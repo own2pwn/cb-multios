@@ -26,53 +26,22 @@ THE SOFTWARE.
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
-#define INUSE_FLAG 1
-#define FREE_FLAG 2
-
-#include <libcgc.h>
-
-typedef struct _heap_block_header {
-	size_t remaining_size;
-	struct _heap_block_header *next;
-	char data[1];
-} heap_block_header;
-
-
-typedef struct _heap_header {
-	size_t size;
-	char flags;
-} heap_header;
-
-typedef struct _heap_metadata {
-	size_t mem_commit;
-	size_t mem_free;
-	size_t mem_inuse;
-	heap_block_header *blocks;
-} heap_metadata;
-
-int cgc_isspace( int c );
-int cgc_isdigit( int c );
-int cgc_isnan( double val );
-int cgc_isinf( double val );
-double cgc_atof(const char *str);
+int isspace( int c );
+int isdigit( int c );
+int isnan( double val );
+int isinf( double val );
+double atof(const char *str);
 int atoi(const char *str);
-void *cgc_calloc(size_t count, size_t size);
-void cgc_free(void *ptr);
-void *cgc_malloc(size_t size);
-
 
 char *cgc_strcpy( char *dest, char *src );
 int printf( const char *fmt, ... );
-void cgc_bzero( void *, size_t );
+void bzero( void *, size_t );
 int cgc_strcmp( const char *, const char * );
-char *cgc_strncat( char *dest, const char *src, size_t n );
-size_t cgc_receive_until( char *, char, size_t );
+char *strncat( char *dest, const char *src, size_t n );
+size_t receive_until( char *, char, size_t );
 size_t cgc_strcat( char *, char* );
 size_t cgc_strlen( char * );
-size_t cgc_itoa( char *, size_t, size_t );
-void cgc_puts( char *t );
-void *cgc_memcpy(void *dest, void*src, unsigned int len);
-void *cgc_memset(void *dest, char c, unsigned int len);
-size_t cgc_strlen( char * str );
+size_t itoa( char *, size_t, size_t );
+void puts( char *t );
 
 #endif // __STDLIB_H__

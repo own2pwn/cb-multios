@@ -1,6 +1,10 @@
 #include <libcgc.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include <malloc.h>
+#endif
+
 /*
 
 Author: John Berry <john.n.berry@gmail.com>
@@ -431,7 +435,11 @@ void list_unread_messages( pmessage_manager pmm )
 	// "###:  "
 	size += count * 8;
 
+#ifdef _WIN32
+	char *data = _alloca(size);
+#else
 	char data[size];
+#endif 
 
 	bzero( data, size );
 

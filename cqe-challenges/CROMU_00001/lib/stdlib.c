@@ -27,6 +27,10 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef _WIN32
+#include <float.h>
+#endif
+
 int isspace( int c )
 {
     if ( c == ' ' ||
@@ -50,12 +54,21 @@ int isdigit( int c )
 
 int isnan( double val )
 {
+    #ifdef WIN32
+    return _isnan(val);
+    #else
     return __builtin_isnan( val );
+    #endif
 }
 
 int isinf( double val )
 {
+    #ifdef WIN32
+    // TODO: x86 asm implementation
+    return 0;
+    #else
     return __builtin_isinf( val );
+    #endif
 }
 
 double atof(const char* str)

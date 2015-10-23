@@ -48,7 +48,11 @@ struct cgc_timeval {
 #define	ENOSYS		5
 #define	EPIPE		6
 
+#ifdef _WIN32
+__declspec(noreturn) void _terminate(unsigned int status);
+#else
 void _terminate(unsigned int status) __attribute__((__noreturn__));
+#endif
 int transmit(int fd, const void *buf, size_t count, size_t *tx_bytes);
 int receive(int fd, void *buf, size_t count, size_t *rx_bytes);
 int cgc_fdwait(int nfds, cgc_fd_set *readfds, cgc_fd_set *writefds,
@@ -58,8 +62,18 @@ int deallocate(void *addr, size_t length);
 int cgc_random(void *buf, size_t count, size_t *rnd_bytes);
 
 typedef struct { long _b[8]; } jmp_buf[1];
+
+#ifdef _WIN32
+int setjmp(jmp_buf);
+#else
 int setjmp(jmp_buf) __attribute__((__returns_twice__));
+#endif
+
+#ifdef _WIN32
+__declspec(noreturn) void longjmp(jmp_buf, int);
+#else
 void longjmp(jmp_buf, int) __attribute__((__noreturn__));
+#endif
 
 float sinf(float); double sin(double); long double sinl(long double);
 float cosf(float); double cos(double); long double cosl(long double);
@@ -90,6 +104,6 @@ long double scalblnl(long double, long int);
 float significandf(float);
 double significand(double);
 long double significandl(long double);
-
-
+void *cgc_memcpy(void *dest, const void *src, size_t n);
+void *cgc_memset(void *dest, const int c, size_t n);
 #endif /* _LIBCGC_H */

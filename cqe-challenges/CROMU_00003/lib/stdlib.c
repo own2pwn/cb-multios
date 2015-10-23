@@ -27,7 +27,11 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
-int cgc_isspace( int c )
+#ifdef _WIN32
+#include <float.h>
+#endif
+
+int isspace( int c )
 {
     if ( c == ' ' ||
          c == '\t' ||
@@ -40,7 +44,7 @@ int cgc_isspace( int c )
         return 0;
 }
 
-int cgc_isdigit( int c )
+int isdigit( int c )
 {
     if ( c >= '0' && c <= '9' )
         return 1;
@@ -48,17 +52,26 @@ int cgc_isdigit( int c )
         return 0;
 }
 
-int cgc_isnan( double val )
+int isnan( double val )
 {
+    #ifdef WIN32
+    return _isnan(val);
+    #else
     return __builtin_isnan( val );
+    #endif
 }
 
-int cgc_isinf( double val )
+int isinf( double val )
 {
+    #ifdef WIN32
+    // TODO: x86 asm implementation
+    return 0;
+    #else
     return __builtin_isinf( val );
+    #endif
 }
 
-double cgc_atof(const char* str)
+double atof(const char* str)
 {
     if ( str == NULL )
         return 0.0;
@@ -69,7 +82,7 @@ double cgc_atof(const char* str)
     int part;
 
     // Skip whitespace
-    while ( cgc_isspace( str[0] ) )
+    while ( isspace( str[0] ) )
         str++;
 
     part = 0; // First part (+/-/./number is acceptable)
@@ -98,7 +111,7 @@ double cgc_atof(const char* str)
             else
                 return 0.0;
         }
-        else if ( cgc_isdigit( *str ) )
+        else if ( isdigit( *str ) )
         {
             if ( part == 0 || part == 1 )
             {
@@ -138,7 +151,7 @@ int atoi(const char* str)
     int digit_count = 0;
 
     // Skip whitespace
-    while ( cgc_isspace( str[0] ) )
+    while ( isspace( str[0] ) )
         str++;
 
     part = 0; // First part (+/-/number is acceptable)
@@ -160,7 +173,7 @@ int atoi(const char* str)
 
             part++;
         }
-        else if ( cgc_isdigit( *str ) )
+        else if ( isdigit( *str ) )
         {
             if ( part == 0 || part == 1 )
             {
@@ -204,9 +217,9 @@ char *cgc_strcpy( char *dest, char *src )
     return (dest);
 }
 
-void cgc_bzero( void *buff, size_t len )
+void bzero( void *buff, size_t len )
 {
-    size_t index = 0;
+    size_t cgc_index = 0;
     unsigned char *c = buff;
 
     if ( buff == NULL ) {
@@ -217,8 +230,8 @@ void cgc_bzero( void *buff, size_t len )
         goto end;
     }
 
-    for ( index = 0; index < len; index++ ) {
-        c[index] = 0x00;
+    for ( cgc_index = 0; cgc_index < len; cgc_index++ ) {
+        c[cgc_index] = 0x00;
     }
 
 end:
@@ -234,7 +247,7 @@ int cgc_strcmp( const char *s1, const char *s2 )
     return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
-char *cgc_strncat ( char *dest, const char *src, size_t n ) 
+char *strncat ( char *dest, const char *src, size_t n ) 
 {
     size_t dest_len = cgc_strlen(dest);
     size_t i;
@@ -252,7 +265,7 @@ char *cgc_strncat ( char *dest, const char *src, size_t n )
     return(dest);
 }
 
-size_t cgc_receive_until( char *dst, char delim, size_t max )
+size_t receive_until( char *dst, char delim, size_t max )
 {
     size_t len = 0;
     size_t rx = 0;
@@ -311,7 +324,7 @@ end:
     return length;
 }
 
-size_t cgc_itoa( char *out, size_t val, size_t max )
+size_t itoa( char *out, size_t val, size_t max )
 {
     size_t length = 0;
     size_t end = 0;
@@ -349,42 +362,10 @@ end:
     return length;
 }
 
-void cgc_puts( char *t )
+void puts( char *t )
 {
     size_t size;
-    transmit(STDOUT, t, cgc_strlen(t), &size);
-    transmit(STDOUT, "\n", 1, &size);
-}
-
-void *cgc_memcpy(void *dest, void*src, unsigned int len) {
-    void *ret;
-    ret = dest;
-    while(len) {
-        *(char*)dest++=*(char *)src++;
-        len--;
+    if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
+        _terminate(2);
     }
-    return ret;
-}
-
-void *cgc_memset(void *dest, char c, unsigned int len) {
-    void *ret = dest;
-    while(len--) {
-        *(char *)dest++=c;
-    }
-    return ret;
-}
-
-char *cgc_strchr(char *str, char c)
-{
-    char *ret;
-    ret = str;
-    while(*ret)
-    {
-        if(*ret == c)
-            break;
-        ret++;
-    }
-    if(*ret == 0)
-        return NULL;
-    return ret;
 }
