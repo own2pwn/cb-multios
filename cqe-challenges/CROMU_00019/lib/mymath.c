@@ -1,6 +1,6 @@
 /*
 
-Author: Jason Williams <jdw@cromulence.co>
+Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
@@ -27,6 +27,10 @@ THE SOFTWARE.
 #include <mymath.h>
 #include <stdint.h>
 
+#ifdef _WIN32
+#include <math.h>
+#else
+
 double floor( double val )
 {
     if ( val > 0.0 )
@@ -36,6 +40,7 @@ double floor( double val )
     else
         return 0.0;
 }
+#endif
 
 double cgc_round_away_from_zero( double val )
 {

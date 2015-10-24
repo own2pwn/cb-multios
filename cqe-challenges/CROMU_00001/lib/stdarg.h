@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 */
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__clang__)
 #pragma once
 
 #ifndef _INC_STDARG

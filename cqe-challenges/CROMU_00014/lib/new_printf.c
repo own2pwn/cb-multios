@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 #include <mymath.h>
+#include <math.h>
 
 // 5 digits of precision
 #define F32_PRECISION       0.00001

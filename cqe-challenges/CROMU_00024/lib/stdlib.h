@@ -25,13 +25,13 @@ THE SOFTWARE.
 */
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
+#include <stdarg.h>
+#include <libcgc.h>
 
 #define INUSE_FLAG 1
 #define FREE_FLAG 2
+#define F32_PRECISION       0.00001
 
-#include <libcgc.h>
-
-//typedef unsigned long size_t;
 
 typedef struct _heap_block_header {
 	size_t remaining_size;
@@ -52,9 +52,9 @@ typedef struct _heap_metadata {
 	heap_block_header *blocks;
 } heap_metadata;
 
-void *calloc(size_t count, size_t size);
-void free(void *ptr);
-void *malloc(size_t size);
+//void *calloc(size_t count, size_t size);
+//void free(void *ptr);
+//void *malloc(size_t size);
 
 
 
@@ -62,33 +62,39 @@ int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
-double atof(const char *str);
 int atoi(const char *str);
 int islower( int c );
 int isupper( int c );
 int isalpha( int c );
 int isalnum( int c );
-int cgc_memcpy( void *dest, void *src, size_t n);
+int memcpy( void *dest, void *src, size_t n);
 
-char *cgc_strcpy( char *dest, char *src );
+char *strcpy( char *dest, char *src );
 char *strncpy( char *, const char *, size_t );
 int putc( int );
-int printf( const char *fmt, ... );
-int sprintf( char *str, const char *fmt, ... );
+//int printf( const char *fmt, ... );
 void bzero( void *, size_t );
-void *cgc_memset(void *, int, size_t);
+void *memset(void *, int, size_t);
 int cgc_strcmp( const char *, const char * );
-char *strncat( char *dest, const char *src, size_t n );
-size_t getline( char *buffer, size_t len);
+char *strncat( char *, const char *, size_t );
 size_t receive_until( char *, char, size_t );
-int receive_bytes (unsigned char *buffer, size_t size) ;
-size_t cgc_strcat( char *, char* );
+size_t receive_until_flush( char *, char , size_t);
+size_t strcat( char *, char* );
 size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 char *strchr(const char *, int);
 char *strtok(char *, const char *);
-size_t write( const void *, size_t );
+ssize_t write( const void *, size_t );
 char *strdup( char * );
 
+int putc( int c );
+
+void int_to_str( int val, char *buf );
+void int_to_hex( unsigned int val, char *buf );
+void float_to_str( double val, char *buf, int precision );
+int vprintf( const char *fmt, va_list arg );
+int vsprintf( char *str, const char *fmt, va_list arg );
+int printf( const char *fmt, ... );
+int sprintf( char *str, const char *fmt, ... );
 #endif // __STDLIB_H__

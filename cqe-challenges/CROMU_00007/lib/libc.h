@@ -26,16 +26,8 @@ THE SOFTWARE.
 #ifndef LIBC_H
 #define LIBC_H
 
-int receive_until(char *dest, size_t length, char end, size_t *bytes_read);
-size_t cgc_strlen(char *buf);
 void print(char *buf);
 int equals(char *one, char *two);
 void cgc_strncpy(char *dst, char *src, size_t length);
-int isdigit(char c);
-int atoi(char *str);
-void itoa(char *str, int i);
-void cgc_memcpy(char *dst, char *src, size_t size);
-void cgc_memset(char *dst, char c, size_t size);
-
 
 #endif // LIBC_H

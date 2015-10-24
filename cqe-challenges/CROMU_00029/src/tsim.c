@@ -57,7 +57,7 @@ int32_t GetSimLength(void) {
                         // failed to read the input
                         return(-1);
                 }
-		SIM_TIME = cgcatof(buf);
+		SIM_TIME = atof(buf);
 	}
 
 	return(0);

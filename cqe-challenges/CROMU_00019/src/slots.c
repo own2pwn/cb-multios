@@ -29,10 +29,15 @@ THE SOFTWARE.
 #include "slots.h"
 #include "casino.h"
 #include "prng.h"
+#include <malloc.h>
 
 
 // Print the slot machine state
+#ifdef _WIN32
+void print_board(int board_size, unsigned char* board[])
+#else
 void print_board(int board_size, unsigned char board[][board_size])
+#endif
 {
 	for (int y=0; y<board_size; y++)
 	{
@@ -70,8 +75,13 @@ void slots(player_info *player)
 			player->wallet -= 2;
 		}
 		player->slots_score += 1;
+                #ifdef _WIN32
+		unsigned char **board = _alloca(board_size*board_size);
+		bzero(board, board_size*board_size);
+                #else
 		unsigned char board[board_size][board_size];
 		bzero(board, sizeof(board));
+                #endif
 
 		// Adjust number of characters used to control odds of winning
 		char max_char = '/';

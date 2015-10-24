@@ -30,18 +30,9 @@ int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isalnum( int c );
-
-double atof(const char *str);
 int atoi(const char *str);
 
-int cgc_memcpy( void *dest, void *src, size_t n);
-int memcmp( void *dest, void *src, size_t n);
 char *cgc_strcpy( char *dest, char *src );
-char *strncpy( char *dest, char *src, size_t n );
 int printf( const char *fmt, ... );
 void bzero( void *, size_t );
 int cgc_strcmp( const char *, const char * );

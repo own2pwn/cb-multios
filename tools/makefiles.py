@@ -23,6 +23,8 @@ def replaceWin32Flags(flags):
 		"-Wno-pointer-sign": "",
 		"-Wno-sign-compare": "",
 		"-Wno-unused-function": "",
+        "-mfpmath=sse": "/arch:sse",
+        "-msse2": "/arch:sse2",
 		}
 
 	for k,v in win32_map.iteritems():

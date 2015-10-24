@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 
 #include "fpti_image_data.h"
+#include <math.h>
 
 int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at)
 {

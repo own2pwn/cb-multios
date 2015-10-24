@@ -27,6 +27,10 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef _WIN32
+#include <float.h>
+#endif
+
 int isspace( int c )
 {
     if ( c == ' ' ||
@@ -50,80 +54,21 @@ int isdigit( int c )
 
 int isnan( double val )
 {
+    #ifdef WIN32
+    return cgc_isnan(val);
+    #else
     return __builtin_isnan( val );
+    #endif
 }
 
 int isinf( double val )
 {
+    #ifdef WIN32
+    // TODO: x86 asm implementation
+    return cgc_isinf(val);
+    #else
     return __builtin_isinf( val );
-}
-
-double atof(const char* str)
-{
-    if ( str == NULL )
-        return 0.0;
-
-    double val = 0.0;
-    double scale = 0.1;
-    int sign = 1;
-    int part;
-
-    // Skip whitespace
-    while ( isspace( str[0] ) )
-        str++;
-
-    part = 0; // First part (+/-/./number is acceptable)
-
-    while( str[0] != '\0' )
-    {
-        if ( str[0] == '-' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            sign = -1;
-            part++;
-        }
-        else if ( str[0] == '+' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            part++;
-        }
-        else if ( str[0] == '.' )
-        {
-            if ( part == 0 || part == 1 )
-                part = 2;
-            else
-                return 0.0;
-        }
-        else if ( isdigit( *str ) )
-        {
-            if ( part == 0 || part == 1 )
-            {
-                // In integer part
-                part = 1;
-                val = (val * 10.0) + (*str - '0');
-            }
-            else if ( part == 2 )
-            {
-                val += ((*str - '0') * scale);
-                scale /= 10.0;
-            }
-            else
-            {
-                // part invalid
-                return 0.0;
-            }
-        }
-        else
-            break;
-
-        str++;
-    }
-
-    return (sign * val);
+    #endif
 }
 
 
@@ -352,99 +297,7 @@ end:
 void puts( char *t )
 {
     size_t size;
-    transmit(STDOUT, t, cgc_strlen(t), &size);
-    transmit(STDOUT, "\n", 1, &size);
-}
-
-void *cgc_memcpy(void *dest, void*src, unsigned int len) {
-    void *ret;
-    ret = dest;
-    while(len) {
-        *(char*)dest++=*(char *)src++;
-        len--;
+    if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
+        _terminate(2);
     }
-    return ret;
-}
-
-void *cgc_memset(void *dest, char c, unsigned int len) {
-    void *ret = dest;
-    while(len--) {
-        *(char *)dest++=c;
-    }
-    return ret;
-}
-
-char *strchr(char *str, char c)
-{
-    char *ret;
-    ret = str;
-    while(*ret)
-    {
-        if(*ret == c)
-            break;
-        ret++;
-    }
-    if(*ret == 0)
-        return NULL;
-    return ret;
-}
-
-heap_metadata *heap_manager = NULL;
-
-
-void *calloc(size_t count, size_t size) {
-    void *ret;
-    ret = malloc(size * count);
-    cgc_memset(ret, 0, size * count);
-    return ret;
-}
-
-void free(void *ptr) {
-    heap_header *chunkHeader;
-    heap_block_header *blockHead;
-
-    chunkHeader = (heap_header*)(((char*)ptr)-sizeof(heap_header));
-    chunkHeader->flags = FREE_FLAG;
-    blockHead = (heap_block_header *)((int)&ptr & 0xfffff000);
-    blockHead->remaining_size+=chunkHeader->size;
-    return;
-}
-
-void *malloc(size_t size) {
-    heap_block_header *blockHead;
-    if (heap_manager == NULL) {
-        void *mallocPtr;
-        //this is our first allocation.
-        allocate(4096, 0, &mallocPtr);
-        heap_manager = mallocPtr;
-        heap_manager->mem_commit = 4096;
-        heap_manager->mem_inuse = sizeof(heap_manager);
-        heap_manager->mem_free = 4096-heap_manager->mem_inuse;
-        allocate(4096, 0, (void *)&heap_manager->blocks);
-        cgc_memset(heap_manager->blocks, 0, 4096);
-        blockHead = (heap_block_header *)heap_manager->blocks;
-        blockHead->remaining_size = 4096-sizeof(heap_block_header);
-        blockHead->next = NULL;
-    }
-    blockHead = (heap_block_header *)heap_manager->blocks;
-    if(size > blockHead->remaining_size) {
-        allocate(4096, 0, (void *)&blockHead->next);
-        if(blockHead->next == NULL) {
-            puts("Not enough space available to allocate more heap.  Failure.");
-            return NULL;
-        }
-        blockHead = blockHead->next;
-        blockHead->remaining_size = 4096-sizeof(heap_block_header);
-    }else{
-        heap_header *chunkHeader;
-        blockHead->remaining_size-=size;
-        chunkHeader = (heap_header *)blockHead->data;
-
-        while((chunkHeader->flags & INUSE_FLAG) && (chunkHeader->size < size+sizeof(heap_header)))
-            chunkHeader = (heap_header *)(((void *)(chunkHeader)+sizeof(heap_header)) + chunkHeader->size);
-        chunkHeader->size = size;
-        chunkHeader->flags = INUSE_FLAG;
-        return (char *)chunkHeader+sizeof(heap_header);
-    }
-    return 0;
 }

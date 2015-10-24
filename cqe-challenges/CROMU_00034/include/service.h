@@ -50,6 +50,7 @@ typedef struct
 	uint16_t future;					// not used yet
 	uint32_t offset_to_first_chapter;	// offset from start of file to the first chapter
 }Header;
+#pragma pack(pop)
 
 #pragma pack(1)
 typedef struct 
@@ -61,6 +62,7 @@ typedef struct
 	uint16_t offset_data;				// either holds data or an offset to the data
 	uint16_t offset_next_entry;			// file offset to next entry
 }Entry;
+#pragma pack(pop)
 
 #pragma pack(1)
 typedef struct 
@@ -72,6 +74,7 @@ typedef struct
 	uint16_t offset_first_entry;
 	uint16_t offset_next_chapter;
 }Chapter;
+#pragma pack(pop)
 
 // this struct is used in a table to look up these fields for each entry
 typedef struct 

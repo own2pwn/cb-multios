@@ -27,41 +27,9 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
-int islower( int c )
-{
-	if ( c >= 'a' && c <= 'z') {
-		return 1;
-	}
-
-	return 0;
-}
-
-int isupper( int c )
-{
-	if ( c >= 'A' && c <= 'Z') {
-		return 1;
-	}
-
-	return 0;
-}
-
-int isascii( int c )
-{
-	if ( 0x20 <= c && c <= 0x7e ) {
-		return 1;
-	}
-
-	return 0;
-}
-
-int isalpha( int c )
-{
-	if ( islower(c) || isupper(c) ) {
-		return 1;
-	}
-
-	return 0;
-}
+#ifdef _WIN32
+#include <float.h>
+#endif
 
 int isspace( int c )
 {
@@ -86,167 +54,23 @@ int isdigit( int c )
 
 int isnan( double val )
 {
+    #ifdef WIN32
+    return cgc_isnan(val);
+    #else
     return __builtin_isnan( val );
+    #endif
 }
 
 int isinf( double val )
 {
+    #ifdef WIN32
+    // TODO: x86 asm implementation
+    return cgc_isinf(val);
+    #else
     return __builtin_isinf( val );
+    #endif
 }
 
-int tolower( int c )
-{
-    if ( c >= 'A' && c <= 'Z' )
-        return (c - 'A') + 'a';
-    else
-        return c;
-}
-
-int toupper( int c )
-{
-    if ( c >= 'a' && c <= 'z' )
-        return (c - 'a') + 'A';
-    else
-        return c;
-}
-
-int cgc_strcmp( char *str1, char *str2 )
-{
-    size_t i;
-
-    for ( i = 0; ; i++ )
-    {
-        if ( str1[i] == '\0' && str2[i] == '\0' )
-            break;
-
-        if ( str1[i] == '\0' )
-            return -1;
-
-        if ( str2[i] == '\0' )
-            return 1;
-
-        if ( str1[i] < str2[i] )
-            return -1;
-
-        if ( str1[i] > str2[i] )
-            return 1;
-    }
-
-    return 0;
-}
-
-char *strncat( char *dest, char *src, size_t n )
-{
-	size_t i = cgc_strlen(dest);
-	size_t j;
-
-	for (j = 0; i < n; i++, j++ )
-	{
-		if (src[j] == '\0')
-			break;
-
-		dest[i] = src[j];
-	}
-
-	return (dest);
-}
-
-char *cgc_strcat( char *dest, char *src )
-{
-	size_t i = cgc_strlen(dest);
-	size_t j;
-
-	for (j = 0; ; i++, j++ )
-	{
-		if (src[j] == '\0')
-			break;
-
-		dest[i] = src[j];
-	}
-
-	return (dest);
-}
-
-char *strchr( char *src, char c )
-{
-	char *result = NULL;
-
-	while ( src[0] != '\0' ) {
-		if ( src[0] == c ) {
-			result = src;
-			break;
-		}
-		src++;
-	}
-
-	return result;
-}
-
-char *cgc_strcpy( char *dest, char *src )
-{
-    size_t i;
-
-    for ( i = 0; ; i++ )
-    {
-        if ( src[i] == '\0' )
-            break;
-
-        dest[i] = src[i];
-    }
-    dest[i] = '\0';
-
-    return (dest);
-}
-
-char *strncpy( char *dest, const char *src, size_t num )
-{
-    size_t i;
-
-    for ( i = 0; i < num; i++ )
-    {
-        if ( src[i] == '\0' )
-            break;
-
-        dest[i] = src[i];
-    }
-    dest[i] = '\0';
-
-    return (dest);
-}
-
-void *cgc_memcpy( void *dest, void *src, size_t numbytes )
-{
-    size_t bytes_copied = 0;
-    if ( numbytes >= 4 )
-    {
-        for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = *((uint32_t*)(src+bytes_copied));
-    }
-
-    for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = *((uint8_t*)(src+bytes_copied));
-
-    return dest;
-}
-
-void *cgc_memset( void *dest, int value, size_t numbytes )
-{
-    size_t bytes_copied = 0;
-    uint8_t byte_set_value = (uint8_t)value;
-
-    if ( numbytes >= 4 )
-    {
-        uint32_t dword_set_value = (byte_set_value << 24) | (byte_set_value << 16) | (byte_set_value << 8) | byte_set_value;
-
-        for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = dword_set_value;
-    }
-
-    for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = byte_set_value;
-
-    return dest;
-}
 
 int atoi(const char* str)
 {
@@ -309,20 +133,171 @@ int atoi(const char* str)
     return (sign * integer_part);
 }
 
-size_t cgc_strlen( const char *str )
+char *cgc_strcpy( char *dest, char *src )
+{
+    size_t i;
+
+    for ( i = 0; ; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+
+    return (dest);
+}
+
+void bzero( void *buff, size_t len )
+{
+    size_t cgc_index = 0;
+    unsigned char *c = buff;
+
+    if ( buff == NULL ) {
+        goto end;
+    }
+
+    if ( len == 0 ) {
+        goto end;
+    }
+
+    for ( cgc_index = 0; cgc_index < len; cgc_index++ ) {
+        c[cgc_index] = 0x00;
+    }
+
+end:
+    return;
+}
+
+int cgc_strcmp( const char *s1, const char *s2 ) 
+{
+    while ( *s1 && (*s1 == *s2) ) 
+    {
+      s1++,s2++;
+    }
+    return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
+}
+
+char *strncat ( char *dest, const char *src, size_t n ) 
+{
+    size_t dest_len = cgc_strlen(dest);
+    size_t i;
+
+    if (dest == NULL || src == NULL) 
+    {
+      return(dest);
+    }
+    for (i = 0; i < n && src[i] != '\0'; i++) 
+    {
+      dest[dest_len+i] = src[i];
+    }
+    dest[dest_len+i] = '\0';
+
+    return(dest);
+}
+
+size_t receive_until( char *dst, char delim, size_t max )
+{
+    size_t len = 0;
+    size_t rx = 0;
+    char c = 0;
+
+    while( len < max ) {
+        dst[len] = 0x00;
+
+        if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
+            len = 0;
+            goto end;
+        }
+
+        if ( c == delim ) {
+            goto end;
+        }
+   
+        dst[len] = c;
+        len++;
+    }
+end:
+    return len;
+}
+
+size_t cgc_strcat( char *dest, char*src )
 {
     size_t length = 0;
+    size_t start = 0;
 
-    while ( str[length] != '\0' )
-        length++;
+    if ( dest == NULL || src == NULL) {
+        goto end;
+    }
 
+    start = cgc_strlen( dest );
+
+    for ( ; src[length] != 0x00 ; start++, length++ ) {
+        dest[start] = src[length];
+    }
+
+    length = start;
+end:
     return length;
 }
 
-int abs( int val )
+size_t cgc_strlen( char * str )
 {
-    if ( val < 0 )
-        return -val;
-    else
-        return val;
+    size_t length = 0;
+
+    if ( str == NULL ) {
+        goto end;
+    }
+
+    while ( str[length] ) { length++; }
+
+end:
+    return length;
+}
+
+size_t itoa( char *out, size_t val, size_t max )
+{
+    size_t length = 0;
+    size_t end = 0;
+    size_t temp = 0;
+
+    if ( out == NULL ) {
+        goto end;
+    }
+
+    // Calculate the needed length
+    temp = val;
+    do {
+        end++;
+        temp /= 10;
+    } while ( temp );
+
+    // ensure we have enough room
+    if ( end >= max ) {
+        goto end;
+    }
+
+    length = end;
+
+    // Subtract one to skip the null
+    end--;
+
+    do {
+        out[end] = (val % 10) + 0x30;
+        val /= 10;
+        end--;
+    } while ( val );
+
+    out[length] = 0x00;
+end:
+    return length;
+}
+
+void puts( char *t )
+{
+    size_t size;
+    if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
+        _terminate(2);
+    }
 }

@@ -27,7 +27,11 @@ THE SOFTWARE.
 #include <mymath.h>
 #include <stdint.h>
 
-double cgcfloor( double val )
+#ifdef _WIN32
+#include <math.h>
+#else
+
+double floor( double val )
 {
     if ( val > 0.0 )
         return rint( val + 0.5 ) - 1.0;
@@ -36,6 +40,7 @@ double cgcfloor( double val )
     else
         return 0.0;
 }
+#endif
 
 double cgc_round_away_from_zero( double val )
 {

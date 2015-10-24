@@ -23,13 +23,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+#include "libcgc.h"
 #include "stdlib.h"
+
+#ifdef _WIN32
+#include "malloc_win32.h"
+#else
 #include "malloc.h"
+#endif
 
 #define ALLOC_PAGE_SIZE     (4096)
 
+#ifdef _WIN32
+#define FREE_BLOCK_NEXT( block )    (((tMallocAllocFtr *)((char *)block + (((tMallocAllocHdr *)block)->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)))->pNext)
+#define FREE_BLOCK_PREV( block )    (((tMallocAllocFtr *)((char *)block + (((tMallocAllocHdr *)block)->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)))->pPrev)
+#else
 #define FREE_BLOCK_NEXT( block )    (((tMallocAllocFtr *)((void *)block + (((tMallocAllocHdr *)block)->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)))->pNext)
 #define FREE_BLOCK_PREV( block )    (((tMallocAllocFtr *)((void *)block + (((tMallocAllocHdr *)block)->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)))->pPrev)
+#endif
 
 #define SET_BIT( val, bit ) (val |= (bit))
 #define CLEAR_BIT( val, bit ) (val &= ~(bit))
@@ -37,12 +48,12 @@ THE SOFTWARE.
 
 tMallocManager g_memManager;
 
-void *calloc( size_t count, size_t obj_size )
+void *cgc_calloc( size_t count, size_t obj_size )
 {
     size_t allocation_size = (count * obj_size);
     void *pMemBuffer;
 
-    pMemBuffer = malloc( allocation_size );
+    pMemBuffer = cgc_malloc( allocation_size );
 
     cgc_memset( pMemBuffer, 0, allocation_size );
 
@@ -61,7 +72,11 @@ void *add_free_list( size_t request_size )
         grow_size *= ALLOC_PAGE_SIZE;
     }
 
+    #ifdef _WIN32
+    char *pAllocLocation;
+    #else
     void *pAllocLocation;
+    #endif
 
     if ( allocate( grow_size, 0, &pAllocLocation ) != 0 )
     {
@@ -83,7 +98,7 @@ void *add_free_list( size_t request_size )
     return (void*)pNewAllocHdr;
 }
 
-void *malloc( size_t alloc_size )
+void *cgc_malloc( size_t alloc_size )
 {
     // Allocate
     if ( alloc_size < 8 )
@@ -95,7 +110,11 @@ void *malloc( size_t alloc_size )
     }
 
     // Scan free list for available objects
+    #ifdef _WIN32
+    char *pFreeCur;
+    #else
     void *pFreeCur;
+    #endif
 
     pFreeCur = g_memManager.pFreeList;
 
@@ -128,14 +147,22 @@ void *malloc( size_t alloc_size )
             if ( size_remaining >= (sizeof(tMallocAllocHdr) + sizeof(tMallocAllocFtr)) )
             {
                 // Build a new free block
+                #ifdef _WIN32
+                char *pNewChunk = (pFreeCur + (alloc_size + sizeof(tMallocAllocHdr)));
+                #else
                 void *pNewChunk = (pFreeCur + (alloc_size + sizeof(tMallocAllocHdr)));
+                #endif
 
                 tMallocAllocHdr *pNewChunkHeader = ((tMallocAllocHdr *)pNewChunk);
                 pNewChunkHeader->alloc_size = (size_remaining - sizeof(tMallocAllocHdr));
 
                 tMallocAllocFtr *pNewChunkFooter = pFreeCurFooter;
 
+                #ifdef _WIN32
+                if ( ((char *)pNewChunkHeader + (pNewChunkHeader->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)) != pFreeCurFooter )
+                #else
                 if ( ((void *)pNewChunkHeader + (pNewChunkHeader->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)) != pFreeCurFooter )
+                #endif
                 {
                     printf( "Footer != in malloc" );
                     _terminate( -3 );
@@ -196,12 +223,16 @@ void *malloc( size_t alloc_size )
     }
 }
 
-void free( void *pItem )
+void cgc_free( void *pItem )
 {
     // Free an object and coalesce to neighboring block if available
 
     // Check neighbor for coalescing
+    #ifdef _WIN32
+    tMallocAllocHdr *pItemHdr = (tMallocAllocHdr *)((char*)pItem - sizeof(tMallocAllocHdr));
+    #else
     tMallocAllocHdr *pItemHdr = (tMallocAllocHdr *)(pItem - sizeof(tMallocAllocHdr));
+    #endif
 
     // Verify inuse bit is set
     if ( !IS_BIT_SET(pItemHdr->alloc_size, MALLOC_INUSE_FLAG_BIT) )
@@ -213,7 +244,11 @@ void free( void *pItem )
     // Do we have a neighbor??? IF so perform coalescing
     if ( IS_BIT_SET( pItemHdr->alloc_size, MALLOC_NEXT_FLAG_BIT) )
     {
+        #ifdef _WIN32
+        tMallocAllocHdr *pNeighbor = ((char*)pItem + (pItemHdr->alloc_size & ~0x3));
+        #else
         tMallocAllocHdr *pNeighbor = (pItem + (pItemHdr->alloc_size & ~0x3));
+        #endif
 
         // Is neighbor inuse? If not -- go ahead and coalesce
         if ( !IS_BIT_SET(pNeighbor->alloc_size, MALLOC_INUSE_FLAG_BIT) )
@@ -234,14 +269,22 @@ void free( void *pItem )
             {
                 g_memManager.pFreeList = pItemHdr;
 
+                #ifdef _WIN32
+                tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((char *)pItemHdr + coalesceSize-sizeof(tMallocAllocHdr)));
+                #else
                 tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((void *)pItemHdr + coalesceSize-sizeof(tMallocAllocHdr)));
+                #endif
 
                 if ( pItemFtr->pNext )
                     FREE_BLOCK_PREV( pItemFtr->pNext ) = pItemHdr;
             }
             else
             {
+                #ifdef _WIN32
+                tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((char *)pItemHdr + coalesceSize-sizeof(tMallocAllocHdr)));
+                #else
                 tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((void *)pItemHdr + coalesceSize-sizeof(tMallocAllocHdr)));
+                #endif
 
                 // Fix up links
                 if ( pItemFtr->pPrev )
@@ -259,7 +302,11 @@ void free( void *pItem )
     // No coalesce possible, just link it to the top of the list
     CLEAR_BIT( pItemHdr->alloc_size, MALLOC_INUSE_FLAG_BIT );
 
+    #ifdef _WIN32
+    tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((char *)pItemHdr + (pItemHdr->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)));
+    #else
     tMallocAllocFtr *pItemFtr = ((tMallocAllocFtr *)((void *)pItemHdr + (pItemHdr->alloc_size & ~0x3)-sizeof(tMallocAllocHdr)));
+    #endif
 
     pItemFtr->pNext = g_memManager.pFreeList;
     pItemFtr->pPrev = NULL;

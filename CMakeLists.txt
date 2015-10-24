@@ -76,7 +76,13 @@ FOREACH(cb_path ${challenge_binaries})										#iterate through cbs
 			MESSAGE("${cb_path}")
 			get_filename_component(cb_id ${cb_path}  NAME )			#get filename
 								
-			add_subdirectory(${cb_path} ${cb_path}/bin)
+            if(WIN) 
+                if(NOT (cb_path MATCHES "(.*CROMU_00006|.*CROMU_00028)"))  
+                    add_subdirectory(${cb_path} ${cb_path}/bin)
+                endif()    
+            else()
+                    add_subdirectory(${cb_path} ${cb_path}/bin)
+            endif()
 
 		endif()
 #	endif()

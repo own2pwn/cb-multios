@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "input.h"
 #include "generator.h"
 #include "mt.h"
+#include <math.h>
 
 extern double wall_clock;
 

@@ -30,7 +30,6 @@ int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
-double atof(const char *str);
 int atoi(const char *str);
 
 char *cgc_strcpy( char *dest, char *src );

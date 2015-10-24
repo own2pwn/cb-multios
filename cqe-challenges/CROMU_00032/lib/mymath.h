@@ -26,8 +26,9 @@ THE SOFTWARE.
 #ifndef __MYMATH_H__
 #define __MYMATH_H__
 
+#ifndef _WIN32
 double floor( double );
+#endif
 double cgc_round( double, double n );
-int expi( int base, int exponent );
 
 #endif // __MYMATH_H__

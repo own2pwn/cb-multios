@@ -92,7 +92,7 @@ void bookKeeping(carstate *drive)
 
 void raiseAlarm() {
 	char a;
-	cgc_memcpy(&a, "AAAAAAAAAAAAAAAA", 16);
+	cgc_memcpy2(&a, "AAAAAAAAAAAAAAAA", 16);
 	validateRet();
 }
 
@@ -138,7 +138,7 @@ void updateBTMetadata(carstate *drive, char *userbuf) {
 	if(len > 31)
 		len = 31;
 	#endif
-	cgc_memcpy(drive->bt_metadata, tmp, len);
+	cgc_memcpy2(drive->bt_metadata, tmp, len);
 	validateRet();
 }
 

@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include "queue.h"
 #include "generator.h"
 #include "input.h"
+#include <math.h>
 
 // Pkt struct used by generator() calls to hold the next packet
 extern pkt NextPkt;

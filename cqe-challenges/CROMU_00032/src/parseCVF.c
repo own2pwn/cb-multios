@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 
 #include "parseCVF.h"
+#include <string.h>
 
 #define LOOPIE 0xfffffff
 
@@ -603,7 +604,7 @@ int parseCVFName( pBitStream pbs, pcvf pNewImage )
 
 	/// Ensure valid characters in the name field
 	for ( int i = 0; i < nameLength; i++) {
-		if ( !isascii( pNewImage->name[i] ) ){
+		if ( !__isascii( pNewImage->name[i] ) ){
 			printf("[ERROR] Invalid value in name field\n");
 			return 0;
 		}

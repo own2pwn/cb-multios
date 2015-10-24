@@ -1,8 +1,8 @@
 /*
 
-Author: Debbie Nuttall <debbie@cromulence.co>
+Author: Jason Williams <jdw@cromulence.com>
 
-Copyright (c) 2015 Cromulence LLC
+Copyright (c) 2014 Cromulence LLC
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-#ifndef STDLIB_H
-#define STDLIB_H
+#ifndef __STDLIB_H__
+#define __STDLIB_H__
 
-typedef unsigned char uint8_t;
-typedef unsigned short int uint16_t;
-typedef unsigned int uint32_t;
+int isspace( int c );
+int isdigit( int c );
+int isnan( double val );
+int isinf( double val );
+int atoi(const char *str);
 
-int cgc_strlen(char *s);
-void bzero(char *s, size_t length);
-void cgc_memcpy(char *d, char *s, size_t num);
-int count_strings(char *s);
-char *next_string(char *s);
-int atoi(char *s);
+char *cgc_strcpy( char *dest, char *src );
+int printf( const char *fmt, ... );
+void bzero( void *, size_t );
+int cgc_strcmp( const char *, const char * );
+char *strncat( char *dest, const char *src, size_t n );
+size_t receive_until( char *, char, size_t );
+size_t cgc_strcat( char *, char* );
+size_t cgc_strlen( char * );
+size_t itoa( char *, size_t, size_t );
+void puts( char *t );
 
-#endif
+#endif // __STDLIB_H__

@@ -55,7 +55,7 @@ int isdigit( int c )
 int isnan( double val )
 {
     #ifdef WIN32
-    return _isnan(val);
+    return cgc_isnan(val);
     #else
     return __builtin_isnan( val );
     #endif
@@ -65,78 +65,10 @@ int isinf( double val )
 {
     #ifdef WIN32
     // TODO: x86 asm implementation
-    return 0;
+    return cgc_isinf(val);
     #else
     return __builtin_isinf( val );
     #endif
-}
-
-double atof(const char* str)
-{
-    if ( str == NULL )
-        return 0.0;
-
-    double val = 0.0;
-    double scale = 0.1;
-    int sign = 1;
-    int part;
-
-    // Skip whitespace
-    while ( isspace( str[0] ) )
-        str++;
-
-    part = 0; // First part (+/-/./number is acceptable)
-
-    while( str[0] != '\0' )
-    {
-        if ( str[0] == '-' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            sign = -1;
-            part++;
-        }
-        else if ( str[0] == '+' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            part++;
-        }
-        else if ( str[0] == '.' )
-        {
-            if ( part == 0 || part == 1 )
-                part = 2;
-            else
-                return 0.0;
-        }
-        else if ( isdigit( *str ) )
-        {
-            if ( part == 0 || part == 1 )
-            {
-                // In integer part
-                part = 1;
-                val = (val * 10.0) + (*str - '0');
-            }
-            else if ( part == 2 )
-            {
-                val += ((*str - '0') * scale);
-                scale /= 10.0;
-            }
-            else
-            {
-                // part invalid
-                return 0.0;
-            }
-        }
-        else
-            break;
-
-        str++;
-    }
-
-    return (sign * val);
 }
 
 

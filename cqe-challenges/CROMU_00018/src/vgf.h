@@ -53,6 +53,9 @@ THE SOFTWARE.
 #define VGF_MAX_COLOR   (200)
 
 // Main file format header
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_HEADER
 {
     uint32_t    vgfMagic;
@@ -60,61 +63,104 @@ struct VGF_HEADER
     uint16_t    vgfHeight;      // Height in pixels
     uint16_t    vgfWidth;       // Width in pixels
     uint8_t     vgfLayerCount;  // Number of layers to render on
+
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_HEADER tVGFHeader;
 
 // VGF files are composed of a collection of VGF objects
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_OBJECT_HEADER
 {
     uint8_t     object_type;
     uint8_t     object_layer;
     uint8_t     object_color_cgc_index;     // Index to the objects color
     uint8_t     object_settings;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_OBJECT_HEADER tVGFObjectHeader;
 
 // The VGF color table
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_COLOR_TABLE
 {
     uint8_t     color_count;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_COLOR_TABLE tVGFColorTable;
 
 // A single color reference in the color cgc_index table
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_COLOR_HEADER
 {
     uint8_t    red;
     uint8_t    green;
     uint8_t    blue;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_COLOR_HEADER tVGFColorHeader;
 
 // A VGF circle object
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_DRAW_CIRCLE
 {
     uint16_t    x_pos;
     uint16_t    y_pos;
     uint16_t    radius;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_DRAW_CIRCLE tVGFDrawCircle;
 
 // A VGF rectangle object
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_DRAW_RECT
 {
     uint16_t    x_start;
     uint16_t    y_start;
     uint16_t    x_len;
     uint16_t    y_len;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_DRAW_RECT tVGFDrawRect;
 
 // A VGF triangle object
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_DRAW_TRIANGLE
 {
     uint16_t    x_pos1;
@@ -123,18 +169,29 @@ struct VGF_DRAW_TRIANGLE
     uint16_t    y_pos2;
     uint16_t    x_pos3;
     uint16_t    y_pos3;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_DRAW_TRIANGLE tVGFDrawTriangle;
 
 // A VGF line object
+#ifdef _WIN32
+#pragma pack(push,1)
+#endif
 struct VGF_DRAW_LINE
 {
     uint16_t    x_start;
     uint16_t    y_start;
     uint16_t    x_end;
     uint16_t    y_end;
+#ifdef _WIN32
+};
+#else
 } __attribute__ ((__packed__));
+#endif
 
 typedef struct VGF_DRAW_LINE tVGFDrawLine;
 

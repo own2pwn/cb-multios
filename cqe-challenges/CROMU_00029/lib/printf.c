@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 #include <mymath.h>
+#include <math.h>
 
 // 5 digits of precision
 #define F32_PRECISION       0.00001
@@ -163,7 +164,7 @@ void float_to_str( double val, char *buf )
             double weight = pow( 10.0, m );
             if ( weight > 0 && !isinf(weight) )
             {
-                digit = cgcfloor( val / weight );
+                digit = floor( val / weight );
                 val -= (digit * weight);
 
                 *(c++) = '0' + digit;

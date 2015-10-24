@@ -30,6 +30,11 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "string.h"
 
+#ifdef _WIN32
+    void * _ReturnAddress(void);
+    #pragma intrinsic(_ReturnAddress)
+#endif
+
 int validatePtr(void *ptr) {
 	int validated = 0;
 	if((unsigned int)ptr > STACKBASE && (unsigned int)ptr < STACKBASE + STACKSIZE)
@@ -46,7 +51,11 @@ int validatePtr(void *ptr) {
 void validateRet() {
 	int* retAddr = 0;
 
+#ifdef WIN32
+    retAddr = _ReturnAddress();
+#else
 	retAddr = __builtin_return_address(1);
+#endif
 
 	if((unsigned int)retAddr < PROGRAMBASE || (unsigned int)retAddr > PROGRAMBASE+PROGRAMSIZE) {
 		//only allowed to ret to an address within the main module.

@@ -27,7 +27,10 @@ THE SOFTWARE.
 #ifndef DATES_H
 #define DATES_H
 
-typedef unsigned long time_t;
+
+#ifdef _WIN32
+#include <crtdefs.h>
+#endif
 
 typedef struct {
 

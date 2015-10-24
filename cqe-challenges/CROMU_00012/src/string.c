@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "asan.h"
 
-void *cgc_memcpy(void *dst, void *src, unsigned int n) {
+void *cgc_memcpy2(void *dst, void *src, unsigned int n) {
 	void *tmpDst;
 	void *tmpSrc;
 
@@ -37,14 +37,14 @@ void *cgc_memcpy(void *dst, void *src, unsigned int n) {
 
 	validatePtr(dst);
 	validatePtr(src);
-	validatePtr(dst+n);
-	validatePtr(src+n);
+	validatePtr((char*)dst+n);
+	validatePtr((char*)src+n);
 	while(n) {
 		validatePtr(tmpDst);
 		validatePtr(tmpSrc);
 		*((char *)tmpDst)=*((char *)tmpSrc);
-		tmpDst++;
-		tmpSrc++;
+		tmpDst = (char*)tmpDst+1;
+		tmpSrc = (char*)tmpSrc+1;
 		n--;
 	}
 	*((char *)tmpDst)=*((char *)tmpSrc);

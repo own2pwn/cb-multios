@@ -27,8 +27,8 @@ THE SOFTWARE.
 #ifndef SERVICE_H
 #define SERVICE_H
 
-
-typedef struct __attribute__((__packed__)) IFD_Array {
+#pragma pack(push,1)
+typedef struct IFD_Array {
 
 	unsigned short Tag;
 	unsigned short Type;
@@ -36,13 +36,16 @@ typedef struct __attribute__((__packed__)) IFD_Array {
 	unsigned Value;
 
 } IFD_Array_Type;
+#pragma pack(pop)
 
-typedef struct __attribute__((__packed__))IFD {
+#pragma pack(push,1)
+typedef struct IFD {
 
 	unsigned short Count;
 	IFD_Array_Type Entry[];
 
 } IFD_Type;
+#pragma pack(pop)
 
 typedef struct TIFF_Hdr {
 

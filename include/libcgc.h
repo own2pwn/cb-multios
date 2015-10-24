@@ -4,12 +4,16 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+
+#ifndef NULL
 #define NULL 0
+#endif
 
 //#define	NULL ((void *)0)
 
-typedef long unsigned int size_t;
-typedef long signed int ssize_t;
+typedef unsigned int size_t;
+typedef signed int ssize_t;
+
 
 #define SSIZE_MAX	2147483647
 #define SIZE_MAX	4294967295
@@ -61,20 +65,22 @@ int allocate(size_t length, int is_X, void **addr);
 int deallocate(void *addr, size_t length);
 int cgc_random(void *buf, size_t count, size_t *rnd_bytes);
 
-typedef struct { long _b[8]; } jmp_buf[1];
 
 #ifdef _WIN32
-int setjmp(jmp_buf);
+//int setjmp(jmp_buf);
+#include <setjmp.h>
 #else
+typedef struct { long _b[8]; } jmp_buf[1];
 int setjmp(jmp_buf) __attribute__((__returns_twice__));
 #endif
 
 #ifdef _WIN32
-__declspec(noreturn) void longjmp(jmp_buf, int);
+//__declspec(noreturn) void longjmp(jmp_buf, int);
 #else
 void longjmp(jmp_buf, int) __attribute__((__noreturn__));
 #endif
 
+#ifndef _WIN32
 float sinf(float); double sin(double); long double sinl(long double);
 float cosf(float); double cos(double); long double cosl(long double);
 float tanf(float); double tan(double); long double tanl(long double);
@@ -104,6 +110,9 @@ long double scalblnl(long double, long int);
 float significandf(float);
 double significand(double);
 long double significandl(long double);
+#endif
 void *cgc_memcpy(void *dest, const void *src, size_t n);
 void *cgc_memset(void *dest, const int c, size_t n);
+int cgc_isnan(   double x);
+int cgc_isinf(   double x);
 #endif /* _LIBCGC_H */

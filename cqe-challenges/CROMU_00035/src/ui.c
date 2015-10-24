@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <malloc.h>
 #include "service.h"
 #include "ui.h"
+#include <string.h>
 #define DELIM 0x0A 	//\n
 
 int strict_atoi(char *a){
@@ -733,7 +734,7 @@ void main_loop(pDataStruct workingData){
 					tempFileChunk = tempFile->head;
 					puts("-----Begin File-----");//five - 
 					while ( tempFileChunk != NULL ){
-						if (tempFileChunk->chunkSize != cgc_write(tempFileChunk,tempFileChunk->chunkSize)){
+						if (tempFileChunk->chunkSize != write(tempFileChunk,tempFileChunk->chunkSize)){
 							puts("file write failed");
 						}
 /*

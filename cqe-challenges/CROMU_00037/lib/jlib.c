@@ -40,20 +40,6 @@ void zero(char *buf, unsigned int len) {
 	return;
 }
 
-size_t cgc_strlen(char *buf) {
-	size_t i = 0;
-
-	if (!buf) {
-		return(0);
-	}
-
-	while (buf[i]) {
-		i++;
-	}
-
-	return(i);
-}
-
 void print(char *buf) {
 	size_t len;
 	size_t total_sent = 0;
@@ -161,28 +147,6 @@ int isdigits(char *buf) {
 		}
 	}
 	return(1);
-}
-
-int atoi(char *buf) {
-	int i;
-	int val = 0;
-	int m = 1;
-
-	if (!buf) {
-		return(0);
-	}
-
-	i = cgc_strlen(buf);
-	if (!i) {
-		return(0);
-	}
-	
-	for (i = i-1; i >= 0; i--) {
-		val += ((buf[i] - '0') * m);
-		m *= 10;
-	}	
-
-	return(val);
 }
 
 void print_uint(unsigned int val) {

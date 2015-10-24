@@ -27,17 +27,9 @@ THE SOFTWARE.
 #include <mymath.h>
 #include <stdint.h>
 
-int expi( int base, int exponent)
-{
-	int result = 1;
-
-	while( exponent ) {
-		result *= base;
-		exponent--;
-	}
-
-	return result;
-}
+#ifdef _WIN32
+#include <math.h>
+#else
 
 double floor( double val )
 {
@@ -48,6 +40,7 @@ double floor( double val )
     else
         return 0.0;
 }
+#endif
 
 double cgc_round_away_from_zero( double val )
 {

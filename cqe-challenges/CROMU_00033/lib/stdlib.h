@@ -26,33 +26,21 @@ THE SOFTWARE.
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
-#include <libcgc.h>
-#include "malloc.h"
-
 int isspace( int c );
 int isdigit( int c );
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isascii( int c );
 int isnan( double val );
 int isinf( double val );
-int tolower( int c );
-int toupper( int c );
-double atof(const char *str);
 int atoi(const char *str);
-int abs( int );
 
-int cgc_strcmp( char *str1, char *str2 );
-char *strchr( char *src, char c);
 char *cgc_strcpy( char *dest, char *src );
-char *cgc_strcat( char *dest, char *src );
-char *strncat( char *dest, char *src, size_t n );
-char *strncpy( char *dest, const char *src, size_t num );
-size_t cgc_strlen( const char *str );
 int printf( const char *fmt, ... );
-
-void* cgc_memcpy( void *dest, void *src, size_t numbytes );
-void* cgc_memset( void *dest, int value, size_t num );
+void bzero( void *, size_t );
+int cgc_strcmp( const char *, const char * );
+char *strncat( char *dest, const char *src, size_t n );
+size_t receive_until( char *, char, size_t );
+size_t cgc_strcat( char *, char* );
+size_t cgc_strlen( char * );
+size_t itoa( char *, size_t, size_t );
+void puts( char *t );
 
 #endif // __STDLIB_H__

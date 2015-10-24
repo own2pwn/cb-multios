@@ -1,8 +1,8 @@
 /*
 
-Author: Debbie Nuttall <debbie@cromulence.co>
+Author: Jason Williams <jdw@cromulence.com>
 
-Copyright (c) 2015 Cromulence LLC
+Copyright (c) 2014 Cromulence LLC
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,88 +24,280 @@ THE SOFTWARE.
 
 */
 #include <libcgc.h>
-#include "stdlib.h"
-#include "io.h"
+#include <stdlib.h>
+#include <stdint.h>
 
-int cgc_strlen(char *s) {
-  char *e = s;
-  while (*e != '\0') e++;
-  return (e - s);
+#ifdef _WIN32
+#include <float.h>
+#endif
+
+int isspace( int c )
+{
+    if ( c == ' ' ||
+         c == '\t' ||
+         c == '\n' ||
+         c == '\v' ||
+         c == '\f' ||
+         c == '\r' )
+        return 1;
+    else
+        return 0;
 }
 
-void bzero(char *s, size_t length) {
-  while (length > 0) {
-    *s++ = '\0';
-    length--;
-  }
+int isdigit( int c )
+{
+    if ( c >= '0' && c <= '9' )
+        return 1;
+    else
+        return 0;
 }
 
-void cgc_memcpy(char *d, char *s, size_t num) {
-  while(num > 0) {
-    *d++ = *s++;
-    num--;
-  }
+int isnan( double val )
+{
+    #ifdef WIN32
+    return cgc_isnan(val);
+    #else
+    return __builtin_isnan( val );
+    #endif
 }
 
-int atoi(char *s) {
-  if (s == NULL) {
-    return 0;
-  }
+int isinf( double val )
+{
+    #ifdef WIN32
+    // TODO: x86 asm implementation
+    return cgc_isinf(val);
+    #else
+    return __builtin_isinf( val );
+    #endif
+}
 
-  int negative = 0;
-  int num_digits = 0;
-  int number = 0;
 
-  while(*s != '\0')
-  {
-    if ((*s == '-') && (num_digits==0)) {
-      negative = 1;
-      s++;
-      continue;
+int atoi(const char* str)
+{
+    if ( str == NULL )
+        return 0;
+
+    int integer_part = 0;
+    int sign = 1;
+    int part;
+    int digit_count = 0;
+
+    // Skip whitespace
+    while ( isspace( str[0] ) )
+        str++;
+
+    part = 0; // First part (+/-/number is acceptable)
+
+    while( str[0] != '\0' )
+    {
+        if ( str[0] == '-' )
+        {
+            if ( part != 0 )
+                return 0;
+
+            sign = -1;
+            part++;
+        }
+        else if ( str[0] == '+' )
+        {
+            if ( part != 0 )
+                return 0;
+
+            part++;
+        }
+        else if ( isdigit( *str ) )
+        {
+            if ( part == 0 || part == 1 )
+            {
+                // In integer part
+                part = 1;
+                integer_part = (integer_part * 10) + (*str - '0');
+
+                digit_count++;
+
+                if ( digit_count == 9 )
+                    break;
+            }
+            else
+            {
+                // part invalid
+                return 0;
+            }
+        }
+        else
+            break;
+
+        str++;
     }
-    if (*s < '0' || *s > '9') {
-      return number;
-    }
-    number = (number * 10) + (*s - '0');
-    num_digits++;
-    s++;
-    if (num_digits > 10) {
-      return number;
-    }
-  }
-  if (negative) {
-    return (-1 * number);
-  } else {
-    return number;
-  }
+
+    return (sign * integer_part);
 }
 
-// This function counts the number of single null
-// terminated strings stopping after the first double null is found
-int count_strings(char *s) {
-  int count = 0;
-  while (*s != '\0' || *(s+1) != '\0') {
-    if (*(s+1) == '\0') {
-      count++;
+char *cgc_strcpy( char *dest, char *src )
+{
+    size_t i;
+
+    for ( i = 0; ; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
     }
-    s++;
-  }
-  return count;
+    dest[i] = '\0';
+
+    return (dest);
 }
 
-// This function returns a pointer to the next null terminated string
-// If it encounters a double null it returns 0;
-char *next_string(char *s) {
-  char *n = s;
-  while (*n != '\0') {
-    n++;
-  }
-  n++;
-  if (*n == '\0') {
-    return 0;
-  } else {
-    return n;
-  }
+void bzero( void *buff, size_t len )
+{
+    size_t cgc_index = 0;
+    unsigned char *c = buff;
+
+    if ( buff == NULL ) {
+        goto end;
+    }
+
+    if ( len == 0 ) {
+        goto end;
+    }
+
+    for ( cgc_index = 0; cgc_index < len; cgc_index++ ) {
+        c[cgc_index] = 0x00;
+    }
+
+end:
+    return;
 }
 
+int cgc_strcmp( const char *s1, const char *s2 ) 
+{
+    while ( *s1 && (*s1 == *s2) ) 
+    {
+      s1++,s2++;
+    }
+    return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
+}
 
+char *strncat ( char *dest, const char *src, size_t n ) 
+{
+    size_t dest_len = cgc_strlen(dest);
+    size_t i;
+
+    if (dest == NULL || src == NULL) 
+    {
+      return(dest);
+    }
+    for (i = 0; i < n && src[i] != '\0'; i++) 
+    {
+      dest[dest_len+i] = src[i];
+    }
+    dest[dest_len+i] = '\0';
+
+    return(dest);
+}
+
+size_t receive_until( char *dst, char delim, size_t max )
+{
+    size_t len = 0;
+    size_t rx = 0;
+    char c = 0;
+
+    while( len < max ) {
+        dst[len] = 0x00;
+
+        if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
+            len = 0;
+            goto end;
+        }
+
+        if ( c == delim ) {
+            goto end;
+        }
+   
+        dst[len] = c;
+        len++;
+    }
+end:
+    return len;
+}
+
+size_t cgc_strcat( char *dest, char*src )
+{
+    size_t length = 0;
+    size_t start = 0;
+
+    if ( dest == NULL || src == NULL) {
+        goto end;
+    }
+
+    start = cgc_strlen( dest );
+
+    for ( ; src[length] != 0x00 ; start++, length++ ) {
+        dest[start] = src[length];
+    }
+
+    length = start;
+end:
+    return length;
+}
+
+size_t cgc_strlen( char * str )
+{
+    size_t length = 0;
+
+    if ( str == NULL ) {
+        goto end;
+    }
+
+    while ( str[length] ) { length++; }
+
+end:
+    return length;
+}
+
+size_t itoa( char *out, size_t val, size_t max )
+{
+    size_t length = 0;
+    size_t end = 0;
+    size_t temp = 0;
+
+    if ( out == NULL ) {
+        goto end;
+    }
+
+    // Calculate the needed length
+    temp = val;
+    do {
+        end++;
+        temp /= 10;
+    } while ( temp );
+
+    // ensure we have enough room
+    if ( end >= max ) {
+        goto end;
+    }
+
+    length = end;
+
+    // Subtract one to skip the null
+    end--;
+
+    do {
+        out[end] = (val % 10) + 0x30;
+        val /= 10;
+        end--;
+    } while ( val );
+
+    out[length] = 0x00;
+end:
+    return length;
+}
+
+void puts( char *t )
+{
+    size_t size;
+    if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
+        _terminate(2);
+    }
+}

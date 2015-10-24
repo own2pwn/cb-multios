@@ -26,38 +26,11 @@ THE SOFTWARE.
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
-#define INUSE_FLAG 1
-#define FREE_FLAG 2
-
-typedef struct _heap_block_header {
-	size_t remaining_size;
-	struct _heap_block_header *next;
-	char data[1];
-} heap_block_header;
-
-
-typedef struct _heap_header {
-	size_t size;
-	char flags;
-} heap_header;
-
-typedef struct _heap_metadata {
-	size_t mem_commit;
-	size_t mem_free;
-	size_t mem_inuse;
-	heap_block_header *blocks;
-} heap_metadata;
-
 int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
-double atof(const char *str);
 int atoi(const char *str);
-void *calloc(size_t count, size_t size);
-void free(void *ptr);
-void *malloc(size_t size);
-
 
 char *cgc_strcpy( char *dest, char *src );
 int printf( const char *fmt, ... );
@@ -69,8 +42,5 @@ size_t cgc_strcat( char *, char* );
 size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
-void *cgc_memcpy(void *dest, void*src, unsigned int len);
-void *cgc_memset(void *dest, char c, unsigned int len);
-size_t cgc_strlen( char * str );
 
 #endif // __STDLIB_H__

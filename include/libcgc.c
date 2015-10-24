@@ -2,12 +2,14 @@
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <errno.h>
-#include <libcgc.h>
 #include <stdlib.h>
+#include <libcgc.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <math.h>
+
 #endif
 
 #if 0
@@ -234,4 +236,10 @@ void *cgc_memset(void *dest, const int c, size_t n) {
     return memset(dest, c, n);
 }
 
+int cgc_isnan(   double x) {
+    return isnan(x);
+}
 
+int cgc_isinf(   double x) {
+    return isinf(x);
+}

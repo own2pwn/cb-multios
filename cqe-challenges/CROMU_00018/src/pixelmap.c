@@ -35,7 +35,12 @@ THE SOFTWARE.
 #define PMP_INFO_HEADER_SIZE       (40)
 
 
+#ifdef _WIN32
+#pragma pack(push,1)
+typedef struct tagPixelmapFileHeader
+#else
 typedef struct __attribute__ ((__packed__)) tagPixelmapFileHeader
+#endif
 {
     uint16_t    pmType;
     uint32_t    pmSize;
@@ -43,9 +48,17 @@ typedef struct __attribute__ ((__packed__)) tagPixelmapFileHeader
     uint16_t    pmReserved2;
     uint32_t    pmOffBits;
 } tPixelmapFileHeader;
+#ifdef _WIN32
+#pragma pack(pop)
+#endif
 
 
+#ifdef _WIN32
+#pragma pack(push,1)
+typedef struct tagPixelmapInfoHeader
+#else
 typedef struct __attribute__ ((__packed__)) tagPixelmapInfoHeader
+#endif
 {
     uint32_t    piSize;
     uint32_t    piWidth;
@@ -59,6 +72,9 @@ typedef struct __attribute__ ((__packed__)) tagPixelmapInfoHeader
     uint32_t    piClrUsed;
     uint32_t    piClrImportant;
 } tPixelmapInfoHeader;
+#ifdef _WIN32
+#pragma pack(pop)
+#endif
 
 // Binary writing helpers
 uint32_t pm_write_u32( uint8_t *pData, uint32_t *pFilePos, uint32_t value )

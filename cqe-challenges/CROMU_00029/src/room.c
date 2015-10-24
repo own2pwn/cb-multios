@@ -29,6 +29,8 @@ THE SOFTWARE.
 #include "room.h"
 #include "input.h"
 #include "malloc.h"
+#include <string.h>
+#include <math.h>
 
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)
 
@@ -172,7 +174,7 @@ void InitCopper(void) {
 void SetTC(uint32_t i, char *buf) {
 	double val;
 
-	val = cgcatof(buf);
+	val = atof(buf);
 	TC[i] = val;
 }
 
@@ -180,7 +182,7 @@ void SetTC(uint32_t i, char *buf) {
 void SetHC(uint32_t i, char *buf) {
 	double val;
 
-	val = cgcatof(buf);
+	val = atof(buf);
 	HC[i] = val;
 }
 
@@ -211,7 +213,7 @@ void InitCustom(void) {
 				_terminate(-1);
 			}
 
-			val = cgcatof(buf);
+			val = atof(buf);
 #ifdef PATCHED
 			if (val < 0) {
 				puts("Invalid value...must be greater than zero");
@@ -259,7 +261,7 @@ void InitCustom(void) {
 				_terminate(-1);
 			}
 	
-			val = cgcatof(buf);
+			val = atof(buf);
 
 #ifdef PATCHED
 			if (val < 0) {
@@ -422,7 +424,7 @@ int InitMaterial(void) {
 				free(TGrid);
 				return(-1);
 			}
-			temperature = cgcatof(buf);
+			temperature = atof(buf);
 		}
 
 		// flush any remaining chars from stdin

@@ -28,6 +28,8 @@ THE SOFTWARE.
 #include "stdint.h"
 #include "input.h"
 #include "room.h"
+#include <math.h>
+#include <string.h>
 
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)
 extern uint32_t X;
@@ -63,7 +65,7 @@ ssize_t read_until(char *buf, char *delim, size_t max) {
 int32_t StoreTemp(double *grid, uint32_t x, uint32_t y, uint32_t z, char *buf) {
 	double temp;
 
-	temp = cgcatof(buf);
+	temp = atof(buf);
 
 	if (temp < MIN_TEMP-1.0 || temp > MAX_TEMP) {
 		return(-1);

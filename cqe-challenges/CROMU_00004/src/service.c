@@ -138,7 +138,11 @@ int recv(int fd, void *buf, size_t count, size_t *rx_bytes) {
 	int rval;	
 
 	while (total_bytes < count) {
+                #ifdef _WIN32
+		rval = receive(fd, (char*)buf+total_bytes, 1, &rx);
+                #else
 		rval = receive(fd, buf+total_bytes, 1, &rx);
+                #endif
 		if (rval != 0) {
 			return(rval);
 		}

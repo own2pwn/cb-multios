@@ -26,17 +26,28 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
+#include <mymath.h>
+#include <math.h>
 
-int cgc_memcpy( void *dest, void *src, size_t n )
+#ifdef _WIN32
+#include <float.h>
+#endif
+
+
+#define F32_PRECISION       0.00001
+
+
+int memcpy( void *dest, void *src, size_t n )
 {
-        size_t cgc_index = 0;
+        size_t index = 0;
 
-        while ( cgc_index < n ) {
-                ((char*)dest)[cgc_index] = ((char*)src)[cgc_index];
-                cgc_index++;
+        while ( index < n ) {
+                ((char*)dest)[index] = ((char*)src)[index];
+                index++;
         }
 
-        return cgc_index;
+        return index;
 }
 
 int islower( int c )
@@ -86,94 +97,17 @@ int isdigit( int c )
         return 0;
 }
 
-int isnan( double val )
-{
-    return __builtin_isnan( val );
-}
-
-int isinf( double val )
-{
-    return __builtin_isinf( val );
-}
-
-double atof(const char* str)
-{
-    if ( str == NULL )
-        return 0.0;
-
-    double val = 0.0;
-    double scale = 0.1;
-    int sign = 1;
-    int part;
-
-    // Skip whitespace
-    while ( isspace( str[0] ) )
-        str++;
-
-    part = 0; // First part (+/-/./number is acceptable)
-
-    while( str[0] != '\0' )
-    {
-        if ( str[0] == '-' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            sign = -1;
-            part++;
-        }
-        else if ( str[0] == '+' )
-        {
-            if ( part != 0 )
-                return 0.0;
-
-            part++;
-        }
-        else if ( str[0] == '.' )
-        {
-            if ( part == 0 || part == 1 )
-                part = 2;
-            else
-                return 0.0;
-        }
-        else if ( isdigit( *str ) )
-        {
-            if ( part == 0 || part == 1 )
-            {
-                // In integer part
-                part = 1;
-                val = (val * 10.0) + (*str - '0');
-            }
-            else if ( part == 2 )
-            {
-                val += ((*str - '0') * scale);
-                scale /= 10.0;
-            }
-            else
-            {
-                // part invalid
-                return 0.0;
-            }
-        }
-        else
-            break;
-
-        str++;
-    }
-
-    return (sign * val);
-}
-
 
 int atoi(const char* str)
 {
     if ( str == NULL )
         return 0;
 
-    int integer_part = 0;
+    unsigned long long int integer_part = 0;
     int sign = 1;
     int part;
     int digit_count = 0;
+    int retval;
 
     // Skip whitespace
     while ( isspace( str[0] ) )
@@ -222,11 +156,16 @@ int atoi(const char* str)
 
         str++;
     }
-
-    return (sign * integer_part);
+    if ( integer_part <= 2147483647 ){
+        retval = (signed long int)integer_part;
+        retval = sign * retval;
+    return retval;
+    }else {
+    return 0;
+    }
 }
 
-char *cgc_strcpy( char *dest, char *src )
+char *strcpy( char *dest, char *src )
 {
     size_t i;
 
@@ -256,7 +195,7 @@ char *strncpy( char *dest, const char *src, size_t n )
 
 void bzero( void *buff, size_t len )
 {
-    size_t cgc_index = 0;
+    size_t index = 0;
     unsigned char *c = buff;
 
     if ( buff == NULL ) {
@@ -267,15 +206,15 @@ void bzero( void *buff, size_t len )
         goto end;
     }
 
-    for ( cgc_index = 0; cgc_index < len; cgc_index++ ) {
-        c[cgc_index] = 0x00;
+    for ( index = 0; index < len; index++ ) {
+        c[index] = 0x00;
     }
 
 end:
     return;
 }
 
-void *cgc_memset(void *s, int c, size_t n)
+void *memset(void *s, int c, size_t n)
 {
     unsigned char *t = (unsigned char *)s;
     while (--n)
@@ -311,51 +250,6 @@ char *strncat ( char *dest, const char *src, size_t n )
     return(dest);
 }
 
-int flush_input(int fd) {
-    cgc_fd_set read_fds;
-    int err;
-    int ready_fd;
-    struct cgc_timeval tv;
-    char buffer[1024];
-    size_t rcv_cnt;
-
-    while (1)  {
-
-        bzero((char *)&read_fds, sizeof(read_fds));
-        FD_SET(fd, &read_fds);
-
-        tv.tv_sec = 0;
-        tv.tv_usec = 10;
-
-        err = cgc_fdwait(fd + 1, &read_fds, NULL, &tv, &ready_fd);
-        if (err != 0) {
-            return err;
-        }
-
-        if (!FD_ISSET(fd, &read_fds))
-            break;
-        else
-            receive(fd, buffer, 1024, &rcv_cnt);
-     
-    }  
-
-    return 0;
-} // flush_input()
-
-size_t getline( char *buffer, size_t len)  {
-int count;
-
-    count = receive_until(buffer, '\n', len);
-
-    if (count==len)
-        buffer[len-1]=0;
-    else {
-        buffer[count]=0;
-    }
-
-    return (count);
-    
-}
 size_t receive_until( char *dst, char delim, size_t max )
 {
     size_t len = 0;
@@ -371,7 +265,6 @@ size_t receive_until( char *dst, char delim, size_t max )
         }
 
         if ( c == delim ) {
-
             goto end;
         }
 
@@ -379,42 +272,10 @@ size_t receive_until( char *dst, char delim, size_t max )
         len++;
     }
 end:
-
-    if (len == max)
-        flush_input(STDIN);
-
     return len;
 }
 
-int receive_bytes (unsigned char *buffer, size_t size) 
-{
-size_t count=0;
-size_t remaining = 0;
-size_t rxbytes=0;
-
-    remaining = size - count;
-
-    while(remaining)  {
-
-        if (!receive(STDIN, buffer+count, remaining, &rxbytes) ) {
-
-            remaining-=rxbytes;
-            count+=rxbytes;
-        }
-        
-        else {
-
-            return(-1);
-        }
-
-
-    }
-
-return 0;
-
-}
-
-size_t cgc_strcat( char *dest, char* src )
+size_t strcat( char *dest, char*src )
 {
     size_t length = 0;
     size_t start = 0;
@@ -550,7 +411,7 @@ char *strtok(char *str, const char *delim) {
 		if (allocate(prev_str_len, 0, (void *)&prev_str)) {
 			return(NULL);
 		}
-		cgc_strcpy(prev_str, str);
+		strcpy(prev_str, str);
 		prev_str_ptr = prev_str;
 	}
 
@@ -584,7 +445,7 @@ char *strtok(char *str, const char *delim) {
 	return(token);
 }
 
-size_t write( const void *buf, size_t count )
+ssize_t write( const void *buf, size_t count )
 {
 	size_t size;
 
@@ -610,11 +471,883 @@ char *strdup(char *s)
         }
 
         bzero(retval, cgc_strlen(s)+1);
-        cgc_strcpy(retval, s);
+        strcpy(retval, s);
 
         return(retval);
+}
+
+int putc( int c )
+{
+    size_t tx_count;
+
+    if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
+        _terminate(2);
+
+    return c;
+}
+
+void int_to_str( int val, char *buf )
+{
+    char temp_buf[32];
+    char *c = temp_buf;
+    int count = 0;
+
+    if ( buf == NULL )
+        return;
+
+    if ( val < 0 )
+    {
+        *buf = '-';
+        buf++;
+
+        val *= -1;
+    }
+
+    do
+    {
+        *c = (val % 10) + '0';
+        val /= 10;
+
+        c++;
+        count++;
+    } while ( val != 0 );
+
+    while ( count-- > 0 )
+    {
+        c--;
+        *buf = *c;
+        buf++;
+    }
+
+    *buf = '\0';
+}
+
+void int_to_hex( unsigned int val, char *buf )
+{
+    char temp_buf[32];
+    char *c = temp_buf;
+    int count = 0;
+
+    if ( buf == NULL )
+        return;
+
+    do
+    {
+        *c = (val % 16) + '0';
+    if (*c > '9') {
+        *c += 7;
+    }
+        val /= 16;
+
+        c++;
+        count++;
+    } while ( val != 0 );
+
+    while ( count-- > 0 )
+    {
+        c--;
+        *buf = *c;
+        buf++;
+    }
+
+    *buf = '\0';
+}
+
+void float_to_str( double val, char *buf, int precision )
+{
+    if ( buf == NULL )
+        return;
+
+    if ( isnan( val ) )
+    {
+        strcpy( buf, "nan" );
+    }
+    else if ( isinf( val ) )
+    {
+        strcpy( buf, "inf" );
+    }
+    else if ( val == 0.0 )
+    {
+        strcpy( buf, "0.00000" );
+    }
+    else
+    {
+        int digit;
+        int m;
+        int m1;
+        int fraction_digit;
+        int in_fraction;
+        int neg = 0;
+        char *c = buf;
+
+        if ( val > 0.0 )
+            val = val + (F32_PRECISION * 0.5);
+        else
+            val = val - (F32_PRECISION * 0.5);
+
+        // Negative numbers
+        if ( val < 0.0 )
+        {
+            neg = 1;
+            *(c++) = '-';
+            val = -val;
+        }
+
+        // Calculate magnitude
+        m = log10( val );
+
+        if ( m < 1.0 )
+            m = 0;
+
+        fraction_digit = 0;
+        in_fraction = 0;
+        while ( val > F32_PRECISION || m >= 0 )
+        {
+            double weight = pow( 10.0, m );
+            if ( weight > 0 && !isinf(weight) )
+            {
+                digit = floor( val / weight );
+                val -= (digit * weight);
+
+                *(c++) = '0' + digit;
+
+                if ( in_fraction )
+                    fraction_digit++;
+            }
+
+            if ( m == 0 && val > 0.0 )
+            {
+                *(c++) = '.';
+                in_fraction = 1;
+                fraction_digit = 0;
+            }
+
+            m--;
+        }
+
+        while ( in_fraction && fraction_digit < precision )
+        {
+            *(c++) = '0';
+            fraction_digit++;
+        }
+
+        *c = '\0';
+    }
+}
+
+int vprintf( const char *fmt, va_list arg )
+{
+    int character_count = 0;
+    char temp_buf[64];
+    int width, precision, zero_padding, left_justification;
+    int i;
+    int pad_len;
+
+    if ( fmt == NULL )
+        return -1;
+
+    while ( *fmt )
+    {
+        if ( *fmt == '@' )
+        {
+            fmt++;
+
+            width=0;
+            precision=0;
+            zero_padding=0;
+            left_justification=0;
+            pad_len=0;
+
+            // We handle width, precision, and justification (but not for floats yet)
+            if (*fmt == '@') {
+
+                putc('@');
+                fmt++;
+                character_count++;
+                continue;
+            }
+
+            if (*fmt == '-') {
+
+                left_justification=1;
+                ++fmt;
+            }
+
+            if (isdigit(*fmt)) {
+
+                if (*fmt == '0') {
+
+                    zero_padding = 1;
+                    fmt++;
+                }
+
+                if (isdigit(*fmt)) {
+
+                    width = atoi(fmt);
+
+                    // skip past the width specification
+                    while (isdigit(*fmt))
+                        fmt++;
+                }
+            }
+
+            if (*fmt == '.') {
+
+                // skip over the '.'
+                fmt++;
+
+                precision=atoi(fmt);
+
+                // now skip past the integer precision value
+                while (isdigit(*fmt))
+                    fmt++;
+
+            }
+
+                // single char
+            if (*fmt == 'c') {
+                
+                char c = (char )va_arg(arg, int);
+
+                pad_len = width - 1;
+
+                // justify right 
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            putc('0');
+                        else
+                            putc(' ');
+
+                        character_count++;
+                    }
+                }
+
+                // output the char itself
+                putc(c);
+                character_count++;
+
+                // justify to the left
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        putc(' ');
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+            }
+
+                 // Integer 
+            if (*fmt == 'd')  {
+
+                int int_arg = va_arg( arg, int );
+                char *c;
+
+                int_to_str( int_arg, temp_buf );
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            putc('0');
+                        else
+                            putc(' ');
+
+                        character_count++;
+                    }
+                }
+
+                // now output the integer value
+                c = temp_buf;
+                while ( *c )
+                {
+                    putc( *c );
+                    character_count++;
+                    c++;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        putc(' ');
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+
+            }
+
+                // hex
+            if ( *fmt == 'x')  {
+            
+                unsigned int int_arg = va_arg( arg, unsigned int );
+                char *c;
+
+                int_to_hex( int_arg, temp_buf );
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            putc('0');
+                        else
+                            putc(' ');
+
+                        character_count++;
+                    }
+                }
+
+                // now output the hex string
+                c = temp_buf;
+                while ( *c )
+                {
+                    putc( *c );
+                    character_count++;
+                    c++;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        putc(' ');
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+            }
+
+                // Float
+            if (*fmt =='f' ) {
+
+                    // currently does not support precision specification for float type
+                    // need the float_to_str() updated to support the rounding necessary
+
+                double float_arg = va_arg( arg, double );
+                char *c;
+
+                float_to_str( float_arg, temp_buf, precision);
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // pad the output with spaces or zeros
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            putc('0');
+                        else
+                            putc(' ');
+
+                        character_count++;
+                    }
+                }
+
+                // now output the float value
+                c = temp_buf;
+                while ( *c )
+                {
+                    putc( *c );
+                    character_count++;
+                    c++;
+                }
+                fmt++;
+                continue;
+            }
+
+            if (*fmt== 's' )  {
+                // String
+                char *string_arg = va_arg( arg, char * );
+                int output_cgc_strlen;
+
+                if (precision > 0 && precision < cgc_strlen(string_arg))
+
+                    output_cgc_strlen = precision;
+                else
+                    output_cgc_strlen = cgc_strlen(string_arg);
+
+
+                pad_len = width - output_cgc_strlen;
+
+                // pad the output with spaces or zeros
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            putc('0');
+                        else
+                            putc(' ');
+
+                        character_count++;
+                    }
+                }
+
+                while ( *string_arg && output_cgc_strlen > 0 )
+                {
+                    putc( *string_arg );
+                    character_count++;
+                    string_arg++;
+                    --output_cgc_strlen;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        putc(' ');
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+
+            }
+
+        }
+        else
+        {
+            putc( *fmt );
+            fmt++;
+
+            character_count++;
+        }
+    }
+
+    return (character_count);
 }
 
 
 
 
+int vsprintf( char *str, const char *fmt, va_list arg )
+{
+    int character_count = 0;
+    char temp_buf[64];
+    int width, precision, zero_padding, left_justification;
+    int i;
+    int pad_len;
+
+    if ( fmt == NULL )
+        return -1;
+
+    while ( *fmt )
+    {
+        if ( *fmt == '@' )
+        {
+            fmt++;
+
+            width=0;
+            precision=0;
+            zero_padding=0;
+            left_justification=0;
+            pad_len=0;
+
+            
+            if (*fmt == '@') {
+
+                str[character_count]='@';
+                fmt++;
+                character_count++;
+                continue;
+            }
+
+            if (*fmt == '-') {
+
+                left_justification=1;
+                ++fmt;
+            }
+
+            if (isdigit(*fmt)) {
+
+                if (*fmt == '0') {
+
+                    zero_padding = 1;
+                    fmt++;
+                }
+
+                if (isdigit(*fmt)) {
+
+                    width = atoi(fmt);
+
+                    while (isdigit(*fmt))
+                        fmt++;
+                }
+            }
+
+            if (*fmt == '.') {
+
+                // skip over the '.'
+                fmt++;
+
+                precision=atoi(fmt);
+
+                // now skip past the integer precision value
+                while (isdigit(*fmt))
+                    fmt++;
+
+            }
+
+                // single char
+            if (*fmt == 'c') {
+                
+                char c = (char )va_arg(arg, int);
+
+                pad_len = width - 1;
+
+                // justify right 
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            str[character_count]='0';
+                        else
+                            str[character_count]=' ';
+
+                        character_count++;
+                    }
+                }
+
+                str[character_count]=c;
+                character_count++;
+
+                // justify to the left
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        str[character_count]=' ';
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+            }
+
+                 // Integer 
+            if (*fmt == 'd')  {
+
+                int int_arg = va_arg( arg, int );
+                char *c;
+
+                int_to_str( int_arg, temp_buf );
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            str[character_count]='0';
+                        else
+                            str[character_count]=' ';
+
+                        character_count++;
+                    }
+                }
+
+                // now output the integer value
+                c = temp_buf;
+                while ( *c )
+                {
+                    str[character_count]=*c;
+                    character_count++;
+                    c++;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        str[character_count]= ' ';
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+
+            }
+
+                // hex
+            if ( *fmt == 'x')  {
+            
+                unsigned int int_arg = va_arg( arg, unsigned int );
+                char *c;
+
+                int_to_hex( int_arg, temp_buf );
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            str[character_count] = '0';
+                        else
+                            str[character_count] = ' ';
+
+                        character_count++;
+                    }
+                }
+
+                // now output the hex string
+                c = temp_buf;
+                while ( *c )
+                {
+                    str[character_count]=*c;
+                    character_count++;
+                    c++;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        str[character_count]=' ';
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+            }
+
+                // Float
+            if (*fmt =='f' ) {
+
+
+                double float_arg = va_arg( arg, double );
+                char *c;
+
+                float_to_str( float_arg, temp_buf, precision);
+
+                // is the output string shorter than the desired width?
+                pad_len = width - cgc_strlen(temp_buf);
+
+                // pad the output with spaces or zeros
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            str[character_count]='0';
+                        else
+                            str[character_count]=' ';
+
+                        character_count++;
+                    }
+                }
+
+                // now output the float value
+                c = temp_buf;
+                while ( *c )
+                {
+                    str[character_count]= *c;
+                    character_count++;
+                    c++;
+                }
+                fmt++;
+                continue;
+            }
+
+            if (*fmt== 's' )  {
+                // String
+                char *string_arg = va_arg( arg, char * );
+                int output_cgc_strlen;
+
+                if (precision > 0 && precision < cgc_strlen(string_arg))
+
+                    output_cgc_strlen = precision;
+                else
+                    output_cgc_strlen = cgc_strlen(string_arg);
+
+
+                pad_len = width - output_cgc_strlen;
+
+                // pad the output with spaces or zeros
+                // right justification
+                if (!left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        if (zero_padding)
+                            str[character_count]='0';
+                        else
+                            str[character_count]=' ';
+                        character_count++;
+                    }
+                }
+
+                while ( *string_arg && output_cgc_strlen > 0 )
+                {
+                    str[character_count]= *string_arg;
+                    character_count++;
+                    string_arg++;
+                    --output_cgc_strlen;
+                }
+
+                // left justification
+                if (left_justification) {
+                    for (i=0; i< pad_len; ++i) {
+
+                        // the option to pad with 0 is ignored when left justified
+                        str[character_count]=' ';
+                        character_count++;
+                    }
+                }
+
+                fmt++;
+                continue;
+
+            }
+
+        }
+        else
+        {
+            str[character_count]= *fmt;
+            fmt++;
+
+            character_count++;
+        }
+    }
+
+    return (character_count);
+}
+
+int printf( const char *fmt, ... )
+{
+    va_list arg;
+    int done;
+    char large_buff[4096];
+    size_t tx_count;
+
+    va_start( arg, fmt );
+
+   // done = vsprintf(large_buff, fmt, arg);
+   // transmit( STDOUT, large_buff, done, &tx_count );
+    
+    done = vprintf( fmt, arg );
+    va_end( arg );
+
+    return done;
+}
+
+int sprintf( char *str, const char *fmt, ... )
+{
+    va_list arg;
+    int done;
+
+    va_start( arg, fmt );
+    done = vsprintf( str, fmt, arg );
+    va_end( arg );
+
+    return done;
+}
+
+
+size_t getline( char *buffer, size_t len)  {
+int count;
+
+    count = receive_until(buffer, '\n', len);
+
+    if (count==len)
+        buffer[len-1]=0;
+    else {
+        buffer[count]=0;
+    }
+
+    return (count);
+    
+}
+
+/*
+heap_metadata *heap_manager = NULL;
+
+
+void *calloc(size_t count, size_t size) {
+    void *ret;
+    ret = malloc(size * count);
+    memset(ret, 0, size * count);
+    return ret;
+}
+
+void free(void *ptr) {
+    heap_header *chunkHeader;
+    heap_block_header *blockHead;
+
+    chunkHeader = (heap_header*)(((char*)ptr)-sizeof(heap_header));
+    chunkHeader->flags = FREE_FLAG;
+    blockHead = (heap_block_header *)((int)&ptr & 0xfffff000);
+    blockHead->remaining_size+=chunkHeader->size;
+    return;
+}
+
+void *malloc(size_t size) {
+    heap_block_header *blockHead;
+    if (heap_manager == NULL) {
+        void *mallocPtr;
+        //this is our first allocation.
+        allocate(4096, 0, &mallocPtr);
+        heap_manager = mallocPtr;
+        heap_manager->mem_commit = 4096;
+        heap_manager->mem_inuse = sizeof(heap_manager);
+        heap_manager->mem_free = 4096-heap_manager->mem_inuse;
+        allocate(4096, 0, (void *)&heap_manager->blocks);
+        memset(heap_manager->blocks, 0, 4096);
+        blockHead = (heap_block_header *)heap_manager->blocks;
+        blockHead->remaining_size = 4096-sizeof(heap_block_header);
+        blockHead->next = NULL;
+    }
+    blockHead = (heap_block_header *)heap_manager->blocks;
+    if(size > blockHead->remaining_size) {
+        allocate(4096, 0, (void *)&blockHead->next);
+        if(blockHead->next == NULL) {
+            puts("Not enough space available to allocate more heap.  Failure.");
+            _terminate(-1);
+        }
+        blockHead = blockHead->next;
+        blockHead->remaining_size = 4096-sizeof(heap_block_header);
+    } else {
+        heap_header *chunkHeader;
+        blockHead->remaining_size-=size;
+        chunkHeader = (heap_header *)blockHead->data;
+
+        while((chunkHeader->flags & INUSE_FLAG) && (chunkHeader->size < size+sizeof(heap_header)))
+            chunkHeader = (heap_header *)(((void *)(chunkHeader)+sizeof(heap_header)) + chunkHeader->size);
+        chunkHeader->size = size;
+        chunkHeader->flags = INUSE_FLAG;
+        return (char *)chunkHeader+sizeof(heap_header);
+    }
+    return 0;
+}
+
+*/
