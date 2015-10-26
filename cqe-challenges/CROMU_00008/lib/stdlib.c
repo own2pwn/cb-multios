@@ -369,3 +369,27 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+int tolower( int c )
+{
+    if ( c >= 'A' && c <= 'Z' )
+        return (c - 'A') + 'a';
+    else
+        return c;
+}
+
+char *strncpy( char *dest, const char *src, size_t num )
+{
+    size_t i;
+
+    for ( i = 0; i < num; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+
+    return (dest);
+}

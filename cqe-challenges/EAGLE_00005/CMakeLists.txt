@@ -1,5 +1,5 @@
-set( AUTHOR_ID "EAGLE")
 set( SERVICE_ID "00005")
-set( CFLAGS " /Zi    ")
+set( AUTHOR_ID "EAGLE")
+set( CFLAGS " /Zi /WX   /Wall /wd4244 /wd4101 /wd4018 /wd4102 /wd4820 /wd4133 /wd4129")
 set( VULN_COUNT "2")
 buildCB(${CFLAGS})

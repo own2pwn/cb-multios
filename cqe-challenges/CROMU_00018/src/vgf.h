@@ -66,6 +66,7 @@ struct VGF_HEADER
 
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -84,6 +85,7 @@ struct VGF_OBJECT_HEADER
     uint8_t     object_settings;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -99,6 +101,7 @@ struct VGF_COLOR_TABLE
     uint8_t     color_count;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -116,6 +119,7 @@ struct VGF_COLOR_HEADER
     uint8_t    blue;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -133,6 +137,7 @@ struct VGF_DRAW_CIRCLE
     uint16_t    radius;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -151,6 +156,7 @@ struct VGF_DRAW_RECT
     uint16_t    y_len;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -171,6 +177,7 @@ struct VGF_DRAW_TRIANGLE
     uint16_t    y_pos3;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif
@@ -189,6 +196,7 @@ struct VGF_DRAW_LINE
     uint16_t    y_end;
 #ifdef _WIN32
 };
+#pragma pack(pop)
 #else
 } __attribute__ ((__packed__));
 #endif

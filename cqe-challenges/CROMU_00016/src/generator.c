@@ -231,7 +231,7 @@ int InitManual(void) {
 		timestamp_s = buf;
 
 		// bytes next
-		bytes_s = strchr(buf, ',');
+		bytes_s = cgc_strchr(buf, ',');
 		if (bytes_s == NULL) {
 			puts("Invalid bytes");
 			return(-1);
@@ -240,7 +240,7 @@ int InitManual(void) {
 		bytes_s++;
 
 		// finally, priority
-		priority_s = strchr(bytes_s, ',');
+		priority_s = cgc_strchr(bytes_s, ',');
 		if (priority_s == NULL) {
 			puts("Invalid priority");
 			return(-1);
@@ -251,7 +251,7 @@ int InitManual(void) {
 		// sanity check the inputs
 		// timestamp
 		for (i = 0; i < cgc_strlen(timestamp_s); i++) {
-			if (!strchr("0123456789.", timestamp_s[i])) {
+			if (!cgc_strchr("0123456789.", timestamp_s[i])) {
 				puts("Invalid timestamp");
 				return(-1);
 			}
@@ -263,7 +263,7 @@ int InitManual(void) {
 		}
 		// bytes
 		for (i = 0; i < cgc_strlen(bytes_s); i++) {
-			if (!strchr("0123456789", bytes_s[i])) {
+			if (!cgc_strchr("0123456789", bytes_s[i])) {
 				puts("Invalid bytes");
 				return(-1);
 			}
@@ -275,7 +275,7 @@ int InitManual(void) {
 		}
 		// priority
 		for (i = 0; i < cgc_strlen(priority_s); i++) {
-			if (!strchr("0123456789", priority_s[i])) {
+			if (!cgc_strchr("0123456789", priority_s[i])) {
 				puts("Invalid priority");
 				return(-1);
 			}

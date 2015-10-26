@@ -72,42 +72,42 @@ int planetMenu( pPlanet pl )
 			case 2:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->period = atof(selection);
+				pl->period = cgc_atof(selection);
 				break;
 			case 3:
 				printf("\n-> ");
 				receive_until(selection, '\n', 10);
-				pl->orbitspeed = atof(selection);
+				pl->orbitspeed = cgc_atof(selection);
 				break;
 			case 4:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->aphelion = atof(selection);
+				pl->aphelion = cgc_atof(selection);
 				break;
 			case 5:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->perihelion = atof(selection);
+				pl->perihelion = cgc_atof(selection);
 				break;
 			case 6:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->radius = atof(selection);
+				pl->radius = cgc_atof(selection);
 				break;
 			case 7:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->eradius = atof(selection);
+				pl->eradius = cgc_atof(selection);
 				break;
 			case 8:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->mass = atof(selection);
+				pl->mass = cgc_atof(selection);
 				break;
 			case 9:
 				printf("\n-> ");
 				receive_until( selection, '\n', 10);
-				pl->gravity = atof(selection);
+				pl->gravity = cgc_atof(selection);
 				break;
 			case 10:
 				printf("\n-> ");
@@ -742,7 +742,7 @@ double extractPeriod( pstring str )
 		return -1;
 	}
 
-	period = atof( temp );
+	period = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -915,7 +915,7 @@ double extractOrbitSpeed( pstring str )
 		goto retspeed;
 	}
 
-	speed = atof( temp );
+	speed = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1096,7 +1096,7 @@ double extractAphelion( pstring str )
 		return -1;
 	}
 
-	aphelion = atof( temp );
+	aphelion = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1261,7 +1261,7 @@ double extractPerihelion( pstring str )
 		return -1;
 	}
 
-	perihelion = atof( temp );
+	perihelion = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1426,7 +1426,7 @@ double extractRadius( pstring str )
 		return -1.0;
 	}
 
-	radius = atof( temp );
+	radius = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1591,7 +1591,7 @@ double extractERadius( pstring str )
 		return -1;
 	}
 
-	eradius = atof( temp );
+	eradius = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1762,7 +1762,7 @@ double extractMass( pstring str )
 		return -1;
 	}
 
-	mass = atof( temp );
+	mass = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 
@@ -1927,7 +1927,7 @@ double extractGravity( pstring str )
 		return -1;
 	}
 
-	gravity = atof( temp );
+	gravity = cgc_atof( temp );
 
 	deallocate( temp, cgc_strlen(temp) + 1 );
 

@@ -301,3 +301,115 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+
+int islower( int c )
+{
+    if ( c >= 0x61 && c <= 0x7a )
+        return 1;
+    else
+        return 0;
+}
+
+int isupper( int c )
+{
+    if ( c >= 0x41 && c <= 0x5a )
+        return 1;
+    else
+        return 0;
+}
+
+int isalpha( int c )
+{
+    return islower( c ) | isupper( c );
+}
+
+int isalnum( int c )
+{
+    return isalpha( c ) | isdigit( c );
+}
+
+
+char *strncpy( char *dest, char *src, size_t n )
+{
+    size_t i;
+
+    for ( i = 0; i < n ; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+
+    return (dest);
+}
+
+double cgc_atof(const char* str)
+{
+    if ( str == NULL )
+        return 0.0;
+
+    double val = 0.0;
+    double scale = 0.1;
+    int sign = 1;
+    int part;
+
+    // Skip whitespace
+    while ( isspace( str[0] ) )
+        str++;
+
+    part = 0; // First part (+/-/./number is acceptable)
+
+    while( str[0] != '\0' )
+    {
+        if ( str[0] == '-' )
+        {
+            if ( part != 0 )
+                return 0.0;
+
+            sign = -1;
+            part++;
+        }
+        else if ( str[0] == '+' )
+        {
+            if ( part != 0 )
+                return 0.0;
+
+            part++;
+        }
+        else if ( str[0] == '.' )
+        {
+            if ( part == 0 || part == 1 )
+                part = 2;
+            else
+                return 0.0;
+        }
+        else if ( isdigit( *str ) )
+        {
+            if ( part == 0 || part == 1 )
+            {
+                // In integer part
+                part = 1;
+                val = (val * 10.0) + (*str - '0');
+            }
+            else if ( part == 2 )
+            {
+                val += ((*str - '0') * scale);
+                scale /= 10.0;
+            }
+            else
+            {
+                // part invalid
+                return 0.0;
+            }
+        }
+        else
+            break;
+
+        str++;
+    }
+
+    return (sign * val);
+}

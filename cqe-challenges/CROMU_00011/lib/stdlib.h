@@ -43,4 +43,12 @@ size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 
+int isdigit( int c );
+int isspace( int c );
+int islower( int c );
+int isupper( int c );
+int islower( int c );
+int isalpha( int c );
+int isalnum( int c );
+char *strncpy( char *dest, char *src, size_t n );
 #endif // __STDLIB_H__

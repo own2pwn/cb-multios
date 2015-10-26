@@ -94,7 +94,7 @@ int ParseArgs(char *cmd) {
 			ARGV[ARGC] = t;
 
 		// handle token delimited by quotes
-		} else if (tok[0] == '"' & tok[cgc_strlen(tok)-1] == '"') {
+		} else if (tok[0] == '"' && tok[cgc_strlen(tok)-1] == '"') {
 			tok[cgc_strlen(tok)-1] = '\0';
 			ARGV[ARGC++] = cgc_strdup(tok+1);
 

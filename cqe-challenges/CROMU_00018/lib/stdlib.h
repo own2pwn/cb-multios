@@ -43,5 +43,5 @@ size_t cgc_strcat( char *, char* );
 size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
-
+int abs( int val );
 #endif // __STDLIB_H__

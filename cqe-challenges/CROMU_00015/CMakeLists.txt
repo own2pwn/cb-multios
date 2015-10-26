@@ -1,6 +1,6 @@
-set( AUTHOR_ID "CROMU")
 set( SERVICE_ID "00015")
-set( CFLAGS " /Zi   ")
+set( AUTHOR_ID "CROMU")
 set( POLLS_RELEASE_SEED "594936938")
+set( CFLAGS " /Zi /WX   /wd4244 /wd4101 /wd4018 /wd4102 /wd4820 /wd4133 /wd4129")
 set( POLLS_TESTING_SEED "-1420921681")
 buildCB(${CFLAGS})

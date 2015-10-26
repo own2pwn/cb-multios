@@ -48,5 +48,7 @@ void puts( char *t );
 size_t getline( char *buffer, size_t len);  
 int receive_bytes (unsigned char *buffer, size_t size);
 
+int sprintf( char *str, const char *fmt, ... );
+char *strncpy( char *dest, const char *src, size_t n );
 #endif // __STDLIB_H__
 

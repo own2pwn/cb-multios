@@ -301,3 +301,11 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+int abs( int val )
+{
+    if ( val < 0 )
+        return -val;
+    else
+        return val;
+}

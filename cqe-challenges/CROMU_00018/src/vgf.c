@@ -26,6 +26,9 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <libcgc.h>
 #include "vgf.h"
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 // Default color not filled in
 #define PIXEL_DEFAULT_COLOR_INDEX   (0xFFFF)
@@ -89,7 +92,7 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
     readPos += sizeof(tVGFHeader);
 
     // Allocated data for parsed file
-    pParsedData = (tVGFParsedFile *)malloc( sizeof(tVGFParsedFile) );
+    pParsedData = (tVGFParsedFile *)cgc_malloc( sizeof(tVGFParsedFile) );
     pParsedData->pObjectList = NULL;
     pParsedData->color_count = 0;
     pParsedData->pColorTable = NULL;
@@ -120,7 +123,7 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
         readPos += sizeof(tVGFObjectHeader);
 
         // Add object and insert
-        tVGFObjectTable *pNewObjEntry = (tVGFObjectTable *)malloc( sizeof( tVGFObjectTable) );
+        tVGFObjectTable *pNewObjEntry = (tVGFObjectTable *)cgc_malloc( sizeof( tVGFObjectTable) );
         pNewObjEntry->pNext = NULL;
 
         if ( pLastObjEntry == NULL )
@@ -216,7 +219,7 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
     // Allocate array
     if ( pParsedData->color_count > 0 )
     {
-        pParsedData->pColorTable = (tVGFColorHeader *)malloc( sizeof(tVGFColorHeader) * pParsedData->color_count );
+        pParsedData->pColorTable = (tVGFColorHeader *)cgc_malloc( sizeof(tVGFColorHeader) * pParsedData->color_count );
 
         // Read in color data
         for ( idx = 0; idx < pParsedData->color_count; idx++ )
@@ -268,7 +271,7 @@ void vgf_destroy_file( tVGFParsedFile *pFile )
             pNext = pCur->pNext;
 
             // Free memory
-            free( pCur );
+            cgc_free( pCur );
 
             // Advance
             pCur = pNext;
@@ -277,10 +280,10 @@ void vgf_destroy_file( tVGFParsedFile *pFile )
 
     // Free color table
     if ( pFile->pColorTable )
-        free( pFile->pColorTable );
+        cgc_free( pFile->pColorTable );
 
     // Free data
-    free( pFile );
+    cgc_free( pFile );
 }
 
 // Get the output size of the VGF file converted to BMP
@@ -326,7 +329,7 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
     for ( layer_idx = 0; layer_idx < layer_count; layer_idx++ )
     {
 
-        layer_data[layer_idx] = (uint16_t *)malloc( pixel_count*sizeof(uint16_t) );
+        layer_data[layer_idx] = (uint16_t *)cgc_malloc( pixel_count*sizeof(uint16_t) );
 
         for ( pixel_idx = 0; pixel_idx < pixel_count; pixel_idx++ )
             layer_data[layer_idx][pixel_idx] = PIXEL_DEFAULT_COLOR_INDEX;
@@ -392,7 +395,7 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
     }
 
     // Allocate data for final layer
-    final_data = (uint16_t *)malloc( pixel_count*sizeof(uint16_t) );
+    final_data = (uint16_t *)cgc_malloc( pixel_count*sizeof(uint16_t) );
 
     // Setup final layer
     for ( pixel_idx = 0; pixel_idx < pixel_count; pixel_idx++ )
@@ -448,12 +451,12 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
 
 exit_cleanup:
     if ( final_data )
-        free( final_data );
+        cgc_free( final_data );
 
     for ( layer_idx = 0; layer_idx < layer_count; layer_idx++ )
     {
         if ( layer_data[layer_idx] )
-            free( layer_data[layer_idx] );
+            cgc_free( layer_data[layer_idx] );
     }
 
     return (exitResults);

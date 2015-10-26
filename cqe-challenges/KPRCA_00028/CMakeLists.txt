@@ -1,5 +1,5 @@
-set( AUTHOR_ID "KPRCA")
 set( SERVICE_ID "00028")
-set( CFLAGS "-O   ")
+set( AUTHOR_ID "KPRCA")
 set( POLLS_RELEASE_SEED "-49922249")
+set( CFLAGS "-O /WX   /wd4244 /wd4101 /wd4018 /wd4102 /wd4820 /wd4133 /wd4129")
 buildCB(${CFLAGS})

@@ -26,6 +26,9 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include "churn.h"
+#ifdef _WIN32
+#include <math.h>
+#endif
 
 churn_item gyre[CHURN_GYRE_SIZE];
 size_t gyre_pos = 0;

@@ -26,6 +26,9 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 #define YOLO_ADD 0x40
 #define YOLO_DEL 0x41

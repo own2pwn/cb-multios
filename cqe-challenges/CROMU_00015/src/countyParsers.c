@@ -84,12 +84,12 @@ int countyMenu( pCounty co )
 			case 4:		/// Set Area
 				printf("\n-> ");
 				receive_until( selection, '\n', 19);
-				co->area = atof( selection );
+				co->area = cgc_atof( selection );
 				break;
 			case 5:		/// Set Density
 				printf("\n-> ");
 				receive_until( selection, '\n', 19);
-				co->density = atof( selection );
+				co->density = cgc_atof( selection );
 				break;
 			case 6:	/// Add border
 				if ( co->border_count >= COUNTYBORDERMAX) {
@@ -105,22 +105,22 @@ int countyMenu( pCounty co )
                                 printf("Lat Start: ");
                                 bzero(selection, 30 );
                                 receive_until( selection, '\n', 19 );
-                                pb->latStart = atof(selection);
+                                pb->latStart = cgc_atof(selection);
 
                                 printf("Long Start: ");
                                 bzero(selection, 30 );
                                 receive_until( selection, '\n', 19 );
-                                pb->lngStart = atof(selection);
+                                pb->lngStart = cgc_atof(selection);
 
                                 printf("Lat End: ");
                                 bzero(selection, 30 );
                                 receive_until( selection, '\n', 19 );
-                                pb->latEnd = atof(selection);
+                                pb->latEnd = cgc_atof(selection);
 
                                 printf("Long End: ");
                                 bzero(selection, 30 );
                                 receive_until( selection, '\n', 19 );
-                                pb->lngEnd = atof(selection);
+                                pb->lngEnd = cgc_atof(selection);
 
                                 co->borders[ co->border_count ] = pb;
                                 co->border_count++;
@@ -666,7 +666,7 @@ double extractDensity( pstring str )
 		goto end;
 	}
 
-	density = atof( temp );
+	density = cgc_atof( temp );
 
 	deallocate( temp, (endIndex-startIndex) + 1 );
 	temp = NULL;
@@ -756,7 +756,7 @@ double extractArea( pstring str )
 		goto end;
 	}
 
-	area = atof( temp );
+	area = cgc_atof( temp );
 
 	deallocate( temp, (endIndex-startIndex) + 1 );
 	temp = NULL;

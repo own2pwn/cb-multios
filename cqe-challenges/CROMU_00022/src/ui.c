@@ -211,7 +211,7 @@ void SetParam(char paramName[64], char *param, int len) {
 	result = GetLongString(temp);
 	if (result > 0){
 		temp[len] = 0x00;
-		cgc_strcpy(param, temp);
+		strcpy(param, temp);
 	}
 	return;
 }
@@ -345,7 +345,7 @@ void SanitizeDate(char date[32]){
 	}else {
 		sprintf( tempDate, "1/1/1900");
 	}
-	cgc_strcpy(date, tempDate);
+	strcpy(date, tempDate);
 	return;
 }
 

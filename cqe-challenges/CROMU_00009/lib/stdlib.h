@@ -30,7 +30,6 @@ int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
-double atof(const char *str);
 int atoi(const char *str);
 
 char *cgc_strcpy( char *dest, char *src );
@@ -44,5 +43,8 @@ size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 char *cgc_strdup(char *s);
-
+char *cgc_strchr(const char *s, int c);
+char *strncpy( char *dest, const char *src, size_t n );
+ssize_t write( const void *buf, size_t count );
+char *strtok(char *str, const char *delim);
 #endif // __STDLIB_H__

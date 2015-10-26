@@ -27,6 +27,7 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include "libc.h"
+#include "stdlib.h"
 #include "timecard.h"
 
 // Converts a char string into a money struct. 
@@ -409,11 +410,11 @@ void process_key_value(pemployee empl, char *key, char *value, int *week)
 {
 	if (equals(key, "employee_id"))
 	{
-		empl->id = atoi(value);
+		empl->id = cgc_atoi(value);
 	}
 	if (equals(key, "employee_name"))
 	{
-		cgc_strncpy(empl->name, value, EMPLOYEE_NAME_LEN);
+		strncpy(empl->name, value, EMPLOYEE_NAME_LEN);
 	}
 	if (equals(key, "wage"))
 	{
@@ -434,7 +435,7 @@ void process_key_value(pemployee empl, char *key, char *value, int *week)
 	}
 	if (equals(key, "week"))
 	{
-		*week = atoi(value);
+		*week = cgc_atoi(value);
 		if ((*week < 0) || (*week >= 52))
 		{
 			*week = 0;
@@ -476,7 +477,7 @@ void merge_employee_records(pemployee empl, pemployee temp)
 	// Only populate employee record the first time a name is given
 	if ((empl->id == -1) && (temp->name[0] != '\0'))
 	{
-		cgc_strncpy(empl->name, temp->name, EMPLOYEE_NAME_LEN);
+		strncpy(empl->name, temp->name, EMPLOYEE_NAME_LEN);
 		empl->id = temp->id;
 		empl->wage.dollars = temp->wage.dollars;
 		empl->wage.cents = temp->wage.cents;
@@ -600,7 +601,7 @@ void output_paycheck(pemployee empl, int week)
 	print("employee-");
 	print(empl->name);
 	print("`week-");
-	itoa((char *)outbuf, week);
+	cgc_itoa((char *)outbuf, week);
 	print(outbuf);
 	print("`standardtime-");
 	htoa((char *)&outbuf, &empl->paychecks[week].standardtime);

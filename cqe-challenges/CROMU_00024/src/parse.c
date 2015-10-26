@@ -25,6 +25,9 @@ THE SOFTWARE.
 */
 
 #include "stdlib.h"
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 
 int parse_command(char *buffer, char separator, char ***args) {
@@ -51,7 +54,7 @@ int parse_command(char *buffer, char separator, char ***args) {
 	} // while
 
 	// allocate one char pointer for each field in the command
-	*args=calloc(arg_count, sizeof(char *));
+	*args=cgc_calloc(arg_count, sizeof(char *));
 
 	// failed to allocate the memory
 	if (*args==0) {

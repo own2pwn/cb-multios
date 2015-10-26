@@ -44,5 +44,6 @@ size_t cgc_strcat( char *, char* );
 size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
-
+int tolower( int c );
+char *strncpy( char *dest, const char *src, size_t num );
 #endif // __STDLIB_H__

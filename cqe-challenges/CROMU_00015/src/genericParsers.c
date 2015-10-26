@@ -138,7 +138,7 @@ Border *extractBorder( pstring str )
 	}
 
 	/// Convert the first value
-	bor->latStart = atof( temp );
+	bor->latStart = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
@@ -165,7 +165,7 @@ Border *extractBorder( pstring str )
 	}
 
 	/// Convert the first long
-	bor->lngStart = atof( temp );
+	bor->lngStart = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
@@ -192,7 +192,7 @@ Border *extractBorder( pstring str )
 	}
 
 	/// Convert the second lat
-	bor->latEnd = atof( temp );
+	bor->latEnd = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
@@ -219,7 +219,7 @@ Border *extractBorder( pstring str )
 	}
 
 	/// Convert the second long
-	bor->lngEnd = atof( temp );
+	bor->lngEnd = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 

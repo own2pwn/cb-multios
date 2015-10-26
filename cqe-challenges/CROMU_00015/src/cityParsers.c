@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 #include "cityParsers.h"
+#include "mymath.h"
 
 int cityMenu ( pCity ci )
 {

@@ -75,7 +75,7 @@ int InitQueues(void) {
 		// Is queue 0 a priority queue (serviced before all others)?
 		if (curr_queue == 0) {
 			bzero(buf, 10);
-			while (buf[0] != 'y' & buf[0] != 'n') {
+			while (buf[0] != 'y' && buf[0] != 'n') {
 				printf("  Is queue #@d a priority queue(y,n): ", curr_queue);
 				if ((len = readUntil(buf, 2, '\n')) == -1) {
 					return(-1);

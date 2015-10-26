@@ -128,22 +128,22 @@ int countryMenu( pCountry co )
 			printf("Lat Start: ");
 			bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->latStart = atof(selection);
+			pb->latStart = cgc_atof(selection);
 
 			printf("Long Start: ");
 			bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->lngStart = atof(selection);
+			pb->lngStart = cgc_atof(selection);
 
 			printf("Lat End: ");
 			bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->latEnd = atof(selection);
+			pb->latEnd = cgc_atof(selection);
 
 			printf("Long End: ");
 			bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->lngEnd = atof(selection);
+			pb->lngEnd = cgc_atof(selection);
 
 			co->borders[ co->border_count ] = pb;
 			co->border_count++;

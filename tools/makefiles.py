@@ -17,14 +17,15 @@ def replaceWin32Flags(flags):
 		"-Wno-packed" : "",
 		"-fno-stack-protector" : "/GS-",
 		"-fno-rtti" : "/GR-",
-		"-Wall": "",
+		"-Wall": "/Wall",
 		"-Wextra": "",
 		"-Wno-missing-field-initializers": "",
 		"-Wno-pointer-sign": "",
 		"-Wno-sign-compare": "",
 		"-Wno-unused-function": "",
-        "-mfpmath=sse": "/arch:sse",
-        "-msse2": "/arch:sse2",
+		"-mfpmath=sse": "/arch:SSE",
+		"-msse2": "/arch:SSE2",
+		"-Werror": "/WX",
 		}
 
 	for k,v in win32_map.iteritems():
@@ -39,28 +40,30 @@ def readAndMake(folder):
 	oldMake = inStream.readlines()
 	inStream.close()
 
-	makeVars = []
+	makeVars = {}
 	for i in oldMake:
 		i = i.replace("\n", "").replace("\t", "") 
 		if "=" in i:
-			print i	
 			var,_,val = i.partition("=")
 			var = var.strip()
 			val = val.strip()
-			makeVars += ['set( ' + var + ' "' + val + '")']
+			makeVars[var] = val
+			#makeVars += ['set( ' + var + ' "' + val + '")']
 
-	newMake = ""
+	if "CFLAGS" not in makeVars:
+		makeVars["CFLAGS"] = "-g"
 
-	for i in makeVars:
-		newMake += i + "\n"
-	if "-Werror" in newMake:
-		newMake = newMake.replace("-Werror", "")
+	if "-Werror" in makeVars["CFLAGS"] and platform.system() != "Windows":
+		makeVars["CFLAGS"] = makeVars["CFLAGS"].replace("-Werror", "")
 
-	if "CFLAGS" not in newMake:
-		newMake +=  'set( CFLAGS " ")\n' 
-	else:
-		if platform.system() == "Windows":
-			newMake =  replaceWin32Flags(newMake)
+	if platform.system() == "Windows":
+		makeVars["CFLAGS"] += " /wd4244 /wd4101 /wd4018 /wd4102 /wd4820 /wd4133 /wd4129"
+
+	newMake = "\n".join(['set( {} "{}")'.format(k,v) for k,v in makeVars.iteritems()])
+	newMake += "\n"
+
+	if platform.system() == "Windows":
+		newMake =  replaceWin32Flags(newMake)
 	
 	#newMake += 'MESSAGE("Building!!! ")\n'
 	newMake += "buildCB(${CFLAGS})"

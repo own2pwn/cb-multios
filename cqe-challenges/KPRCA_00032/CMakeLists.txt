@@ -1,6 +1,6 @@
+set( SERVICE_ID "00032")
 set( POLLS_RELEASE_SEED "1240805680")
 set( AUTHOR_ID "KPRCA")
-set( SERVICE_ID "00032")
-set( CFLAGS "-O3 /Zi    -msse")
+set( CFLAGS "-O3 /Zi /WX   -msse /wd4244 /wd4101 /wd4018 /wd4102 /wd4820 /wd4133 /wd4129")
 set( POLLS_TESTING_SEED "843413816")
 buildCB(${CFLAGS})

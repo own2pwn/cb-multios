@@ -97,4 +97,5 @@ int vprintf( const char *fmt, va_list arg );
 int vsprintf( char *str, const char *fmt, va_list arg );
 int printf( const char *fmt, ... );
 int sprintf( char *str, const char *fmt, ... );
+size_t getline( char *buffer, size_t len);
 #endif // __STDLIB_H__

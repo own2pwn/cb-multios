@@ -71,6 +71,8 @@ int isinf( double val )
     #endif
 }
 
+
+
 int atoi(const char* str)
 {
     if ( str == NULL )
@@ -255,6 +257,44 @@ end:
     return length;
 }
 
+size_t itoa( char *out, size_t val, size_t max )
+{
+    size_t length = 0;
+    size_t end = 0;
+    size_t temp = 0;
+
+    if ( out == NULL ) {
+        goto end;
+    }
+
+    // Calculate the needed length
+    temp = val;
+    do {
+        end++;
+        temp /= 10;
+    } while ( temp );
+
+    // ensure we have enough room
+    if ( end >= max ) {
+        goto end;
+    }
+
+    length = end;
+
+    // Subtract one to skip the null
+    end--;
+
+    do {
+        out[end] = (val % 10) + 0x30;
+        val /= 10;
+        end--;
+    } while ( val );
+
+    out[length] = 0x00;
+end:
+    return length;
+}
+
 void puts( char *t )
 {
     size_t size;
@@ -262,3 +302,143 @@ void puts( char *t )
         _terminate(2);
     }
 }
+char *token = NULL;
+char *prev_str = NULL;
+unsigned int prev_str_len = 0;
+char *prev_str_ptr = NULL;
+char *strtok(char *str, const char *delim) {
+    char *start;
+    char *end;
+    char *t;
+    int i;
+
+    // invalid input
+    if (delim == NULL) {
+        return(NULL);
+    }
+    
+    // called on existing string
+    if (str == NULL) {
+        if (prev_str == NULL) {
+            return(NULL);
+        }
+        // already parsed through end of original str
+        if (prev_str_ptr >= prev_str+prev_str_len) {
+            return(NULL);
+        }
+    } else {
+        // called with new string, so free the old one
+        if (prev_str) {
+            deallocate(prev_str, prev_str_len);
+            prev_str = NULL;
+            prev_str_len = 0;
+            prev_str_ptr = NULL;
+        }
+    }
+
+    // not been called before, so make a copy of the string
+    if (prev_str == NULL) {
+        if (cgc_strlen(str) > 4096) {
+            // too big
+            return(NULL);
+        } 
+        prev_str_len = cgc_strlen(str);
+        if (allocate(prev_str_len, 0, (void *)&prev_str)) {
+            return(NULL);
+        }
+        cgc_strcpy(prev_str, str);
+        prev_str_ptr = prev_str;
+    }
+
+    str = prev_str_ptr;
+
+    // make sure the string isn't starting with a delimeter
+    while (cgc_strchr(delim, str[0]) && str < prev_str+prev_str_len) {
+        str++;
+    }
+    if (str >= prev_str+prev_str_len) {
+        return(NULL);
+    }
+
+    // find the earliest next delimiter
+    start = str;
+    end = str+cgc_strlen(str);
+    for (i = 0; i < cgc_strlen((char *)delim); i++) {
+        if ((t = cgc_strchr(start, delim[i]))) {
+            if (t != NULL && t < end) {
+                end = t;
+            }
+        }
+    }
+    
+    // populate the new token
+    token = start;
+    *end = '\0';
+
+    prev_str_ptr = end+1;
+
+    return(token);
+}
+char *cgc_strdup(char *s) 
+{
+        char *retval;
+
+        if (!s) {
+                return(NULL);
+        }
+
+        if (allocate(cgc_strlen(s)+1, 0, (void *)&retval)) {
+                return(NULL);
+        }
+
+        bzero(retval, cgc_strlen(s)+1);
+        cgc_strcpy(retval, s);
+
+        return(retval);
+}
+
+char *cgc_strchr(const char *s, int c) {
+    while (*s != '\0') {
+        if (*s == c) {
+            return((char *)s);
+        }
+        s++;
+    }
+    if (*s == c) {
+        return((char *)s);
+    }
+    return(NULL);
+}
+
+char *strncpy( char *dest, const char *src, size_t n )
+{
+    size_t i;
+
+    for ( i = 0; i < n && src[i] != '\0'; i++)
+        dest[i] = src[i];
+    for ( ; i < n; i++)
+        dest[i] = '\0';
+
+    return (dest);
+}
+
+ssize_t write( const void *buf, size_t count )
+{
+    size_t size;
+    size_t total_sent = 0;
+
+    if (!buf) {
+        return(0);
+    }
+
+    while (total_sent < count) {
+        if (transmit(STDOUT, (char*)buf+total_sent, count-total_sent, &size) != 0) {
+            return(total_sent);
+        }
+        total_sent += size;
+    }   
+
+    return(total_sent);
+
+}
+

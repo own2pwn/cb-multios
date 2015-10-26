@@ -301,3 +301,47 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+
+int islower( int c )
+{
+    if ( c >= 0x61 && c <= 0x7a )
+        return 1;
+    else
+        return 0;
+}
+
+int isupper( int c )
+{
+    if ( c >= 0x41 && c <= 0x5a )
+        return 1;
+    else
+        return 0;
+}
+
+int isalpha( int c )
+{
+    return islower( c ) | isupper( c );
+}
+
+int isalnum( int c )
+{
+    return isalpha( c ) | isdigit( c );
+}
+
+
+char *strncpy( char *dest, char *src, size_t n )
+{
+    size_t i;
+
+    for ( i = 0; i < n ; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+
+    return (dest);
+}

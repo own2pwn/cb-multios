@@ -29,6 +29,6 @@ THE SOFTWARE.
 #ifndef _WIN32
 double floor( double );
 #endif
+#include <math.h>
 double cgc_round( double, double n );
-
 #endif // __MYMATH_H__

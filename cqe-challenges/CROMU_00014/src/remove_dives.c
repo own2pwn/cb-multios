@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 #include "service.h"
 #include "stdlib.h"
+#include "malloc_win32.h"
 
 
 int remove_dives(logbook_type *Info)  {
@@ -77,14 +78,14 @@ int remove_dives(logbook_type *Info)  {
 
 				next_ptr=temp_ptr->next;
 
-				free(temp_ptr);
+				cgc_free(temp_ptr);
 
 				temp_ptr=next_ptr;
 			}
 
 		}
 		// now free the dive log entry
-		free(next_dive);
+		cgc_free(next_dive);
 
 		Info->dives = temp_dive;
 		return 0;
@@ -118,7 +119,7 @@ int remove_dives(logbook_type *Info)  {
 
 				next_ptr=temp_ptr->next;
 
-				free(temp_ptr);
+				cgc_free(temp_ptr);
 
 				temp_ptr=next_ptr;
 			}
@@ -126,7 +127,7 @@ int remove_dives(logbook_type *Info)  {
 		}
 
 		// now free the dive log entry
-		free (next_dive);
+		cgc_free (next_dive);
 	}
 	else {
 

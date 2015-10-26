@@ -28,6 +28,9 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "service.h"
 #include "bst.h"
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 
 int main(void) {
@@ -65,11 +68,11 @@ int main(void) {
             // if the string to add is less than 10 chars, ignore the add command
             if (cgc_strlen(args[1]) < 10) {
 
-                free(args);
+                cgc_free(args);
                 continue;
             }
 
-            item=calloc(1, sizeof(data_item_type));
+            item=cgc_calloc(1, sizeof(data_item_type));
 
             if (!item) {
 
@@ -118,7 +121,7 @@ int main(void) {
 
         }
         
-        free(args);
+        cgc_free(args);
     }
 
  

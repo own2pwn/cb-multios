@@ -102,22 +102,22 @@ int territoryMenu( pTerritory ty )
 	                        printf("Lat Start: ");
         	                bzero(selection, 30 );
 				receive_until( selection, '\n', 19 );
-                        	pb->latStart = atof(selection);
+                        	pb->latStart = cgc_atof(selection);
 
              	           	printf("Long Start: ");
                 	        bzero(selection, 30 );
 				receive_until( selection, '\n', 19 );
-                        	pb->lngStart = atof(selection);
+                        	pb->lngStart = cgc_atof(selection);
 
 	                        printf("Lat End: ");
         	                bzero(selection, 30 );
 				receive_until( selection, '\n', 19 );
-                        	pb->latEnd = atof(selection);
+                        	pb->latEnd = cgc_atof(selection);
 
                         	printf("Long End: ");
                         	bzero(selection, 30 );
 				receive_until( selection, '\n', 19 );
-                        	pb->lngEnd = atof(selection);
+                        	pb->lngEnd = cgc_atof(selection);
 
                     	    	ty->borders[ ty->border_count ] = pb;
                         	ty->border_count++;

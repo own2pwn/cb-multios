@@ -26,6 +26,9 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <libcgc.h>
 #include "pixelmap.h"
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 #define PMP_HEADER_FILE_TYPE            (0x4D50)
 #define PMP_HEADER_COMPRESSION_NONE     (0)
@@ -156,7 +159,7 @@ int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *
     oInfoHeader.piSizeImage = pmImageSize;
 
     // Allocate file data
-    (*pFileData) = malloc( oFileHeader.pmSize );
+    (*pFileData) = cgc_malloc( oFileHeader.pmSize );
     (*pFileSize) = oFileHeader.pmSize;
 
     uint8_t *pData = (*pFileData);

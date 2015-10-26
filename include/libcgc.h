@@ -16,7 +16,11 @@ typedef signed int ssize_t;
 
 
 #define SSIZE_MAX	2147483647
+
+#ifndef SIZE_MAX
 #define SIZE_MAX	4294967295
+#endif
+
 #define	FD_SETSIZE	1024
 
 typedef long int _fd_mask;
