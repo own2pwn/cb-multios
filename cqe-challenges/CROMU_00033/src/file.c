@@ -299,7 +299,7 @@ int fixup_dir_length( pfile d )
         d->length = 1;
         
         /// 8 is used because it is cgc_rounded up anyway
-        d->data = malloc( 8 );
+        d->data = cgc_malloc( 8 );
         
         if ( d->data == NULL ) {
             printf("[ERROR] Failed to fixup dir data\n");
@@ -312,7 +312,7 @@ int fixup_dir_length( pfile d )
         /// Increment it by 1
         d->length += 1;
         
-        nd = malloc( d->length * sizeof(pfile));
+        nd = cgc_malloc( d->length * sizeof(pfile));
         
         if ( nd == NULL ) {
             d->length--;
@@ -321,7 +321,7 @@ int fixup_dir_length( pfile d )
         
         cgc_memset(nd, 0, d->length * sizeof(pfile));
         cgc_memcpy(nd, d->data, (d->length-1)*sizeof(pfile));
-        free(d->data);
+        cgc_free(d->data);
         d->data = nd;
     }
     
@@ -511,10 +511,10 @@ void free_file( pfile f )
     }
     
     if ( f->data != NULL ) {
-        free(f->data);
+        cgc_free(f->data);
     }
     
-    free(f);
+    cgc_free(f);
     
     return;
 }
@@ -523,7 +523,7 @@ pfile init_file( void )
 {
 	pfile new_file = NULL;
 
-	new_file = malloc( sizeof(file) );
+	new_file = cgc_malloc( sizeof(file) );
 
 	if ( new_file == NULL ) {
 		return new_file;
@@ -588,7 +588,7 @@ int set_data( pfile pf, int length, char *data )
         return 0;
     }
     
-    tn = malloc( length + 1 );
+    tn = cgc_malloc( length + 1 );
     
     if ( tn == NULL ) {
         return 0;

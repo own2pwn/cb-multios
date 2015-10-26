@@ -264,7 +264,7 @@ int32_t SimStep(void) {
 
 	// allocate a new TGrid to hold updated temperatures
 	malloc_size = X*Y*Z*sizeof(double);
-	if ((TGridNew = calloc(malloc_size, 1)) == NULL) {
+	if ((TGridNew = cgc_calloc(malloc_size, 1)) == NULL) {
 		return(-1);
 	}
 
@@ -278,7 +278,7 @@ int32_t SimStep(void) {
 	}
 
 	// free and replace the old TGrid
-	free(TGrid);
+	cgc_free(TGrid);
 	TGrid = TGridNew;
 
 	return(0);

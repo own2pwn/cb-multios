@@ -123,7 +123,7 @@ void create_user(int tries)
 		}
 		else
 		{
-			listOfUsers[user_count] = (User*)malloc(sizeof(User));
+			listOfUsers[user_count] = (User*)cgc_malloc(sizeof(User));
 			strncpy(listOfUsers[user_count]->name, buf, len);
 
 			listOfUsers[user_count]->cgc_index = user_count;

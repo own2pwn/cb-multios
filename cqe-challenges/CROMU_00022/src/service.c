@@ -28,20 +28,20 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 #include <mymath.h>
-#include <malloc.h>
+#include "malloc_win32.h"
 #include "service.h"
 #include "ui.h"
 
 
 pDiverInfo init_data(){
 	pDiverInfo workingData = NULL;
-	workingData = malloc( sizeof( sDiverInfo ) );
+	workingData = cgc_malloc( sizeof( sDiverInfo ) );
 	if ( workingData == NULL ){ _terminate( -2 );}
 	return workingData;
 }
 
 void destroy_data( pDiverInfo workingData ){
-	free( workingData );
+	cgc_free( workingData );
 }
 
 //dive is linked list
@@ -51,9 +51,9 @@ pDiveEntry AddDive( pDiverInfo DiverInfo ){
 	pDiveEntryListNode DiveEntryListCur = NULL ;
 	pDiveEntryListNode DiveEntryListTemp;
 	//linked list node
-	pDiveEntryListNode DiveEntryListNew = malloc( sizeof( sDiveEntryListNode ) );
+	pDiveEntryListNode DiveEntryListNew = cgc_malloc( sizeof( sDiveEntryListNode ) );
 	//data element
-	pDiveEntry DiveEntryNew = malloc( sizeof( sDiveEntry ) );
+	pDiveEntry DiveEntryNew = cgc_malloc( sizeof( sDiveEntry ) );
 	//if malloc fails, exit
 	if (  ( DiveEntryNew == NULL ) || ( DiveEntryListNew == NULL )  ) { _terminate( -2 );}
 
@@ -117,8 +117,8 @@ pDiveEntryListNode DeleteDive( pDiverInfo DiverInfo, pDiveEntryListNode DiveEntr
 	if ( DiveEntryListNodeToDelete == DiverInfo->DiveEntryList ){
 		DiverInfo->DiveEntryList = DiverInfo->DiveEntryList->next;
 	}
-	free(DiveEntryListNodeToDelete->DiveEntry);
-	free(DiveEntryListNodeToDelete);	
+	cgc_free(DiveEntryListNodeToDelete->DiveEntry);
+	cgc_free(DiveEntryListNodeToDelete);	
 	return DiveEntryListPrev;
 }
 

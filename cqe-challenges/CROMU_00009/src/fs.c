@@ -558,10 +558,10 @@ int ReadFile(char *full_name) {
 			return(0);
 		}
 		if (fsize >= DATA_BLOCK_SIZE) {
-			write(b, DATA_BLOCK_SIZE);
+			cgc_write(b, DATA_BLOCK_SIZE);
 			fsize -= DATA_BLOCK_SIZE;
 		} else {
-			write(b, fsize);
+			cgc_write(b, fsize);
 		}
 	}	
 	puts("");
@@ -1060,9 +1060,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 }
 
 /*
-   write to the file specified by stream (previously opened with fopen)
+   cgc_write to the file specified by stream (previously opened with fopen)
 */
-size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+size_t fcgc_write(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	int i;
 	unsigned char *p = (unsigned char *)ptr;
 	inode *in;
@@ -1077,12 +1077,12 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
 		return(0);
 	}
 
-	// make sure stream is a WRITE or APPEND type
+	// make sure stream is a cgc_write or APPEND type
 	if (stream->mode != WRITE && stream->mode != APPEND) {
 		return(0);
 	}
 
-	// write size*nmemb bytes from ptr to the file
+	// cgc_write size*nmemb bytes from ptr to the file
 	in2 = stream->curr_pos_inode;
 	cgc_index = stream->cgc_index;
 	b = in2->blocks[cgc_index];

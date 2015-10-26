@@ -305,14 +305,14 @@ void puts( char *t )
 heap_metadata *heap_manager = NULL;
 
 
-void *calloc(size_t count, size_t size) {
+void *cgc_calloc(size_t count, size_t size) {
     void *ret;
-    ret = malloc(size * count);
+    ret = cgc_malloc(size * count);
     memset(ret, 0, size * count);
     return ret;
 }
 
-void free(void *ptr) {
+void cgc_free(void *ptr) {
     heap_header *chunkHeader;
     heap_block_header *blockHead;
 
@@ -323,7 +323,7 @@ void free(void *ptr) {
     return;
 }
 
-void *malloc(size_t size) {
+void *cgc_malloc(size_t size) {
     heap_block_header *blockHead;
     if (heap_manager == NULL) {
         void *mallocPtr;

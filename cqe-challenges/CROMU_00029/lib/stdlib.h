@@ -52,11 +52,6 @@ typedef struct _heap_metadata {
 	heap_block_header *blocks;
 } heap_metadata;
 
-//void *calloc(size_t count, size_t size);
-//void free(void *ptr);
-//void *malloc(size_t size);
-
-
 
 int isspace( int c );
 int isdigit( int c );
@@ -85,7 +80,7 @@ size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 char *strchr(const char *, int);
 char *strtok(char *, const char *);
-ssize_t write( const void *, size_t );
+ssize_t cgc_write( const void *, size_t );
 char *strdup( char * );
 
 int putc( int c );

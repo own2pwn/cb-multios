@@ -145,19 +145,19 @@ int handle_ndir( void )
     
     if ( set_name( new_dir, name ) == 0) {
         printf("[ERROR] Failed to set directory name\n");
-        free(new_dir);
+        cgc_free(new_dir);
         return 0;
     }
     
     if ( set_type( new_dir, DIR) == 0 ) {
         printf("[ERROR] Failed to set type\n");
-        free(new_dir);
+        cgc_free(new_dir);
         return 0;
     }
     
     if ( add_file( new_dir ) == 0 ) {
         printf("[ERROR] NDIR failed\n");
-        free(new_dir);
+        cgc_free(new_dir);
         return 0;
     }
     
@@ -198,7 +198,7 @@ int handle_send( void )
         return 0;
     }
     
-    data = malloc( file_length + 1);
+    data = cgc_malloc( file_length + 1);
     
     if ( data == NULL ) {
         printf("[ERROR] malloc failed\n");
@@ -216,33 +216,33 @@ int handle_send( void )
     
     if ( new_file == NULL ) {
         printf("[ERROR] Failed to initialize a new file\n");
-        free(data);
+        cgc_free(data);
         return 0;
     }
     
     if ( set_name( new_file, name ) == 0) {
         printf("[ERROR] Failed to set file name\n");
-        free(data);
-        free(new_file);
+        cgc_free(data);
+        cgc_free(new_file);
         return 0;
     }
     
     if ( set_type( new_file, FILE) == 0 ) {
         printf("[ERROR] Failed to set type\n");
-        free(data);
-        free(new_file);
+        cgc_free(data);
+        cgc_free(new_file);
         return 0;
     }
     
     if ( set_data( new_file, file_length, data) == 0) {
         printf("[ERROR] Failed to set data\n");
-        free(data);
-        free(new_file);
+        cgc_free(data);
+        cgc_free(new_file);
         return 0;
     }
     
     /// Free the data since set_data() allocates a new copy
-    free(data);
+    cgc_free(data);
     
     if ( add_file( new_file) == 0 ) {
         printf("[ERROR] SEND failed\n");

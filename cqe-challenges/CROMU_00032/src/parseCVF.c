@@ -56,7 +56,7 @@ void freeCVF( pcvf cvf )
 
 	while ( cgc_index < 8 ) {
 		if ( cvf->pds[cgc_index].pixelArray != NULL ) {
-			free( cvf->pds[cgc_index].pixelArray);
+			cgc_free( cvf->pds[cgc_index].pixelArray);
 			cvf->pds[cgc_index].pixelArray = NULL;
 			cvf->pds[cgc_index].charCount = 0;
 		}	
@@ -68,22 +68,22 @@ void freeCVF( pcvf cvf )
 		while ( cgc_index < cvf->rCount ) {
 			if ( cvf->renderedFrames[cgc_index] != NULL ) {
 				if ( cvf->renderedFrames[cgc_index]->image != NULL ) {
-					free( cvf->renderedFrames[cgc_index]->image);
+					cgc_free( cvf->renderedFrames[cgc_index]->image);
 					cvf->renderedFrames[cgc_index]->image = NULL;
 					cvf->renderedFrames[cgc_index]->height = 0;
 					cvf->renderedFrames[cgc_index]->width = 0;
 				}
-				free(cvf->renderedFrames[cgc_index]);
+				cgc_free(cvf->renderedFrames[cgc_index]);
 				cvf->renderedFrames[cgc_index] = NULL;
 
 			}
 			cgc_index++;
 		}
-		free(cvf->renderedFrames);
+		cgc_free(cvf->renderedFrames);
 		cvf->renderedFrames = NULL;
 	}
 
-	free(cvf);
+	cgc_free(cvf);
 
 	return;
 }
@@ -277,7 +277,7 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 	pixel_bits = bitsNeeded( dictionary->charCount - 1);
 
 	/// allocate the new frame
-	newFrame = malloc( sizeof(frame) );
+	newFrame = cgc_malloc( sizeof(frame) );
 
 	if ( newFrame == NULL ) {
 		return 0;
@@ -287,10 +287,10 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 	newFrame->height = pNewImage->height;
 	newFrame->width = pNewImage->width;
 
-	newFrame->image = malloc( length );	
+	newFrame->image = cgc_malloc( length );	
 
 	if ( newFrame->image == NULL ) {
-		free(newFrame);
+		cgc_free(newFrame);
 		newFrame = NULL;
 		return 0;
 	}
@@ -306,18 +306,18 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 		pixel_cgc_index_length = bitsNeeded( length );
 
 		if ( readBits( pbs, pixel_cgc_index_length, (&pixel_count)) == 0 ) {
-			free(newFrame->image);
+			cgc_free(newFrame->image);
 			newFrame->image = NULL;
-			free(newFrame);
+			cgc_free(newFrame);
 			newFrame = NULL;
 			return 0;
 		}
 
 		if ( pixel_count == 0 ) {
 			printf("[ERROR] Empty frames not allowed\n");
-			free(newFrame->image);
+			cgc_free(newFrame->image);
 			newFrame->image = NULL;
-			free(newFrame);
+			cgc_free(newFrame);
 			newFrame = NULL;
 			return 0;
 		}
@@ -339,18 +339,18 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 		xbits = 0;
 		while ( xbits < pixel_count ) {
 			if ( readBits( pbs, pixel_bits, &ybits) == 0 ) {
-				free(newFrame->image);
+				cgc_free(newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				return 0;
 			}
 
 			if ( ybits > dictionary->charCount ) {
 				printf("[ERROR] invalid pixel\n");
-				free(newFrame->image);
+				cgc_free(newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				return 0;
 			}
@@ -369,9 +369,9 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 	} else {
 		/// An incremental image requires a copy of the previously rendered frame
 		if ( pNewImage->renderedFrames[ pNewImage->rCount - 1] == NULL ) {
-			free(newFrame->image);
+			cgc_free(newFrame->image);
 			newFrame->image = NULL;
-			free(newFrame);
+			cgc_free(newFrame);
 			newFrame = NULL;
 			return 0;
 		}
@@ -384,18 +384,18 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 			ybits = 0;
 
 			if ( readBits( pbs, pixel_count_bits, &xbits) == 0 ) {
-				free( newFrame->image);
+				cgc_free( newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				printf("[ERROR] Failed to read pixel cgc_index\n");
 				return 0;
 			}
 
 			if ( readBits( pbs, pixel_bits, &ybits) == 0 ) {
-				free( newFrame->image);
+				cgc_free( newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				printf("[ERROR] Failed to read pixel value\n");
 				return 0;
@@ -404,18 +404,18 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 
 			if ( xbits >= length ) {
 				printf("[ERROR] Index out of image bounds\n");
-				free(newFrame->image);
+				cgc_free(newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				return 0;
 			}
 
 			if ( ybits >= dictionary->charCount ) {
 				printf("[ERROR] Pixel beyond dictionary bounds\n");
-				free(newFrame->image);
+				cgc_free(newFrame->image);
 				newFrame->image = NULL;
-				free(newFrame);
+				cgc_free(newFrame);
 				newFrame = NULL;
 				return 0;
 			}
@@ -434,9 +434,9 @@ int parseCVFFrame( pBitStream pbs, pcvf pNewImage )
 	/// Consume any padding bits
 	if ( xbits ) {
 		if ( readBits( pbs, xbits, &ybits) == 0 ) {
-			free(newFrame->image);
+			cgc_free(newFrame->image);
 			newFrame->image = NULL;
-			free(newFrame);
+			cgc_free(newFrame);
 			newFrame = NULL;
 			printf("[ERROR] Failed to read padding bits\n");
 			return 0;
@@ -486,7 +486,7 @@ int parseCVFPixelDict( pBitStream pbs, pcvf pNewImage, int cgc_index )
 		return pixelCount;
 	}
 
-	pixelArray = malloc( pixelCount + 1 );
+	pixelArray = cgc_malloc( pixelCount + 1 );
 
 	if (pixelArray == NULL ) {
 		return 0;
@@ -498,7 +498,7 @@ int parseCVFPixelDict( pBitStream pbs, pcvf pNewImage, int cgc_index )
 	for (unsigned int i = 0; i < pixelCount; i++) {
 		if ( readBits( pbs, 8, &t) == 0 ) {
 			printf("[ERROR] Failed to read custom pixel dictionary\n");
-			free(pixelArray);
+			cgc_free(pixelArray);
 			pixelArray = NULL;
 			return 0;
 		}
@@ -680,7 +680,7 @@ int parseCVFHeader( pBitStream pbs, pcvf pNewImage )
 	}
 
 	/// Allocate frame structure pointer array
-	pNewImage->renderedFrames = malloc( sizeof( pframe ) * pNewImage->frameCount);
+	pNewImage->renderedFrames = cgc_malloc( sizeof( pframe ) * pNewImage->frameCount);
 
 	if ( pNewImage->renderedFrames == NULL ) {
 		return 0;
@@ -797,7 +797,7 @@ pcvf initCVF( void )
 {
 	pcvf nc = NULL;
 
-	nc = malloc( sizeof( cvf ) );
+	nc = cgc_malloc( sizeof( cvf ) );
 
 	if ( nc == NULL ) {
 		return nc;

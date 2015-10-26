@@ -42,6 +42,6 @@ size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 size_t receive_bytes( unsigned char *dst, size_t max );
-ssize_t write( const void *buf, size_t count );
+ssize_t cgc_write( const void *buf, size_t count );
 char *strncpy( char *dest, const char *src, size_t n );
 #endif // __STDLIB_H__

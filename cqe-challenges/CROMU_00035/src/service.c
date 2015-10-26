@@ -40,7 +40,7 @@ void die(char *message){
 }
 
 void *mallocOrDie( int size, char *message ){
-	void *retval = malloc( size );
+	void *retval = cgc_malloc( size );
 	if ( retval == NULL ){die( message );}
 	bzero(retval, size);
 	return retval;
@@ -144,7 +144,7 @@ pPerms delete_perms(pNode node,pPerms temp){//returns next perm or null if no ne
 		}
 #endif
 	}	
-	free(temp);
+	cgc_free(temp);
 	return retval;
 
 }
@@ -244,7 +244,7 @@ void delete_file_bytes(pFile file, unsigned int newSize){
 	size = last->chunkSize - remainderbytes;
 	char *newChunk = mallocOrDie( size , "Failed to malloc filechunk" );
 	cgc_memcpy(newChunk,last->chunk,size);
-	free(last->chunk);
+	cgc_free(last->chunk);
 	last->chunkSize = size;
 	last->chunk = newChunk;
 }
@@ -308,8 +308,8 @@ pFileChunk delete_chunk(pFile file, pFileChunk chunk){
 		file->chunkCount -= 1;
 	}
 
-	free(chunk->chunk);
-	free(chunk);
+	cgc_free(chunk->chunk);
+	cgc_free(chunk);
 	return retval;
 }
 
@@ -318,7 +318,7 @@ void delete_file(pFile file){
 	while(tempChunk != NULL){
 		tempChunk = delete_chunk(file, tempChunk);
 	}
-	free(file);
+	cgc_free(file);
 	return;
 }
 
@@ -358,8 +358,8 @@ pNode delete_node(pNode node, pDataStruct workingData){
 	while(perms != NULL){
 		perms = delete_perms(node, perms);
 	}
-	free(node->name);
-	free(node);
+	cgc_free(node->name);
+	cgc_free(node);
 	return retval;
 }
 
@@ -457,7 +457,7 @@ pGroupUserList remove_user_from_group(pUser user, pGroup group){
 		}
 	}
 	retval = temp->prev; //if first, next is null
-	free(temp);
+	cgc_free(temp);
 	return retval;
 }
 
@@ -481,8 +481,8 @@ pUser remove_user(pUser user, pDataStruct workingData){
 		user->next->prev = user->prev;
 	}
 	retval = user->prev;
-	free (user->name);
-	free (user);
+	cgc_free(user->name);
+	cgc_free(user);
 	return retval;
 }
 
@@ -514,8 +514,8 @@ pGroup remove_group(pGroup group, pDataStruct workingData){
 		group->next->prev = group->prev;
 	}
 	retval = group->prev;
-	free(group->name);
-	free(group);
+	cgc_free(group->name);
+	cgc_free(group);
 	return retval;
 }
 
@@ -652,7 +652,7 @@ char *recursive_path(pNode start, pNode end){
 	cgc_strcpy(retpath, path);
 	cgc_strcat(retpath, "/");
 	cgc_strcat(retpath, end->name);
-	free(path);
+	cgc_free(path);
 	return retpath;
 }
 
@@ -669,7 +669,7 @@ void str_of_path(char *path, pDataStruct workingData, pNode end){
 #ifndef PATCHED
 	cgc_strcpy(path, newPath );	
 #endif
-	free ( newPath );
+	cgc_free ( newPath );
 	return;
 }
 

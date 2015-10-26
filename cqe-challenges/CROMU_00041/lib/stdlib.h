@@ -50,9 +50,9 @@ typedef struct _heap_metadata {
 	heap_block_header *blocks;
 } heap_metadata;
 
-void *calloc(size_t count, size_t size);
-void free(void *ptr);
-void *malloc(size_t size);
+void *cgc_calloc(size_t count, size_t size);
+void cgc_free(void *ptr);
+void *cgc_malloc(size_t size);
 int isspace( int c );
 int isdigit( int c );
 int isnan( double val );

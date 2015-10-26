@@ -75,7 +75,7 @@ pBitStream readImageData( void )
 		return NULL;
 	}
 
-	newData = malloc( length );
+	newData = cgc_malloc( length );
 
 	if ( newData == NULL ) {
 		return NULL;
@@ -86,7 +86,7 @@ pBitStream readImageData( void )
 	bytes_read = receiveIt( newData, length );
 
 	if ( bytes_read != length ) {
-		free( newData );
+		cgc_free( newData );
 		return NULL;
 	}
 
@@ -95,7 +95,7 @@ pBitStream readImageData( void )
 	npbs = initStream( newData, length );
 
 	/// We no longer need the old data so free the buffer.
-	free( newData );
+	cgc_free( newData );
 	newData = NULL;
 
 	return npbs;

@@ -39,11 +39,11 @@ void freeStream( pBitStream *stream )
 
 	/// Ensure the stream pointer is valid before attempting to free it.
 	if ( t->stream ) {
-		free(t->stream);
+		cgc_free(t->stream);
 	}
 
 	/// Free the meta structure
-	free( t );
+	cgc_free( t );
 
 	/// Set the meta structure to NULL
 	*stream = NULL;
@@ -63,7 +63,7 @@ pBitStream initStream( char *newData, unsigned int newDataLength )
 		return pbs;
 	}
 
-	pbs = malloc( sizeof(BitStream) );
+	pbs = cgc_malloc( sizeof(BitStream) );
 
 	if ( pbs == NULL ) {
 		return pbs;
@@ -71,10 +71,10 @@ pBitStream initStream( char *newData, unsigned int newDataLength )
 
 	cgc_memset( pbs, 0, sizeof( BitStream ) );
 
-	pbs->stream = malloc( newDataLength );
+	pbs->stream = cgc_malloc( newDataLength );
 
 	if ( pbs->stream == NULL ) {
-		free(pbs);
+		cgc_free(pbs);
 		pbs = NULL;
 		return pbs;
 	}

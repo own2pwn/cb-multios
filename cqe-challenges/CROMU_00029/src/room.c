@@ -307,7 +307,7 @@ void InitCustom(void) {
 int32_t AllocateGrid(double **grid, uint32_t x, uint32_t y, uint32_t z) {
 	size_t malloc_size = x*y*z*sizeof(double);
 
-	if ((*grid = calloc(malloc_size, 1)) == NULL) {
+	if ((*grid = cgc_calloc(malloc_size, 1)) == NULL) {
 		return(-1);
 	}
 
@@ -400,7 +400,7 @@ int InitMaterial(void) {
 		printf("Should the material be isothermic? (y,n): ");
 		if (read_until(buf, "\n", 3) == -1) {
 			// failed to read the input
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 		if (buf[0] == 'y' || buf[0] == 'Y') {
@@ -420,7 +420,7 @@ int InitMaterial(void) {
 			printf("  What temperature? (@f - @f degrees C): ", MIN_TEMP, MAX_TEMP);
 			if (read_until(buf, "\n", 99) == -1) {
 				// failed to read the input
-				free(TGrid);
+				cgc_free(TGrid);
 				return(-1);
 			}
 			temperature = atof(buf);
@@ -445,7 +445,7 @@ int InitMaterial(void) {
 		printf("  Send the grid temperatures as a comma separated list of Celcius decimal values.\n");
 		printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
 		if (read_temps(TGrid)) {
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 	}
@@ -456,7 +456,7 @@ int InitMaterial(void) {
 		printf("Are there any constant energy sources in the room? (y,n): ");
 		if (read_until(buf, "\n", 3) == -1) {
 			// failed to read the input
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 		if (buf[0] == 'y' || buf[0] == 'Y') {
@@ -472,7 +472,7 @@ int InitMaterial(void) {
 	if (heat) {
 		// allocate a grid to hold the heat source data
 		if (AllocateGrid(&HGrid,X,Y,Z)) {
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 
@@ -481,8 +481,8 @@ int InitMaterial(void) {
 		printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
 		printf("  Send @f for any grid location which doesn't have a heat source.\n", NO_HEAT);
 		if (read_temps(HGrid)) {
-			free(TGrid);
-			free(HGrid);
+			cgc_free(TGrid);
+			cgc_free(HGrid);
 			return(-1);
 		}
 	}
