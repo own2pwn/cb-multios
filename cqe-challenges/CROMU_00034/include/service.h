@@ -42,7 +42,7 @@ enum Format {CHAR, SHORT, INT, STR, BOOL, PTR};
 // PTR: offset into the entry_info_table for another entry
 
 
-#pragma pack(1)
+#pragma pack(push, 1)
 // One Header, with pointer to first Dir
 typedef struct 
 {
@@ -52,7 +52,7 @@ typedef struct
 }Header;
 #pragma pack(pop)
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct 
 {
 	/* owned by chapter */
@@ -64,7 +64,7 @@ typedef struct
 }Entry;
 #pragma pack(pop)
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct 
 {
 	/* owned by book */

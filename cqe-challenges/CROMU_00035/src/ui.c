@@ -32,7 +32,6 @@ THE SOFTWARE.
 #include <malloc.h>
 #include "service.h"
 #include "ui.h"
-#include <string.h>
 #define DELIM 0x0A 	//\n
 
 int strict_atoi(char *a){

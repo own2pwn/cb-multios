@@ -28,8 +28,8 @@ THE SOFTWARE.
 #include "stack.h"
 #include "stdlib.h"
 #include "prng.h"
-#include "solver.h"
 #include "string.h"
+#include "solver.h"
 
 // test input
 char *tests[] = {"(4+2)*3",

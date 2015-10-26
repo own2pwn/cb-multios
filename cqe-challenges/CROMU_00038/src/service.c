@@ -105,7 +105,7 @@ int i;
 
 
         // now read and discard the rest of the SAP0 header
-        xif_data = malloc(segment_size-sizeof(segment_size));
+        xif_data = cgc_malloc(segment_size-sizeof(segment_size));
 
         if ((int)xif_data == 0) {
 
@@ -122,7 +122,7 @@ int i;
             _terminate(-1);
         }
 
-        free(xif_data);
+        cgc_free(xif_data);
         xif_data = 0;
 
         // now read the next marker, which should be SAP1
@@ -166,7 +166,7 @@ int i;
         _terminate(-1);
     }
     
-    xif_data = malloc(segment_size);
+    xif_data = cgc_malloc(segment_size);
 
     if ((int)xif_data == 0) {
 

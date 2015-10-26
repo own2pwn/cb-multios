@@ -30,7 +30,6 @@ THE SOFTWARE.
 #include "shapes.h"
 #include "stack.h"
 #include "prng.h"
-#include "string.h"
 #include "solver.h"
 
 

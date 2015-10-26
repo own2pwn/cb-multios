@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "tvis.h"
 #include "room.h"
+#include <math.h>
 
 double SIM_TIME;
 

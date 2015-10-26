@@ -43,7 +43,7 @@ size_t size;
 
 	if (*book == 0) {
 
-		*book = malloc(sizeof(Recipe_Type));
+		*book = cgc_malloc(sizeof(Recipe_Type));
 
 		if (*book==0) {
 
@@ -61,7 +61,7 @@ size_t size;
 		while(recipe->next != 0) 
 			recipe = recipe->next;
 
-		recipe->next = malloc(sizeof(Recipe_Type));
+		recipe->next = cgc_malloc(sizeof(Recipe_Type));
 
 		if (recipe->next == 0) {
 
@@ -88,7 +88,7 @@ size_t size;
 			*book = 0;
 		}
 
-		free(recipe);
+		cgc_free(recipe);
 
 		if (previous)
 			previous->next = 0;
@@ -108,7 +108,7 @@ size_t size;
 			*book = 0;
 		}
 
-		free(recipe);
+		cgc_free(recipe);
 
 		if (previous) 
 			previous->next = 0;

@@ -28,6 +28,10 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "service.h"
 
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
+
 
 
 int get_ingredients(Recipe_Type *recipe) {
@@ -53,7 +57,7 @@ Ingredient_Type *ingredient;
 	}
 	else {
 
-		 ingredient = malloc(sizeof(Ingredient_Type));
+		 ingredient = cgc_malloc(sizeof(Ingredient_Type));
 
 		if (ingredient == 0) {
 
@@ -87,7 +91,7 @@ Ingredient_Type *ingredient;
 
 		if (size > 1 ) {
 
-			ingredient->next = malloc(sizeof(Ingredient_Type));
+			ingredient->next = cgc_malloc(sizeof(Ingredient_Type));
 
 			if (ingredient->next == 0) {
 

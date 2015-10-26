@@ -301,3 +301,28 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+char *strncpy( char *dest, const char *src, size_t n )
+{
+    size_t i;
+
+    for ( i = 0; i < n && src[i] != '\0'; i++)
+        dest[i] = src[i];
+    for ( ; i < n; i++)
+        dest[i] = '\0';
+
+    return (dest);
+}
+
+ssize_t write( const void *buf, size_t count )
+{
+    size_t size;
+
+    transmit(STDOUT, buf, count, &size);
+
+    if (count != size)
+        return(-1);
+
+    return(size);
+
+}

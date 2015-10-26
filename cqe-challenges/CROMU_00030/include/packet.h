@@ -74,7 +74,7 @@ Data packet contents:
 
 #define MAX_CONTENT 10
 
-#pragma pack(1)
+#pragma pack(push, 1)
 // all numbers are from '0' to '9', ascii
 typedef struct 
 {
@@ -94,6 +94,7 @@ typedef struct
 	char answer[5];
 	int enc_type;
 } Enc_Chal;
+#pragma pack(pop)
 
 int seed_crypt;
 

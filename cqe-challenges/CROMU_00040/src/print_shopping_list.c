@@ -28,6 +28,9 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "service.h"
 
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
 
 
 Shopping_List_Type *build_shopping_list(Recipe_Type *book) {
@@ -52,7 +55,7 @@ Ingredient_Type *ingredient;
 
 		if (list_head==0) {
 
-			list_head = malloc(sizeof(Shopping_List_Type));
+			list_head = cgc_malloc(sizeof(Shopping_List_Type));
 
 			if (list_head == 0) {
 
@@ -72,7 +75,7 @@ Ingredient_Type *ingredient;
 			list->item = ingredient->item;
 			ingredient=ingredient->next;
 
-			list->next = malloc(sizeof(Shopping_List_Type));
+			list->next = cgc_malloc(sizeof(Shopping_List_Type));
 
 			if (list->next == 0) {
 
@@ -91,7 +94,7 @@ Ingredient_Type *ingredient;
 	}
 
 	if (list) {
-		free(list);
+		cgc_free(list);
 		list = previous;
 		list->next = 0;
 	}
@@ -130,7 +133,7 @@ Shopping_List_Type *tmp_list;
 
 		while( my_list) {
 
-			free(my_list);
+			cgc_free(my_list);
 
 			my_list = tmp_list;
 

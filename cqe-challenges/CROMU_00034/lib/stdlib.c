@@ -323,3 +323,88 @@ size_t receive_bytes( unsigned char *dst, size_t max )
 end:
     return len;
 }
+
+char *strncpy( char *dest, const char *src, size_t num )
+{
+    size_t i;
+
+    for ( i = 0; i < num; i++ )
+    {
+        if ( src[i] == '\0' )
+            break;
+
+        dest[i] = src[i];
+    }
+    dest[i] = '\0';
+
+    return (dest);
+}
+
+heap_metadata *heap_manager = NULL;
+
+
+void *cgc_calloc(size_t count, size_t size) {
+    void *ret;
+    ret = cgc_malloc(size * count);
+    memset(ret, 0, size * count);
+    return ret;
+}
+
+void cgc_free(void *ptr) {
+    heap_header *chunkHeader;
+    heap_block_header *blockHead;
+
+    chunkHeader = (heap_header*)(((char*)ptr)-sizeof(heap_header));
+    chunkHeader->flags = FREE_FLAG;
+    blockHead = (heap_block_header *)((int)&ptr & 0xfffff000);
+    blockHead->remaining_size+=chunkHeader->size;
+    return;
+}
+
+void *cgc_malloc(size_t size) {
+    heap_block_header *blockHead;
+    if (heap_manager == NULL) {
+        void *mallocPtr;
+        //this is our first allocation.
+        allocate(4096, 0, &mallocPtr);
+        heap_manager = mallocPtr;
+        heap_manager->mem_commit = 4096;
+        heap_manager->mem_inuse = sizeof(heap_manager);
+        heap_manager->mem_free = 4096-heap_manager->mem_inuse;
+        allocate(4096, 0, (void *)&heap_manager->blocks);
+        memset(heap_manager->blocks, 0, 4096);
+        blockHead = (heap_block_header *)heap_manager->blocks;
+        blockHead->remaining_size = 4096-sizeof(heap_block_header);
+        blockHead->next = NULL;
+    }
+    blockHead = (heap_block_header *)heap_manager->blocks;
+    if(size > blockHead->remaining_size) {
+        allocate(4096, 0, (void *)&blockHead->next);
+        if(blockHead->next == NULL) {
+            puts("Not enough space available to allocate more heap.  Failure.");
+            _terminate(-1);
+        }
+        blockHead = blockHead->next;
+        blockHead->remaining_size = 4096-sizeof(heap_block_header);
+    } else {
+        heap_header *chunkHeader;
+        blockHead->remaining_size-=size;
+        chunkHeader = (heap_header *)blockHead->data;
+
+        while((chunkHeader->flags & INUSE_FLAG) && (chunkHeader->size < size+sizeof(heap_header)))
+            chunkHeader = (heap_header *)(((char *)(chunkHeader)+sizeof(heap_header)) + chunkHeader->size);
+        chunkHeader->size = size;
+        chunkHeader->flags = INUSE_FLAG;
+        return (char *)chunkHeader+sizeof(heap_header);
+    }
+    return 0;
+}
+
+void *memset(void *s, int c, size_t n)
+{
+    unsigned char *t = (unsigned char *)s;
+    while (--n)
+        t[n] = (unsigned char)c;
+    t[n] = (unsigned char)c;
+    return(s);
+}

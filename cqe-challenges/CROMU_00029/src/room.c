@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include "room.h"
 #include "input.h"
 #include "malloc.h"
-#include <string.h>
 #include <math.h>
 
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)

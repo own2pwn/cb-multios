@@ -283,3 +283,39 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+int islower( int c )
+{
+        if ( c >= 'a' && c <= 'z') {
+                    return 1;
+                        }
+
+            return 0;
+}
+
+int isupper( int c )
+{
+        if ( c >= 'A' && c <= 'Z') {
+                    return 1;
+                        }
+
+            return 0;
+}
+
+int isascii( int c )
+{
+        if ( 0x20 <= c && c <= 0x7e ) {
+                    return 1;
+                        }
+
+            return 0;
+}
+
+int isalpha( int c )
+{
+        if ( islower(c) || isupper(c) ) {
+                    return 1;
+                        }
+
+            return 0;
+}

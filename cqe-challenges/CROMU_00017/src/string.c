@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 #include "stdlib.h"
+#include "string.h"
 #include "math_lib.h"
 
 // cgc_strlen 

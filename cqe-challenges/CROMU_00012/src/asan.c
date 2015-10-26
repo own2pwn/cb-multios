@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 #include "asan.h"
 #include "stdlib.h"
-#include "string.h"
 
 #ifdef _WIN32
     void * _ReturnAddress(void);

@@ -327,3 +327,46 @@ size_t receive_fixed(char *dest, size_t size) {
     }
     return total_read;
 }
+
+
+int strncmp( const char *s1, const char *s2, int count )
+{
+    int num_checked = 0;
+    if (count < 1) {
+        return -1;
+    }
+    while ( num_checked < count - 1 && *s1 && (*s1 == *s2) )
+    {
+      s1++,s2++;num_checked++;
+    }
+    return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
+}
+
+
+char *strchr(const char *s, int c) {
+    while (*s != '\0') {
+        if (*s == c) {
+            return((char *)s);
+        }
+        s++;
+    }
+    if (*s == c) {
+        return((char *)s);
+    }
+    return(NULL);
+}
+
+char *strrchr(const char *s, int c) {
+    const char *r = s + cgc_strlen((char *)s);
+    while (r != s) {
+        if (*r == c) {
+            return((char *)r);
+        }
+        r--;
+    }
+    if (*r == c) {
+        return((char *)r);
+    }
+    return(NULL);
+}
+

@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include "input.h"
 #include "room.h"
 #include <math.h>
-#include <string.h>
 
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)
 extern uint32_t X;

@@ -28,6 +28,10 @@ THE SOFTWARE.
 #include "stdint.h"
 #include "vars.h"
 
+#ifdef _WIN32
+#include "malloc_win32.h"
+#endif
+
 vars_t *pVARS = NULL;
 
 // Init VARS
@@ -54,7 +58,7 @@ int32_t DestroyVARS(void) {
 	pm = pVARS;
 	while (pm) {
 		pm_next = pm->next;
-		free(pm);
+		cgc_free(pm);
 		pm = pm_next;
 	}
 	
@@ -95,7 +99,7 @@ vars_t *CreateVARSObject(char *name, uint8_t type, void *value) {
 	}
 
 	// create the object
-	if ((pm = calloc(1, sizeof(vars_t))) == NULL) {
+	if ((pm = cgc_calloc(1, sizeof(vars_t))) == NULL) {
 		_terminate(-1);
 	}
 
@@ -145,7 +149,7 @@ int32_t DeleteVARSObject(vars_t *target) {
 		// handle case where target is head object
 		if (pm == pVARS) {
 			pVARS = pm->next;
-			free(pm);
+			cgc_free(pm);
 			return(1);
 		}
 
@@ -154,7 +158,7 @@ int32_t DeleteVARSObject(vars_t *target) {
 		if (pm->next) {
 			pm->next->prev = pm->prev;
 		}
-		free(pm);
+		cgc_free(pm);
 
 		return(1);
 	}

@@ -45,7 +45,7 @@ uint16_t read_short()
 
 void populate_entry(int entry, int num, char* str, int str_len, uint8_t req, uint8_t mult, uint8_t type)
 {
-	entry_info_table[entry][num] = (Entry_Info*)malloc(sizeof(Entry_Info));
+	entry_info_table[entry][num] = (Entry_Info*)cgc_malloc(sizeof(Entry_Info));
 	entry_info_table[entry][num]->format = type;
 	entry_info_table[entry][num]->mult_ok = mult;
 	entry_info_table[entry][num]->required = req;
@@ -56,7 +56,7 @@ void populate_entry(int entry, int num, char* str, int str_len, uint8_t req, uin
 
 void populate_sub_entry(int entry, int num, char* str, int str_len, uint8_t req, uint8_t mult, uint8_t type)
 {
-	sub_entry_info_list[entry][num] = (Entry_Info*)malloc(sizeof(Entry_Info));
+	sub_entry_info_list[entry][num] = (Entry_Info*)cgc_malloc(sizeof(Entry_Info));
 	sub_entry_info_list[entry][num]->format = type;
 	sub_entry_info_list[entry][num]->mult_ok = mult;
 	sub_entry_info_list[entry][num]->required = req;
@@ -866,7 +866,7 @@ int main()
 	}
 
 	// create a buffer of 'size' size
-	uint8_t *buffer = (uint8_t*)malloc( buffer_size );
+	uint8_t *buffer = (uint8_t*)cgc_malloc( buffer_size );
 
 	if (buffer == NULL)
 	{
@@ -907,7 +907,7 @@ int main()
 	test_win();
 	
 
-	free(buffer);
+	cgc_free(buffer);
 	printf("good book.\n");
 	return 0;
 }

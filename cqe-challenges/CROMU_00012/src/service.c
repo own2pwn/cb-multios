@@ -29,8 +29,8 @@ THE SOFTWARE.
 #include "asan.h"
 #include "stdlib.h"
 #include "service.h"
-#include "libc.h"
 #include "string.h"
+#include "libc.h"
 
 int recvUntil(int fd, char *buf, int size, char delim) {
 	char tmp;
