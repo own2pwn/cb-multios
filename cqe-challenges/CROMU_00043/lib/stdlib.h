@@ -43,4 +43,7 @@ size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
 
+int count_strings(char *s);
+char *next_string(char *s);
+
 #endif // __STDLIB_H__

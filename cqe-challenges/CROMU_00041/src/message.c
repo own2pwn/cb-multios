@@ -120,9 +120,9 @@ label:
 		Message *cur = &(globs.listOfMessages[cgc_index][target]);
 
 		cur->match = 0xbeef;
-		cgc_strcpy(cur->from, src);
-		cgc_strcpy(cur->to, dest);
-		cgc_strcpy(cur->msg, msg);
+		strcpy(cur->from, src);
+		strcpy(cur->to, dest);
+		strcpy(cur->msg, msg);
 		cur->is_draft = draft;
 
 		msg_count_login++;
@@ -289,9 +289,9 @@ void print_draft_for_send(char *name)
 	// pointer to destination message 
 	Message *dst_msg = &(globs.listOfMessages[dst_cgc_index][target]);
 
-	cgc_strcpy(dst_msg->from, cur->from);
-	cgc_strcpy(dst_msg->to, cur->to);
-	cgc_strcpy(dst_msg->msg, cur->msg);
+	strcpy(dst_msg->from, cur->from);
+	strcpy(dst_msg->to, cur->to);
+	strcpy(dst_msg->msg, cur->msg);
 	dst_msg->is_draft = 0;
 	dst_msg->match = 0xbeef;
 

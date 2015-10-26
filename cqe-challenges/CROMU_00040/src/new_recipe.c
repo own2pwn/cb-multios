@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "stdlib.h"
 #include "service.h"
+#include "malloc_win32.h"
 
 #define BUFF_SIZE 200
 

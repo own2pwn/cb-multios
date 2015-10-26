@@ -28,6 +28,10 @@ THE SOFTWARE.
 #include "service.h"
 #include "io.h"
 
+#ifdef _WIN32
+#include <stdarg.h>
+#endif
+
 void FailAndTerminate(char *error_msg) {
   // Output error message
   TransmitFormattedBytes("+s\n", error_msg);
@@ -48,7 +52,7 @@ void ReceiveBytes(void *buffer, size_t size) {
       FailAndTerminate("zero bytes received");
     }
     size  -= bytes_received;
-    buffer += bytes_received;
+    buffer = (char*)buffer + bytes_received;
   }
 }
 
@@ -114,7 +118,7 @@ void TransmitBytes(void *buffer, size_t size) {
     if (return_value != 0) {
      _terminate(-2);
     }
-    buffer += bytes_transmitted;
+    buffer = (char*)buffer + bytes_transmitted;
     size -= bytes_transmitted;
   }
 }

@@ -25,7 +25,6 @@ THE SOFTWARE.
 */
 #include <libcgc.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 #ifdef _WIN32
 #include <float.h>
@@ -300,4 +299,32 @@ void puts( char *t )
     if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
         _terminate(2);
     }
+}
+
+// This function counts the number of single null
+// terminated strings stopping after the first double null is found
+int count_strings(char *s) {
+  int count = 0;
+  while (*s != '\0' || *(s+1) != '\0') {
+    if (*(s+1) == '\0') {
+      count++;
+    }
+    s++;
+  }
+  return count;
+}
+
+// This function returns a pointer to the next null terminated string
+// If it encounters a double null it returns 0;
+char *next_string(char *s) {
+  char *n = s;
+  while (*n != '\0') {
+    n++;
+  }
+  n++;
+  if (*n == '\0') {
+    return 0;
+  } else {
+    return n;
+  }
 }

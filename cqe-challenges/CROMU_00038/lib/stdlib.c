@@ -301,3 +301,33 @@ void puts( char *t )
         _terminate(2);
     }
 }
+
+int receive_bytes (unsigned char *buffer, size_t size) 
+{
+size_t count=0;
+size_t remaining=0;
+size_t rxbytes=0;
+
+    remaining = size;
+
+    while(remaining)  {
+
+        rxbytes = 0;
+
+        if (receive(STDIN, buffer+count, remaining, &rxbytes)==0 ) {
+
+            remaining-=rxbytes;
+            count+=rxbytes;
+        }
+        
+        else {
+
+            return(-1);
+        }
+
+
+    }
+
+return 0;
+
+}

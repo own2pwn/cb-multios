@@ -197,6 +197,21 @@ char *strncat ( char *dest, const char *src, size_t n )
     return(dest);
 }
 
+size_t getline( char *buffer, size_t len)  {
+int count;
+
+    count = receive_until(buffer, '\n', len);
+
+    if (count==len)
+        buffer[len-1]=0;
+    else {
+        buffer[count]=0;
+    }
+
+    return (count);
+    
+}
+
 size_t receive_until( char *dst, char delim, size_t max )
 {
     size_t len = 0;
@@ -300,4 +315,16 @@ void puts( char *t )
     if (transmit(STDOUT, t, cgc_strlen(t), &size) != 0) {
         _terminate(2);
     }
+}
+
+char *strncpy( char *dest, const char *src, size_t n )
+{
+    size_t i;
+
+    for ( i = 0; i < n && src[i] != '\0'; i++)
+        dest[i] = src[i];
+    for ( ; i < n; i++)
+        dest[i] = '\0';
+
+    return (dest);
 }

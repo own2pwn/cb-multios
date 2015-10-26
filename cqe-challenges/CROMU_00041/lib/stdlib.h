@@ -26,21 +26,49 @@ THE SOFTWARE.
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
+#define INUSE_FLAG 1
+#define FREE_FLAG 2
+
+#include <libcgc.h>
+
+typedef struct _heap_block_header {
+	size_t remaining_size;
+	struct _heap_block_header *next;
+	char data[1];
+} heap_block_header;
+
+
+typedef struct _heap_header {
+	size_t size;
+	char flags;
+} heap_header;
+
+typedef struct _heap_metadata {
+	size_t mem_commit;
+	size_t mem_free;
+	size_t mem_inuse;
+	heap_block_header *blocks;
+} heap_metadata;
+
+void *calloc(size_t count, size_t size);
+void free(void *ptr);
+void *malloc(size_t size);
 int isspace( int c );
 int isdigit( int c );
 int isnan( double val );
 int isinf( double val );
 int atoi(const char *str);
 
-char *cgc_strcpy( char *dest, char *src );
+char *strcpy( char *dest, char *src );
 int printf( const char *fmt, ... );
 void bzero( void *, size_t );
 int cgc_strcmp( const char *, const char * );
 char *strncat( char *dest, const char *src, size_t n );
 size_t receive_until( char *, char, size_t );
 size_t cgc_strcat( char *, char* );
-size_t cgc_strlen( char * );
+size_t strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
-
+char *strncpy( char *dest, const char *src, size_t n );
+void *memset(void *, int, size_t);
 #endif // __STDLIB_H__

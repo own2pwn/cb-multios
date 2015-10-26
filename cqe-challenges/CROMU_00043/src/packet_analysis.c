@@ -29,6 +29,9 @@ THE SOFTWARE.
 #include "service.h"
 #include "packet_analysis.h"
 #include "io.h"
+#ifdef _WIN32
+#include <stdarg.h>
+#endif
 
 enum authorities {SELF, LAW_ENFORCEMENT, UNIVERSITY, EMPLOYER, NETWORK_PROVIDER, NUM_AUTHORITIES};
 char *authority_names[NUM_AUTHORITIES] = {"Self", "Law Enforcement", "University", "Employer", "Network Provider"};

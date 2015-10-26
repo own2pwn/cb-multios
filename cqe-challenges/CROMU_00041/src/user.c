@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "stdint.h"
 
-
 User *current_user;
 
 User *listOfUsers[MAX_USERS];
@@ -79,7 +78,7 @@ void create_user(int tries)
 
 	int found = -1;
 	// does this user already exist?
-	if (cgc_strlen(buf) < 1) 
+	if (strlen(buf) < 1) 
 	{
 		return;
 	}

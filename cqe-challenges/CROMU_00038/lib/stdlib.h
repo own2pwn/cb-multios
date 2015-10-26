@@ -42,5 +42,5 @@ size_t cgc_strcat( char *, char* );
 size_t cgc_strlen( char * );
 size_t itoa( char *, size_t, size_t );
 void puts( char *t );
-
+int receive_bytes (unsigned char *buffer, size_t size);
 #endif // __STDLIB_H__

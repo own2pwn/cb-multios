@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define SERVICE_H
 
 #include "stdlib.h"
+#include "stdint.h"
 
 #define MAX_FILTERS 16
 
