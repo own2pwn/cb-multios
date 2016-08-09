@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,52 +26,52 @@ THE SOFTWARE.
 #ifndef __DLQUEUE_H__
 #define __DLQUEUE_H__
 
-class DLQueue;
+class cgc_DLQueue;
 
-class DLItem
+class cgc_DLItem
 {
 public:
-    DLItem( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
-    ~DLItem( ) { };
+    cgc_DLItem( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
+    ~cgc_DLItem( ) { };
 
-    DLItem *GetNext( void ) { return m_pNext; };
-    DLItem *GetPrev( void ) { return m_pPrev; };
+    cgc_DLItem *cgc_GetNext( void ) { return m_pNext; };
+    cgc_DLItem *cgc_GetPrev( void ) { return m_pPrev; };
 
-    friend class DLQueue;
+    friend class cgc_DLQueue;
 
 private:
-    DLItem *m_pNext;
-    DLItem *m_pPrev;
+    cgc_DLItem *m_pNext;
+    cgc_DLItem *m_pPrev;
 };
 
-class DLQueue
+class cgc_DLQueue
 {
 public:
-    DLQueue( );
-    ~DLQueue( );
+    cgc_DLQueue( );
+    ~cgc_DLQueue( );
 
-    void DeleteAll( void );
+    void cgc_DeleteAll( void );
 
-    void AddFirst( DLItem *pItem );
-    void AddLast( DLItem *pItem );
-    void AddAfter( DLItem *pPrev, DLItem *pItem );
+    void cgc_AddFirst( cgc_DLItem *pItem );
+    void cgc_AddLast( cgc_DLItem *pItem );
+    void cgc_AddAfter( cgc_DLItem *pPrev, cgc_DLItem *pItem );
 
-    void Unlink( DLItem *pItem );
+    void cgc_Unlink( cgc_DLItem *pItem );
 
-    void DeleteItem( DLItem *pItem );
-    void RemoveItem( DLItem *pItem );
-    DLItem *RemoveFirst( void );
-    DLItem *RemoveLast( void );
+    void cgc_DeleteItem( cgc_DLItem *pItem );
+    void cgc_RemoveItem( cgc_DLItem *pItem );
+    cgc_DLItem *cgc_RemoveFirst( void );
+    cgc_DLItem *cgc_RemoveLast( void );
 
-    DLItem *GetFirst( void ) { return m_pFirst; };
-    DLItem *GetLast( void ) { return m_pLast; };
+    cgc_DLItem *cgc_GetFirst( void ) { return m_pFirst; };
+    cgc_DLItem *cgc_GetLast( void ) { return m_pLast; };
 
-    size_t GetCount( void ) { return m_count; };
+    cgc_size_t cgc_GetCount( void ) { return m_count; };
 
 private:
-    DLItem *m_pFirst;
-    DLItem *m_pLast;
-    size_t m_count;
+    cgc_DLItem *m_pFirst;
+    cgc_DLItem *m_pLast;
+    cgc_size_t m_count;
 };
 
 #endif // __DLQUEUE_H___

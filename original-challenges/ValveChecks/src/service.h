@@ -27,20 +27,20 @@
 #define REQ_SIZE 128
 int main(void);
 
-typedef enum {GETV,SETV,GETT,NOTHERE} codes_t;
+typedef enum {GETV,SETV,GETT,NOTHERE} cgc_codes_t;
 
 typedef struct reqbody {
-    codes_t code;
+    cgc_codes_t code;
     uint8_t data[REQ_SIZE];
-} reqbody_t;
+} cgc_reqbody_t;
 
 typedef struct reqpkt {
-    reqbody_t data;
-    uint64_t additive;
-    uint64_t addxoradd;
+    cgc_reqbody_t data;
+    uint64_t cgc_additive;
+    uint64_t cgc_addxoradd;
     double fp;
-    uint32_t crc32;
-    uint32_t md5[4];
-} reqpkt_t;
+    uint32_t cgc_crc32;
+    uint32_t cgc_md5[4];
+} cgc_reqpkt_t;
 
 #endif

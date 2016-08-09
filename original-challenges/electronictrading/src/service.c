@@ -44,31 +44,31 @@ static struct stock_state state = {};
 int
 main(void) {
     int cmd_ret = 0;
-    size_t size = 0;
+    cgc_size_t size = 0;
     struct command cmd = {};
 
-    stock_init(&state);
+    cgc_stock_init(&state);
 
     while (1) {
-        if (read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
+        if (cgc_read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
             continue;
 
         switch (cmd.type) {
         case LIST_STOCKS:
-            cmd_ret = cmd_list_stocks(&state);
+            cmd_ret = cgc_cmd_list_stocks(&state);
             break;
         case LIST_ORDERS:
-            cmd_ret = cmd_list_orders(&state, (char *)&cmd.arg0);
+            cmd_ret = cgc_cmd_list_orders(&state, (char *)&cmd.arg0);
             break;
         case PLACE_ORDER:
-            cmd_ret = cmd_place_order(&state, (char *)&cmd.arg0, cmd.arg1,
+            cmd_ret = cgc_cmd_place_order(&state, (char *)&cmd.arg0, cmd.arg1,
                     cmd.arg2, cmd.arg3);
             break;
         case CHECK_ORDER:
-            cmd_ret = cmd_check_order(&state, cmd.arg0);
+            cmd_ret = cgc_cmd_check_order(&state, cmd.arg0);
             break;
         case CANCEL_ORDER:
-            cmd_ret = cmd_cancel_order(&state, cmd.arg0);
+            cmd_ret = cgc_cmd_cancel_order(&state, cmd.arg0);
             break;
         case QUIT:
             goto out;
@@ -76,11 +76,11 @@ main(void) {
             cmd_ret = -1;
         }
 
-        write_all(STDOUT, &cmd_ret, sizeof(cmd_ret));
+        cgc_write_all(STDOUT, &cmd_ret, sizeof(cmd_ret));
     }
    
 out:
-    stock_destroy(&state);
+    cgc_stock_destroy(&state);
 
     return 0;
 }

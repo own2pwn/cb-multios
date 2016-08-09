@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-void seed_prng_array( uint32_t *array_data, uint32_t array_size );
-void seed_prng( uint32_t seed_value );
-uint32_t prng( void );
-uint32_t random_in_range( uint32_t min, uint32_t max );
+void cgc_seed_prng_array( cgc_uint32_t *array_data, cgc_uint32_t array_size );
+void cgc_seed_prng( cgc_uint32_t seed_value );
+cgc_uint32_t cgc_prng( void );
+cgc_uint32_t cgc_random_in_range( cgc_uint32_t min, cgc_uint32_t cgc_max );
 
 #endif // __PRNG_H__

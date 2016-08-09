@@ -2,7 +2,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -29,9 +29,9 @@ const static int N_FORMULAS = 3000;
 typedef struct chem_formula {
 	char *compound_name;
 	double mole;
-} chem_formula_t;
+} cgc_chem_formula_t;
 
-static chem_formula_t chem_formulas[N_FORMULAS] = {
+static cgc_chem_formula_t chem_formulas[N_FORMULAS] = {
 	{ "[CH2-].CN1C2=C(C=CC3=C2C(=NC(=C)C3=C)[O-])[N-]C1=N.[Rb+].[Y]", 0.688187645035 },
 	{ "(C)N(CC(=O)OC)C(=O)C=CC1=CC=CC(=C1)C#N", 1.98716677345 },
 	{ "WVGDXNDJTJGGGO-UHFFFAOYSA-M", 1.26072600093 },

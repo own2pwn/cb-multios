@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,20 +34,20 @@ THE SOFTWARE.
 #include "malloc.h"
 
 
-extern fileHandleType securityIDFileHandle;
+extern cgc_fileHandleType securityIDFileHandle;
 
 int main(void) {
 
 int retcode;
 unsigned int count;
-fileHandleType fh;
+cgc_fileHandleType fh;
 int useraccount;
 void *message;
 int messagetype;
-newUserMessageType *newuser;
-loginMessageType *loginuser;
-newPostMessageType *newPost;
-addCommentMessageType *newComment;
+cgc_newUserMessageType *newuser;
+cgc_loginMessageType *loginuser;
+cgc_newPostMessageType *newPost;
+cgc_addCommentMessageType *newComment;
 unsigned int postID;
 int responseCode;
 unsigned int nextPostID = 100;
@@ -57,69 +57,69 @@ int postSize;
 int endIt;
     
     // using a small blocksize of 256 bytes because postings are small and this is more efficient
-    retcode = initFileSystem(512, 512, 512*2000);
+    retcode = cgc_initFileSystem(512, 512, 512*2000);
 
     securityIDFileHandle = -1;
 
     if (retcode != 0) {
 
-        printf("Error making filesystem.\n");
+        cgc_printf("Error making filesystem.\n");
         _terminate(-1);
     }
 
-    retcode = makeMemoryFile("sticky.posts", 0x4347C000 + 1536, 160*16,  1,  ROOT_ID );
+    retcode = cgc_makeMemoryFile("sticky.posts", 0x4347C000 + 1536, 160*16,  1,  ROOT_ID );
 
     if ( retcode != 0 ) {
 
-        printf("Error making posts.log\n");
+        cgc_printf("Error making posts.log\n");
         _terminate(-1);
     }
 
-    retcode = makeMemoryFile("initialPostID.mem", 0x4347C000, 4, 1, ROOT_ID );
+    retcode = cgc_makeMemoryFile("initialPostID.mem", 0x4347C000, 4, 1, ROOT_ID );
 
     if ( retcode != 0 ) {
 
-        printf("Error making posts.log\n");
+        cgc_printf("Error making posts.log\n");
         _terminate(-1);
     }
 
-	retcode = createFile("Users.db", REGULAR, ROOT_ID);	
+	retcode = cgc_createFile("Users.db", REGULAR, ROOT_ID);	
     
     if ( retcode != 0 ) {
 
-        printf("Error making Users.db\n");
+        cgc_printf("Error making Users.db\n");
         _terminate(-1);
     }
 
-    retcode = createFile("posts.log", REGULAR, ROOT_ID);
+    retcode = cgc_createFile("posts.log", REGULAR, ROOT_ID);
 
     if ( retcode != 0 ) {
 
-        printf("Error making posts.log\n");
+        cgc_printf("Error making posts.log\n");
         _terminate(-1);
     }
 
     // seed the first postID with magic page data.  After this they just increase by 1 each time
-    fh = openFile("initialPostID.mem", ROOT_ID);
+    fh = cgc_openFile("initialPostID.mem", ROOT_ID);
 
     if ( fh < 0 ) {
 
-        printf("Error opening initialPostID.mem\n");
+        cgc_printf("Error opening initialPostID.mem\n");
         _terminate(-1);
     }
-    readFile(fh, (void *)&nextPostID, sizeof(nextPostID), 0, 0, ROOT_ID);
+    cgc_readFile(fh, (void *)&nextPostID, sizeof(nextPostID), 0, 0, ROOT_ID);
     nextPostID &= 0x0fffffff;
 
     // we'll never re-seed the postID so just delete the file
-    deleteFile(fh, ROOT_ID);
+    cgc_deleteFile(fh, ROOT_ID);
 
     // this file will allow us to get semi-random userID's from the magic page.  It is kept open and a new ID is 
     // read whenever a new account is created
-    retcode = makeMemoryFile("UserIDs.mem", 0x4347C004, 1532, 1, ROOT_ID );
+    retcode = cgc_makeMemoryFile("UserIDs.mem", 0x4347C004, 1532, 1, ROOT_ID );
 
     if ( retcode != 0 ) {
 
-        printf("Error making UserIDs.mem\n");
+        cgc_printf("Error making UserIDs.mem\n");
         _terminate(-1);
     }
 
@@ -134,16 +134,16 @@ int endIt;
 
     while (!endIt) {
 
-    	messagetype = receiveMessage(message);
+    	messagetype = cgc_receiveMessage(message);
 
     	switch (messagetype) {
 
     			// add a new user
     		case 0xa0:
 
-    			newuser = (newUserMessageType *)message;
+    			newuser = (cgc_newUserMessageType *)message;
 
-    			if (create_user(newuser->name, newuser->password, newuser->fullname) >= 0 ) {
+    			if (cgc_create_user(newuser->name, newuser->password, newuser->fullname) >= 0 ) {
 
     				responseCode = 0;
     				
@@ -154,17 +154,17 @@ int endIt;
 
     			}
 
-    			sendResponse((void *)&responseCode, sizeof(responseCode));
+    			cgc_sendResponse((void *)&responseCode, sizeof(responseCode));
 
     			break;
 
-    			// authenticate a user
+    			// cgc_authenticate a user
     		case 0xb0:
 
-    			loginuser = (loginMessageType *)message;
-    			useraccount = authenticate(loginuser->name, loginuser->password);
+    			loginuser = (cgc_loginMessageType *)message;
+    			useraccount = cgc_authenticate(loginuser->name, loginuser->password);
 
-    			sendResponse((void *)&useraccount, sizeof(useraccount));
+    			cgc_sendResponse((void *)&useraccount, sizeof(useraccount));
 
     			break;
 
@@ -173,17 +173,17 @@ int endIt;
 
                 sessionToken = *(unsigned int *)message;
 
-                retcode = newFeedPost(sessionToken, &postText, &postSize);
+                retcode = cgc_newFeedPost(sessionToken, &postText, &postSize);
 
                 if (retcode == 0 ) {
 
-                    sendResponse((void *)postText, postSize);
+                    cgc_sendResponse((void *)postText, postSize);
                     deallocate((void *)postText, postSize);
                 }
                 else {
 
                     retcode = -1;
-                    sendResponse((void *)&retcode, sizeof(retcode));
+                    cgc_sendResponse((void *)&retcode, sizeof(retcode));
 
                 }
     			break;
@@ -191,9 +191,9 @@ int endIt;
     			 // record a new post from the user
     		case 0xd0:
 
-                newPost = (newPostMessageType *)message;
+                newPost = (cgc_newPostMessageType *)message;
 
-                retcode = savePost(nextPostID, newPost->sessionToken, newPost->post);
+                retcode = cgc_savePost(nextPostID, newPost->sessionToken, newPost->post);
 
                 if (retcode == 0) {
 
@@ -205,18 +205,18 @@ int endIt;
                     retcode = -1;
                 }
 
-                sendResponse((void *)&retcode, sizeof(retcode));
+                cgc_sendResponse((void *)&retcode, sizeof(retcode));
 
     			break;
 
                 // comment on a post
             case 0xe0:
 
-                newComment = (addCommentMessageType *)message;
+                newComment = (cgc_addCommentMessageType *)message;
 
-                retcode = saveComment(newComment->postID, newComment->commenterID, newComment->comment);
+                retcode = cgc_saveComment(newComment->postID, newComment->commenterID, newComment->comment);
 
-                sendResponse((void *)&retcode, sizeof(retcode));
+                cgc_sendResponse((void *)&retcode, sizeof(retcode));
 
                 break;
 
@@ -227,25 +227,25 @@ int endIt;
 
                 if ( postID < 16 ) {
 
-                     retcode = sendStickPost( postID );
+                     retcode = cgc_sendStickPost( postID );
                 }
                 else {
 
-                    retcode = retrievePost( postID, 1 , &postText, &postSize);
+                    retcode = cgc_retrievePost( postID, 1 , &postText, &postSize);
 
                     if (retcode == 0) {
 
-                        sendResponse((void *)postText, postSize);
+                        cgc_sendResponse((void *)postText, postSize);
                         deallocate((void *)postText, postSize);
                     }
                 }
 
                 if ( retcode == -1 ) {
 
-                    sendResponse((void *)&retcode, sizeof(retcode));
+                    cgc_sendResponse((void *)&retcode, sizeof(retcode));
 
                 }
-                // response sent by the retrievePost() function
+                // response sent by the cgc_retrievePost() function
                 break;
 
             case 100:
@@ -264,7 +264,7 @@ int endIt;
 
     } // while (1)
 
-    printf("BYE!\n");
+    cgc_printf("BYE!\n");
 
 }  // main  
 

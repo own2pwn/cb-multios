@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,9 +25,9 @@
 #include "int2str.h"
 #include "xxprintf.h"
 
-int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
+int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args) {
 
-    size_t buf_len = 0;
+    cgc_size_t buf_len = 0;
     const char *fmt_ptr = fmt;
 
     // if fmt is NULL, set fmt_ptr to "" so it will skip the while loop
@@ -49,10 +49,10 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
 
         } else {
             char fmt_spec = '\0';
-            size_t arg_len = 0;
+            cgc_size_t arg_len = 0;
             unsigned char next_ch = 0;
             const char *next_arg = NULL;  // ptr to the next arg in args (to use this iteration)
-            char tmp[32]; // tmp buffer for int2str conversion
+            char tmp[32]; // tmp buffer for cgc_int2str conversion
             int int_arg = 0;
             int remaining = 0;
 
@@ -63,9 +63,9 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
             switch(fmt_spec) {
                 case 'n': // deal with number
                     int_arg = va_arg(args, int);
-                    int2str(tmp, 32, int_arg);
+                    cgc_int2str(tmp, 32, int_arg);
                     next_arg = tmp;
-                    arg_len = strlen(next_arg);
+                    arg_len = cgc_strlen(next_arg);
 
                     break; 
                 case 'c': // deal with char buffer (i.e. string)
@@ -73,7 +73,7 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
                     if (!next_arg) {
                         arg_len = 0;
                     } else { 
-                        arg_len = strlen(next_arg);
+                        arg_len = cgc_strlen(next_arg);
                     } 
 
                     break; 
@@ -92,10 +92,10 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
             if (fmt_spec == 'n' || fmt_spec == 'c') {
                 remaining = buf_size - buf_len;
                 if (arg_len <= remaining) {
-                    memcpy(&buf[buf_len], next_arg, arg_len);
+                    cgc_memcpy(&buf[buf_len], next_arg, arg_len);
                     buf_len += arg_len;
                 } else {
-                    memcpy(&buf[buf_len], next_arg, remaining);
+                    cgc_memcpy(&buf[buf_len], next_arg, remaining);
                     buf_len += remaining;
                 }
             }
@@ -126,12 +126,12 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
 
 }
 
-int snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
+int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...) {
     int buf_len;
-    va_list args;
+    cgc_va_list args;
 
     va_start(args, fmt);
-    buf_len = vsnprintf(buf, buf_size, fmt, args);
+    buf_len = cgc_vsnprintf(buf, buf_size, fmt, args);
     va_end(args);
 
     return buf_len;

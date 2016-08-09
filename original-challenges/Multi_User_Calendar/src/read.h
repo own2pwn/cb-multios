@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,8 +26,8 @@
 
 #define MAX_TRIES 5
 
-int readline(char *buf, size_t buf_size);
-int readnum(char *buf, size_t buf_size, int *num);
-char *q_and_a(char *question, int maxlen, char *buf, size_t buflen, int *recv_status, bool allow_empty);
+int cgc_readline(char *buf, cgc_size_t buf_size);
+int cgc_readnum(char *buf, cgc_size_t buf_size, int *num);
+char *cgc_q_and_a(char *question, int maxlen, char *buf, cgc_size_t buflen, int *recv_status, cgc_bool allow_empty);
 
 #endif

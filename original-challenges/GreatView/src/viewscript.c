@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -62,15 +62,15 @@
 #define MAXARRSIZE 2*1024*1024
 #define MAXSCRIPTSIZE 2*1024*1024
 
-typedef enum {NUMTYPE, ARRTYPE, VIEWTYPE} varenum;
+typedef enum {NUMTYPE, ARRTYPE, VIEWTYPE} cgc_varenum;
 
 typedef struct viewtype {
     char *name;
-    size_t size;
+    cgc_size_t size;
     int sign;
-} viewtype_t;
+} cgc_viewtype_t;
 
-static viewtype_t viewtypes[] = { 
+static cgc_viewtype_t viewtypes[] = { 
                             {"int", sizeof(int), 1},
                             {"uint", sizeof(unsigned int), 0},
                             {"short", sizeof(short), 1},
@@ -82,34 +82,34 @@ static viewtype_t viewtypes[] = {
 typedef struct var {
     struct var *next;
     char *name;
-    varenum type;
+    cgc_varenum type;
     int refcount;
-} var_t;
+} cgc_var_t;
 
 typedef struct numvar {
-    var_t v;
+    cgc_var_t v;
     int num;
-} numvar_t;
+} cgc_numvar_t;
 
 typedef struct arrvar {
-    var_t v;
-    size_t size;
+    cgc_var_t v;
+    cgc_size_t size;
     uint8_t arr[0];
-} arrvar_t;
+} cgc_arrvar_t;
 
 typedef struct viewvar {
-    var_t v;
-    arrvar_t *arr;
-    viewtype_t *view;
+    cgc_var_t v;
+    cgc_arrvar_t *arr;
+    cgc_viewtype_t *view;
     int sign;
     char *bytesize;
-} viewvar_t;
+} cgc_viewvar_t;
 
 typedef struct nspace {
-    var_t *first;
-    var_t *last;
+    cgc_var_t *first;
+    cgc_var_t *last;
     int count;
-} nspace_t;
+} cgc_nspace_t;
 
 /**
  * Create new number variable.
@@ -118,7 +118,7 @@ typedef struct nspace {
  * @param arg String containing constructor args
  * @return 0 on success, err number on error
  */
-static int newnum(char *name, char *arg); 
+static int cgc_newnum(char *name, char *arg); 
 
 /**
  * Create new array variable.
@@ -127,7 +127,7 @@ static int newnum(char *name, char *arg);
  * @param arg String containing constructor args
  * @return 0 on success, err number on error
  */
-static int newarr(char *name, char *arg);
+static int cgc_newarr(char *name, char *arg);
 
 /**
  * Create new view variable.
@@ -136,35 +136,35 @@ static int newarr(char *name, char *arg);
  * @param arg String containing constructor args
  * @return 0 on success, err number on error
  */
-static int newview(char *name, char *arg);
+static int cgc_newview(char *name, char *arg);
 
 /**
  * Handle "new" command
  *
  * @return 0 on success, err number on error
  */
-static int handlenew();
+static int cgc_handlenew();
 
 /**
  * Handle "get" command
  *
  * @return 0 on success, err number on error
  */
-static int handleget();
+static int cgc_handleget();
 
 /**
  * Handle "set" command
  *
  * @return 0 on success, err number on error
  */
-static int handleset();
+static int cgc_handleset();
 
 /**
  * Handle "del" command
  *
  * @return 0 on success, err number on error
  */
-static int handledel();
+static int cgc_handledel();
 
 /**
  * Delete a variable from the namespace, by name.
@@ -172,7 +172,7 @@ static int handledel();
  * @param name Name of variable
  * @return 0 on success, err number on error
  */
-static int delvar(char *name); 
+static int cgc_delvar(char *name); 
 
 /**
  * Add a variable to the namespace.
@@ -182,7 +182,7 @@ static int delvar(char *name);
  * @param type Type of the variable
  * @return 0 on success, err number on error
  */
-static int addvar(var_t *var, char *name, varenum type); 
+static int cgc_addvar(cgc_var_t *var, char *name, cgc_varenum type); 
 
 /**
  * Get variable by name
@@ -190,7 +190,7 @@ static int addvar(var_t *var, char *name, varenum type);
  * @param name Name of variable
  * @return variable on success, NULL on error
  */
-static var_t *getvar(char *name); 
+static cgc_var_t *cgc_getvar(char *name); 
 
 /**
  * Calculate the total number, in bytes, of a view, from a list of num vars.
@@ -198,7 +198,7 @@ static var_t *getvar(char *name);
  * @param varlist List of variable names
  * @return Size in bytes on success, 0 on error
  */
-static uint32_t calc_bytesize(char *varlist); 
+static uint32_t cgc_calc_bytesize(char *varlist); 
 
 /**
  * Run a line from a script
@@ -206,20 +206,20 @@ static uint32_t calc_bytesize(char *varlist);
  * @param cmd Line from script
  * @return 0 on success, err number on failure
  */
-static int runcmd(char *cmd); 
+static int cgc_runcmd(char *cmd); 
 
 
 static char *cmds[4] = { NEWTOK, GETTOK, SETTOK, DELTOK };
-static int (*handlers[4])() = { handlenew, handleget, handleset, handledel };
+static int (*handlers[4])() = { cgc_handlenew, cgc_handleget, cgc_handleset, cgc_handledel };
 static char *types[3] = { NUM, ARR, VIEW }; 
-static int (*constructors[3])(char *, char *) = { newnum, newarr, newview };
-static nspace_t global_nspace = {NULL, 0, 0};
+static int (*constructors[3])(char *, char *) = { cgc_newnum, cgc_newarr, cgc_newview };
+static cgc_nspace_t global_nspace = {NULL, 0, 0};
 
-static int delvar(char *name) {
-    var_t *cur = global_nspace.first;
-    var_t *last = NULL;
+static int cgc_delvar(char *name) {
+    cgc_var_t *cur = global_nspace.first;
+    cgc_var_t *last = NULL;
     while (cur) {
-        if (streq(cur->name,name)) {
+        if (cgc_streq(cur->name,name)) {
             if (last)
                 last->next = cur->next;
             else
@@ -229,13 +229,13 @@ static int delvar(char *name) {
                 global_nspace.last = last;
 
             if (cur->type == VIEWTYPE) {
-                if (!(--(((viewvar_t*)cur)->arr->v.refcount)))
-                    free(((viewvar_t*)cur)->arr);
+                if (!(--(((cgc_viewvar_t*)cur)->arr->v.refcount)))
+                    cgc_free(((cgc_viewvar_t*)cur)->arr);
             }
 
             //we keep arrays around until all outstanding refs are gone
             if (cur->refcount <= 0) //should be 0
-                free(cur);
+                cgc_free(cur);
 
             global_nspace.count--;
 
@@ -247,12 +247,12 @@ static int delvar(char *name) {
     return ERRNOSUCHVAR;
 }
 
-static int addvar(var_t *var, char *name, varenum type) {
+static int cgc_addvar(cgc_var_t *var, char *name, cgc_varenum type) {
 
-    if (!(var->name = calloc(strlen(name)+1)))
+    if (!(var->name = cgc_calloc(cgc_strlen(name)+1)))
         return ERRNOMEM;
 
-    strcpy(var->name, name);
+    cgc_strcpy(var->name, name);
 
     var->type = type;
     if (global_nspace.last)
@@ -265,39 +265,39 @@ static int addvar(var_t *var, char *name, varenum type) {
     return 0;
 }
 
-static var_t *getvar(char *name) {
-    var_t *cur = NULL;
+static cgc_var_t *cgc_getvar(char *name) {
+    cgc_var_t *cur = NULL;
     if (global_nspace.count <= 0 || !global_nspace.first)
         return NULL;
 
     cur = global_nspace.first;
     while (cur) {
-        if (streq(cur->name, name))
+        if (cgc_streq(cur->name, name))
             return cur;
         cur = cur->next;
     }
     return NULL;
 }
 
-static uint32_t calc_bytesize(char *varlist) {
+static uint32_t cgc_calc_bytesize(char *varlist) {
     char *varname = NULL;
     char *varlistcpy = NULL;
     char *varlistcpy_strtok = NULL;
-    var_t *var = NULL;
+    cgc_var_t *var = NULL;
     uint32_t val = 0;
 
-    if (!(varlistcpy = calloc(strlen(varlist)+1)))
+    if (!(varlistcpy = cgc_calloc(cgc_strlen(varlist)+1)))
         return 0;
 
-    strcpy(varlistcpy,varlist);
+    cgc_strcpy(varlistcpy,varlist);
     varlistcpy_strtok = varlistcpy;
 
     //we allow this to overflow, but result is checked for size elsewhere
-    while ((varname = strtok(varlistcpy_strtok,','))) {
-        varlistcpy_strtok = NULL; //for strtok
-        if (strlen(varname) == 0)
+    while ((varname = cgc_strtok(varlistcpy_strtok,','))) {
+        varlistcpy_strtok = NULL; //for cgc_strtok
+        if (cgc_strlen(varname) == 0)
             break;
-        if (!(var = getvar(varname))) {
+        if (!(var = cgc_getvar(varname))) {
             val = 0;
             break;
         }
@@ -305,119 +305,119 @@ static uint32_t calc_bytesize(char *varlist) {
             val = 0;
             break;
         }
-        val += ((numvar_t*)var)->num;
+        val += ((cgc_numvar_t*)var)->num;
     }
-    free(varlistcpy);
+    cgc_free(varlistcpy);
     return val;
 }
 
-static int newnum(char *name, char *arg) {
-    numvar_t *n = NULL;
+static int cgc_newnum(char *name, char *arg) {
+    cgc_numvar_t *n = NULL;
     int res = 0;
 
-    if (!(n = calloc(sizeof(numvar_t))))
+    if (!(n = cgc_calloc(sizeof(cgc_numvar_t))))
         return ERRNOMEM;
 
-    n->num = str2int(arg);
+    n->num = cgc_str2int(arg);
 
-    res = addvar((var_t*)n, name, NUMTYPE);
+    res = cgc_addvar((cgc_var_t*)n, name, NUMTYPE);
 
     if(res)
-        free(n);
+        cgc_free(n);
 
     return res;
 }
 
-static int newarr(char *name, char *arg) {
-    arrvar_t *a = NULL; 
+static int cgc_newarr(char *name, char *arg) {
+    cgc_arrvar_t *a = NULL; 
     int res = 0;
 
-    uint32_t size = str2uint(arg);
+    uint32_t size = cgc_str2uint(arg);
 
     if (size > MAXARRSIZE)
         return ERRTOOBIG;
 
-    if (!(a = calloc(sizeof(arrvar_t)+(size*sizeof(int)))))
+    if (!(a = cgc_calloc(sizeof(cgc_arrvar_t)+(size*sizeof(int)))))
         return ERRNOMEM;
 
     a->size = size*sizeof(int);
 
-    res = addvar((var_t*)a, name, ARRTYPE);
+    res = cgc_addvar((cgc_var_t*)a, name, ARRTYPE);
 
     if (res)
-        free(a);
+        cgc_free(a);
 
     return res;
 }
 
-static int newview(char *name, char *arg) {
-    viewvar_t *v = NULL;
-    arrvar_t *a = NULL;
+static int cgc_newview(char *name, char *arg) {
+    cgc_viewvar_t *v = NULL;
+    cgc_arrvar_t *a = NULL;
     int i = 0;
     int res = 0;
 
-    char *type = strtok(NULL,' ');
+    char *type = cgc_strtok(NULL,' ');
 
-    if (!type || strlen(type) == 0)
+    if (!type || cgc_strlen(type) == 0)
         return ERRNOTYPE;
 
-    if (!(a = (arrvar_t*)getvar(arg))) 
+    if (!(a = (cgc_arrvar_t*)cgc_getvar(arg))) 
         return ERRNOSUCHVAR;
 
     if (a->v.type != ARRTYPE) 
         return ERRWRONGTYPE;
 
-    if (!(v = calloc(sizeof(viewvar_t))))
+    if (!(v = cgc_calloc(sizeof(cgc_viewvar_t))))
         return ERRNOMEM;
 
-    for (i=0; i < sizeof(viewtypes)/sizeof(viewtype_t); i++) {
-        if (streq(type,viewtypes[i].name)) {
+    for (i=0; i < sizeof(viewtypes)/sizeof(cgc_viewtype_t); i++) {
+        if (cgc_streq(type,viewtypes[i].name)) {
             v->view = &viewtypes[i];
             break;
         }
     }
 
     if (!v->view) {
-        free(v);
+        cgc_free(v);
         return ERRNOSUCHTYPE;
     }
 
     v->arr = a;
 
-    res = addvar((var_t*)v, name, VIEWTYPE);
+    res = cgc_addvar((cgc_var_t*)v, name, VIEWTYPE);
 
     if (res)
-        free(v);
+        cgc_free(v);
 
     return res;
 }
 
-static int handlenew() {
+static int cgc_handlenew() {
     char *type = NULL;
     char *name = NULL;
     char *arg = NULL;
     int i = 0;
 
-    type = strtok(NULL,' ');
+    type = cgc_strtok(NULL,' ');
 
-    if (!type || strlen(type) == 0)
+    if (!type || cgc_strlen(type) == 0)
         return ERRNOTYPE;
 
-    name = strtok(NULL,' ');
+    name = cgc_strtok(NULL,' ');
 
     if (!name)
         return ERRNONAME;
 
-    if (getvar(name))
+    if (cgc_getvar(name))
         return ERRALREADYEXISTS;
 
-    arg = strtok(NULL, ' ');
+    arg = cgc_strtok(NULL, ' ');
 
-    if (!arg || strlen(arg) == 0)
+    if (!arg || cgc_strlen(arg) == 0)
         return ERRNOARG;
 
     for (i = 0; i < sizeof(types)/sizeof(types[0]); i+=1) {
-        if (streq(type,types[i]))
+        if (cgc_streq(type,types[i]))
             return constructors[i](name,arg);
     }
 
@@ -425,11 +425,11 @@ static int handlenew() {
 
 }
 
-static int handleget() {
-    var_t *var = NULL;
-    viewvar_t *view = NULL;
+static int cgc_handleget() {
+    cgc_var_t *var = NULL;
+    cgc_viewvar_t *view = NULL;
     char out[12] = {0};
-    char *name = strtok(NULL, ' ');
+    char *name = cgc_strtok(NULL, ' ');
     char *arg = NULL;
     char *subarg = NULL;
     uint32_t val = 0;
@@ -437,42 +437,42 @@ static int handleget() {
     int idx = 0;
     int i = 0;
 
-    if (!name || strlen(name) == 0)
+    if (!name || cgc_strlen(name) == 0)
         return ERRNONAME;
 
-    if (!(var = getvar(name)))
+    if (!(var = cgc_getvar(name)))
         return ERRNOSUCHVAR;
 
     switch (var->type) {
         case NUMTYPE:
-            int2str(out, sizeof(out), ((numvar_t*)var)->num);
+            cgc_int2str(out, sizeof(out), ((cgc_numvar_t*)var)->num);
             break;
 
         case ARRTYPE:
-            if (!(arg = strtok(NULL, ' ')))
+            if (!(arg = cgc_strtok(NULL, ' ')))
                 return ERRNOARG;
             
-            idx = str2uint(arg);
+            idx = cgc_str2uint(arg);
 
-            if (idx >= ((arrvar_t*)var)->size/sizeof(int))
+            if (idx >= ((cgc_arrvar_t*)var)->size/sizeof(int))
                 return ERRINVALIDIDX;
 
-            int2str(out, sizeof(out), ((int*)((arrvar_t*)var)->arr)[idx]);
+            cgc_int2str(out, sizeof(out), ((int*)((cgc_arrvar_t*)var)->arr)[idx]);
             break;
 
         case VIEWTYPE:
-            view = (viewvar_t*)var;
+            view = (cgc_viewvar_t*)var;
 
-            if (!(arg = strtok(NULL, ' ')))
+            if (!(arg = cgc_strtok(NULL, ' ')))
                 return ERRNOARG;
             
-            idx = str2uint(arg)*view->view->size;
+            idx = cgc_str2uint(arg)*view->view->size;
 
             if (view->bytesize) {
                 #ifndef PATCHED
-                if (!(idx+view->view->size < calc_bytesize(view->bytesize)))
+                if (!(idx+view->view->size < cgc_calc_bytesize(view->bytesize)))
                 #else
-                if (!(idx+view->view->size < calc_bytesize(view->bytesize) && calc_bytesize(view->bytesize) < view->arr->size))
+                if (!(idx+view->view->size < cgc_calc_bytesize(view->bytesize) && cgc_calc_bytesize(view->bytesize) < view->arr->size))
                 #endif
                     return ERRINVALIDIDX;
             } else if (idx+view->view->size > view->arr->size) {
@@ -484,13 +484,13 @@ static int handleget() {
 
             if (view->view->sign) {
                 if (view->view->size == sizeof(int))
-                    int2str(out, sizeof(out), val);
+                    cgc_int2str(out, sizeof(out), val);
                 else if (view->view->size == sizeof(short))
-                    int2str(out, sizeof(out), (short)val);
+                    cgc_int2str(out, sizeof(out), (short)val);
                 else if (view->view->size == sizeof(char))
-                    int2str(out, sizeof(out), (char)val);
+                    cgc_int2str(out, sizeof(out), (char)val);
             } else {
-                uint2str(out, sizeof(out), val);
+                cgc_uint2str(out, sizeof(out), val);
             }
 
             break;
@@ -498,72 +498,72 @@ static int handleget() {
             return ERRNOSUCHTYPE;
     }
 
-    SSENDL(strlen(out),out);
+    SSENDL(cgc_strlen(out),out);
     return 0;
 }
 
-static int handleset() {
-    var_t *var = NULL;
-    char *name = strtok(NULL, ' ');
+static int cgc_handleset() {
+    cgc_var_t *var = NULL;
+    char *name = cgc_strtok(NULL, ' ');
     char *arg = NULL, *arg2 = NULL, *varlist = NULL;
     uint32_t idx = 0;
     uint32_t val = 0;
 
-    if (!name || strlen(name) == 0)
+    if (!name || cgc_strlen(name) == 0)
         return ERRNONAME;
 
-    if (!(var = getvar(name)))
+    if (!(var = cgc_getvar(name)))
         return ERRNOSUCHVAR;
 
-    if (!(arg = strtok(NULL, ' ')))
+    if (!(arg = cgc_strtok(NULL, ' ')))
         return ERRNOARG;
 
     switch (var->type) {
         case NUMTYPE:
-            ((numvar_t*)var)->num = str2int(arg);
+            ((cgc_numvar_t*)var)->num = cgc_str2int(arg);
             return 0;
         case ARRTYPE:
-            idx = str2int(arg);
+            idx = cgc_str2int(arg);
 
-            if (idx >= ((arrvar_t*)var)->size/sizeof(int))
+            if (idx >= ((cgc_arrvar_t*)var)->size/sizeof(int))
                 return ERRINVALIDIDX;
 
-            if (!(arg = strtok(NULL, ' ')))
+            if (!(arg = cgc_strtok(NULL, ' ')))
                 return ERRNOARG;
 
-            ((int*)&((arrvar_t*)var)->arr)[idx] = str2int(arg);
+            ((int*)&((cgc_arrvar_t*)var)->arr)[idx] = cgc_str2int(arg);
 
             return 0;
         case VIEWTYPE:
-            if (!(arg2 = strtok(NULL, ' ')))
+            if (!(arg2 = cgc_strtok(NULL, ' ')))
                 return ERRNOARG;
 
-            if (!(varlist = calloc(strlen(arg2)+1)))
+            if (!(varlist = cgc_calloc(cgc_strlen(arg2)+1)))
                 return ERRNOMEM;
 
-            strcpy(varlist,arg2);
+            cgc_strcpy(varlist,arg2);
 
-            if (!streq(arg,"byteSize")) {
-                free(varlist);
+            if (!cgc_streq(arg,"byteSize")) {
+                cgc_free(varlist);
                 return ERRNOSUCHVAR;
             }
 
-            val = calc_bytesize(arg2);
+            val = cgc_calc_bytesize(arg2);
 
-            if (!(var = getvar(name))) {
-                free(varlist);
+            if (!(var = cgc_getvar(name))) {
+                cgc_free(varlist);
                 return ERRNOSUCHVAR;
             }
 
-            if (val > ((viewvar_t*)var)->arr->size) {
-                free(varlist);
+            if (val > ((cgc_viewvar_t*)var)->arr->size) {
+                cgc_free(varlist);
                 return ERRTOOBIG;
             }
 
-            if (((viewvar_t*)var)->bytesize)
-                free(((viewvar_t*)var)->bytesize);
+            if (((cgc_viewvar_t*)var)->bytesize)
+                cgc_free(((cgc_viewvar_t*)var)->bytesize);
 
-            ((viewvar_t*)var)->bytesize = varlist;
+            ((cgc_viewvar_t*)var)->bytesize = varlist;
 
             return 0;
 
@@ -572,32 +572,32 @@ static int handleset() {
     }
 }
 
-static int handledel() {
-    char *name = strtok(NULL,' ');
+static int cgc_handledel() {
+    char *name = cgc_strtok(NULL,' ');
 
-    if (!name || strlen(name)==0)
+    if (!name || cgc_strlen(name)==0)
         return ERRNONAME;
 
-    return delvar(name);
+    return cgc_delvar(name);
 }
 
-static int runcmd(char *cmd) {
+static int cgc_runcmd(char *cmd) {
     int i;
 
-    cmd = strtok(cmd,' ');
+    cmd = cgc_strtok(cmd,' ');
 
-    if (!cmd || strlen(cmd) == 0)
+    if (!cmd || cgc_strlen(cmd) == 0)
         return ERRSHORT;
 
     for (i = 0; i < sizeof(cmds)/sizeof(cmds[0]); i+=1) {
-        if (streq(cmd,cmds[i]))
+        if (cgc_streq(cmd,cmds[i]))
             return handlers[i]();
     }
 
     return ERRNOSUCHCMD;
 }
 
-int run_viewscript(char *script) {
+int cgc_run_viewscript(char *script) {
 
     char *cur = script;
     char **lines;
@@ -605,7 +605,7 @@ int run_viewscript(char *script) {
     int idx = 0;
     int count = 0;
     //this is properly null-terminated by main()
-    int len = strlen(script);
+    int len = cgc_strlen(script);
 
     if (len > MAXSCRIPTSIZE)
         return ERRTOOBIG;
@@ -619,21 +619,21 @@ int run_viewscript(char *script) {
     if (count == 0)
         return ERRSHORT;
 
-    if (!(lines = calloc((count+1)*sizeof(char *))))
+    if (!(lines = cgc_calloc((count+1)*sizeof(char *))))
         return ERRNOMEM;
 
-    lines[0] = strtok(script,'\n');
+    lines[0] = cgc_strtok(script,'\n');
     #ifdef PATCHED
-    while (idx < count && (lines[++idx] = strtok(NULL,'\n')));
+    while (idx < count && (lines[++idx] = cgc_strtok(NULL,'\n')));
     #else 
-    while ((lines[++idx] = strtok(NULL,'\n')));
+    while ((lines[++idx] = cgc_strtok(NULL,'\n')));
     #endif
     for (idx = 0; idx < count; idx++) {
-        if ((res = runcmd(lines[idx])))
+        if ((res = cgc_runcmd(lines[idx])))
             return res;
     }
 
-    free(lines);
+    cgc_free(lines);
 
     LOG("Done.");
 

@@ -44,8 +44,8 @@
 #define MAX_UINT32 0xffffffff
 
 // Fragmentation related
-int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
-int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
+int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
+int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
 
 /**
  * Set a buffer to provided character
@@ -55,7 +55,7 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
  * @param n Number of times to copy character
  * @return dst
  */
-void * memset(void *dst, char c, size_t n); 
+void * cgc_memset(void *dst, char c, cgc_size_t n); 
 
 /**
  * Convert unsigned integer to string
@@ -65,7 +65,7 @@ void * memset(void *dst, char c, size_t n);
  * @param i Integer to convert
  * @return Ascii-representation of i in str_buf
  */
-int uint2str32(char* str_buf, int buf_size, uint32_t i);
+int cgc_uint2str32(char* str_buf, int buf_size, uint32_t i);
 
 /**
  * Compare two buffers
@@ -75,7 +75,7 @@ int uint2str32(char* str_buf, int buf_size, uint32_t i);
  * @param n Number of bytes to compare
  * @return -1 if not equal, 0 if equal
  */
-int memcmp(void *a, void *b, size_t n);
+int cgc_memcmp(void *a, void *b, cgc_size_t n);
 
 /**
  * Convert string to signed integer
@@ -83,7 +83,7 @@ int memcmp(void *a, void *b, size_t n);
  * @param str_buf Source buffer
  * @return integer
  */
-int str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32_t *out);
+int cgc_str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32_t *out);
 
 /**
  * Copy a string with bounds checking
@@ -93,7 +93,7 @@ int str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32
  * @param n Size of destination buffer
  * @return Number of bytes copied
  */
-size_t strncpy(char *s1, char *s2, size_t n);
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
 
 /**
  * Locate character in string
@@ -102,7 +102,7 @@ size_t strncpy(char *s1, char *s2, size_t n);
  * @param h Character to find
  * @return Pointer to character in string, or NULL
  */
-char * strnchr(char *str, char c, uint32_t n); 
+char * cgc_strnchr(char *str, char c, uint32_t n); 
 
 // *
 //  * Tokenize string. Loosely based on strtok.

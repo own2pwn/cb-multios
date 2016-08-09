@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -38,17 +38,17 @@ typedef struct {
 	unsigned int size;
 	void* memory;
 	void* next;
-} Run;
+} cgc_Run;
 
 typedef struct {
-	Run run[MAX_RUNS];
-} Pool;
+	cgc_Run run[MAX_RUNS];
+} cgc_Pool;
 
 typedef struct {
-	size_t size;
+	cgc_size_t size;
 	void* memory;
 	void* next;
-} LargeChunk;
+} cgc_LargeChunk;
 
 /**
 * Allocate size number of bytes from the heap
@@ -57,7 +57,7 @@ typedef struct {
 *
 * @return a pointer the allocated memory
 */
-void* malloc(size_t size);
+void* cgc_malloc(cgc_size_t size);
 
 /**
 * Deallocate the chunk of memory at address ptr
@@ -66,4 +66,4 @@ void* malloc(size_t size);
 *
 * @return None
 */
-void free(void* ptr);
+void cgc_free(void* ptr);

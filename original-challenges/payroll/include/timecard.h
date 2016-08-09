@@ -36,61 +36,61 @@ typedef struct money_s
 {
 	int dollars;
 	int cents;
-} money, *pmoney;
+} cgc_money, *cgc_pmoney;
 
 typedef struct time_s
 {
 	int hours;
 	int minutes;
-} time, *ptime;
+} cgc_time, *cgc_ptime;
 
 // A function pointer will be used to calculate overtime differently for exempt vs non-exempt employees 
-typedef void (*overtime_calc)(pmoney, pmoney, ptime);
+typedef void (*cgc_overtime_calc)(cgc_pmoney, cgc_pmoney, cgc_ptime);
 
-// A payroll struct is used to hold time and pay information for one week
+// A cgc_payroll struct is used to hold cgc_time and pay information for one week
 typedef struct payroll_s{
-	time 	standardtime;
-	time 	overtime;
-	money 	standardpay;
-	money 	overtimepay;
-	money 	payroll_tax;
+	cgc_time 	standardtime;
+	cgc_time 	overtime;
+	cgc_money 	standardpay;
+	cgc_money 	overtimepay;
+	cgc_money 	payroll_tax;
 #ifdef PATCHED
 	char paycheck[20];
 #else
 	char paycheck[12];
 #endif
-	overtime_calc calculate_overtime;
-} payroll, *ppayroll;
+	cgc_overtime_calc calculate_overtime;
+} cgc_payroll, *cgc_ppayroll;
 
-// The employee structure holds various employee information as well as a payroll
+// The cgc_employee structure holds various cgc_employee information as well as a cgc_payroll
 // record for each week of the year. 
 typedef struct employee_s{
 	char 	name[EMPLOYEE_NAME_LEN];
 	int 	id;
-	money 	wage;
+	cgc_money 	wage;
 	int 	exempt;
-	payroll paychecks[WEEKS_IN_A_YEAR];
-} employee, *pemployee;
+	cgc_payroll paychecks[WEEKS_IN_A_YEAR];
+} cgc_employee, *cgc_pemployee;
 
-void atom(pmoney amount, char *str);
-void mtoa(char *str, pmoney amount);
-void atoh(ptime t, char *str);
-void htoa(char *str, ptime t);
-void initialize_employee(pemployee empl);
-void add_time(ptime t, int hours, int minutes);
-void add_money(pmoney dest, float money);
-void add_pay(pmoney pay, pmoney rate, ptime timeworked);
-void log_hours(ppayroll paycheck, char *hours);
-void log_overtime_hours(ppayroll paycheck, char *hours);
-void calculate_standardpay(pmoney pay, pmoney wage, ptime timeworked);
-void calculate_totalpay(ppayroll paycheck);
-void exempt_overtime(pmoney pay, pmoney wage, ptime timeworked);
-void nonexempt_overtime(pmoney pay, pmoney wage, ptime timeworked);
-int get_key_value(char *inbuf, size_t length, char **key, char **value);
-void process_key_value(pemployee empl, char *key, char *value, int *week);
-void merge_employee_records(pemployee empl, pemployee temp);
-void process_query(int query, employee employee_list[], pemployee temp, int week);
-void output_paycheck(pemployee empl, int week);
+void cgc_atom(cgc_pmoney amount, char *str);
+void cgc_mtoa(char *str, cgc_pmoney amount);
+void cgc_atoh(cgc_ptime t, char *str);
+void cgc_htoa(char *str, cgc_ptime t);
+void cgc_initialize_employee(cgc_pemployee empl);
+void cgc_add_time(cgc_ptime t, int hours, int minutes);
+void cgc_add_money(cgc_pmoney dest, float cgc_money);
+void cgc_add_pay(cgc_pmoney pay, cgc_pmoney rate, cgc_ptime timeworked);
+void cgc_log_hours(cgc_ppayroll paycheck, char *hours);
+void cgc_log_overtime_hours(cgc_ppayroll paycheck, char *hours);
+void cgc_calculate_standardpay(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timeworked);
+void cgc_calculate_totalpay(cgc_ppayroll paycheck);
+void cgc_exempt_overtime(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timeworked);
+void cgc_nonexempt_overtime(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timeworked);
+int cgc_get_key_value(char *inbuf, cgc_size_t length, char **key, char **value);
+void cgc_process_key_value(cgc_pemployee empl, char *key, char *value, int *week);
+void cgc_merge_employee_records(cgc_pemployee empl, cgc_pemployee temp);
+void cgc_process_query(int query, cgc_employee employee_list[], cgc_pemployee temp, int week);
+void cgc_output_paycheck(cgc_pemployee empl, int week);
 
 // Read status codes
 #define READ_ERROR 			-1

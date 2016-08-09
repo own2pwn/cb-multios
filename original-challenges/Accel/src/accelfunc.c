@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,29 +27,29 @@
 #include "accelfunc.h"
 #include "convert.h"
 
-double handle_op_avg(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_avg(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     if (*args == NULL)
         goto error;
 
     double result = 0.0, operand;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if(*is_bad_formula)
             goto error;
 
         result += operand;
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
@@ -60,21 +60,21 @@ done:
     return result / (double) i;
 }
 
-double handle_op_count(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_count(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     if (*args == NULL)
         goto error;
 
     double result = 0.0, operand;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if(*is_bad_formula)
             goto error;
 
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
@@ -82,7 +82,7 @@ double handle_op_count(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
@@ -93,41 +93,41 @@ done:
     return result;
 }
 
-double handle_op_max(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_max(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     double max = 0.0;
     if (*args == NULL)
         goto error;
 
     double operand;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     if (front != NULL) {
-        max = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        max = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if (*is_bad_formula)
             goto error;
         i++;
     }
 
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if(*is_bad_formula)
             goto error;
 
         if (operand > max)
             max = operand;
 
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
     max = 0.0;
 done:
@@ -138,10 +138,10 @@ done:
 	return max;
 }
 
-double handle_op_median(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_median(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
-    stack_t *sorted, *tmp, *prev;
+    cgc_size_t i = 0;
+    cgc_stack_t *sorted, *tmp, *prev;
 #ifdef PATCHED
     sorted = NULL;
 #endif
@@ -150,34 +150,34 @@ double handle_op_median(stack_t **args, int *is_bad_formula)
     sorted = NULL;
 
     double median = 0.0, operand, temp;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
 
-    operand = atof(front, strlen(front) + 1, is_bad_formula);
+    operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
     if(*is_bad_formula) {
-        free(front);
+        cgc_free(front);
         goto error;
     } else {
-        push(&sorted, front);
+        cgc_push(&sorted, front);
         i++;
     }
 
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
         if(*is_bad_formula)
             goto error;
 
         //using stack as linked list
         tmp = sorted;
         int passed_first = 0, is_inserted = 0;
-        stack_t *elem = NULL;
+        cgc_stack_t *elem = NULL;
         while (tmp != NULL) {
-            temp = atof(tmp->data, strlen(tmp->data) + 1, is_bad_formula);
+            temp = cgc_atof(tmp->data, cgc_strlen(tmp->data) + 1, is_bad_formula);
             if (operand <= temp) {
                 if (!passed_first) {
-                    push(&sorted, front);
+                    cgc_push(&sorted, front);
                 } else {
-                    elem = malloc(sizeof(stack_t));
+                    elem = cgc_malloc(sizeof(cgc_stack_t));
                     elem->data = front;
                     elem->next = tmp;
                     prev->next = elem;
@@ -195,13 +195,13 @@ double handle_op_median(stack_t **args, int *is_bad_formula)
             while (tmp->next != NULL)
                 tmp = tmp->next;
 
-            elem = malloc(sizeof(stack_t));
+            elem = cgc_malloc(sizeof(cgc_stack_t));
             elem->data = front;
             elem->next = NULL;
             tmp->next = elem;
         }
 
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
@@ -211,22 +211,22 @@ double handle_op_median(stack_t **args, int *is_bad_formula)
         for(j = 0; j < (i / 2) - 1; j++)
             tmp = tmp->next;
 
-        median += atof(tmp->data, strlen(tmp->data) + 1, is_bad_formula);
+        median += cgc_atof(tmp->data, cgc_strlen(tmp->data) + 1, is_bad_formula);
         tmp = tmp->next;
-        median += atof(tmp->data, strlen(tmp->data) + 1, is_bad_formula);
+        median += cgc_atof(tmp->data, cgc_strlen(tmp->data) + 1, is_bad_formula);
 
         median /= 2;
     } else {
         for(j = 0; j < (i / 2); j++)
             tmp = tmp->next;
 
-        median += atof(tmp->data, strlen(tmp->data) + 1, is_bad_formula);
+        median += cgc_atof(tmp->data, cgc_strlen(tmp->data) + 1, is_bad_formula);
     }
 
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
     median = 0.0;
 done:
@@ -234,45 +234,45 @@ done:
         i = 1;
         goto error;
     }
-    clear_stack(&sorted);
+    cgc_clear_stack(&sorted);
 	return median;
 }
 
-double handle_op_min(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_min(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     double min = 0.0;
     if (*args == NULL)
         goto error;
 
     double operand;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     if (front != NULL) {
-        min = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        min = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if (*is_bad_formula)
             goto error;
         i++;
     }
 
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if(*is_bad_formula)
             goto error;
 
         if (operand < min)
             min = operand;
 
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
     min = 0.0;
 done:
@@ -283,17 +283,17 @@ done:
 	return min;
 }
 
-double handle_op_stddev(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_stddev(cgc_stack_t **args, int *is_bad_formula)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     if (*args == NULL)
         goto error;
 
     double result = 0.0, operand, mean = 0.0;
-    stack_t *tmp = *args;
+    cgc_stack_t *tmp = *args;
 
     while (tmp != NULL) {
-        operand = atof(tmp->data, strlen(tmp->data) + 1, is_bad_formula);
+        operand = cgc_atof(tmp->data, cgc_strlen(tmp->data) + 1, is_bad_formula);
         if(*is_bad_formula)
             goto error;
 
@@ -306,22 +306,22 @@ double handle_op_stddev(stack_t **args, int *is_bad_formula)
     mean /= i;
 
     i = 0;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
 
         //TODO - Look into this, I don't know why pow is failing
         //result += (pow((operand - mean), 2.0));
         result += ((operand - mean) * (operand - mean));
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
         i++;
     }
 
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
@@ -332,7 +332,7 @@ done:
     return sqrt(result / (double) i);
 }
 
-double handle_op_abs(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_abs(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -341,11 +341,11 @@ double handle_op_abs(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -356,14 +356,14 @@ double handle_op_abs(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_add(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_add(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -372,20 +372,20 @@ double handle_op_add(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
     // Get second operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand2 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand2 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -396,14 +396,14 @@ double handle_op_add(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_cos(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_cos(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -412,11 +412,11 @@ double handle_op_cos(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -427,14 +427,14 @@ double handle_op_cos(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_ln(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_ln(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -443,11 +443,11 @@ double handle_op_ln(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -461,14 +461,14 @@ double handle_op_ln(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_log10(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_log10(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -477,11 +477,11 @@ double handle_op_log10(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -495,14 +495,14 @@ double handle_op_log10(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_power(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_power(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -511,20 +511,20 @@ double handle_op_power(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
     // Get second operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand2 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand2 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -546,14 +546,14 @@ double handle_op_power(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_product(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_product(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -562,20 +562,20 @@ double handle_op_product(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
     // Get second operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand2 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand2 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -586,14 +586,14 @@ double handle_op_product(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_quotient(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_quotient(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -602,20 +602,20 @@ double handle_op_quotient(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
     // Get second operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand2 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand2 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -629,14 +629,14 @@ double handle_op_quotient(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_sin(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_sin(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -645,11 +645,11 @@ double handle_op_sin(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -660,14 +660,14 @@ double handle_op_sin(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_sqrt(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_sqrt(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -676,11 +676,11 @@ double handle_op_sqrt(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -694,14 +694,14 @@ double handle_op_sqrt(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_subtract(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_subtract(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
@@ -710,20 +710,20 @@ double handle_op_subtract(stack_t **args, int *is_bad_formula)
     char *front;
 
     // Get first operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand1 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand1 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
     // Get second operand
-    front = pop_copy(args);
+    front = cgc_pop_copy(args);
     if (front == NULL)
         goto error;
-    operand2 = atof(front, strlen(front) + 1, is_bad_formula);
-    free(front);
+    operand2 = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+    cgc_free(front);
     if(*is_bad_formula)
         goto error;
 
@@ -734,28 +734,28 @@ double handle_op_subtract(stack_t **args, int *is_bad_formula)
     goto done;
 
 error:
-    clear_stack(args);
+    cgc_clear_stack(args);
     *is_bad_formula = 1;
 	result = 0.0;
 done:
     return result;
 }
 
-double handle_op_sum(stack_t **args, int *is_bad_formula)
+double cgc_handle_op_sum(cgc_stack_t **args, int *is_bad_formula)
 {
     if (*args == NULL)
         goto error;
 
     double result = 0.0, operand;
-    char *front = pop_copy(args);
+    char *front = cgc_pop_copy(args);
     while(front != NULL) {
-        operand = atof(front, strlen(front) + 1, is_bad_formula);
-        free(front);
+        operand = cgc_atof(front, cgc_strlen(front) + 1, is_bad_formula);
+        cgc_free(front);
         if(*is_bad_formula)
             goto error;
 
         result += operand;
-        front = pop_copy(args);
+        front = cgc_pop_copy(args);
     }
 
     goto done;

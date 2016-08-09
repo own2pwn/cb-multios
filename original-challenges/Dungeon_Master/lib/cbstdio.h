@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -19,7 +19,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define va_start(al, lp)  __builtin_va_start(al, lp)
 #define va_end(al)          __builtin_va_end(al)
 #define va_arg(al, t)    __builtin_va_arg(al, t)
@@ -28,7 +28,7 @@ typedef __builtin_va_list va_list;
 /**
 * Store a formatted string into a buffer
 *
-* NOTES: sprintf initializes the va_list and then calls vsprintf
+* NOTES: cgc_sprintf initializes the cgc_va_list and then calls cgc_vsprintf
 *
 * FORMAT: By using '!', the next variable will be converted depending on the 
 *          character that follows and in the string. The following conversions
@@ -43,4 +43,4 @@ typedef __builtin_va_list va_list;
 * @return The number of characters stored in the buffer, or
 *          a negative value if there was an error
 */
-int sprintf(char *buf, const char* fmt, ...);
+int cgc_sprintf(char *buf, const char* fmt, ...);

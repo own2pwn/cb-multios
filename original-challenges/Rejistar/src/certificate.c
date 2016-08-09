@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,24 +30,24 @@
 #include <libcgc.h>
 
 /**
-* Is the command a valud Certificate command
+* Is the command a valud cgc_Certificate command
 * 
 * @param command the command string
 *
 * @return 1 if true, 0 if false
 */
-int isCertCommand(char* command) {
+int cgc_isCertCommand(char* command) {
 
-	if(!strncmp(command, ENROLL_CMD, strlen(ENROLL_CMD)))
+	if(!cgc_strncmp(command, ENROLL_CMD, cgc_strlen(ENROLL_CMD)))
 		return 1;
 
-	if(!strncmp(command, REENROLL_CMD, strlen(REENROLL_CMD)))
+	if(!cgc_strncmp(command, REENROLL_CMD, cgc_strlen(REENROLL_CMD)))
 		return 1;
 
-	if(!strncmp(command, CERTS_CMD, strlen(CERTS_CMD)))
+	if(!cgc_strncmp(command, CERTS_CMD, cgc_strlen(CERTS_CMD)))
 		return 1;
 
-	if(!strncmp(command, REVOKE_CERT_CMD, strlen(REVOKE_CERT_CMD)))
+	if(!cgc_strncmp(command, REVOKE_CERT_CMD, cgc_strlen(REVOKE_CERT_CMD)))
 		return 1;
 
 	return 0;
@@ -58,47 +58,47 @@ int isCertCommand(char* command) {
 *
 * @return None
 */
-void initIssuer() {
-	if(!(issuer = malloc(64)))
+void cgc_initIssuer() {
+	if(!(issuer = cgc_malloc(64)))
 		_terminate(1);
-	bzero(issuer, 64);
-	memcpy(issuer, ISSUER_STR, strlen(ISSUER_STR));		
+	cgc_bzero(issuer, 64);
+	cgc_memcpy(issuer, ISSUER_STR, cgc_strlen(ISSUER_STR));		
 }
 
 /**
 * Sign the certificate
 * 
-* @param cert The address of the Certificate to sign
+* @param cert The address of the cgc_Certificate to sign
 *
 * @return None
 */
-void signCert(Certificate** cert) {
-	Certificate *signedCert;
-	size_t size=0;
+void cgc_signCert(cgc_Certificate** cert) {
+	cgc_Certificate *signedCert;
+	cgc_size_t size=0;
 	unsigned int signature=0;
 	int i;
 
 	signedCert = *cert;
-	size = strlen(signedCert->issuer);
+	size = cgc_strlen(signedCert->issuer);
 	for(i=0; i<size; i++)
 		signature += signedCert->issuer[i];
 
-	size = strlen(signedCert->subject);
+	size = cgc_strlen(signedCert->subject);
 	for(i=0; i<size; i++)
 		signature += signedCert->subject[i];
 
-	size = strlen(signedCert->key);
+	size = cgc_strlen(signedCert->key);
 	for(i=0; i<size; i++)
 		signature += signedCert->key[i];
 
 	signature += signedCert->expiration;
 
-	size = strlen(private_key);
+	size = cgc_strlen(private_key);
 	for(i=0; i<size; i++)
 		signature += private_key[i];	
 
 	if(signedCert->revoked) {
-		size = strlen(signedCert->revoked);
+		size = cgc_strlen(signedCert->revoked);
 		for(i=0; i<size; i++)
 			signature += signedCert->revoked[i];
 	}
@@ -108,30 +108,30 @@ void signCert(Certificate** cert) {
 }
 
 /**
-* Calculate how many bytes are needed to store the Certificate as a string
+* Calculate how many bytes are needed to store the cgc_Certificate as a string
 * 
-* @param cert The address of the Certificate
+* @param cert The address of the cgc_Certificate
 *
-* @return The number of bytes to store the Certificate as a string
+* @return The number of bytes to store the cgc_Certificate as a string
 */
-size_t calculateCertSize(Certificate *cert) {
-	size_t size;
+cgc_size_t cgc_calculateCertSize(cgc_Certificate *cert) {
+	cgc_size_t size;
 
-	size = strlen(CERT_ISSUER_HDR) +1;
-	size += strlen(cert->issuer) + 1;
-	size += strlen(CERT_SUBJECT_HDR) + 1;
-	size += strlen(cert->subject) + 1;
-	size += strlen(CERT_KEY_HDR) + 1;
-	size += strlen(cert->key) + 1;
-	size += strlen(CERT_SIG_HDR) + 1;
+	size = cgc_strlen(CERT_ISSUER_HDR) +1;
+	size += cgc_strlen(cert->issuer) + 1;
+	size += cgc_strlen(CERT_SUBJECT_HDR) + 1;
+	size += cgc_strlen(cert->subject) + 1;
+	size += cgc_strlen(CERT_KEY_HDR) + 1;
+	size += cgc_strlen(cert->key) + 1;
+	size += cgc_strlen(CERT_SIG_HDR) + 1;
 	size += MAX_UINT_STR_SIZE + 1; //signature
-	size += strlen(CERT_EXP_HDR) + 1;
+	size += cgc_strlen(CERT_EXP_HDR) + 1;
 	size += MAX_UINT_STR_SIZE + 1; //expiration
-	size += strlen(CERT_USE_HDR) + 1;
-	size += strlen(cert->use) + 1;
+	size += cgc_strlen(CERT_USE_HDR) + 1;
+	size += cgc_strlen(cert->use) + 1;
 	if(cert->revoked) {
-		size += strlen(CERT_STATUS_HDR) + 1;
-		size += strlen(cert->revoked) + 1;		
+		size += cgc_strlen(CERT_STATUS_HDR) + 1;
+		size += cgc_strlen(cert->revoked) + 1;		
 	}
 
 
@@ -146,27 +146,27 @@ size_t calculateCertSize(Certificate *cert) {
 *
 * @return None
 */
-void sendCerts(unsigned int id, Certificate *cert) {
-	Certificate *cert_ptr;
+void cgc_sendCerts(unsigned int id, cgc_Certificate *cert) {
+	cgc_Certificate *cert_ptr;
 	int first=1;
-	size_t certSize, bytes;
+	cgc_size_t certSize, bytes;
 	char* buffer;
 	int ret;
 
 	for(cert_ptr=cert;cert_ptr != 0; cert_ptr=cert_ptr->next) {
 		if(!first) {
-			if((ret = transmit_all(STDOUT, "|", sizeof("|")))) 
+			if((ret = cgc_transmit_all(STDOUT, "|", sizeof("|")))) 
 				_terminate(1);	
 		} else {
 			first = 0;
 		}
 
-		certSize = calculateCertSize(cert);
-		if(!(buffer = malloc(certSize+10)))
+		certSize = cgc_calculateCertSize(cert);
+		if(!(buffer = cgc_malloc(certSize+10)))
 			_terminate(1);
-		bzero(buffer, certSize+10);
+		cgc_bzero(buffer, certSize+10);
 		if(cert->revoked) {
-			sprintf(buffer, "!X=!X;!X=!X;!X=!X;!X=!U;!X=!U;!X=!X;!X=!X",
+			cgc_sprintf(buffer, "!X=!X;!X=!X;!X=!X;!X=!U;!X=!U;!X=!X;!X=!X",
 				CERT_ISSUER_HDR, cert->issuer,
 				CERT_SUBJECT_HDR, cert->subject,
 				CERT_KEY_HDR, cert->key,
@@ -175,7 +175,7 @@ void sendCerts(unsigned int id, Certificate *cert) {
 				CERT_USE_HDR, cert->use,
 				CERT_STATUS_HDR, cert->revoked);			
 		} else {
-			sprintf(buffer, "!X=!X;!X=!X;!X=!X;!X=!U;!X=!U;!X=!X",
+			cgc_sprintf(buffer, "!X=!X;!X=!X;!X=!X;!X=!U;!X=!U;!X=!X",
 				CERT_ISSUER_HDR, cert->issuer,
 				CERT_SUBJECT_HDR, cert->subject,
 				CERT_KEY_HDR, cert->key,
@@ -184,66 +184,66 @@ void sendCerts(unsigned int id, Certificate *cert) {
 				CERT_USE_HDR, cert->use);			
 		}
 
-		certSize = strlen(buffer);
-		if((ret = transmit_all(STDOUT, buffer, certSize))) 
+		certSize = cgc_strlen(buffer);
+		if((ret = cgc_transmit_all(STDOUT, buffer, certSize))) 
 			_terminate(1);
-		free(buffer);
+		cgc_free(buffer);
 	}
 
-	if((ret = transmit_all(STDOUT, "?", strlen("?")))) 
+	if((ret = cgc_transmit_all(STDOUT, "?", cgc_strlen("?")))) 
 		_terminate(1);
 
 }
 
 /**
-* Parse the buffer as a Certificate
+* Parse the buffer as a cgc_Certificate
 * 
 * @param buffer The buffer that contains the string
 *
-* @return The address of the new Certificate
+* @return The address of the new cgc_Certificate
 */
-Certificate *parseCertificate(char* body) {
-	Certificate *cert;
+cgc_Certificate *cgc_parseCertificate(char* body) {
+	cgc_Certificate *cert;
 
-	cert = malloc(sizeof(Certificate));
+	cert = cgc_malloc(sizeof(cgc_Certificate));
 	if(!cert)
 		_terminate(1);
 
-	bzero((char *)cert, sizeof(Certificate));
+	cgc_bzero((char *)cert, sizeof(cgc_Certificate));
 
-	initializeAttributes(body);
-	getStringAttribute(&cert->issuer, CERT_ISSUER_HDR);
-	getStringAttribute(&cert->subject, CERT_SUBJECT_HDR);
-	getStringAttribute(&cert->key, CERT_KEY_HDR);
-	getIntegerAttribute(&cert->signature, CERT_SIG_HDR);
-	getIntegerAttribute(&cert->expiration, CERT_EXP_HDR);
-	getStringAttribute(&cert->use, CERT_USE_HDR);
-	getStringAttribute(&cert->revoked, CERT_STATUS_HDR);
-	getIntegerAttribute(&cert->exp_window, CERT_EXP_WDOW_HDR);
+	cgc_initializeAttributes(body);
+	cgc_getStringAttribute(&cert->issuer, CERT_ISSUER_HDR);
+	cgc_getStringAttribute(&cert->subject, CERT_SUBJECT_HDR);
+	cgc_getStringAttribute(&cert->key, CERT_KEY_HDR);
+	cgc_getIntegerAttribute(&cert->signature, CERT_SIG_HDR);
+	cgc_getIntegerAttribute(&cert->expiration, CERT_EXP_HDR);
+	cgc_getStringAttribute(&cert->use, CERT_USE_HDR);
+	cgc_getStringAttribute(&cert->revoked, CERT_STATUS_HDR);
+	cgc_getIntegerAttribute(&cert->exp_window, CERT_EXP_WDOW_HDR);
 
 	return cert;
 }
 
 /**
-* Check to see if Certificate is in the Certiifcate Revocation List
+* Check to see if cgc_Certificate is in the Certiifcate Revocation List
 * 
 * @param cert The address of the certificate
 *
 * @return 1 if certificate is in the list, 0 if not
 */
-int checkCRLs(Certificate *cert) {
-	Certificate *revoked_cert;
-	size_t size, size1, size2;
+int cgc_checkCRLs(cgc_Certificate *cert) {
+	cgc_Certificate *revoked_cert;
+	cgc_size_t size, size1, size2;
 
 	for(revoked_cert=CRL; revoked_cert != NULL; revoked_cert=revoked_cert->next) {
-		size1 = strlen(revoked_cert->subject);
-		size2 = strlen(cert->subject);
+		size1 = cgc_strlen(revoked_cert->subject);
+		size2 = cgc_strlen(cert->subject);
 		size = size1 > size2 ? size1 : size2;
-		if(!strncmp(revoked_cert->subject, cert->subject, size)) {
-			size1 = strlen(revoked_cert->key);
-			size2 = strlen(cert->key);
+		if(!cgc_strncmp(revoked_cert->subject, cert->subject, size)) {
+			size1 = cgc_strlen(revoked_cert->key);
+			size2 = cgc_strlen(cert->key);
 			size = size1 > size2 ? size1 : size2;		
-			if(!strncmp(revoked_cert->key, cert->key, size))
+			if(!cgc_strncmp(revoked_cert->key, cert->key, size))
 				return 0;
 		}
 	}
@@ -252,7 +252,7 @@ int checkCRLs(Certificate *cert) {
 }
 
 /**
-* Ensure the Certificate is valid
+* Ensure the cgc_Certificate is valid
 * 
 * @param cert The address of the certificate to check
 * @param use The command the requestor wants to use the certificate for
@@ -260,45 +260,45 @@ int checkCRLs(Certificate *cert) {
 *
 * @return 1 if certificate is valid, 0 if it is not
 */
-int validateCert(Certificate *cert, char* use, unsigned int* expiration_date) {
+int cgc_validateCert(cgc_Certificate *cert, char* use, unsigned int* expiration_date) {
 	unsigned int tmp_sig;
 
 	if(!cert->issuer || !cert->subject || !cert->key || !cert->signature || !cert->expiration || !cert->use) {
-		sendErrorResponse(RESPONSE_ERR_NO_CERT);
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_CERT);
 
 		return 0;		
 	}
 
-	if(strncmp(cert->issuer, issuer, strlen(ISSUER_STR))) {
-		sendErrorResponse(RESPONSE_ERR_NO_CERT);
+	if(cgc_strncmp(cert->issuer, issuer, cgc_strlen(ISSUER_STR))) {
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_CERT);
 
 		return 0;
 	}
 
 	if(cert->revoked)
-		if(!strncmp(cert->revoked, CERT_STATUS_REVOKED, strlen(CERT_STATUS_REVOKED)))
+		if(!cgc_strncmp(cert->revoked, CERT_STATUS_REVOKED, cgc_strlen(CERT_STATUS_REVOKED)))
 			return 0;
 
 	tmp_sig = cert->signature;
-	signCert(&cert);
+	cgc_signCert(&cert);
 	*expiration_date += 1;
 
 	if(tmp_sig == cert->signature && cert->expiration > *expiration_date)
-		return checkCRLs(cert);
+		return cgc_checkCRLs(cert);
 
 	if(cert->expiration > *expiration_date) {
-		sendErrorResponse(RESPONSE_ERR_NO_CERT);
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_CERT);
 
 		return 0;		
 	}
 
-	sendErrorResponse(RESPONSE_ERR_EXP_CERT);
+	cgc_sendErrorResponse(RESPONSE_ERR_EXP_CERT);
 
 	return 0;
 }
 
 /**
-* Send the current Certificate Revocation List to the requestor
+* Send the current cgc_Certificate Revocation List to the requestor
 * 
 * @param id The id of the initial requesting message
 * @param body The body of the requesting message
@@ -306,8 +306,8 @@ int validateCert(Certificate *cert, char* use, unsigned int* expiration_date) {
 *
 * @return None
 */
-void crls(int id, char* body, unsigned int* expiration_date) {
-	sendCerts(id, CRL);
+void cgc_crls(int id, char* body, unsigned int* expiration_date) {
+	cgc_sendCerts(id, CRL);
 }
 
 /**
@@ -317,16 +317,16 @@ void crls(int id, char* body, unsigned int* expiration_date) {
 *
 * @return None
 */
-void freeCert(Certificate* cert) {
+void cgc_freeCert(cgc_Certificate* cert) {
 
-	free(cert->subject);
-	free(cert->issuer);
-	free(cert->key);
-	free(cert->use);
-	free(cert->next);
+	cgc_free(cert->subject);
+	cgc_free(cert->issuer);
+	cgc_free(cert->key);
+	cgc_free(cert->use);
+	cgc_free(cert->next);
 	if(cert->revoked)
-		free(cert->revoked);
-	free(cert);
+		cgc_free(cert->revoked);
+	cgc_free(cert);
 }
 
 /**
@@ -338,25 +338,25 @@ void freeCert(Certificate* cert) {
 *
 * @return None
 */
-void revokeCert(int id, char* body, unsigned int* expiration_date) {
-	Certificate *cert;
+void cgc_revokeCert(int id, char* body, unsigned int* expiration_date) {
+	cgc_Certificate *cert;
 	int ret;
-	size_t size;
+	cgc_size_t size;
 
-	if(!(cert = parseCertificate(body)))
+	if(!(cert = cgc_parseCertificate(body)))
 		return;
 
-	if(!(ret = validateCert(cert, NULL, expiration_date)))
+	if(!(ret = cgc_validateCert(cert, NULL, expiration_date)))
 		return;
 
-	size = strlen(CERT_STATUS_REVOKED);
-	if(!(cert->revoked = malloc(size+1)))
+	size = cgc_strlen(CERT_STATUS_REVOKED);
+	if(!(cert->revoked = cgc_malloc(size+1)))
 		_terminate(1);
-	bzero(cert->revoked, size+1);
-	memcpy(cert->revoked, CERT_STATUS_REVOKED, size);
-	signCert(&cert);
+	cgc_bzero(cert->revoked, size+1);
+	cgc_memcpy(cert->revoked, CERT_STATUS_REVOKED, size);
+	cgc_signCert(&cert);
 	cert->next = NULL;
-	sendCerts(id, cert);
+	cgc_sendCerts(id, cert);
 	cert->next = CRL;
 	CRL = cert;
 }
@@ -370,15 +370,15 @@ void revokeCert(int id, char* body, unsigned int* expiration_date) {
 *
 * @return None
 */
-void reenroll(int id, char* body, unsigned int* expiration_date) {
-	Certificate *cert;
+void cgc_reenroll(int id, char* body, unsigned int* expiration_date) {
+	cgc_Certificate *cert;
 	int ret;
 	unsigned int expire_window=100;
 
-	if(!(cert = parseCertificate(body))) 
+	if(!(cert = cgc_parseCertificate(body))) 
 		return;
 	
-	if(!(ret = validateCert(cert, NULL, expiration_date))) 
+	if(!(ret = cgc_validateCert(cert, NULL, expiration_date))) 
 		return;
 
 	if(cert->exp_window)
@@ -386,9 +386,9 @@ void reenroll(int id, char* body, unsigned int* expiration_date) {
 
 	*expiration_date += 1;
 	cert->expiration = *expiration_date + expire_window;
-	signCert(&cert);
-	sendCerts(id, cert);
-	freeCert(cert);
+	cgc_signCert(&cert);
+	cgc_sendCerts(id, cert);
+	cgc_freeCert(cert);
 }
 
 /**
@@ -399,23 +399,23 @@ void reenroll(int id, char* body, unsigned int* expiration_date) {
 *
 * @return 1 if use is valid, 0 if it is not
 */
-int checkCertUse(char* command, char* useList) {
+int cgc_checkCertUse(char* command, char* useList) {
 	char* use;
-	size_t size, size1, size2;
+	cgc_size_t size, size1, size2;
 
 	if(!useList)
 		return 0;
 
-	use = strtok(useList,":");
+	use = cgc_strtok(useList,":");
 	do {
-		size1 = strlen(command);
-		size2 = strlen(use);
+		size1 = cgc_strlen(command);
+		size2 = cgc_strlen(use);
 		size = size1 > size2 ? size1 : size2;
-		if(!strncmp(command, use, size) ||
-			!strncmp(REVOKE_CERT_CMD, use, strlen(REVOKE_CERT_CMD)))
+		if(!cgc_strncmp(command, use, size) ||
+			!cgc_strncmp(REVOKE_CERT_CMD, use, cgc_strlen(REVOKE_CERT_CMD)))
 			return 1;
 
-		use = strtok(0, ":");
+		use = cgc_strtok(0, ":");
 	} while(use);
 
 	return 0;
@@ -431,31 +431,31 @@ int checkCertUse(char* command, char* useList) {
 *
 * @return None
 */
-void enroll(int id, char* body, unsigned int* expiration_date) {
-	Certificate *cert;
-	size_t size;
+void cgc_enroll(int id, char* body, unsigned int* expiration_date) {
+	cgc_Certificate *cert;
+	cgc_size_t size;
 	unsigned int expire_window=100;
 
 	if(!issuer) {
-		initIssuer();
+		cgc_initIssuer();
 	}
 
-	cert = parseCertificate(body);
+	cert = cgc_parseCertificate(body);
 
 	if(!cert->subject || !cert->key || !cert->use) {
-		sendErrorResponse(RESPONSE_ERR_NO_CERT);
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_CERT);
 
 		return;		
 	}
 
 	if(cert->issuer)
-		free(cert->issuer);
+		cgc_free(cert->issuer);
 
-	size = strlen(issuer);
-	if(!(cert->issuer = malloc(size+1)))
+	size = cgc_strlen(issuer);
+	if(!(cert->issuer = cgc_malloc(size+1)))
 		_terminate(1);
-	bzero(cert->issuer, size+1);
-	memcpy(cert->issuer, issuer, size);
+	cgc_bzero(cert->issuer, size+1);
+	cgc_memcpy(cert->issuer, issuer, size);
 
 	if(!cert->subject)
 		return;
@@ -469,8 +469,8 @@ void enroll(int id, char* body, unsigned int* expiration_date) {
 	*expiration_date += 1;
 	cert->expiration = *expiration_date + expire_window;
 	cert->next = 0;
-	signCert(&cert); 
-	sendCerts(id, cert);
-	freeCert(cert);
+	cgc_signCert(&cert); 
+	cgc_sendCerts(id, cert);
+	cgc_freeCert(cert);
 
 }

@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,18 +27,18 @@ THE SOFTWARE.
 #define __MESSAGE_RENDERER_H__
 
 // Renders messages to HTML
-class CMessageRenderer
+class cgc_CMessageRenderer
 {
 public:
-    CMessageRenderer() : m_messageRenderCount( 0 ) { };
-    ~CMessageRenderer() { };
+    cgc_CMessageRenderer() : m_messageRenderCount( 0 ) { };
+    ~cgc_CMessageRenderer() { };
 
-    bool RenderHeader( void );
-    bool RenderFooter( void );
-    bool RenderMessage( CFullMessage *pMessage );
+    bool cgc_RenderHeader( void );
+    bool cgc_RenderFooter( void );
+    bool cgc_RenderMessage( cgc_CFullMessage *pMessage );
 
 private:
-    uint32_t m_messageRenderCount;
+    cgc_uint32_t m_messageRenderCount;
 };
 
 #endif // __MESSAGE_RENDERER_H__

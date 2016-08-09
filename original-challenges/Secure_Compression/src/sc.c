@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,9 +27,9 @@
 
 #include "sc.h"
 
-bio_t* bit_new(unsigned char *data)
+cgc_bio_t* cgc_bit_new(unsigned char *data)
 {
-    bio_t *bio = (bio_t *) malloc(sizeof(bio_t));
+    cgc_bio_t *bio = (cgc_bio_t *) cgc_malloc(sizeof(cgc_bio_t));
     bio->data = data;
     bio->didx = 0;
     bio->bidx = 0;
@@ -37,9 +37,9 @@ bio_t* bit_new(unsigned char *data)
     return bio;
 }
 
-unsigned char bit_read(bio_t *bio, size_t n)
+unsigned char cgc_bit_read(cgc_bio_t *bio, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     unsigned char b = bio->data[bio->didx], ret = 0;
     for (i = 0; i < n; ++i)
     {
@@ -55,9 +55,9 @@ unsigned char bit_read(bio_t *bio, size_t n)
     return ret;
 }
 
-void bit_write(bio_t *bio, unsigned char data, size_t n)
+void cgc_bit_write(cgc_bio_t *bio, unsigned char data, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     unsigned char b = bio->data[bio->didx];
     for (i = 0; i < n; ++i)
     {
@@ -74,9 +74,9 @@ void bit_write(bio_t *bio, unsigned char data, size_t n)
     bio->data[bio->didx] = b;
 }
 
-unsigned char *_find_char(unsigned char *s, unsigned char c, size_t n)
+unsigned char *cgc__find_char(unsigned char *s, unsigned char c, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     unsigned char *p = s;
     for (i = 0; i < n; ++i)
         if (p[i] == c)
@@ -84,16 +84,16 @@ unsigned char *_find_char(unsigned char *s, unsigned char c, size_t n)
     return NULL;
 }
 
-int _sc_compare(unsigned char *order, unsigned char *s1, unsigned char *s2, size_t n)
+int cgc__sc_compare(unsigned char *order, unsigned char *s1, unsigned char *s2, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     unsigned char *p1, *p2;
     for (i = 0; i < n; ++i)
     {
         if (s1[i] != s2[i])
         {
-            p1 = _find_char(order, s1[i], n);
-            p2 = _find_char(order, s2[i], n);
+            p1 = cgc__find_char(order, s1[i], n);
+            p2 = cgc__find_char(order, s2[i], n);
             if (p1 == NULL || p2 == NULL)
                 return s1[i] - s2[i];
             return p1 - p2;
@@ -102,29 +102,29 @@ int _sc_compare(unsigned char *order, unsigned char *s1, unsigned char *s2, size
     return 0;
 }
 
-sc_obj_t* sc_new(unsigned char *key)
+cgc_sc_obj_t* cgc_sc_new(unsigned char *key)
 {
-    sc_obj_t *sc = (sc_obj_t *) malloc(sizeof(sc_obj_t));
-    memset(sc, 0, sizeof(sc_obj_t));
-    memcpy(sc->order, key, 95);
-    sc->cmp = _sc_compare;
+    cgc_sc_obj_t *sc = (cgc_sc_obj_t *) cgc_malloc(sizeof(cgc_sc_obj_t));
+    cgc_memset(sc, 0, sizeof(cgc_sc_obj_t));
+    cgc_memcpy(sc->order, key, 95);
+    sc->cmp = cgc__sc_compare;
     return sc;
 }
 
-int sc_scompress(sc_obj_t *sc, unsigned char **out, size_t *outlen)
+int cgc_sc_scompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen)
 {
     if (!sc || !out || !outlen)
         return -1;
 
-    size_t old_len = sc->data_len;
+    cgc_size_t old_len = sc->data_len;
     unsigned char *buf = NULL, *old = sc->data;
-    buf = sc_bwt(sc, 0, outlen);
+    buf = cgc_sc_bwt(sc, 0, outlen);
     if (!buf)
         return -1;
     sc->data = buf;
     sc->data_len = *outlen;
-    *out = sc_mtf(sc, 0, outlen);
-    free(buf);
+    *out = cgc_sc_mtf(sc, 0, outlen);
+    cgc_free(buf);
     sc->data = old;
     sc->data_len = old_len;
     if (!*out)
@@ -132,21 +132,21 @@ int sc_scompress(sc_obj_t *sc, unsigned char **out, size_t *outlen)
     return 0;
 }
 
-int sc_sdecompress(sc_obj_t *sc, unsigned char **out, size_t *outlen)
+int cgc_sc_sdecompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen)
 {
     if (!sc || !out || !outlen)
         return -1;
 
     int l;
-    size_t old_len = sc->data_len;
+    cgc_size_t old_len = sc->data_len;
     unsigned char *buf = NULL, *old = sc->data;
-    buf = sc_mtf(sc, 1, outlen);
+    buf = cgc_sc_mtf(sc, 1, outlen);
     if (!buf)
         return -1;
     sc->data = buf;
     sc->data_len = *outlen;
-    *out = sc_bwt(sc, 1, outlen);
-    free(buf);
+    *out = cgc_sc_bwt(sc, 1, outlen);
+    cgc_free(buf);
     sc->data = old;
     sc->data_len = old_len;
     if (!*out)
@@ -154,31 +154,31 @@ int sc_sdecompress(sc_obj_t *sc, unsigned char **out, size_t *outlen)
     return 0;
 }
 
-int sc_set_data(sc_obj_t *sc, unsigned char *data, size_t data_len)
+int cgc_sc_set_data(cgc_sc_obj_t *sc, unsigned char *data, cgc_size_t data_len)
 {
     if (!sc)
         return -1;
     if (sc->data)
-        free(sc->data);
-    sc->data = malloc(data_len);
-    memcpy(sc->data, data, data_len);
+        cgc_free(sc->data);
+    sc->data = cgc_malloc(data_len);
+    cgc_memcpy(sc->data, data, data_len);
     sc->data_len = data_len;
     return 0;
 }
 
-int _gcd(int a, int b)
+int cgc__gcd(int a, int b)
 {
     if (b == 0)
         return a;
-    return _gcd(b, a % b);
+    return cgc__gcd(b, a % b);
 }
 
-void _rot_left(unsigned char *data, size_t sz, size_t rot)
+void cgc__rot_left(unsigned char *data, cgc_size_t sz, cgc_size_t rot)
 {
     int i, j, k;
     char c, tmp;
 
-    for (i = 0; i < _gcd(rot, sz); ++i)
+    for (i = 0; i < cgc__gcd(rot, sz); ++i)
     {
         j = i;
         tmp = data[i];
@@ -196,7 +196,7 @@ void _rot_left(unsigned char *data, size_t sz, size_t rot)
     }
 }
 
-void _merge(unsigned char **xs, unsigned char **ys, int lo, int mid, int hi, sc_obj_t *sc)
+void cgc__merge(unsigned char **xs, unsigned char **ys, int lo, int mid, int hi, cgc_sc_obj_t *sc)
 {
     int i, j, k;
     for (i = lo, j = mid, k = lo; i < mid && j < hi; ++k)
@@ -210,49 +210,49 @@ void _merge(unsigned char **xs, unsigned char **ys, int lo, int mid, int hi, sc_
         ys[k] = xs[i];
     for (; j < hi; ++j, ++k)
         ys[k] = xs[j];
-    memcpy(&xs[lo], &ys[lo], (hi - lo) * sizeof(unsigned char *));
+    cgc_memcpy(&xs[lo], &ys[lo], (hi - lo) * sizeof(unsigned char *));
 }
 
-void _msort(unsigned char **xs, unsigned char **ys, int lo, int hi, sc_obj_t *sc)
+void cgc__msort(unsigned char **xs, unsigned char **ys, int lo, int hi, cgc_sc_obj_t *sc)
 {
     int mid;
     if (hi - lo > 1)
     {
         mid = lo + ((hi - lo) / 2);
-        _msort(xs, ys, lo, mid, sc);
-        _msort(xs, ys, mid, hi, sc);
-        _merge(xs, ys, lo, mid, hi, sc);
+        cgc__msort(xs, ys, lo, mid, sc);
+        cgc__msort(xs, ys, mid, hi, sc);
+        cgc__merge(xs, ys, lo, mid, hi, sc);
     }
 }
 
-void _sort(unsigned char **xs, int len, sc_obj_t *sc)
+void cgc__sort(unsigned char **xs, int len, cgc_sc_obj_t *sc)
 {
-    unsigned char **ys = malloc(sizeof(unsigned char *) * len);
-    _msort(xs, ys, 0, len, sc);
-    free(ys);
+    unsigned char **ys = cgc_malloc(sizeof(unsigned char *) * len);
+    cgc__msort(xs, ys, 0, len, sc);
+    cgc_free(ys);
 }
 
 
-unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen)
+unsigned char* cgc_sc_bwt(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
 {
     if (sc->data_len > MAX_DATA_SIZE)
         return NULL;
 
     int i, j, k;
     unsigned short oidx;
-    size_t size = 0, to_copy = 0, num_blocks = 0;
+    cgc_size_t size = 0, to_copy = 0, num_blocks = 0;
     unsigned char block[BLOCK_SIZE], tmp[BLOCK_SIZE];
     num_blocks = (sc->data_len / BLOCK_SIZE) + !!(sc->data_len % BLOCK_SIZE);
     *outlen = num_blocks * sizeof(short) + sc->data_len;
     num_blocks = 0;
-    unsigned char **rot_table = malloc(BLOCK_SIZE * sizeof(unsigned char *));
-    unsigned char *out = malloc(*outlen);
-    memset(out, 0, *outlen);
+    unsigned char **rot_table = cgc_malloc(BLOCK_SIZE * sizeof(unsigned char *));
+    unsigned char *out = cgc_malloc(*outlen);
+    cgc_memset(out, 0, *outlen);
 
     for (i = 0; i < BLOCK_SIZE; ++i)
     {
-        rot_table[i] = malloc(BLOCK_SIZE);
-        memset(rot_table[i], 0, BLOCK_SIZE);
+        rot_table[i] = cgc_malloc(BLOCK_SIZE);
+        cgc_memset(rot_table[i], 0, BLOCK_SIZE);
     }
 
     if (!op)
@@ -263,17 +263,17 @@ unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen)
             if (size >= sc->data_len)
                 break;
             to_copy = sc->data_len - size > 512 ? 512 : (sc->data_len - size);
-            memset(block, 0, sizeof(block));
-            memcpy(block, &sc->data[size], to_copy);
+            cgc_memset(block, 0, sizeof(block));
+            cgc_memcpy(block, &sc->data[size], to_copy);
 
             for (i = 0; i < to_copy; ++i)
             {
-                memcpy(rot_table[i], block, to_copy);
-                _rot_left(rot_table[i], to_copy, i);
+                cgc_memcpy(rot_table[i], block, to_copy);
+                cgc__rot_left(rot_table[i], to_copy, i);
             }
-            _sort(rot_table, to_copy, sc);
+            cgc__sort(rot_table, to_copy, sc);
             for (oidx = 0; oidx < to_copy; ++oidx)
-                if (memcmp(rot_table[oidx], block, to_copy) == 0)
+                if (cgc_memcmp(rot_table[oidx], block, to_copy) == 0)
                     break;
 
             *(unsigned short *)&out[size + num_blocks * sizeof(short)] = oidx;
@@ -300,17 +300,17 @@ unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen)
             if (oidx > to_copy)
                 goto fail;
 #endif
-            memset(block, 0, sizeof(block));
-            memcpy(block, &sc->data[size], to_copy);
+            cgc_memset(block, 0, sizeof(block));
+            cgc_memcpy(block, &sc->data[size], to_copy);
             for (i = 0; i < BLOCK_SIZE; ++i)
-                memset(rot_table[i], 0, BLOCK_SIZE);
+                cgc_memset(rot_table[i], 0, BLOCK_SIZE);
 
             for (i = to_copy - 1; i >= 0; --i)
             {
                 for (j = 0; j < to_copy; ++j)
                     rot_table[j][i] = block[j];
 
-                _sort(rot_table, to_copy, sc);
+                cgc__sort(rot_table, to_copy, sc);
             }
 
             num_blocks++;
@@ -322,17 +322,17 @@ unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen)
     goto cleanup;
 
 fail:
-    free(out);
+    cgc_free(out);
     out = NULL;
 cleanup:
     for (i = 0; i < BLOCK_SIZE; ++i)
-        free(rot_table[i]);
-    free(rot_table);
+        cgc_free(rot_table[i]);
+    cgc_free(rot_table);
 
     return out;
 }
 
-unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen)
+unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
 {
     int i, j, k;
     unsigned char list[256];
@@ -340,14 +340,14 @@ unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen)
     if (!op)
     {
         // Do MTF
-        unsigned char *out = malloc(sc->data_len);
-        unsigned char *out_c = malloc(sc->data_len * 2 + 4);
-        *(size_t *)out_c = sc->data_len;
-        memset(out, 0, sc->data_len);
+        unsigned char *out = cgc_malloc(sc->data_len);
+        unsigned char *out_c = cgc_malloc(sc->data_len * 2 + 4);
+        *(cgc_size_t *)out_c = sc->data_len;
+        cgc_memset(out, 0, sc->data_len);
 
         for (i = 0; i < 32; ++i)
             list[i] = (unsigned char) i;
-        memcpy(&list[32], sc->order, 95);
+        cgc_memcpy(&list[32], sc->order, 95);
         for (i = 127; i < sizeof(list); ++i)
             list[i] = (unsigned char) i;
 
@@ -361,28 +361,28 @@ unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen)
                     break;
                 }
             }
-            memmove(&list[1], list, j);
+            cgc_memmove(&list[1], list, j);
             *list = sc->data[i];
         }
-        memset(out_c + 4, 0, sc->data_len * 2);
-        bio_t *bio = bit_new(out_c + 4);
+        cgc_memset(out_c + 4, 0, sc->data_len * 2);
+        cgc_bio_t *bio = cgc_bit_new(out_c + 4);
         for (i = 0; i < sc->data_len; ++i)
         {
             if (out[i] > 0x0F)
             {
-                bit_write(bio, '\x00', 1);
-                bit_write(bio, out[i], 8);
+                cgc_bit_write(bio, '\x00', 1);
+                cgc_bit_write(bio, out[i], 8);
             }
             else
             {
-                bit_write(bio, '\x80', 1);
-                bit_write(bio, out[i] << 4, 4);
+                cgc_bit_write(bio, '\x80', 1);
+                cgc_bit_write(bio, out[i] << 4, 4);
             }
         }
         *outlen = bio->didx + 4 + (bio->bidx > 0);
 
-        free(bio);
-        free(out);
+        cgc_free(bio);
+        cgc_free(out);
         bio = NULL;
         out = NULL;
         return out_c;
@@ -395,35 +395,35 @@ unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen)
 #else
         unsigned char out[MAX_DATA_SIZE/2];
 #endif
-        size_t sz = *(size_t *)sc->data;
+        cgc_size_t sz = *(cgc_size_t *)sc->data;
         if (sz > MAX_DATA_SIZE)
             return NULL;
-        unsigned char *out_d = malloc(sz);
-        memset(out, 0, sizeof(out));
+        unsigned char *out_d = cgc_malloc(sz);
+        cgc_memset(out, 0, sizeof(out));
 
-        bio_t *bio = bit_new(sc->data + 4);
+        cgc_bio_t *bio = cgc_bit_new(sc->data + 4);
         for (i = 0; i < sz; ++i)
         {
-            if (bit_read(bio, 1) == 0)
-                out[i] = bit_read(bio, 8);
+            if (cgc_bit_read(bio, 1) == 0)
+                out[i] = cgc_bit_read(bio, 8);
             else
-                out[i] = bit_read(bio, 4);
+                out[i] = cgc_bit_read(bio, 4);
         }
 
         for (i = 0; i < 32; ++i)
             list[i] = (unsigned char) i;
-        memcpy(&list[32], sc->order, 95);
+        cgc_memcpy(&list[32], sc->order, 95);
         for (i = 127; i < sizeof(list); ++i)
             list[i] = (unsigned char) i;
 
         for (i = 0; i < sz; ++i)
         {
             out_d[i] = list[out[i]];
-            memmove(&list[1], list, out[i]);
+            cgc_memmove(&list[1], list, out[i]);
             *list = out_d[i];
         }
         *outlen = sz;
-        free(bio);
+        cgc_free(bio);
         bio = NULL;
         return out_d;
     }

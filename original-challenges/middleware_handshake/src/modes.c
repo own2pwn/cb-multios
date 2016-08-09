@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,20 +27,20 @@
 #include "common.h"
 #include "modes.h"
 
-int _do_encode(mode_t *mode, unsigned char *b)
+int cgc__do_encode(cgc_mode_t *mode, unsigned char *b)
 {
 #define XOR(a, b, n) for (i = 0; i < (n); i++) (a)[i] ^= (b)[i];
     unsigned int i, bytes = mode->code->def->bsize / 8;
     unsigned char tmp[MAX_BSIZE / 8];
     if (mode->mode == MODE_BCM)
     {
-        uint64_t c = mode->state.cm;
+        cgc_uint64_t c = mode->state.cm;
         for (i = bytes; i > 0; i--)
         {
             tmp[i-1] = c;
             c = c >> 8;
         }
-        if (codes_encode(mode->code, tmp) != SUCCESS)
+        if (cgc_codes_encode(mode->code, tmp) != SUCCESS)
             return FAILURE;
 
         XOR(b, tmp, bytes)
@@ -50,24 +50,24 @@ int _do_encode(mode_t *mode, unsigned char *b)
     else if (mode->mode == MODE_XIM)
     {
         XOR(b, mode->state.xm, bytes)
-        if (codes_encode(mode->code, b) != SUCCESS)
+        if (cgc_codes_encode(mode->code, b) != SUCCESS)
             return FAILURE;
         XOR(mode->state.xm, b, bytes)
     }
     else if (mode->mode == MODE_XOM)
     {
-        memcpy(tmp, b, bytes);
+        cgc_memcpy(tmp, b, bytes);
         XOR(b, mode->state.xm, bytes)
-        if (codes_encode(mode->code, b) != SUCCESS)
+        if (cgc_codes_encode(mode->code, b) != SUCCESS)
             return FAILURE;
-        memcpy(mode->state.xm, tmp, bytes);
+        cgc_memcpy(mode->state.xm, tmp, bytes);
         XOR(mode->state.xm, b, bytes)
     }
 #undef XOR
     return SUCCESS;
 }
 
-int _do_decode(mode_t *mode, unsigned char *b)
+int cgc__do_decode(cgc_mode_t *mode, unsigned char *b)
 {
 #define XOR(a, b, n) for (i = 0; i < (n); i++) (a)[i] ^= (b)[i];
     unsigned int i, bytes = mode->code->def->bsize / 8;
@@ -75,42 +75,42 @@ int _do_decode(mode_t *mode, unsigned char *b)
     if (mode->mode == MODE_BCM)
     {
         // the same as encoding
-        _do_encode(mode, b);
+        cgc__do_encode(mode, b);
     }
     else if (mode->mode == MODE_XIM)
     {
-        memcpy(tmp, b, bytes);
-        if (codes_decode(mode->code, b) != SUCCESS)
+        cgc_memcpy(tmp, b, bytes);
+        if (cgc_codes_decode(mode->code, b) != SUCCESS)
             return FAILURE;
         XOR(b, mode->state.xm, bytes)
         XOR(mode->state.xm, tmp, bytes)
     }
     else if (mode->mode == MODE_XOM)
     {
-        memcpy(tmp, b, bytes);
-        if (codes_decode(mode->code, b) != SUCCESS)
+        cgc_memcpy(tmp, b, bytes);
+        if (cgc_codes_decode(mode->code, b) != SUCCESS)
             return FAILURE;
         XOR(b, mode->state.xm, bytes)
 
-        memcpy(mode->state.xm, tmp, bytes);
+        cgc_memcpy(mode->state.xm, tmp, bytes);
         XOR(mode->state.xm, b, bytes)
     }
 #undef XOR
     return SUCCESS;
 }
 
-int modes_init(mode_t *mode, unsigned int mode_id, code_t *code)
+int cgc_modes_init(cgc_mode_t *mode, unsigned int mode_id, cgc_code_t *code)
 {
     if (mode_id >= MODE_END)
         return FAILURE;
 
     mode->mode = mode_id;
     mode->code = code;
-    memset(&mode->state, 0, sizeof(mode->state));
+    cgc_memset(&mode->state, 0, sizeof(mode->state));
     return SUCCESS;
 }
 
-int modes_encode(mode_t *mode, const unsigned char *inb, unsigned int inlen, 
+int cgc_modes_encode(cgc_mode_t *mode, const unsigned char *inb, unsigned int inlen, 
     unsigned char **outb, unsigned int *outlen)
 {
     int pad = 0;
@@ -124,7 +124,7 @@ int modes_encode(mode_t *mode, const unsigned char *inb, unsigned int inlen,
         return SUCCESS;
     }
 
-    data = malloc(len + bytes);
+    data = cgc_malloc(len + bytes);
     if (data == NULL)
         return FAILURE;
 
@@ -133,25 +133,25 @@ int modes_encode(mode_t *mode, const unsigned char *inb, unsigned int inlen,
         unsigned int tocopy = bytes;
         if (inlen < tocopy)
             tocopy = inlen;
-        memcpy(&data[i], inb, tocopy);
+        cgc_memcpy(&data[i], inb, tocopy);
         inb += tocopy;
         inlen -= tocopy;
 
         if (tocopy < bytes)
         {
             pad = 1;
-            memset(&data[i + tocopy], tocopy, bytes - tocopy);
+            cgc_memset(&data[i + tocopy], tocopy, bytes - tocopy);
         }
 
-        if (_do_encode(mode, &data[i]) != SUCCESS)
+        if (cgc__do_encode(mode, &data[i]) != SUCCESS)
             goto fail;
     }
 
     if (pad == 0)
     {
         // if there is no padding, append another block for padding
-        memset(&data[len], 0, bytes);
-        if (_do_encode(mode, &data[len]) != SUCCESS)
+        cgc_memset(&data[len], 0, bytes);
+        if (cgc__do_encode(mode, &data[len]) != SUCCESS)
             goto fail;
         len += bytes;
     }
@@ -161,11 +161,11 @@ int modes_encode(mode_t *mode, const unsigned char *inb, unsigned int inlen,
     return SUCCESS;
 
 fail:
-    free(data);
+    cgc_free(data);
     return FAILURE;
 }
 
-int modes_decode(mode_t *mode, const unsigned char *inb, unsigned int inlen, 
+int cgc_modes_decode(cgc_mode_t *mode, const unsigned char *inb, unsigned int inlen, 
     unsigned char **outb, unsigned int *outlen)
 {
     unsigned int bytes = mode->code->def->bsize / 8;
@@ -182,14 +182,14 @@ int modes_decode(mode_t *mode, const unsigned char *inb, unsigned int inlen,
     if ((inlen % bytes) != 0)
         return FAILURE;
 
-    data = malloc(inlen);
+    data = cgc_malloc(inlen);
     if (data == NULL)
         return FAILURE;
-    memcpy(data, inb, inlen);
+    cgc_memcpy(data, inb, inlen);
 
     for (i = 0; i < inlen; i += bytes)
     {
-        if (_do_decode(mode, &data[i]) != SUCCESS)
+        if (cgc__do_decode(mode, &data[i]) != SUCCESS)
             goto fail;
     }
 
@@ -211,49 +211,49 @@ int modes_decode(mode_t *mode, const unsigned char *inb, unsigned int inlen,
     return SUCCESS;
 
 fail:
-    free(data);
+    cgc_free(data);
     return FAILURE;
 }
 
-int modes_self_test()
+int cgc_modes_self_test()
 {
     static unsigned char test[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x55, 0xAA};
-    code_t c;
-    mode_t m;
+    cgc_code_t c;
+    cgc_mode_t m;
     unsigned char *tmp1, *tmp2;
     unsigned int len, id;
 
-    if (codes_init(&c, C_NULL, NULL) != SUCCESS)
+    if (cgc_codes_init(&c, C_NULL, NULL) != SUCCESS)
         goto fail;
 
     for (id = MODE_NULL; id < MODE_END; id++)
     {
-        if (modes_init(&m, id, &c) != SUCCESS)
+        if (cgc_modes_init(&m, id, &c) != SUCCESS)
             goto fail;
 
-        if (modes_encode(&m, test, sizeof(test), &tmp1, &len) != SUCCESS)
+        if (cgc_modes_encode(&m, test, sizeof(test), &tmp1, &len) != SUCCESS)
             goto fail;
 
         if (len != 12)
             goto fail;
 
-        if (modes_init(&m, id, &c) != SUCCESS)
+        if (cgc_modes_init(&m, id, &c) != SUCCESS)
             goto fail;
 
-        if (modes_decode(&m, tmp1, len, &tmp2, &len) != SUCCESS)
+        if (cgc_modes_decode(&m, tmp1, len, &tmp2, &len) != SUCCESS)
             goto fail;
-        free(tmp1);
+        cgc_free(tmp1);
 
         if (len != sizeof(test))
             goto fail;
 
-        if (memcmp(tmp2, test, sizeof(test)) != 0)
+        if (cgc_memcmp(tmp2, test, sizeof(test)) != 0)
             goto fail;
-        free(tmp2);
+        cgc_free(tmp2);
     }
     return SUCCESS;
 
 fail:
-    fdprintf(STDERR, "Modes self-init FAILED!\n");
+    cgc_fdprintf(STDERR, "Modes self-init FAILED!\n");
     return FAILURE;
 }

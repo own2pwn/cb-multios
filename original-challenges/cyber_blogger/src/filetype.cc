@@ -30,7 +30,7 @@ const filetype supported_files[] = {
 };
 
 
-const filetype *get_filetype_m(unsigned int magic)
+const filetype *cgc_get_filetype_m(unsigned int magic)
 {
     for (int i = 0; i < sizeof(supported_files)/sizeof(filetype); i++) {
         if (magic == supported_files[i].magic)
@@ -40,13 +40,13 @@ const filetype *get_filetype_m(unsigned int magic)
     return NULL;
 }
 
-const filetype *get_filetype_e(char *extension)
+const filetype *cgc_get_filetype_e(char *extension)
 {
     if (!extension || !*extension)
         return NULL;
 
     for (int i = 0; i < sizeof(supported_files)/sizeof(filetype); i++) {
-        if (strcasecmp(supported_files[i].extension, extension) == 0)
+        if (cgc_strcasecmp(supported_files[i].extension, extension) == 0)
             return &supported_files[i];
     }
 

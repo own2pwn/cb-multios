@@ -29,17 +29,17 @@ struct freeblk {
     LIST_ELEMS(struct freeblk) list;
 };
 
-static int pool_grow(struct pool *pool);
+static int cgc_pool_grow(struct pool *pool);
 
 void
-pool_init(struct pool *pool, size_t size)
+cgc_pool_init(struct pool *pool, cgc_size_t size)
 {
     pool->size = MAX(size, sizeof(struct freeblk));
     LIST_INIT(&pool->freelist);
 }
 
 int
-pool_destroy(struct pool *pool)
+cgc_pool_destroy(struct pool *pool)
 {
     int ret = 0;
     struct freeblk *cur = NULL;
@@ -50,7 +50,7 @@ pool_destroy(struct pool *pool)
     LIST_INIT(&pagelist);
 
     LIST_FOR_EACH(&pool->freelist, list, cur)
-        if (((uintptr_t)cur & (PAGE_SIZE - 1)) == 0) {
+        if (((cgc_uintptr_t)cur & (PAGE_SIZE - 1)) == 0) {
             LIST_REMOVE(&pool->freelist, list, cur);
             LIST_PUSH_FRONT(&pagelist, list, cur);
         }
@@ -68,12 +68,12 @@ pool_destroy(struct pool *pool)
 }
 
 void *
-pool_alloc(struct pool *pool)
+cgc_pool_alloc(struct pool *pool)
 {
     struct freeblk *ret = NULL;
 
     if (pool->freelist.head == NULL &&
-            pool_grow(pool) != 0)
+            cgc_pool_grow(pool) != 0)
         return NULL;
 
     LIST_POP_FRONT(&pool->freelist, list, ret);
@@ -82,18 +82,18 @@ pool_alloc(struct pool *pool)
 }
 
 void
-pool_free(struct pool *pool, void *addr)
+cgc_pool_free(struct pool *pool, void *addr)
 {
     LIST_ELEMS_INIT(&((struct freeblk *)addr)->list);
     LIST_PUSH_FRONT(&pool->freelist, list, (struct freeblk *)addr);
 }
 
 static int
-pool_grow(struct pool *pool)
+cgc_pool_grow(struct pool *pool)
 {
     int ret = 0;
-    size_t i = 0;
-    size_t num_pages = PAGE_SIZE / pool->size;
+    cgc_size_t i = 0;
+    cgc_size_t num_pages = PAGE_SIZE / pool->size;
     struct freeblk *toadd = NULL;
     unsigned char *page = NULL;
 

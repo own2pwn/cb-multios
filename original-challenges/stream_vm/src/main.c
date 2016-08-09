@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,22 +31,22 @@
 #define R_ZERO 0
 
 typedef struct {
-    uint32_t registers[NUM_REGISTERS];
-    uint8_t memory[MEM_SIZE];
-} vmstate_t;
+    cgc_uint32_t registers[NUM_REGISTERS];
+    cgc_uint8_t memory[MEM_SIZE];
+} cgc_vmstate_t;
 
-typedef int opcode_t;
+typedef int cgc_opcode_t;
 
-static vmstate_t state;
+static cgc_vmstate_t state;
 #define R_VALUE(x) ((x) == R_ZERO ? 0 : state.registers[(x)])
 #define M_VALUE(x) (state.memory[(x) % MEM_SIZE])
 
-static int read_fully(void *_dst, size_t len)
+static int cgc_read_fully(void *_dst, cgc_size_t len)
 {
-    uint8_t *dst = (uint8_t *)_dst;
+    cgc_uint8_t *dst = (cgc_uint8_t *)_dst;
     while (len > 0)
     {
-        size_t bytes;
+        cgc_size_t bytes;
         if (receive(STDIN, dst, len, &bytes) != 0)
             return 1;
         len -= bytes;
@@ -55,9 +55,9 @@ static int read_fully(void *_dst, size_t len)
     return 0;
 }
 
-static int process_syscall()
+static int cgc_process_syscall()
 {
-    size_t bytes;
+    cgc_size_t bytes;
     switch (state.registers[1])
     {
     case 0:
@@ -77,7 +77,7 @@ static int process_syscall()
             length = state.registers[3];
         if (addr + length > MEM_SIZE)
             return 1;
-        read_fully(&M_VALUE(addr), length);
+        cgc_read_fully(&M_VALUE(addr), length);
         return 0;
     }
     default:
@@ -85,7 +85,7 @@ static int process_syscall()
     }
 }
 
-static int process(opcode_t op)
+static int cgc_process(cgc_opcode_t op)
 {
     static void* opcode_table[] = {
         &&do_invalid, &&do_load, &&do_store, &&do_syscall,
@@ -152,7 +152,7 @@ do_div:
     return 0;
 
 do_syscall:
-    return process_syscall();
+    return cgc_process_syscall();
 
 do_slt:
     state.registers[rdst] = R_VALUE(rsrc) < R_VALUE(lval & 0xf);
@@ -165,36 +165,36 @@ do_slte:
 
 int main()
 {
-    size_t bytes;
-    memset(&state, 0, sizeof(state));
+    cgc_size_t bytes;
+    cgc_memset(&state, 0, sizeof(state));
 
-    uint32_t magic;
-    if (read_fully(&magic, sizeof(magic)) != 0 || magic != MAGIC)
+    cgc_uint32_t magic;
+    if (cgc_read_fully(&magic, sizeof(magic)) != 0 || magic != MAGIC)
         goto bad_init;
 
     int flags;
-    if (read_fully(&flags, sizeof(flags)) != 0)
+    if (cgc_read_fully(&flags, sizeof(flags)) != 0)
         goto bad_init;
 
     if (flags >> 31)
     {
-        if (read_fully(state.registers, sizeof(state.registers)) != 0)
+        if (cgc_read_fully(state.registers, sizeof(state.registers)) != 0)
             goto bad_init;
     }
     
     if (flags & (MEM_SIZE-1))
     {
-        if (read_fully(state.memory, flags & (MEM_SIZE-1)) != 0)
+        if (cgc_read_fully(state.memory, flags & (MEM_SIZE-1)) != 0)
             goto bad_init;
     }
 
     while (1)
     {
-        opcode_t opcode;
-        if (read_fully(&opcode, sizeof(opcode)) != 0)
+        cgc_opcode_t opcode;
+        if (cgc_read_fully(&opcode, sizeof(opcode)) != 0)
             break;
 
-        if (process(opcode) != 0)
+        if (cgc_process(opcode) != 0)
             break;
 
         transmit(STDOUT, state.registers, sizeof(state.registers), &bytes);

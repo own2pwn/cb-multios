@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,13 +26,13 @@
 #include "rng.h"
 
 typedef struct {
-    uint64_t state;
-} lcg_priv_t;
+    cgc_uint64_t state;
+} cgc_lcg_priv_t;
 
-static int lcg_init(rng_t *rng)
+static int cgc_lcg_init(cgc_rng_t *rng)
 {
-    lcg_priv_t *priv;
-    rng->priv = priv = malloc(sizeof(lcg_priv_t));
+    cgc_lcg_priv_t *priv;
+    rng->priv = priv = cgc_malloc(sizeof(cgc_lcg_priv_t));
     if (priv == NULL)
         return FAILURE;
 
@@ -40,17 +40,17 @@ static int lcg_init(rng_t *rng)
     return SUCCESS;
 }
 
-static uint32_t next(lcg_priv_t *priv)
+static cgc_uint32_t cgc_next(cgc_lcg_priv_t *priv)
 {
     priv->state = priv->state * 6364136223846793005ULL + 1;
     return priv->state >> 32;
 }
 
-static int lcg_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt)
+static int cgc_lcg_get_bytes(cgc_rng_t *rng, unsigned char *out, unsigned int cnt)
 {
     while (cnt > 0)
     {
-        uint32_t x = next(rng->priv);
+        cgc_uint32_t x = cgc_next(rng->priv);
         *out++ = x >> 24;
         if (--cnt == 0) break;
         *out++ = x >> 16;
@@ -63,9 +63,9 @@ static int lcg_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt)
     return SUCCESS;
 }
 
-const rng_def_t lcg_rng = {
+const cgc_rng_def_t lcg_rng = {
     .name = "64-bit LCG",
     .id = RNG_LCG,
-    .init = lcg_init,
-    .get_bytes = lcg_get_bytes
+    .init = cgc_lcg_init,
+    .get_bytes = cgc_lcg_get_bytes
 };

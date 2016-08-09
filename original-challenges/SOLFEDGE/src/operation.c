@@ -31,7 +31,7 @@
  *  Success: 2 or 3 (number of letters written to syllable_buf)
  *  Failure: ERR_INVALID_NOTE
  */
-int get_syllable_for_note_id(int note_id, char *syllable_buf) {
+int cgc_get_syllable_for_note_id(int note_id, char *syllable_buf) {
 
 	switch(note_id) {
 	case C:
@@ -78,7 +78,7 @@ int get_syllable_for_note_id(int note_id, char *syllable_buf) {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_SYLLABLE
  */
-int get_note_for_syllable_id(int syllable_id, char *note_buf) {
+int cgc_get_note_for_syllable_id(int syllable_id, char *note_buf) {
 
 	switch(syllable_id) {
 	case Ut:
@@ -116,7 +116,7 @@ int get_note_for_syllable_id(int syllable_id, char *note_buf) {
  *  Success: 1 thru 7 from notes enum
  *  Failure: ERR_INVALID_NOTE
  */
-int get_next_note_id(const char *str) {
+int cgc_get_next_note_id(const char *str) {
 
 	switch(str[0]) {
 	case 'C':
@@ -152,7 +152,7 @@ int get_next_note_id(const char *str) {
  *  Success: 1 thru 7 in syllables enum
  *  Failure: ERR_INVALID_SYLLABLE
  */
-int get_next_syllable_id(const char *str, char *bytes_read) {
+int cgc_get_next_syllable_id(const char *str, char *bytes_read) {
 
 	char s0 = str[0];
 	char s1 = str[1];
@@ -190,12 +190,12 @@ int get_next_syllable_id(const char *str, char *bytes_read) {
  *  Success: 1 (number of bytes written)
  *  Failure: ERR_INVALID_SYLLABLE
  */
-int write_note_to_buf(int syllable_id, char *notes_buf) {
+int cgc_write_note_to_buf(int syllable_id, char *notes_buf) {
 
 	int ret = 1;
 	char note = 0;
 
-	ret = get_note_for_syllable_id(syllable_id, &note);
+	ret = cgc_get_note_for_syllable_id(syllable_id, &note);
 	if (SUCCESS == ret) {
 		notes_buf[0] = note;
 		ret = 1;
@@ -210,12 +210,12 @@ int write_note_to_buf(int syllable_id, char *notes_buf) {
  *  Success: 2 or 3 (number of bytes written)
  *  Failure: ERR_INVALID_NOTE
  */
-int write_syllable_to_buf(int note_id, char *syllable_buf) {
+int cgc_write_syllable_to_buf(int note_id, char *syllable_buf) {
 
 	int ret = 2;
 	char syllable[3] = {0};
 
-	ret = get_syllable_for_note_id(note_id, syllable);
+	ret = cgc_get_syllable_for_note_id(note_id, syllable);
 	if (0 < ret) {
 		syllable_buf[0] = syllable[0];
 		syllable_buf[1] = syllable[1];
@@ -237,7 +237,7 @@ int write_syllable_to_buf(int note_id, char *syllable_buf) {
  *  Success: total bytes written to notes_buf (> 0)
  *  Failure: ERR_INVALID_SYLLABLE
  */
-int process_syllables(uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
+int cgc_process_syllables(cgc_uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
 
 	int ret = 1;
 	char *s_buf_ptr = syllables_buf;
@@ -247,12 +247,12 @@ int process_syllables(uint32_t bytes_count, char *syllables_buf, char *notes_buf
 	int total_bytes_written = 0;
 
 	while ((0 < ret) && (0 < bytes_count)) {
-		syllable_id = get_next_syllable_id(s_buf_ptr, bytes_read);
+		syllable_id = cgc_get_next_syllable_id(s_buf_ptr, bytes_read);
 		if (0 < syllable_id) {
 			s_buf_ptr += bytes_read[0];
 			bytes_count -= bytes_read[0];
 
-			ret = write_note_to_buf(syllable_id, n_buf_ptr);
+			ret = cgc_write_note_to_buf(syllable_id, n_buf_ptr);
 			if (1 == ret) {
 				n_buf_ptr += ret;
 				total_bytes_written += ret;
@@ -282,7 +282,7 @@ int process_syllables(uint32_t bytes_count, char *syllables_buf, char *notes_buf
  *  Success: total bytes written to syllables_buf (> 0)
  *  Failure: ERR_INVALID_NOTE, ERR_TOO_MANY_NOTES
  */
-int process_notes(uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
+int cgc_process_notes(cgc_uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
 
 	int ret = 1;
 	char *s_buf_ptr = syllables_buf;
@@ -295,12 +295,12 @@ int process_notes(uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
 #else
 	while ((0 < ret) && (MAX_SYLLABLES_BYTES > total_bytes_written) && (0 < bytes_count)) {
 #endif
-		note_id = get_next_note_id(n_buf_ptr);
+		note_id = cgc_get_next_note_id(n_buf_ptr);
 		if (0 < note_id) {
 			n_buf_ptr++;
 			bytes_count--;
 
-			ret = write_syllable_to_buf(note_id, s_buf_ptr);
+			ret = cgc_write_syllable_to_buf(note_id, s_buf_ptr);
 			if ((2 == ret) || (3 == ret)) {
 				s_buf_ptr += ret;
 				total_bytes_written += ret;
@@ -321,15 +321,15 @@ int process_notes(uint32_t bytes_count, char *syllables_buf, char *notes_buf) {
 /*
  * Send resultant syllables to client.
  */
-void send_syllables(uint32_t bytes_count, char *syllable_buf) {
-	send(syllable_buf, bytes_count * sizeof(char));
+void cgc_send_syllables(cgc_uint32_t bytes_count, char *syllable_buf) {
+	cgc_send(syllable_buf, bytes_count * sizeof(char));
 }
 
 /*
  * Send resultant notes to client.
  */
-void send_notes(uint32_t bytes_count, char *notes_buf) {
-	send(notes_buf, bytes_count * sizeof(char));	
+void cgc_send_notes(cgc_uint32_t bytes_count, char *notes_buf) {
+	cgc_send(notes_buf, bytes_count * sizeof(char));	
 }
 
 /*
@@ -338,27 +338,27 @@ void send_notes(uint32_t bytes_count, char *notes_buf) {
  * Returns:
  *  Token count >= 0
  */
-uint32_t recv_bytes_count() {
-    uint32_t count[1] = {0};
-    RECV(count, sizeof(uint32_t));
+cgc_uint32_t cgc_recv_bytes_count() {
+    cgc_uint32_t count[1] = {0};
+    RECV(count, sizeof(cgc_uint32_t));
 	return count[0];
 }
 
 /*
  * Control operation to convert received notes into syllables
- * and send resulting syllables back to client.
+ * and cgc_send resulting syllables back to client.
  *
  * Returns:
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_NOTE, ERR_TOO_MANY_NOTES,
  * 			 ERR_NO_NOTES, ERR_NO_SYLLABLES
  */
-int to_syllables(char *syllables_buf, char *notes_buf) {
+int cgc_to_syllables(char *syllables_buf, char *notes_buf) {
 
 	int ret = 0;
 	int total_bytes_written = 0;
 
-	uint32_t bytes_count = recv_bytes_count();
+	cgc_uint32_t bytes_count = cgc_recv_bytes_count();
 
 	if (0 >= bytes_count) {
 		return ERR_NO_NOTES;
@@ -370,10 +370,10 @@ int to_syllables(char *syllables_buf, char *notes_buf) {
 
 	RECV(notes_buf, bytes_count);
 
-	total_bytes_written = process_notes(bytes_count, syllables_buf, notes_buf);
+	total_bytes_written = cgc_process_notes(bytes_count, syllables_buf, notes_buf);
 
 	if (0 < total_bytes_written) {
-		send_syllables(total_bytes_written, syllables_buf);
+		cgc_send_syllables(total_bytes_written, syllables_buf);
 		ret = SUCCESS;
 	} else if (0 == total_bytes_written) {
 		ret = ERR_NO_SYLLABLES;
@@ -386,19 +386,19 @@ int to_syllables(char *syllables_buf, char *notes_buf) {
 
 /*
  * Control operation to convert received syllables into notes
- * and send resulting notes back to client.
+ * and cgc_send resulting notes back to client.
  *
  * Returns:
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_SYLLABLE, ERR_TOO_MANY_SYLLABLES, 
  *			 ERR_NO_SYLLABLES, ERR_NO_NOTES
  */
-int to_notes(char *syllables_buf, char *notes_buf) {
+int cgc_to_notes(char *syllables_buf, char *notes_buf) {
 
 	int ret = 0;
 	int total_bytes_written = 0;
 
-	uint32_t bytes_count = recv_bytes_count();
+	cgc_uint32_t bytes_count = cgc_recv_bytes_count();
 
 	if (0 >= bytes_count) {
 		return ERR_NO_SYLLABLES;
@@ -410,10 +410,10 @@ int to_notes(char *syllables_buf, char *notes_buf) {
 
 	RECV(syllables_buf, bytes_count);
 
-	total_bytes_written = process_syllables(bytes_count, syllables_buf, notes_buf);
+	total_bytes_written = cgc_process_syllables(bytes_count, syllables_buf, notes_buf);
 
 	if (0 < total_bytes_written) {
-		send_notes(total_bytes_written, notes_buf);
+		cgc_send_notes(total_bytes_written, notes_buf);
 		ret = SUCCESS;
 	} else if (0 == total_bytes_written) {
 		ret = ERR_NO_NOTES;

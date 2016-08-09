@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "stdint.h"
 
-#define MAX_ENTRY_PER_TITLE 15 // The most Entries a Chapter can have 
+#define MAX_ENTRY_PER_TITLE 15 // The most Entries a cgc_Chapter can have 
 #define MAX_NUM_ENTRIES 15
 #define NAME_LEN_MAX 26
 #define NUM_SUBTITLES 7
@@ -43,56 +43,56 @@ enum Format {CHAR, SHORT, INT, STR, BOOL, PTR};
 
 
 #pragma pack(1)
-// One Header, with pointer to first Dir
+// One cgc_Header, with pointer to first Dir
 typedef struct 
 {
-	uint16_t magic_number;				// always 4242
-	uint16_t future;					// not used yet
-	uint32_t offset_to_first_chapter;	// offset from start of file to the first chapter
-}Header;
+	cgc_uint16_t magic_number;				// always 4242
+	cgc_uint16_t future;					// not used yet
+	cgc_uint32_t offset_to_first_chapter;	// offset from start of file to the first chapter
+}cgc_Header;
 
 #pragma pack(1)
 typedef struct 
 {
 	/* owned by chapter */
-	uint8_t entry;						// what type of entry is this? name, birth date
-	uint8_t format;						// format of offset_data
-	uint8_t len; // # bytes read from data_offset. if 0, data IS the data_offset value, of type 'format'
-	uint16_t offset_data;				// either holds data or an offset to the data
-	uint16_t offset_next_entry;			// file offset to next entry
-}Entry;
+	cgc_uint8_t entry;						// what type of entry is this? name, birth date
+	cgc_uint8_t format;						// format of offset_data
+	cgc_uint8_t len; // # bytes read from data_offset. if 0, data IS the data_offset value, of type 'format'
+	cgc_uint16_t offset_data;				// either holds data or an offset to the data
+	cgc_uint16_t offset_next_entry;			// file offset to next entry
+}cgc_Entry;
 
 #pragma pack(1)
 typedef struct 
 {
 	/* owned by book */
 	/* owns entries */
-	uint8_t title;
-	uint8_t entry_count;
-	uint16_t offset_first_entry;
-	uint16_t offset_next_chapter;
-}Chapter;
+	cgc_uint8_t title;
+	cgc_uint8_t entry_count;
+	cgc_uint16_t offset_first_entry;
+	cgc_uint16_t offset_next_chapter;
+}cgc_Chapter;
 
 // this struct is used in a table to look up these fields for each entry
 typedef struct 
 {
 	/* data */
-	uint8_t format;
-	uint8_t str_len;
-	uint8_t mult_ok;
-	uint8_t required;
+	cgc_uint8_t format;
+	cgc_uint8_t str_len;
+	cgc_uint8_t mult_ok;
+	cgc_uint8_t required;
 	char entry_str[NAME_LEN_MAX];
-}Entry_Info;
+}cgc_Entry_Info;
 
 // [titles][entries]
-Entry_Info* entry_info_table[MAX_NUM_ENTRIES][MAX_ENTRY_PER_TITLE];
-Entry_Info* sub_entry_info_list[MAX_NUM_ENTRIES][MAX_ENTRY_PER_TITLE];
+cgc_Entry_Info* entry_info_table[MAX_NUM_ENTRIES][MAX_ENTRY_PER_TITLE];
+cgc_Entry_Info* sub_entry_info_list[MAX_NUM_ENTRIES][MAX_ENTRY_PER_TITLE];
 
-uint8_t required_entries[MAX_ENTRY_PER_TITLE];  // store all required entries for this chapter, to be ticked off as they are received
-uint8_t prev_read_entries[MAX_ENTRY_PER_TITLE]; // keep track of which entries have been read in this chapter
+cgc_uint8_t required_entries[MAX_ENTRY_PER_TITLE];  // store all required entries for this chapter, to be ticked off as they are received
+cgc_uint8_t prev_read_entries[MAX_ENTRY_PER_TITLE]; // keep track of which entries have been read in this chapter
 
-int8_t successful[5];
-uint16_t success_info[5][2];
+cgc_int8_t successful[5];
+cgc_uint16_t success_info[5][2];
 /*
 	0: married?
 	1: other ID married?

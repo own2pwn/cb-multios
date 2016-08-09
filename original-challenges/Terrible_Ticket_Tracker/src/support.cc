@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,16 +24,16 @@
 
 #include "cstdio.h"
 
-uint32_t g_support_id = 1;
+cgc_uint32_t g_support_id = 1;
 
-Support::Support(uint32_t contact_info, PRIORITY max_priority)
+cgc_Support::cgc_Support(cgc_uint32_t cgc_contact_info, cgc_PRIORITY cgc_max_priority)
 {
     support_id_ = g_support_id++;
-    contact_info_ = contact_info;
-    max_priority_ = max_priority;
+    contact_info_ = cgc_contact_info;
+    max_priority_ = cgc_max_priority;
 }
 
-bool Support::AssignTicket(Ticket *ticket)
+bool cgc_Support::cgc_AssignTicket(cgc_Ticket *ticket)
 {
     if (!ticket)
         return false;
@@ -42,34 +42,34 @@ bool Support::AssignTicket(Ticket *ticket)
     return true;
 }
 
-bool Support::UpdateTicket(STATUS status)
+bool cgc_Support::cgc_UpdateTicket(cgc_STATUS cgc_status)
 {
     if (!ticket_)
         return false;
 
-    ticket_->UpdateStatus(status);
+    ticket_->cgc_UpdateStatus(cgc_status);
     return true;
 }
 
-Ticket *Support::CurrentTicket()
+cgc_Ticket *cgc_Support::cgc_CurrentTicket()
 {
     return ticket_;
 }
 
-void Support::Display(void)
+void cgc_Support::cgc_Display(void)
 {
-  printf("%d" EOL, id());
-  if (CurrentTicket())
-    printf("%d" EOL, CurrentTicket()->id());
+  cgc_printf("%d" EOL, cgc_id());
+  if (cgc_CurrentTicket())
+    cgc_printf("%d" EOL, cgc_CurrentTicket()->cgc_id());
   else
-    printf("%s" EOL, "None");
-  printf("%d" EOL, contact_info());
-  printf("%d" EOL, max_priority());
+    cgc_printf("%s" EOL, "None");
+  cgc_printf("%d" EOL, cgc_contact_info());
+  cgc_printf("%d" EOL, cgc_max_priority());
 }
 
-Ticket *Support::RemoveTicket()
+cgc_Ticket *cgc_Support::cgc_RemoveTicket()
 {
-    Ticket *ticket = nullptr;
+    cgc_Ticket *ticket = nullptr;
     if (ticket_)
     {
         ticket = ticket_;
@@ -80,17 +80,17 @@ Ticket *Support::RemoveTicket()
     return ticket;
 }
 
-uint32_t Support::id()
+cgc_uint32_t cgc_Support::cgc_id()
 {
     return support_id_;
 }
 
-uint32_t Support::contact_info()
+cgc_uint32_t cgc_Support::cgc_contact_info()
 {
     return contact_info_;
 }
 
-PRIORITY Support::max_priority()
+cgc_PRIORITY cgc_Support::cgc_max_priority()
 {
     return max_priority_;
 }

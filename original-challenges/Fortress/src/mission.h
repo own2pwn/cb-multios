@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,65 +30,65 @@
 #include "explorer.h"
 #include "list.h"
 
-class CMissionEstimate
+class cgc_CMissionEstimate
 {
-    friend class CMission;
+    friend class cgc_CMission;
 
     public:
-        CMissionEstimate() {};
-        ~CMissionEstimate() {};
+        cgc_CMissionEstimate() {};
+        ~cgc_CMissionEstimate() {};
 
-        int GetSuccessRate() { return m_successRate; }
-        int GetGroupNeeded() { return m_groupNeeded; }
-        int GetGroupSupplied() { return m_groupSupplied; }
-        CRequirement::Type GetMissingTypes() { return m_missing; }
+        int cgc_GetSuccessRate() { return m_successRate; }
+        int cgc_GetGroupNeeded() { return m_groupNeeded; }
+        int cgc_GetGroupSupplied() { return m_groupSupplied; }
+        cgc_CRequirement::Type cgc_GetMissingTypes() { return m_missing; }
 
     private:
         int m_successRate;
-        CRequirement::Type m_missing;
+        cgc_CRequirement::Type m_missing;
         int m_groupNeeded;
         int m_groupSupplied;
 };
 
-class CMission
+class cgc_CMission
 {
     public:
-        CMission(const char *name, const CRequirement &req, const CReward &reward);
-        ~CMission();
+        cgc_CMission(const char *name, const cgc_CRequirement &req, const cgc_CReward &reward);
+        ~cgc_CMission();
 
-        void SetRequirement(const CRequirement &req);
-        CRequirement& GetRequirement();
-        void SetReward(const CReward &reward);
-        CReward& GetReward();
-        CList<CExplorer *>* GetExplorers() { return m_exps; }
-        bool IsAvail();
-        int GetSuccessRate() { return m_successRate; }
-        void SetSuccessRate(int sr) { m_successRate = sr; }
+        void cgc_SetRequirement(const cgc_CRequirement &req);
+        cgc_CRequirement& cgc_GetRequirement();
+        void cgc_SetReward(const cgc_CReward &reward);
+        cgc_CReward& cgc_GetReward();
+        cgc_CList<cgc_CExplorer *>* cgc_GetExplorers() { return m_exps; }
+        bool cgc_IsAvail();
+        int cgc_GetSuccessRate() { return m_successRate; }
+        void cgc_SetSuccessRate(int sr) { m_successRate = sr; }
 
-        const char* GetName();
-        int GetReqLevel();
-        int GetReqGroup();
-        int GetReqSupply();
-        int GetDuration();
-        void SubDuration(int n) { m_req.m_duration -= n; }
-        char* GetReqTypeString();
+        const char* cgc_GetName();
+        int cgc_GetReqLevel();
+        int cgc_GetReqGroup();
+        int cgc_GetReqSupply();
+        int cgc_GetDuration();
+        void cgc_SubDuration(int n) { m_req.m_duration -= n; }
+        char* cgc_GetReqTypeString();
 
-        int GetRewardExp() { return m_reward.m_exp; }
-        int GetRewardSupply() { return m_reward.m_supply; }
+        int cgc_GetRewardExp() { return m_reward.m_exp; }
+        int cgc_GetRewardSupply() { return m_reward.m_supply; }
 
-        void Execute(const CList<CExplorer *> &explorers);
-        CMissionEstimate* Check(const CList<CExplorer *> &explorers);
-        bool Complete();
+        void cgc_Execute(const cgc_CList<cgc_CExplorer *> &explorers);
+        cgc_CMissionEstimate* cgc_Check(const cgc_CList<cgc_CExplorer *> &explorers);
+        bool cgc_Complete();
 
     private:
-        CRequirement::Type EvalCounters(const CList<CExplorer *> &exps);
+        cgc_CRequirement::Type cgc_EvalCounters(const cgc_CList<cgc_CExplorer *> &exps);
 
         static const int k_maxNameLength = 32;
 
         char *m_name;
-        CRequirement m_req;
-        CReward m_reward;
+        cgc_CRequirement m_req;
+        cgc_CReward m_reward;
         bool m_avail;
         int m_successRate;
-        CList<CExplorer *> *m_exps;
+        cgc_CList<cgc_CExplorer *> *m_exps;
 };

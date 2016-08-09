@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,7 +25,7 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-bool IsLeapYear( uint16_t year )
+bool cgc_IsLeapYear( cgc_uint16_t year )
 {
     if ( (year % 400 == 0 || year % 100 != 0) &&
          (year % 4 == 0) )
@@ -34,11 +34,11 @@ bool IsLeapYear( uint16_t year )
         return (false);
 }
 
-uint8_t DaysInMonth( uint8_t month, uint16_t year )
+cgc_uint8_t cgc_DaysInMonth( cgc_uint8_t month, cgc_uint16_t year )
 {
     if ( month == 2 )
     {
-        if ( IsLeapYear( year ) )
+        if ( cgc_IsLeapYear( year ) )
             return (29);
         else
             return (28);

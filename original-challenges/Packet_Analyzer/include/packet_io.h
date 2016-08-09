@@ -28,11 +28,11 @@ THE SOFTWARE.
 
 #include "service.h"
 
-void ReceiveBytesOrTerminate(void *buffer, size_t size);
-int ReceiveAndVerifyInitializationPacket(SystemState *state);
-int ReceiveAndVerifyFilters(SystemState *state);
-int ReceiveAndProcessFile(SystemState *state);
-int ReceiveAndProcessStream(SystemState *state);
-void DisplayStatistics(SystemState *state);
+void cgc_ReceiveBytesOrTerminate(void *buffer, cgc_size_t size);
+int cgc_ReceiveAndVerifyInitializationPacket(cgc_SystemState *state);
+int cgc_ReceiveAndVerifyFilters(cgc_SystemState *state);
+int cgc_ReceiveAndProcessFile(cgc_SystemState *state);
+int cgc_ReceiveAndProcessStream(cgc_SystemState *state);
+void cgc_DisplayStatistics(cgc_SystemState *state);
 
 #endif

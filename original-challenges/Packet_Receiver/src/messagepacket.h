@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,38 +26,38 @@ THE SOFTWARE.
 #ifndef __MESSAGE_PACKET_H__
 #define __MESSAGE_PACKET_H__
 
-class CMessagePacket
+class cgc_CMessagePacket
 {
 public:
-    static const uint8_t FRAGMENTED_BIT = 0x0;         // Indicates fragmented packet
-    static const uint8_t LAST_FRAGMENT_BIT = 0x1;      // Indicates last fragment of fragmented packets
-    static const uint8_t LARGE_CHECKSUM_BIT = 0x2;     // Indicates large checksum (32-bit instead of 16-bit)
+    static const cgc_uint8_t FRAGMENTED_BIT = 0x0;         // Indicates fragmented packet
+    static const cgc_uint8_t LAST_FRAGMENT_BIT = 0x1;      // Indicates last fragment of fragmented packets
+    static const cgc_uint8_t LARGE_CHECKSUM_BIT = 0x2;     // Indicates large checksum (32-bit instead of 16-bit)
 
-    static const uint8_t HEADER_IDENTIFIER_BITS = 0xF0;       // Validates the packet header
-    static const uint8_t HEADER_IDENTIFIER_VALUE = 0xB0;      // Validates the packet header
-    static const uint8_t HEADER_PARITY_BIT = 0x3;             // Validates the packet header
-    static const uint8_t HEADER_PARITY_BIT_MASK = 0xF7;       // Mask for parity bit analysis
+    static const cgc_uint8_t HEADER_IDENTIFIER_BITS = 0xF0;       // Validates the packet header
+    static const cgc_uint8_t HEADER_IDENTIFIER_VALUE = 0xB0;      // Validates the packet header
+    static const cgc_uint8_t HEADER_PARITY_BIT = 0x3;             // Validates the packet header
+    static const cgc_uint8_t HEADER_PARITY_BIT_MASK = 0xF7;       // Mask for parity bit analysis
 
-    static const uint16_t MESSAGE_BYTE_ALIGN_SEQUENCE = 0xC3AC;    // 1100 0011 1010 1100
-    static const uint16_t PREAMBLE_LOCK_COUNT = 15;                // Lock after 15 out of 32 bits have been received
+    static const cgc_uint16_t MESSAGE_BYTE_ALIGN_SEQUENCE = 0xC3AC;    // 1100 0011 1010 1100
+    static const cgc_uint16_t PREAMBLE_LOCK_COUNT = 15;                // Lock after 15 out of 32 bits have been received
 
 public:
-    CMessagePacket( uint8_t hdr, uint8_t len );
-    ~CMessagePacket( );
+    cgc_CMessagePacket( cgc_uint8_t hdr, cgc_uint8_t len );
+    ~cgc_CMessagePacket( );
 
-    static CMessagePacket *ParseStream( CDataStream *pRxData );
+    static cgc_CMessagePacket *cgc_ParseStream( cgc_CDataStream *pRxData );
 
-    const uint8_t *GetData( void )
+    const cgc_uint8_t *cgc_GetData( void )
     {
-        if ( IsFragmented() && m_messageHeader.len >= 2 )
+        if ( cgc_IsFragmented() && m_messageHeader.len >= 2 )
             return (m_pMessageData+2);
         else
             return (m_pMessageData);
     }
 
-    uint8_t GetDataLength( void ) const
+    cgc_uint8_t cgc_GetDataLength( void ) const
     {
-        if ( IsFragmented() )
+        if ( cgc_IsFragmented() )
         {
             if ( m_messageHeader.len >= 2 )
                 return (m_messageHeader.len - 2);
@@ -68,28 +68,28 @@ public:
             return (m_messageHeader.len);
     }
 
-    uint16_t GetSequenceNumber( void ) const
+    cgc_uint16_t cgc_GetSequenceNumber( void ) const
     {
-        if ( IsFragmented() && m_messageHeader.len >= 2 )
-            return (*((uint16_t *)m_pMessageData) >> 4);
+        if ( cgc_IsFragmented() && m_messageHeader.len >= 2 )
+            return (*((cgc_uint16_t *)m_pMessageData) >> 4);
         else
             return (0);
     }
 
-    uint8_t GetFragmentNumber( void ) const
+    cgc_uint8_t cgc_GetFragmentNumber( void ) const
     {
-        if ( IsFragmented() && m_messageHeader.len >= 2 )
-            return (uint8_t)(*((uint16_t *)m_pMessageData) & 0xF);
+        if ( cgc_IsFragmented() && m_messageHeader.len >= 2 )
+            return (cgc_uint8_t)(*((cgc_uint16_t *)m_pMessageData) & 0xF);
         else
             return (0);
     }
 
-    uint8_t GetHeader( void ) const
+    cgc_uint8_t cgc_GetHeader( void ) const
     {
         return (m_messageHeader.hdr);
     }
 
-    bool IsFragmented( void ) const
+    bool cgc_IsFragmented( void ) const
     {
         if ( m_messageHeader.hdr & (1<<FRAGMENTED_BIT) )
             return (true);
@@ -97,7 +97,7 @@ public:
             return (false);
     }
 
-    bool IsLastFragment( void ) const
+    bool cgc_IsLastFragment( void ) const
     {
         if ( m_messageHeader.hdr & (1<<LAST_FRAGMENT_BIT) )
             return (true);
@@ -105,7 +105,7 @@ public:
             return (false);
     }
 
-    bool IsLargeChecksum( void ) const
+    bool cgc_IsLargeChecksum( void ) const
     {
         if ( m_messageHeader.hdr & (1<<LARGE_CHECKSUM_BIT) )
             return (true);
@@ -114,16 +114,16 @@ public:
     }
 
 private:
-    static uint8_t WaitForPreambleLock( CDataStream *pRxStream );
+    static cgc_uint8_t cgc_WaitForPreambleLock( cgc_CDataStream *pRxStream );
 
-    void SetDataByteAt( uint8_t data_pos, uint8_t value );
+    void cgc_SetDataByteAt( cgc_uint8_t data_pos, cgc_uint8_t value );
 
-    void SetChecksum32( uint32_t new_checksum )
+    void cgc_SetChecksum32( cgc_uint32_t new_checksum )
     {
         m_messageHeader.check.checksum32 = new_checksum;
     }
 
-    void SetChecksum16( uint16_t new_checksum )
+    void cgc_SetChecksum16( cgc_uint16_t new_checksum )
     {
         m_messageHeader.check.checksum16 = new_checksum;
     }
@@ -131,17 +131,17 @@ private:
 private:
     typedef struct
     {
-        uint8_t hdr;
-        uint8_t len;
+        cgc_uint8_t hdr;
+        cgc_uint8_t len;
         union
         {
-            uint32_t checksum32;
-            uint16_t checksum16;
+            cgc_uint32_t checksum32;
+            cgc_uint16_t checksum16;
         } check;
-    } tMessageHeader;
+    } cgc_tMessageHeader;
 
-    tMessageHeader m_messageHeader;
-    uint8_t *m_pMessageData;
+    cgc_tMessageHeader m_messageHeader;
+    cgc_uint8_t *m_pMessageData;
 };
 
 #endif // __MESSAGE_PACKET_H__

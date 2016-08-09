@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,9 +23,9 @@ THE SOFTWARE.
 
 #include "bitstream.h"
 
-void freeStream( pBitStream *stream )
+void cgc_freeStream( cgc_pBitStream *stream )
 {
-	pBitStream t;
+	cgc_pBitStream t;
 
 	if ( stream == NULL ) {
 		return;
@@ -37,13 +37,13 @@ void freeStream( pBitStream *stream )
 		return;
 	}
 
-	/// Ensure the stream pointer is valid before attempting to free it.
+	/// Ensure the stream pointer is valid before attempting to cgc_free it.
 	if ( t->stream ) {
-		free(t->stream);
+		cgc_free(t->stream);
 	}
 
 	/// Free the meta structure
-	free( t );
+	cgc_free( t );
 
 	/// Set the meta structure to NULL
 	*stream = NULL;
@@ -51,9 +51,9 @@ void freeStream( pBitStream *stream )
 	return;
 }
 
-pBitStream initStream( char *newData, unsigned int newDataLength )
+cgc_pBitStream cgc_initStream( char *newData, unsigned int newDataLength )
 {
-	pBitStream pbs = NULL;
+	cgc_pBitStream pbs = NULL;
 
 	if ( newData == NULL ) {
 		return pbs;
@@ -63,30 +63,30 @@ pBitStream initStream( char *newData, unsigned int newDataLength )
 		return pbs;
 	}
 
-	pbs = malloc( sizeof(BitStream) );
+	pbs = cgc_malloc( sizeof(cgc_BitStream) );
 
 	if ( pbs == NULL ) {
 		return pbs;
 	}
 
-	memset( pbs, 0, sizeof( BitStream ) );
+	cgc_memset( pbs, 0, sizeof( cgc_BitStream ) );
 
-	pbs->stream = malloc( newDataLength );
+	pbs->stream = cgc_malloc( newDataLength );
 
 	if ( pbs->stream == NULL ) {
-		free(pbs);
+		cgc_free(pbs);
 		pbs = NULL;
 		return pbs;
 	}
 
 	pbs->streamLength = newDataLength;
 
-	memcpy( pbs->stream, newData, newDataLength );
+	cgc_memcpy( pbs->stream, newData, newDataLength );
 
 	return pbs;		
 }
 
-int readBits( pBitStream stream, unsigned int bitCount, unsigned int *outBits )
+int cgc_readBits( cgc_pBitStream stream, unsigned int bitCount, unsigned int *outBits )
 {
 	int outIndex = 0;
 	int retval = 0;

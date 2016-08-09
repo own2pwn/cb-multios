@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "input.h"
 
-int add_player(playerInfoType *playerList) {
+int cgc_add_player(cgc_playerInfoType *playerList) {
 
 int i;
 char buffer[MAX_NAME_LEN];
@@ -44,15 +44,15 @@ int method;
 
 	if (i == MAX_PLAYERS) {
 
-		printf("Too many players\n");
+		cgc_printf("Too many players\n");
 		return -1;
 	}
 
-	printf("Enter player name\n");
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+	cgc_printf("Enter player name\n");
+	if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 		return -1;
 
-	strcpy(playerList[i].player_name, buffer);
+	cgc_strcpy(playerList[i].player_name, buffer);
 
 	playerList[i].funds = 500;
 	playerList[i].computerPlayer = 0;
@@ -60,21 +60,21 @@ int method;
 	playerList[i].losses = 0;
 	playerList[i].useHints = 0;
 
-	printf("Computer player? (y/n)\n");
+	cgc_printf("Computer player? (y/n)\n");
 
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+	if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 		return -1;
 
 	if (buffer[0] == 'y' || buffer[0] == 'Y') {
 
 		playerList[i].computerPlayer = 1;
 
-		printf("Method 1-4:\n");
+		cgc_printf("Method 1-4:\n");
 
-		if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+		if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 			return -1;
 
-		method = atoi(buffer);
+		method = cgc_atoi(buffer);
 
 		playerList[i].computerMethod = method;
 
@@ -83,49 +83,49 @@ int method;
 
 			case 1:
 
-				playerList[i].whackJackAlgorithm = matchDealer;
+				playerList[i].whackJackAlgorithm = cgc_matchDealer;
 				break;
 
 			case 2:
 
-				playerList[i].whackJackAlgorithm = basicAlgo;
+				playerList[i].whackJackAlgorithm = cgc_basicAlgo;
 				break;			
 
 			case 3:
 
-				playerList[i].whackJackAlgorithm = simpleAlgo;
+				playerList[i].whackJackAlgorithm = cgc_simpleAlgo;
 				break;
 
 			case 4:
 
-				playerList[i].whackJackAlgorithm = neverBustAlgo;
+				playerList[i].whackJackAlgorithm = cgc_neverBustAlgo;
 				break;
 
 			case 5:
 
-				playerList[i].whackJackAlgorithm = superDuperAlgo;
+				playerList[i].whackJackAlgorithm = cgc_superDuperAlgo;
 				break;			
 		}
 
 	}
 	else {
 
-		printf("Would you like to enable hints?\n");
+		cgc_printf("Would you like to enable hints?\n");
 
 
-		if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+		if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 		return -1;
 
 		if (buffer[0] == 'y' || buffer[0] == 'Y') {
 
 			playerList[i].useHints = 1;
 
-			printf("Method 1-4:\n");
+			cgc_printf("Method 1-4:\n");
 
-			if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+			if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 				return -1;
 
-			method = atoi(buffer);
+			method = cgc_atoi(buffer);
 
 			playerList[i].hintsMethod = method;
 
@@ -134,22 +134,22 @@ int method;
 
 				case 1:
 
-					playerList[i].whackJackAlgorithm = matchDealer;
+					playerList[i].whackJackAlgorithm = cgc_matchDealer;
 					break;
 
 				case 2:
 
-					playerList[i].whackJackAlgorithm = basicAlgo;
+					playerList[i].whackJackAlgorithm = cgc_basicAlgo;
 					break;			
 
 				case 3:
 
-					playerList[i].whackJackAlgorithm = simpleAlgo;
+					playerList[i].whackJackAlgorithm = cgc_simpleAlgo;
 					break;
 
 				case 4:
 
-					playerList[i].whackJackAlgorithm = neverBustAlgo;
+					playerList[i].whackJackAlgorithm = cgc_neverBustAlgo;
 					break;			
 			}
 		}
@@ -157,10 +157,10 @@ int method;
 
 	return 0;
 
-} // add_player
+} // cgc_add_player
 
 
-int show_players(playerInfoType *playerList) {
+int cgc_show_players(cgc_playerInfoType *playerList) {
 
 int i;
 
@@ -171,10 +171,10 @@ int i;
 
 		if (playerList[i].player_name[0] != 0 ) {
 
-			printf("Player name: $s\n", playerList[i].player_name);
-			printf("       Wins: $d\n", playerList[i].wins);
-			printf("     Losses: $d\n", playerList[i].losses);
-			printf("      Funds: $d\n", playerList[i].funds);
+			cgc_printf("Player name: $s\n", playerList[i].player_name);
+			cgc_printf("       Wins: $d\n", playerList[i].wins);
+			cgc_printf("     Losses: $d\n", playerList[i].losses);
+			cgc_printf("      Funds: $d\n", playerList[i].funds);
 		}
 
 		++i;
@@ -182,9 +182,9 @@ int i;
 
 	return 0;
 
-} // show_players
+} // cgc_show_players
 
-int delete_player(playerInfoType *playerList) {
+int cgc_delete_player(cgc_playerInfoType *playerList) {
 
 int i;
 int x;
@@ -199,7 +199,7 @@ char buffer[20];
 
 		if (playerList[i].player_name[0] != 0 ) {
 
-			printf("$d) $s\n", x, playerList[i].player_name);
+			cgc_printf("$d) $s\n", x, playerList[i].player_name);
 			x++;
 		}
 
@@ -208,16 +208,16 @@ char buffer[20];
 
 	if (x == 1) {
 
-		printf("No players\n");
+		cgc_printf("No players\n");
 		return -1;
 	}
 
-	printf("Player to delete (1-$d):\n", x-1);
+	cgc_printf("Player to delete (1-$d):\n", x-1);
 
-	if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+	if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 		return -1;
 
-	delete_num = atoi(buffer);
+	delete_num = cgc_atoi(buffer);
 
 
 	if ( delete_num >= x)

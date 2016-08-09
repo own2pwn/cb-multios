@@ -29,6 +29,6 @@ THE SOFTWARE.
 
 #include "casino.h"
 
-void slots(player_info *player);
+void cgc_slots(cgc_player_info *player);
 
 #endif // SLOTS_H

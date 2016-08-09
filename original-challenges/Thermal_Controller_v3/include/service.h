@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.com)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,7 +44,7 @@ typedef struct Sensor_s{
 	unsigned int sensorCoef;
 	double sensorTemp;
 
-} sSensor, *pSensor;
+} cgc_sSensor, *cgc_pSensor;
 
 typedef struct Step_s{
 	unsigned int type;
@@ -53,13 +53,13 @@ typedef struct Step_s{
 		unsigned int timeVal;
 	};
 	unsigned int temp;	
-} sStep, *pStep;
+} cgc_sStep, *cgc_pStep;
 
 typedef struct Program_s{
 	struct Program_s *prev;
 	struct Program_s *next;
-	sStep step;
-} sProgram, *pProgram;
+	cgc_sStep step;
+} cgc_sProgram, *cgc_pProgram;
 
 typedef struct State_s {
 	unsigned int smoke;
@@ -68,7 +68,7 @@ typedef struct State_s {
 	double currentTemp;
 	unsigned int setTemp;
 	unsigned int sensorCount;
-	pSensor sensorList;
+	cgc_pSensor sensorList;
 	short int numSteps;
 	unsigned int heater;
 	unsigned int ambientTemp;
@@ -76,36 +76,36 @@ typedef struct State_s {
 	unsigned int currentTime;
 	unsigned int historyPosition;
 	unsigned char finished;
-	pProgram programList;
-} sState, *pState;
+	cgc_pProgram programList;
+} cgc_sState, *cgc_pState;
 
 
 
-pState init_state();
-void new_state(pState state);
-int power_on(pState state);
-int power_off(pState state);
-int smoke_on(pState state);
-int smoke_off(pState state);
-int set_ambient_temp(pState, int ambientTemp );
-int set_temp(pState state, unsigned short int temp);
-int add_sensor(pState state, unsigned short int sensorID, unsigned int sensorAddr, unsigned int coeff, unsigned int sensorTemp);
-pSensor find_sensor(pState state, unsigned short int sensorID);
-int remove_sensor(pState state, unsigned short int sensorID);
-void free_program(pState state);
-int add_steps(pState state, unsigned int numSteps, pStep steps );
-int add_step(pState state, unsigned int type, unsigned int val, unsigned int temp);
-unsigned int get_program(pState state, unsigned int *size, unsigned int *buf);
-unsigned int get_status(pState state,unsigned int *);
-void get_sensors(pState state,unsigned int *);
-void update_sensors(pState state);
-void reset_sensors(pState state);
-pProgram get_step(pState state, int step);
-void check_program(pState state);
-void add_history(pState state);
-int simulate_seconds(pState state, int seconds);
+cgc_pState cgc_init_state();
+void cgc_new_state(cgc_pState state);
+int cgc_power_on(cgc_pState state);
+int cgc_power_off(cgc_pState state);
+int cgc_smoke_on(cgc_pState state);
+int cgc_smoke_off(cgc_pState state);
+int cgc_set_ambient_temp(cgc_pState, int ambientTemp );
+int cgc_set_temp(cgc_pState state, unsigned short int temp);
+int cgc_add_sensor(cgc_pState state, unsigned short int sensorID, unsigned int sensorAddr, unsigned int coeff, unsigned int sensorTemp);
+cgc_pSensor cgc_find_sensor(cgc_pState state, unsigned short int sensorID);
+int cgc_remove_sensor(cgc_pState state, unsigned short int sensorID);
+void cgc_free_program(cgc_pState state);
+int cgc_add_steps(cgc_pState state, unsigned int numSteps, cgc_pStep steps );
+int cgc_add_step(cgc_pState state, unsigned int type, unsigned int val, unsigned int temp);
+unsigned int cgc_get_program(cgc_pState state, unsigned int *size, unsigned int *buf);
+unsigned int cgc_get_status(cgc_pState state,unsigned int *);
+void cgc_get_sensors(cgc_pState state,unsigned int *);
+void cgc_update_sensors(cgc_pState state);
+void cgc_reset_sensors(cgc_pState state);
+cgc_pProgram cgc_get_step(cgc_pState state, int step);
+void cgc_check_program(cgc_pState state);
+void cgc_add_history(cgc_pState state);
+int cgc_simulate_seconds(cgc_pState state, int seconds);
 
-unsigned int validate_fw(pState state);
-int check_val(unsigned char *buf,unsigned short size);
-int exit_normal();
+unsigned int cgc_validate_fw(cgc_pState state);
+int cgc_check_val(unsigned char *buf,unsigned short size);
+int cgc_exit_normal();
 #endif

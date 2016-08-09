@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,17 +30,17 @@
 #define MAX_OTP_LEN 128
 
 typedef struct otp {
-    size_t data_len;
+    cgc_size_t data_len;
     unsigned char data[MAX_OTP_LEN];
     unsigned int seed_value;
     unsigned int seed_idx;
-    uint8_t num_reqs;
-} otp_t;
+    cgc_uint8_t num_reqs;
+} cgc_otp_t;
 
-void otp_handshake(otp_t **o);
-void otp_generate_otp(otp_t *o);
-void otp_extend_session(otp_t *o);
-void otp_set_seeds(otp_t *o);
-void otp_verify_otp(otp_t *o);
+void cgc_otp_handshake(cgc_otp_t **o);
+void cgc_otp_generate_otp(cgc_otp_t *o);
+void cgc_otp_extend_session(cgc_otp_t *o);
+void cgc_otp_set_seeds(cgc_otp_t *o);
+void cgc_otp_verify_otp(cgc_otp_t *o);
 
 #endif

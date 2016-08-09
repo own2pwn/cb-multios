@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-void read_bytes(void *buf, size_t count);
-uint8_t read_byte();
-int read_int();
-char *read_string();
+void cgc_read_bytes(void *buf, cgc_size_t count);
+cgc_uint8_t cgc_read_byte();
+int cgc_read_int();
+char *cgc_read_string();
 
-void write_bytes(const void *buf, size_t count);
-void write_byte(uint8_t b);
-void write_int(int val);
-void write_string(const char *str);
+void cgc_write_bytes(const void *buf, cgc_size_t count);
+void cgc_write_byte(cgc_uint8_t b);
+void cgc_write_int(int val);
+void cgc_write_string(const char *str);
 
 #endif /* !IO_H_ */

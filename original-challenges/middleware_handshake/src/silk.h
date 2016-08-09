@@ -6,29 +6,29 @@
 
 typedef struct {
     void *priv;
-} silk_t;
+} cgc_silk_t;
 
 typedef struct {
-    uint32_t codes;
-} __attribute__((packed)) silk_negotiate_t;
+    cgc_uint32_t codes;
+} __attribute__((packed)) cgc_silk_negotiate_t;
 
 typedef struct {
-    uint16_t plen;
-    uint16_t glen;
-    uint16_t qlen;
-    uint16_t alen;
-    uint8_t data[];
-} __attribute__((packed)) silk_kx_param_t;
+    cgc_uint16_t plen;
+    cgc_uint16_t glen;
+    cgc_uint16_t qlen;
+    cgc_uint16_t alen;
+    cgc_uint8_t data[];
+} __attribute__((packed)) cgc_silk_kx_param_t;
 
 typedef struct {
-    uint16_t blen;
-    uint8_t data[];
-} __attribute__((packed)) silk_kx_reply_t;
+    cgc_uint16_t blen;
+    cgc_uint8_t data[];
+} __attribute__((packed)) cgc_silk_kx_reply_t;
 
 typedef struct {
-    uint16_t datalen;
-    uint8_t data[];
-} __attribute__((packed)) silk_data_t;
+    cgc_uint16_t datalen;
+    cgc_uint8_t data[];
+} __attribute__((packed)) cgc_silk_data_t;
 
 enum {
     PKT_ERROR,
@@ -38,15 +38,15 @@ enum {
     PKT_DATA
 };
 
-int silk_init(silk_t *silk);
+int cgc_silk_init(cgc_silk_t *silk);
 
 // high-level API
-int silk_prepare(silk_t *silk);
-int silk_send(silk_t *silk, const unsigned char *data, unsigned int cnt);
-int silk_recv(silk_t *silk, unsigned char *out, unsigned int cnt);
+int cgc_silk_prepare(cgc_silk_t *silk);
+int cgc_silk_send(cgc_silk_t *silk, const unsigned char *data, unsigned int cnt);
+int cgc_silk_recv(cgc_silk_t *silk, unsigned char *out, unsigned int cnt);
 
 // low-level API
-int silk_negotiate(silk_t *silk);
-int silk_kx(silk_t *silk);
+int cgc_silk_negotiate(cgc_silk_t *silk);
+int cgc_silk_kx(cgc_silk_t *silk);
 
 #endif

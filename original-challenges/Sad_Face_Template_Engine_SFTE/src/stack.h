@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,12 +28,12 @@ typedef struct {
   unsigned int length;
   unsigned int size;
   void **elems;
-} stack_t;
+} cgc_stack_t;
 
-stack_t* stack_new(unsigned int size);
-void stack_push(stack_t *stack, void *elem);
-void* stack_pop(stack_t *stack);
-void* stack_peek(stack_t *stack);
-void stack_destroy(stack_t *stack);
+cgc_stack_t* cgc_stack_new(unsigned int size);
+void cgc_stack_push(cgc_stack_t *stack, void *elem);
+void* cgc_stack_pop(cgc_stack_t *stack);
+void* cgc_stack_peek(cgc_stack_t *stack);
+void cgc_stack_destroy(cgc_stack_t *stack);
 
 #endif

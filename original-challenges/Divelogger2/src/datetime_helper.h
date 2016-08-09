@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __DATETIME_HELPER_H__
 #define __DATETIME_HELPER_H__
 
-bool IsLeapYear( uint16_t year );
-uint8_t DaysInMonth( uint8_t month, uint16_t year );
+bool cgc_IsLeapYear( cgc_uint16_t year );
+cgc_uint8_t cgc_DaysInMonth( cgc_uint8_t month, cgc_uint16_t year );
 
 #endif // __DATETIME_HELPER_H__

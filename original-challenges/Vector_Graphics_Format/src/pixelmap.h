@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *rgb_data, uint32_t width, uint32_t height );
-int32_t pixelmap_get_size( uint32_t width, uint32_t height );
+cgc_int32_t cgc_pixelmap_write_file( cgc_uint8_t **pFileData, cgc_uint32_t *pFileSize, cgc_uint8_t *rgb_data, cgc_uint32_t width, cgc_uint32_t height );
+cgc_int32_t cgc_pixelmap_get_size( cgc_uint32_t width, cgc_uint32_t height );
 
 #endif // __PIXELMAP_H___

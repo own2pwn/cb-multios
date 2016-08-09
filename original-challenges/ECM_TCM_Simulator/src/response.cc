@@ -33,50 +33,50 @@ extern "C"
 #include "response.h"
 
 
-CResponse::CResponse( )
+cgc_CResponse::cgc_CResponse( )
 	: m_responseLen( 0 )
 {
 
 }
 
-CResponse::~CResponse( )
+cgc_CResponse::~cgc_CResponse( )
 {
 
 }
 
-uint16_t CResponse::AddResponse( uint8_t *pData, uint16_t dataLen )
+cgc_uint16_t cgc_CResponse::cgc_AddResponse( cgc_uint8_t *pData, cgc_uint16_t dataLen )
 {
 	if ( pData == NULL || dataLen == 0 )
 		return 0;
 
-	m_responseList.AddLast( new CResponseElement( pData, dataLen ) );
+	m_responseList.cgc_AddLast( new cgc_CResponseElement( pData, dataLen ) );
 
 	m_responseLen += dataLen;
 
 	return (dataLen);
 }
 
-uint16_t CResponse::GetResponseData( uint8_t *pDest, uint16_t destLen )
+cgc_uint16_t cgc_CResponse::cgc_GetResponseData( cgc_uint8_t *pDest, cgc_uint16_t destLen )
 {
-	uint16_t pos = 0;
+	cgc_uint16_t pos = 0;
 
 	if ( pDest == NULL )
 		return (0);
 
-	if ( destLen < GetResponseLength() )
+	if ( destLen < cgc_GetResponseLength() )
 		return (0);
 
-	for ( CResponseElement *pCur = m_responseList.GetFirst(); pCur; pCur = m_responseList.GetNext( pCur ) )
+	for ( cgc_CResponseElement *pCur = m_responseList.cgc_GetFirst(); pCur; pCur = m_responseList.cgc_GetNext( pCur ) )
 	{
-		memcpy( pDest+pos, pCur->GetData(), pCur->GetDataLength() );
-		pos += pCur->GetDataLength();
+		cgc_memcpy( pDest+pos, pCur->cgc_GetData(), pCur->cgc_GetDataLength() );
+		pos += pCur->cgc_GetDataLength();
 	}
 
 	return (pos);
 }
 
-void CResponse::ClearResponse( void )
+void cgc_CResponse::cgc_ClearResponse( void )
 {
-	m_responseList.DeleteAll();
+	m_responseList.cgc_DeleteAll();
 	m_responseLen = 0;
 }

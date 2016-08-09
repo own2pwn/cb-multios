@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "error.h"
 #include "tree.h"
 
-TreeNode *root;
+cgc_TreeNode *root;
 
 #define NUM_INITIAL_PAGES 20
 struct InitialPageInfo InitialInfo[NUM_INITIAL_PAGES] = {
@@ -92,41 +92,41 @@ struct InitialPageInfo InitialInfo[NUM_INITIAL_PAGES] = {
 };
 
 // Initializes the server by loading pages into memory
-int InitializeTree() {
-  TreeNode *ptr;
+int cgc_InitializeTree() {
+  cgc_TreeNode *ptr;
   for (int i = 0; i < NUM_INITIAL_PAGES; ++i) {
-    TreeNode *node = calloc(sizeof(TreeNode), 1);
-    VerifyPointerOrTerminate(node, "TreeNode during initialization");
-    strncpy(node->name, InitialInfo[i].name, sizeof(node->name));
-    node->page_size = strlen(InitialInfo[i].data) + 1;
-    node->page = calloc(node->page_size, 1);
-    VerifyPointerOrTerminate(node->page, "node->page during initialization");
-    memcpy(node->page, InitialInfo[i].data, node->page_size);
-    if (InsertNodeInTree(node) != 0) {
-      free(node->page);
-      free(node);
+    cgc_TreeNode *node = cgc_calloc(sizeof(cgc_TreeNode), 1);
+    cgc_VerifyPointerOrTerminate(node, "cgc_TreeNode during initialization");
+    cgc_strncpy(node->name, InitialInfo[i].name, sizeof(node->name));
+    node->page_size = cgc_strlen(InitialInfo[i].data) + 1;
+    node->page = cgc_calloc(node->page_size, 1);
+    cgc_VerifyPointerOrTerminate(node->page, "node->page during initialization");
+    cgc_memcpy(node->page, InitialInfo[i].data, node->page_size);
+    if (cgc_InsertNodeInTree(node) != 0) {
+      cgc_free(node->page);
+      cgc_free(node);
       return -1;
     } 
   }
   return 0;
 }
 
-void WalkTree(TreeNode *nodein) {
+void cgc_WalkTree(cgc_TreeNode *nodein) {
 #ifdef PATCHED
-  TreeNode *node_stack[128];
+  cgc_TreeNode *node_stack[128];
 #else
-  TreeNode *node_stack[64];
+  cgc_TreeNode *node_stack[64];
 #endif
   int indent = 0;
   int index = 0;
   int what = 0xfe;
-  TreeNode *node = nodein;
+  cgc_TreeNode *node = nodein;
 
-  printf("@s\n", node);
+  cgc_printf("@s\n", node);
 
   if (node->child) {
     node_stack[index++] = node->child;
-    node_stack[index++] = (TreeNode *)(indent + 1);
+    node_stack[index++] = (cgc_TreeNode *)(indent + 1);
   }
 
   while (index > 0) {
@@ -135,68 +135,68 @@ void WalkTree(TreeNode *nodein) {
     node = node_stack[--index];
     
     for (int i=0; i<indent; i++) {
-      printf("    ");
+      cgc_printf("    ");
     }
-    printf("@s\n", node);
+    cgc_printf("@s\n", node);
 
     if (node->peer) {
       node_stack[index++] = node->peer;
-      node_stack[index++] = (TreeNode *)indent;
+      node_stack[index++] = (cgc_TreeNode *)indent;
     }
     
     if (node->child) {
       node_stack[index++] = node->child;
-      node_stack[index++] = (TreeNode *)(indent + 1);
+      node_stack[index++] = (cgc_TreeNode *)(indent + 1);
     }
   }
 }
 
-int PrintTree(char *name) {
-  TreeNode *start;
+int cgc_PrintTree(char *name) {
+  cgc_TreeNode *start;
   if (name == NULL || name[0]=='\0') {
     start = root;
   } else {
-    start = LookupNode(name);
+    start = cgc_LookupNode(name);
   }
   if (start == NULL) {
-    printf("ERROR: Tree not found: @s\n", name);
+    cgc_printf("ERROR: Tree not found: @s\n", name);
     return -1;
   }
-  WalkTree(start);
+  cgc_WalkTree(start);
 
   return 0;
 }
 
-void FreeTree(TreeNode *node) {
+void cgc_FreeTree(cgc_TreeNode *node) {
   if (node->child != NULL) {
-    FreeTree(node->child);
+    cgc_FreeTree(node->child);
   }
   if (node->peer != NULL) {
-    FreeTree(node->peer);
+    cgc_FreeTree(node->peer);
   }
   if (node->page != NULL) {
-    free(node->page);
+    cgc_free(node->page);
   }
-  free(node);
+  cgc_free(node);
 }
 
-int DeleteNode(char *name) {
-  TreeNode *node, *parent;
+int cgc_DeleteNode(char *name) {
+  cgc_TreeNode *node, *parent;
   // Lookup node
-  node = LookupNode(name);
+  node = cgc_LookupNode(name);
   if (node == NULL) {
-    printf("ERROR: Could not locate node for deletion\n");
+    cgc_printf("ERROR: Could not locate node for deletion\n");
     return -1;
   }
   // Lookup parent node
   char local_name[64];
-  memcpy(local_name, name, sizeof(local_name));
-  char *last_part = strrchr(local_name, '.');
+  cgc_memcpy(local_name, name, sizeof(local_name));
+  char *last_part = cgc_strrchr(local_name, '.');
   if (last_part == NULL) {
     parent = root;
   } else {
     last_part[0] = '\0';
-    parent = LookupNode(local_name);
+    parent = cgc_LookupNode(local_name);
   }
   if (node == NULL || parent == NULL) {
     return -1;
@@ -208,41 +208,41 @@ int DeleteNode(char *name) {
     parent->child = node->peer;
     node->peer = NULL;
   } else {
-    TreeNode *prev = parent->child;
+    cgc_TreeNode *prev = parent->child;
     while (prev->peer != node && prev != NULL) {
       prev = prev->peer;
     }
     if (prev == NULL) {
-      printf("ERROR: Could not locate node for deletion\n");
+      cgc_printf("ERROR: Could not locate node for deletion\n");
       return -1;
     }
     prev->peer = node->peer;
     node->peer = NULL;
   }
-  FreeTree(node);
+  cgc_FreeTree(node);
   return 0;
 }
 
 // Finds a node in the tree by name. 
 // Returns pointer to the node or NULL
-TreeNode *LookupNode(char *name) {  
-  TreeNode *node = root->child;
+cgc_TreeNode *cgc_LookupNode(char *name) {  
+  cgc_TreeNode *node = root->child;
   // Make a local copy of the name and walk its subparts
   char local_name[64];
-  memcpy(local_name, name, sizeof(local_name));
+  cgc_memcpy(local_name, name, sizeof(local_name));
   char *part = local_name;
-  char *next_part = strchr(local_name, '.');
+  char *next_part = cgc_strchr(local_name, '.');
   if (next_part != NULL) {
     next_part[0] = '\0';
   }
   while (node != NULL) {
-    if (strcmp(node->name, part) == 0)
+    if (cgc_strcmp(node->name, part) == 0)
     {
       if (next_part == NULL) {
         return node;
       } else {
         part = next_part + 1;
-        next_part = strchr(part, '.');
+        next_part = cgc_strchr(part, '.');
         if (next_part != NULL) {
           next_part[0] = '\0';
         }
@@ -255,28 +255,28 @@ TreeNode *LookupNode(char *name) {
   return node;
 }
 
-int InsertNodeInTree(TreeNode *node) {
+int cgc_InsertNodeInTree(cgc_TreeNode *node) {
   if (root == NULL) {
-    TreeNode *node = calloc(sizeof(TreeNode), 1);
-    VerifyPointerOrTerminate(node, "root TreeNode during insert");
+    cgc_TreeNode *node = cgc_calloc(sizeof(cgc_TreeNode), 1);
+    cgc_VerifyPointerOrTerminate(node, "root cgc_TreeNode during insert");
     node->name[0] = '.';
     root = node;
   }
   // Make sure node doesn't exist
-  if (LookupNode(node->name) != NULL) {
-    printf("ERROR: node already exists\n");
+  if (cgc_LookupNode(node->name) != NULL) {
+    cgc_printf("ERROR: node already exists\n");
     return -1;
   }
   // Make sure name isn't blank
   if (node->name[0] == '\0') {
-    printf("ERROR: Name cannot be blank\n");
+    cgc_printf("ERROR: Name cannot be blank\n");
     return -1;
   }
    // Lookup parent node
   char local_name[64];
-  memcpy(local_name, node->name, sizeof(local_name));
-  char *last_part = strrchr(local_name, '.');
-  TreeNode *insert_location = root;
+  cgc_memcpy(local_name, node->name, sizeof(local_name));
+  char *last_part = cgc_strrchr(local_name, '.');
+  cgc_TreeNode *insert_location = root;
   // If no subparts in name, insert as child to root
   if (last_part == NULL) {
     if (insert_location->child == NULL) {
@@ -291,11 +291,11 @@ int InsertNodeInTree(TreeNode *node) {
     return 0;
   } 
   // Strip leading portion of name
-  strncpy(node->name, last_part + 1, sizeof(node->name));  
+  cgc_strncpy(node->name, last_part + 1, sizeof(node->name));  
   last_part[0] = '\0';
-  insert_location = LookupNode(local_name);
+  insert_location = cgc_LookupNode(local_name);
   if (insert_location == NULL) {
-    printf("ERROR: Parent node doesn't exist: @s\n", local_name);
+    cgc_printf("ERROR: Parent node doesn't exist: @s\n", local_name);
     return -1;
   }
   if (insert_location->child == NULL) {

@@ -2,13 +2,13 @@
 #include "mylibc.h"
 
 
-ssize_t readLine(int fd, char* buf, size_t len)
+cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
 {
   char c = '\0';
   int ret = 0;
-  size_t i = 0;
-  size_t numRead;
-  size_t temp = len;
+  cgc_size_t i = 0;
+  cgc_size_t numRead;
+  cgc_size_t temp = len;
 
   if (buf == NULL)
   {
@@ -37,9 +37,9 @@ ssize_t readLine(int fd, char* buf, size_t len)
   return (i);
 }
 
-size_t myStrLen(const char* str)
+cgc_size_t cgc_myStrLen(const char* str)
 {
-  size_t i = 0;
+  cgc_size_t i = 0;
 
   if (str == NULL)
   {
@@ -53,18 +53,18 @@ size_t myStrLen(const char* str)
   return (i);
 }
 
-size_t my_printf(const char* str)
+cgc_size_t cgc_my_printf(const char* str)
 {
-  size_t rx_bytes;
-  size_t total = 0; 
-  size_t len = 0;
+  cgc_size_t rx_bytes;
+  cgc_size_t total = 0; 
+  cgc_size_t len = 0;
   int ret = 0;
   if (str == NULL)
   {
     return (-1);
   }
 
-  len = myStrLen(str);
+  len = cgc_myStrLen(str);
   do
   {
     ret = transmit(STDOUT, str + total, len - total, &rx_bytes);
@@ -79,12 +79,12 @@ size_t my_printf(const char* str)
 }
 
 //minlen is used for leading 0's in the fractional part
-int snprintdecimal(char* str, size_t len, uint32_t num)
+int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num)
 {
   int i = 0;
   int j = 0;
-  uint32_t rem = 0;
-  char temp[24]; //the maximum uint64_t value is 2^64 - 1
+  cgc_uint32_t rem = 0;
+  char temp[24]; //the maximum cgc_uint64_t value is 2^64 - 1
                  // which is approx 10^20 so 24 characters should be good
   temp[0] = '0';
   temp[0] = '\0';
@@ -127,11 +127,11 @@ int snprintdecimal(char* str, size_t len, uint32_t num)
   return (-1); 
 }
 
-uint32_t strToUint32(const char* str)
+cgc_uint32_t cgc_strToUint32(const char* str)
 {
   int i = 0;
-  uint64_t temp64 = 0;
-  uint32_t temp = 0;
+  cgc_uint64_t temp64 = 0;
+  cgc_uint32_t temp = 0;
 
   if (str == NULL)
   {
@@ -146,7 +146,7 @@ uint32_t strToUint32(const char* str)
     i++;
   }
 
-  return ((uint32_t)temp64);
+  return ((cgc_uint32_t)temp64);
 }
 
 

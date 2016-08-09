@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -21,9 +21,9 @@
 */
 #define MAX_UINT_STR_SIZE 12
 
-#define ENROLL_CMD "enroll"
-#define REENROLL_CMD "reenroll"
-#define CERTS_CMD "crls"
+#define ENROLL_CMD "cgc_enroll"
+#define REENROLL_CMD "cgc_reenroll"
+#define CERTS_CMD "cgc_crls"
 #define REVOKE_CERT_CMD "revoke"
 
 #define CERT_AUTH_TYPE  "PeerCert"
@@ -39,8 +39,8 @@
 
 #define CERT_STATUS_REVOKED "Revoked"
 
-#define RESPONSE_ERR_NO_CERT "Invalid Certificate!"
-#define RESPONSE_ERR_EXP_CERT "Expired Certificate!"
+#define RESPONSE_ERR_NO_CERT "Invalid cgc_Certificate!"
+#define RESPONSE_ERR_EXP_CERT "Expired cgc_Certificate!"
 
 #define ISSUER_STR "Secure Registers Inc."
 
@@ -54,18 +54,18 @@ typedef struct {
 	unsigned int expiration;
 	unsigned int exp_window;
 	void* next;
-} Certificate;
+} cgc_Certificate;
 
 static char private_key[1024];
 static char* issuer;
-Certificate *CRL;
+cgc_Certificate *CRL;
 
-void enroll(int id, char* body, unsigned int* expiration_date);
-void crls(int id, char* body, unsigned int* expiration_date);
-void reenroll(int id, char* body, unsigned int* expiration_date);
-void revokeCert(int id, char* body, unsigned int* expiration_date);
+void cgc_enroll(int id, char* body, unsigned int* expiration_date);
+void cgc_crls(int id, char* body, unsigned int* expiration_date);
+void cgc_reenroll(int id, char* body, unsigned int* expiration_date);
+void cgc_revokeCert(int id, char* body, unsigned int* expiration_date);
 
-Certificate *parseCertificate(char* body);
-int validateCert(Certificate *cert, char* use, unsigned int* expiration_date);
-int checkCertUse(char* command, char* useList);
-int isCertCommand(char* command);
+cgc_Certificate *cgc_parseCertificate(char* body);
+int cgc_validateCert(cgc_Certificate *cert, char* use, unsigned int* expiration_date);
+int cgc_checkCertUse(char* command, char* useList);
+int cgc_isCertCommand(char* command);

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -24,9 +24,9 @@
 #include "streq.h"
 #include "strlen.h"
  
-int streq(const char *str1, const char *str2, const char term) {
+int cgc_streq(const char *str1, const char *str2, const char term) {
 
-    if (strlen(str1, term) != strlen(str2, term))
+    if (cgc_strlen(str1, term) != cgc_strlen(str2, term))
         return -1;
 
     while(*str1 != term) {

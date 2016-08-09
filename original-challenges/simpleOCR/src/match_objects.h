@@ -1,15 +1,15 @@
 #include "myint.h"
 
 #define MATCH_OBJECT_SIZE (7 * 12)
-typedef struct match_object_t match_object_t;
-struct match_object_t {
-  u32 width, height;
+typedef struct cgc_match_object_t cgc_match_object_t;
+struct cgc_match_object_t {
+  cgc_u32 width, height;
   char character;
-  u8 map[MATCH_OBJECT_SIZE];
+  cgc_u8 map[MATCH_OBJECT_SIZE];
 };
 
 #define NUM_MATCH_OBJECTS 27
-match_object_t match_objects[NUM_MATCH_OBJECTS] = {
+cgc_match_object_t match_objects[NUM_MATCH_OBJECTS] = {
   {
     .character = 'a',
     .width = 7,

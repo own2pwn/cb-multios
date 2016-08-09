@@ -29,16 +29,16 @@ THE SOFTWARE.
 
 #define NOISE_POWER_AMP		20.0
 
-double get_rand_uniform( void )
+double cgc_get_rand_uniform( void )
 {
 	// Rand returns 0 to RAND_MAX (which is 31-bits of resolution)
-	double rand_1 = rand() >> 4;
-	double rand_2 = rand() >> 5;
+	double rand_1 = cgc_rand() >> 4;
+	double rand_2 = cgc_rand() >> 5;
 
 	return (((rand_1 * 67108864) + rand_2) * (1.0 / 9007199254740992));
 }
 
-int8_t add_awgn_to_sample( int8_t sample_in )
+cgc_int8_t cgc_add_awgn_to_sample( cgc_int8_t sample_in )
 {
 	// Use Box Muller method to apply a guassian distribution of noise at a specific amplitude to the channel
 	double S;
@@ -47,8 +47,8 @@ int8_t add_awgn_to_sample( int8_t sample_in )
 
 	do
 	{
-		double U1 = get_rand_uniform();
-		double U2 = get_rand_uniform();
+		double U1 = cgc_get_rand_uniform();
+		double U2 = cgc_get_rand_uniform();
 
 		V1 = (2*U1) - 1.0;
 		V2 = (2*U2) - 1.0;
@@ -59,10 +59,10 @@ int8_t add_awgn_to_sample( int8_t sample_in )
 	double X = sqrt( -2 * log(S) / S) * V1;
 	double Y = sqrt( -2 * log(S) / S) * V2;
 
-	int8_t noise = (int8_t)(X * sqrt(NOISE_POWER_AMP));
+	cgc_int8_t noise = (cgc_int8_t)(X * sqrt(NOISE_POWER_AMP));
 
 	// Apply clipping...
-	int16_t new_value = (int16_t)noise + (int16_t)sample_in;
+	cgc_int16_t new_value = (cgc_int16_t)noise + (cgc_int16_t)sample_in;
 	sample_in = noise + sample_in;
 
 	if ( new_value >= 128 )
@@ -73,10 +73,10 @@ int8_t add_awgn_to_sample( int8_t sample_in )
 	return sample_in;	
 }
 
-uint8_t receive_sample( int8_t sample_in )
+cgc_uint8_t cgc_receive_sample( cgc_int8_t sample_in )
 {
 	// Apply AWGN (noise) to channel
-	sample_in = add_awgn_to_sample( sample_in );
+	sample_in = cgc_add_awgn_to_sample( sample_in );
 
 	// Receive 16-bit sample
 	

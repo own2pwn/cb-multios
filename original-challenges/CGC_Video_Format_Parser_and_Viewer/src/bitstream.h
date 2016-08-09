@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,7 +31,7 @@ THE SOFTWARE.
 /**
  * Structure to manage a bit stream
  **/
-typedef struct BitStream {
+typedef struct cgc_BitStream {
 	/// Pointer to the stream managed by this structure
 	char *stream;
 
@@ -45,7 +45,7 @@ typedef struct BitStream {
 	/// Current bit index within the current byte to be read. This will
 	///	never be greater than 7
 	unsigned int bitIndex;
-} BitStream, *pBitStream;
+} cgc_BitStream, *cgc_pBitStream;
 
 /**
  * Read the specified number of bits into the buffer pointed to by outBits
@@ -55,22 +55,22 @@ typedef struct BitStream {
  *		is expected to provide a sufficiently large buffer.
  * @return Returns the number of bits read on success or 0 on failure.
  **/
-int readBits( pBitStream stream, unsigned int bitCount, unsigned int *outBits );
+int cgc_readBits( cgc_pBitStream stream, unsigned int bitCount, unsigned int *outBits );
 
 /**
- * Initializes a new BitStream structure with the specified buffer and length.
+ * Initializes a new cgc_BitStream structure with the specified buffer and length.
  * The function requires a buffer/length pair since it allocates a new buffer that it alone manages.
  * @param newData Pointer to the data to be associated with this stream.
  * @param newDataLength Length of the buffer pointed to by newData.
- * @return Returns a pointer to a new BitStream structure or NULL on failure.
+ * @return Returns a pointer to a new cgc_BitStream structure or NULL on failure.
  **/
-pBitStream initStream( char *newData, unsigned int newDataLength);
+cgc_pBitStream cgc_initStream( char *newData, unsigned int newDataLength);
 
 /**
- * Frees a BitStream along with the data it is pointing to.
- * @param stream BitStream ** that will be freed. This is set to NULL.
+ * Frees a cgc_BitStream along with the data it is pointing to.
+ * @param stream cgc_BitStream ** that will be freed. This is set to NULL.
  * @return Returns nothing.
  **/
-void freeStream( pBitStream *stream );
+void cgc_freeStream( cgc_pBitStream *stream );
 
 #endif

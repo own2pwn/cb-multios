@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -40,16 +40,16 @@
 // scaledown using braille symbols instead of pixel mean
 // #define BRAILLE
 
-static void usage(char *progname)
+static void cgc_usage(char *progname)
 {
-    printf("Usage: %s rom-file\n", progname);
+    cgc_printf("Usage: %s rom-file\n", progname);
 }
 
-static int recvall(int fd, uint8_t *buf, size_t cnt)
+static int cgc_recvall(int fd, cgc_uint8_t *buf, cgc_size_t cnt)
 {
     while (cnt > 0)
     {
-        size_t n;
+        cgc_size_t n;
         if (receive(fd, buf, cnt, &n) != 0 || n == 0)
             break;
         cnt -= n;
@@ -59,15 +59,15 @@ static int recvall(int fd, uint8_t *buf, size_t cnt)
     return cnt == 0;
 }
 
-static int load_rom(gb_t *gb)
+static int cgc_load_rom(cgc_gb_t *gb)
 {
-    uint8_t rom[ROM_SIZE];
-    if (!recvall(STDIN, rom, ROM_SIZE))
+    cgc_uint8_t rom[ROM_SIZE];
+    if (!cgc_recvall(STDIN, rom, ROM_SIZE))
         return 0;
-    return gb_load(gb, rom);
+    return cgc_gb_load(gb, rom);
 }
 
-static void print_reg(gb_t *gb)
+static void cgc_print_reg(cgc_gb_t *gb)
 {
     ERR("AF = %04X, BC = %04X, DE = %04X, HL = %04X",
         gb->R_AF, gb->R_BC, gb->R_DE, gb->R_HL);
@@ -75,7 +75,7 @@ static void print_reg(gb_t *gb)
         gb->R_SP, gb->R_PC);
 }
 
-static char *block_6px_char(uint8_t *bitmap, unsigned int span)
+static char *cgc_block_6px_char(cgc_uint8_t *bitmap, unsigned int span)
 {
 #ifndef BRAILLE
     unsigned int avg = bitmap[0 * span + 0] + bitmap[0 * span + 1] +
@@ -110,9 +110,9 @@ static char *block_6px_char(uint8_t *bitmap, unsigned int span)
 #endif
 }
 
-static void draw_screen(gb_t *gb)
+static void cgc_draw_screen(cgc_gb_t *gb)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     if ((gb->mem[IO_LCDC] & 0x80) == 0)
     {
         /* LCD disabled */
@@ -123,7 +123,7 @@ static void draw_screen(gb_t *gb)
 
 #ifndef SCALEDOWN
     static char buf[144 * 161 + 1];
-    uint8_t x, y;
+    cgc_uint8_t x, y;
     for (y = 0; y < 144; y++)
     {
         for (x = 0; x < 160; x++)
@@ -149,13 +149,13 @@ static void draw_screen(gb_t *gb)
     buf[y * 161 + 0] = '\n';
     transmit(STDOUT, buf, sizeof(buf), &bytes);
 #else
-    uint8_t x, y;
+    cgc_uint8_t x, y;
     for (y = 0; y < 144; y += 3)
     {
         for (x = 0; x < 160; x += 2)
         {
-            char *ch = block_6px_char(&gb->screen[y * 160 + x], 160);
-            transmit(STDOUT, ch, strlen(ch), &bytes);
+            char *ch = cgc_block_6px_char(&gb->screen[y * 160 + x], 160);
+            transmit(STDOUT, ch, cgc_strlen(ch), &bytes);
         }
         transmit(STDOUT, "\n", 1, &bytes);
     }
@@ -163,10 +163,10 @@ static void draw_screen(gb_t *gb)
 #endif
 }
 
-int process_input(gb_t *gb)
+int cgc_process_input(cgc_gb_t *gb)
 {
     char ch;
-    size_t bytes;
+    cgc_size_t bytes;
 
     if (receive(STDIN, &ch, 1, &bytes) != 0 || bytes != 1)
         return 0;
@@ -233,72 +233,72 @@ int process_input(gb_t *gb)
     return 1;
 }
 
-int check_input(gb_t *gb)
+int cgc_check_input(cgc_gb_t *gb)
 {
-    fd_set fds;
+    cgc_fd_set fds;
     int readyfds = 0;
-    struct timeval tv;
+    struct cgc_timeval tv;
 
     FD_ZERO(&fds);
     FD_SET(STDIN, &fds);
     tv.tv_sec = 0;
     tv.tv_usec = SLEEP_US;
 
-    if (fdwait(STDIN+1, &fds, NULL, &tv, &readyfds) != 0)
+    if (cgc_fdwait(STDIN+1, &fds, NULL, &tv, &readyfds) != 0)
         return 0;
 
     if (readyfds)
     {
-        return process_input(gb);
+        return cgc_process_input(gb);
     }
     return 1;
 }
 
 int main()
 {
-    gb_t *gb = gb_new();
+    cgc_gb_t *gb = cgc_gb_new();
     if (gb == NULL)
     {
         ERR("Unable to allocate memory.");
-        exit(1);
+        cgc_exit(1);
     }
 
     // clear the screen
-    printf("\x1B[2J");
+    cgc_printf("\x1B[2J");
 
-    if (!load_rom(gb))
+    if (!cgc_load_rom(gb))
     {
         ERR("Unable to load ROM.");
-        exit(2);
+        cgc_exit(2);
     }
 
     // hide the cursor
-    printf("\x1B[?25l");
+    cgc_printf("\x1B[?25l");
 
-    gb_reset(gb);
+    cgc_gb_reset(gb);
 
     unsigned int ticks_sleep = 0;
     unsigned int vblanks = 0;
     for (;;)
     {
-        if (!gb_tick(gb))
+        if (!cgc_gb_tick(gb))
             break;
 
         if (gb->vblank)
         {
             if ((++vblanks % REFRESH_DIVIDER) == 0)
-                draw_screen(gb);
+                cgc_draw_screen(gb);
             gb->vblank = 0;
         }
 
         if (ticks_sleep++ == TICKS_SLEEP * gb->speed)
         {
-            if (!check_input(gb))
+            if (!cgc_check_input(gb))
                 break;
             ticks_sleep = 0;
         }
     }
-    print_reg(gb);
+    cgc_print_reg(gb);
 
     return 0;
 }

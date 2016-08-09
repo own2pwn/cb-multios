@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include "service.h"
 
 
-void get_instructions(Recipe_Type *recipe) {
+void cgc_get_instructions(cgc_Recipe_Type *recipe) {
 
-size_t size;
+cgc_size_t size;
 char buffer[1024];
 char *temp_step;
 char **step_list;
@@ -39,10 +39,10 @@ char **step_list;
 int step_count = 0;
 
 
-	printf("Enter the step by step instructions.  A blank line to end.\n\n");
-	printf("Step 1: ");
+	cgc_printf("Enter the step by step instructions.  A blank line to end.\n\n");
+	cgc_printf("Step 1: ");
 
-	size=getline(buffer, sizeof(buffer));
+	size=cgc_getline(buffer, sizeof(buffer));
 
 	if (size <=1) 
 		return;
@@ -51,43 +51,43 @@ int step_count = 0;
 	
 	// the dynamic array is null terminated so allocate memory for the null too
 #ifdef PATCHED
-		recipe->Instructions = malloc(sizeof(char *) * 4);
+		recipe->Instructions = cgc_malloc(sizeof(char *) * 4);
 #else
-		recipe->Instructions = malloc(sizeof(char *) * 2);
+		recipe->Instructions = cgc_malloc(sizeof(char *) * 2);
 #endif
 
 		if (recipe->Instructions == 0) {
 
-			printf("unable to malloc memory\n");
+			cgc_printf("unable to cgc_malloc memory\n");
 			_terminate(-1);
 
 		}
 
 #ifdef PATCHED
-		memset(recipe->Instructions, 0, sizeof(char *)*4);
+		cgc_memset(recipe->Instructions, 0, sizeof(char *)*4);
 #else
-		memset(recipe->Instructions, 0, sizeof(char *)*2);
+		cgc_memset(recipe->Instructions, 0, sizeof(char *)*2);
 #endif
 
 
 #ifdef PATCHED
-		temp_step=malloc(strlen(buffer)+1);
+		temp_step=cgc_malloc(cgc_strlen(buffer)+1);
 #else
-		temp_step=malloc(strlen(buffer));
+		temp_step=cgc_malloc(cgc_strlen(buffer));
 #endif
 
 		if (temp_step == 0) {
 
-			printf("unable to malloc memory\n");
+			cgc_printf("unable to cgc_malloc memory\n");
 			_terminate(-1);
 
 		}
 
 #ifdef PATCHED
-		memset( temp_step, 0, strlen(buffer) + 1 );
+		cgc_memset( temp_step, 0, cgc_strlen(buffer) + 1 );
 #endif
 
-		strcpy(temp_step, buffer);
+		cgc_strcpy(temp_step, buffer);
 
 		recipe->Instructions[0] = temp_step;
 
@@ -95,63 +95,63 @@ int step_count = 0;
 
 	}
 
-	printf("Step 2: ");
+	cgc_printf("Step 2: ");
 
-	size=getline(buffer, sizeof(buffer));
+	size=cgc_getline(buffer, sizeof(buffer));
 
 	while(size > 1) {
 
 #ifdef PATCHED
-			step_list = malloc(sizeof(char *)*(step_count+4));
+			step_list = cgc_malloc(sizeof(char *)*(step_count+4));
 #else
-			step_list = malloc(sizeof(char *)*(step_count+2));
+			step_list = cgc_malloc(sizeof(char *)*(step_count+2));
 #endif
 
 			if (step_list == 0) {
 
-				printf("unable to malloc\n");
+				cgc_printf("unable to cgc_malloc\n");
 				_terminate(-1);
 			}
 
 #ifdef PATCHED
-			memset(step_list, 0, sizeof(char *)*(step_count+4));
+			cgc_memset(step_list, 0, sizeof(char *)*(step_count+4));
 #else
-			memset(step_list, 0, sizeof(char *)*(step_count+2));
+			cgc_memset(step_list, 0, sizeof(char *)*(step_count+2));
 #endif
 
-			memcpy(step_list, recipe->Instructions, sizeof(char *)*(step_count+1));
+			cgc_memcpy(step_list, recipe->Instructions, sizeof(char *)*(step_count+1));
 
 #ifdef PATCHED
-			temp_step=malloc(strlen(buffer)+1);
+			temp_step=cgc_malloc(cgc_strlen(buffer)+1);
 #else
-			temp_step=malloc(strlen(buffer));
+			temp_step=cgc_malloc(cgc_strlen(buffer));
 #endif
 
 			if (temp_step == 0) {
 
-				printf("unable to malloc memory\n");
+				cgc_printf("unable to cgc_malloc memory\n");
 				_terminate(-1);
 
 			}
 
 #ifdef PATCHED
-			memset( temp_step, 0, strlen(buffer)+ 1);
+			cgc_memset( temp_step, 0, cgc_strlen(buffer)+ 1);
 #endif
-			strcpy(temp_step, buffer);
+			cgc_strcpy(temp_step, buffer);
 
 			step_list[step_count] = temp_step;
 
-			free(recipe->Instructions);
+			cgc_free(recipe->Instructions);
 
 			recipe->Instructions = step_list;
 
 			++step_count;
 
-			printf("Step @d: ", step_count+1);
+			cgc_printf("Step @d: ", step_count+1);
 
-			size=getline(buffer, sizeof(buffer));
+			size=cgc_getline(buffer, sizeof(buffer));
 
 	}  // while
 
 
-}  // get_instructions()
+}  // cgc_get_instructions()

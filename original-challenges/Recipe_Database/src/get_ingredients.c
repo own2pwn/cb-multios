@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,22 +30,22 @@ THE SOFTWARE.
 
 
 
-int get_ingredients(Recipe_Type *recipe) {
+int cgc_get_ingredients(cgc_Recipe_Type *recipe) {
 int ingredients_count;
-size_t size;
+cgc_size_t size;
 char buffer[1024];
 char item[1024];
 char measurement[1024];
 
-Ingredient_Type *ingredient;
+cgc_Ingredient_Type *ingredient;
 
 	ingredients_count=0;
 	ingredient = 0;
 
 
-	printf("Enter the measurement and ingredients, one per line.  A blank line ends.\n\n");
+	cgc_printf("Enter the measurement and ingredients, one per line.  A blank line ends.\n\n");
 
-	size=getline(buffer, sizeof(buffer));
+	size=cgc_getline(buffer, sizeof(buffer));
 
 	if (size <= 1) {
 
@@ -53,11 +53,11 @@ Ingredient_Type *ingredient;
 	}
 	else {
 
-		 ingredient = malloc(sizeof(Ingredient_Type));
+		 ingredient = cgc_malloc(sizeof(cgc_Ingredient_Type));
 
 		if (ingredient == 0) {
 
-			printf("unable to malloc memory\n");
+			cgc_printf("unable to cgc_malloc memory\n");
 			_terminate(-1);
 		}
 	}
@@ -68,30 +68,30 @@ Ingredient_Type *ingredient;
 
 		// validate ingredient entry
 
-		bzero(measurement, 1024);
-		bzero(item,1024);
+		cgc_bzero(measurement, 1024);
+		cgc_bzero(item,1024);
 
-		split_ingredient(buffer, measurement, 1024,  item, 1024);
+		cgc_split_ingredient(buffer, measurement, 1024,  item, 1024);
 
 		ingredient->next = 0;
 
-		memcpy( ingredient->item, item, 99);
-		memcpy( ingredient->measurement, measurement, 19);
+		cgc_memcpy( ingredient->item, item, 99);
+		cgc_memcpy( ingredient->measurement, measurement, 19);
 
 		// store ingredient
 		++ingredients_count;
 
 
 		// get next input line
-		size=getline(buffer, sizeof(buffer));
+		size=cgc_getline(buffer, sizeof(buffer));
 
 		if (size > 1 ) {
 
-			ingredient->next = malloc(sizeof(Ingredient_Type));
+			ingredient->next = cgc_malloc(sizeof(cgc_Ingredient_Type));
 
 			if (ingredient->next == 0) {
 
-				printf("unable to malloc\n");
+				cgc_printf("unable to cgc_malloc\n");
 				_terminate(-1);
 
 			}

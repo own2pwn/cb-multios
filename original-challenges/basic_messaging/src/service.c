@@ -43,41 +43,41 @@ THE SOFTWARE.
 #define USERNAME_LENGTH 0x10
 
 /**
- * Structure to store an individual message and necessary metadata
+ * Structure to store an individual cgc_message and necessary metadata
  **/
-typedef struct message {
-	struct message *next;
+typedef struct cgc_message {
+	struct cgc_message *next;
 	unsigned int message_id;
 	unsigned int read;
-	char message[MESSAGE_LENGTH];
-} message, *pmessage;
+	char cgc_message[MESSAGE_LENGTH];
+} cgc_message, *cgc_pmessage;
 
 /**
- * Structure to manage the messages for a single user
+ * Structure to manage the messages for a single cgc_user
  **/
-typedef struct message_manager {
-	pmessage root;
+typedef struct cgc_message_manager {
+	cgc_pmessage root;
 	unsigned int message_count;
-} message_manager, *pmessage_manager;
+} cgc_message_manager, *cgc_pmessage_manager;
 
 /**
- * Structure with necessary data for an individual user.
+ * Structure with necessary data for an individual cgc_user.
  **/
-typedef struct user {
+typedef struct cgc_user {
 	char name[USERNAME_LENGTH];
-	pmessage_manager pmm;	
-	struct user *next;
-} user, *puser;
+	cgc_pmessage_manager pmm;	
+	struct cgc_user *next;
+} cgc_user, *cgc_puser;
 
 /**
  * Structure to manage all users. Only one instance of this per application execution.
  **/
-typedef struct user_manager {
-	puser root;
+typedef struct cgc_user_manager {
+	cgc_puser root;
 	unsigned int user_count;
-} user_manager, *puser_manager;
+} cgc_user_manager, *cgc_puser_manager;
 
-pmessage_manager init_manager( void );
+cgc_pmessage_manager cgc_init_manager( void );
 
 /**
  * Lists all existing users. This functions is for debugging purposes only. Normal
@@ -85,9 +85,9 @@ pmessage_manager init_manager( void );
  * @param pum List all existing usernames.
  * @return Returns nothing.
  **/
-void list_users( puser_manager pum )
+void cgc_list_users( cgc_puser_manager pum )
 {
-	puser walker = NULL;
+	cgc_puser walker = NULL;
 
 	if ( pum == NULL ) {
 		goto end;
@@ -96,7 +96,7 @@ void list_users( puser_manager pum )
 	walker = pum->root;
 
 	while ( walker ) {
-		puts(walker->name);
+		cgc_puts(walker->name);
 		walker = walker->next;
 	}
 end:
@@ -104,15 +104,15 @@ end:
 }
 
 /**
- * Initialize the global user management structure. This should only be called once
- * @return Returns the user management structure for a give execution or NULL on error.
+ * Initialize the global cgc_user management structure. This should only be called once
+ * @return Returns the cgc_user management structure for a give execution or NULL on error.
  **/
-puser_manager init_users( void )
+cgc_puser_manager cgc_init_users( void )
 {
-	puser_manager pum = NULL;
+	cgc_puser_manager pum = NULL;
 
-	if ( allocate( sizeof(user_manager), 0, (void**)&pum ) != 0) {
-		puts( "[-] Error Failed to allocate buffer\n" );
+	if ( allocate( sizeof(cgc_user_manager), 0, (void**)&pum ) != 0) {
+		cgc_puts( "[-] Error Failed to allocate buffer\n" );
 		goto end;
 	}
 
@@ -123,16 +123,16 @@ end:
 }
 
 /**
- * Creates a new user and adds it to the user management structure.
- * @param pum A pointer to the global user management structure.
+ * Creates a new cgc_user and adds it to the cgc_user management structure.
+ * @param pum A pointer to the global cgc_user management structure.
  * @param username Pointer to an ascii username.
- * @return Returns the newly created user id or 0 on failure.
+ * @return Returns the newly created cgc_user id or 0 on failure.
  **/
-size_t create_user( puser_manager pum, char *username )
+cgc_size_t cgc_create_user( cgc_puser_manager pum, char *username )
 {
-	size_t id = 0;
-	puser walker = NULL;
-	puser newuser = NULL;
+	cgc_size_t id = 0;
+	cgc_puser walker = NULL;
+	cgc_puser newuser = NULL;
 
 	if ( pum == NULL ) {
 		goto end;
@@ -142,8 +142,8 @@ size_t create_user( puser_manager pum, char *username )
 		goto end;
 	}
 
-	if ( strlen(username) > USERNAME_LENGTH - 1 ) {
-		puts("[-] Error username too long\n");
+	if ( cgc_strlen(username) > USERNAME_LENGTH - 1 ) {
+		cgc_puts("[-] Error username too long\n");
 		goto end;
 	}
 
@@ -151,26 +151,26 @@ size_t create_user( puser_manager pum, char *username )
 	walker = pum->root;
 
 	while ( walker ) {
-		if ( strcmp( walker->name, username ) == 0) {
-			puts("[-] Error user exists\n");
+		if ( cgc_strcmp( walker->name, username ) == 0) {
+			cgc_puts("[-] Error cgc_user exists\n");
 			goto end;
 		}
 		walker = walker->next;
 	}
 
-	// Create user stucture
-	if ( allocate( sizeof(user), 0, (void**)&newuser) != 0 ) {
-		puts("[-] Error allocating user structure\n");
+	// Create cgc_user stucture
+	if ( allocate( sizeof(cgc_user), 0, (void**)&newuser) != 0 ) {
+		cgc_puts("[-] Error allocating cgc_user structure\n");
 		goto end;
 	}
 	
 	newuser->next = NULL;
 	newuser->name[0] = 0x00;
-	newuser->pmm = init_manager();
+	newuser->pmm = cgc_init_manager();
 
-	strncat( newuser->name, username, USERNAME_LENGTH );
+	cgc_strncat( newuser->name, username, USERNAME_LENGTH );
 
-	// Check root user first
+	// Check root cgc_user first
 	if ( pum->root == NULL ) {
 		pum->root = newuser;
 		pum->user_count++;
@@ -178,7 +178,7 @@ size_t create_user( puser_manager pum, char *username )
 		goto end;
 	}
 
-	// Link in new user
+	// Link in new cgc_user
 	newuser->next = pum->root;
 	pum->root = newuser;
 
@@ -190,15 +190,15 @@ end:
 }
 
 /**
- * Initializes the message manager structure. This will be called once per new user.
- * @return Returns the new message manager structure or NULL on failure.
+ * Initializes the cgc_message manager structure. This will be called once per new cgc_user.
+ * @return Returns the new cgc_message manager structure or NULL on failure.
  **/
-pmessage_manager init_manager( void )
+cgc_pmessage_manager cgc_init_manager( void )
 {
-	pmessage_manager pmm = NULL;
+	cgc_pmessage_manager pmm = NULL;
 
-	if ( allocate( sizeof(message_manager), 0, (void**)&pmm ) != 0) {
-		puts( "[-] Error Failed to allocate buffer\n" );
+	if ( allocate( sizeof(cgc_message_manager), 0, (void**)&pmm ) != 0) {
+		cgc_puts( "[-] Error Failed to allocate buffer\n" );
 		goto end;
 	}
 
@@ -209,15 +209,15 @@ end:
 }
 
 /**
- * Adds a new message to a users message manager.
- * @param pman Pointer to a users message management structure.
- * @param pm Pointer to the message to add
- * @return Id of the new message or 0 on failure.
+ * Adds a new cgc_message to a users cgc_message manager.
+ * @param pman Pointer to a users cgc_message management structure.
+ * @param pm Pointer to the cgc_message to add
+ * @return Id of the new cgc_message or 0 on failure.
  **/
-size_t add_message( pmessage_manager pman, pmessage pm )
+cgc_size_t cgc_add_message( cgc_pmessage_manager pman, cgc_pmessage pm )
 {
-	size_t id = 0;
-	pmessage walker = NULL;
+	cgc_size_t id = 0;
+	cgc_pmessage walker = NULL;
 
 	if ( pm == NULL ) {
 		goto end;
@@ -253,26 +253,26 @@ end:
 }
 
 /**
- * Creates a new message with the given text.
- * @param msg_string String containing the data to store in the message.
- * @return Returns a message structure that must be added to the message manager or NULL on failure.
+ * Creates a new cgc_message with the given text.
+ * @param msg_string String containing the data to store in the cgc_message.
+ * @return Returns a cgc_message structure that must be added to the cgc_message manager or NULL on failure.
  **/
-pmessage create_message( char * msg_string )
+cgc_pmessage cgc_create_message( char * msg_string )
 {
-	pmessage pmsg = NULL;
+	cgc_pmessage pmsg = NULL;
 	int counter = 0;
 
 	if ( msg_string == NULL ) {
 		goto end;
 	}
 
-	if ( strlen( msg_string ) > MESSAGE_LENGTH - 1 ) {
-		puts("[-] Error Message too long\n");
+	if ( cgc_strlen( msg_string ) > MESSAGE_LENGTH - 1 ) {
+		cgc_puts("[-] Error Message too long\n");
 		goto end;
 	}
 
-	if ( allocate( sizeof(message), 0, (void**)&pmsg)  != 0 ) {
-		puts("[-] Error Failed to allocate message struct\n");
+	if ( allocate( sizeof(cgc_message), 0, (void**)&pmsg)  != 0 ) {
+		cgc_puts("[-] Error Failed to allocate cgc_message struct\n");
 		goto end;
 	}
 
@@ -280,10 +280,10 @@ pmessage create_message( char * msg_string )
 	pmsg->message_id = 0;
 	pmsg->read = 0;
 
-	bzero( pmsg->message, MESSAGE_LENGTH );
+	cgc_bzero( pmsg->cgc_message, MESSAGE_LENGTH );
 
-	for ( counter = 0; counter < strlen( msg_string ); counter++ ) {
-		pmsg->message[counter] = msg_string[counter];
+	for ( counter = 0; counter < cgc_strlen( msg_string ); counter++ ) {
+		pmsg->cgc_message[counter] = msg_string[counter];
 	}
 
 end:
@@ -291,22 +291,22 @@ end:
 }
 
 /**
- * Deletes a message with a given id from a users message list.
- * @param pmm Pointer to a users message management structure.
- * @param message_id Id of the message to be deleted.
- * @return Only returns void. Any errors are displayed to the user.
+ * Deletes a cgc_message with a given id from a users cgc_message list.
+ * @param pmm Pointer to a users cgc_message management structure.
+ * @param message_id Id of the cgc_message to be deleted.
+ * @return Only returns void. Any errors are displayed to the cgc_user.
  **/
-void delete_message( pmessage_manager pmm, size_t message_id )
+void cgc_delete_message( cgc_pmessage_manager pmm, cgc_size_t message_id )
 {
-	pmessage walker = NULL;
-	pmessage prev = NULL;
+	cgc_pmessage walker = NULL;
+	cgc_pmessage prev = NULL;
 
 	if ( pmm == NULL ) {
 		goto end;
 	}
 
 	if ( message_id > pmm->message_count ) {
-		puts( "[-] Message ID out of range\n");
+		cgc_puts( "[-] Message ID out of range\n");
 		goto end;
 	}
 
@@ -314,7 +314,7 @@ void delete_message( pmessage_manager pmm, size_t message_id )
 
 	while ( walker ) {
 		if ( walker->message_id == message_id ) {
-			// If prev is null that means the root message
+			// If prev is null that means the root cgc_message
 			//   is the one to be deleted
 			if ( prev == NULL ) {
 				pmm->root = walker->next;
@@ -322,7 +322,7 @@ void delete_message( pmessage_manager pmm, size_t message_id )
 				prev->next = walker->next;
 			}
 
-			deallocate( walker, sizeof( message ) );
+			deallocate( walker, sizeof( cgc_message ) );
 			goto end;
 		}
 
@@ -331,21 +331,21 @@ void delete_message( pmessage_manager pmm, size_t message_id )
 	}
 
 	if ( walker == NULL ) {
-		puts("[-] Message ID not found\n");
+		cgc_puts("[-] Message ID not found\n");
 	}
 end:
 	return;
 }
 
 /**
- * Displays a single message to a user
- * @param pmm Pointer to the message manager structure of a user.
- * @param message_id Id of the message to be displayed.
+ * Displays a single cgc_message to a cgc_user
+ * @param pmm Pointer to the cgc_message manager structure of a cgc_user.
+ * @param message_id Id of the cgc_message to be displayed.
  **/
-void read_message( pmessage_manager pmm, size_t message_id )
+void cgc_read_message( cgc_pmessage_manager pmm, cgc_size_t message_id )
 {
-	size_t retval = 0;
-	pmessage walker = NULL;
+	cgc_size_t retval = 0;
+	cgc_pmessage walker = NULL;
 	char buffer[0x100];
 
 	if ( pmm == NULL ) {
@@ -353,23 +353,23 @@ void read_message( pmessage_manager pmm, size_t message_id )
 	}
 
 	if ( message_id > pmm->message_count ) {
-		puts( "[-] Message ID out of range\n");
+		cgc_puts( "[-] Message ID out of range\n");
 		goto end;
 	}
 
-	bzero( buffer, 0x100 );
-	strncat( buffer, "***********************************\n", 0x100 );
+	cgc_bzero( buffer, 0x100 );
+	cgc_strncat( buffer, "***********************************\n", 0x100 );
 	
 	walker = pmm->root;
 
 	while ( walker ) {
 		if ( walker->message_id == message_id ) {
-			retval = strlen(buffer);
-			itoa( buffer + retval, message_id, 0x100-retval );
-			strncat(buffer, ":  ", 0x100 );
-			strncat(buffer, walker->message, 0x100 );
-			strncat( buffer, "\n***********************************\n", 0x100 );
-			puts( buffer );
+			retval = cgc_strlen(buffer);
+			cgc_itoa( buffer + retval, message_id, 0x100-retval );
+			cgc_strncat(buffer, ":  ", 0x100 );
+			cgc_strncat(buffer, walker->cgc_message, 0x100 );
+			cgc_strncat( buffer, "\n***********************************\n", 0x100 );
+			cgc_puts( buffer );
 			walker->read = 1;
 			goto end;
 		}
@@ -378,7 +378,7 @@ void read_message( pmessage_manager pmm, size_t message_id )
 	}
 
 	if ( walker == NULL ) {
-		puts("[-] Message ID not found\n");
+		cgc_puts("[-] Message ID not found\n");
 	}
 
 end:
@@ -386,18 +386,18 @@ end:
 }
 
 /**
- * Lists all unread messages of a user. This function is where the bug is. The variable
+ * Lists all unread messages of a cgc_user. This function is where the bug is. The variable
  *  used to store the number of unread messages is an unsigned char so if more than 255
  *  messages are waiting to be displayed this counter will overflow. The counter is used
  *  to calculate the size of the buffer necessary to display the messages. A counter
  *  that has overflowed will result in the allocation of a buffer that is too small to
  *  contain the entire stream of messages.
- * @param pmm A pointer to the message manager of a user
+ * @param pmm A pointer to the cgc_message manager of a cgc_user
  **/
-void list_unread_messages( pmessage_manager pmm )
+void cgc_list_unread_messages( cgc_pmessage_manager pmm )
 {
-	pmessage walker = NULL;
-	size_t size = 0;
+	cgc_pmessage walker = NULL;
+	cgc_size_t size = 0;
 #ifdef PATCHED
 	unsigned int count = 0;
 #else
@@ -420,7 +420,7 @@ void list_unread_messages( pmessage_manager pmm )
 		return;
 	}
 
-	puts("Unread messages:\n");
+	cgc_puts("Unread messages:\n");
 
 	// Calculate size
 	// Message Text
@@ -433,37 +433,37 @@ void list_unread_messages( pmessage_manager pmm )
 
 	char data[size];
 
-	bzero( data, size );
+	cgc_bzero( data, size );
 
 	walker = pmm->root;
 
 	while ( walker ) {
 		if ( walker->read == 0 ) {
 
-			// Mark the message as read
+			// Mark the cgc_message as read
 			walker->read = 1;
-			strcat( data, "***********************************\n");
-			itoa( data + strlen(data), walker->message_id, 4 );
-			strcat( data, ":  " );
-			strcat( data, walker->message );
-			strcat( data, "\n");
-			strcat( data, "***********************************\n");
+			cgc_strcat( data, "***********************************\n");
+			cgc_itoa( data + cgc_strlen(data), walker->message_id, 4 );
+			cgc_strcat( data, ":  " );
+			cgc_strcat( data, walker->cgc_message );
+			cgc_strcat( data, "\n");
+			cgc_strcat( data, "***********************************\n");
 		}
 		walker = walker->next;
 	}
 
-	puts( data );
+	cgc_puts( data );
 end:
 	return;
 }
 
 /**
- * List all existing messages of a user including those already read.
- * @param pmm Pointer to the message management structure of a user.
+ * List all existing messages of a cgc_user including those already read.
+ * @param pmm Pointer to the cgc_message management structure of a cgc_user.
  **/
-void list_messages( pmessage_manager pmm )
+void cgc_list_messages( cgc_pmessage_manager pmm )
 {
-	pmessage walker = NULL;
+	cgc_pmessage walker = NULL;
 
 	if ( pmm == NULL ) {
 		goto end;
@@ -472,7 +472,7 @@ void list_messages( pmessage_manager pmm )
 	walker = pmm->root;
 
 	while ( walker ) {
-		read_message( pmm, walker->message_id );
+		cgc_read_message( pmm, walker->message_id );
 		walker = walker->next;
 	}
 end:
@@ -480,14 +480,14 @@ end:
 }
 
 /**
- * Retrieve a specific user structure from the manager
- * @param pum Pointer to the global user management structure
- * @param username Pointer to the username of the user to locate
- * @return Returns a pointer to the requested user management structure or NULL on failure.
+ * Retrieve a specific cgc_user structure from the manager
+ * @param pum Pointer to the global cgc_user management structure
+ * @param username Pointer to the username of the cgc_user to locate
+ * @return Returns a pointer to the requested cgc_user management structure or NULL on failure.
  **/
-puser get_user( puser_manager pum, char *username )
+cgc_puser cgc_get_user( cgc_puser_manager pum, char *username )
 {
-	puser pu = NULL;
+	cgc_puser pu = NULL;
 
 	if ( pum == NULL || username == NULL ) {
 		goto end;
@@ -496,7 +496,7 @@ puser get_user( puser_manager pum, char *username )
 	pu = pum->root;
 
 	while ( pu ) {
-		if ( strcmp( pu->name, username ) == 0 ) {
+		if ( cgc_strcmp( pu->name, username ) == 0 ) {
 			goto end;
 		}
 		pu = pu->next;
@@ -506,38 +506,38 @@ end:
 }
 
 /**
- * Stores a message for a specific user
- * @param pum Pointer to the global user management structure
- * @param username Username of the user to send the message to
- * @param msg Pointer to the message to send to the user.
- * @return Returns the id of the sent message or 0 on failure.
+ * Stores a cgc_message for a specific cgc_user
+ * @param pum Pointer to the global cgc_user management structure
+ * @param username Username of the cgc_user to send the cgc_message to
+ * @param msg Pointer to the cgc_message to send to the cgc_user.
+ * @return Returns the id of the sent cgc_message or 0 on failure.
  **/
-size_t send_user_message( puser_manager pum, char *username, char *msg )
+cgc_size_t cgc_send_user_message( cgc_puser_manager pum, char *username, char *msg )
 {
-	size_t id = 0;
-	puser pu = NULL;
-	pmessage pmsg = NULL;
+	cgc_size_t id = 0;
+	cgc_puser pu = NULL;
+	cgc_pmessage pmsg = NULL;
 
 	if ( pum == NULL || username == NULL || msg == NULL ) {
 		goto end;
 	}
 
-	pu = get_user( pum, username );
+	pu = cgc_get_user( pum, username );
 
 	if ( pu == NULL ) {
-		puts("[-] Error invalid user\n");
+		cgc_puts("[-] Error invalid cgc_user\n");
 		goto end;
 	}
 
-	pmsg = create_message( msg );
+	pmsg = cgc_create_message( msg );
 
 	if ( pmsg == NULL ) {
-		puts("[-] Failed to create message\n");
+		cgc_puts("[-] Failed to create cgc_message\n");
 		goto end;
 	}
 
-	if ( (id = add_message( pu->pmm, pmsg )) == 0 ) {
-		puts("[-] Failed to add message\n");
+	if ( (id = cgc_add_message( pu->pmm, pmsg )) == 0 ) {
+		cgc_puts("[-] Failed to add cgc_message\n");
 		goto end;
 	}	
 end:
@@ -545,14 +545,14 @@ end:
 }
 
 /**
- * Handles the sub menu for a logged in user
- * @param pum Pointer to the global user management structure
- * @param pu Pointer to the user structure for the logged in user
+ * Handles the sub menu for a logged in cgc_user
+ * @param pum Pointer to the global cgc_user management structure
+ * @param pu Pointer to the cgc_user structure for the logged in cgc_user
  **/
-void handle_loggedin( puser_manager pum, puser pu )
+void cgc_handle_loggedin( cgc_puser_manager pum, cgc_puser pu )
 {
-	size_t choice = 0;
-	char message[MESSAGE_LENGTH];
+	cgc_size_t choice = 0;
+	char cgc_message[MESSAGE_LENGTH];
 	char username[USERNAME_LENGTH];
 	
 	if ( pum == NULL || pu == NULL ) {
@@ -560,59 +560,59 @@ void handle_loggedin( puser_manager pum, puser pu )
 	}
 
 	while ( 1 ) {
-		list_unread_messages( pu->pmm );
+		cgc_list_unread_messages( pu->pmm );
 
-		puts("1) Send Message\n");
-		puts("2) Read Message\n");
-		puts("3) List Messages\n");
-		puts("4) Delete Message\n");
-		puts("5) Logout\n");
-		puts("6) Exit\n");
-		puts(": ");
+		cgc_puts("1) Send Message\n");
+		cgc_puts("2) Read Message\n");
+		cgc_puts("3) List Messages\n");
+		cgc_puts("4) Delete Message\n");
+		cgc_puts("5) Logout\n");
+		cgc_puts("6) Exit\n");
+		cgc_puts(": ");
 
 		choice = 0;
 
-		if ( receive_until( (char*)&choice, 0x0a, 2 ) == 0 ) {
-			puts("[-] Receive failed\n");
+		if ( cgc_receive_until( (char*)&choice, 0x0a, 2 ) == 0 ) {
+			cgc_puts("[-] Receive failed\n");
 			_terminate(0);
 		}
 
 		choice -= 0x30;
 
 		if ( choice > 6 || choice < 1 ) {
-			puts("[-] Invalid choice\n");
+			cgc_puts("[-] Invalid choice\n");
 			continue;
 		}
 
 		if ( choice == 6 ) {
-			puts("Exiting...\n");
+			cgc_puts("Exiting...\n");
 			_terminate(0);
 		} else if ( choice == 5 ) {
-			puts("Logging out...\n");
+			cgc_puts("Logging out...\n");
 			goto end;
 		} else if ( choice == 4 ) {
-			puts("ID: ");
-			bzero( message, MESSAGE_LENGTH);
-			receive_until( message, '\n', 4 );
-			choice = atoi( message );
-			delete_message( pu->pmm, choice );
+			cgc_puts("ID: ");
+			cgc_bzero( cgc_message, MESSAGE_LENGTH);
+			cgc_receive_until( cgc_message, '\n', 4 );
+			choice = cgc_atoi( cgc_message );
+			cgc_delete_message( pu->pmm, choice );
 		} else if ( choice == 3 ) {
-			list_messages( pu->pmm );
+			cgc_list_messages( pu->pmm );
 		} else if ( choice == 2 ) {
-			puts("ID: ");
-			bzero( message, MESSAGE_LENGTH );
-			receive_until( message, '\n', 4 );
-			choice = atoi( message );
-			read_message( pu->pmm, choice );
+			cgc_puts("ID: ");
+			cgc_bzero( cgc_message, MESSAGE_LENGTH );
+			cgc_receive_until( cgc_message, '\n', 4 );
+			choice = cgc_atoi( cgc_message );
+			cgc_read_message( pu->pmm, choice );
 		} else if ( choice == 1 ) {
-			bzero( message, MESSAGE_LENGTH );
-			bzero( username, USERNAME_LENGTH );
+			cgc_bzero( cgc_message, MESSAGE_LENGTH );
+			cgc_bzero( username, USERNAME_LENGTH );
 
-			puts("To: ");
-			receive_until( username, '\n', USERNAME_LENGTH-1);
-			puts("Message: ");
-			receive_until( message, '\n', MESSAGE_LENGTH-1);
-			send_user_message( pum, username, message );
+			cgc_puts("To: ");
+			cgc_receive_until( username, '\n', USERNAME_LENGTH-1);
+			cgc_puts("Message: ");
+			cgc_receive_until( cgc_message, '\n', MESSAGE_LENGTH-1);
+			cgc_send_user_message( pum, username, cgc_message );
 		}
 	}
 
@@ -621,17 +621,17 @@ end:
 }
 
 /**
- * Function to handle the main user interface loop
+ * Function to handle the main cgc_user interface loop
  **/
-void handle_menu ( )
+void cgc_handle_menu ( )
 {
-	puser_manager pum = NULL;
-	puser current_user = NULL;
-	size_t choice = 0;
-	size_t received = 0;
+	cgc_puser_manager pum = NULL;
+	cgc_puser current_user = NULL;
+	cgc_size_t choice = 0;
+	cgc_size_t received = 0;
 	char username[USERNAME_LENGTH];
 
-	pum = init_users( );
+	pum = cgc_init_users( );
 
 	if ( pum == NULL ) {
 		goto end;
@@ -640,42 +640,42 @@ void handle_menu ( )
 	while ( 1 ) {
 		choice = 0;
 
-		puts("1) Create User\n");
-		puts("2) Login\n");
-		puts("3) Exit\n");
-		puts(": ");
+		cgc_puts("1) Create User\n");
+		cgc_puts("2) Login\n");
+		cgc_puts("3) Exit\n");
+		cgc_puts(": ");
 
-		if ( receive_until( (char*)&choice, '\n', 2 ) == 0 ) {
-			puts("[-] Receive Failed\n");
+		if ( cgc_receive_until( (char*)&choice, '\n', 2 ) == 0 ) {
+			cgc_puts("[-] Receive Failed\n");
 			_terminate(0);
 		}
 
 		choice -= 0x30;
 
 		if ( choice > 3 || choice < 1 ) {
-			puts("[-] Invalid choice\n");
+			cgc_puts("[-] Invalid choice\n");
 			continue;
 		}
 
-		bzero( username, USERNAME_LENGTH );
+		cgc_bzero( username, USERNAME_LENGTH );
 
 		if ( choice == 3 ) {
-			puts("Exiting...\n");
+			cgc_puts("Exiting...\n");
 			_terminate( 0 );
 		} else if ( choice == 1 ) {
-			puts("username: ");
-			receive_until( username, '\n', USERNAME_LENGTH - 1);
-			create_user( pum, username );
+			cgc_puts("username: ");
+			cgc_receive_until( username, '\n', USERNAME_LENGTH - 1);
+			cgc_create_user( pum, username );
 		} else if ( choice == 2 ) {
-			puts("username: ");
-			receive_until( username, '\n', USERNAME_LENGTH - 1);
-			current_user = get_user( pum, username );
+			cgc_puts("username: ");
+			cgc_receive_until( username, '\n', USERNAME_LENGTH - 1);
+			current_user = cgc_get_user( pum, username );
 			if ( current_user != NULL ) {
-				puts("Login Success\n");
-				handle_loggedin( pum, current_user );
+				cgc_puts("Login Success\n");
+				cgc_handle_loggedin( pum, current_user );
 				current_user = NULL;
 			} else {
-				puts("Login Failed\n");
+				cgc_puts("Login Failed\n");
 			}
 		}
 	}
@@ -685,10 +685,10 @@ end:
 }
 
 /**
- * Main function just calls handle_menu
+ * Main function just calls cgc_handle_menu
  * @return Always returns 0
  **/
 int main(void) {
-	handle_menu();
+	cgc_handle_menu();
 	return 0;
 }

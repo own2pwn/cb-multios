@@ -23,15 +23,15 @@
 #include "time.h"
 #include <string.h>
 
-time_t time(char hour, char minute)
+cgc_time_t cgc_time(char hour, char minute)
 {
-    time_t t;
+    cgc_time_t t;
     t.hour = hour;
     t.minute = minute;
     return t;
 }
 
-int timecmp(time_t t1, time_t t2)
+int cgc_timecmp(cgc_time_t t1, cgc_time_t t2)
 {
     if (t1.hour < t2.hour)
         return -1;
@@ -45,7 +45,7 @@ int timecmp(time_t t1, time_t t2)
     return 0;
 }
 
-int days_intersect(days_t d1, days_t d2)
+int cgc_days_intersect(cgc_days_t d1, cgc_days_t d2)
 {
     if (d1 == H && d2 == H)
         return 0;
@@ -53,27 +53,27 @@ int days_intersect(days_t d1, days_t d2)
     return (d1 & d2);
 }
 
-void daystostr(days_t days, char *output)
+void cgc_daystostr(cgc_days_t days, char *output)
 {
     if (!output)
         return;
 
-    memset(output, 0, 9);
+    cgc_memset(output, 0, 9);
     if(days & M)
-        strcat(output, "M");
+        cgc_strcat(output, "M");
     if(days & T)
-        strcat(output, "T");
+        cgc_strcat(output, "T");
     if(days & W)
-        strcat(output, "W");
+        cgc_strcat(output, "W");
     if(days & R)
-        strcat(output, "R");
+        cgc_strcat(output, "R");
     if(days & F)
-        strcat(output, "F");
+        cgc_strcat(output, "F");
     if(days & S)
-        strcat(output, "S");
+        cgc_strcat(output, "S");
     if(days & U)
-        strcat(output, "U");
+        cgc_strcat(output, "U");
     if(days & H)
-        strcat(output, "H");
+        cgc_strcat(output, "H");
 }
 

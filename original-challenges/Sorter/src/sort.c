@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  *
  */
-//int insertion_sort(int *array, size_t array_size, int *fptrs)
+//int insertion_sort(int *array, cgc_size_t array_size, int *fptrs)
 //{
 //    int num_comparisons = 0;
 //    int *sorted_array = MALLOC(fptrs, sizeof(int) * array_size);
@@ -43,7 +43,7 @@
 //    return num_comparisons;
 //}
 //
-//int selection_sort(int *array, size_t array_size, int *fptrs)
+//int selection_sort(int *array, cgc_size_t array_size, int *fptrs)
 //{
 //    int num_comparisons = 0;
 //    int *sorted_array = MALLOC(fptrs, sizeof(int) * array_size);
@@ -71,7 +71,7 @@
 //    return num_comparisons;
 //}
 //
-//int heap_propagate(int *array, size_t array_size, size_t swap_idx, int *fptrs)
+//int heap_propagate(int *array, cgc_size_t array_size, cgc_size_t swap_idx, int *fptrs)
 //{
 //    int num_comparisons = 0;
 //    int parent, lchild, rchild;
@@ -120,7 +120,7 @@
 //    return num_comparisons;
 //}
 //
-//int heapify(int *array, size_t array_size, int *fptrs)
+//int heapify(int *array, cgc_size_t array_size, int *fptrs)
 //{
 //    int num_comparisons = 0;
 //    if (array_size < 2)
@@ -178,7 +178,7 @@
 //    return num_comparisons;
 //}
 //
-//int heap_sort(int *array, size_t array_size, int *fptrs)
+//int heap_sort(int *array, cgc_size_t array_size, int *fptrs)
 //{
 //    int num_comparisons = 0;
 //    int real_array_size = array_size;
@@ -227,7 +227,7 @@
 //    return num_comparisons;
 //}
 //
-//int merge_sort(int *array, size_t array_size, int *fptrs)
+//int merge_sort(int *array, cgc_size_t array_size, int *fptrs)
 //{
 //    int *orig_array = NULL;
 //    int used_allocate = 0;

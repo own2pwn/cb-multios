@@ -42,7 +42,7 @@ struct plane {
  * @param plane The plane to intialize
  * @param normal The normal vector of the new plane
  */
-void plane_init(struct plane *plane, struct vector normal);
+void cgc_plane_init(struct plane *plane, struct vector normal);
 
 #endif /* PLANE_H_ */
 

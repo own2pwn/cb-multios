@@ -30,11 +30,11 @@ THE SOFTWARE.
 
 #define PHASE_COUNT 8
 
-scramble_item phase_0(scramble_item i, scramble_item j);
-scramble_item phase_1(scramble_item i, scramble_item j);
-scramble_item phase_2(scramble_item i, scramble_item j);
-scramble_item phase_3(scramble_item i, scramble_item j);
-scramble_item phase_4(scramble_item i, scramble_item j);
-scramble_item phase_5(scramble_item i, scramble_item j);
-scramble_item phase_6(scramble_item i, scramble_item j);
-scramble_item phase_7(scramble_item i, scramble_item j);
+cgc_scramble_item cgc_phase_0(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_1(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_2(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_3(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_4(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_5(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_6(cgc_scramble_item i, cgc_scramble_item j);
+cgc_scramble_item cgc_phase_7(cgc_scramble_item i, cgc_scramble_item j);

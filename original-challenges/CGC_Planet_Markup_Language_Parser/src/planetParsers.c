@@ -31,97 +31,97 @@ THE SOFTWARE.
  * @param pl Pointer to the planet to manage
  * @return Returns 0 if planet pointer should be NULL 1 otherwise
  **/
-int planetMenu( pPlanet pl )
+int cgc_planetMenu( cgc_pPlanet pl )
 {
 	int choice = 0;
 	char selection[30];
-	size_t length = 0;
-	pCountry pc = NULL;
+	cgc_size_t length = 0;
+	cgc_pCountry pc = NULL;
 
 	if ( pl == NULL ) {
 		return 0;
 	}
 
 	while ( 1 ) {
-		bzero(selection, 30);
+		cgc_bzero(selection, 30);
 
-		printf("\nPlanet: @s\n", pl->name);
-		printf("1) Display planet information\n");
-		printf("2) Set Period\n");
-		printf("3) Set Orbit Speed\n");
-		printf("4) Set Aphelion\n");
-		printf("5) Set Perihelion\n");
-		printf("6) Set Mean Radius\n");
-		printf("7) Set Equatorial Radius\n");
-		printf("8) Set Mass\n");
-		printf("9) Set Gravity\n");
-		printf("10) Set population\n");
-		printf("11) Add Country\n");
-		printf("12) Select country\n");
-		printf("13) Delete Planet and exit menu\n");
-		printf("14) Exit menu\n");
-		printf("Selection: ");
+		cgc_printf("\nPlanet: @s\n", pl->name);
+		cgc_printf("1) Display planet information\n");
+		cgc_printf("2) Set Period\n");
+		cgc_printf("3) Set Orbit Speed\n");
+		cgc_printf("4) Set Aphelion\n");
+		cgc_printf("5) Set Perihelion\n");
+		cgc_printf("6) Set Mean Radius\n");
+		cgc_printf("7) Set Equatorial Radius\n");
+		cgc_printf("8) Set Mass\n");
+		cgc_printf("9) Set Gravity\n");
+		cgc_printf("10) Set population\n");
+		cgc_printf("11) Add cgc_Country\n");
+		cgc_printf("12) Select country\n");
+		cgc_printf("13) Delete cgc_Planet and exit menu\n");
+		cgc_printf("14) Exit menu\n");
+		cgc_printf("Selection: ");
 
-		receive_until(selection, '\n', 3);
-		choice = atoi( selection );
+		cgc_receive_until(selection, '\n', 3);
+		choice = cgc_atoi( selection );
 
 		switch ( choice ) {
 			case 1:
-				printPlanetInfo( pl );
+				cgc_printPlanetInfo( pl );
 				break;
 			case 2:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->period = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->period = cgc_atof(selection);
 				break;
 			case 3:
-				printf("\n-> ");
-				receive_until(selection, '\n', 10);
-				pl->orbitspeed = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until(selection, '\n', 10);
+				pl->orbitspeed = cgc_atof(selection);
 				break;
 			case 4:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->aphelion = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->aphelion = cgc_atof(selection);
 				break;
 			case 5:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->perihelion = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->perihelion = cgc_atof(selection);
 				break;
 			case 6:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->radius = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->radius = cgc_atof(selection);
 				break;
 			case 7:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->eradius = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->eradius = cgc_atof(selection);
 				break;
 			case 8:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->mass = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->mass = cgc_atof(selection);
 				break;
 			case 9:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->gravity = atof(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->gravity = cgc_atof(selection);
 				break;
 			case 10:
-				printf("\n-> ");
-				receive_until( selection, '\n', 10);
-				pl->population = atoi(selection);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 10);
+				pl->population = cgc_atoi(selection);
 				break;
 			case 11:
 				if ( pl->country_count >= COUNTRYMAX ) {
-					printf("Too many countries\n");
+					cgc_printf("Too many countries\n");
 					continue;
 				}
 
-				printf("\nNew Name: ");
-				receive_until(selection, '\n', 19);
+				cgc_printf("\nNew Name: ");
+				cgc_receive_until(selection, '\n', 19);
 
 				choice = 0;
 				while ( choice < COUNTRYMAX ) {
@@ -132,22 +132,22 @@ int planetMenu( pPlanet pl )
 				}
 
 				if ( choice == COUNTRYMAX ) {
-					printf("!!No country slots\n");
+					cgc_printf("!!No country slots\n");
 					continue;
 				}
 
-				if ( allocate( sizeof(Country), 0, (void**)(&pc) ) != 0 ) {
-					printf("!!Failed to allocate structure\n");
+				if ( allocate( sizeof(cgc_Country), 0, (void**)(&pc) ) != 0 ) {
+					cgc_printf("!!Failed to allocate structure\n");
 					continue;
 				}
 
-				initCountry( pc );
+				cgc_initCountry( pc );
 
 				pl->countries[choice] = pc;
 
 				length = 0;
 	
-				while ( isalnum( selection[length] ) ) {
+				while ( cgc_isalnum( selection[length] ) ) {
 					pc->name[length] = selection[length];
 					length++;
 				}
@@ -156,41 +156,41 @@ int planetMenu( pPlanet pl )
 				pl->country_count++;
 				break;
 			case 12:
-				printf("\nCountries:\n");
+				cgc_printf("\nCountries:\n");
 				for ( choice = 0; choice < pl->country_count; choice++ ) {
 					if ( pl->countries[choice] != NULL ) {
-						printf("@d) @s\n", choice + 1, pl->countries[choice]);
+						cgc_printf("@d) @s\n", choice + 1, pl->countries[choice]);
 					}
 				}
 
-				bzero(selection, 30);
-				printf("\n-> ");
-				receive_until( selection, '\n', 3 );
+				cgc_bzero(selection, 30);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 3 );
 
-				choice = atoi(selection);
+				choice = cgc_atoi(selection);
 
 				if ( choice < 1 || choice > COUNTRYMAX) {
-					printf("Invalid choice...\n");
+					cgc_printf("Invalid choice...\n");
 					continue;
 				} else if ( pl->countries[ choice-1] == NULL ) {
-					printf("Invalid choice...\n");
+					cgc_printf("Invalid choice...\n");
 					continue;
 				}
 
-				if ( countryMenu( pl->countries[choice-1]) == 0 ) {
+				if ( cgc_countryMenu( pl->countries[choice-1]) == 0 ) {
 					pl->countries[choice-1] = NULL;
 					pl->country_count--;
 				}
 				break;
 			case 13:
-				freePlanet( pl );
+				cgc_freePlanet( pl );
 				return 0;
 				break;
 			case 14:
 				return 1;
 				break;
 			default:
-				printf("Invalid...\n");
+				cgc_printf("Invalid...\n");
 				break;
 		};
 	}
@@ -204,7 +204,7 @@ end:
  * @param pl Pointer to the planet structure
  * @return Returns nothing
  **/
-void freePlanet( pPlanet pl )
+void cgc_freePlanet( cgc_pPlanet pl )
 {
 	int index = 0;
 
@@ -216,8 +216,8 @@ void freePlanet( pPlanet pl )
 	while ( index < COUNTRYMAX ) {
 		if ( pl->countries[ index] != NULL ) {
 
-			/// This function also frees the pointer so freePlanet does not have to.
-			freeCountry( pl->countries[index] );
+			/// This function also frees the pointer so cgc_freePlanet does not have to.
+			cgc_freeCountry( pl->countries[index] );
 			pl->countries[index] = NULL;
 
 		}
@@ -225,7 +225,7 @@ void freePlanet( pPlanet pl )
 		index++;
 	}
 	
-	deallocate( pl, sizeof(Planet) );
+	deallocate( pl, sizeof(cgc_Planet) );
 
 	return;
 }
@@ -235,7 +235,7 @@ void freePlanet( pPlanet pl )
  * @param pl Pointer to the planet structure
  * @return Returns nothing
  **/
-void printPlanetInfo( pPlanet pl )
+void cgc_printPlanetInfo( cgc_pPlanet pl )
 {
         int index = 0;
 
@@ -244,50 +244,50 @@ void printPlanetInfo( pPlanet pl )
         }
 
         if ( pl->name[0] == '\x00' ) {
-                printf("Name: Unknown\n");
+                cgc_printf("Name: Unknown\n");
         } else {
-                printf("Name: @s\n", pl->name );
+                cgc_printf("Name: @s\n", pl->name );
         }
 
         if ( pl->population >= 0 ) {
-                printf("\tPopulation: @d\n", pl->population);
+                cgc_printf("\tPopulation: @d\n", pl->population);
         }
 
         if ( pl->period >= 0.0 ) {
-                printf("\tPeriod: @f\n", pl->period);
+                cgc_printf("\tPeriod: @f\n", pl->period);
         }
 
         if ( pl->orbitspeed >= 0.0 ) {
-                printf("\tOrbit Speed: @f\n", pl->orbitspeed);
+                cgc_printf("\tOrbit Speed: @f\n", pl->orbitspeed);
         }
 
         if ( pl->aphelion >= 0.0 ) {
-                printf("\tAphelion: @f\n", pl->aphelion);
+                cgc_printf("\tAphelion: @f\n", pl->aphelion);
         }
 
         if ( pl->perihelion >= 0.0 ) {
-                printf("\tPerihelion: @f\n", pl->perihelion);
+                cgc_printf("\tPerihelion: @f\n", pl->perihelion);
         }
 
         if ( pl->radius >= 0.0 ) {
-                printf("\tRadius: @f\n", pl->radius);
+                cgc_printf("\tRadius: @f\n", pl->radius);
         }
 
         if ( pl->eradius >= 0.0 ) {
-                printf("\tERadius: @f\n", pl->eradius);
+                cgc_printf("\tERadius: @f\n", pl->eradius);
         }
         if ( pl->mass >= 0.0 ) {
-                printf("\tMass: @f\n", pl->mass);
+                cgc_printf("\tMass: @f\n", pl->mass);
         }
 	
 	if ( pl->gravity >= 0.0 ) {
-		printf("\tGravity: @f\n", pl->gravity);
+		cgc_printf("\tGravity: @f\n", pl->gravity);
 	}
 
 	/// Print each country's information
         while ( index < COUNTRYMAX ) {
                 if ( pl->countries[ index ] != NULL ) {
-                        printCountryInfo( pl->countries[index] );
+                        cgc_printCountryInfo( pl->countries[index] );
                 }
 
                 index++;
@@ -301,7 +301,7 @@ void printPlanetInfo( pPlanet pl )
  * @param pl Pointer to the planet structure
  * @return 0 on failure 1 on success
  **/
-void initPlanet( pPlanet pl )
+void cgc_initPlanet( cgc_pPlanet pl )
 {
         register int index = 0;
 
@@ -309,7 +309,7 @@ void initPlanet( pPlanet pl )
                 return;
         }
 
-        bzero( pl->name, 20 );
+        cgc_bzero( pl->name, 20 );
         pl->period = -1.0;
         pl->orbitspeed = -1.0;
         pl->aphelion = -1.0;
@@ -331,16 +331,16 @@ void initPlanet( pPlanet pl )
 }
 
 /**
- * Parse the planet string and its sub elements
- * @param topLevel Pointer to the string structure to be parsed
+ * Parse the planet cgc_string and its sub elements
+ * @param topLevel Pointer to the cgc_string structure to be parsed
  * @return Returns a pointer to a planet structure with associated data. Null on failure
  **/
-pPlanet planetTopLevel( pstring topLevel )
+cgc_pPlanet cgc_planetTopLevel( cgc_pstring topLevel )
 {
 	int endIndex = 0;
         int temp_index = 0;
-        pPlanet newPlanet = NULL;
-        element el;
+        cgc_pPlanet newPlanet = NULL;
+        cgc_element el;
         char *fl = NULL;
         int lastGood = 0;
 
@@ -349,7 +349,7 @@ pPlanet planetTopLevel( pstring topLevel )
         }
 
         /// Skip any leading spaces
-        skipWhiteSpace( topLevel );
+        cgc_skipWhiteSpace( topLevel );
 
 	lastGood = topLevel->index;
 
@@ -357,7 +357,7 @@ pPlanet planetTopLevel( pstring topLevel )
 		goto end;
 	}
 
-	char *c = "{Planet}";
+	char *c = "{cgc_Planet}";
 
 	for ( int i = 0; i < 8; i++ ) {
 		if ( topLevel->buffer[ topLevel->index + i ] != c[i] ) {
@@ -368,44 +368,44 @@ pPlanet planetTopLevel( pstring topLevel )
         /// Skip 8 bytes of top level then any whitespace
         topLevel->index += 8;
 
-	skipWhiteSpace( topLevel );
+	cgc_skipWhiteSpace( topLevel );
 
         /// Allocate a new planet structure
-        if ( allocate( sizeof(Planet), 0, (void**)&newPlanet) != 0 ) {
+        if ( allocate( sizeof(cgc_Planet), 0, (void**)&newPlanet) != 0 ) {
                 goto end;
         }
 
-        initPlanet( newPlanet );
+        cgc_initPlanet( newPlanet );
 
-        /// Extract the next element name
-        fl = pullNextElementName( topLevel );
+        /// Extract the next cgc_element name
+        fl = cgc_pullNextElementName( topLevel );
 
-        getIndex( topLevel, &lastGood);
+        cgc_getIndex( topLevel, &lastGood);
 
         while ( fl != NULL ) {
-                /// Convert the element name
-                el = elementNameToEnum( fl );
+                /// Convert the cgc_element name
+                el = cgc_elementNameToEnum( fl );
 
                 /// The name is no longer needed so free it
-                deallocate( fl, strlen(fl) + 1 );
+                deallocate( fl, cgc_strlen(fl) + 1 );
 
                 switch (el) {
                         case name:
-                                fl = extractName( topLevel );
+                                fl = cgc_extractName( topLevel );
 
                                 if ( fl == NULL ) {
                                         goto error;
                                 }
 
-				bzero( newPlanet->name, 20 );
-                                strncpy( newPlanet->name, fl, 19 );
+				cgc_bzero( newPlanet->name, 20 );
+                                cgc_strncpy( newPlanet->name, fl, 19 );
 
-                                deallocate(fl, strlen(fl) + 1 );
+                                deallocate(fl, cgc_strlen(fl) + 1 );
                                 fl = NULL;
 
                                 break;
                         case population:
-                                newPlanet->population = extractPopulation( topLevel );
+                                newPlanet->population = cgc_extractPopulation( topLevel );
 
                                 if ( newPlanet->population < 0 ) {
                                         goto error;
@@ -414,28 +414,28 @@ pPlanet planetTopLevel( pstring topLevel )
                                 break;
                         case period:
                                 /// Extract period and check result
-                                newPlanet->period = extractPeriod( topLevel );
+                                newPlanet->period = cgc_extractPeriod( topLevel );
                                 if ( newPlanet->period < 0.0 ) {
                                         goto error;
                                 }
 
                                 break;
                         case orbitspeed:
-                                newPlanet->orbitspeed = extractOrbitSpeed( topLevel );
+                                newPlanet->orbitspeed = cgc_extractOrbitSpeed( topLevel );
 
                                 if ( newPlanet->orbitspeed < 0.0 ) {
                                         goto error;
                                 }
                                 break;
                         case aphelion:
-                                newPlanet->aphelion = extractAphelion( topLevel );
+                                newPlanet->aphelion = cgc_extractAphelion( topLevel );
 
                                 if ( newPlanet->aphelion < 0.0 ) {
                                         goto error;
                                 }
                                 break;
                         case perihelion:
-                                newPlanet->perihelion = extractPerihelion( topLevel );
+                                newPlanet->perihelion = cgc_extractPerihelion( topLevel );
 
                                 if ( newPlanet->perihelion < 0.0 ) {
                                         goto error;
@@ -443,7 +443,7 @@ pPlanet planetTopLevel( pstring topLevel )
 
                                 break;
                         case radius:
-                                newPlanet->radius = extractRadius( topLevel );
+                                newPlanet->radius = cgc_extractRadius( topLevel );
 
                                 if ( newPlanet->radius < 0.0 ) {
                                         goto error;
@@ -451,14 +451,14 @@ pPlanet planetTopLevel( pstring topLevel )
                                 break;
 
                         case eradius:
-                                newPlanet->eradius = extractERadius( topLevel );
+                                newPlanet->eradius = cgc_extractERadius( topLevel );
 
                                 if ( newPlanet->eradius < 0.0 ) {
                                         goto error;
                                 }
                                 break;
                         case mass:
-                                newPlanet->mass = extractMass( topLevel );
+                                newPlanet->mass = cgc_extractMass( topLevel );
 
                                 if ( newPlanet->mass < 0.0 ) {
                                         goto error;
@@ -467,7 +467,7 @@ pPlanet planetTopLevel( pstring topLevel )
                                 break;
 
                         case gravity:
-                                newPlanet->gravity = extractGravity( topLevel );
+                                newPlanet->gravity = cgc_extractGravity( topLevel );
 
                                 if ( newPlanet->gravity < 0.0 ) {
                                         goto error;
@@ -476,11 +476,11 @@ pPlanet planetTopLevel( pstring topLevel )
                                 break;
                         case country:
                                 if ( newPlanet->country_count >= COUNTRYMAX ) {
-                                        printf("!!Only @d countries allowed\n", COUNTRYMAX);
+                                        cgc_printf("!!Only @d countries allowed\n", COUNTRYMAX);
                                         goto error;
                                 }
 
-                                newPlanet->countries[ newPlanet->country_count] = countryTopLevel(topLevel);
+                                newPlanet->countries[ newPlanet->country_count] = cgc_countryTopLevel(topLevel);
 
                                 if (newPlanet->countries[ newPlanet->country_count ] == NULL ) {
                                         goto error;
@@ -490,45 +490,45 @@ pPlanet planetTopLevel( pstring topLevel )
                                 break;
 
                         default:
-                                printf("Not allowed under Planet\n", fl);
+                                cgc_printf("Not allowed under cgc_Planet\n", fl);
                                 goto error;
                                 break;
                 };
 
 
-                getIndex( topLevel, &lastGood );
-                fl = pullNextElementName( topLevel );
+                cgc_getIndex( topLevel, &lastGood );
+                fl = cgc_pullNextElementName( topLevel );
 
         }
 
-        /// Since no more valid elements need to be parsed, check the closing element
-        skipWhiteSpace( topLevel );
+        /// Since no more valid elements need to be parsed, check the closing cgc_element
+        cgc_skipWhiteSpace( topLevel );
 
-        if ( !atChar( topLevel, '{' ) ) {
-                printf("!!Closing value failed for Planet\n");
+        if ( !cgc_atChar( topLevel, '{' ) ) {
+                cgc_printf("!!Closing value failed for cgc_Planet\n");
                 goto error;
         }
 
         /// Skip the open brace
-        if ( incChar( topLevel ) < 0 ) {
+        if ( cgc_incChar( topLevel ) < 0 ) {
                 goto error;
         }
 
-        skipWhiteSpace( topLevel );
+        cgc_skipWhiteSpace( topLevel );
 
-        if ( !atChar( topLevel, '#' ) ) {
-                printf("!!Malformed closing element\n");
+        if ( !cgc_atChar( topLevel, '#' ) ) {
+                cgc_printf("!!Malformed closing cgc_element\n");
                 goto error;
         }
 
         /// Skip past #
-        if ( incChar( topLevel ) == -1 ) {
+        if ( cgc_incChar( topLevel ) == -1 ) {
                 goto error;
         }
 
-        getIndex( topLevel, &temp_index );
+        cgc_getIndex( topLevel, &temp_index );
 
-        endIndex = skipAlpha( topLevel );
+        endIndex = cgc_skipAlpha( topLevel );
 
         if ( endIndex == -1 ) {
                 endIndex = 0;
@@ -539,38 +539,38 @@ pPlanet planetTopLevel( pstring topLevel )
                 goto error;
         }
 
-        fl = copyData( topLevel, temp_index, endIndex );
+        fl = cgc_copyData( topLevel, temp_index, endIndex );
 
         if ( fl == NULL ) {
                 goto error;
         }
 
-        if ( strcmp( fl, "Planet") != 0 ) {
-                printf("!!Closing element malformed\n");
+        if ( cgc_strcmp( fl, "cgc_Planet") != 0 ) {
+                cgc_printf("!!Closing cgc_element malformed\n");
                 deallocate( fl, (endIndex-temp_index) + 1 );
                 goto error;
         }
 
         deallocate(fl, (endIndex-temp_index) + 1 );
 
-        skipWhiteSpace( topLevel );
+        cgc_skipWhiteSpace( topLevel );
 
-        if ( !atChar( topLevel, '}' ) ) {
-                printf("!!Failed to find final closing brace\n");
+        if ( !cgc_atChar( topLevel, '}' ) ) {
+                cgc_printf("!!Failed to find final closing brace\n");
                 goto error;
         }
 
-        incChar(topLevel);
+        cgc_incChar(topLevel);
 	
         goto end;
 
 error:
         topLevel->index = lastGood;
 
-        printf("!!Error at: @s\n", topLevel->buffer + topLevel->index);
+        cgc_printf("!!Error at: @s\n", topLevel->buffer + topLevel->index);
 
 	if ( newPlanet != NULL ) {
-		freePlanet( newPlanet );
+		cgc_freePlanet( newPlanet );
 		newPlanet = NULL;
 	}
 
@@ -580,11 +580,11 @@ end:
 
 
 /**
- * Parse the Period element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Period cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Period should never be negative.
  **/
-double extractPeriod( pstring str )
+double cgc_extractPeriod( cgc_pstring str )
 {
 	char *temp = NULL;
 	double period = -1.0;
@@ -599,162 +599,162 @@ double extractPeriod( pstring str )
 		return period;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return period;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return period;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return period;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Period" then this is the wrong function
-	if ( strcmp( temp, "Period") != 0 ) {
-		printf("!!Element id is not \"Period\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Period" then this is the wrong function
+	if ( cgc_strcmp( temp, "Period") != 0 ) {
+		cgc_printf("!!Element id is not \"Period\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return period;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return period;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &ps );
+	cgc_getIndex( str, &ps );
 
 	/// The period data must be a float
-	pe = skipFloat( str );
+	pe = cgc_skipFloat( str );
 
 	if ( pe == -1 ) {
-		printf("!!Failed to locate the end of the period data\n");
+		cgc_printf("!!Failed to locate the end of the period data\n");
 		return end;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return period;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return period;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 #ifdef PATCHED
 	if ( temp == NULL ) {
 		return -1.0;
 	}
 #endif
 
-	if ( strcmp( temp, "Period") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Period") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return period;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, ps, pe );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, ps, pe );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy period data\n");
+		cgc_printf("!!Failed to copy period data\n");
 		return -1;
 	}
 
-	period = atof( temp );
+	period = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return period;
 }
 
 /**
- * Parse the OrbitSpeed element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the OrbitSpeed cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Orbit speed should never be negative.
  **/
-double extractOrbitSpeed( pstring str )
+double cgc_extractOrbitSpeed( cgc_pstring str )
 {
 	char *temp = NULL;
 	double speed = -1.0;
@@ -767,118 +767,118 @@ double extractOrbitSpeed( pstring str )
 		goto reterrvalue;	
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !(atChar( str, '{' ) & 1) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !(cgc_atChar( str, '{' ) & 1) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		goto reterrspeed;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return speed;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		goto reterrvalue;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "OrbitSpeed" then this is the wrong function
-	if ( strcmp( temp, "OrbitSpeed") != 0 ) {
-		printf("!!Element id is not \"OrbitSpeed\"\n");
-		bzero( temp, strlen(temp) );
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "OrbitSpeed" then this is the wrong function
+	if ( cgc_strcmp( temp, "OrbitSpeed") != 0 ) {
+		cgc_printf("!!Element id is not \"OrbitSpeed\"\n");
+		cgc_bzero( temp, cgc_strlen(temp) );
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		goto reterrvalue;
 	}
 
 	/// The buffer is no longer needed so free it
-	bzero( temp, strlen(temp) + 1 );
-	deallocate(temp, strlen(temp) + 1);
+	cgc_bzero( temp, cgc_strlen(temp) + 1 );
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		goto reterrspeed;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		goto retspeed;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
 	ss = str->index;
 
 	/// The period data must be a float
-	se = skipFloat( str );
+	se = cgc_skipFloat( str );
 
 	if (se == -1 ) {
-		printf("!!Failed to locate the end of the period data\n");
+		cgc_printf("!!Failed to locate the end of the period data\n");
 		return -1.0;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto reterrvalue;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		goto reterrspeed;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		goto reterrvalue;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -886,38 +886,38 @@ double extractOrbitSpeed( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "OrbitSpeed") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		bzero(temp, strlen(temp) + 1 );
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "OrbitSpeed") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		cgc_bzero(temp, cgc_strlen(temp) + 1 );
+		deallocate(temp, cgc_strlen(temp)+1);
 		return -1.0;
 	}
 
-	bzero( temp, strlen(temp) + 1 );
-	deallocate(temp, strlen(temp)+1);
+	cgc_bzero( temp, cgc_strlen(temp) + 1 );
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto reterrspeed;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, ss, se );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, ss, se );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy period data\n");
+		cgc_printf("!!Failed to copy period data\n");
 		goto retspeed;
 	}
 
-	speed = atof( temp );
+	speed = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	goto retspeed;
 
@@ -933,11 +933,11 @@ retspeed:
 }
 
 /**
- * Parse the Aphelion element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Aphelion cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Aphelion should never be negative.
  **/
-double extractAphelion( pstring str )
+double cgc_extractAphelion( cgc_pstring str )
 {
 	char *temp = NULL;
 	double aphelion = -1.0;
@@ -952,116 +952,116 @@ double extractAphelion( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return aphelion;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return aphelion;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return aphelion;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Aphelion" then this is the wrong function
-	if ( strcmp( temp, "Aphelion") != 0 ) {
-		printf("!!Element id is not \"Aphelion\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Aphelion" then this is the wrong function
+	if ( cgc_strcmp( temp, "Aphelion") != 0 ) {
+		cgc_printf("!!Element id is not \"Aphelion\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return aphelion;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return aphelion;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &ps );
+	cgc_getIndex( str, &ps );
 
 	/// The period data must be a float
-	pe = skipFloat( str );
+	pe = cgc_skipFloat( str );
 
 	if ( pe == -1 ) {
-		printf("!!Failed to locate the end of the period data\n");
+		cgc_printf("!!Failed to locate the end of the period data\n");
 		return aphelion;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return aphelion;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return aphelion;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -1069,46 +1069,46 @@ double extractAphelion( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Aphelion") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Aphelion") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return aphelion;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, ps, pe );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, ps, pe );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy period data\n");
+		cgc_printf("!!Failed to copy period data\n");
 		return -1;
 	}
 
-	aphelion = atof( temp );
+	aphelion = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return aphelion;
 }
 
 /**
- * Parse the Perihelion element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Perihelion cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Perihelion should never be negative.
  **/
-double extractPerihelion( pstring str )
+double cgc_extractPerihelion( cgc_pstring str )
 {
 	char *temp = NULL;
 	double perihelion = -1.0;
@@ -1123,157 +1123,157 @@ double extractPerihelion( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return perihelion;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return perihelion;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return perihelion;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Perihelion" then this is the wrong function
-	if ( strcmp( temp, "Perihelion") != 0 ) {
-		printf("!!Element id is not \"Perihelion\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Perihelion" then this is the wrong function
+	if ( cgc_strcmp( temp, "Perihelion") != 0 ) {
+		cgc_printf("!!Element id is not \"Perihelion\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return perihelion;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return perihelion;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &ps );
+	cgc_getIndex( str, &ps );
 
 	/// The period data must be a float
-	pe = skipFloat( str );
+	pe = cgc_skipFloat( str );
 
 	if ( pe == -1 ) {
-		printf("!!Failed to locate the end of the perihelion data\n");
+		cgc_printf("!!Failed to locate the end of the perihelion data\n");
 		return perihelion;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return perihelion;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return perihelion;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "Perihelion") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Perihelion") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return perihelion;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, ps, pe );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, ps, pe );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy perihelion data\n");
+		cgc_printf("!!Failed to copy perihelion data\n");
 		return -1;
 	}
 
-	perihelion = atof( temp );
+	perihelion = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return perihelion;
 }
 
 /**
- * Parse the Radius element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Radius cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Radius should never be negative.
  **/
-double extractRadius( pstring str )
+double cgc_extractRadius( cgc_pstring str )
 {
 	char *temp = NULL;
 	double radius = -1.0;
@@ -1288,157 +1288,157 @@ double extractRadius( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return radius;
 	}
 
 	/// Skip past the curly brace
-	if ( incChar( str ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_incChar( str ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return radius;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return radius;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Radius" then this is the wrong function
-	if ( strcmp( temp, "Radius") != 0 ) {
-		printf("!!Element id is not \"Radius\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Radius" then this is the wrong function
+	if ( cgc_strcmp( temp, "Radius") != 0 ) {
+		cgc_printf("!!Element id is not \"Radius\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return radius;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return radius;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &rs );
+	cgc_getIndex( str, &rs );
 
 	/// The radius data must be a float
-	re = skipFloat( str );
+	re = cgc_skipFloat( str );
 
 	if ( re == -1 ) {
-		printf("!!Failed to locate the end of the radius data\n");
+		cgc_printf("!!Failed to locate the end of the radius data\n");
 		return radius;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return radius;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = incChar( str );
+	start = cgc_incChar( str );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return radius;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "Radius") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Radius") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return radius;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, rs, re );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, rs, re );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy radius data\n");
+		cgc_printf("!!Failed to copy radius data\n");
 		return -1.0;
 	}
 
-	radius = atof( temp );
+	radius = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return radius;
 }
 
 /**
- * Parse the ERadius element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the ERadius cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. ERadius should never be negative.
  **/
-double extractERadius( pstring str )
+double cgc_extractERadius( cgc_pstring str )
 {
 	char *temp = NULL;
 	double eradius = -1.0;
@@ -1453,157 +1453,157 @@ double extractERadius( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return eradius;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return eradius;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return eradius;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "ERadius" then this is the wrong function
-	if ( strcmp( temp, "ERadius") != 0 ) {
-		printf("!!Element id is not \"ERadius\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "ERadius" then this is the wrong function
+	if ( cgc_strcmp( temp, "ERadius") != 0 ) {
+		cgc_printf("!!Element id is not \"ERadius\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return eradius;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return eradius;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &es );
+	cgc_getIndex( str, &es );
 
 	/// The eradius data must be a float
-	ee = skipFloat( str );
+	ee = cgc_skipFloat( str );
 
 	if ( ee == -1 ) {
-		printf("!!Failed to locate the end of the eradius data\n");
+		cgc_printf("!!Failed to locate the end of the eradius data\n");
 		return eradius;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return eradius;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return eradius;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "ERadius") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "ERadius") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return eradius;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the eradius element data
-	temp = copyData( str, es, ee );
+	/// Copy the eradius cgc_element data
+	temp = cgc_copyData( str, es, ee );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy eradius data\n");
+		cgc_printf("!!Failed to copy eradius data\n");
 		return -1;
 	}
 
-	eradius = atof( temp );
+	eradius = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return eradius;
 }
 
 /**
- * Parse the Mass element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Mass cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Mass should never be negative.
  **/
-double extractMass( pstring str )
+double cgc_extractMass( cgc_pstring str )
 {
 	char *temp = NULL;
 	double mass = -1.0;
@@ -1618,116 +1618,116 @@ double extractMass( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return mass;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return mass;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return mass;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Mass" then this is the wrong function
-	if ( strcmp( temp, "Mass") != 0 ) {
-		printf("!!Element id is not \"Mass\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Mass" then this is the wrong function
+	if ( cgc_strcmp( temp, "Mass") != 0 ) {
+		cgc_printf("!!Element id is not \"Mass\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return mass;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return mass;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &es );
+	cgc_getIndex( str, &es );
 
 	/// The mass data must be a float
-	ee = skipFloat( str );
+	ee = cgc_skipFloat( str );
 
 	if ( ee == -1 ) {
-		printf("!!Failed to locate the end of the mass data\n");
+		cgc_printf("!!Failed to locate the end of the mass data\n");
 		return mass;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return mass;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return mass;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -1735,46 +1735,46 @@ double extractMass( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Mass") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Mass") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return mass;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the mass element data
-	temp = copyData( str, es, ee );
+	/// Copy the mass cgc_element data
+	temp = cgc_copyData( str, es, ee );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy mass data\n");
+		cgc_printf("!!Failed to copy mass data\n");
 		return -1;
 	}
 
-	mass = atof( temp );
+	mass = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return mass;
 }
 
 /**
- * Parse the Gravity element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Gravity cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the double value or -1.0 on failure. Gravity should never be negative.
  **/
-double extractGravity( pstring str )
+double cgc_extractGravity( cgc_pstring str )
 {
 	char *temp = NULL;
 	double gravity = -1.0;
@@ -1789,147 +1789,147 @@ double extractGravity( pstring str )
 		return -1.0;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return gravity;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return gravity;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return gravity;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1.0;
 	}
 
-	/// If the element id is not "Gravity" then this is the wrong function
-	if ( strcmp( temp, "Gravity") != 0 ) {
-		printf("!!Element id is not \"Gravity\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Gravity" then this is the wrong function
+	if ( cgc_strcmp( temp, "Gravity") != 0 ) {
+		cgc_printf("!!Element id is not \"Gravity\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return gravity;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return gravity;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &es );
+	cgc_getIndex( str, &es );
 
 	/// The gravity data must be a float
-	ee = skipFloat( str );
+	ee = cgc_skipFloat( str );
 
 	if ( ee == -1 ) {
-		printf("!!Failed to locate the end of the gravity data\n");
+		cgc_printf("!!Failed to locate the end of the gravity data\n");
 		return gravity;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return gravity;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1.0;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return gravity;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return -1.0;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "Gravity") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Gravity") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return gravity;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1.0;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the gravity element data
-	temp = copyData( str, es, ee );
+	/// Copy the gravity cgc_element data
+	temp = cgc_copyData( str, es, ee );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy gravity data\n");
+		cgc_printf("!!Failed to copy gravity data\n");
 		return -1;
 	}
 
-	gravity = atof( temp );
+	gravity = cgc_atof( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return gravity;
 }

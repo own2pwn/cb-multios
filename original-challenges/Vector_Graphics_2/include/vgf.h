@@ -43,67 +43,67 @@ THE SOFTWARE.
 #pragma pack(push, 1)
 
 typedef struct VGF_Header_s {
-  uint32_t magic;
-  uint16_t version;
-  uint16_t y_size;
-  uint16_t x_size;
-  uint8_t layers;
-} VGF_Header;
+  cgc_uint32_t magic;
+  cgc_uint16_t version;
+  cgc_uint16_t y_size;
+  cgc_uint16_t x_size;
+  cgc_uint8_t layers;
+} cgc_VGF_Header;
 
 
 typedef struct VGF_Object_s {
-  uint8_t type;
-  uint8_t layer;
-  uint8_t color;
-  uint8_t fill;
-} VGF_Object;
+  cgc_uint8_t type;
+  cgc_uint8_t layer;
+  cgc_uint8_t color;
+  cgc_uint8_t fill;
+} cgc_VGF_Object;
 
 typedef struct VGF_Triangle_s {
-  uint16_t  x0;
-  uint16_t  y0;
-  uint16_t  x1;
-  uint16_t  y1;
-  uint16_t  x2;
-  uint16_t  y2;
-} VGF_Triangle;
+  cgc_uint16_t  x0;
+  cgc_uint16_t  y0;
+  cgc_uint16_t  x1;
+  cgc_uint16_t  y1;
+  cgc_uint16_t  x2;
+  cgc_uint16_t  y2;
+} cgc_VGF_Triangle;
 
 typedef struct VGF_Rectangle_s {
-  uint16_t x_start;
-  uint16_t y_start;
-  uint16_t x_len;
-  uint16_t y_len;
-} VGF_Rectangle;
+  cgc_uint16_t x_start;
+  cgc_uint16_t y_start;
+  cgc_uint16_t x_len;
+  cgc_uint16_t y_len;
+} cgc_VGF_Rectangle;
 
 typedef struct VGF_Square_s {
-  uint16_t x_start;
-  uint16_t y_start;
-  uint16_t x_len;
-} VGF_Square;
+  cgc_uint16_t x_start;
+  cgc_uint16_t y_start;
+  cgc_uint16_t x_len;
+} cgc_VGF_Square;
 
 typedef struct VGF_Line_s {
-  uint16_t x_start;
-  uint16_t y_start;
-  uint16_t x_end;
-  uint16_t y_end;
-} VGF_Line;
+  cgc_uint16_t x_start;
+  cgc_uint16_t y_start;
+  cgc_uint16_t x_end;
+  cgc_uint16_t y_end;
+} cgc_VGF_Line;
 
 typedef struct VGF_Circle_s {
-  uint16_t x_start;
-  uint16_t y_start;
-  uint16_t radius;
-} VGF_Circle;
+  cgc_uint16_t x_start;
+  cgc_uint16_t y_start;
+  cgc_uint16_t radius;
+} cgc_VGF_Circle;
 
 typedef struct VGF_Spray_s {
-  uint16_t x_start;
-  uint16_t y_start;
-  uint16_t width;
-  uint16_t density;
-  uint32_t magic;
-} VGF_Spray;
+  cgc_uint16_t x_start;
+  cgc_uint16_t y_start;
+  cgc_uint16_t width;
+  cgc_uint16_t density;
+  cgc_uint32_t magic;
+} cgc_VGF_Spray;
 
 #pragma pack(pop)
 
-int VGFVerify(VGF_Header *header);
-int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c);
+int cgc_VGFVerify(cgc_VGF_Header *header);
+int cgc_VGFProcess(cgc_uint8_t **file_data_in, cgc_uint8_t *file_end, cgc_Canvas *c);
 
 #endif

@@ -27,4 +27,4 @@
  * @param buf Buffer to hold random bytes
  * @param n Number of bytes to add to buf
  */
-void rand(void *buf, unsigned int n);
+void cgc_rand(void *buf, unsigned int n);

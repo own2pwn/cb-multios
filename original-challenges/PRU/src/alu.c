@@ -30,84 +30,84 @@ THE SOFTWARE.
 #include "cpu.h"
 #include "stdio.h"
 
-int getALUOp2(pruCPU *cpu, aluInstruction inst) {
+int cgc_getALUOp2(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
 	if(inst.io == 0)
 		return cpu->r[inst.arg2.rs2.reg];
 	else
 		return inst.arg2.imm;
 }
 	
-void doAdd(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] + getALUOp2(cpu, inst);
+void cgc_doAdd(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] + cgc_getALUOp2(cpu, inst);
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doAdc(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] + getALUOp2(cpu, inst) + cpu->carry;
+void cgc_doAdc(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] + cgc_getALUOp2(cpu, inst) + cpu->carry;
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doSub(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] - getALUOp2(cpu, inst);
+void cgc_doSub(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] - cgc_getALUOp2(cpu, inst);
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doSuc(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] - getALUOp2(cpu, inst) - cpu->carry;
+void cgc_doSuc(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] - cgc_getALUOp2(cpu, inst) - cpu->carry;
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doRsb(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = getALUOp2(cpu, inst) - cpu->r[inst.rs1];
+void cgc_doRsb(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cgc_getALUOp2(cpu, inst) - cpu->r[inst.rs1];
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doRsc(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = getALUOp2(cpu, inst) - cpu->r[inst.rs1] - cpu->carry;
+void cgc_doRsc(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cgc_getALUOp2(cpu, inst) - cpu->r[inst.rs1] - cpu->carry;
 	cpu->carry = (cpu->r[inst.rd] >> 31) & 1;
 }
 
-void doLsl(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] << (getALUOp2(cpu, inst) & 0x1f);
+void cgc_doLsl(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] << (cgc_getALUOp2(cpu, inst) & 0x1f);
 }
 
-void doLsr(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] >> (signed int)(getALUOp2(cpu, inst) & 0x1f);
+void cgc_doLsr(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] >> (signed int)(cgc_getALUOp2(cpu, inst) & 0x1f);
 }
 
-void doAnd(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] & getALUOp2(cpu, inst);
+void cgc_doAnd(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] & cgc_getALUOp2(cpu, inst);
 }
 
-void doOr(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] | getALUOp2(cpu, inst);
+void cgc_doOr(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] | cgc_getALUOp2(cpu, inst);
 }
 
-void doXor(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] ^ getALUOp2(cpu, inst);
+void cgc_doXor(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] ^ cgc_getALUOp2(cpu, inst);
 }
 
-void doNot(pruCPU *cpu, aluInstruction inst) {
+void cgc_doNot(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
 	cpu->r[inst.rd] = ~cpu->r[inst.rs1];
 }
 
-void doMin(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] < getALUOp2(cpu, inst) ? cpu->r[inst.rs1] : getALUOp2(cpu, inst);
+void cgc_doMin(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] < cgc_getALUOp2(cpu, inst) ? cpu->r[inst.rs1] : cgc_getALUOp2(cpu, inst);
 }
 
-void doMax(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] > getALUOp2(cpu, inst) ? cpu->r[inst.rs1] : getALUOp2(cpu, inst);
+void cgc_doMax(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] > cgc_getALUOp2(cpu, inst) ? cpu->r[inst.rs1] : cgc_getALUOp2(cpu, inst);
 }
 
-void doClr(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] & ~(1 << (getALUOp2(cpu, inst) & 0x1f));
+void cgc_doClr(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] & ~(1 << (cgc_getALUOp2(cpu, inst) & 0x1f));
 }
 
-void doSet(pruCPU *cpu, aluInstruction inst) {
-	cpu->r[inst.rd] = cpu->r[inst.rs1] | (1 << (getALUOp2(cpu, inst) & 0x1f));
+void cgc_doSet(cgc_pruCPU *cpu, cgc_aluInstruction inst) {
+	cpu->r[inst.rd] = cpu->r[inst.rs1] | (1 << (cgc_getALUOp2(cpu, inst) & 0x1f));
 }
 
-void doQATB(pruCPU *cpu, fmtQatbInstruction qatb) {
+void cgc_doQATB(cgc_pruCPU *cpu, cgc_fmtQatbInstruction qatb) {
 	int arg1;
 	int arg2;
 	char takeBranch = 0;

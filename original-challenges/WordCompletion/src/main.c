@@ -2,7 +2,7 @@
 
 #include "words.h"
 
-typedef unsigned int uint32_t;
+typedef unsigned int cgc_uint32_t;
 #define PAGE_SIZE 4096
 
 char gValidChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -18,9 +18,9 @@ char gValidChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345
 #define NEXT_WORD_MSG "Next Word: "
 #define FINAL_RND_MSG "Final Round. Chose another 2 digit number\n"
 
-size_t strlen(char* str)
+cgc_size_t cgc_strlen(char* str)
 {
-  size_t ret = 0; 
+  cgc_size_t ret = 0; 
   if (str == NULL)
   {
     return (0);
@@ -31,10 +31,10 @@ size_t strlen(char* str)
   return (ret);
 }
 
-size_t transmit_all(char* buf, size_t size)
+cgc_size_t cgc_transmit_all(char* buf, cgc_size_t size)
 {
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -55,16 +55,16 @@ size_t transmit_all(char* buf, size_t size)
   return (size);
 }
 
-size_t transmit_str(char* buf)
+cgc_size_t cgc_transmit_str(char* buf)
 {
-  size_t len = strlen(buf);
-  return (transmit_all(buf, len));
+  cgc_size_t len = cgc_strlen(buf);
+  return (cgc_transmit_all(buf, len));
 }
 
-size_t receive_all(char* buf, size_t size)
+cgc_size_t cgc_receive_all(char* buf, cgc_size_t size)
 {
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -85,17 +85,17 @@ size_t receive_all(char* buf, size_t size)
   return (size);
 }
 
-size_t readline(char* buf, size_t len)
+cgc_size_t cgc_readline(char* buf, cgc_size_t len)
 {
   if (buf == NULL)
   {
     return (0);
   }
 
-  size_t count = 0;
+  cgc_size_t count = 0;
   int ret = 0;
   char c = 0;
-  size_t rx_bytes = 0;
+  cgc_size_t rx_bytes = 0;
   do
   {
     ret = receive(STDIN, &c, 1, &rx_bytes);
@@ -110,7 +110,7 @@ size_t readline(char* buf, size_t len)
   return (count); 
 }
 
-char rotN(char c, int n)
+char cgc_rotN(char c, int n)
 {
   int temp = 0;
   n = n % VALID_CHARS_LEN;
@@ -137,17 +137,17 @@ char rotN(char c, int n)
   return (gValidChars[temp]);
 }
 
-size_t strrotcpy(char* dst, char* src, int rot)
+cgc_size_t cgc_strrotcpy(char* dst, char* src, int rot)
 {
   if ( (src == NULL) || (dst == NULL) )
   {
     return (0);
   }
 
-  size_t ret = 0;
+  cgc_size_t ret = 0;
   for (ret = 0; src[ret] != '\0'; ret++)
   {
-    dst[ret] = rotN(src[ret], rot);
+    dst[ret] = cgc_rotN(src[ret], rot);
   }
 
   dst[ret] = '\0';
@@ -157,10 +157,10 @@ size_t strrotcpy(char* dst, char* src, int rot)
 char** gWords = NULL;
 char* gWordData = NULL;
 
-int init(int rot)
+int cgc_init(int rot)
 {
   int ret = 0;
-  size_t numWords = NUM_WORDS;
+  cgc_size_t numWords = NUM_WORDS;
 
   //first allocate enough space for the wordlist
   ret = allocate( sizeof(gSeedWords), 0, (void**)(&gWords));
@@ -170,11 +170,11 @@ int init(int rot)
   }
 
   //now calculate how many bytes we need to store the words themselves
-  size_t total = 0;
+  cgc_size_t total = 0;
   int i = 0;
   for (i = 0; i < numWords; i++)
   {
-    total += strlen(gSeedWords[i]);
+    total += cgc_strlen(gSeedWords[i]);
     total += 1; //for the NULL character
   }
  
@@ -185,12 +185,12 @@ int init(int rot)
   } 
 
   //now that we have both we can fill in the data  
-  size_t temp = 0;
+  cgc_size_t temp = 0;
   char* pTemp = gWordData;
   for (i = 0; i < numWords; i++)
   {
     gWords[i] = pTemp;
-    pTemp += strrotcpy(pTemp, gSeedWords[i], rot);
+    pTemp += cgc_strrotcpy(pTemp, gSeedWords[i], rot);
     pTemp += 1; //for the NULL character
   }
   
@@ -202,7 +202,7 @@ int init(int rot)
   return (0);
 }
 
-int toInt(char c1, char c2)
+int cgc_toInt(char c1, char c2)
 {
   int ret = 0;
 
@@ -234,9 +234,9 @@ int toInt(char c1, char c2)
  *    enough for our purposes
  *  Instead of just returning the last bit, we return the whole uint32
 **/
-static uint32_t gRandRegister = 0xDA2bAC9C;
+static cgc_uint32_t gRandRegister = 0xDA2bAC9C;
 
-uint32_t RANDOM()
+cgc_uint32_t cgc_RANDOM()
 {
   gRandRegister = ((((gRandRegister >> 31)
              ^ (gRandRegister >> 6)
@@ -251,7 +251,7 @@ uint32_t RANDOM()
   return (gRandRegister);
 }
 
-int strcmp(char* s1, char* s2)
+int cgc_strcmp(char* s1, char* s2)
 {
   if (s1 == NULL)
   {
@@ -296,14 +296,14 @@ int strcmp(char* s1, char* s2)
   return (-1);
 }
 
-#define rand() RANDOM()
+#define rand() cgc_RANDOM()
 
-void srand(uint32_t seed)
+void cgc_srand(cgc_uint32_t seed)
 {
   gRandRegister = seed;
 }
 
-void scramble(char* dst, char* src, size_t len)
+void cgc_scramble(char* dst, char* src, cgc_size_t len)
 {
 #if PATCHED
   if ( (dst == NULL) || (src == NULL) )
@@ -313,7 +313,7 @@ void scramble(char* dst, char* src, size_t len)
 #endif
 
   int i = 0;
-  uint32_t r = (rand() % 3) + 2;
+  cgc_uint32_t r = (rand() % 3) + 2;
 
   while ( (src[i] != '\0') && (i < len) )
   {
@@ -340,77 +340,77 @@ void scramble(char* dst, char* src, size_t len)
 int main(void)
 {
 #define BUF_SIZE 64
-#define READLINE(_buf, _len) do { sret = readline(_buf, _len); if (sret == 0) { _terminate(1); } } while (0)
+#define READLINE(_buf, _len) do { sret = cgc_readline(_buf, _len); if (sret == 0) { _terminate(1); } } while (0)
 
   char buf[BUF_SIZE];
   int i = 0;
   int ret = 0;
   int temp = 0;
-  size_t sret = 0;
+  cgc_size_t sret = 0;
   char c = '\n';
 
-  transmit_str(ENTER_NUM_MSG);
+  cgc_transmit_str(ENTER_NUM_MSG);
   READLINE(buf, BUF_SIZE);
   
-  i = toInt(buf[0], buf[1]);
-  if (init(i+1) != 0)
+  i = cgc_toInt(buf[0], buf[1]);
+  if (cgc_init(i+1) != 0)
   {
     return (-1);
   }
  
   //initialize the LFSR
-  srand(*((int*)buf));
+  cgc_srand(*((int*)buf));
   
   for (i = 0; i < NUM_ROUNDS; i++)
   {
     if (i == 0)
     {
-      transmit_str(WORD_MSG);
+      cgc_transmit_str(WORD_MSG);
     }
     else 
     {
-      transmit_str(NEXT_WORD_MSG);
+      cgc_transmit_str(NEXT_WORD_MSG);
     }
 
     temp = rand() % NUM_WORDS;
-    scramble(buf, gWords[temp], BUF_SIZE);
-    transmit_str(buf);
-    transmit_all(&c, 1);
+    cgc_scramble(buf, gWords[temp], BUF_SIZE);
+    cgc_transmit_str(buf);
+    cgc_transmit_all(&c, 1);
     READLINE(buf, BUF_SIZE);
   
     buf[sret-1] = '\0';
 
-    if (strcmp(buf, gWords[temp]) != 0)
+    if (cgc_strcmp(buf, gWords[temp]) != 0)
     {
-      transmit_str(LOSE_MSG);
+      cgc_transmit_str(LOSE_MSG);
       return (0);
     }
   }
 
-  transmit_str(FINAL_RND_MSG);      
+  cgc_transmit_str(FINAL_RND_MSG);      
   READLINE(buf, BUF_SIZE);
   
-  i = toInt(buf[0], buf[1]);
+  i = cgc_toInt(buf[0], buf[1]);
 
 #if PATCHED
   i = i % NUM_WORDS;
 #endif
 
-  scramble(buf, gWords[i], BUF_SIZE);
+  cgc_scramble(buf, gWords[i], BUF_SIZE);
 
-  transmit_str(buf);
-  transmit_all(&c, 1);
+  cgc_transmit_str(buf);
+  cgc_transmit_all(&c, 1);
   READLINE(buf, BUF_SIZE);
   
   buf[sret-1] = '\0';
 
-  if (strcmp(buf, gWords[i]) != 0)
+  if (cgc_strcmp(buf, gWords[i]) != 0)
   {
-    transmit_str(LOSE_MSG);
+    cgc_transmit_str(LOSE_MSG);
   }
   else
   {
-    transmit_str(WIN_MSG);
+    cgc_transmit_str(WIN_MSG);
   }
   return (0);
 }

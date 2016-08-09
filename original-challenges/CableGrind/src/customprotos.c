@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,14 +25,14 @@
 #include "cablegrind.h"
 
 
-static uint32_t ntohl(uint32_t n) {
+static uint32_t cgc_ntohl(uint32_t n) {
     uint8_t *p = (uint8_t*)&n;
     return p[0]<<24 | p[1]<<16 | p[2]<<8 | p[3];
 }
 
 STACKPROTECTINIT
-void process_trolololo(uint8_t **payload, int *size) {
-void (*next_dissectors[]) (uint8_t **, int *) = {process_trolololo};
+void cgc_process_trolololo(uint8_t **payload, int *size) {
+void (*next_dissectors[]) (uint8_t **, int *) = {cgc_process_trolololo};
 STACKPROTECTADD
     int i;
     uint32_t buf[MAX_TRL_BUF_SIZE];
@@ -64,7 +64,7 @@ STACKPROTECTADD
     }
 
     for (i = 1; i < bsize+1; i++) {
-        buf[i-1] = ntohl(src[i]);
+        buf[i-1] = cgc_ntohl(src[i]);
     }
 
 STACKPROTECTCHK

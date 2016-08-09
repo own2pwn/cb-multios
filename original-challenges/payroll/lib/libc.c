@@ -31,12 +31,12 @@ THE SOFTWARE.
 // chars written to 'dest', including 'end' char.  
 // Returns 0 on success, otherwise error code. 
 // Number of bytes read is returned in 'bytes_read'.
-int receive_until(char *dest, size_t length, char end, size_t *bytes_read)
+int cgc_receive_until(char *dest, cgc_size_t length, char end, cgc_size_t *bytes_read)
 {
-	size_t count = 0;
+	cgc_size_t count = 0;
 	char c;
 	int receive_status;
-	size_t receive_bytes;
+	cgc_size_t receive_bytes;
 
 	do 
 	{
@@ -52,18 +52,18 @@ int receive_until(char *dest, size_t length, char end, size_t *bytes_read)
 	return 0;
 }
 
-size_t strlen(char *buf)
+cgc_size_t cgc_strlen(char *buf)
 {
-	size_t length = 0;
+	cgc_size_t length = 0;
 	while(buf[length]!='\0') length++;
 	return length;
 }
 
-void print(char *buf)
+void cgc_print(char *buf)
 {
-   size_t len = strlen(buf);
-   size_t tx = 0;
-   size_t nbytes;
+   cgc_size_t len = cgc_strlen(buf);
+   cgc_size_t tx = 0;
+   cgc_size_t nbytes;
    while (tx < len) {
    	int res = transmit(STDOUT, (void *)buf + tx, len - tx, &nbytes);
    	if (res != 0 || nbytes == 0) {
@@ -74,7 +74,7 @@ void print(char *buf)
 }
 
 // Returns 1 if the strings are equal, otherwise 0
-int equals(char *one, char *two)
+int cgc_equals(char *one, char *two)
 {
 	int i = 0;
 	while((one[i]==two[i]) && (one[i]!='\0')) i++;
@@ -83,9 +83,9 @@ int equals(char *one, char *two)
 
 // Copy a string from src to dst. Copy ends when null byte reached
 // in src string OR when length bytes have been copied to dst.
-void strncpy(char *dst, char *src, size_t length)
+void cgc_strncpy(char *dst, char *src, cgc_size_t length)
 {
-	size_t pos;
+	cgc_size_t pos;
 	for(pos = 0; pos<length && src[pos]!='\0'; pos++)
 	{
 		dst[pos] = src[pos];
@@ -94,14 +94,14 @@ void strncpy(char *dst, char *src, size_t length)
 		dst[pos] = '\0';
 }
 
-int isdigit(char c)
+int cgc_isdigit(char c)
 {
 	return (c >= '0' && c <= '9');
 }
 
-int atoi(char *str)
+int cgc_atoi(char *str)
 {
-	size_t i = 0;
+	cgc_size_t i = 0;
 	int negative = 0;
 	int result = 0;
 
@@ -117,7 +117,7 @@ int atoi(char *str)
 	{
 		i++;
 	}
-	while(isdigit(str[i]))
+	while(cgc_isdigit(str[i]))
 	{
 		result = (result * 10) + (str[i] - '0');
 		i++;
@@ -131,9 +131,9 @@ int atoi(char *str)
 
 }
 
-// itoa - Does not check output buffer size. 
+// cgc_itoa - Does not check output buffer size. 
 // Can potentially write up to 12 characters ("-2147483648\0") to str.
-void itoa(char *str, int i)
+void cgc_itoa(char *str, int i)
 {
 	char buffer[11];
 	int pos = 0;
@@ -167,7 +167,7 @@ void itoa(char *str, int i)
 	str[outpos] = '\0';
 }
 
-void memcpy(char *dst, char *src, size_t size)
+void cgc_memcpy(char *dst, char *src, cgc_size_t size)
 {
 	char *end = dst + size;
 	while(dst != end)
@@ -176,7 +176,7 @@ void memcpy(char *dst, char *src, size_t size)
 	}
 }
 
-void memset(char *dst, char c, size_t size)
+void cgc_memset(char *dst, char c, cgc_size_t size)
 {
 	char *end = dst + size;
 	while(dst < end)

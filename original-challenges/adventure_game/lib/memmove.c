@@ -24,9 +24,9 @@
  */
 #include <string.h>
 
-void *memmove(void *dest, const void *src, size_t n)
+void *memmove(void *dest, const void *src, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     const unsigned char *usrc = src;
     unsigned char *udest = dest;
 

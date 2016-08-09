@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,59 +30,59 @@ THE SOFTWARE.
 #include <string.h>
 
 // Forward declarations
-class Date;
-class Time;
+class cgc_Date;
+class cgc_Time;
 
-class Date
+class cgc_Date
 {
 public:
-    Date() : m_day( 1 ), m_month( 1 ), m_year( 1900 ) { };
-    ~Date() { };
+    cgc_Date() : m_day( 1 ), m_month( 1 ), m_year( 1900 ) { };
+    ~cgc_Date() { };
 
-    void SetDate( uint8_t day, uint8_t month, uint16_t year )
+    void cgc_SetDate( cgc_uint8_t day, cgc_uint8_t month, cgc_uint16_t year )
     {
         m_day = day;
         m_month = month;
         m_year = year;
     }
 
-    bool SetDate( const char* pszInStr );
-    bool SetDate( const String& instr );
-    void FromUnixTimeval( uint32_t timeval );
+    bool cgc_SetDate( const char* pszInStr );
+    bool cgc_SetDate( const cgc_String& instr );
+    void cgc_FromUnixTimeval( cgc_uint32_t cgc_timeval );
 
-    String GetString( void ) const;
+    cgc_String cgc_GetString( void ) const;
 
 private:
-    uint8_t     m_day;
-    uint8_t     m_month;
-    uint16_t    m_year;
+    cgc_uint8_t     m_day;
+    cgc_uint8_t     m_month;
+    cgc_uint16_t    m_year;
 };
 
-class Time
+class cgc_Time
 {
 public:
-    Time() : m_hour( 0 ), m_minute( 0 ), m_second( 0 ) { };
-    Time( uint8_t hour, uint8_t minute, uint8_t second ) : m_hour( hour ), m_minute( minute ), m_second( second ) { };
-    ~Time() { };
+    cgc_Time() : m_hour( 0 ), m_minute( 0 ), m_second( 0 ) { };
+    cgc_Time( cgc_uint8_t hour, cgc_uint8_t minute, cgc_uint8_t second ) : m_hour( hour ), m_minute( minute ), m_second( second ) { };
+    ~cgc_Time() { };
 
-    void SetTime( uint8_t hour, uint8_t minute, uint8_t second )
+    void cgc_SetTime( cgc_uint8_t hour, cgc_uint8_t minute, cgc_uint8_t second )
     {
         m_hour = hour;
         m_minute = minute;
         m_second = second;
     }
 
-    bool SetTime( const char *pszInStr );
-    bool SetTime( const String& inStr );
+    bool cgc_SetTime( const char *pszInStr );
+    bool cgc_SetTime( const cgc_String& inStr );
 
-    void FromUnixTimeval( uint32_t timeval );
+    void cgc_FromUnixTimeval( cgc_uint32_t cgc_timeval );
 
-    String GetString( void ) const;
+    cgc_String cgc_GetString( void ) const;
 
 private:
-    uint8_t     m_hour;
-    uint8_t     m_minute;
-    uint8_t     m_second;
+    cgc_uint8_t     m_hour;
+    cgc_uint8_t     m_minute;
+    cgc_uint8_t     m_second;
 };
 
 #endif // __DATETIME_H__

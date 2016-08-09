@@ -60,19 +60,19 @@
 #define ERR_FILE_NOT_FOUND "requested file not found\n"
 
 
-int dump_file(char *name);
-int head_file(char *name);
-int list_files(void);
+int cgc_dump_file(char *name);
+int cgc_head_file(char *name);
+int cgc_list_files(void);
 int main(void);
 
 // stupid-simple files that have 16-character names and 16-character contents
-typedef struct fileentry {
+typedef struct cgc_fileentry {
     char name[FILE_BUF_SZ];
     char contents[FILE_BUF_SZ];   
-} fileentry;
+} cgc_fileentry;
 
-UINT8 num_files;
-fileentry *files;
+cgc_UINT8 num_files;
+cgc_fileentry *files;
 char buf_recv[RECV_BUF_SZ];
 char *ptr_uri_tip;
 char *ptr_uri_gimme;

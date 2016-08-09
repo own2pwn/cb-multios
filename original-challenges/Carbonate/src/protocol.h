@@ -29,18 +29,18 @@ THE SOFTWARE.
 #include "carbonate.h"
 
 typedef struct {
-  uint8 type;
-  uint8 length;
+  cgc_uint8 type;
+  cgc_uint8 length;
   void* value;
-} protocol_frame;
+} cgc_protocol_frame;
 
-protocol_frame* allocate_frame(protocol_frame template);
+cgc_protocol_frame* cgc_allocate_frame(cgc_protocol_frame template);
 
-protocol_frame* expect_frame(uint8 type);
-protocol_frame* receive_frame();
+cgc_protocol_frame* cgc_expect_frame(cgc_uint8 type);
+cgc_protocol_frame* cgc_receive_frame();
 
-void send_frame(protocol_frame* payload);
-void send_empty_frame(uint8 type);
-void expect_empty_frame(uint8 type);
+void cgc_send_frame(cgc_protocol_frame* payload);
+void cgc_send_empty_frame(cgc_uint8 type);
+void cgc_expect_empty_frame(cgc_uint8 type);
 
-void free_frame(protocol_frame* fr);
+void cgc_free_frame(cgc_protocol_frame* fr);

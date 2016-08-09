@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,31 +34,31 @@
 typedef struct {
 #define DIR_OUT 0
 #define DIR_IN 1
-    code_t code[2];
-    mode_t mode[2];
-    rng_t rng;
+    cgc_code_t code[2];
+    cgc_mode_t mode[2];
+    cgc_rng_t rng;
 
     unsigned int code_id;
     unsigned int mode_id;
     unsigned int ksize;
 
     unsigned char *recvbuf;
-    uint16_t recvbuf_len;
-    uint16_t recvbuf_idx;
-} silk_priv_t;
+    cgc_uint16_t recvbuf_len;
+    cgc_uint16_t recvbuf_idx;
+} cgc_silk_priv_t;
 
-int _recv_bytes(void *data, unsigned int n)
+int cgc__recv_bytes(void *data, unsigned int n)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     if (receive(STDIN, data, n, &bytes) != 0 || bytes != n)
         return FAILURE;
     return SUCCESS;
 }
 
-int _recv(uint8_t pktid, void *data, unsigned int n)
+int cgc__recv(cgc_uint8_t pktid, void *data, unsigned int n)
 {
-    uint8_t actual_pktid;
-    if (_recv_bytes(&actual_pktid, sizeof(actual_pktid)) != SUCCESS)
+    cgc_uint8_t actual_pktid;
+    if (cgc__recv_bytes(&actual_pktid, sizeof(actual_pktid)) != SUCCESS)
         return FAILURE;
 
     if (actual_pktid != pktid)
@@ -70,39 +70,39 @@ int _recv(uint8_t pktid, void *data, unsigned int n)
         return FAILURE;
     }
 
-    return n > 0 ? _recv_bytes(data, n) : SUCCESS;
+    return n > 0 ? cgc__recv_bytes(data, n) : SUCCESS;
 }
 
-int _send_bytes(void *data, unsigned int n)
+int cgc__send_bytes(void *data, unsigned int n)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     if (transmit(STDOUT, data, n, &bytes) != 0 || bytes != n)
         return FAILURE;
     return SUCCESS;
 }
 
-int _send(uint8_t pktid, void *data, unsigned int n)
+int cgc__send(cgc_uint8_t pktid, void *data, unsigned int n)
 {
-    if (_send_bytes(&pktid, sizeof(pktid)) != SUCCESS)
+    if (cgc__send_bytes(&pktid, sizeof(pktid)) != SUCCESS)
         return FAILURE;
-    return n > 0 ? _send_bytes(data, n) : SUCCESS;
+    return n > 0 ? cgc__send_bytes(data, n) : SUCCESS;
 }
 
-int silk_init(silk_t *silk)
+int cgc_silk_init(cgc_silk_t *silk)
 {
-    silk_priv_t *priv;
+    cgc_silk_priv_t *priv;
     
-    silk->priv = priv = malloc(sizeof(silk_priv_t));
+    silk->priv = priv = cgc_malloc(sizeof(cgc_silk_priv_t));
     if (priv == NULL)
         return FAILURE;
 
-    if (codes_self_test() != SUCCESS ||
-        bn_self_test() != SUCCESS ||
-        kx_self_test() != SUCCESS ||
-        modes_self_test() != SUCCESS)
+    if (cgc_codes_self_test() != SUCCESS ||
+        cgc_bn_self_test() != SUCCESS ||
+        cgc_kx_self_test() != SUCCESS ||
+        cgc_modes_self_test() != SUCCESS)
         return FAILURE;
 
-    if (rng_init(&priv->rng, RNG_LCG) != SUCCESS)
+    if (cgc_rng_init(&priv->rng, RNG_LCG) != SUCCESS)
         return FAILURE;
 
     priv->recvbuf = NULL;
@@ -111,9 +111,9 @@ int silk_init(silk_t *silk)
     return SUCCESS;
 }
 
-uint32_t silk_allowed_codes(silk_priv_t *priv)
+cgc_uint32_t cgc_silk_allowed_codes(cgc_silk_priv_t *priv)
 {
-    uint32_t res = 0;
+    cgc_uint32_t res = 0;
 #define ADD(x) res |= 1 << (x);
     ADD(C_NULL)
     ADD(C_FAITH)
@@ -128,9 +128,9 @@ uint32_t silk_allowed_codes(silk_priv_t *priv)
     return res;
 }
 
-unsigned int silk_preferred_code(silk_priv_t *priv, uint32_t accepted)
+unsigned int cgc_silk_preferred_code(cgc_silk_priv_t *priv, cgc_uint32_t accepted)
 {
-    uint32_t possible = accepted & silk_allowed_codes(priv);
+    cgc_uint32_t possible = accepted & cgc_silk_allowed_codes(priv);
 #define TEST(x) if (possible & (1 << (x))) return (x);
     TEST(C_DOLPHIN)
     TEST(C_BEST)
@@ -141,9 +141,9 @@ unsigned int silk_preferred_code(silk_priv_t *priv, uint32_t accepted)
     return INVALID;
 }
 
-unsigned int silk_preferred_mode(silk_priv_t *priv, uint32_t accepted)
+unsigned int cgc_silk_preferred_mode(cgc_silk_priv_t *priv, cgc_uint32_t accepted)
 {
-    uint32_t possible = accepted & silk_allowed_codes(priv);
+    cgc_uint32_t possible = accepted & cgc_silk_allowed_codes(priv);
 #define TEST(x) if (possible & (1 << (16+x))) return (x);
     TEST(MODE_XOM)
     TEST(MODE_XIM)
@@ -153,72 +153,72 @@ unsigned int silk_preferred_mode(silk_priv_t *priv, uint32_t accepted)
     return INVALID;
 }
 
-int silk_negotiate(silk_t *silk)
+int cgc_silk_negotiate(cgc_silk_t *silk)
 {
     unsigned int code, mode;
-    silk_negotiate_t pkt;
-    silk_priv_t *priv = silk->priv;
+    cgc_silk_negotiate_t pkt;
+    cgc_silk_priv_t *priv = silk->priv;
     
-    pkt.codes = silk_allowed_codes(priv);    
+    pkt.codes = cgc_silk_allowed_codes(priv);    
 
-    if (_send(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
+    if (cgc__send(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
         return FAILURE;
 
-    if (_recv(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
+    if (cgc__recv(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
         return FAILURE;
 
-    code = silk_preferred_code(priv, pkt.codes);
+    code = cgc_silk_preferred_code(priv, pkt.codes);
     if (code == INVALID)
         return FAILURE;
-    mode = silk_preferred_mode(priv, pkt.codes);
+    mode = cgc_silk_preferred_mode(priv, pkt.codes);
     if (mode == INVALID)
         return FAILURE;
     if (((1 << code)|(1 << (16+mode))) != pkt.codes)
     {
         pkt.codes = (1 << code) | (1 << (16+mode));
-        if (_send(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
+        if (cgc__send(PKT_NEGOTIATE, &pkt, sizeof(pkt)) != SUCCESS)
             return FAILURE;
     }
 
     priv->code_id = code;
-    priv->ksize = codes_ksize(priv->code_id);
+    priv->ksize = cgc_codes_ksize(priv->code_id);
     priv->mode_id = mode;
 
     return SUCCESS;
 }
 
-int silk_kx(silk_t *silk)
+int cgc_silk_kx(cgc_silk_t *silk)
 {
-    silk_priv_t *priv = silk->priv;
+    cgc_silk_priv_t *priv = silk->priv;
     int result = FAILURE;
     unsigned int group, idx, i;
     unsigned char *data = NULL, k[MAX_KSIZE / 8];
-    uint8_t xorbyte;
-    bn_t A, B;
-    kx_t kx;
-    silk_kx_param_t param;
-    silk_kx_reply_t reply;
+    cgc_uint8_t xorbyte;
+    cgc_bn_t A, B;
+    cgc_kx_t kx;
+    cgc_silk_kx_param_t param;
+    cgc_silk_kx_reply_t reply;
 
     if (priv->ksize == 0)
     {
         // ksize==0, so no real kx
-        memset(&param, 0, sizeof(param));
-        if (_send(PKT_KX_PARAM, &param, sizeof(param)) != SUCCESS)
+        cgc_memset(&param, 0, sizeof(param));
+        if (cgc__send(PKT_KX_PARAM, &param, sizeof(param)) != SUCCESS)
             return FAILURE;
 
-        if (_recv(PKT_KX_REPLY, &reply, sizeof(reply)) != SUCCESS)
+        if (cgc__recv(PKT_KX_REPLY, &reply, sizeof(reply)) != SUCCESS)
             return FAILURE;
         if (reply.blen != 0)
             return FAILURE;
 
-        if (codes_init(&priv->code[DIR_OUT], priv->code_id, NULL) != SUCCESS)
+        if (cgc_codes_init(&priv->code[DIR_OUT], priv->code_id, NULL) != SUCCESS)
             return FAILURE;
-        if (modes_init(&priv->mode[DIR_OUT], priv->mode_id, &priv->code[DIR_OUT]) != SUCCESS)
+        if (cgc_modes_init(&priv->mode[DIR_OUT], priv->mode_id, &priv->code[DIR_OUT]) != SUCCESS)
             return FAILURE;
 
-        if (codes_init(&priv->code[DIR_IN], priv->code_id, NULL) != SUCCESS)
+        if (cgc_codes_init(&priv->code[DIR_IN], priv->code_id, NULL) != SUCCESS)
             return FAILURE;
-        if (modes_init(&priv->mode[DIR_IN], priv->mode_id, &priv->code[DIR_IN]) != SUCCESS)
+        if (cgc_modes_init(&priv->mode[DIR_IN], priv->mode_id, &priv->code[DIR_IN]) != SUCCESS)
             return FAILURE;
 
         return SUCCESS;
@@ -232,59 +232,59 @@ int silk_kx(silk_t *silk)
         group = KX_GROUP_3072_3072;
     }
 
-    bn_init(&A);
-    bn_init(&B);
+    cgc_bn_init(&A);
+    cgc_bn_init(&B);
 
-    if (kx_init_std(&kx, group) != SUCCESS)
+    if (cgc_kx_init_std(&kx, group) != SUCCESS)
         return FAILURE;
 
-    if (kx_gen_a(&kx, &priv->rng) != SUCCESS)
+    if (cgc_kx_gen_a(&kx, &priv->rng) != SUCCESS)
         goto fail;
-    if (kx_get_A(&kx, &A) != SUCCESS)
+    if (cgc_kx_get_A(&kx, &A) != SUCCESS)
         goto fail;
 
-    param.plen = ROUNDUP(bn_length(&kx.P), 8) / 8;
-    param.glen = ROUNDUP(bn_length(&kx.G), 8) / 8;
-    param.qlen = ROUNDUP(bn_length(&kx.Q), 8) / 8;
-    param.alen = ROUNDUP(bn_length(&A), 8) / 8;
+    param.plen = ROUNDUP(cgc_bn_length(&kx.P), 8) / 8;
+    param.glen = ROUNDUP(cgc_bn_length(&kx.G), 8) / 8;
+    param.qlen = ROUNDUP(cgc_bn_length(&kx.Q), 8) / 8;
+    param.alen = ROUNDUP(cgc_bn_length(&A), 8) / 8;
     idx = 0;
-    data = malloc(param.plen + param.glen + param.qlen + param.alen);
+    data = cgc_malloc(param.plen + param.glen + param.qlen + param.alen);
     if (data == NULL)
         goto fail;
-    bn_to_bytes(&kx.P, &data[idx], param.plen);
+    cgc_bn_to_bytes(&kx.P, &data[idx], param.plen);
     idx += param.plen;
-    bn_to_bytes(&kx.G, &data[idx], param.glen);
+    cgc_bn_to_bytes(&kx.G, &data[idx], param.glen);
     idx += param.glen;
-    bn_to_bytes(&kx.Q, &data[idx], param.qlen);
+    cgc_bn_to_bytes(&kx.Q, &data[idx], param.qlen);
     idx += param.qlen;
-    bn_to_bytes(&A, &data[idx], param.alen);
+    cgc_bn_to_bytes(&A, &data[idx], param.alen);
     idx += param.alen;
 
-    if (_send(PKT_KX_PARAM, &param, sizeof(param)) != SUCCESS)
+    if (cgc__send(PKT_KX_PARAM, &param, sizeof(param)) != SUCCESS)
         goto fail;
-    if (_send_bytes(data, idx) != SUCCESS)
+    if (cgc__send_bytes(data, idx) != SUCCESS)
         goto fail;
-    free(data);
+    cgc_free(data);
     data = NULL;
 
-    if (_recv(PKT_KX_REPLY, &reply, sizeof(reply)) != SUCCESS)
+    if (cgc__recv(PKT_KX_REPLY, &reply, sizeof(reply)) != SUCCESS)
         goto fail;
-    data = malloc(reply.blen);
+    data = cgc_malloc(reply.blen);
     if (data == NULL)
         goto fail;
-    if (_recv_bytes(data, reply.blen) != SUCCESS)
+    if (cgc__recv_bytes(data, reply.blen) != SUCCESS)
         goto fail;
 
-    if (bn_from_bytes(&B, data, reply.blen) != SUCCESS)
+    if (cgc_bn_from_bytes(&B, data, reply.blen) != SUCCESS)
         goto fail;
-    if (kx_set_b(&kx, &B) != SUCCESS)
+    if (cgc_kx_set_b(&kx, &B) != SUCCESS)
         goto fail;
 
-    if (kx_get_sk(&kx, k, priv->ksize) != SUCCESS)
+    if (cgc_kx_get_sk(&kx, k, priv->ksize) != SUCCESS)
         goto fail;
-    if (codes_init(&priv->code[DIR_OUT], priv->code_id, k) != SUCCESS)
+    if (cgc_codes_init(&priv->code[DIR_OUT], priv->code_id, k) != SUCCESS)
         goto fail;
-    if (modes_init(&priv->mode[DIR_OUT], priv->mode_id, &priv->code[DIR_OUT]) != SUCCESS)
+    if (cgc_modes_init(&priv->mode[DIR_OUT], priv->mode_id, &priv->code[DIR_OUT]) != SUCCESS)
         goto fail;
 
     xorbyte = 0xFF;
@@ -294,44 +294,44 @@ int silk_kx(silk_t *silk)
         xorbyte ^= k[i] >> 3;
     }
 
-    if (codes_init(&priv->code[DIR_IN], priv->code_id, k) != SUCCESS)
+    if (cgc_codes_init(&priv->code[DIR_IN], priv->code_id, k) != SUCCESS)
         goto fail;
-    if (modes_init(&priv->mode[DIR_IN], priv->mode_id, &priv->code[DIR_IN]) != SUCCESS)
+    if (cgc_modes_init(&priv->mode[DIR_IN], priv->mode_id, &priv->code[DIR_IN]) != SUCCESS)
         goto fail;
 
     result = SUCCESS;
 
 fail:
-    free(data);
-    bn_destroy(&A);
-    bn_destroy(&B);
-    kx_destroy(&kx);
+    cgc_free(data);
+    cgc_bn_destroy(&A);
+    cgc_bn_destroy(&B);
+    cgc_kx_destroy(&kx);
     return result;
 }
 
-int silk_prepare(silk_t *silk)
+int cgc_silk_prepare(cgc_silk_t *silk)
 {
-    if (silk_negotiate(silk) != SUCCESS)
+    if (cgc_silk_negotiate(silk) != SUCCESS)
         return FAILURE;
 
-    if (silk_kx(silk) != SUCCESS)
+    if (cgc_silk_kx(silk) != SUCCESS)
         return FAILURE;
 
     return SUCCESS;
 }
 
-int silk_send(silk_t *silk, const unsigned char *data, unsigned int cnt)
+int cgc_silk_send(cgc_silk_t *silk, const unsigned char *data, unsigned int cnt)
 {
     const unsigned int max_cnt = 0xFFFF - MAX_BSIZE / 8;
     unsigned char *real_data;
     unsigned int real_cnt;
-    silk_priv_t *priv = silk->priv;
-    silk_data_t pkt;
+    cgc_silk_priv_t *priv = silk->priv;
+    cgc_silk_data_t pkt;
 
     while (cnt > 0)
     {
         unsigned int to_send = cnt > max_cnt ? max_cnt : cnt;
-        if (modes_encode(&priv->mode[DIR_OUT], data, to_send, &real_data, &real_cnt) != SUCCESS)
+        if (cgc_modes_encode(&priv->mode[DIR_OUT], data, to_send, &real_data, &real_cnt) != SUCCESS)
             return FAILURE;
 
         // sanity check
@@ -339,9 +339,9 @@ int silk_send(silk_t *silk, const unsigned char *data, unsigned int cnt)
             return FAILURE;
 
         pkt.datalen = real_cnt;
-        _send(PKT_DATA, &pkt, sizeof(pkt));
-        _send_bytes(real_data, real_cnt);
-        free(real_data);
+        cgc__send(PKT_DATA, &pkt, sizeof(pkt));
+        cgc__send_bytes(real_data, real_cnt);
+        cgc_free(real_data);
 
         data += to_send;
         cnt -= to_send;
@@ -349,20 +349,20 @@ int silk_send(silk_t *silk, const unsigned char *data, unsigned int cnt)
     return SUCCESS;
 }
 
-static int _fill_recvbuf(silk_priv_t *priv)
+static int cgc__fill_recvbuf(cgc_silk_priv_t *priv)
 {
     int result = FAILURE;
     unsigned int datalen;
     unsigned char *pkt_data = NULL, *data;
-    silk_data_t pkt;
-    if (_recv(PKT_DATA, &pkt, sizeof(pkt)) != SUCCESS)
+    cgc_silk_data_t pkt;
+    if (cgc__recv(PKT_DATA, &pkt, sizeof(pkt)) != SUCCESS)
         goto fail;
-    pkt_data = malloc(pkt.datalen);
+    pkt_data = cgc_malloc(pkt.datalen);
     if (pkt_data == NULL)
         goto fail;
-    if (_recv_bytes(pkt_data, pkt.datalen) != SUCCESS)
+    if (cgc__recv_bytes(pkt_data, pkt.datalen) != SUCCESS)
         goto fail;
-    if (modes_decode(&priv->mode[DIR_IN], pkt_data, pkt.datalen, &data, &datalen) != SUCCESS)
+    if (cgc_modes_decode(&priv->mode[DIR_IN], pkt_data, pkt.datalen, &data, &datalen) != SUCCESS)
         goto fail;
 
     priv->recvbuf = data;
@@ -371,25 +371,25 @@ static int _fill_recvbuf(silk_priv_t *priv)
     result = SUCCESS;
 
 fail:
-    free(pkt_data);
+    cgc_free(pkt_data);
     return result;
 }
 
-int silk_recv(silk_t *silk, unsigned char *out, unsigned int cnt)
+int cgc_silk_recv(cgc_silk_t *silk, unsigned char *out, unsigned int cnt)
 {
-    silk_priv_t *priv = silk->priv;
+    cgc_silk_priv_t *priv = silk->priv;
     while (cnt > 0)
     {
         unsigned int to_copy;
 
         if (priv->recvbuf == NULL)
         {
-            if (_fill_recvbuf(priv) != SUCCESS)
+            if (cgc__fill_recvbuf(priv) != SUCCESS)
                 return FAILURE;
         }
 
         to_copy = cnt > priv->recvbuf_len ? priv->recvbuf_len : cnt;
-        memcpy(out, &priv->recvbuf[priv->recvbuf_idx], to_copy);
+        cgc_memcpy(out, &priv->recvbuf[priv->recvbuf_idx], to_copy);
         out += to_copy;
         cnt -= to_copy;
         priv->recvbuf_idx += to_copy;
@@ -397,7 +397,7 @@ int silk_recv(silk_t *silk, unsigned char *out, unsigned int cnt)
 
         if (priv->recvbuf_len == 0)
         {
-            free(priv->recvbuf);
+            cgc_free(priv->recvbuf);
             priv->recvbuf = NULL;
             priv->recvbuf_len = priv->recvbuf_idx = 0;
         }

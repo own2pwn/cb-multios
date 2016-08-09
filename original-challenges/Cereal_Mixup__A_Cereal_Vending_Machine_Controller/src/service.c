@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,7 +35,7 @@
 const char INPUT_TYPE_PLAIN[4] =        {'\xdd','\x11','\x44','\xaa'};
 const char INPUT_TYPE_SERIALIZED[4] =   {'\x00','\xaa','\xdd','\x11'};
 
-static Stream *in;
+static cgc_Stream *in;
 
 static char OK[4] = {0};
 static char ERR[4] = {0};
@@ -43,7 +43,7 @@ static char ERR[4] = {0};
 /**
  * Create a checksum of the flag page to use as the OK/ERR byte strings
  */
-void gen_result_bufs(void) {
+void cgc_gen_result_bufs(void) {
     const char *fp = (char *)FLAG_PAGE;
     for (unsigned int idx = 0; idx < 4095; idx+=2) {
         OK[idx % 4] ^= fp[idx];
@@ -52,32 +52,32 @@ void gen_result_bufs(void) {
 }
 
 /**
- * Receive input buffer, convert to Stream object
+ * Receive input buffer, convert to cgc_Stream object
  *
  * @return SUCCESS on success, else, -1 on error
  */
-ssize_t receive_input(void) {
-    ssize_t res;
-    Stream tmp;
+cgc_ssize_t cgc_receive_input(void) {
+    cgc_ssize_t res;
+    cgc_Stream tmp;
     // recv Input type and size
-    res = recv_all((char *)&tmp, sizeof(tmp));
+    res = cgc_recv_all((char *)&tmp, sizeof(tmp));
     if (res != sizeof(tmp)) {
         _terminate(ERRNO_RECV);
     }
 
     // check for invalid INPUT_TYPE
-    if (memcmp(INPUT_TYPE_PLAIN, (const char *)tmp.type, sizeof(INPUT_TYPE_PLAIN)) &&
-        memcmp(INPUT_TYPE_SERIALIZED, (const char *)tmp.type, sizeof(INPUT_TYPE_SERIALIZED))) {
+    if (cgc_memcmp(INPUT_TYPE_PLAIN, (const char *)tmp.type, sizeof(INPUT_TYPE_PLAIN)) &&
+        cgc_memcmp(INPUT_TYPE_SERIALIZED, (const char *)tmp.type, sizeof(INPUT_TYPE_SERIALIZED))) {
         return -1;
     }
 
-    in = malloc(sizeof(tmp) + tmp.size);
+    in = cgc_malloc(sizeof(tmp) + tmp.size);
     MALLOC_OK(in);
 
     in->size = tmp.size;
-    memcpy(in->type, tmp.type, sizeof(INPUT_TYPE_SERIALIZED));
+    cgc_memcpy(in->type, tmp.type, sizeof(INPUT_TYPE_SERIALIZED));
 
-    res = recv_all(in->content, in->size);
+    res = cgc_recv_all(in->content, in->size);
     if (res != in->size) {
         _terminate(ERRNO_RECV);
     }
@@ -87,34 +87,34 @@ ssize_t receive_input(void) {
 
 int main(void) {
 
-    ssize_t ret = 0;
+    cgc_ssize_t ret = 0;
     int order_id = INITIAL_ORDER_ID;
 
-    gen_result_bufs();
+    cgc_gen_result_bufs();
 
     while (TRUE) {
 
-        ret = receive_input();
+        ret = cgc_receive_input();
         if (0 > ret) {
             goto check_res;
         }
 
-        send((char *)&order_id, sizeof(order_id));
+        cgc_send((char *)&order_id, sizeof(order_id));
 
-        if (0 == memcmp(INPUT_TYPE_PLAIN, (const char *)in->type, sizeof(INPUT_TYPE_PLAIN))) {
-            ret = process_plain_input(in);
+        if (0 == cgc_memcmp(INPUT_TYPE_PLAIN, (const char *)in->type, sizeof(INPUT_TYPE_PLAIN))) {
+            ret = cgc_process_plain_input(in);
         } else {
-            ret = process_serialized_input(in);
+            ret = cgc_process_serialized_input(in);
         }
 check_res:
         if (0 == ret) {
-            send(OK, sizeof(OK));
+            cgc_send(OK, sizeof(OK));
         } else {
-            send(ERR, sizeof(ERR));
+            cgc_send(ERR, sizeof(ERR));
 	        break;
         }
 
-        free(in);
+        cgc_free(in);
         order_id++;
     }
 

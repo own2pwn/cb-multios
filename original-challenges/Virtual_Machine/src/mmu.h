@@ -34,29 +34,29 @@ THE SOFTWARE.
 #define MMU_PAGE_SIZE		(512)
 #define MMU_PAGE_COUNT		((0x10000)/MMU_PAGE_SIZE)
 
-class CMMU
+class cgc_CMMU
 {
 public:
-	CMMU( );
-	~CMMU( );
+	cgc_CMMU( );
+	~cgc_CMMU( );
 
-	bool AddMemorySection( uint16_t address, uint8_t *pData, uint16_t dataLen, uint8_t mmuFlags );
+	bool cgc_AddMemorySection( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t dataLen, cgc_uint8_t mmuFlags );
 
-	bool Fetch16( uint16_t address, uint16_t &value );
-	bool Read16( uint16_t address, uint16_t &value );
-	bool Write16( uint16_t address, uint16_t value );
+	bool cgc_Fetch16( cgc_uint16_t address, cgc_uint16_t &value );
+	bool cgc_Read16( cgc_uint16_t address, cgc_uint16_t &value );
+	bool cgc_Write16( cgc_uint16_t address, cgc_uint16_t value );
 
-	bool ReadDMA( uint16_t address, uint8_t *pData, uint16_t amount );
-	bool WriteDMA( uint16_t address, uint8_t *pData, uint16_t amount );
+	bool cgc_ReadDMA( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t amount );
+	bool cgc_WriteDMA( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t amount );
 
 private:
-	typedef struct MMU_PAGE
+	typedef struct cgc_MMU_PAGE
 	{
-		uint8_t *pageData;
-		uint8_t mmuFlags;		
-	} tMMUPage;
+		cgc_uint8_t *pageData;
+		cgc_uint8_t mmuFlags;		
+	} cgc_tMMUPage;
 
-	tMMUPage m_mmuPages[MMU_PAGE_COUNT];
+	cgc_tMMUPage m_mmuPages[MMU_PAGE_COUNT];
 };
 
 #endif // __MMU_H__

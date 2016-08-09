@@ -2,5 +2,5 @@
 #include "charter.h"
 #include "block.h"
 
-void each(data_package, void (^block)(uint32 index, uint32 value));
+void cgc_each(cgc_data_package, void (^block)(cgc_uint32 index, cgc_uint32 value));
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@
  * @param ch 	Char to test
  * @return TRUE if non-printable, else FALSE
  */
-unsigned int is_non_printable(unsigned char ch);
+unsigned int cgc_is_non_printable(unsigned char ch);
 
 /**
  * Determine if a char is printable (letter, digit, symbol)
@@ -35,7 +35,7 @@ unsigned int is_non_printable(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if printable, else FALSE
  */
-unsigned int is_printable(unsigned char ch);
+unsigned int cgc_is_printable(unsigned char ch);
 
 /**
  * Determine if a char is letter
@@ -43,7 +43,7 @@ unsigned int is_printable(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if letter, else FALSE
  */
-unsigned int is_letter(unsigned char ch);
+unsigned int cgc_is_letter(unsigned char ch);
 
 /**
  * Determine if a char is digit
@@ -51,7 +51,7 @@ unsigned int is_letter(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if digit, else FALSE
  */
-unsigned int is_digit(unsigned char ch);
+unsigned int cgc_is_digit(unsigned char ch);
 
 /**
  * Determine if a char is symbol
@@ -59,7 +59,7 @@ unsigned int is_digit(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if symbol, else FALSE
  */
-unsigned int is_symbol(unsigned char ch);
+unsigned int cgc_is_symbol(unsigned char ch);
 
 /**
  * Determine if a char is upper case letter
@@ -67,7 +67,7 @@ unsigned int is_symbol(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if upper, else FALSE
  */
-unsigned int is_upper(unsigned char ch);
+unsigned int cgc_is_upper(unsigned char ch);
 
 /**
  * Determine if a char is lower case letter
@@ -75,7 +75,7 @@ unsigned int is_upper(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if lower, else FALSE
  */
-unsigned int is_lower(unsigned char ch);
+unsigned int cgc_is_lower(unsigned char ch);
 
 /**
  * Determine if a char is white-space token
@@ -83,6 +83,6 @@ unsigned int is_lower(unsigned char ch);
  * @param ch 	Char to test
  * @return TRUE if white-space, else FALSE
  */
-unsigned int is_white_space(unsigned char ch);
+unsigned int cgc_is_white_space(unsigned char ch);
 
 #endif

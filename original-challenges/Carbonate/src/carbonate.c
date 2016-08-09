@@ -30,28 +30,28 @@ THE SOFTWARE.
 #include "scramble.h"
 #include "handler.h"
 
-void scramble();
-void cool_set_stuff();
-void safe_set_stuff();
+void cgc_scramble();
+void cgc_cool_set_stuff();
+void cgc_safe_set_stuff();
 
 int main(void) {
-  send_empty_frame(HELLO_ID);
-  expect_empty_frame(HELLO_ID);
+  cgc_send_empty_frame(HELLO_ID);
+  cgc_expect_empty_frame(HELLO_ID);
 
-  scramble();
+  cgc_scramble();
 
 #ifdef PATCHED
     while (1) {
-      safe_set_stuff();
+      cgc_safe_set_stuff();
     }
 #else
-  if (scramble_okay()) {
+  if (cgc_scramble_okay()) {
     while(1) {
-      cool_set_stuff();
+      cgc_cool_set_stuff();
     }
   } else {
     while (1) {
-      safe_set_stuff();
+      cgc_safe_set_stuff();
     }
   }
 #endif
@@ -59,67 +59,67 @@ int main(void) {
   return 0;
 }
 
-void scramble() {
-  while (!scramble_done()) {
-    protocol_frame* scramble_data = expect_frame(SCRAMBLE_REQ_ID);
-    handle_scramble(NULL, scramble_data);
-    free_frame(scramble_data);
+void cgc_scramble() {
+  while (!cgc_scramble_done()) {
+    cgc_protocol_frame* scramble_data = cgc_expect_frame(SCRAMBLE_REQ_ID);
+    cgc_handle_scramble(NULL, scramble_data);
+    cgc_free_frame(scramble_data);
   }
 
 }
 
-void cool_set_stuff() {
-  with_set(^(set_t set) {
+void cgc_cool_set_stuff() {
+  cgc_with_set(^(cgc_set_t set) {
       while(1) {
-        protocol_frame* frame = receive_frame();
+        cgc_protocol_frame* frame = cgc_receive_frame();
 
         switch(frame->type) {
         case CHECK_REQ_ID:
-          handle_check(set, frame);
+          cgc_handle_check(set, frame);
           break;
         case ADD_REQ_ID:
-          handle_add(set, frame);
+          cgc_handle_add(set, frame);
           break;
         case SUBTRACT_REQ_ID:
-          handle_subtract(set, frame);
+          cgc_handle_subtract(set, frame);
           break;
         case CLEAR_REQ_ID:
-          free_frame(frame);
-          send_empty_frame(CLEAR_RESP_ID);
-          return; // leaves with_set block, clearing set
+          cgc_free_frame(frame);
+          cgc_send_empty_frame(CLEAR_RESP_ID);
+          return; // leaves cgc_with_set block, clearing set
         default:
           _terminate(-1);
         }
 
-        free_frame(frame);
+        cgc_free_frame(frame);
       }
     });
 }
 
-void safe_set_stuff() {
-  with_set(^(set_t set) {
+void cgc_safe_set_stuff() {
+  cgc_with_set(^(cgc_set_t set) {
       while(1) {
-        protocol_frame* frame = receive_frame();
+        cgc_protocol_frame* frame = cgc_receive_frame();
 
         switch(frame->type) {
         case CHECK_REQ_ID:
-          handle_check_safe(set, frame);
+          cgc_handle_check_safe(set, frame);
           break;
         case ADD_REQ_ID:
-          handle_add_safe(set, frame);
+          cgc_handle_add_safe(set, frame);
           break;
         case SUBTRACT_REQ_ID:
-          handle_subtract_safe(set, frame);
+          cgc_handle_subtract_safe(set, frame);
           break;
         case CLEAR_REQ_ID:
-          free_frame(frame);
-          send_empty_frame(CLEAR_RESP_ID);
-          return; // leaves with_set block, clearing set
+          cgc_free_frame(frame);
+          cgc_send_empty_frame(CLEAR_RESP_ID);
+          return; // leaves cgc_with_set block, clearing set
         default:
           _terminate(-1);
         }
 
-        free_frame(frame);
+        cgc_free_frame(frame);
       }
     });
 }

@@ -34,17 +34,17 @@
 #include "send_bytes.h"
 #include "recv_bytes.h"
 // #include "char.h"
-// #include "streq.h"
+// #include "cgc_streq.h"
 // #include "strlen.h"
 // #include "list.h"
 // #include "malloc.h"
 
-typedef unsigned char uint8_t;
-typedef uint8_t byte_t;
-typedef unsigned short uint16_t; 
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
-typedef uint8_t bool;
+typedef unsigned char cgc_uint8_t;
+typedef cgc_uint8_t cgc_byte_t;
+typedef unsigned short cgc_uint16_t; 
+typedef unsigned int cgc_uint32_t;
+typedef unsigned long long cgc_uint64_t;
+typedef cgc_uint8_t cgc_bool;
 #define FALSE 0
 #define TRUE 1
 

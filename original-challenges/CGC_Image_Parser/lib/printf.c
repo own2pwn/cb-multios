@@ -32,9 +32,9 @@ THE SOFTWARE.
 // 5 digits of precision
 #define F32_PRECISION       0.00001
 
-int putc( int c )
+int cgc_putc( int c )
 {
-    size_t tx_count;
+    cgc_size_t tx_count;
 
     if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
         _terminate(2);
@@ -42,7 +42,7 @@ int putc( int c )
     return c;
 }
 
-void int_to_str( int val, char *buf )
+void cgc_int_to_str( int val, char *buf )
 {
     char temp_buf[32];
     char *c = temp_buf;
@@ -78,22 +78,22 @@ void int_to_str( int val, char *buf )
     *buf = '\0';
 }
 
-void float_to_str( double val, char *buf )
+void cgc_float_to_str( double val, char *buf )
 {
     if ( buf == NULL )
         return;
 
-    if ( isnan( val ) )
+    if ( cgc_isnan( val ) )
     {
-        strcpy( buf, "nan" );
+        cgc_strcpy( buf, "nan" );
     }
-    else if ( isinf( val ) )
+    else if ( cgc_isinf( val ) )
     {
-        strcpy( buf, "inf" );
+        cgc_strcpy( buf, "inf" );
     }
     else if ( val == 0.0 )
     {
-        strcpy( buf, "0.00000" );
+        cgc_strcpy( buf, "0.00000" );
     }
     else
     {
@@ -129,9 +129,9 @@ void float_to_str( double val, char *buf )
         while ( val > F32_PRECISION || m >= 0 )
         {
             double weight = pow( 10.0, m );
-            if ( weight > 0 && !isinf(weight) )
+            if ( weight > 0 && !cgc_isinf(weight) )
             {
-                digit = floor( val / weight );
+                digit = cgc_floor( val / weight );
                 val -= (digit * weight);
 
                 *(c++) = '0' + digit;
@@ -160,7 +160,7 @@ void float_to_str( double val, char *buf )
     }
 }
 
-int vprintf( const char *fmt, va_list arg )
+int cgc_vprintf( const char *fmt, cgc_va_list arg )
 {
     int character_count = 0;
     char temp_buf[64];
@@ -178,7 +178,7 @@ int vprintf( const char *fmt, va_list arg )
             switch ( *fmt )
             {
             case '@':
-                putc( '@' );
+                cgc_putc( '@' );
                 break;
             case 'c':
 		// char
@@ -186,7 +186,7 @@ int vprintf( const char *fmt, va_list arg )
 		    int temp = va_arg( arg, int );
 
 		    char c_arg = (char)temp;
-                    putc( c_arg );
+                    cgc_putc( c_arg );
 		}
                 break;
             case 'd':
@@ -195,12 +195,12 @@ int vprintf( const char *fmt, va_list arg )
                     int int_arg = va_arg( arg, int );
                     char *c;
 
-                    int_to_str( int_arg, temp_buf );
+                    cgc_int_to_str( int_arg, temp_buf );
 
                     c = temp_buf;
                     while ( *c )
                     {
-                        putc( *c );
+                        cgc_putc( *c );
                         character_count++;
                         c++;
                     }
@@ -213,12 +213,12 @@ int vprintf( const char *fmt, va_list arg )
                     double float_arg = va_arg( arg, double );
                     char *c;
 
-                    float_to_str( float_arg, temp_buf );
+                    cgc_float_to_str( float_arg, temp_buf );
 
                     c = temp_buf;
                     while ( *c )
                     {
-                        putc( *c );
+                        cgc_putc( *c );
                         character_count++;
                         c++;
                     }
@@ -230,7 +230,7 @@ int vprintf( const char *fmt, va_list arg )
                     char *string_arg = va_arg( arg, char *);
                     while (*string_arg)
                     {
-                        putc( *string_arg );
+                        cgc_putc( *string_arg );
                         character_count++;
                         string_arg++;
                     }
@@ -248,7 +248,7 @@ int vprintf( const char *fmt, va_list arg )
         }
         else
         {
-            putc( *fmt );
+            cgc_putc( *fmt );
             fmt++;
 
             character_count++;
@@ -258,13 +258,13 @@ int vprintf( const char *fmt, va_list arg )
     return (character_count);
 }
 
-int printf( const char *fmt, ... )
+int cgc_printf( const char *fmt, ... )
 {
-    va_list arg;
+    cgc_va_list arg;
     int done;
 
     va_start( arg, fmt );
-    done = vprintf( fmt, arg );
+    done = cgc_vprintf( fmt, arg );
     va_end( arg );
 
     return done;

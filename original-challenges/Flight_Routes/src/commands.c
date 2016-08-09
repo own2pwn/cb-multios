@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,13 +30,13 @@ THE SOFTWARE.
 #include "commands.h"
 
 
-int execute_cmd(airportInfoType **airports, char *buffer) {
+int cgc_execute_cmd(cgc_airportInfoType **airports, char *buffer) {
 
 int value;
 int retcode;
 
 
-	value = atoi(buffer);
+	value = cgc_atoi(buffer);
 
 
 	switch (value) {
@@ -44,22 +44,22 @@ int retcode;
 
 		case 0x1:
 
-			retcode = showAirports(*airports, buffer);
+			retcode = cgc_showAirports(*airports, buffer);
 			break;
 
 		case 0x2:
 
-			retcode = addAirport(airports, buffer);
+			retcode = cgc_addAirport(airports, buffer);
 			break;
 
 		case 0x3:
 
-			retcode = deleteAirport(airports, buffer);
+			retcode = cgc_deleteAirport(airports, buffer);
 			break;
 
 		case 0xf:
 
-			retcode = findRoutes(*airports, buffer);
+			retcode = cgc_findRoutes(*airports, buffer);
 			break;
 
 

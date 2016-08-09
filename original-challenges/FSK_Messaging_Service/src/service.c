@@ -36,80 +36,80 @@ THE SOFTWARE.
 
 #define BYTE_RECEIVE_MAX	(SAMPLE_FS*4)	// 4 seconds
 
-void init_prng( void )
+void cgc_init_prng( void )
 {
-	uint32_t randomData[8];
-	size_t random_bytes_populated;
+	cgc_uint32_t randomData[8];
+	cgc_size_t random_bytes_populated;
 
-	if ( random( (void*)randomData, sizeof(uint32_t)*8, &random_bytes_populated ) != 0 )
+	if ( cgc_random( (void*)randomData, sizeof(cgc_uint32_t)*8, &random_bytes_populated ) != 0 )
 	{
-		printf( "[[ERROR RANDOM FAILED]]\n" );
+		cgc_printf( "[[ERROR RANDOM FAILED]]\n" );
 		_terminate(1);
 	}
 
-	seed_prng_array( randomData, 8 );
+	cgc_seed_prng_array( randomData, 8 );
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
 {
 	void *secret_page = (void *)secret_page_i;
 
-	tBasebandState oBaseband;
+	cgc_tBasebandState oBaseband;
 
-	uint32_t ts = ((uint32_t*)secret_page)[0] + ((uint32_t*)secret_page)[1] + ((uint32_t*)secret_page)[2] + ((uint32_t*)secret_page)[3];
+	cgc_uint32_t ts = ((cgc_uint32_t*)secret_page)[0] + ((cgc_uint32_t*)secret_page)[1] + ((cgc_uint32_t*)secret_page)[2] + ((cgc_uint32_t*)secret_page)[3];
 	ts &= 0x7FFFF;
 
 	ts += 1452975630;
 
-	printf( "[[RECEIVER STARTED -- TIMESTAMP: $d]]\n", ts );
+	cgc_printf( "[[RECEIVER STARTED -- TIMESTAMP: $d]]\n", ts );
 
 	// Initialize random number generator
-	init_prng();
+	cgc_init_prng();
 
 	// Initialize baseband
-	init_baseband( &oBaseband );
+	cgc_init_baseband( &oBaseband );
 
 	// Initialize packet handler
-	init_packet_handler( );
+	cgc_init_packet_handler( );
 
 	// Begin receiing packets
-	for ( uint32_t byteCount = 0; byteCount < BYTE_RECEIVE_MAX; )
+	for ( cgc_uint32_t byteCount = 0; byteCount < BYTE_RECEIVE_MAX; )
 	{
-		uint8_t rx_sample[256];
-		size_t rx_count;
+		cgc_uint8_t rx_sample[256];
+		cgc_size_t rx_count;
 
         	if ( receive( STDIN, rx_sample, 256, &rx_count) != 0) 
 		{
 			// Failed ??
-			printf( "[[CONNECTION CLOSED EARLY]]\n" );
+			cgc_printf( "[[CONNECTION CLOSED EARLY]]\n" );
             		_terminate(1);
         	}
 
 		if ( rx_count < 1 )
 		{
 			// Failed ??
-			printf( "[[RECEIVE ERROR]]\n" );
+			cgc_printf( "[[RECEIVE ERROR]]\n" );
             		_terminate(1);
 		}
 
-		for ( uint32_t i = 0; i < rx_count; i++ )
+		for ( cgc_uint32_t i = 0; i < rx_count; i++ )
 		{
 			if ( byteCount >= BYTE_RECEIVE_MAX )
 				break;
 
-			uint8_t sample_result = receive_sample( rx_sample[i] );
+			cgc_uint8_t sample_result = cgc_receive_sample( rx_sample[i] );
 
-			process_sample( &oBaseband, sample_result );
+			cgc_process_sample( &oBaseband, sample_result );
 
 			byteCount++;
 		}
 	}
 
 	// Display any received packets
-	display_packets();
+	cgc_display_packets();
 
 	// Destroy the packet handler
-	destroy_packet_handler();
+	cgc_destroy_packet_handler();
 
 	return 0;
 }

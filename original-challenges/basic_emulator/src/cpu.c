@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,21 +29,21 @@
 #include "gb.h"
 #include "util.h"
 
-static uint8_t *r_8b(gb_t *gb, int r);
-static uint16_t *r_16b(gb_t *gb, int r);
-static void flags_bitwise(gb_t *gb, uint16_t v);
-static uint8_t do_add_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry);
-static uint16_t do_add_16b(gb_t *gb, uint16_t lhs, uint16_t rhs, uint8_t carry);
-static uint8_t do_sub_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry);
-static void do_call(gb_t *gb, uint16_t addr);
-static void do_ret(gb_t *gb);
-static int step_prefix(gb_t *gb);
-static int step_misc(gb_t *gb);
-static int step(gb_t *gb);
-static void do_interrupt(gb_t *gb, int n);
-static void check_interrupts(gb_t *gb);
+static cgc_uint8_t *cgc_r_8b(cgc_gb_t *gb, int r);
+static cgc_uint16_t *cgc_r_16b(cgc_gb_t *gb, int r);
+static void cgc_flags_bitwise(cgc_gb_t *gb, cgc_uint16_t v);
+static cgc_uint8_t cgc_do_add_8b(cgc_gb_t *gb, cgc_uint8_t lhs, cgc_uint8_t rhs, cgc_uint8_t carry);
+static cgc_uint16_t cgc_do_add_16b(cgc_gb_t *gb, cgc_uint16_t lhs, cgc_uint16_t rhs, cgc_uint8_t carry);
+static cgc_uint8_t cgc_do_sub_8b(cgc_gb_t *gb, cgc_uint8_t lhs, cgc_uint8_t rhs, cgc_uint8_t carry);
+static void cgc_do_call(cgc_gb_t *gb, cgc_uint16_t addr);
+static void cgc_do_ret(cgc_gb_t *gb);
+static int cgc_step_prefix(cgc_gb_t *gb);
+static int cgc_step_misc(cgc_gb_t *gb);
+static int cgc_step(cgc_gb_t *gb);
+static void cgc_do_interrupt(cgc_gb_t *gb, int n);
+static void cgc_check_interrupts(cgc_gb_t *gb);
 
-static uint8_t *r_8b(gb_t *gb, int r)
+static cgc_uint8_t *cgc_r_8b(cgc_gb_t *gb, int r)
 {
     if (r == 0x00)
         return &gb->R_B;
@@ -64,7 +64,7 @@ static uint8_t *r_8b(gb_t *gb, int r)
     return NULL;
 }
 
-static uint16_t *r_16b(gb_t *gb, int r)
+static cgc_uint16_t *cgc_r_16b(cgc_gb_t *gb, int r)
 {
     if (r == 0x00)
         return &gb->R_BC;
@@ -77,16 +77,16 @@ static uint16_t *r_16b(gb_t *gb, int r)
     return NULL;
 }
 
-static void flags_bitwise(gb_t *gb, uint16_t v)
+static void cgc_flags_bitwise(cgc_gb_t *gb, cgc_uint16_t v)
 {
     gb->R_F = v == 0 ? F_Z : 0;
 }
 
-static uint8_t do_add_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry)
+static cgc_uint8_t cgc_do_add_8b(cgc_gb_t *gb, cgc_uint8_t lhs, cgc_uint8_t rhs, cgc_uint8_t carry)
 {
-    uint16_t result = lhs + rhs + carry;
+    cgc_uint16_t result = lhs + rhs + carry;
     gb->R_F = 0;
-    if ((uint8_t)result == 0)
+    if ((cgc_uint8_t)result == 0)
         gb->R_F |= F_Z;
     if (result > 0xFF)
         gb->R_F |= F_C;
@@ -97,9 +97,9 @@ static uint8_t do_add_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry)
     return result;
 }
 
-static uint16_t do_add_16b(gb_t *gb, uint16_t lhs, uint16_t rhs, uint8_t carry)
+static cgc_uint16_t cgc_do_add_16b(cgc_gb_t *gb, cgc_uint16_t lhs, cgc_uint16_t rhs, cgc_uint8_t carry)
 {
-    uint32_t result = lhs + rhs + carry;
+    cgc_uint32_t result = lhs + rhs + carry;
     gb->R_F &= ~(F_N | F_C | F_H);
     if (result > 0xFFFF)
         gb->R_F |= F_C;
@@ -108,11 +108,11 @@ static uint16_t do_add_16b(gb_t *gb, uint16_t lhs, uint16_t rhs, uint8_t carry)
     return result;
 }
 
-static uint8_t do_sub_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry)
+static cgc_uint8_t cgc_do_sub_8b(cgc_gb_t *gb, cgc_uint8_t lhs, cgc_uint8_t rhs, cgc_uint8_t carry)
 {
-    uint16_t result = lhs - rhs - carry;
+    cgc_uint16_t result = lhs - rhs - carry;
     gb->R_F = F_N;
-    if ((uint8_t)result == 0)
+    if ((cgc_uint8_t)result == 0)
         gb->R_F |= F_Z;
     if (result > 0xFF)
         gb->R_F |= F_C;
@@ -123,34 +123,34 @@ static uint8_t do_sub_8b(gb_t *gb, uint8_t lhs, uint8_t rhs, uint8_t carry)
     return result;
 }
 
-static void do_call(gb_t *gb, uint16_t addr)
+static void cgc_do_call(cgc_gb_t *gb, cgc_uint16_t addr)
 {
     gb->R_SP -= 2;
-    *(uint16_t *)&gb->mem[gb->R_SP] = gb->R_PC;
+    *(cgc_uint16_t *)&gb->mem[gb->R_SP] = gb->R_PC;
     gb->R_PC = addr;
 }
 
-static void do_ret(gb_t *gb)
+static void cgc_do_ret(cgc_gb_t *gb)
 {
-    gb->R_PC = *(uint16_t *)&gb->mem[gb->R_SP];
+    gb->R_PC = *(cgc_uint16_t *)&gb->mem[gb->R_SP];
     gb->R_SP += 2;
 }
 
-static int step_prefix(gb_t *gb)
+static int cgc_step_prefix(cgc_gb_t *gb)
 {
-    uint8_t *pc = &gb->mem[gb->R_PC];
-    uint8_t opc = pc[1];
-    uint8_t rn = opc & 7;
-    uint8_t *r = r_8b(gb, rn);
+    cgc_uint8_t *pc = &gb->mem[gb->R_PC];
+    cgc_uint8_t opc = pc[1];
+    cgc_uint8_t rn = opc & 7;
+    cgc_uint8_t *r = cgc_r_8b(gb, rn);
 
     int c;
     int b = (opc & 0x38) >> 3;
-    uint8_t v = *r;
+    cgc_uint8_t v = *r;
     if ((opc & 0xF8) == 0x00) /* RLC */
     {
         c = (v & 0x80) >> 7;
         *r = (v << 1) | c;
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -158,7 +158,7 @@ static int step_prefix(gb_t *gb)
     {
         c = (v & 1);
         *r = (v >> 1) | (c << 7);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -166,7 +166,7 @@ static int step_prefix(gb_t *gb)
     {
         c = (v & 0x80) >> 7;
         *r = (v << 1) | (!!(gb->R_F & F_C));
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -174,7 +174,7 @@ static int step_prefix(gb_t *gb)
     {
         c = (v & 1);
         *r = (v >> 1) | ((!!(gb->R_F & F_C)) << 7);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -182,7 +182,7 @@ static int step_prefix(gb_t *gb)
     {
         c = (v & 0x80) >> 7;
         *r = (v << 1);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -190,20 +190,20 @@ static int step_prefix(gb_t *gb)
     {
         c = (v & 1);
         *r = (v >> 1) | (v & 0x80);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
     else if ((opc & 0xF8) == 0x30) /* SWAP */
     {
         *r = (v << 4) | (v >> 4);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
     }
     else if ((opc & 0xF8) == 0x38) /* SRL */
     {
         c = (v & 1);
         *r = (v >> 1);
-        flags_bitwise(gb, *r);
+        cgc_flags_bitwise(gb, *r);
         if (c)
             gb->R_F |= F_C;
     }
@@ -236,14 +236,14 @@ static int step_prefix(gb_t *gb)
         return 8;
 }
 
-static int step_misc(gb_t *gb)
+static int cgc_step_misc(cgc_gb_t *gb)
 {
-    uint8_t *pc = &gb->mem[gb->R_PC];
-    uint8_t opc = pc[0];
+    cgc_uint8_t *pc = &gb->mem[gb->R_PC];
+    cgc_uint8_t opc = pc[0];
 
     int c;
-    uint8_t t8;
-    uint16_t t16;
+    cgc_uint8_t t8;
+    cgc_uint16_t t16;
     switch (opc)
     {
     case 0x00:
@@ -262,7 +262,7 @@ static int step_misc(gb_t *gb)
         gb->R_PC++;
         return 4;
     case 0x08:
-        *(uint16_t *)&gb->mem[*(uint16_t *)&pc[1]] = gb->R_SP;
+        *(cgc_uint16_t *)&gb->mem[*(cgc_uint16_t *)&pc[1]] = gb->R_SP;
         gb->R_PC +=3;
         return 20;
     case 0x0F:
@@ -294,7 +294,7 @@ static int step_misc(gb_t *gb)
     case 0x18:
         /* JR r8 */
         gb->R_PC += 2;
-        gb->R_PC += (int8_t)pc[1];
+        gb->R_PC += (cgc_int8_t)pc[1];
         return 12;
     case 0x1F:
         /* RRA */
@@ -316,14 +316,14 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            gb->R_PC += (int8_t)pc[1];
+            gb->R_PC += (cgc_int8_t)pc[1];
             return 12;
         }
     case 0x27:
         /* DAA */
         t8 = 0;
-        uint8_t oldA = gb->R_A;
-        uint8_t oldF = gb->R_F;
+        cgc_uint8_t oldA = gb->R_A;
+        cgc_uint8_t oldF = gb->R_F;
         if (gb->R_F & F_N)
         {
             if (gb->R_F & F_H)
@@ -354,7 +354,7 @@ static int step_misc(gb_t *gb)
         gb->R_PC += 2;
         if (gb->R_F & F_Z)
         {
-            gb->R_PC += (int8_t)pc[1];
+            gb->R_PC += (cgc_int8_t)pc[1];
             return 12;
         }
         else
@@ -376,7 +376,7 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            gb->R_PC += (int8_t)pc[1];
+            gb->R_PC += (cgc_int8_t)pc[1];
             return 12;
         }
     case 0x37:
@@ -390,7 +390,7 @@ static int step_misc(gb_t *gb)
         gb->R_PC += 2;
         if (gb->R_F & F_C)
         {
-            gb->R_PC += (int8_t)pc[1];
+            gb->R_PC += (cgc_int8_t)pc[1];
             return 12;
         }
         else
@@ -420,7 +420,7 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            do_ret(gb);
+            cgc_do_ret(gb);
             return 16;
         }
     case 0xC2:
@@ -432,12 +432,12 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            gb->R_PC = *(uint16_t *)&pc[1];
+            gb->R_PC = *(cgc_uint16_t *)&pc[1];
             return 16;
         }
     case 0xC3:
         /* JP a16 */
-        gb->R_PC = *(uint16_t *)&pc[1];
+        gb->R_PC = *(cgc_uint16_t *)&pc[1];
         return 16;
     case 0xC4:
         /* CALL NZ, a16 */
@@ -448,18 +448,18 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            do_call(gb, *(uint16_t *)&pc[1]);
+            cgc_do_call(gb, *(cgc_uint16_t *)&pc[1]);
             return 24;
         }
     case 0xC6:
-        gb->R_A = do_add_8b(gb, gb->R_A, pc[1], 0);
+        gb->R_A = cgc_do_add_8b(gb, gb->R_A, pc[1], 0);
         gb->R_PC += 2;
         return 8;
     case 0xC8:
         /* RET Z */
         if (gb->R_F & F_Z)
         {
-            do_ret(gb);
+            cgc_do_ret(gb);
             return 16;
         }
         else
@@ -469,13 +469,13 @@ static int step_misc(gb_t *gb)
         }
     case 0xC9:
         /* RET */
-        do_ret(gb);
+        cgc_do_ret(gb);
         return 16;
     case 0xCA:
         /* JP Z, a16 */
         if (gb->R_F & F_Z)
         {
-            gb->R_PC = *(uint16_t *)&pc[1];
+            gb->R_PC = *(cgc_uint16_t *)&pc[1];
             return 16;
         }
         else
@@ -484,13 +484,13 @@ static int step_misc(gb_t *gb)
             return 12;
         }
     case 0xCB:
-        return step_prefix(gb);
+        return cgc_step_prefix(gb);
     case 0xCC:
         /* CALL Z, a16 */
         gb->R_PC += 3;
         if (gb->R_F & F_Z)
         {
-            do_call(gb, *(uint16_t *)&pc[1]);
+            cgc_do_call(gb, *(cgc_uint16_t *)&pc[1]);
             return 24;
         }
         else
@@ -498,10 +498,10 @@ static int step_misc(gb_t *gb)
     case 0xCD:
         /* CALL a16 */
         gb->R_PC += 3;
-        do_call(gb, *(uint16_t *)&pc[1]);
+        cgc_do_call(gb, *(cgc_uint16_t *)&pc[1]);
         return 24;
     case 0xCE:
-        gb->R_A = do_add_8b(gb, gb->R_A, pc[1], !!(gb->R_F & F_C));
+        gb->R_A = cgc_do_add_8b(gb, gb->R_A, pc[1], !!(gb->R_F & F_C));
         gb->R_PC += 2;
         return 8;
     case 0xD0:
@@ -513,7 +513,7 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            do_ret(gb);
+            cgc_do_ret(gb);
             return 16;
         }
     case 0xD2:
@@ -525,7 +525,7 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            gb->R_PC = *(uint16_t *)&pc[1];
+            gb->R_PC = *(cgc_uint16_t *)&pc[1];
             return 16;
         }
     case 0xD4:
@@ -537,18 +537,18 @@ static int step_misc(gb_t *gb)
         }
         else
         {
-            do_call(gb, *(uint16_t *)&pc[1]);
+            cgc_do_call(gb, *(cgc_uint16_t *)&pc[1]);
             return 24;
         }
     case 0xD6:
-        gb->R_A = do_sub_8b(gb, gb->R_A, pc[1], 0);
+        gb->R_A = cgc_do_sub_8b(gb, gb->R_A, pc[1], 0);
         gb->R_PC += 2;
         return 8;
     case 0xD8:
         /* RET C */
         if (gb->R_F & F_C)
         {
-            do_ret(gb);
+            cgc_do_ret(gb);
             return 16;
         }
         else
@@ -558,14 +558,14 @@ static int step_misc(gb_t *gb)
         }
     case 0xD9:
         /* RETI */
-        do_ret(gb);
+        cgc_do_ret(gb);
         gb->reg.IME = IME_IE;
         return 16;
     case 0xDA:
         /* JP C, a16 */
         if (gb->R_F & F_C)
         {
-            gb->R_PC = *(uint16_t *)&pc[1];
+            gb->R_PC = *(cgc_uint16_t *)&pc[1];
             return 16;
         }
         else
@@ -578,13 +578,13 @@ static int step_misc(gb_t *gb)
         gb->R_PC += 3;
         if (gb->R_F & F_C)
         {
-            do_call(gb, *(uint16_t *)&pc[1]);
+            cgc_do_call(gb, *(cgc_uint16_t *)&pc[1]);
             return 24;
         }
         else
             return 12;
     case 0xDE:
-        gb->R_A = do_sub_8b(gb, gb->R_A, pc[1], !!(gb->R_F & F_C));
+        gb->R_A = cgc_do_sub_8b(gb, gb->R_A, pc[1], !!(gb->R_F & F_C));
         gb->R_PC += 2;
         return 8;
     case 0xE0:
@@ -597,12 +597,12 @@ static int step_misc(gb_t *gb)
         return 8;
     case 0xE6:
         gb->R_A &= pc[1];
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_F |= F_H;
         gb->R_PC += 2;
         return 8;
     case 0xE8:
-        gb->R_SP = do_add_16b(gb, gb->R_SP, (int8_t)pc[1], 0);
+        gb->R_SP = cgc_do_add_16b(gb, gb->R_SP, (cgc_int8_t)pc[1], 0);
         gb->R_F &= ~F_Z;
         gb->R_PC += 2;
         return 16;
@@ -611,12 +611,12 @@ static int step_misc(gb_t *gb)
         gb->R_PC = gb->R_HL;
         return 4;
     case 0xEA:
-        gb->mem[*(uint16_t*)&pc[1]] = gb->R_A;
+        gb->mem[*(cgc_uint16_t*)&pc[1]] = gb->R_A;
         gb->R_PC += 3;
         return 16;
     case 0xEE:
         gb->R_A ^= pc[1];
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_PC += 2;
         return 8;
     case 0xF0:
@@ -633,11 +633,11 @@ static int step_misc(gb_t *gb)
         return 4;
     case 0xF6:
         gb->R_A |= pc[1];
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_PC += 2;
         return 8;
     case 0xF8:
-        gb->R_HL = do_add_16b(gb, gb->R_SP, (int8_t)pc[1], 0);
+        gb->R_HL = cgc_do_add_16b(gb, gb->R_SP, (cgc_int8_t)pc[1], 0);
         gb->R_F &= ~F_Z;
         gb->R_PC += 2;
         return 12;
@@ -646,7 +646,7 @@ static int step_misc(gb_t *gb)
         gb->R_PC++;
         return 8;
     case 0xFA:
-        gb->R_A = gb->mem[*(uint16_t*)&pc[1]];
+        gb->R_A = gb->mem[*(cgc_uint16_t*)&pc[1]];
         gb->R_PC += 3;
         return 16;
     case 0xFB:
@@ -655,7 +655,7 @@ static int step_misc(gb_t *gb)
         return 4;
     case 0xFE:
         /* compare gb->R_A and pc[1] */
-        do_sub_8b(gb, gb->R_A, pc[1], 0);
+        cgc_do_sub_8b(gb, gb->R_A, pc[1], 0);
         gb->R_PC += 2;
         return 8;
     default:
@@ -663,20 +663,20 @@ static int step_misc(gb_t *gb)
     }
 }
 
-static int step(gb_t *gb)
+static int cgc_step(cgc_gb_t *gb)
 {
-    uint8_t *pc = &gb->mem[gb->R_PC];
-    uint8_t opc = pc[0];
+    cgc_uint8_t *pc = &gb->mem[gb->R_PC];
+    cgc_uint8_t opc = pc[0];
     //ERR("pc %04X opc %02X", gb->R_PC, opc);
 
-    int cycles = step_misc(gb);
+    int cycles = cgc_step_misc(gb);
     if (cycles != 0)
     {
         return cycles;
     }
     else if ((opc & 0xC7) == 0x02)
     {
-        uint16_t *r;
+        cgc_uint16_t *r;
         switch (opc & 0x30)
         {
         case 0x00:
@@ -710,9 +710,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xC7) == 0x04) /* INC r */
     {
-        uint8_t rn = (opc & 0x38) >> 3;
-        uint8_t *r = r_8b(gb, rn);
-        uint8_t old = *r;
+        cgc_uint8_t rn = (opc & 0x38) >> 3;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        cgc_uint8_t old = *r;
         (*r)++;
         gb->R_F &= ~(F_Z | F_N | F_H);
         if (*r == 0)
@@ -727,9 +727,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xC7) == 0x05) /* DEC r */
     {
-        uint8_t rn = (opc & 0x38) >> 3;
-        uint8_t *r = r_8b(gb, rn);
-        uint8_t old = *r;
+        cgc_uint8_t rn = (opc & 0x38) >> 3;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        cgc_uint8_t old = *r;
         (*r)--;
         gb->R_F &= ~(F_Z | F_N | F_H);
         gb->R_F |= F_N;
@@ -745,8 +745,8 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xC7) == 0x06) /* LD r, n */
     {
-        uint8_t rn = (opc & 0x38) >> 3;
-        uint8_t *r = r_8b(gb, rn);
+        cgc_uint8_t rn = (opc & 0x38) >> 3;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
         *r = pc[1];
         gb->R_PC += 2;
         if (rn == 6)
@@ -756,42 +756,42 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xCF) == 0x01) /* LD rr, nn nn */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r = r_16b(gb, rn);
-        *r = *(uint16_t *)&pc[1];
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r = cgc_r_16b(gb, rn);
+        *r = *(cgc_uint16_t *)&pc[1];
         gb->R_PC += 3;
         return 12;
     }
     else if ((opc & 0xCF) == 0x03) /* INC rr */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r = r_16b(gb, rn);
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r = cgc_r_16b(gb, rn);
         (*r)++;
         gb->R_PC++;
         return 8;
     }
     else if ((opc & 0xCF) == 0x09) /* ADD HL, rr */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r = r_16b(gb, rn);
-        gb->R_HL = do_add_16b(gb, gb->R_HL, *r, 0);
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r = cgc_r_16b(gb, rn);
+        gb->R_HL = cgc_do_add_16b(gb, gb->R_HL, *r, 0);
         gb->R_PC++;
         return 8;
     }
     else if ((opc & 0xCF) == 0x0B) /* DEC rr */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r = r_16b(gb, rn);
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r = cgc_r_16b(gb, rn);
         (*r)--;
         gb->R_PC++;
         return 8;
     }
     else if ((opc & 0xC0) == 0x40) /* LD r1, r2 */
     {
-        uint8_t rn1 = opc & 0x07;
-        uint8_t rn2 = (opc & 0x38) >> 3;
-        uint8_t *r1 = r_8b(gb, rn1);
-        uint8_t *r2 = r_8b(gb, rn2);
+        cgc_uint8_t rn1 = opc & 0x07;
+        cgc_uint8_t rn2 = (opc & 0x38) >> 3;
+        cgc_uint8_t *r1 = cgc_r_8b(gb, rn1);
+        cgc_uint8_t *r2 = cgc_r_8b(gb, rn2);
         *r2 = *r1;
         gb->R_PC++;
         if (rn1 == 6 || rn2 == 6)
@@ -801,9 +801,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0x80) /* ADD A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
-        gb->R_A = do_add_8b(gb, gb->R_A, *r, 0);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        gb->R_A = cgc_do_add_8b(gb, gb->R_A, *r, 0);
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -812,9 +812,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0x88) /* ADC A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
-        gb->R_A = do_add_8b(gb, gb->R_A, *r, !!(gb->R_F & F_C));
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        gb->R_A = cgc_do_add_8b(gb, gb->R_A, *r, !!(gb->R_F & F_C));
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -823,10 +823,10 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0x90) /* SUB A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
-        uint8_t old = gb->R_A;
-        gb->R_A = do_sub_8b(gb, gb->R_A, *r, 0);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        cgc_uint8_t old = gb->R_A;
+        gb->R_A = cgc_do_sub_8b(gb, gb->R_A, *r, 0);
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -835,9 +835,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0x98) /* SBC A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
-        gb->R_A = do_sub_8b(gb, gb->R_A, *r, !!(gb->R_F & F_C));
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        gb->R_A = cgc_do_sub_8b(gb, gb->R_A, *r, !!(gb->R_F & F_C));
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -846,10 +846,10 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0xA0) /* AND A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
         gb->R_A &= *r;
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_F |= F_H;
         gb->R_PC++;
         if (rn == 6)
@@ -859,10 +859,10 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0xA8) /* XOR A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
         gb->R_A ^= *r;
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -871,10 +871,10 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0xB0) /* OR A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
         gb->R_A |= *r;
-        flags_bitwise(gb, gb->R_A);
+        cgc_flags_bitwise(gb, gb->R_A);
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -883,9 +883,9 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xF8) == 0xB8) /* CP A, r */
     {
-        uint8_t rn = opc & 7;
-        uint8_t *r = r_8b(gb, rn);
-        do_sub_8b(gb, gb->R_A, *r, 0);
+        cgc_uint8_t rn = opc & 7;
+        cgc_uint8_t *r = cgc_r_8b(gb, rn);
+        cgc_do_sub_8b(gb, gb->R_A, *r, 0);
         gb->R_PC++;
         if (rn == 6)
             return 8;
@@ -894,20 +894,20 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xC7) == 0xC7) /* RST n */
     {
-        uint8_t n = opc & 0x38;
+        cgc_uint8_t n = opc & 0x38;
         gb->R_PC++;
-        do_call(gb, n);
+        cgc_do_call(gb, n);
         return 16;
     }
     else if ((opc & 0xCF) == 0xC1) /* POP r */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r;
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r;
         if (rn == 3)
             r = &gb->R_AF;
         else
-            r = r_16b(gb, rn);
-        *r = *(uint16_t *)&gb->mem[gb->R_SP];
+            r = cgc_r_16b(gb, rn);
+        *r = *(cgc_uint16_t *)&gb->mem[gb->R_SP];
         if (rn == 3)
             gb->R_F &= 0xF0;
         gb->R_SP += 2;
@@ -916,14 +916,14 @@ static int step(gb_t *gb)
     }
     else if ((opc & 0xCF) == 0xC5) /* PUSH r */
     {
-        uint8_t rn = (opc & 0x30) >> 4;
-        uint16_t *r;
+        cgc_uint8_t rn = (opc & 0x30) >> 4;
+        cgc_uint16_t *r;
         if (rn == 3)
             r = &gb->R_AF;
         else
-            r = r_16b(gb, rn);
+            r = cgc_r_16b(gb, rn);
         gb->R_SP -= 2;
-        *(uint16_t *)&gb->mem[gb->R_SP] = *r;
+        *(cgc_uint16_t *)&gb->mem[gb->R_SP] = *r;
         gb->R_PC++;
         return 16;
     }
@@ -934,42 +934,42 @@ static int step(gb_t *gb)
     }
 }
 
-void cpu_interrupt(gb_t *gb, int n)
+void cgc_cpu_interrupt(cgc_gb_t *gb, int n)
 {
     gb->mem[IO_IF] |= (1 << n);
 }
 
-static void do_interrupt(gb_t *gb, int n)
+static void cgc_do_interrupt(cgc_gb_t *gb, int n)
 {
     // reset bit in IF
     gb->mem[IO_IF] &= ~(1 << n);
     // disable interrupts
     gb->reg.IME = 0;
     // call exception vector
-    do_call(gb, 0x040 + n * 8);
+    cgc_do_call(gb, 0x040 + n * 8);
 }
 
-static void check_interrupts(gb_t *gb)
+static void cgc_check_interrupts(cgc_gb_t *gb)
 {
-    uint8_t masked = gb->mem[IO_IE] & gb->mem[IO_IF];
+    cgc_uint8_t masked = gb->mem[IO_IE] & gb->mem[IO_IF];
     // process HALT even if IME disabled
     if (masked)
         gb->halted = 0;
     if ((gb->reg.IME & IME_IE) == 0)
         return;
     if (masked & (1 << 0))
-        do_interrupt(gb, 0);
+        cgc_do_interrupt(gb, 0);
     else if (masked & (1 << 1))
-        do_interrupt(gb, 1);
+        cgc_do_interrupt(gb, 1);
     else if (masked & (1 << 2))
-        do_interrupt(gb, 2);
+        cgc_do_interrupt(gb, 2);
     else if (masked & (1 << 3))
-        do_interrupt(gb, 3);
+        cgc_do_interrupt(gb, 3);
     else if (masked & (1 << 4))
-        do_interrupt(gb, 4);
+        cgc_do_interrupt(gb, 4);
 }
 
-int cpu_tick(gb_t *gb)
+int cgc_cpu_tick(cgc_gb_t *gb)
 {
     if (gb->reg.IME & IME_WAIT)
     {
@@ -984,7 +984,7 @@ int cpu_tick(gb_t *gb)
         gb->reg.IME &= ~(IME_DI | IME_EI);
     }
 
-    check_interrupts(gb);
+    cgc_check_interrupts(gb);
 
     if (gb->ticks_skip > 1)
     {
@@ -992,7 +992,7 @@ int cpu_tick(gb_t *gb)
     }
     else if (!gb->halted)
     {
-        int cycles = step(gb);
+        int cycles = cgc_step(gb);
         if (cycles == 0)
             return 0;
         gb->ticks_skip = cycles / 4;

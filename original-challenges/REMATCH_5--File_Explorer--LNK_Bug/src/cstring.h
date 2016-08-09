@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,13 +28,13 @@ THE SOFTWARE.
 
 
 typedef struct cString_s {
-  uint16_t length;
+  cgc_uint16_t length;
   char *string;
-} cString;
+} cgc_cString;
 
-cString *ReceiveCString(int maxLen);
-void DestroyCString(cString *s);
-int ReceiveBytes(char *buffer, int length);
-int TransmitBytes(char *buffer, int length);
-void TransmitCString(cString *s);
+cgc_cString *cgc_ReceiveCString(int maxLen);
+void cgc_DestroyCString(cgc_cString *s);
+int cgc_ReceiveBytes(char *buffer, int length);
+int cgc_TransmitBytes(char *buffer, int length);
+void cgc_TransmitCString(cgc_cString *s);
 #endif

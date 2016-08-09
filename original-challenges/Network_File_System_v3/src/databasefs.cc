@@ -38,44 +38,44 @@ extern "C"
 
 #include "databasefs.h"
 
-CDBNode::CDBNode( const CUtil::String &sName, const CUtil::String &sOwner, uint8_t modeBits )
+cgc_CDBNode::cgc_CDBNode( const CUtil::cgc_String &sName, const CUtil::cgc_String &sOwner, cgc_uint8_t modeBits )
 	: m_modeBits( modeBits ), m_sName( sName ), m_sOwner( sOwner )
 {
 
 }
 
-CDBNode::CDBNode( const char *pszName, const char *pszOwner, uint8_t modeBits )
+cgc_CDBNode::cgc_CDBNode( const char *pszName, const char *pszOwner, cgc_uint8_t modeBits )
 	: m_modeBits( modeBits ), m_sName( pszName ), m_sOwner( pszOwner )
 {
 
 }
 
-CDBNode::~CDBNode( )
+cgc_CDBNode::~cgc_CDBNode( )
 {
 
 }
 
-CDBFile::CDBFile( const CUtil::String &sName, const CUtil::String &sOwner, uint8_t modeBits )
-	: CDBNode( sName, sOwner, modeBits ), m_fileSize( 0 )
+cgc_CDBFile::cgc_CDBFile( const CUtil::cgc_String &sName, const CUtil::cgc_String &sOwner, cgc_uint8_t modeBits )
+	: cgc_CDBNode( sName, sOwner, modeBits ), m_fileSize( 0 )
 {
-	bzero( m_pChunks, sizeof(tFileChunk *)*FILE_MAX_CHUNKS );
+	cgc_bzero( m_pChunks, sizeof(cgc_tFileChunk *)*FILE_MAX_CHUNKS );
 }
 
-CDBFile::CDBFile( const char *pszName, const char *pszOwner, uint8_t modeBits )
-	: CDBNode( pszName, pszOwner, modeBits ), m_fileSize( 0 )
+cgc_CDBFile::cgc_CDBFile( const char *pszName, const char *pszOwner, cgc_uint8_t modeBits )
+	: cgc_CDBNode( pszName, pszOwner, modeBits ), m_fileSize( 0 )
 {
-	bzero( m_pChunks, sizeof(tFileChunk *)*FILE_MAX_CHUNKS );
+	cgc_bzero( m_pChunks, sizeof(cgc_tFileChunk *)*FILE_MAX_CHUNKS );
 }
 
-CDBFile::~CDBFile( )
+cgc_CDBFile::~cgc_CDBFile( )
 {
 	if ( m_fileSize > 0 )
 	{
-		uint32_t topChunk = (m_fileSize / FILE_CHUNK_SIZE)+1;
+		cgc_uint32_t topChunk = (m_fileSize / FILE_CHUNK_SIZE)+1;
 		if ( topChunk > FILE_MAX_CHUNKS )
 			topChunk = FILE_MAX_CHUNKS;
 
-		for ( uint32_t curChunk = 0; curChunk < topChunk; curChunk++ )
+		for ( cgc_uint32_t curChunk = 0; curChunk < topChunk; curChunk++ )
 		{
 			if ( m_pChunks[curChunk] )
 			{
@@ -88,12 +88,12 @@ CDBFile::~CDBFile( )
 	m_fileSize = 0;
 }
 
-uint8_t CDBFile::WriteData( int32_t writePos, uint8_t *pData, uint32_t writeLength, uint32_t &writeActual )
+cgc_uint8_t cgc_CDBFile::cgc_WriteData( cgc_int32_t writePos, cgc_uint8_t *pData, cgc_uint32_t writeLength, cgc_uint32_t &writeActual )
 {
 	if ( !pData )
 		return FILE_WRITE_ERROR;
 
-	uint32_t writeAmount = writeLength;
+	cgc_uint32_t writeAmount = writeLength;
 	if ( writePos + writeLength > MAX_FILE_SIZE )
 	{
 		return FILE_WRITE_ERROR_MAX_FILESIZE;
@@ -105,23 +105,23 @@ uint8_t CDBFile::WriteData( int32_t writePos, uint8_t *pData, uint32_t writeLeng
 	}
 
 	// Begin writing
-	uint32_t fromPos = 0;
+	cgc_uint32_t fromPos = 0;
 	while ( writeAmount > 0 )
 	{
-		uint32_t chunkPos = (writePos / FILE_CHUNK_SIZE);
-		uint32_t chunkOffset = (writePos % FILE_CHUNK_SIZE);
+		cgc_uint32_t chunkPos = (writePos / FILE_CHUNK_SIZE);
+		cgc_uint32_t chunkOffset = (writePos % FILE_CHUNK_SIZE);
 
-		uint32_t chunkToWrite = writeAmount;
+		cgc_uint32_t chunkToWrite = writeAmount;
 		if ( chunkToWrite > (FILE_CHUNK_SIZE - chunkOffset) )
 			chunkToWrite = (FILE_CHUNK_SIZE - chunkOffset);
 
 		if ( !m_pChunks[chunkPos] )
 		{
-			m_pChunks[chunkPos] = new tFileChunk;
-			bzero( m_pChunks[chunkPos]->chunkData, FILE_CHUNK_SIZE );
+			m_pChunks[chunkPos] = new cgc_tFileChunk;
+			cgc_bzero( m_pChunks[chunkPos]->chunkData, FILE_CHUNK_SIZE );
 		}
 
-		memcpy( m_pChunks[chunkPos]->chunkData+chunkOffset, pData+fromPos, chunkToWrite );
+		cgc_memcpy( m_pChunks[chunkPos]->chunkData+chunkOffset, pData+fromPos, chunkToWrite );
 		
 		writeAmount -= chunkToWrite;
 		fromPos += chunkToWrite;
@@ -136,7 +136,7 @@ uint8_t CDBFile::WriteData( int32_t writePos, uint8_t *pData, uint32_t writeLeng
 	return (FILE_WRITE_OK);	
 }
 
-uint8_t CDBFile::ReadData( int32_t readPos, uint8_t *pData, uint32_t readLength, uint32_t &readActual )
+cgc_uint8_t cgc_CDBFile::cgc_ReadData( cgc_int32_t readPos, cgc_uint8_t *pData, cgc_uint32_t readLength, cgc_uint32_t &readActual )
 {
 	if ( readPos > m_fileSize )
 		return (FILE_READ_ERROR);
@@ -147,20 +147,20 @@ uint8_t CDBFile::ReadData( int32_t readPos, uint8_t *pData, uint32_t readLength,
 	if ( !pData )
 		return (FILE_READ_EOF);
 
-	uint32_t readAmount = readLength;
+	cgc_uint32_t readAmount = readLength;
 	if ( readPos+readAmount > m_fileSize )
 		readAmount = (m_fileSize - readPos);
 
 	if ( readAmount > readLength )
 		readAmount = readLength;
 
-	uint32_t fromPos = 0;
+	cgc_uint32_t fromPos = 0;
 	while ( readAmount > 0 )
 	{
-		uint32_t chunkPos = (readPos / FILE_CHUNK_SIZE);
-		uint32_t chunkOffset = (readPos % FILE_CHUNK_SIZE);
+		cgc_uint32_t chunkPos = (readPos / FILE_CHUNK_SIZE);
+		cgc_uint32_t chunkOffset = (readPos % FILE_CHUNK_SIZE);
 
-		uint32_t chunkToRead = readAmount;
+		cgc_uint32_t chunkToRead = readAmount;
 		if ( chunkToRead > (FILE_CHUNK_SIZE - chunkOffset) )
 			chunkToRead = (FILE_CHUNK_SIZE - chunkOffset);
 
@@ -170,7 +170,7 @@ uint8_t CDBFile::ReadData( int32_t readPos, uint8_t *pData, uint32_t readLength,
 			return (FILE_READ_ERROR);
 		}
 
-		memcpy( pData+fromPos, m_pChunks[chunkPos]->chunkData+chunkOffset, chunkToRead );
+		cgc_memcpy( pData+fromPos, m_pChunks[chunkPos]->chunkData+chunkOffset, chunkToRead );
 
 		readAmount -= chunkToRead;
 		fromPos += chunkToRead;
@@ -182,287 +182,287 @@ uint8_t CDBFile::ReadData( int32_t readPos, uint8_t *pData, uint32_t readLength,
 	return (FILE_READ_OK);	
 }
 
-CDBFSUser::CDBFSUser( const CUtil::String &sUsername, const CUtil::String &sPassword )
+cgc_CDBFSUser::cgc_CDBFSUser( const CUtil::cgc_String &sUsername, const CUtil::cgc_String &sPassword )
 	: m_sUsername( sUsername ), m_sPassword( sPassword )
 {
 
 }
 
-CDBFSUser::CDBFSUser( const char *pszUsername, const char *pszPassword )
+cgc_CDBFSUser::cgc_CDBFSUser( const char *pszUsername, const char *pszPassword )
 	: m_sUsername( pszUsername ), m_sPassword( pszPassword )
 {
 
 }
 
-CDBFSUser::~CDBFSUser( )
+cgc_CDBFSUser::~cgc_CDBFSUser( )
 {
 
 }
 
-CDBFSOpenFile::CDBFSOpenFile( CDBFile *pFile, uint8_t openMode )
+cgc_CDBFSOpenFile::cgc_CDBFSOpenFile( cgc_CDBFile *pFile, cgc_uint8_t openMode )
 	: m_pFile( pFile ), m_curFilePos( 0 ), m_openMode( openMode )
 {
 
 }
 
-CDBFSOpenFile::~CDBFSOpenFile( )
+cgc_CDBFSOpenFile::~cgc_CDBFSOpenFile( )
 {
 
 }
 
-CDBFS::CDBFS( CTimeGen *pTimeGen )
+cgc_CDBFS::cgc_CDBFS( cgc_CTimeGen *pTimeGen )
 	: m_bLastError( false ), m_pTimeGen( pTimeGen ), m_sLastError( "" ), m_pCurUser( NULL ), m_curFiles( 0 ), m_maxFiles( 8 )
 {
 
 }
 
-CDBFS::~CDBFS( )
+cgc_CDBFS::~cgc_CDBFS( )
 {
 
 }
 
-bool CDBFS::Init( CUtil::String sRootPassword, uint32_t maxFiles )
+bool cgc_CDBFS::cgc_Init( CUtil::cgc_String sRootPassword, cgc_uint32_t maxFiles )
 {
-	ClearError();
+	cgc_ClearError();
 
 	m_maxFiles = maxFiles;
 	m_curFiles = 0;
 
-	m_nodeList.DeleteAll();
-	m_userList.DeleteAll();
-	m_openFileList.DeleteAll();
+	m_nodeList.cgc_DeleteAll();
+	m_userList.cgc_DeleteAll();
+	m_openFileList.cgc_DeleteAll();
 
-	m_userList.AddFirst( new CDBFSUser( "root", sRootPassword ) );
+	m_userList.cgc_AddFirst( new cgc_CDBFSUser( "root", sRootPassword ) );
 
 	m_pCurUser = NULL;
 
 	return (true);
 }
 
-bool CDBFS::AddFileAsRoot( CUtil::String sFilename, uint8_t *pData, uint32_t dataLen )
+bool cgc_CDBFS::cgc_AddFileAsRoot( CUtil::cgc_String sFilename, cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
-	if ( FindFileByName( sFilename ) )
+	if ( cgc_FindFileByName( sFilename ) )
 	{
-		SetError( "File already exists" );
+		cgc_SetError( "File already exists" );
 
 		// Failed to add
 		return (false);
 	}
 
-	if ( IsMaxFilesReached() )
+	if ( cgc_IsMaxFilesReached() )
 	{
-		SetError( "Max files created" );
+		cgc_SetError( "Max files created" );
 		return (false);
 	}
 
 	// Create new file
-	CDBFile *pFile = CreateFile( sFilename, "root", FS_MODE_OWNER_READ|FS_MODE_OWNER_WRITE );
+	cgc_CDBFile *pFile = cgc_CreateFile( sFilename, "root", FS_MODE_OWNER_READ|FS_MODE_OWNER_WRITE );
 	m_curFiles++;	
 
-	uint32_t fileWriteActual;
-	uint32_t fileWriteAmount = dataLen;
+	cgc_uint32_t fileWriteActual;
+	cgc_uint32_t fileWriteAmount = dataLen;
 
-	uint8_t writeStatus;
-	if ( (writeStatus = pFile->WriteData( 0, pData, fileWriteAmount, fileWriteActual)) != FILE_WRITE_OK )
+	cgc_uint8_t writeStatus;
+	if ( (writeStatus = pFile->cgc_WriteData( 0, pData, fileWriteAmount, fileWriteActual)) != FILE_WRITE_OK )
 	{
-		SetError( "Write error" );
+		cgc_SetError( "Write error" );
 		return (false);
 	}
 
 	// Write success
-	ClearError();
+	cgc_ClearError();
 
 	return (true);	
 }
 
-CDBFSUser *CDBFS::FindUser( CUtil::String sUsername )
+cgc_CDBFSUser *cgc_CDBFS::cgc_FindUser( CUtil::cgc_String sUsername )
 {
-	CDBFSUser *pCur;
+	cgc_CDBFSUser *pCur;
 	
-	for ( pCur = m_userList.GetFirst(); pCur; pCur = m_userList.GetNext( pCur ) )
+	for ( pCur = m_userList.cgc_GetFirst(); pCur; pCur = m_userList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetUsername() == sUsername )
+		if ( pCur->cgc_GetUsername() == sUsername )
 			return (pCur);
 	}
 
 	return (NULL);
 }
 
-bool CDBFS::SetUser( CUtil::String sUsername, CUtil::String sPassword )
+bool cgc_CDBFS::cgc_SetUser( CUtil::cgc_String sUsername, CUtil::cgc_String sPassword )
 {
-	CDBFSUser *pUser;
+	cgc_CDBFSUser *pUser;
 
-	if ( !(pUser = FindUser( sUsername )) )
+	if ( !(pUser = cgc_FindUser( sUsername )) )
 	{
-		SetError( "Invalid username" );
+		cgc_SetError( "Invalid username" );
 
 		return (false);
 	}
 
-	if ( pUser->GetPassword() != sPassword )
+	if ( pUser->cgc_GetPassword() != sPassword )
 	{
-		SetError( "Invalid password" );
+		cgc_SetError( "Invalid password" );
 
 		return (false);
 	}
 
-	ClearError();
+	cgc_ClearError();
 	
 	m_pCurUser = pUser;
 
 	return (true);
 }
 
-bool CDBFS::AddUser( CUtil::String sUsername, CUtil::String sPassword )
+bool cgc_CDBFS::cgc_AddUser( CUtil::cgc_String sUsername, CUtil::cgc_String sPassword )
 {
 	if ( m_pCurUser == NULL )
 	{
-		SetError( "Must be root" );
+		cgc_SetError( "Must be root" );
 
 		return (false);
 	}
 
-	if ( m_pCurUser->GetUsername() != "root" )
+	if ( m_pCurUser->cgc_GetUsername() != "root" )
 	{
-		SetError( "Must be root" );
+		cgc_SetError( "Must be root" );
 
 		return (false);
 	}
 
-	if ( FindUser( sUsername ) )
+	if ( cgc_FindUser( sUsername ) )
 	{
-		SetError( "User already exists" );
+		cgc_SetError( "User already exists" );
 
 		return (false);
 	}
 
-	ClearError();
+	cgc_ClearError();
 	
-	m_userList.AddLast( new CDBFSUser( sUsername, sPassword ) );
+	m_userList.cgc_AddLast( new cgc_CDBFSUser( sUsername, sPassword ) );
 
 	return (true);
 }
 
-bool CDBFS::DeleteUser( CUtil::String sUsername )
+bool cgc_CDBFS::cgc_DeleteUser( CUtil::cgc_String sUsername )
 {
 	if ( m_pCurUser == NULL )
 	{
-		SetError( "Must be root" );
+		cgc_SetError( "Must be root" );
 
 		return (false);
 	}
 
-	if ( m_pCurUser->GetUsername() != "root" )
+	if ( m_pCurUser->cgc_GetUsername() != "root" )
 	{
-		SetError( "Must be root" );
+		cgc_SetError( "Must be root" );
 
 		return (false);
 	}
 
-	CDBFSUser *pUser;
-	if ( !(pUser = FindUser( sUsername )) )
+	cgc_CDBFSUser *pUser;
+	if ( !(pUser = cgc_FindUser( sUsername )) )
 	{
-		SetError( "User not found" );
+		cgc_SetError( "User not found" );
 
 		return (false);
 	}
 
-	if ( pUser->GetUsername() == "root" )
+	if ( pUser->cgc_GetUsername() == "root" )
 	{
-		SetError( "Can't delete root user" );
+		cgc_SetError( "Can't delete root user" );
 		
 		return (false);
 	}
 
-	ClearError();
+	cgc_ClearError();
 
 	delete pUser;
 
 	return (true);
 }
 
-bool CDBFS::RenameFile( CUtil::String sOldFilename, CUtil::String sNewFilename )
+bool cgc_CDBFS::cgc_RenameFile( CUtil::cgc_String sOldFilename, CUtil::cgc_String sNewFilename )
 {
 	// Quick check if they are logged in
 	if ( m_pCurUser == NULL )
 	{
-		SetError( "Permission denied" );
+		cgc_SetError( "Permission denied" );
 		return (false);
 	}
 	
 	// Rename file anywhere on the file system to a new location (can be a move as well)
-	CDBFile *pFile = FindFileByName( sOldFilename );
+	cgc_CDBFile *pFile = cgc_FindFileByName( sOldFilename );
 
 	if ( !pFile )
 	{
-		SetError( "Source file not found" );
+		cgc_SetError( "Source file not found" );
 		return (false);
 	}
 
 	// Check permissions
-	if ( !IsUserRoot() && !(pFile->GetOwner() == m_pCurUser->GetUsername()) )
+	if ( !cgc_IsUserRoot() && !(pFile->cgc_GetOwner() == m_pCurUser->cgc_GetUsername()) )
 	{
-		SetError( "Permission denied" );
+		cgc_SetError( "Permission denied" );
 		return (false);
 	}
 
 	// Check destination
-	if ( FindFileByName( sNewFilename ) )
+	if ( cgc_FindFileByName( sNewFilename ) )
 	{
-		SetError( "File already exists" );
+		cgc_SetError( "File already exists" );
 		return (false);
 	}
 
 	// Remove
-	pFile->m_dbLink.Unlink();
+	pFile->m_dbLink.cgc_Unlink();
 
 	// Change name
-	pFile->SetName( sNewFilename.c_str() );
+	pFile->cgc_SetName( sNewFilename.cgc_c_str() );
 
 	// Re-add
-	m_nodeList.AddLast( pFile );
+	m_nodeList.cgc_AddLast( pFile );
 
 	// Clear file system errors	
-	ClearError();
+	cgc_ClearError();
 
 	return (true);
 }
 
-bool CDBFS::DeleteFile( CUtil::String sFilename )
+bool cgc_CDBFS::cgc_DeleteFile( CUtil::cgc_String sFilename )
 {
 	// Quick check if they are logged in
 	if ( m_pCurUser == NULL )
 	{
-		SetError( "Must login first" );
+		cgc_SetError( "Must login first" );
 		return (false);
 	}
 	
 	// Rename file anywhere on the file system to a new location (can be a move as well)
-	CDBFile *pFile = FindFileByName( sFilename );
+	cgc_CDBFile *pFile = cgc_FindFileByName( sFilename );
 
 	if ( !pFile )
 	{
-		SetError( "Invalid filename" );
+		cgc_SetError( "Invalid filename" );
 		return (false);
 	}
 
 	// Check permissions
-	if ( !IsUserRoot() && !(pFile->GetOwner() == m_pCurUser->GetUsername()) )
+	if ( !cgc_IsUserRoot() && !(pFile->cgc_GetOwner() == m_pCurUser->cgc_GetUsername()) )
 	{
-		SetError( "Permission denied" );
+		cgc_SetError( "Permission denied" );
 		return (false);
 	}
 
-	if ( IsFileOpen( pFile ) )
+	if ( cgc_IsFileOpen( pFile ) )
 	{
 		// Close all open handles
 		if ( pFile )
 		{
-			CDBFSOpenFile *pNext;
-			for ( CDBFSOpenFile *pCurOpenFile = m_openFileList.GetFirst(); pCurOpenFile; pCurOpenFile = pNext )
+			cgc_CDBFSOpenFile *pNext;
+			for ( cgc_CDBFSOpenFile *pCurOpenFile = m_openFileList.cgc_GetFirst(); pCurOpenFile; pCurOpenFile = pNext )
 			{
-				pNext = m_openFileList.GetNext( pCurOpenFile );
-				if ( pCurOpenFile->GetFile() == pFile )
+				pNext = m_openFileList.cgc_GetNext( pCurOpenFile );
+				if ( pCurOpenFile->cgc_GetFile() == pFile )
 				{
 					delete pCurOpenFile;
 				}
@@ -477,45 +477,45 @@ bool CDBFS::DeleteFile( CUtil::String sFilename )
 	m_curFiles--;
 
 	// Clear file system errors
-	ClearError();
+	cgc_ClearError();
 
 	return (true);
 }
 
-CDBFSOpenFile *CDBFS::OpenFile( CUtil::String sFilename, const char *pszMode )
+cgc_CDBFSOpenFile *cgc_CDBFS::cgc_OpenFile( CUtil::cgc_String sFilename, const char *pszMode )
 {
 	// Check mode
 	if ( pszMode == NULL )
 	{
-		SetError( "Invalid filename or mode" );
+		cgc_SetError( "Invalid filename or mode" );
 		return (NULL);
 	}
 
-	if ( strlen(pszMode) != 1 )
+	if ( cgc_strlen(pszMode) != 1 )
 	{
-		SetError( "Invalid mode" );
+		cgc_SetError( "Invalid mode" );
 		return (NULL);
 	}
 
 	if ( pszMode[0] != 'r' && pszMode[0] != 'w' && pszMode[0] != 'a' )
 	{
-		SetError( "Invalid mode" );
+		cgc_SetError( "Invalid mode" );
 		return (NULL);
 	}
 
 	if ( !m_pCurUser )
 	{
-		SetError( "Must login first" );
+		cgc_SetError( "Must login first" );
 		return (NULL);
 	}
 
 	// Find file
-	CDBFile *pFile = FindFileByName( sFilename );
+	cgc_CDBFile *pFile = cgc_FindFileByName( sFilename );
 
 	if ( (!pFile && pszMode[0] == 'r') || (!pFile && pszMode[0] == 'a') )
 	{
 		// Open for reading and file does not exist
-		SetError( "Unable to locate file" );
+		cgc_SetError( "Unable to locate file" );
 		return (NULL);
 	}
 
@@ -523,53 +523,53 @@ CDBFSOpenFile *CDBFS::OpenFile( CUtil::String sFilename, const char *pszMode )
 	if ( !pFile )
 	{
 		// Creating file
-		if ( !IsUserRoot() )
+		if ( !cgc_IsUserRoot() )
 		{
-			SetError( "Permission denied" );
+			cgc_SetError( "Permission denied" );
 			return (NULL);
 		}
 
-		if ( IsMaxFilesReached() )
+		if ( cgc_IsMaxFilesReached() )
 		{
-			SetError( "Max files created" );
+			cgc_SetError( "Max files created" );
 			return (NULL);
 		}
 
 		// Create new file
-		pFile = CreateFile( sFilename, m_pCurUser->GetUsername(), FS_MODE_OWNER_READ|FS_MODE_OWNER_WRITE );
+		pFile = cgc_CreateFile( sFilename, m_pCurUser->cgc_GetUsername(), FS_MODE_OWNER_READ|FS_MODE_OWNER_WRITE );
 		m_curFiles++;	
 	}	
 
 	// Create open file data structure
-	uint8_t openMode = 0;
+	cgc_uint8_t openMode = 0;
 	if ( pszMode[0] == 'r' )
 		openMode = FILE_OPEN_READ;
 	else
 		openMode = FILE_OPEN_WRITE;
 
-	CDBFSOpenFile *pOpenFileData = new CDBFSOpenFile( pFile, openMode );
+	cgc_CDBFSOpenFile *pOpenFileData = new cgc_CDBFSOpenFile( pFile, openMode );
 
-	m_openFileList.AddLast( pOpenFileData ); 
+	m_openFileList.cgc_AddLast( pOpenFileData ); 
 
 	// If opened in append mode!
 	if ( pszMode[0] == 'a' )
-		pOpenFileData->SetFilePositionEnd();
+		pOpenFileData->cgc_SetFilePositionEnd();
 
-	ClearError();
+	cgc_ClearError();
 	return (pOpenFileData);
 }
 
-bool CDBFS::CloseFile( CDBFSOpenFile *pFile )
+bool cgc_CDBFS::cgc_CloseFile( cgc_CDBFSOpenFile *pFile )
 {
 	if ( !pFile )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (false);
 	}
 
 	// Check for file pointer
 	bool bFound = false;	
-	for ( CDBFSOpenFile *pOpenFileCur = m_openFileList.GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.GetNext( pOpenFileCur ) )
+	for ( cgc_CDBFSOpenFile *pOpenFileCur = m_openFileList.cgc_GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.cgc_GetNext( pOpenFileCur ) )
 	{
 		if ( pOpenFileCur == pFile )
 		{
@@ -580,40 +580,40 @@ bool CDBFS::CloseFile( CDBFSOpenFile *pFile )
 
 	if ( !bFound )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (false);	
 	}
 
 	delete pFile;
 
 	// Clear error
-	ClearError();
+	cgc_ClearError();
 	return (true);
 }
 
-bool CDBFS::IsFileOpen( CDBFile *pFile )
+bool cgc_CDBFS::cgc_IsFileOpen( cgc_CDBFile *pFile )
 {
 	if ( !pFile )
 		return (false);
 
-	for ( CDBFSOpenFile *pOpenFileCur = m_openFileList.GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.GetNext( pOpenFileCur ) )
+	for ( cgc_CDBFSOpenFile *pOpenFileCur = m_openFileList.cgc_GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.cgc_GetNext( pOpenFileCur ) )
 	{
-		if ( pOpenFileCur->GetFile() == pFile )
+		if ( pOpenFileCur->cgc_GetFile() == pFile )
 			return (true);
 	}
 
 	return (false);
 }
 
-CDBFile *CDBFS::FindFileByName( const CUtil::String &sFilename )
+cgc_CDBFile *cgc_CDBFS::cgc_FindFileByName( const CUtil::cgc_String &sFilename )
 {
 	// Scan for file name
-	for ( CDBNode *pNode = m_nodeList.GetFirst(); pNode; pNode = m_nodeList.GetNext( pNode ) )
+	for ( cgc_CDBNode *pNode = m_nodeList.cgc_GetFirst(); pNode; pNode = m_nodeList.cgc_GetNext( pNode ) )
 	{
-		if ( pNode->GetType() == FS_NODE_FILE )
+		if ( pNode->cgc_GetType() == FS_NODE_FILE )
 		{
-			if ( pNode->GetName() == sFilename )
-				return (CDBFile *)pNode;
+			if ( pNode->cgc_GetName() == sFilename )
+				return (cgc_CDBFile *)pNode;
 		}
 	}
 
@@ -621,23 +621,23 @@ CDBFile *CDBFS::FindFileByName( const CUtil::String &sFilename )
 	return NULL;
 }
 
-uint32_t CDBFS::FileRead( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSOpenFile *pFP )
+cgc_uint32_t cgc_CDBFS::cgc_FileRead( cgc_uint8_t *pBuf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_CDBFSOpenFile *pFP )
 {
 	if ( !pBuf )
 	{
-		SetError( "Invalid buffer" );
+		cgc_SetError( "Invalid buffer" );
 		return (0);
 	}
 
 	if ( !pFP )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}
 
 	// Check for file pointer
 	bool bFound = false;	
-	for ( CDBFSOpenFile *pOpenFileCur = m_openFileList.GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.GetNext( pOpenFileCur ) )
+	for ( cgc_CDBFSOpenFile *pOpenFileCur = m_openFileList.cgc_GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.cgc_GetNext( pOpenFileCur ) )
 	{
 		if ( pOpenFileCur == pFP )
 		{
@@ -648,54 +648,54 @@ uint32_t CDBFS::FileRead( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSOp
 	
 	if ( !bFound )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}
 	
 
-	int32_t filePos = pFP->GetFilePosition();
-	CDBFile *pDBFile = pFP->GetFile();
+	cgc_int32_t filePos = pFP->cgc_GetFilePosition();
+	cgc_CDBFile *pDBFile = pFP->cgc_GetFile();
 
 	if ( !pDBFile )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}	
 
-	uint32_t fileReadAmount = (size*nitems);
-	uint32_t fileReadActual = 0;
+	cgc_uint32_t fileReadAmount = (size*nitems);
+	cgc_uint32_t fileReadActual = 0;
 
-	uint8_t readStatus;
+	cgc_uint8_t readStatus;
 
-	if ( (readStatus = pDBFile->ReadData( filePos, pBuf, fileReadAmount, fileReadActual )) != FILE_READ_OK )
+	if ( (readStatus = pDBFile->cgc_ReadData( filePos, pBuf, fileReadAmount, fileReadActual )) != FILE_READ_OK )
 	{
-		SetError( "Read error" );
+		cgc_SetError( "Read error" );
 		return (fileReadActual);
 	}
 
 	// Clear error
-	ClearError();
+	cgc_ClearError();
 
 	return (fileReadActual);
 }
 
-uint32_t CDBFS::FileWrite( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSOpenFile *pFP )
+cgc_uint32_t cgc_CDBFS::cgc_FileWrite( cgc_uint8_t *pBuf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_CDBFSOpenFile *pFP )
 {
 	if ( !pBuf )
 	{
-		SetError( "Invalid buffer" );
+		cgc_SetError( "Invalid buffer" );
 		return (0);
 	}
 
 	if ( !pFP )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}
 
 	// Check for file pointer
 	bool bFound = false;	
-	for ( CDBFSOpenFile *pOpenFileCur = m_openFileList.GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.GetNext( pOpenFileCur ) )
+	for ( cgc_CDBFSOpenFile *pOpenFileCur = m_openFileList.cgc_GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.cgc_GetNext( pOpenFileCur ) )
 	{
 		if ( pOpenFileCur == pFP )
 		{
@@ -706,53 +706,53 @@ uint32_t CDBFS::FileWrite( uint8_t *pBuf, uint32_t size, uint32_t nitems, CDBFSO
 	
 	if ( !bFound )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}
 	
 	// Check to make sure file is opened writeable
-	if ( pFP->GetMode() != FILE_OPEN_WRITE )
+	if ( pFP->cgc_GetMode() != FILE_OPEN_WRITE )
 	{
-		SetError( "File opened read only" );
+		cgc_SetError( "File opened read only" );
 		return (0);
 	}
 
-	int32_t filePos = pFP->GetFilePosition();
-	CDBFile *pDBFile = pFP->GetFile();
+	cgc_int32_t filePos = pFP->cgc_GetFilePosition();
+	cgc_CDBFile *pDBFile = pFP->cgc_GetFile();
 
 	if ( !pDBFile )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (0);
 	}
 
-	uint32_t fileWriteAmount = (size*nitems);
-	uint32_t fileWriteActual = 0;
+	cgc_uint32_t fileWriteAmount = (size*nitems);
+	cgc_uint32_t fileWriteActual = 0;
 
-	uint8_t writeStatus;
-	if ( (writeStatus = pDBFile->WriteData( filePos, pBuf, fileWriteAmount, fileWriteActual)) != FILE_WRITE_OK )
+	cgc_uint8_t writeStatus;
+	if ( (writeStatus = pDBFile->cgc_WriteData( filePos, pBuf, fileWriteAmount, fileWriteActual)) != FILE_WRITE_OK )
 	{
-		SetError( "Write error" );
+		cgc_SetError( "Write error" );
 		return (fileWriteActual);
 	}
 
 	// Clear error
-	ClearError();
+	cgc_ClearError();
 
 	return (fileWriteActual);
 }
 
-uint32_t CDBFS::FileSeek( CDBFSOpenFile *pFP, int32_t offset, int8_t origin )
+cgc_uint32_t cgc_CDBFS::cgc_FileSeek( cgc_CDBFSOpenFile *pFP, cgc_int32_t offset, cgc_int8_t origin )
 {
 	if ( !pFP )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (-1);
 	}
 
 	// Check for file pointer
 	bool bFound = false;	
-	for ( CDBFSOpenFile *pOpenFileCur = m_openFileList.GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.GetNext( pOpenFileCur ) )
+	for ( cgc_CDBFSOpenFile *pOpenFileCur = m_openFileList.cgc_GetFirst(); pOpenFileCur; pOpenFileCur = m_openFileList.cgc_GetNext( pOpenFileCur ) )
 	{
 		if ( pOpenFileCur == pFP )
 		{
@@ -763,45 +763,45 @@ uint32_t CDBFS::FileSeek( CDBFSOpenFile *pFP, int32_t offset, int8_t origin )
 	
 	if ( !bFound )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (-1);
 	}
 	
-	int32_t filePos = pFP->GetFilePosition();
-	CDBFile *pFile = pFP->GetFile();
+	cgc_int32_t filePos = pFP->cgc_GetFilePosition();
+	cgc_CDBFile *pFile = pFP->cgc_GetFile();
 
 	if ( !pFile )
 	{
-		SetError( "Invalid file pointer" );
+		cgc_SetError( "Invalid file pointer" );
 		return (-1);
 	}
 
-	int32_t newPos = 0;
+	cgc_int32_t newPos = 0;
 	if ( origin == SEEK_SET )
 		newPos = offset;
 	else if ( origin == SEEK_CUR )
-		newPos = ((int32_t)filePos) + offset;
+		newPos = ((cgc_int32_t)filePos) + offset;
 	else if ( origin == SEEK_END )
-		newPos = ((int32_t)pFile->GetFileSize()) + offset;
+		newPos = ((cgc_int32_t)pFile->cgc_GetFileSize()) + offset;
 
 #ifdef PATCHED_1
-	if ( newPos < 0 || newPos > pFile->GetFileSize() )
+	if ( newPos < 0 || newPos > pFile->cgc_GetFileSize() )
 #else
-	if ( newPos > pFile->GetFileSize() )
+	if ( newPos > pFile->cgc_GetFileSize() )
 #endif
 	{
-		SetError( "Out of range" );
+		cgc_SetError( "Out of range" );
 		return (-1);
 	} 
 
-	if ( !pFP->SetFilePosition( newPos ) )
+	if ( !pFP->cgc_SetFilePosition( newPos ) )
 	{
-		SetError( "Out of range" );
+		cgc_SetError( "Out of range" );
 		return (-1);
 	}
 
 	// Clear errors
-	ClearError();
+	cgc_ClearError();
 
 	return (0);
 }

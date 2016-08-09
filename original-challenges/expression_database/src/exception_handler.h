@@ -35,25 +35,25 @@ THE SOFTWARE.
 
 typedef struct EXCEPTION_DATA_STRUCT
 {
-    uint8_t exceptionNumber;
+    cgc_uint8_t exceptionNumber;
     char szExceptionName[MAX_EXCEPTION_NAME];
     char szExceptionExtra[MAX_EXCEPTION_EXTRA];
-} tExceptionData;
+} cgc_tExceptionData;
 
 typedef struct EXCEPTION_FRAME_STRUCT
 {
     jmp_buf jmpBuffer;
-} tExceptionFrame;
+} cgc_tExceptionFrame;
 
-#define TRY         switch( setjmp( get_next_exception_frame()->jmpBuffer ) ) { case 0: while(1) {
+#define TRY         switch( setjmp( cgc_get_next_exception_frame()->jmpBuffer ) ) { case 0: while(1) {
 #define CATCH(e)    break; case e:
-#define THROW(e)    longjmp( get_current_exception_frame()->jmpBuffer, e )
+#define THROW(e)    longjmp( cgc_get_current_exception_frame()->jmpBuffer, e )
 #define FINALLY   break; } default:
-#define ETRY      pop_exception_frame(); }
+#define ETRY      cgc_pop_exception_frame(); }
 
-void init_exception_handler( void );
-tExceptionFrame *get_next_exception_frame( void );
-tExceptionFrame *get_current_exception_frame( void );
-tExceptionFrame *pop_exception_frame( void );
+void cgc_init_exception_handler( void );
+cgc_tExceptionFrame *cgc_get_next_exception_frame( void );
+cgc_tExceptionFrame *cgc_get_current_exception_frame( void );
+cgc_tExceptionFrame *cgc_pop_exception_frame( void );
 
 #endif // __EXCEPTION_HANDLER_H__

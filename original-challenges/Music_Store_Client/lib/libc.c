@@ -1,28 +1,28 @@
 #include <libcgc.h>
 #include "libc.h"
 
-void bzero(char *buf, int n);
-int ready(int fd);
+void cgc_bzero(char *buf, int n);
+int cgc_ready(int fd);
 
-void bzero(char *buf, int n) {
+void cgc_bzero(char *buf, int n) {
     for (int i = 0; i < n; i++) {
         buf[i] = 0;
     }
 }
 
-int ready(int fd) {
-    fd_set write_fds;
+int cgc_ready(int fd) {
+    cgc_fd_set write_fds;
     int err;
     int ready_fd;
-    struct timeval tv;
+    struct cgc_timeval tv;
 
-    bzero((char *)&write_fds, sizeof(write_fds));
+    cgc_bzero((char *)&write_fds, sizeof(write_fds));
     FD_SET(fd, &write_fds);
 
     tv.tv_sec = 10;
     tv.tv_usec = 0;
 
-    err = fdwait(fd + 1, NULL, &write_fds, &tv, &ready_fd);
+    err = cgc_fdwait(fd + 1, NULL, &write_fds, &tv, &ready_fd);
     if (err != 0) {
         return err;
     }
@@ -33,9 +33,9 @@ int ready(int fd) {
     return 0;
 }
 
-int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
 
@@ -53,8 +53,8 @@ int transmit_all(int fd, const char *buf, const size_t size) {
     return 0;
 }
 
-size_t strlen(const char *string) {
-    size_t size = 0;
+cgc_size_t cgc_strlen(const char *string) {
+    cgc_size_t size = 0;
     
     while(1) {
         if(string[size] == '\0')
@@ -64,10 +64,10 @@ size_t strlen(const char *string) {
 }
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * memcpy(void* dst, const void* src, size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
 
-    uint8_t *dst_ptr = (uint8_t *) dst;
-    uint8_t *src_ptr = (uint8_t *) src;
+    cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
+    cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
     while (cnt--) {
         *dst_ptr = *src_ptr;
         dst_ptr++;
@@ -78,7 +78,7 @@ void * memcpy(void* dst, const void* src, size_t cnt) {
 }
 
 // overwrites the first n chars of str with unsigned char ch.
-void * memset(void* str, int ch, size_t n) {
+void * cgc_memset(void* str, int ch, cgc_size_t n) {
     unsigned char *ch_ptr = str;
     while (n > 0) {
         *ch_ptr = (unsigned char)ch;
@@ -90,7 +90,7 @@ void * memset(void* str, int ch, size_t n) {
 }
 
 
-int strcmp(const char* string1, const char* string2)
+int cgc_strcmp(const char* string1, const char* string2)
 {
     int pos;
 
@@ -100,9 +100,9 @@ int strcmp(const char* string1, const char* string2)
 }
 
 // mod from FASTLANE: lines terminated with \x07, diff return values, 
-int recvline(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -129,7 +129,7 @@ int recvline(int fd, char *buf, size_t size) {
     return total_read;
 }
 
-char* strcat(char *dest, const char* src)
+char* cgc_strcat(char *dest, const char* src)
 {
     char* ret = dest;
     int pos1, pos2;
@@ -144,7 +144,7 @@ char* strcat(char *dest, const char* src)
 // takes a string and converts it to an int32
 // MAX int32 is +/- 2^31-1 (2,147,483,647) which is 10 digits
 // returns 0 if str_buf is "0" or has no digits.
-int str2int(const char* str_buf) {
+int cgc_str2int(const char* str_buf) {
     int result = 0;
     int temp = 0;
     int max_chars = 10; // max number of chars read from str_buf

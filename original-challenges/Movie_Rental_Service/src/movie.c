@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 
 #include "movie.h"
 
-const char* movie_g2s(enum genre_t genre)
+const char* cgc_movie_g2s(enum genre_t genre)
 {
  const char *genre_str = NULL;
   switch (genre)
@@ -47,7 +47,7 @@ const char* movie_g2s(enum genre_t genre)
   return genre_str;
 }
 
-const char* movie_r2s(enum rating_t rating)
+const char* cgc_movie_r2s(enum rating_t rating)
 {
   const char *rating_str = NULL;
   switch (rating)
@@ -66,11 +66,11 @@ const char* movie_r2s(enum rating_t rating)
   return rating_str;
 }
 
-int movie_add(movie_list_t *list, movie_t *movie)
+int cgc_movie_add(cgc_movie_list_t *list, cgc_movie_t *movie)
 {
   if (list)
   {
-    movie_node_t *node = (movie_node_t *) malloc(sizeof(movie_node_t));
+    cgc_movie_node_t *node = (cgc_movie_node_t *) cgc_malloc(sizeof(cgc_movie_node_t));
     if (node == NULL)
       return -1;
 
@@ -82,10 +82,10 @@ int movie_add(movie_list_t *list, movie_t *movie)
       return 0;
     }
 
-    movie_node_t *tmp = movie_find(*list, movie->title);
+    cgc_movie_node_t *tmp = cgc_movie_find(*list, movie->title);
     if (tmp)
     {
-      if (node) free(node);
+      if (node) cgc_free(node);
       return -1;
     }
 
@@ -104,30 +104,30 @@ int movie_add(movie_list_t *list, movie_t *movie)
   return -1;
 }
 
-void free_movie(movie_t *movie)
+void cgc_free_movie(cgc_movie_t *movie)
 {
   if (movie)
   {
     if (movie->title)
-      free(movie->title);
+      cgc_free(movie->title);
     if (movie->desc)
-      free(movie->desc);
-    free(movie);
+      cgc_free(movie->desc);
+    cgc_free(movie);
   }
 }
 
-int movie_delete(movie_list_t *list, int id)
+int cgc_movie_delete(cgc_movie_list_t *list, int id)
 {
   if (list)
   {
-    movie_node_t *prev = NULL;
-    movie_node_t *tmp = *list;
+    cgc_movie_node_t *prev = NULL;
+    cgc_movie_node_t *tmp = *list;
 
     int n = 1;
     if (tmp && id == 1)
     {
       *list = tmp->next;
-      free(tmp);
+      cgc_free(tmp);
       return 0;
     }
 
@@ -140,7 +140,7 @@ int movie_delete(movie_list_t *list, int id)
       if (id == n)
       {
         prev->next = tmp->next;
-        free(tmp);
+        cgc_free(tmp);
         break;
       }
       prev = tmp;
@@ -151,20 +151,20 @@ int movie_delete(movie_list_t *list, int id)
   return -1;
 }
 
-int movie_update(movie_t *movie)
+int cgc_movie_update(cgc_movie_t *movie)
 {
   
   return 0;
 }
 
-movie_node_t* movie_find(movie_list_t list, char *title)
+cgc_movie_node_t* cgc_movie_find(cgc_movie_list_t list, char *title)
 {
   if (list)
   {
-    movie_node_t *cur = list;
+    cgc_movie_node_t *cur = list;
     while (cur != NULL)
     {
-      if (strcmp(cur->movie->title, title) == 0)
+      if (cgc_strcmp(cur->movie->title, title) == 0)
         return cur;
       cur = cur->next;
     }
@@ -172,12 +172,12 @@ movie_node_t* movie_find(movie_list_t list, char *title)
   return NULL;
 }
 
-movie_node_t* movie_find_by_id(movie_list_t list, int id)
+cgc_movie_node_t* cgc_movie_find_by_id(cgc_movie_list_t list, int id)
 {
   if (list)
   {
     int n = 0;
-    movie_node_t *cur = list;
+    cgc_movie_node_t *cur = list;
     while (cur != NULL)
     {
       n++;

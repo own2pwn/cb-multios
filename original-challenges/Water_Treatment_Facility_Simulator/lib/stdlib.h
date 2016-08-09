@@ -30,14 +30,14 @@ THE SOFTWARE.
 
 #define RAND_MAX	2147483647
 
-int rand( void );
-void srand( unsigned int seed );
+int cgc_rand( void );
+void cgc_srand( unsigned int seed );
 
-int cromu_atoi( const char *pStr );
-double cromu_atof( char *pStr );
+int cgc_cromu_atoi( const char *pStr );
+double cgc_cromu_atof( char *pStr );
  
-char *strcpy( char *pDest, const char *pSource );
-char *strncpy( char *pDest, const char *pSource, size_t maxlen );
-void *memcpy( void *pDest, const void *pSrc, size_t nbytes );
+char *cgc_strcpy( char *pDest, const char *pSource );
+char *cgc_strncpy( char *pDest, const char *pSource, cgc_size_t maxlen );
+void *cgc_memcpy( void *pDest, const void *pSrc, cgc_size_t nbytes );
 
 #endif // STDLIB_H__

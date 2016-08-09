@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 #include "struct_inits.h"
 
-void print_set( psetArray psa )
+void cgc_print_set( cgc_psetArray psa )
 {
 	int index = 0;
 
@@ -34,21 +34,21 @@ void print_set( psetArray psa )
 		goto end;
 	}
 
-	printf("@s = |", psa->varName);
+	cgc_printf("@s = |", psa->varName);
 
 	while ( index < psa->varCount ) {
 		if (psa->sElems[index]->type == SET ) {
-			printf("@s", psa->sElems[index]->value);
+			cgc_printf("@s", psa->sElems[index]->value);
 		} else {
-			printf("\"@s\"", psa->sElems[index]->value);
+			cgc_printf("\"@s\"", psa->sElems[index]->value);
 		}
 		index++;
 		if ( index != psa->varCount ) {
-			printf(",");
+			cgc_printf(",");
 		}
 	}
 
-	printf("|\n");
+	cgc_printf("|\n");
 end:
 	return;
 }
@@ -57,14 +57,14 @@ end:
  * Frees the necessary fields within an element as well as the element itself
  * @param element Pointer to the element to be freed
  **/
-void free_element( psetElement element )
+void cgc_free_element( cgc_psetElement element )
 {
 	if ( element == NULL ) {
 		goto end;
 	}
 
-	deallocate( element->value, strlen( element->value) + 1 );
-	deallocate( element, sizeof(setElement) );
+	deallocate( element->value, cgc_strlen( element->value) + 1 );
+	deallocate( element, sizeof(cgc_setElement) );
 
 end:
 	return;
@@ -75,25 +75,25 @@ end:
  * @param Pointer to the set to be copied
  * @return Returns a copy of the supplied set or NULL on failure
  **/
-psetArray copy_set( psetArray set )
+cgc_psetArray cgc_copy_set( cgc_psetArray set )
 {
-	psetArray copy = NULL;
+	cgc_psetArray copy = NULL;
 	int index = 0;
 
 	if ( set == NULL ) {
 		goto end;
 	}
 
-	if ( allocate( sizeof(setArray), 0, (void**)&copy) != 0 ) {
+	if ( allocate( sizeof(cgc_setArray), 0, (void**)&copy) != 0 ) {
 		copy = NULL;
 		goto end;
 	}
 
-	bzero( copy, sizeof(setArray));
+	cgc_bzero( copy, sizeof(cgc_setArray));
 
 	while ( index < set->varCount ) {
-		if (add_element_to_set( copy, copy_element( set->sElems[index]) ) != 0 ) {
-			free_set_array( copy );
+		if (cgc_add_element_to_set( copy, cgc_copy_element( set->sElems[index]) ) != 0 ) {
+			cgc_free_set_array( copy );
 			copy = NULL;
 			goto end;
 		}
@@ -105,11 +105,11 @@ end:
 }
 
 /**
- * Frees a setArray structure and its sub structs
- * @param psa Pointer to a setArray structure
+ * Frees a cgc_setArray structure and its sub structs
+ * @param psa Pointer to a cgc_setArray structure
  * @return Nothing
  **/
-void free_set_array( psetArray psa )
+void cgc_free_set_array( cgc_psetArray psa )
 {
 	int index = 0;
 
@@ -118,12 +118,12 @@ void free_set_array( psetArray psa )
 	}
 
 	for ( index = 0; index < psa->varCount; index++){
-		deallocate( psa->sElems[index]->value, strlen(psa->sElems[index]->value) + 1 );
-		deallocate( psa->sElems[index], sizeof( setElement) );
+		deallocate( psa->sElems[index]->value, cgc_strlen(psa->sElems[index]->value) + 1 );
+		deallocate( psa->sElems[index], sizeof( cgc_setElement) );
 		psa->sElems[index] = NULL;
 	}
 
-	deallocate( psa, sizeof(setArray));
+	deallocate( psa, sizeof(cgc_setArray));
 	psa = NULL;
 
 end:
@@ -135,30 +135,30 @@ end:
  * @param element Element to copy
  * @return Copy of the element argument
  **/
-psetElement copy_element( psetElement element )
+cgc_psetElement cgc_copy_element( cgc_psetElement element )
 {
-	psetElement copy = NULL;
+	cgc_psetElement copy = NULL;
 	int vlen = 0;
 
 	if ( element == NULL ) {
 		goto end;
 	}
 
-	if ( allocate( sizeof(psetElement), 0, (void**)&copy) != 0 ) {
+	if ( allocate( sizeof(cgc_psetElement), 0, (void**)&copy) != 0 ) {
 		copy = NULL;
 		goto end;
 	}
 
-	vlen = strlen( element->value ) + 1;
+	vlen = cgc_strlen( element->value ) + 1;
 
 	if ( allocate( vlen, 0, (void**)&copy->value) != 0 ) {
-		deallocate( copy, sizeof(psetElement) );
+		deallocate( copy, sizeof(cgc_psetElement) );
 		copy = NULL;
 		goto end;
 	}
 
-	bzero( copy->value, vlen );
-	memcpy( copy->value, element->value, vlen-1 );
+	cgc_bzero( copy->value, vlen );
+	cgc_memcpy( copy->value, element->value, vlen-1 );
 	copy->type = element->type;
 
 end:
@@ -171,7 +171,7 @@ end:
  * @param element Element to check for
  * @return 1 if exists 0 if not, -1 on error
  **/
-int element_in_set( psetArray set, psetElement element )
+int cgc_element_in_set( cgc_psetArray set, cgc_psetElement element )
 {
 	int retval = -1;
 	int vlen = 0;
@@ -187,7 +187,7 @@ int element_in_set( psetArray set, psetElement element )
 	}
 
 	while ( index < set->varCount ) {
-		if ( strcmp( element->value, set->sElems[index]->value) == 0 ) {
+		if ( cgc_strcmp( element->value, set->sElems[index]->value) == 0 ) {
 			if ( element->type == set->sElems[index]->type ) {
 				retval = 1;
 				goto end;
@@ -207,7 +207,7 @@ end:
  * @param pse Element to be added to the set
  * @return 0 on success nonzero on failure
  **/
-int add_element_to_set( psetArray psa, psetElement pse )
+int cgc_add_element_to_set( cgc_psetArray psa, cgc_psetElement pse )
 {
 	int retval = 1;
 
@@ -234,9 +234,9 @@ end:
  * @param type Type value either 0 or 1
  * @return Returns a pointer to a new set element or null on failure
  **/
-psetElement create_element( char* value, int type )
+cgc_psetElement cgc_create_element( char* value, int type )
 {
-        psetElement pse = NULL;
+        cgc_psetElement pse = NULL;
         int vlen = 0;
 
         if ( value == NULL ) {
@@ -247,20 +247,20 @@ psetElement create_element( char* value, int type )
                 goto end;
         }
 
-        if ( allocate( sizeof(setElement), 0, (void**)&pse) != 0 ) {
+        if ( allocate( sizeof(cgc_setElement), 0, (void**)&pse) != 0 ) {
                 pse = NULL;
                 goto end;
         }
 
-        vlen = strlen(value);
+        vlen = cgc_strlen(value);
 
         if ( allocate( vlen + 1, 0, (void**)&(pse->value)) != 0 ) {
-                deallocate( pse, sizeof(setElement) );
+                deallocate( pse, sizeof(cgc_setElement) );
                 pse = NULL;
                 goto end;
         }
 
-        memcpy( pse->value, value, vlen );
+        cgc_memcpy( pse->value, value, vlen );
 
         pse->value[vlen] = 0x00;
         pse->type = type;

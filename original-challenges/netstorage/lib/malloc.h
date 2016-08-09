@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,20 +34,20 @@
 #define ALIGNMENT 8
 
 extern struct blk_t *free_lists[NUM_FREE_LISTS];
-extern size_t size_class_limits[NUM_FREE_LISTS];
+extern cgc_size_t size_class_limits[NUM_FREE_LISTS];
 
 struct blk_t {
-  size_t size;
-  unsigned int free;
+  cgc_size_t size;
+  unsigned int cgc_free;
   struct blk_t *fsucc;
   struct blk_t *fpred;
   struct blk_t *next;
   struct blk_t *prev;
 };
 
-void coalesce(struct blk_t *);
-int get_size_class(size_t size);
-void insert_into_flist(struct blk_t *blk);
-void remove_from_flist(struct blk_t *blk);
+void cgc_coalesce(struct blk_t *);
+int cgc_get_size_class(cgc_size_t size);
+void cgc_insert_into_flist(struct blk_t *blk);
+void cgc_remove_from_flist(struct blk_t *blk);
 
 #endif /* MALLOC_COMMON_H */

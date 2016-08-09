@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,7 +25,7 @@
 
 // 64 char alphabet, every byte has 4 possible bytes
 
-unsigned char get_num_for_char(unsigned char u){
+unsigned char cgc_get_num_for_char(unsigned char u){
 	
 	for(int i = 0; i < ABETSZ ; ++i){
 		if(u == (unsigned char) ALPHABET[i])
@@ -35,10 +35,10 @@ unsigned char get_num_for_char(unsigned char u){
 	return 128;
 }
 
-char * encode(char * input, size_t size){
+char * cgc_encode(char * input, cgc_size_t size){
 	
-	size_t sz = size*BLOCK_SZ;
-	char *outbuf = (char *) calloc(1, sz+1);
+	cgc_size_t sz = size*BLOCK_SZ;
+	char *outbuf = (char *) cgc_calloc(1, sz+1);
 	if(outbuf == NULL)
 		return NULL;
 	int outidx = 0;
@@ -47,7 +47,7 @@ char * encode(char * input, size_t size){
 		unsigned int idx1 = inch/divisor;
 		unsigned int idx2 = inch % divisor;
 		if(idx1 >= ABETSZ || idx2 >= ABETSZ){
-			free(outbuf);
+			cgc_free(outbuf);
 			return NULL;
 		}
 		outbuf[outidx] = ALPHABET[idx1];
@@ -62,19 +62,19 @@ char * encode(char * input, size_t size){
 
 }
 
-char * decode(char * input, size_t size){
-	unsigned char * outbuf = calloc(1, size/BLOCK_SZ);
+char * cgc_decode(char * input, cgc_size_t size){
+	unsigned char * outbuf = cgc_calloc(1, size/BLOCK_SZ);
 	int outct = 0;
 	for(int i =0; i < size; i+=BLOCK_SZ){
 		unsigned char in1 = input[i];
 		unsigned char in2 = input[i+1];
-		unsigned char ch1 = get_num_for_char(in1);
-		unsigned char ch2 = get_num_for_char(in2);
+		unsigned char ch1 = cgc_get_num_for_char(in1);
+		unsigned char ch2 = cgc_get_num_for_char(in2);
 		if(ch1 < 127 &&  ch2 < 127 ){
 			outbuf[outct] = ch1 * divisor + ch2;
 
 		}else{
-			free(outbuf);
+			cgc_free(outbuf);
 			return NULL;
 		}
 		outct +=1;

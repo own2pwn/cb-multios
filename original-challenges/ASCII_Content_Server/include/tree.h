@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,12 +38,12 @@ typedef struct Node {
   struct Node *child;
   int page_size;
   char *page;
-} TreeNode;
+} cgc_TreeNode;
 
-int PrintTree(char *name);
-int DeleteNode(char *name);
-TreeNode *LookupNode(char *name);
-int InsertNodeInTree(TreeNode *node);
-int InitializeTree();
+int cgc_PrintTree(char *name);
+int cgc_DeleteNode(char *name);
+cgc_TreeNode *cgc_LookupNode(char *name);
+int cgc_InsertNodeInTree(cgc_TreeNode *node);
+int cgc_InitializeTree();
 
 #endif // TREE_H

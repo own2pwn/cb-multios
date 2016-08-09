@@ -23,6 +23,6 @@
 #ifndef LIBC_H
 #define LIBC_H
 
-extern int transmit_all(int fd, const char *buf, const size_t size); // NRFIN_00002
-extern void * memset(void *dst, char c, size_t n); 
+extern int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size); // NRFIN_00002
+extern void * cgc_memset(void *dst, char c, cgc_size_t n); 
 #endif

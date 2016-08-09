@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,20 +28,20 @@
 // struct for a stamp
 typedef struct __attribute__((packed))  {
 	char serial[STAMP_SIZE];
-} stamp_t;
+} cgc_stamp_t;
 
 
 /**
  * Initialize the stamp roll.
  */
-void init_stamp_roll(void);
+void cgc_init_stamp_roll(void);
 
 /**
  * Create and return a new stamp.
  *
  * @return VA of new stamp or NULL on error.
  */
-stamp_t *get_new_stamp(void);
+cgc_stamp_t *cgc_get_new_stamp(void);
 
 /**
  * Use a stamp
@@ -49,6 +49,6 @@ stamp_t *get_new_stamp(void);
  * @param s 	A stamp to use
  * @return SUCCESS on success, else -1 if stamp is invalid
  */
-int use_stamp(stamp_t *s);
+int cgc_use_stamp(cgc_stamp_t *s);
 
 #endif

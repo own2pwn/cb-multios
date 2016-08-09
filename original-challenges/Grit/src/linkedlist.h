@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,143 +24,143 @@
 #include <cstdlib.h>
 
 template <class T>
-class LinkedList
+class cgc_LinkedList
 {
 public:
-    class Node
+    class cgc_Node
     {
-        friend class LinkedList;
+        friend class cgc_LinkedList;
     private:
-        inline Node(T value_) : next(NULL), prev(NULL), value(value_)
+        inline cgc_Node(T value_) : cgc_next(NULL), cgc_prev(NULL), cgc_value(value_)
         {
         }
     public:
-        Node *next;
-        Node *prev;
-        T value;
+        cgc_Node *cgc_next;
+        cgc_Node *cgc_prev;
+        T cgc_value;
     };
-    class Iterator
+    class cgc_Iterator
     {
-        friend class LinkedList;
+        friend class cgc_LinkedList;
     public:
-        T value() const
+        T cgc_value() const
         {
-            return node->value;
+            return node->cgc_value;
         }
-        void next()
+        void cgc_next()
         {
-            node = node->next;
+            node = node->cgc_next;
         }
-        void prev()
+        void cgc_prev()
         {
-            node = node->prev;
+            node = node->cgc_prev;
         }
-        bool empty() const
+        bool cgc_empty() const
         {
             return node == NULL;
         }
     private:
-        inline Iterator(Node *node_) : node(node_)
+        inline cgc_Iterator(cgc_Node *node_) : node(node_)
         {
         }
 
-        Node *node;
+        cgc_Node *node;
     };
-    typedef void (*destructor) (T value);
-    static void deleteDestructor(T value)
+    typedef void (*cgc_destructor) (T cgc_value);
+    static void cgc_deleteDestructor(T cgc_value)
     {
-        delete value;
+        delete cgc_value;
     }
 
-    inline LinkedList(destructor dtor_) : dtor(dtor_), head(NULL), tail(NULL), length(0)
+    inline cgc_LinkedList(cgc_destructor dtor_) : dtor(dtor_), head(NULL), tail(NULL), length(0)
     {
     }
-    inline LinkedList() : LinkedList(NULL)
+    inline cgc_LinkedList() : cgc_LinkedList(NULL)
     {
     }
-    inline ~LinkedList()
+    inline ~cgc_LinkedList()
     {
-        Node *next;
-        for (Node *node = head; node != NULL; node = next)
+        cgc_Node *cgc_next;
+        for (cgc_Node *node = head; node != NULL; node = cgc_next)
         {
-            next = node->next;
+            cgc_next = node->cgc_next;
 
             if (dtor)
-                dtor(node->value);
+                dtor(node->cgc_value);
             delete node;
         }
     }
-    unsigned int getLength() const
+    unsigned int cgc_getLength() const
     {
         return length;
     }
-    inline void append(T value)
+    inline void cgc_append(T cgc_value)
     {
-        Node *node = new Node(value);
-        insertNode(tail, node);
+        cgc_Node *node = new cgc_Node(cgc_value);
+        cgc_insertNode(tail, node);
         length++;
     }
-    inline void prepend(T value)
+    inline void cgc_prepend(T cgc_value)
     {
-        Node *node = new Node(value);
-        insertNode(NULL, node);
+        cgc_Node *node = new cgc_Node(cgc_value);
+        cgc_insertNode(NULL, node);
         length++;
     }
-    inline Iterator begin() const
+    inline cgc_Iterator cgc_begin() const
     {
-        return Iterator(head);
+        return cgc_Iterator(head);
     }
-    inline Iterator end() const
+    inline cgc_Iterator cgc_end() const
     {
-        return Iterator(tail);
+        return cgc_Iterator(tail);
     }
-    inline void removeAt(Iterator &it)
+    inline void cgc_removeAt(cgc_Iterator &it)
     {
-        if (it.empty())
+        if (it.cgc_empty())
             return;
 
-        Node *node = it.node;
-        it.next();
+        cgc_Node *node = it.node;
+        it.cgc_next();
 
-        removeNode(node);
+        cgc_removeNode(node);
         delete node;
         length--;
     }
 private:
-    inline void insertNode(Node *prev, Node *newNode)
+    inline void cgc_insertNode(cgc_Node *cgc_prev, cgc_Node *newNode)
     {
-        if (prev == NULL)
+        if (cgc_prev == NULL)
         {
-            newNode->next = head;
+            newNode->cgc_next = head;
             head = newNode;
         }
         else
         {
-            newNode->next = prev->next;
-            prev->next = newNode;
+            newNode->cgc_next = cgc_prev->cgc_next;
+            cgc_prev->cgc_next = newNode;
         }
 
-        newNode->prev = prev;
-        if (newNode->next)
-            newNode->next->prev = newNode;
+        newNode->cgc_prev = cgc_prev;
+        if (newNode->cgc_next)
+            newNode->cgc_next->cgc_prev = newNode;
 
-        if (tail == prev)
+        if (tail == cgc_prev)
             tail = newNode;
     }
-    inline void removeNode(Node *node)
+    inline void cgc_removeNode(cgc_Node *node)
     {
-        if (node->next)
-            node->next->prev = node->prev;
-        if (node->prev)
-            node->prev->next = node->next;
+        if (node->cgc_next)
+            node->cgc_next->cgc_prev = node->cgc_prev;
+        if (node->cgc_prev)
+            node->cgc_prev->cgc_next = node->cgc_next;
         if (node == head)
-            head = node->next;
+            head = node->cgc_next;
         if (node == tail)
-            tail = node->prev;
+            tail = node->cgc_prev;
     }
 
-    destructor dtor;
-    Node *head;
-    Node *tail;
+    cgc_destructor dtor;
+    cgc_Node *head;
+    cgc_Node *tail;
     unsigned int length;
 };

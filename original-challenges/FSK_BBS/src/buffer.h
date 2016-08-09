@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,28 +27,28 @@
 #include <stdlib.h>
 
 typedef struct {
-    uint64_t read_idx;
-    uint64_t write_idx;
-    uint8_t *buffer;
-    size_t length;
-} buffer_t;
+    cgc_uint64_t read_idx;
+    cgc_uint64_t write_idx;
+    cgc_uint8_t *buffer;
+    cgc_size_t length;
+} cgc_buffer_t;
 
 // read functions
-int buffer_read_bit(buffer_t *);
-unsigned int buffer_read_bits(buffer_t *, unsigned int count);
-void buffer_read_bytes(buffer_t *, uint8_t *, size_t);
+int cgc_buffer_read_bit(cgc_buffer_t *);
+unsigned int cgc_buffer_read_bits(cgc_buffer_t *, unsigned int count);
+void cgc_buffer_read_bytes(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
 
 // write functions
-void buffer_write_bit(buffer_t *, int value);
-void buffer_write_bits(buffer_t *, unsigned int value, unsigned int count);
-void buffer_write_bytes(buffer_t *, uint8_t *, size_t);
+void cgc_buffer_write_bit(cgc_buffer_t *, int value);
+void cgc_buffer_write_bits(cgc_buffer_t *, unsigned int value, unsigned int count);
+void cgc_buffer_write_bytes(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
 
 // misc functions
-void buffer_init(buffer_t *, uint8_t *, size_t);
-uint64_t buffer_read_remaining(buffer_t *);
-uint64_t buffer_read_tell(buffer_t *);
-void buffer_read_seek(buffer_t *, uint64_t);
-uint64_t buffer_write_tell(buffer_t *);
-void buffer_write_seek(buffer_t *, uint64_t);
+void cgc_buffer_init(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
+cgc_uint64_t cgc_buffer_read_remaining(cgc_buffer_t *);
+cgc_uint64_t cgc_buffer_read_tell(cgc_buffer_t *);
+void cgc_buffer_read_seek(cgc_buffer_t *, cgc_uint64_t);
+cgc_uint64_t cgc_buffer_write_tell(cgc_buffer_t *);
+void cgc_buffer_write_seek(cgc_buffer_t *, cgc_uint64_t);
 
 #endif /* !BUFFER_H_ */

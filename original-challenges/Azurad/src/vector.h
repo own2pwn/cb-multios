@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -23,38 +23,38 @@
 #pragma once
 
 #include <cstdlib.h>
-#include <new.h>
+
 
 namespace std
 {
     template <typename T>
-    T* addressof(T& ref)
+    T* cgc_addressof(T& ref)
     {
         return reinterpret_cast<T*>(&reinterpret_cast<char&>(ref));
     }
 };
 
 template <class T>
-class vector
+class cgc_vector
 {
 public:
-    vector() : size(0), allocated(0), items(nullptr) {};
-    vector(unsigned int initial)
+    cgc_vector() : cgc_size(0), allocated(0), items(nullptr) {};
+    cgc_vector(unsigned int initial)
     {
-        enlarge(initial);
+        cgc_enlarge(initial);
     }
-    vector(const vector &other)
+    cgc_vector(const cgc_vector &other)
     {
-        size = other.size;
-        allocated = other.size;
-        if (size)
+        cgc_size = other.cgc_size;
+        allocated = other.cgc_size;
+        if (cgc_size)
         {
-            items = (T *)malloc(sizeof(T) * size);
-            for (unsigned int i = 0; i < size; i++)
+            items = (T *)cgc_malloc(sizeof(T) * cgc_size);
+            for (unsigned int i = 0; i < cgc_size; i++)
                 items[i] = other.items[i];
         }
     }
-    ~vector()
+    ~cgc_vector()
     {
         for (unsigned int i = 0; i < allocated; i++)
         {
@@ -62,89 +62,92 @@ public:
         }
         if (allocated)
         {
-            free(items);
+            cgc_free(items);
             items = nullptr;
         }
     }
 
-    vector(vector &&) = delete;
-    vector& operator=(const vector& other)
+    cgc_vector(cgc_vector &&) = delete;
+    cgc_vector& operator=(const cgc_vector& other)
     {
-        size = other.size;
-        allocated = other.size;
-        if (size)
+        cgc_size = other.cgc_size;
+        allocated = other.cgc_size;
+        if (cgc_size)
         {
-            items = (T *)malloc(sizeof(T) * size);
-            for (unsigned int i = 0; i < size; i++)
+            items = (T *)cgc_malloc(sizeof(T) * cgc_size);
+            for (unsigned int i = 0; i < cgc_size; i++)
                 items[i] = other.items[i];
         }
         return *this;
     }
 
-    unsigned int length() const
+    unsigned int cgc_length() const
     {
-        return size;
+        return cgc_size;
     }
 
     T& operator[] (unsigned int i)
     {
-        if (i >= size)
-            exit(1);
+        if (i >= cgc_size)
+            cgc_exit(1);
         return items[i];
     }
 
     const T& operator[] (unsigned int i) const
     {
-        if (i >= size)
-            exit(1);
+        if (i >= cgc_size)
+            cgc_exit(1);
         return items[i];
     }
 
-    void push_back(const T& item)
+    void cgc_push_back(const T& item)
     {
-        if (size == allocated)
-            enlarge(allocated == 0 ? 8 : allocated * 2);
-        items[size++] = item;
+        if (cgc_size == allocated)
+            cgc_enlarge(allocated == 0 ? 8 : allocated * 2);
+        items[cgc_size++] = item;
     }
 
-    void enlarge(unsigned int length)
+    void cgc_enlarge(unsigned int cgc_length)
     {
-        if (length > allocated)
+        if (cgc_length > allocated)
         {
-            items = (T *)realloc(items, sizeof(T) * length);
+            items = (T *)cgc_realloc(items, sizeof(T) * cgc_length);
             if (items == nullptr)
-                exit(1);
+                cgc_exit(1);
 
-            T *start = std::addressof(items[allocated]);
-            T *end = std::addressof(items[length]);
-            while (start < end)
+            T *start = std::cgc_addressof(items[allocated]);
+            T *cgc_end = std::cgc_addressof(items[cgc_length]);
+            while (start < cgc_end)
             {
-                new (start++) T();
+                T *tmp = new T();
+cgc_memcpy(start++, tmp, sizeof(T));
+delete tmp;
+
             }
 
-            allocated = length;
+            allocated = cgc_length;
         }
     }
 
-    void resize(unsigned int length)
+    void cgc_resize(unsigned int cgc_length)
     {
-        enlarge(length);
+        cgc_enlarge(cgc_length);
 
-        if (size < length)
+        if (cgc_size < cgc_length)
         {
-            // items are already set to default values
-            size = length;
+            // items are already cgc_set to default values
+            cgc_size = cgc_length;
         }
         else
         {
             // clear items
-            for (unsigned int i = length; i < size; i++)
+            for (unsigned int i = cgc_length; i < cgc_size; i++)
                 items[i] = T();
-            size = length;
+            cgc_size = cgc_length;
         }
     }
 private:
-    unsigned int size;
+    unsigned int cgc_size;
     unsigned int allocated;
     T *items;
 };

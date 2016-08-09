@@ -40,7 +40,7 @@ extern "C"
 #include "databasefs.h"
 #include "networkfs.h"
 
-int strcmp_unsigned( const unsigned char *s1, const unsigned char *s2 )
+int cgc_strcmp_unsigned( const unsigned char *s1, const unsigned char *s2 )
 {
 	if (s1 && !s2) {
                 return(1);
@@ -71,13 +71,13 @@ int strcmp_unsigned( const unsigned char *s1, const unsigned char *s2 )
         return(0);	
 }
 
-CNetworkFS::CNetworkFS( CTimeGen *pTimeGen )
+cgc_CNetworkFS::cgc_CNetworkFS( cgc_CTimeGen *pTimeGen )
 	: m_pFS( NULL ), m_pComms( NULL ), m_pTimeGen( pTimeGen ), m_maxFiles( DEFAULT_MAX_FILES )
 {
 
 }
 
-CNetworkFS::~CNetworkFS( )
+cgc_CNetworkFS::~cgc_CNetworkFS( )
 {
 	if ( m_pFS )
 		delete m_pFS;
@@ -85,7 +85,7 @@ CNetworkFS::~CNetworkFS( )
 	m_pFS = NULL;
 }
 
-bool CNetworkFS::Init( CNetworkComm *pComms, uint32_t maxFiles )
+bool cgc_CNetworkFS::cgc_Init( cgc_CNetworkComm *pComms, cgc_uint32_t maxFiles )
 {
 	if ( pComms == NULL )
 		return (false);
@@ -101,21 +101,21 @@ bool CNetworkFS::Init( CNetworkComm *pComms, uint32_t maxFiles )
 
 	m_maxFiles = maxFiles;
 
-	m_pFS = new CDBFS( m_pTimeGen );
+	m_pFS = new cgc_CDBFS( m_pTimeGen );
 
-	m_pFS->Init( "rootpasswd", maxFiles );
-	m_pFS->AddFileAsRoot( "passwd", (uint8_t*)"root:rootpasswd", 15 );
+	m_pFS->cgc_Init( "rootpasswd", maxFiles );
+	m_pFS->cgc_AddFileAsRoot( "passwd", (cgc_uint8_t*)"root:rootpasswd", 15 );
 
 	return (true);
 }
 
-bool CNetworkFS::Run( void )
+bool cgc_CNetworkFS::cgc_Run( void )
 {
 	bool bDone = false;
 
 	if ( !m_pComms )
 	{
-		SetError( "No comms available!" );
+		cgc_SetError( "No comms available!" );
 		return (false);
 	}
 
@@ -124,9 +124,9 @@ bool CNetworkFS::Run( void )
 		// Receive Loop
 		
 		// Read request
-		tRequestHeader oRequestHdr;
+		cgc_tRequestHeader oRequestHdr;
 
-		if ( m_pComms->RecvData( (uint8_t*)&oRequestHdr, sizeof(oRequestHdr) ) != sizeof(oRequestHdr) )
+		if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oRequestHdr, sizeof(oRequestHdr) ) != sizeof(oRequestHdr) )
 		{
 			// Exit if no data received
 			return (true);
@@ -135,70 +135,70 @@ bool CNetworkFS::Run( void )
 		switch( oRequestHdr.requestType )
 		{
 		case REQUEST_CFS_LOGIN:
-			HandleCFSLogin();
+			cgc_HandleCFSLogin();
 			break;
 
 		case REQUEST_CFS_DIR:
-			HandleCFSDir();
+			cgc_HandleCFSDir();
 			break;
 	
 		case REQUEST_CFS_READ:
-			HandleCFSRead();
+			cgc_HandleCFSRead();
 			break;
 	
 		case REQUEST_CFS_WRITE:
-			HandleCFSWrite();
+			cgc_HandleCFSWrite();
 			break;
 
 		case REQUEST_CFS_WRITE_APPEND:
-			HandleCFSWriteAppend();
+			cgc_HandleCFSWriteAppend();
 			break;
 
 		case REQUEST_CFS_DEL:
-			HandleCFSDel();
+			cgc_HandleCFSDel();
 			break;
 
 		case REQUEST_CFS_RENAME:
-			HandleCFSRename();
+			cgc_HandleCFSRename();
 			break;
 
 		default:
-			SetError( "Unknown request type!" );
+			cgc_SetError( "Unknown request type!" );
 			break;
 		}
 
-		if ( HasError() )
+		if ( cgc_HasError() )
 			return (false);
 	}
 
 	return (false);
 }
 
-void CNetworkFS::SetError( const char *pszError )
+void cgc_CNetworkFS::cgc_SetError( const char *pszError )
 {
 	m_sErrorText = pszError;
 	m_bError = true;
 }
 
-void CNetworkFS::HandleCFSLogin( void )
+void cgc_CNetworkFS::cgc_HandleCFSLogin( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_LOGIN_STRUCT
+	typedef struct cgc_REQUEST_CFS_LOGIN_STRUCT
 	{
-		uint8_t usernameLen;
-		uint8_t passwordLen;
-	} __attribute__((packed)) tRequestCFSLogin;
+		cgc_uint8_t usernameLen;
+		cgc_uint8_t passwordLen;
+	} __attribute__((packed)) cgc_tRequestCFSLogin;
 
-	tRequestCFSLogin oLoginHdr;
+	cgc_tRequestCFSLogin oLoginHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oLoginHdr, sizeof(oLoginHdr) ) != sizeof(oLoginHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oLoginHdr, sizeof(oLoginHdr) ) != sizeof(oLoginHdr) )
 	{
-		SetError( "Login read error" );
+		cgc_SetError( "cgc_Login read error" );
 		return;
 	}
 
@@ -206,97 +206,97 @@ void CNetworkFS::HandleCFSLogin( void )
 	char *pszUsername = new char[oLoginHdr.usernameLen+1];
 	char *pszPassword = new char[oLoginHdr.passwordLen+1];
 
-	if ( m_pComms->RecvData( (uint8_t*)pszUsername, oLoginHdr.usernameLen ) != oLoginHdr.usernameLen )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszUsername, oLoginHdr.usernameLen ) != oLoginHdr.usernameLen )
 	{
 		delete pszUsername;
 		delete pszPassword;
 
-		SetError( "Login read error" );
+		cgc_SetError( "cgc_Login read error" );
 		return;
 	}
 
 	pszUsername[oLoginHdr.usernameLen] = '\0';
 
-	if ( m_pComms->RecvData( (uint8_t*)pszPassword, oLoginHdr.passwordLen ) != oLoginHdr.passwordLen )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszPassword, oLoginHdr.passwordLen ) != oLoginHdr.passwordLen )
 	{
 		delete pszUsername;
 		delete pszPassword;
 
-		SetError( "Login read error" );
+		cgc_SetError( "cgc_Login read error" );
 		return;
 	}
 
 	pszPassword[oLoginHdr.passwordLen] = '\0';
 
-	CUtil::String sUsername = pszUsername;
-	CUtil::String sPassword = pszPassword;
+	CUtil::cgc_String sUsername = pszUsername;
+	CUtil::cgc_String sPassword = pszPassword;
 
 	delete pszUsername;
 	delete pszPassword;
 	
 	// Validate login!
-	bool bLoginValid = m_pFS->SetUser( sUsername, sPassword );
+	bool bLoginValid = m_pFS->cgc_SetUser( sUsername, sPassword );
 
 	if ( !bLoginValid )
 	{
-		// Login invalid!!
-		SendResponse( REQUEST_CFS_LOGIN, RESPONSE_LOGIN_FAILED, NULL, 0 );
+		// cgc_Login invalid!!
+		cgc_SendResponse( REQUEST_CFS_LOGIN, RESPONSE_LOGIN_FAILED, NULL, 0 );
 		
 		return;
 	}
 
-	// Login succeeded
-	SendResponse( REQUEST_CFS_LOGIN, RESPONSE_SUCCESS, NULL, 0 );
+	// cgc_Login succeeded
+	cgc_SendResponse( REQUEST_CFS_LOGIN, RESPONSE_SUCCESS, NULL, 0 );
 }
 
-void CNetworkFS::HandleCFSDir( void )
+void cgc_CNetworkFS::cgc_HandleCFSDir( void )
 {
 	// Directory listing	
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	uint32_t dataSize = 512;
+	cgc_uint32_t dataSize = 512;
 
-	CUtil::DLL_LIST( CTempFileList, m_oLink ) oSortedList;
+	CUtil::DLL_LIST( cgc_CTempFileList, m_oLink ) oSortedList;
 
-	CDBFile *pFile;
-	for ( pFile = m_pFS->ListFileFirst( ); pFile; pFile = m_pFS->ListFileNext( pFile ) )
+	cgc_CDBFile *pFile;
+	for ( pFile = m_pFS->cgc_ListFileFirst( ); pFile; pFile = m_pFS->cgc_ListFileNext( pFile ) )
 	{
-		if ( pFile->GetName().GetLength() > 32 )
-			dataSize += pFile->GetName().GetLength();
+		if ( pFile->cgc_GetName().cgc_GetLength() > 32 )
+			dataSize += pFile->cgc_GetName().cgc_GetLength();
 		else
 			dataSize += 32;
 
-		if ( pFile->GetOwner().GetLength() > 32 )
-			dataSize += pFile->GetOwner().GetLength();	
+		if ( pFile->cgc_GetOwner().cgc_GetLength() > 32 )
+			dataSize += pFile->cgc_GetOwner().cgc_GetLength();	
 		else
 			dataSize += 32;
 
 		// Create sorted list
-		if ( oSortedList.IsEmpty() )
-			oSortedList.AddLast( new CTempFileList( pFile ) );
+		if ( oSortedList.cgc_IsEmpty() )
+			oSortedList.cgc_AddLast( new cgc_CTempFileList( pFile ) );
 		else
 		{
 			// Find the right location
-			CTempFileList *pPrevFile = NULL;
-			CTempFileList *pCurFile = NULL;
-			for ( pCurFile = oSortedList.GetFirst(); pCurFile; pCurFile = oSortedList.GetNext( pCurFile ) )
+			cgc_CTempFileList *pPrevFile = NULL;
+			cgc_CTempFileList *pCurFile = NULL;
+			for ( pCurFile = oSortedList.cgc_GetFirst(); pCurFile; pCurFile = oSortedList.cgc_GetNext( pCurFile ) )
 			{
-				if ( strcmp_unsigned( (unsigned char *)pFile->GetName().c_str(), (unsigned char *)pCurFile->m_pFile->GetName().c_str() ) < 0 )
+				if ( cgc_strcmp_unsigned( (unsigned char *)pFile->cgc_GetName().cgc_c_str(), (unsigned char *)pCurFile->m_pFile->cgc_GetName().cgc_c_str() ) < 0 )
 					break;
 
 				pPrevFile = pCurFile;
 			}
 	
 			if ( pPrevFile == NULL )
-				oSortedList.AddFirst( new CTempFileList( pFile ) );
+				oSortedList.cgc_AddFirst( new cgc_CTempFileList( pFile ) );
 			else if ( pPrevFile == pCurFile )
-				oSortedList.AddLast( new CTempFileList( pFile ) );
+				oSortedList.cgc_AddLast( new cgc_CTempFileList( pFile ) );
 			else
-				oSortedList.AddAfter( pPrevFile, new CTempFileList( pFile ) );
+				oSortedList.cgc_AddAfter( pPrevFile, new cgc_CTempFileList( pFile ) );
 		}	
 
 		dataSize += 8;	// Size
@@ -306,20 +306,20 @@ void CNetworkFS::HandleCFSDir( void )
 	}
 
 	char *pszFileList = new char[dataSize];
-	uint32_t pos = 0;
+	cgc_uint32_t pos = 0;
 
-	pos += sprintf( pszFileList, "$-32s $-32s $-8s $-4s $-10s\n", "Filename", "Owner", "Size", "Mode", "Timestamp" );
+	pos += cgc_sprintf( pszFileList, "$-32s $-32s $-8s $-4s $-10s\n", "Filename", "Owner", "Size", "Mode", "Timestamp" );
 
-	uint32_t sendSize = 0;	
+	cgc_uint32_t sendSize = 0;	
 	
-	CTempFileList *pFileList;	
-	for ( pFileList = oSortedList.GetFirst(); pFileList; pFileList = oSortedList.GetNext( pFileList ) )	
+	cgc_CTempFileList *pFileList;	
+	for ( pFileList = oSortedList.cgc_GetFirst(); pFileList; pFileList = oSortedList.cgc_GetNext( pFileList ) )	
 	{
 		pFile = pFileList->m_pFile;
 
 		char modeStr[6] = "----";
 
-		uint8_t modeBits = pFile->GetModeBits();
+		cgc_uint8_t modeBits = pFile->cgc_GetModeBits();
 
 		if ( modeBits & FS_MODE_OWNER_READ )
 			modeStr[0] = 'r';
@@ -333,177 +333,177 @@ void CNetworkFS::HandleCFSDir( void )
 		if ( modeBits & FS_MODE_OTHER_WRITE )
 			modeStr[3] = 'w';
 
-		pos += sprintf( pszFileList+pos, "$-32s $-32s $-8d $-4s $-10d\n", pFile->GetName().c_str(), pFile->GetOwner().c_str(), pFile->GetFileSize(), modeStr, pFile->GetAccessTime() );
+		pos += cgc_sprintf( pszFileList+pos, "$-32s $-32s $-8d $-4s $-10d\n", pFile->cgc_GetName().cgc_c_str(), pFile->cgc_GetOwner().cgc_c_str(), pFile->cgc_GetFileSize(), modeStr, pFile->cgc_GetAccessTime() );
 	}
 
 	// Delete all the temporary storage holders
-	oSortedList.DeleteAll();
+	oSortedList.cgc_DeleteAll();
 
 	// Send pos worth of data for response
-	SendResponse( REQUEST_CFS_DIR, RESPONSE_SUCCESS, (uint8_t*)pszFileList, pos );
+	cgc_SendResponse( REQUEST_CFS_DIR, RESPONSE_SUCCESS, (cgc_uint8_t*)pszFileList, pos );
 
 	delete pszFileList;
 }
 
-void CNetworkFS::HandleCFSRead( void )
+void cgc_CNetworkFS::cgc_HandleCFSRead( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_READ_STRUCT
+	typedef struct cgc_REQUEST_CFS_READ_STRUCT
 	{
-		uint32_t fileOffset;
-		uint16_t readLength;
-		uint8_t fileNameLength;
-	} __attribute__((packed)) tRequestCFSRead;
+		cgc_uint32_t fileOffset;
+		cgc_uint16_t readLength;
+		cgc_uint8_t fileNameLength;
+	} __attribute__((packed)) cgc_tRequestCFSRead;
 
-	tRequestCFSRead oReadHdr;
+	cgc_tRequestCFSRead oReadHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oReadHdr, sizeof(oReadHdr) ) != sizeof(oReadHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oReadHdr, sizeof(oReadHdr) ) != sizeof(oReadHdr) )
 	{
-		SetError( "Read read error" );
+		cgc_SetError( "Read read error" );
 		return;
 	}
 
 	char *pszFilename = new char[oReadHdr.fileNameLength+1];
 
 	// Read in filename
-	if ( m_pComms->RecvData( (uint8_t*)pszFilename, oReadHdr.fileNameLength ) != oReadHdr.fileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszFilename, oReadHdr.fileNameLength ) != oReadHdr.fileNameLength )
 	{
 		delete pszFilename;
 
-		SetError( "Read read error" );
+		cgc_SetError( "Read read error" );
 		return;
 	}
 
 	pszFilename[oReadHdr.fileNameLength] = '\0';
 
-	CUtil::String sFilename = pszFilename;
+	CUtil::cgc_String sFilename = pszFilename;
 	delete pszFilename;
 
 	// Open file
-	CDBFSOpenFile *pFP = m_pFS->OpenFile( sFilename, "r" );
+	cgc_CDBFSOpenFile *pFP = m_pFS->cgc_OpenFile( sFilename, "r" );
 
 	if ( !pFP )
 	{
-		SendResponse( REQUEST_CFS_READ, RESPONSE_INVALID_FILE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_READ, RESPONSE_INVALID_FILE, NULL, 0 );
 
 		return;
 	}
 
 	// Seek
-	if ( m_pFS->FileSeek( pFP, oReadHdr.fileOffset, SEEK_SET ) != 0 )
+	if ( m_pFS->cgc_FileSeek( pFP, oReadHdr.fileOffset, SEEK_SET ) != 0 )
 	{
-		SendResponse( REQUEST_CFS_READ, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_READ, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
 
 		return;
 	}
 
 	// Read
 	// Allocate send buffer
-	uint8_t *pReadData = new uint8_t[ oReadHdr.readLength ];
+	cgc_uint8_t *pReadData = new cgc_uint8_t[ oReadHdr.readLength ];
 
-	if ( m_pFS->FileRead( pReadData, oReadHdr.readLength, 1, pFP ) == 0 )
+	if ( m_pFS->cgc_FileRead( pReadData, oReadHdr.readLength, 1, pFP ) == 0 )
 	{
 		// Read failure
 		delete pReadData;
 
-		SendResponse( REQUEST_CFS_READ, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_READ, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
 
 		return;
 	}
 
 	// Close file
-	m_pFS->CloseFile( pFP );
+	m_pFS->cgc_CloseFile( pFP );
 	pFP = NULL;
 
-	SendResponse( REQUEST_CFS_READ, RESPONSE_SUCCESS, pReadData, oReadHdr.readLength );
+	cgc_SendResponse( REQUEST_CFS_READ, RESPONSE_SUCCESS, pReadData, oReadHdr.readLength );
 
 	return;
 }
 
-void CNetworkFS::HandleCFSWrite( void )
+void cgc_CNetworkFS::cgc_HandleCFSWrite( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_WRITE_STRUCT
+	typedef struct cgc_REQUEST_CFS_WRITE_STRUCT
 	{
-		uint16_t writeLength;
-		uint8_t fileNameLength;
-	} __attribute__((packed)) tRequestCFSWrite;
+		cgc_uint16_t writeLength;
+		cgc_uint8_t fileNameLength;
+	} __attribute__((packed)) cgc_tRequestCFSWrite;
 
-	tRequestCFSWrite oWriteHdr;
+	cgc_tRequestCFSWrite oWriteHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oWriteHdr, sizeof(oWriteHdr) ) != sizeof(oWriteHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oWriteHdr, sizeof(oWriteHdr) ) != sizeof(oWriteHdr) )
 	{
-		SetError( "Write read error" );
+		cgc_SetError( "Write read error" );
 		return;
 	}
 
 	char *pszFilename = new char[oWriteHdr.fileNameLength+1];
-	uint8_t *pData = new uint8_t[oWriteHdr.writeLength];
+	cgc_uint8_t *pData = new cgc_uint8_t[oWriteHdr.writeLength];
 
 	// Read in filename
-	if ( m_pComms->RecvData( (uint8_t*)pszFilename, oWriteHdr.fileNameLength ) != oWriteHdr.fileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszFilename, oWriteHdr.fileNameLength ) != oWriteHdr.fileNameLength )
 	{
 		delete pszFilename;
 		delete pData;
 
-		SetError( "Write read error" );
+		cgc_SetError( "Write read error" );
 		return;
 	}
 
 	pszFilename[oWriteHdr.fileNameLength] = '\0';
 
-	if ( m_pComms->RecvData( pData, oWriteHdr.writeLength ) != oWriteHdr.writeLength )
+	if ( m_pComms->cgc_RecvData( pData, oWriteHdr.writeLength ) != oWriteHdr.writeLength )
 	{
 		delete pszFilename;
 		delete pData;
 
-		SetError( "Write read error" );
+		cgc_SetError( "Write read error" );
 		return;
 	}
 
-	CUtil::String sFilename = pszFilename;
+	CUtil::cgc_String sFilename = pszFilename;
 	delete pszFilename;
 
 	// Open file
-	CDBFSOpenFile *pFP = m_pFS->OpenFile( sFilename, "w" );
+	cgc_CDBFSOpenFile *pFP = m_pFS->cgc_OpenFile( sFilename, "w" );
 
 	if ( !pFP )
 	{
 		delete pData;
 
-		SendResponse( REQUEST_CFS_WRITE, RESPONSE_INVALID_FILE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_WRITE, RESPONSE_INVALID_FILE, NULL, 0 );
 
 		return;
 	}
 
 	// Seek
-	if ( m_pFS->FileSeek( pFP, 0, SEEK_SET ) != 0 )
+	if ( m_pFS->cgc_FileSeek( pFP, 0, SEEK_SET ) != 0 )
 	{
 		delete pData;
 
-		SendResponse( REQUEST_CFS_WRITE, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_WRITE, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
 
 		return;
 	}
 
 	// Write
 	// Send buffer
-	if ( m_pFS->FileWrite( pData, oWriteHdr.writeLength, 1, pFP ) == 0 )
+	if ( m_pFS->cgc_FileWrite( pData, oWriteHdr.writeLength, 1, pFP ) == 0 )
 	{
 		// Write failure
 		delete pData;
 
-		SendResponse( REQUEST_CFS_WRITE, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_WRITE, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
 
 		return;
 	}
@@ -512,83 +512,83 @@ void CNetworkFS::HandleCFSWrite( void )
 	delete pData;
 
 	// Close file
-	m_pFS->CloseFile( pFP );
+	m_pFS->cgc_CloseFile( pFP );
 	pFP = NULL;
 
-	SendResponse( REQUEST_CFS_WRITE, RESPONSE_SUCCESS, NULL, 0 );
+	cgc_SendResponse( REQUEST_CFS_WRITE, RESPONSE_SUCCESS, NULL, 0 );
 
 	return;
 }
 
-void CNetworkFS::HandleCFSWriteAppend( void )
+void cgc_CNetworkFS::cgc_HandleCFSWriteAppend( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_WRITE_APPEND_STRUCT
+	typedef struct cgc_REQUEST_CFS_WRITE_APPEND_STRUCT
 	{
-		uint16_t dataLen;
-		uint8_t fileNameLength;
-	} __attribute__((packed)) tRequestCFSWriteAppend;
+		cgc_uint16_t dataLen;
+		cgc_uint8_t fileNameLength;
+	} __attribute__((packed)) cgc_tRequestCFSWriteAppend;
 
-	tRequestCFSWriteAppend oWriteAppendHdr;
+	cgc_tRequestCFSWriteAppend oWriteAppendHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oWriteAppendHdr, sizeof(oWriteAppendHdr) ) != sizeof(oWriteAppendHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oWriteAppendHdr, sizeof(oWriteAppendHdr) ) != sizeof(oWriteAppendHdr) )
 	{
-		SetError( "Write append read error" );
+		cgc_SetError( "Write append read error" );
 		return;
 	}
 
-	uint8_t *pData = new uint8_t[oWriteAppendHdr.dataLen];
+	cgc_uint8_t *pData = new cgc_uint8_t[oWriteAppendHdr.dataLen];
 	char *pszFilename = new char[oWriteAppendHdr.fileNameLength+1];
 
 	// Read in filename
-	if ( m_pComms->RecvData( (uint8_t*)pszFilename, oWriteAppendHdr.fileNameLength ) != oWriteAppendHdr.fileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszFilename, oWriteAppendHdr.fileNameLength ) != oWriteAppendHdr.fileNameLength )
 	{
 		delete pData;
 		delete pszFilename;
 
-		SetError( "Write append read error" );
+		cgc_SetError( "Write append read error" );
 		return;
 	}
 
 	pszFilename[oWriteAppendHdr.fileNameLength] = '\0';
 
 	// Read data
-	if ( m_pComms->RecvData( pData, oWriteAppendHdr.dataLen ) != oWriteAppendHdr.dataLen )
+	if ( m_pComms->cgc_RecvData( pData, oWriteAppendHdr.dataLen ) != oWriteAppendHdr.dataLen )
 	{
 		delete pData;
 		delete pszFilename;
 
-		SetError( "Write append read error" );
+		cgc_SetError( "Write append read error" );
 		return;
 	}
 
-	CUtil::String sFilename = pszFilename;
+	CUtil::cgc_String sFilename = pszFilename;
 	delete pszFilename;
 
 	// Open file (in append mode)
-	CDBFSOpenFile *pFP = m_pFS->OpenFile( sFilename, "a" );
+	cgc_CDBFSOpenFile *pFP = m_pFS->cgc_OpenFile( sFilename, "a" );
 
 	if ( !pFP )
 	{
 		delete pData;
 
-		SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_INVALID_FILE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_INVALID_FILE, NULL, 0 );
 
 		return;
 	}
 
 	// Write
-	if ( m_pFS->FileWrite( pData, oWriteAppendHdr.dataLen, 1, pFP ) == 0 )
+	if ( m_pFS->cgc_FileWrite( pData, oWriteAppendHdr.dataLen, 1, pFP ) == 0 )
 	{
 		// Write failure
 		delete pData;
 
-		SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_SYSTEM_FAILURE, NULL, 0 );
 
 		return;
 	}
@@ -597,78 +597,78 @@ void CNetworkFS::HandleCFSWriteAppend( void )
 	delete pData;
 
 	// Close file
-	m_pFS->CloseFile( pFP );
+	m_pFS->cgc_CloseFile( pFP );
 	pFP = NULL;
 
-	SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_SUCCESS, NULL, 0 );
+	cgc_SendResponse( REQUEST_CFS_WRITE_APPEND, RESPONSE_SUCCESS, NULL, 0 );
 }
 
-void CNetworkFS::HandleCFSDel( void )
+void cgc_CNetworkFS::cgc_HandleCFSDel( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_DELETE_STRUCT
+	typedef struct cgc_REQUEST_CFS_DELETE_STRUCT
 	{
-		uint8_t fileNameLength;
-	} __attribute__((packed)) tRequestCFSDelete;
+		cgc_uint8_t fileNameLength;
+	} __attribute__((packed)) cgc_tRequestCFSDelete;
 
-	tRequestCFSDelete oDeleteHdr;
+	cgc_tRequestCFSDelete oDeleteHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oDeleteHdr, sizeof(oDeleteHdr) ) != sizeof(oDeleteHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oDeleteHdr, sizeof(oDeleteHdr) ) != sizeof(oDeleteHdr) )
 	{
-		SetError( "Delete read error" );
+		cgc_SetError( "Delete read error" );
 		return;
 	}
 
 	char *pszFilename = new char[oDeleteHdr.fileNameLength+1];
 
 	// Read in filename
-	if ( m_pComms->RecvData( (uint8_t*)pszFilename, oDeleteHdr.fileNameLength ) != oDeleteHdr.fileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszFilename, oDeleteHdr.fileNameLength ) != oDeleteHdr.fileNameLength )
 	{
 		delete pszFilename;
 
-		SetError( "Delete read error" );
+		cgc_SetError( "Delete read error" );
 		return;
 	}
 
 	pszFilename[oDeleteHdr.fileNameLength] = '\0';
 
-	CUtil::String sFilename = pszFilename;
+	CUtil::cgc_String sFilename = pszFilename;
 	delete pszFilename;
 
-	if ( !m_pFS->DeleteFile( sFilename ) )
+	if ( !m_pFS->cgc_DeleteFile( sFilename ) )
 	{
-		SendResponse( REQUEST_CFS_DEL, RESPONSE_DELETE_FAILED, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_DEL, RESPONSE_DELETE_FAILED, NULL, 0 );
 
 		return;
 	}
 	
-	SendResponse( REQUEST_CFS_DEL, RESPONSE_SUCCESS, NULL, 0 );
+	cgc_SendResponse( REQUEST_CFS_DEL, RESPONSE_SUCCESS, NULL, 0 );
 }
 
-void CNetworkFS::HandleCFSRename( void )
+void cgc_CNetworkFS::cgc_HandleCFSRename( void )
 {
 	if ( !m_pFS )
 	{
-		SetError( "No file system" );
+		cgc_SetError( "No file system" );
 		return;
 	}
 
-	typedef struct REQUEST_CFS_RENAME_STRUCT
+	typedef struct cgc_REQUEST_CFS_RENAME_STRUCT
 	{
-		uint8_t origFileNameLength;
-		uint8_t newFileNameLength;
-	} __attribute__((packed)) tRequestCFSRename;
+		cgc_uint8_t origFileNameLength;
+		cgc_uint8_t newFileNameLength;
+	} __attribute__((packed)) cgc_tRequestCFSRename;
 
-	tRequestCFSRename oRenameHdr;
+	cgc_tRequestCFSRename oRenameHdr;
 
-	if ( m_pComms->RecvData( (uint8_t*)&oRenameHdr, sizeof(oRenameHdr) ) != sizeof(oRenameHdr) )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)&oRenameHdr, sizeof(oRenameHdr) ) != sizeof(oRenameHdr) )
 	{
-		SetError( "Rename read error" );
+		cgc_SetError( "Rename read error" );
 		return;
 	}
 
@@ -676,57 +676,57 @@ void CNetworkFS::HandleCFSRename( void )
 	char *pszNewFilename = new char [oRenameHdr.newFileNameLength+1];
 
 	// Read in filename
-	if ( m_pComms->RecvData( (uint8_t*)pszOrigFilename, oRenameHdr.origFileNameLength ) != oRenameHdr.origFileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszOrigFilename, oRenameHdr.origFileNameLength ) != oRenameHdr.origFileNameLength )
 	{
 		delete pszOrigFilename;
 		delete pszNewFilename;
 
-		SetError( "Rename read error" );
+		cgc_SetError( "Rename read error" );
 		return;
 	}
 
 	pszOrigFilename[oRenameHdr.origFileNameLength] = '\0';
 
-	if ( m_pComms->RecvData( (uint8_t*)pszNewFilename, oRenameHdr.newFileNameLength ) != oRenameHdr.newFileNameLength )
+	if ( m_pComms->cgc_RecvData( (cgc_uint8_t*)pszNewFilename, oRenameHdr.newFileNameLength ) != oRenameHdr.newFileNameLength )
 	{
 		delete pszOrigFilename;
 		delete pszNewFilename;
 
-		SetError( "Rename read error" );
+		cgc_SetError( "Rename read error" );
 		return;
 	}
 
 	pszNewFilename[oRenameHdr.newFileNameLength] = '\0';
 
-	CUtil::String sOrigFilename = pszOrigFilename;
-	CUtil::String sNewFilename = pszNewFilename;
+	CUtil::cgc_String sOrigFilename = pszOrigFilename;
+	CUtil::cgc_String sNewFilename = pszNewFilename;
 
 	delete pszOrigFilename;
 	delete pszNewFilename;
 
-	if ( !m_pFS->RenameFile( sOrigFilename, sNewFilename ) )
+	if ( !m_pFS->cgc_RenameFile( sOrigFilename, sNewFilename ) )
 	{
-		SendResponse( REQUEST_CFS_RENAME, RESPONSE_RENAME_FAILED, NULL, 0 );
+		cgc_SendResponse( REQUEST_CFS_RENAME, RESPONSE_RENAME_FAILED, NULL, 0 );
 
 		return;
 	}
 	
-	SendResponse( REQUEST_CFS_RENAME, RESPONSE_SUCCESS, NULL, 0 );
+	cgc_SendResponse( REQUEST_CFS_RENAME, RESPONSE_SUCCESS, NULL, 0 );
 }
 
-void CNetworkFS::SendResponse( eRequestType requestType, eResponseType responseType, uint8_t *pResponseData, uint16_t responseLength )
+void cgc_CNetworkFS::cgc_SendResponse( cgc_eRequestType requestType, cgc_eResponseType responseType, cgc_uint8_t *pResponseData, cgc_uint16_t responseLength )
 {
-	tResponseHeader oResponseHdr;
+	cgc_tResponseHeader oResponseHdr;
 
 	oResponseHdr.responseType = requestType;
 	oResponseHdr.responseCode = responseType;
 	oResponseHdr.responseLength = responseLength;
 
 	// Create and send a resopnse -- include header and response data
-	m_pComms->SendData( (uint8_t*)&oResponseHdr, sizeof(oResponseHdr) );
+	m_pComms->cgc_SendData( (cgc_uint8_t*)&oResponseHdr, sizeof(oResponseHdr) );
 
 	if ( responseLength == 0 )
 		return;
 
-	m_pComms->SendData( (uint8_t*)pResponseData, responseLength );
+	m_pComms->cgc_SendData( (cgc_uint8_t*)pResponseData, responseLength );
 }

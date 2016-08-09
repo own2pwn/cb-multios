@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -41,21 +41,21 @@
 #define VERTICAL_STAR_BORDER "*"
 #define HORIZONTAL_STAR_BORDER '*'
 
-#define TEXT_TAG "text"
-#define LIST_TAG "list"
+#define TEXT_TAG "cgc_text"
+#define LIST_TAG "cgc_list"
 #define PARAGRAPH_TAG "pgraph"
-#define PAGE_TAG "page"
-#define DOCUMENT_TAG "document"
+#define PAGE_TAG "cgc_page"
+#define DOCUMENT_TAG "cgc_document"
 #define LENGTH_TAG "length"
 #define WIDTH_TAG "width"
-#define ELEMENT_TAG "element"
+#define ELEMENT_TAG "cgc_element"
 #define TYPE_TAG "type"
 #define COLUMN_TAG "column"
 #define ROWS_TAG "rows"
 #define FIELDS_TAG "fields"
 #define HEADER_TAG "header"
 #define FIELD_TAG "field"
-#define TABLE_TAG "table"
+#define TABLE_TAG "cgc_table"
 #define ROW_TAG "row"
 #define MACRO_TAG "macro"
 #define BORDER_TAG "border"
@@ -74,103 +74,103 @@ typedef struct {
 	char* name;
 	void* children;
 	void* next;
-} Object;
+} cgc_Object;
 
 typedef struct {
-	char* (*body)(void *macros, Object* object);
+	char* (*body)(void *macros, cgc_Object* object);
 	void* next;
 	char* name;
-} Macro;
+} cgc_Macro;
 
-char* FourByFourTable_Macro = "<document>\n"
+char* FourByFourTable_Macro = "<cgc_document>\n"
 							  "<macro>\n"
 							  "<4x4Table>\n"
-							  "<table>\n"
+							  "<cgc_table>\n"
 							  "<rows>\n"
 							  "4\n"
 							  "</rows>\n"
 							  "<fields>\n"
 							  "4\n"
    							  "</fields>\n"
-							  "</table>\n"
+							  "</cgc_table>\n"
 							  "</4x4Table>\n"
 							  "</macro>\n"
-							  "</document>\n";
+							  "</cgc_document>\n";
 
-char* FiveByFiveTable_Macro = "<document>\n"
+char* FiveByFiveTable_Macro = "<cgc_document>\n"
 							  "<macro>\n"
 							  "<5x5Table>\n"
-							  "<table>\n"
+							  "<cgc_table>\n"
 							  "<rows>\n"
 							  "5\n"
 							  "</rows>\n"
 							  "<fields>\n"
 							  "5\n"
    							  "</fields>\n"
-							  "</table>\n"
+							  "</cgc_table>\n"
 							  "</5x5Table>\n"
 							  "</macro>\n"
-							  "</document>\n";
+							  "</cgc_document>\n";
 
-char* AlphanumericOutline_Macro = "<document>\n"
+char* AlphanumericOutline_Macro = "<cgc_document>\n"
 							      "<macro>\n"
 							      "<Outline>\n"
-							      "<list>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "roman\n"
 							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "ALPHA\n"
 							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "numeral\n"
 							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "alpha\n"
 							      "</type>\n"
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</element>\n"					
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"					
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"
+							      "</cgc_list>\n"
 							      "</Outline>\n"
 							      "</macro>\n"
-							      "</document>\n";
+							      "</cgc_document>\n";
 
-char* BulletedOutline_Macro = "<document>\n"
+char* BulletedOutline_Macro = "<cgc_document>\n"
 							      "<macro>\n"
 							      "<Bulleted>\n"
-							      "<list>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "-\n"
 							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      ">\n"
 							      "</type>\n"
-							      "<element>\n"
-							      "<list>\n"
+							      "<cgc_element>\n"
+							      "<cgc_list>\n"
 							      "<type>\n"
 							      "+\n"
 							      "</type>\n"
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
-							      "</element>\n"					
-							      "</list>\n"
-							      "</element>\n"
-							      "</list>\n"
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"					
+							      "</cgc_list>\n"
+							      "</cgc_element>\n"
+							      "</cgc_list>\n"
 							      "</Bulleted>\n"
 							      "</macro>\n"
-							      "</document>\n";
+							      "</cgc_document>\n";

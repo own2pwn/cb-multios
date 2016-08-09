@@ -32,61 +32,61 @@ THE SOFTWARE.
 #define ECHO_MAX_LEN 80
 
 HANDLER(seed){
-  churn_item* replacement = (churn_item*)(extract_seed_req(frame));
-  churn_initialize(replacement);
-  send_empty_frame(SEED_RESP_ID);
+  cgc_churn_item* replacement = (cgc_churn_item*)(cgc_extract_seed_req(frame));
+  cgc_churn_initialize(replacement);
+  cgc_send_empty_frame(SEED_RESP_ID);
 }
 
 HANDLER(rand){
-  size_t byte_count = *(size_t*)(extract_rand_req(frame));
-  uint8* buf;
+  cgc_size_t byte_count = *(cgc_size_t*)(cgc_extract_rand_req(frame));
+  cgc_uint8* buf;
 
   if (allocate(byte_count, 0, (void**)(&buf))) {
     _terminate(-1);
   }
 
-  for (size_t i = 0; i < byte_count; i++) {
-    buf[i] = churn_rand_uint8();
+  for (cgc_size_t i = 0; i < byte_count; i++) {
+    buf[i] = cgc_churn_rand_uint8();
   }
 
-  protocol_frame template;
+  cgc_protocol_frame template;
   template.type = RAND_RESP_ID;
   template.length = byte_count;
 
-  protocol_frame* payload = allocate_frame(template);
+  cgc_protocol_frame* payload = cgc_allocate_frame(template);
   payload->value = (void*) buf;
 
-  send_frame(payload);
+  cgc_send_frame(payload);
 
-  free_frame(payload);
+  cgc_free_frame(payload);
   deallocate(buf, byte_count);
 }
 
 HANDLER(guess){
-  uint64 guess = *(uint64*)(extract_guess_req(frame));
-  uint64 actual = churn_rand_uint64();
+  cgc_uint64 guess = *(cgc_uint64*)(cgc_extract_guess_req(frame));
+  cgc_uint64 actual = cgc_churn_rand_uint64();
 
   if (guess != actual) _terminate(-1);
 
-  send_empty_frame(GUESS_RESP_ID);
+  cgc_send_empty_frame(GUESS_RESP_ID);
 }
 
 HANDLER(echo){
   char buf[ECHO_MAX_LEN + 2];
   void* meh;
-  protocol_frame* payload;
-  protocol_frame template;
+  cgc_protocol_frame* payload;
+  cgc_protocol_frame template;
 
   if (frame->length == 0) return;
 
-  char* data = (char*)(extract_echo_req(frame));
+  char* data = (char*)(cgc_extract_echo_req(frame));
 #ifdef PATCHED
   if (frame->length > ECHO_MAX_LEN) {
     _terminate(-1);
   }
 #endif
 
-  size_t i = 0;
+  cgc_size_t i = 0;
   while(1) {
     buf[i] = data[i];
     if (0 == data[i]) break;
@@ -99,12 +99,12 @@ HANDLER(echo){
   template.type = ECHO_RESP_ID;
   template.length = frame->length;
 
-  payload = allocate_frame(template);
+  payload = cgc_allocate_frame(template);
   meh = payload->value;
   payload->value = (void*) &buf;
 
-  send_frame(payload);
+  cgc_send_frame(payload);
   payload->value = meh;
 
-  free_frame(payload);
+  cgc_free_frame(payload);
 }

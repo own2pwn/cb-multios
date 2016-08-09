@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,38 +31,38 @@
 # 24 "src/main.c"
 # 1 "lib/libcgc.h" 1
 # 10 "lib/libcgc.h"
-typedef long unsigned int size_t;
-typedef long signed int ssize_t;
+typedef long unsigned int cgc_size_t;
+typedef long signed int cgc_ssize_t;
 
 
 
 
 
-typedef long int _fd_mask;
+typedef long int cgc__fd_mask;
 
 
 
 typedef struct {
- _fd_mask _fd_bits[1024 / (8 * sizeof(_fd_mask))];
-} fd_set;
+ cgc__fd_mask _fd_bits[1024 / (8 * sizeof(cgc__fd_mask))];
+} cgc_fd_set;
 # 38 "lib/libcgc.h"
-struct timeval {
+struct cgc_timeval {
  int tv_sec;
  int tv_usec;
 };
 # 50 "lib/libcgc.h"
 void _terminate(unsigned int status) __attribute__((__noreturn__));
-int transmit(int fd, const void *buf, size_t count, size_t *tx_bytes);
-int receive(int fd, void *buf, size_t count, size_t *rx_bytes);
-int fdwait(int nfds, fd_set *readfds, fd_set *writefds,
-    const struct timeval *timeout, int *readyfds);
-int allocate(size_t length, int is_X, void **addr);
-int deallocate(void *addr, size_t length);
-int random(void *buf, size_t count, size_t *rnd_bytes);
+int transmit(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
+int receive(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
+int cgc_fdwait(int nfds, cgc_fd_set *readfds, cgc_fd_set *writefds,
+    const struct cgc_timeval *timeout, int *readyfds);
+int allocate(cgc_size_t length, int is_X, void **addr);
+int deallocate(void *addr, cgc_size_t length);
+int cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes);
 
-typedef struct { long _b[8]; } jmp_buf[1];
-int setjmp(jmp_buf) __attribute__((__returns_twice__));
-void longjmp(jmp_buf, int) __attribute__((__noreturn__));
+typedef struct { long _b[8]; } cgc_jmp_buf[1];
+int setjmp(cgc_jmp_buf) __attribute__((__returns_twice__));
+void longjmp(cgc_jmp_buf, int) __attribute__((__noreturn__));
 
 float sinf(float); double sin(double); long double sinl(long double);
 float cosf(float); double cos(double); long double cosl(long double);
@@ -98,17 +98,17 @@ long double significandl(long double);
 
 
 
-int isdigit(int c);
-int isascii(int c);
-int isprint(int c);
-int isalnum(int c);
-int isalpha(int c);
-int islower(int c);
-int isupper(int c);
-int isspace(int c);
-int ispunct(int c);
-int tolower(int c);
-int toupper(int c);
+int cgc_isdigit(int c);
+int cgc_isascii(int c);
+int cgc_isprint(int c);
+int cgc_isalnum(int c);
+int cgc_isalpha(int c);
+int cgc_islower(int c);
+int cgc_isupper(int c);
+int cgc_isspace(int c);
+int cgc_ispunct(int c);
+int cgc_tolower(int c);
+int cgc_toupper(int c);
 # 26 "src/main.c" 2
 # 1 "lib/stdlib.h" 1
 
@@ -119,11 +119,11 @@ int toupper(int c);
 
 
 
-typedef __builtin_va_list __gnuc_va_list;
+typedef __builtin_va_list cgc___gnuc_va_list;
 
 
 
-typedef __gnuc_va_list va_list;
+typedef cgc___gnuc_va_list cgc_va_list;
 # 6 "lib/stdlib.h" 2
 # 1 "lib/stddef.h" 1
 
@@ -131,26 +131,26 @@ typedef __gnuc_va_list va_list;
 
 
 
-typedef long int ptrdiff_t;
+typedef long int cgc_ptrdiff_t;
 # 7 "lib/stdlib.h" 2
 
 
 
 
-extern int fdprintf(int fd, const char *fmt, ...);
-extern int sprintf(char *s, const char *fmt, ...);
+extern int cgc_fdprintf(int fd, const char *fmt, ...);
+extern int cgc_sprintf(char *s, const char *fmt, ...);
 
 
-long strtol(const char *str, char **endptr, int base);
-unsigned long strtoul(const char *str, char **endptr, int base);
+long cgc_strtol(const char *str, char **endptr, int base);
+unsigned long cgc_strtoul(const char *str, char **endptr, int base);
 
-extern void *malloc(size_t size);
-extern void *calloc(size_t nmemb, size_t size);
-extern void *realloc(void *ptr, size_t size);
-extern void free(void *ptr);
-extern size_t malloc_size(void *ptr);
+extern void *cgc_malloc(cgc_size_t size);
+extern void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size);
+extern void *cgc_realloc(void *ptr, cgc_size_t size);
+extern void cgc_free(void *ptr);
+extern cgc_size_t cgc_malloc_size(void *ptr);
 
-static void exit(int ret)
+static void cgc_exit(int ret)
 {
     _terminate(ret);
 }
@@ -161,41 +161,41 @@ static void exit(int ret)
 
 
 
-extern void *memcpy(void *dest, const void *src, size_t n);
-extern void *memmove(void *dest, const void *src, size_t n);
-extern void *memset(void *dest, int c, size_t n);
-extern int memcmp(void *s1, const void *s2, size_t n);
-extern void *memchr(const void *s, int c, size_t n);
+extern void *cgc_memcpy(void *dest, const void *src, cgc_size_t n);
+extern void *cgc_memmove(void *dest, const void *src, cgc_size_t n);
+extern void *cgc_memset(void *dest, int c, cgc_size_t n);
+extern int cgc_memcmp(void *s1, const void *s2, cgc_size_t n);
+extern void *cgc_memchr(const void *s, int c, cgc_size_t n);
 
-extern size_t strlen(const char *s);
-extern char *strcpy(char *dest, const char *src);
-extern char *strncpy(char *dest, const char *src, size_t n);
-extern char *strchr(const char *s, int c);
-extern char *strsep(char **stringp, const char *delim);
-extern int strcmp(const char *s1, const char *s2);
-extern int strncmp(const char *s1, const char *s2, size_t n);
-extern int strcasecmp(const char *s1, const char *s2);
-extern int strncasecmp(const char *s1, const char *s2, size_t n);
-extern char *strcat(char *dest, const char *src);
-extern char *strdup(const char *src);
+extern cgc_size_t cgc_strlen(const char *s);
+extern char *cgc_strcpy(char *dest, const char *src);
+extern char *cgc_strncpy(char *dest, const char *src, cgc_size_t n);
+extern char *cgc_strchr(const char *s, int c);
+extern char *cgc_strsep(char **stringp, const char *delim);
+extern int cgc_strcmp(const char *s1, const char *s2);
+extern int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n);
+extern int cgc_strcasecmp(const char *s1, const char *s2);
+extern int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n);
+extern char *cgc_strcat(char *dest, const char *src);
+extern char *cgc_strdup(const char *src);
 # 28 "src/main.c" 2
 
 # 1 "src/io.h" 1
 # 35 "src/io.h"
-int send_n_bytes(int fd, size_t n, char* buf);
-int read_n_bytes(int fd, size_t n, char* buf);
-int read_until(int fd, size_t n, char terminator, char* buf);
-int transmit_string(int fd, char* buf);
+int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf);
+int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf);
+int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf);
+int cgc_transmit_string(int fd, char* buf);
 # 30 "src/main.c" 2
-typedef struct thunk_t thunk_t;
-typedef struct list_t list_t;
-struct list_t
+typedef struct cgc_thunk_t cgc_thunk_t;
+typedef struct cgc_list_t cgc_list_t;
+struct cgc_list_t
 {
-  list_t *prev, *next;
-  thunk_t* thunk;
+  cgc_list_t *prev, *next;
+  cgc_thunk_t* thunk;
 };
 
-void remove_head_list(list_t** list);
+void cgc_remove_head_list(cgc_list_t** list);
 
 
 
@@ -203,60 +203,60 @@ void remove_head_list(list_t** list);
 
 
 
-typedef struct note_t note_t;
-struct note_t
+typedef struct cgc_note_t cgc_note_t;
+struct cgc_note_t
 {
-  size_t size;
-  size_t cap;
+  cgc_size_t size;
+  cgc_size_t cap;
   char* buf;
   char* title;
 };
 
 
-note_t* note_store[(512)] = {0};
+cgc_note_t* note_store[(512)] = {0};
 
-note_t* get_note(char* title)
+cgc_note_t* cgc_get_note(char* title)
 {
-  for(size_t i = 0; i < (512); i++)
-    if (note_store[i] && strcmp(title, note_store[i]->title) == 0)
+  for(cgc_size_t i = 0; i < (512); i++)
+    if (note_store[i] && cgc_strcmp(title, note_store[i]->title) == 0)
       return note_store[i];
   return ((void *)0);
 }
 
-note_t* new_note(char* title, char* data)
+cgc_note_t* cgc_new_note(char* title, char* data)
 {
   if (!data || !title)
     return ((void *)0);
 
-  if (get_note(title))
+  if (cgc_get_note(title))
     return ((void *)0);
 
-  note_t* note = calloc(sizeof(note_t), 1);
-  ({ if (note == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 75); exit(1); }); });
+  cgc_note_t* note = cgc_calloc(sizeof(cgc_note_t), 1);
+  ({ if (note == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 75); cgc_exit(1); }); });
 
-  size_t data_size = strlen(data);
+  cgc_size_t data_size = cgc_strlen(data);
 
   if (data_size + 1 > (1024))
   {
-    note->buf = calloc(sizeof(char), data_size + 1);
-    ({ if (note->buf == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 82); exit(1); }); });
+    note->buf = cgc_calloc(sizeof(char), data_size + 1);
+    ({ if (note->buf == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 82); cgc_exit(1); }); });
     note->size = note->cap = data_size;
-    strcpy(note->buf, data);
+    cgc_strcpy(note->buf, data);
   }
   else
   {
-    note->buf = calloc(sizeof(char), (1024));
-    ({ if (note->buf == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 89); exit(1); }); });
+    note->buf = cgc_calloc(sizeof(char), (1024));
+    ({ if (note->buf == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 89); cgc_exit(1); }); });
     note->size = data_size;
     note->cap = (1024);
-    strcpy(note->buf, data);
+    cgc_strcpy(note->buf, data);
   }
 
-  note->title = calloc(sizeof(char), strlen(title) + 1);
-  ({ if (note->title == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 96); exit(1); }); });
-  strcpy(note->title, title);
+  note->title = cgc_calloc(sizeof(char), cgc_strlen(title) + 1);
+  ({ if (note->title == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 96); cgc_exit(1); }); });
+  cgc_strcpy(note->title, title);
 
-  size_t i;
+  cgc_size_t i;
   for (i = 0; i < (512); i++)
   {
     if (note_store[i] == ((void *)0))
@@ -272,41 +272,41 @@ note_t* new_note(char* title, char* data)
   return note;
 }
 
-note_t* append_note(note_t* note, char* data)
+cgc_note_t* cgc_append_note(cgc_note_t* note, char* data)
 {
   if (!note || !data)
     return ((void *)0);
 
-  if (strlen(data) + note->size + 1 > note->cap)
+  if (cgc_strlen(data) + note->size + 1 > note->cap)
   {
 #ifdef PATCHED
-    note->cap = (strlen(data) + note->size + 1) * 2;
+    note->cap = (cgc_strlen(data) + note->size + 1) * 2;
 #else
     note->cap *= 2;
 #endif
-    note->buf = realloc(note->buf, note->cap);
-    ({ if (note->buf == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 124); exit(1); }); });
+    note->buf = cgc_realloc(note->buf, note->cap);
+    ({ if (note->buf == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 124); cgc_exit(1); }); });
   }
 
-  strcat(note->buf, data);
-  note->size += strlen(data);
+  cgc_strcat(note->buf, data);
+  note->size += cgc_strlen(data);
   return note;
 }
 
-int delete_note(note_t* note)
+int cgc_delete_note(cgc_note_t* note)
 {
   if (!note)
     return -1;
 
-  for (size_t i = 0; i < (512); i++)
+  for (cgc_size_t i = 0; i < (512); i++)
     if (note_store[i] == note)
       note_store[i] = ((void *)0);
 
   if (note->buf)
-    free(note->buf);
+    cgc_free(note->buf);
   if (note->title)
-    free(note->title);
-  free(note);
+    cgc_free(note->title);
+  cgc_free(note);
   return 0;
 }
 
@@ -315,68 +315,68 @@ int delete_note(note_t* note)
 
 
 
-typedef int (*thunk_fp_t)(char **, list_t **);
-struct thunk_t
+typedef int (*cgc_thunk_fp_t)(char **, cgc_list_t **);
+struct cgc_thunk_t
 {
   unsigned arity;
   char** argv;
-  thunk_fp_t fp;
+  cgc_thunk_fp_t fp;
 };
 
 char* thunk_res = ((void *)0);
 
-void free_thunk(thunk_t* thunk)
+void cgc_free_thunk(cgc_thunk_t* thunk)
 {
   for (unsigned i = 0; i < thunk->arity; i++)
     if (thunk->argv[i])
-      free(thunk->argv[i]);
+      cgc_free(thunk->argv[i]);
 
-  free(thunk->argv);
-  free(thunk);
+  cgc_free(thunk->argv);
+  cgc_free(thunk);
 }
 
-thunk_t* new_thunk(thunk_fp_t fp, unsigned arity, char** argv)
+cgc_thunk_t* cgc_new_thunk(cgc_thunk_fp_t fp, unsigned arity, char** argv)
 {
   if (arity > 4 || !argv)
     return ((void *)0);
 
-  thunk_t* thunk = calloc(sizeof(thunk_t), 1);
-  ({ if (thunk == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 180); exit(1); }); });
+  cgc_thunk_t* thunk = cgc_calloc(sizeof(cgc_thunk_t), 1);
+  ({ if (thunk == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 180); cgc_exit(1); }); });
 
   thunk->fp = fp;
   thunk->arity = arity;
-  thunk->argv = calloc(sizeof(char *), thunk->arity);
-  ({ if (thunk->argv == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 185); exit(1); }); });
+  thunk->argv = cgc_calloc(sizeof(char *), thunk->arity);
+  ({ if (thunk->argv == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 185); cgc_exit(1); }); });
 
   for (unsigned i = 0; i < thunk->arity; i++)
   {
     if (!argv[i])
       goto error;
 
-    thunk->argv[i] = calloc(sizeof(char), strlen(argv[i]) + 1);
-    ({ if (thunk->argv[i] == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 193); exit(1); }); });
+    thunk->argv[i] = cgc_calloc(sizeof(char), cgc_strlen(argv[i]) + 1);
+    ({ if (thunk->argv[i] == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 193); cgc_exit(1); }); });
 
-    strcpy(thunk->argv[i], argv[i]);
+    cgc_strcpy(thunk->argv[i], argv[i]);
   }
 
   return thunk;
 
 error:
-  free_thunk(thunk);
+  cgc_free_thunk(thunk);
   return ((void *)0);
 }
 
-void run_thunk(list_t** list)
+void cgc_run_thunk(cgc_list_t** list)
 {
   if (!list || !*list)
     return;
 
-  thunk_t* thunk = (*list)->thunk;
+  cgc_thunk_t* thunk = (*list)->thunk;
   thunk->fp(thunk->argv, list);
 }
 
 
-int append_thunk(char **argv, list_t** list)
+int cgc_append_thunk(char **argv, cgc_list_t** list)
 {
   char tmp[(8192) + 1];
 
@@ -389,52 +389,52 @@ int append_thunk(char **argv, list_t** list)
   if (!note_title || !content)
     return -1;
 
-  strncpy(tmp, content, (8192));
+  cgc_strncpy(tmp, content, (8192));
   tmp[(8192)] = '\0';
-  size_t rep_len = strlen("cloud");
+  cgc_size_t rep_len = cgc_strlen("cloud");
 
-  size_t idx = 0;
+  cgc_size_t idx = 0;
   while (idx < (8192) - rep_len)
   {
-    if (strncmp(tmp + idx, "cloud", rep_len) == 0)
+    if (cgc_strncmp(tmp + idx, "cloud", rep_len) == 0)
     {
-      memcpy(tmp + idx, "butt ", rep_len);
+      cgc_memcpy(tmp + idx, "butt ", rep_len);
       idx += rep_len;
     }
     idx++;
   }
 
-  if (strcmp(content, tmp))
+  if (cgc_strcmp(content, tmp))
   {
-    content = realloc(content, strlen(tmp) + 1);
-    ({ if (content == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 246); exit(1); }); });
-    strcpy(content, tmp);
+    content = cgc_realloc(content, cgc_strlen(tmp) + 1);
+    ({ if (content == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 246); cgc_exit(1); }); });
+    cgc_strcpy(content, tmp);
   }
 
-  note_t* note = get_note(note_title);
+  cgc_note_t* note = cgc_get_note(note_title);
   if (note)
-    append_note(note, content);
+    cgc_append_note(note, content);
 
-  remove_head_list(list);
+  cgc_remove_head_list(list);
   if (list)
-    run_thunk(list);
+    cgc_run_thunk(list);
 
   return 0;
 }
 
-int delete_thunk(char** argv, list_t** list)
+int cgc_delete_thunk(char** argv, cgc_list_t** list)
 {
   char* note_title = argv[0];
   if (!note_title)
     return -1;
 
-  note_t* note = get_note(note_title);
+  cgc_note_t* note = cgc_get_note(note_title);
   if (note)
-    delete_note(note);
+    cgc_delete_note(note);
 
-  remove_head_list(list);
+  cgc_remove_head_list(list);
   if (list)
-    run_thunk(list);
+    cgc_run_thunk(list);
   return 0;
 }
 
@@ -444,36 +444,36 @@ int delete_thunk(char** argv, list_t** list)
 
 
 
-list_t* thunks = ((void *)0);
+cgc_list_t* thunks = ((void *)0);
 
-list_t* new_list(list_t* prev, list_t* next, thunk_t* thunk)
+cgc_list_t* cgc_new_list(cgc_list_t* prev, cgc_list_t* next, cgc_thunk_t* thunk)
 {
-  list_t* new = calloc(sizeof(list_t), 1);
-  ({ if (new == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 288); exit(1); }); });
+  cgc_list_t* new = cgc_calloc(sizeof(cgc_list_t), 1);
+  ({ if (new == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 288); cgc_exit(1); }); });
   new->prev = prev;
   new->next = next;
   new->thunk = thunk;
   return new;
 }
 
-int append_list(list_t** list, thunk_t* thunk)
+int cgc_append_list(cgc_list_t** list, cgc_thunk_t* thunk)
 {
   if (!*list)
   {
-    *list = new_list(((void *)0), ((void *)0), thunk);
+    *list = cgc_new_list(((void *)0), ((void *)0), thunk);
     return 0;
   }
 
-  list_t* elem = *list;
+  cgc_list_t* elem = *list;
   while (elem->next)
     elem = elem->next;
 
-  list_t* new = new_list(elem, ((void *)0), thunk);
+  cgc_list_t* new = cgc_new_list(elem, ((void *)0), thunk);
   elem->next = new;
   return 0;
 }
 
-void remove_head_list(list_t** list)
+void cgc_remove_head_list(cgc_list_t** list)
 {
   if (!list || !*list)
     return;
@@ -483,9 +483,9 @@ void remove_head_list(list_t** list)
   *list = (*list)->next;
 }
 
-size_t len_list(list_t* list)
+cgc_size_t cgc_len_list(cgc_list_t* list)
 {
-  size_t len = 0;
+  cgc_size_t len = 0;
   while (list && ++len)
     list = list->next;
   return len;
@@ -508,34 +508,34 @@ static const char* NOTE_CREATED = "Note successfully created.\n";
 static const char* NOTE_DELETED = "Note successfully deleted.\n";
 static const char* NOTE_APPENDED = "Note successfully appended.\n";
 
-void prompt(int fd)
+void cgc_prompt(int fd)
 {
-  transmit_string(fd, (char *)PROMPT_MSG);
+  cgc_transmit_string(fd, (char *)PROMPT_MSG);
 }
 
-void yell(int fd)
+void cgc_yell(int fd)
 {
-  transmit_string(fd, (char *)ERROR_MSG);
+  cgc_transmit_string(fd, (char *)ERROR_MSG);
 }
 
-char* nth_word(unsigned n, char* input, int to_end)
+char* cgc_nth_word(unsigned n, char* input, int to_end)
 {
 
-  size_t len = strlen(input);
+  cgc_size_t len = cgc_strlen(input);
   char* word_start[128];
   char* p = input;
-  memset(word_start, '\0', 128 * sizeof(char *));
+  cgc_memset(word_start, '\0', 128 * sizeof(char *));
 
-  for (size_t i = 0; i < 128; i++)
+  for (cgc_size_t i = 0; i < 128; i++)
   {
-    if (*p && isspace(*p))
+    if (*p && cgc_isspace(*p))
       p++;
     if (p >= input + len)
       break;
 
     word_start[i] = p;
 
-    p = strchr(p, ' ');
+    p = cgc_strchr(p, ' ');
     if (!p)
       break;
   }
@@ -546,58 +546,58 @@ char* nth_word(unsigned n, char* input, int to_end)
 
   char* end = ((void *)0);
   if (!to_end)
-    end = strchr(p, ' ');
+    end = cgc_strchr(p, ' ');
   if (!end)
-    end = strchr(p, '\0');
+    end = cgc_strchr(p, '\0');
   if (!end)
-    ({ fdprintf(2, "ERROR %s:%d:\t" "malformed string" "\n", "src/main.c", 389); exit(1); });
+    ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "malformed string" "\n", "src/main.c", 389); cgc_exit(1); });
 
-  char* res = calloc(sizeof(char), end - p + 1);
-  ({ if (res == ((void *)0)) ({ fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 392); exit(1); }); });
-  return strncpy(res, p, end - p);
+  char* res = cgc_calloc(sizeof(char), end - p + 1);
+  ({ if (res == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 392); cgc_exit(1); }); });
+  return cgc_strncpy(res, p, end - p);
 }
 
-char** make_argv(char* input, size_t n)
+char** cgc_make_argv(char* input, cgc_size_t n)
 {
-  char** argv = calloc(sizeof(char *), n);
+  char** argv = cgc_calloc(sizeof(char *), n);
 
-  size_t i;
+  cgc_size_t i;
   for(i = 0; i < n - 1; i++)
   {
-    argv[i] = nth_word(i + 1, input, 0);
+    argv[i] = cgc_nth_word(i + 1, input, 0);
     if (!argv[i])
       goto error;
   }
 
-  argv[i] = nth_word(i + 1, input, 1);
+  argv[i] = cgc_nth_word(i + 1, input, 1);
   if (!argv[i])
     goto error;
   return argv;
 
 error:
-  for(size_t i = 1; i < n - 1; i++)
+  for(cgc_size_t i = 1; i < n - 1; i++)
     if (argv[i])
-      free(argv[i]);
-  free(argv);
+      cgc_free(argv[i]);
+  cgc_free(argv);
   return ((void *)0);
 }
 
-void print_argv(char** argv, size_t n)
+void cgc_print_argv(char** argv, cgc_size_t n)
 {
-  for(size_t i = 0; i < n; i ++)
+  for(cgc_size_t i = 0; i < n; i ++)
     if (argv[i])
                         ;
 }
 
-void free_argv(char** argv, size_t n)
+void cgc_free_argv(char** argv, cgc_size_t n)
 {
   if (!argv || !n)
     return;
 
-  for(size_t i = 0; i < n; i ++)
+  for(cgc_size_t i = 0; i < n; i ++)
     if (argv[i])
-      free(argv[i]);
-  free(argv);
+      cgc_free(argv[i]);
+  cgc_free(argv);
 }
 # 454 "src/main.c"
 int main(void)
@@ -607,71 +607,71 @@ int main(void)
   const char* resp;
   for (;;)
   {
-    prompt(1);
-    memset(input_buf, '\0', (16 * 1024));
-    if (read_until(0, (16 * 1024), '\n', input_buf) < 0)
+    cgc_prompt(1);
+    cgc_memset(input_buf, '\0', (16 * 1024));
+    if (cgc_read_until(0, (16 * 1024), '\n', input_buf) < 0)
       break;
 
-    if (strncmp(input_buf, "quit", 4) == 0)
-        exit(0);
+    if (cgc_strncmp(input_buf, "quit", 4) == 0)
+        cgc_exit(0);
 
-    char* command = nth_word(0, input_buf, 0);
+    char* command = cgc_nth_word(0, input_buf, 0);
     char** argv = ((void *)0);
 
     if (!command)
       continue;
 
 #ifdef PATCHED
-    if (len_list(thunks) > 32)
-      run_thunk(&thunks);
+    if (cgc_len_list(thunks) > 32)
+      cgc_run_thunk(&thunks);
 #endif
 
-    if (strncmp(command, "new-note", strlen("new-note")) == 0)
+    if (cgc_strncmp(command, "new-note", cgc_strlen("new-note")) == 0)
     {
-      run_thunk(&thunks);
-      argv = make_argv(input_buf, 2);
+      cgc_run_thunk(&thunks);
+      argv = cgc_make_argv(input_buf, 2);
       if (argv)
       {
-        if (new_note(argv[0], argv[1]) == ((void *)0))
+        if (cgc_new_note(argv[0], argv[1]) == ((void *)0))
           resp = NOTE_FULL;
         else
           resp = NOTE_CREATED;
-        free_argv(argv, 2);
+        cgc_free_argv(argv, 2);
       }
     }
-    else if (strncmp(command, "append-note", strlen("append-note")) == 0)
+    else if (cgc_strncmp(command, "append-note", cgc_strlen("append-note")) == 0)
     {
-      argv = make_argv(input_buf, 2);
+      argv = cgc_make_argv(input_buf, 2);
       if (argv)
       {
-        thunk_t* thunk = new_thunk(append_thunk, 2, argv);
-        append_list(&thunks, thunk);
+        cgc_thunk_t* thunk = cgc_new_thunk(cgc_append_thunk, 2, argv);
+        cgc_append_list(&thunks, thunk);
         resp = NOTE_APPENDED;
-        free_argv(argv, 2);
+        cgc_free_argv(argv, 2);
       }
     }
 
 
-    else if (strncmp(command, "delete-note", strlen("delete-note")) == 0)
+    else if (cgc_strncmp(command, "delete-note", cgc_strlen("delete-note")) == 0)
     {
-      argv = make_argv(input_buf, 1);
+      argv = cgc_make_argv(input_buf, 1);
       if (argv)
       {
-        thunk_t* thunk = new_thunk(delete_thunk, 1, argv);
-        append_list(&thunks, thunk);
+        cgc_thunk_t* thunk = cgc_new_thunk(cgc_delete_thunk, 1, argv);
+        cgc_append_list(&thunks, thunk);
         resp = NOTE_DELETED;
-        free_argv(argv, 1);
+        cgc_free_argv(argv, 1);
       }
     }
-    else if (strncmp(command, "get-note", strlen("get-note")) == 0)
+    else if (cgc_strncmp(command, "get-note", cgc_strlen("get-note")) == 0)
     {
-      run_thunk(&thunks);
-      argv = make_argv(input_buf, 1);
+      cgc_run_thunk(&thunks);
+      argv = cgc_make_argv(input_buf, 1);
       if (argv)
       {
-        note_t* note = get_note(argv[0]);
+        cgc_note_t* note = cgc_get_note(argv[0]);
         if (note)
-          fdprintf(1, "%s\n", note->buf);
+          cgc_fdprintf(1, "%s\n", note->buf);
         else
           resp = NOTE_UNK;
       }
@@ -679,12 +679,12 @@ int main(void)
 
     else
     {
-      yell(1);
+      cgc_yell(1);
     }
 
     if (resp)
-      transmit_string(1, (char *)resp);
+      cgc_transmit_string(1, (char *)resp);
     resp = ((void *)0);
-    free(command);
+    cgc_free(command);
   }
 }

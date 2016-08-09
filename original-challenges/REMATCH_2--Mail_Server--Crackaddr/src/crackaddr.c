@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 
 
-char *crackaddr(char *addr, char *output) {
+char *cgc_crackaddr(char *addr, char *output) {
 	char *outp = output;
 	char *endp = output + MAX_NAME - 5;
 	char c;
@@ -40,7 +40,7 @@ char *crackaddr(char *addr, char *output) {
 	}
 
 	// strip whitespace
-	while (*addr && isspace(*addr))
+	while (*addr && cgc_isspace(*addr))
 		addr++;
 	
 	// Setup state
@@ -78,7 +78,7 @@ char *crackaddr(char *addr, char *output) {
 			}
 		}
 
-		// Equivalent to parents from original crackaddr
+		// Equivalent to parents from original cgc_crackaddr
 		// Bb can be embedded in other Bb
 		if (c == 'B') {
 			Blevel++;
@@ -103,7 +103,7 @@ char *crackaddr(char *addr, char *output) {
 			}
 		}
 
-		// Equivalent to angle brackets from original crackaddr
+		// Equivalent to angle brackets from original cgc_crackaddr
 		if ((c == 'C') && (!inC)) {
 			inC = TRUE;
 #ifdef PATCHED_1

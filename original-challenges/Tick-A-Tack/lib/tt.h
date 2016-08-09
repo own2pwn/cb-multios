@@ -25,17 +25,17 @@
 
 #define EMPTY ' '
 
-typedef struct tt_move_coords {
+typedef struct cgc_tt_move_coords {
 	unsigned char row;
 	unsigned char col;
-} tt_move_coords;
+} cgc_tt_move_coords;
 
-typedef struct tt_scores {
+typedef struct cgc_tt_scores {
 	unsigned char player;
 	unsigned char computer;
-} tt_scores;
+} cgc_tt_scores;
 
-typedef struct tt_data {
+typedef struct cgc_tt_data {
 	char top[3];
 	char middle[3];
 	char bottom[3];
@@ -43,28 +43,28 @@ typedef struct tt_data {
 	char comp_char;
 	unsigned char moves;
 	char winner;
-} tt_data;
+} cgc_tt_data;
 
-typedef struct tt_game {
-	tt_data * data;
-	tt_scores * scores;
-} tt_game;
+typedef struct cgc_tt_game {
+	cgc_tt_data * data;
+	cgc_tt_scores * scores;
+} cgc_tt_game;
 
-void make_board(tt_data * data, char * board);
-void init_game_data(tt_data * data);
-void set_player_chars(tt_data * data, char player_char);
-void reset_scores(tt_scores * scores);
-int has_valid_coords(tt_move_coords * move);
-int coords_unoccupied(tt_data * data, tt_move_coords * move);
-void game_board_set_at_coord(tt_data * data, tt_move_coords * move);
-char game_board_get_at_coord(tt_data * data, tt_move_coords * move);
-int is_valid_move(tt_data * data, tt_move_coords * move);
-int update_board(tt_data * data, tt_move_coords * move);
-int have_winner(tt_data * data);
-int have_moves_remaining(tt_data * data);
-char is_player_winner(tt_data * data);
-int is_players_turn(tt_data * data);
-void move_complete(tt_data * data);
-void computer_move(tt_data * data, tt_move_coords * move);
-void update_score(tt_game * game);
+void cgc_make_board(cgc_tt_data * data, char * board);
+void cgc_init_game_data(cgc_tt_data * data);
+void cgc_set_player_chars(cgc_tt_data * data, char player_char);
+void cgc_reset_scores(cgc_tt_scores * scores);
+int cgc_has_valid_coords(cgc_tt_move_coords * move);
+int cgc_coords_unoccupied(cgc_tt_data * data, cgc_tt_move_coords * move);
+void cgc_game_board_set_at_coord(cgc_tt_data * data, cgc_tt_move_coords * move);
+char cgc_game_board_get_at_coord(cgc_tt_data * data, cgc_tt_move_coords * move);
+int cgc_is_valid_move(cgc_tt_data * data, cgc_tt_move_coords * move);
+int cgc_update_board(cgc_tt_data * data, cgc_tt_move_coords * move);
+int cgc_have_winner(cgc_tt_data * data);
+int cgc_have_moves_remaining(cgc_tt_data * data);
+char cgc_is_player_winner(cgc_tt_data * data);
+int cgc_is_players_turn(cgc_tt_data * data);
+void cgc_move_complete(cgc_tt_data * data);
+void cgc_computer_move(cgc_tt_data * data, cgc_tt_move_coords * move);
+void cgc_update_score(cgc_tt_game * game);
 #endif

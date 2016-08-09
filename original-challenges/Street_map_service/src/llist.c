@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,9 +32,9 @@ THE SOFTWARE.
 #include "service.h"
 #include "llist.h"
 
-psListNode get_last_element_s(psList thisList){
-	psListNode thisNode = NULL; 
-	psListNode tempNode = NULL;
+cgc_psListNode cgc_get_last_element_s(cgc_psList thisList){
+	cgc_psListNode thisNode = NULL; 
+	cgc_psListNode tempNode = NULL;
 	thisNode = thisList->listRoot;
 	while (thisNode != NULL){
 		tempNode = thisNode;
@@ -43,9 +43,9 @@ psListNode get_last_element_s(psList thisList){
 	return tempNode;
 }
 //returns NULL if no elements
-pdListNode get_last_element_d(pdList thisList){
-	pdListNode thisNode = NULL; 
-	pdListNode tempNode = NULL;
+cgc_pdListNode cgc_get_last_element_d(cgc_pdList thisList){
+	cgc_pdListNode thisNode = NULL; 
+	cgc_pdListNode tempNode = NULL;
 	thisNode = thisList->listRoot;
 	while (thisNode != NULL){
 		tempNode = thisNode;
@@ -54,13 +54,13 @@ pdListNode get_last_element_d(pdList thisList){
 	return tempNode;
 }
 
-psList create_single_list(){
-	psList thisList = NULL;
-	if (  allocate( sizeof(sList), 0, (void**)&thisList ) !=0  ){
-		puts("\n**Allocate returned an error.\n");
+cgc_psList cgc_create_single_list(){
+	cgc_psList thisList = NULL;
+	if (  allocate( sizeof(cgc_sList), 0, (void**)&thisList ) !=0  ){
+		cgc_puts("\n**Allocate returned an error.\n");
 		_terminate(1);	
 	}
-	bzero(thisList, sizeof(sList));
+	cgc_bzero(thisList, sizeof(cgc_sList));
 	thisList->listRoot = NULL;
 	thisList->count = 0;
 	return thisList;
@@ -68,13 +68,13 @@ psList create_single_list(){
 
 
 //create double linked list 
-pdList create_double_list(){
-	pdList thisList = NULL;
-	if (  allocate( sizeof(dList), 0, (void**)&thisList ) !=0  ){
-			puts("\n**Allocate returned an error.\n");
+cgc_pdList cgc_create_double_list(){
+	cgc_pdList thisList = NULL;
+	if (  allocate( sizeof(cgc_dList), 0, (void**)&thisList ) !=0  ){
+			cgc_puts("\n**Allocate returned an error.\n");
 			_terminate(1);
 	}
-	bzero(thisList, sizeof(dList));
+	cgc_bzero(thisList, sizeof(cgc_dList));
 	thisList->listRoot = NULL;
 	thisList->count = 0;
 	return thisList;
@@ -84,16 +84,16 @@ pdList create_double_list(){
 
 
 //if prev is null, insert as first node. if prev is last append
-pdListNode insert_double_list_node(pdList thisList, pdListNode prevNode){
-	pdListNode newNode = NULL;
+cgc_pdListNode cgc_insert_double_list_node(cgc_pdList thisList, cgc_pdListNode prevNode){
+	cgc_pdListNode newNode = NULL;
 
 
 	//allocate a node
-	if (  allocate( sizeof(dListNode), 0, (void**)&newNode ) != 0  ){
-		puts("\n**Allocate returned an error.\n");
+	if (  allocate( sizeof(cgc_dListNode), 0, (void**)&newNode ) != 0  ){
+		cgc_puts("\n**Allocate returned an error.\n");
 		_terminate(1);
 		}
-	bzero(newNode, sizeof(dListNode));
+	cgc_bzero(newNode, sizeof(cgc_dListNode));
 	//cases are 
 	//1) newlist insert at listroot, new->next is null, new->prev is null, listroot is new
 	//2) existing insert at listroot, new->next is listroot, new->prev is null, listroot is new, new->next->prev is new
@@ -122,11 +122,11 @@ pdListNode insert_double_list_node(pdList thisList, pdListNode prevNode){
 }
 
 //returns pointer to prevNode, or null if first node is deleted
-pdListNode delete_double_list_node(pdList thisList, pdListNode deletedNode){
+cgc_pdListNode cgc_delete_double_list_node(cgc_pdList thisList, cgc_pdListNode deletedNode){
 	//empty list
-	pdListNode retNode = NULL;	
+	cgc_pdListNode retNode = NULL;	
 	if ( (deletedNode == NULL) || (thisList->count == 0) ){
-		puts("**Cannot delete and empty list.");
+		cgc_puts("**Cannot delete and empty list.");
 		return NULL;
 	}
 
@@ -154,7 +154,7 @@ pdListNode delete_double_list_node(pdList thisList, pdListNode deletedNode){
 	}
 
 	retNode = deletedNode->prev;
-	deallocate(deletedNode, sizeof(dListNode));
+	deallocate(deletedNode, sizeof(cgc_dListNode));
 	thisList->count--;
 	return retNode;
 }
@@ -162,14 +162,14 @@ pdListNode delete_double_list_node(pdList thisList, pdListNode deletedNode){
 
 // if prevNode is NULL insert at begining, else insert after prevNode
 // returns pointer to inserted node
-psListNode insert_single_list_node(psList thisList, psListNode prevNode){
-	psListNode newNode = NULL;
-	psListNode tempNode = NULL;
-	if (  allocate( sizeof(sListNode), 0, (void**)&newNode ) != 0  ){
-		puts("\n**Allocate returned an error.\n");
+cgc_psListNode cgc_insert_single_list_node(cgc_psList thisList, cgc_psListNode prevNode){
+	cgc_psListNode newNode = NULL;
+	cgc_psListNode tempNode = NULL;
+	if (  allocate( sizeof(cgc_sListNode), 0, (void**)&newNode ) != 0  ){
+		cgc_puts("\n**Allocate returned an error.\n");
 		_terminate(1);
 		}
-	bzero(newNode, sizeof(sListNode));
+	cgc_bzero(newNode, sizeof(cgc_sListNode));
 	//cases are 
 	//1) newlist insert at listroot, new->next is null, listroot is new
 	//2) existing insert at listroot, new->next is listroot, listroot is new

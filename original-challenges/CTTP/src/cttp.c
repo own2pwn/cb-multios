@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -37,28 +37,28 @@
 #define MAX_PATH_SIZE 256
 #define MAX_BODY_SIZE 1024*1024*2
 
-#define LOGERR(req) if(dolog) logreq(req,ERR)
-#define LOGWARN(req) if (dolog) logreq(req,WARN)
-#define LOGINFO(req) if (dolog) logreq(req,INFO)
-#define ISLE(resp) (memcmp(resp,LEHDR,4) == 0)
+#define LOGERR(req) if(dolog) cgc_logreq(req,ERR)
+#define LOGWARN(req) if (dolog) cgc_logreq(req,WARN)
+#define LOGINFO(req) if (dolog) cgc_logreq(req,INFO)
+#define ISLE(resp) (cgc_memcmp(resp,LEHDR,4) == 0)
 #define SWAP32(i) { i = (i<<24) | ((i<<8) & 0xff0000) | ((i>>8) & 0xff00) | ((i>>24)&0xff); }
 
 
-typedef struct list list_t;
-typedef struct list_node list_node_t;
+typedef struct list cgc_list_t;
+typedef struct list_node cgc_list_node_t;
 
 enum LogCode {
     INFO = FLAG_PAGE,
     WARN,
     ERR
-} typedef level_t;
+} typedef cgc_level_t;
 
 enum Version {
     ONE = 0x10000000,
     TWO,
     THREE,
     FOUR
-} typedef ver_t;
+} typedef cgc_ver_t;
 
 enum RequestType {
     RETRIEVE = 0x41414141,
@@ -67,51 +67,51 @@ enum RequestType {
     AUTH,
     DELETE,
     QUIT
-} typedef rtype_t;
+} typedef cgc_rtype_t;
 
 enum ResponseCode {
     OK = 0xbaaaaaaa,
     NOK,
     SOK,
     LOL
-} typedef rcode_t;
+} typedef cgc_rcode_t;
 
 struct cttpreq {
     char hdr[4];
-    ver_t version;
-    rtype_t type;
-    size_t psize;
-    size_t bodysize;
+    cgc_ver_t version;
+    cgc_rtype_t type;
+    cgc_size_t psize;
+    cgc_size_t bodysize;
     char *path;
     char *body;
-} typedef cttpreq_t;
+} typedef cgc_cttpreq_t;
     
 struct cttpresp {
     char hdr[4];
-    rcode_t code;
-    size_t rsize;
+    cgc_rcode_t code;
+    cgc_size_t rsize;
     char *data;
-} typedef cttpresp_t;
+} typedef cgc_cttpresp_t;
 
 struct fileinfo {
-    size_t psize;
-    size_t bodysize;
+    cgc_size_t psize;
+    cgc_size_t bodysize;
     char *path;
     char *body;
-} typedef fileinfo_t;
+} typedef cgc_fileinfo_t;
 
 struct logmsg {
-   level_t level;
-   cttpreq_t *req;
-} typedef logmsg_t;
+   cgc_level_t level;
+   cgc_cttpreq_t *req;
+} typedef cgc_logmsg_t;
 
-static bool verified;
-static bool dolog;
-static list_t files;
-static list_t loglist;
+static cgc_bool verified;
+static cgc_bool dolog;
+static cgc_list_t files;
+static cgc_list_t loglist;
 
-static cttpresp_t *internalerror();
-bool do_challenge();
+static cgc_cttpresp_t *cgc_internalerror();
+cgc_bool cgc_do_challenge();
 
 /**
  * Log a received requests
@@ -119,11 +119,11 @@ bool do_challenge();
  * @param req Original request
  * @param level Error level
  */
-static void logreq(cttpreq_t *req, int level) {
+static void cgc_logreq(cgc_cttpreq_t *req, int level) {
     char *path, *body;
-    list_node_t *node;
-    logmsg_t *info;
-    cttpreq_t *lreq = calloc(sizeof(cttpreq_t));
+    cgc_list_node_t *node;
+    cgc_logmsg_t *info;
+    cgc_cttpreq_t *lreq = cgc_calloc(sizeof(cgc_cttpreq_t));
 
     if (!req) {
         debug("Passed null req\n");
@@ -135,31 +135,31 @@ static void logreq(cttpreq_t *req, int level) {
         return;
     }
 
-    memcpy(lreq, req, sizeof(cttpreq_t));
+    cgc_memcpy(lreq, req, sizeof(cgc_cttpreq_t));
 
     if (lreq->path && lreq->psize) {
-        lreq->path = calloc(lreq->psize);
+        lreq->path = cgc_calloc(lreq->psize);
 
         if (!lreq->path) {
             debug("Failed to allocate path\n");
             return;
         }
 
-        memcpy(lreq->path, req->path, lreq->psize);
+        cgc_memcpy(lreq->path, req->path, lreq->psize);
     }
 
     if (lreq->body && lreq->bodysize) {
-        lreq->body = calloc(lreq->bodysize);
+        lreq->body = cgc_calloc(lreq->bodysize);
 
         if (!lreq->body) {
             debug("Failed to allocate body\n");
             return;
         }
         
-        memcpy(lreq->body, req->body, lreq->bodysize);
+        cgc_memcpy(lreq->body, req->body, lreq->bodysize);
     }
 
-    info = calloc(sizeof(logmsg_t));
+    info = cgc_calloc(sizeof(cgc_logmsg_t));
 
     if (!info) {
         debug("Failed to allocate log entry\n");
@@ -169,7 +169,7 @@ static void logreq(cttpreq_t *req, int level) {
     info->req = lreq;
     info->level = level;
 
-    node = calloc(sizeof(list_node_t));
+    node = cgc_calloc(sizeof(cgc_list_node_t));
 
     if (!node) {
         debug("Failed to allocate node\n");
@@ -178,7 +178,7 @@ static void logreq(cttpreq_t *req, int level) {
 
     node->data = info;
 
-    list_push_back(&loglist, node);
+    cgc_list_push_back(&loglist, node);
 }
 
 /**
@@ -187,18 +187,18 @@ static void logreq(cttpreq_t *req, int level) {
  * @param path Requested path
  * @param psize Size of requested path
  * 
- * @return fileinfo_t struct of file
+ * @return cgc_fileinfo_t struct of file
  */
-static fileinfo_t *get_file(char *path, size_t psize) {
-    list_node_t *cur, *n;
-    fileinfo_t *f = NULL;
+static cgc_fileinfo_t *cgc_get_file(char *path, cgc_size_t psize) {
+    cgc_list_node_t *cur, *n;
+    cgc_fileinfo_t *f = NULL;
 
     if (!path)
         goto out;
 
     list_for_each_safe(&files, n, cur) {
-        f = (fileinfo_t*)cur->data;
-        if (!memcmp(path, f->path, psize < f->psize ? psize : f->psize)) {
+        f = (cgc_fileinfo_t*)cur->data;
+        if (!cgc_memcmp(path, f->path, psize < f->psize ? psize : f->psize)) {
             break;
         }
     }
@@ -217,20 +217,20 @@ out:
  * 
  * @return true on success, false on fail
  */
-static bool add_file(fileinfo_t *file) {
-    list_node_t *node = calloc(sizeof(list_node_t));
+static cgc_bool cgc_add_file(cgc_fileinfo_t *file) {
+    cgc_list_node_t *node = cgc_calloc(sizeof(cgc_list_node_t));
 
     if (!node) {
         return false;
     }
 
-    if (get_file(file->path, file->psize)) {
+    if (cgc_get_file(file->path, file->psize)) {
         return false;
     }
 
     node->data = file;
 
-    list_push_back(&files, node);
+    cgc_list_push_back(&files, node);
 
     return true;
 }
@@ -243,23 +243,23 @@ static bool add_file(fileinfo_t *file) {
  * 
  * @return true on success, false on fail
  */
-static bool delete_file(char *path, size_t psize) {
-    list_node_t *cur, *n;
-    fileinfo_t *f = NULL;
+static cgc_bool cgc_delete_file(char *path, cgc_size_t psize) {
+    cgc_list_node_t *cur, *n;
+    cgc_fileinfo_t *f = NULL;
 
     if (!path) {
         return false;
     }
 
     list_for_each_safe(&files, n, cur) {
-        f = (fileinfo_t*)cur->data;
-        if (!memcmp(path, f->path, psize < f->psize ? psize : f->psize)) {
+        f = (cgc_fileinfo_t*)cur->data;
+        if (!cgc_memcmp(path, f->path, psize < f->psize ? psize : f->psize)) {
             break;
         }
     }
 
     if (cur) {
-        list_remove(&files, cur);
+        cgc_list_remove(&files, cur);
         return true;
     } else {
         return false;
@@ -275,23 +275,23 @@ static bool delete_file(char *path, size_t psize) {
  * 
  * @return a response structure
  */
-static cttpresp_t *genericmsg(rcode_t code, const char *msg, size_t s) {
-    cttpresp_t  *resp = calloc(sizeof(cttpresp_t));
+static cgc_cttpresp_t *cgc_genericmsg(cgc_rcode_t code, const char *msg, cgc_size_t s) {
+    cgc_cttpresp_t  *resp = cgc_calloc(sizeof(cgc_cttpresp_t));
 
     if (!resp) {
         debug("Failed to allocate resp");
-        return internalerror();
+        return cgc_internalerror();
     }
 
-    resp->data = calloc(s);
+    resp->data = cgc_calloc(s);
     
     if (!resp->data) {
         debug("Failed to allocate resp data");
-        return internalerror();
+        return cgc_internalerror();
     }
 
-    strcpy(resp->data, msg);
-    resp->rsize = strlen(resp->data)+1;
+    cgc_strcpy(resp->data, msg);
+    resp->rsize = cgc_strlen(resp->data)+1;
     resp->code = code;
     return resp;
 }
@@ -301,8 +301,8 @@ static cttpresp_t *genericmsg(rcode_t code, const char *msg, size_t s) {
  *
  * @return response struct
  */
-static cttpresp_t *internalerror() {
-    return genericmsg(NOK, INTERNALERR, sizeof(INTERNALERR));
+static cgc_cttpresp_t *cgc_internalerror() {
+    return cgc_genericmsg(NOK, INTERNALERR, sizeof(INTERNALERR));
 }
 
 /**
@@ -310,8 +310,8 @@ static cttpresp_t *internalerror() {
  *
  * @return response struct
  */
-static cttpresp_t *notimplemented() {
-    return genericmsg(LOL, NOTIMPLEMENTED, sizeof(NOTIMPLEMENTED));
+static cgc_cttpresp_t *cgc_notimplemented() {
+    return cgc_genericmsg(LOL, NOTIMPLEMENTED, sizeof(NOTIMPLEMENTED));
 }
 
 /**
@@ -321,9 +321,9 @@ static cttpresp_t *notimplemented() {
  *
  * @return response struct
  */
-static cttpresp_t *handle_retrieve(cttpreq_t *req) {
-    cttpresp_t  *resp = calloc(sizeof(cttpresp_t));
-    fileinfo_t *file; 
+static cgc_cttpresp_t *cgc_handle_retrieve(cgc_cttpreq_t *req) {
+    cgc_cttpresp_t  *resp = cgc_calloc(sizeof(cgc_cttpresp_t));
+    cgc_fileinfo_t *file; 
 
     if (!resp) {
         debug("Failed to allocate resp.\n");
@@ -335,21 +335,21 @@ static cttpresp_t *handle_retrieve(cttpreq_t *req) {
         goto out_free;
     }
 
-    file = get_file(req->path, req->psize);
+    file = cgc_get_file(req->path, req->psize);
 
     if (!file) {
         debug("Failed to find file.\n");
         goto out_free;
     }
 
-    resp->data = calloc(file->bodysize);
+    resp->data = cgc_calloc(file->bodysize);
     
     if (!resp->data) {
         debug("Failed to allocate resp data");
         goto out_free;
     }
 
-    memcpy(resp->data, file->body, file->bodysize);
+    cgc_memcpy(resp->data, file->body, file->bodysize);
     resp->rsize = file->bodysize;
     resp->code = OK;
 
@@ -357,11 +357,11 @@ static cttpresp_t *handle_retrieve(cttpreq_t *req) {
     return resp;
 
 out_free:
-    free(resp);
+    cgc_free(resp);
 out:
     if (req)
         LOGERR(req);
-    return internalerror();
+    return cgc_internalerror();
 }
 
 /**
@@ -371,29 +371,29 @@ out:
  *
  * @return response struct
  */
-static cttpresp_t *handle_submit(cttpreq_t *req) {
-    fileinfo_t *file; 
+static cgc_cttpresp_t *cgc_handle_submit(cgc_cttpreq_t *req) {
+    cgc_fileinfo_t *file; 
 
     if (!req) {
         debug("Passed null req\n");
         goto out;
     }
 
-    file = calloc(sizeof(fileinfo_t));
+    file = cgc_calloc(sizeof(cgc_fileinfo_t));
 
     if (!file) {
         debug("Failed to alloc file.\n");
         goto out;
     }
 
-    file->path = calloc(req->psize);
+    file->path = cgc_calloc(req->psize);
 
     if (!file->path) {
         debug("Failed too alloc path.\n");
         goto out_free_file;
     }
 
-    file->body = calloc(req->bodysize);
+    file->body = cgc_calloc(req->bodysize);
 
     if (!file->body) {
         debug("Failed to alloc body.\n");
@@ -404,24 +404,24 @@ static cttpresp_t *handle_submit(cttpreq_t *req) {
     file->psize = req->psize;
     file->bodysize = req->bodysize;
 
-    memcpy(file->path, req->path, req->psize);
-    memcpy(file->body, req->body, req->bodysize);
+    cgc_memcpy(file->path, req->path, req->psize);
+    cgc_memcpy(file->body, req->body, req->bodysize);
 
-    if (add_file(file)) {
+    if (cgc_add_file(file)) {
         LOGINFO(req);
-        return genericmsg(OK, SUBMITOK, sizeof(SUBMITOK));
+        return cgc_genericmsg(OK, SUBMITOK, sizeof(SUBMITOK));
     }
 
 out_free_body:
-    free(file->body);
+    cgc_free(file->body);
 out_free_path:
-    free(file->path);
+    cgc_free(file->path);
 out_free_file:
-    free(file);
+    cgc_free(file);
 out:
     if (req)
         LOGERR(req);
-    return internalerror();
+    return cgc_internalerror();
 }
 
 /**
@@ -431,9 +431,9 @@ out:
  *
  * @return response struct
  */
-static cttpresp_t *handle_check(cttpreq_t *req) {
-    cttpresp_t  *resp = calloc(sizeof(cttpresp_t));
-    fileinfo_t *file; 
+static cgc_cttpresp_t *cgc_handle_check(cgc_cttpreq_t *req) {
+    cgc_cttpresp_t  *resp = cgc_calloc(sizeof(cgc_cttpresp_t));
+    cgc_fileinfo_t *file; 
 
     if (!resp) {
         debug("Failed to allocate resp.\n");
@@ -447,14 +447,14 @@ static cttpresp_t *handle_check(cttpreq_t *req) {
 
     debug("in handle check\n");
 
-    file = get_file(req->path, req->psize);
+    file = cgc_get_file(req->path, req->psize);
 
     if (!file) {
         debug("Failed to find file.\n");
         goto out_free;
     }
 
-    resp->data = calloc(sizeof(size_t));
+    resp->data = cgc_calloc(sizeof(cgc_size_t));
     
     if (!resp->data) {
         debug("Failed to allocate resp data");
@@ -462,20 +462,20 @@ static cttpresp_t *handle_check(cttpreq_t *req) {
     }
 
     debug("found file\n");
-    memcpy(resp->data, &file->bodysize, sizeof(size_t));
+    cgc_memcpy(resp->data, &file->bodysize, sizeof(cgc_size_t));
 
-    resp->rsize = sizeof(size_t);
+    resp->rsize = sizeof(cgc_size_t);
     resp->code = OK;
 
     LOGINFO(req);
     return resp;
 
 out_free:
-    free(resp);
+    cgc_free(resp);
 out:
     if (req)
         LOGERR(req);
-    return internalerror();
+    return cgc_internalerror();
 }
 
 /**
@@ -485,23 +485,23 @@ out:
  *
  * @return response struct
  */
-static cttpresp_t *handle_delete(cttpreq_t *req) {
-    fileinfo_t *file; 
+static cgc_cttpresp_t *cgc_handle_delete(cgc_cttpreq_t *req) {
+    cgc_fileinfo_t *file; 
 
     if (!req) {
         debug("Passed null req\n");
         goto out;
     }
 
-    if (delete_file(req->path, req->psize)) { 
+    if (cgc_delete_file(req->path, req->psize)) { 
         LOGINFO(req);
-        return genericmsg(OK, DELETEOK, sizeof(DELETEOK));
+        return cgc_genericmsg(OK, DELETEOK, sizeof(DELETEOK));
     }
 
 out:
     if (req)
         LOGERR(req);
-    return internalerror();
+    return cgc_internalerror();
 }
 
 /**
@@ -512,18 +512,18 @@ out:
  * @return response struct
  */
 STACKPROTECTINIT
-static cttpresp_t *handle_auth(cttpreq_t *req) {
+static cgc_cttpresp_t *cgc_handle_auth(cgc_cttpreq_t *req) {
     STACKPROTECTADD
-    size_t s;
+    cgc_size_t s;
 #ifndef PATCHED_2
     char tmpbuf[4096];
 #endif
     int i;
     char key;
-    cttpresp_t  *resp = calloc(sizeof(cttpresp_t));
-    fileinfo_t *file; 
+    cgc_cttpresp_t  *resp = cgc_calloc(sizeof(cgc_cttpresp_t));
+    cgc_fileinfo_t *file; 
 
-    if (!do_challenge()) {
+    if (!cgc_do_challenge()) {
         debug("Failed to auth!\n");
         goto out;
     }
@@ -538,7 +538,7 @@ static cttpresp_t *handle_auth(cttpreq_t *req) {
         goto out_free;
     }
 
-    file = get_file(req->path, req->psize);
+    file = cgc_get_file(req->path, req->psize);
 
     if (!file) {
         debug("Failed to find file.\n");
@@ -546,7 +546,7 @@ static cttpresp_t *handle_auth(cttpreq_t *req) {
     }
     
     s = file->bodysize;
-    resp->data = calloc(s);
+    resp->data = cgc_calloc(s);
     
     if (!resp->data) {
         debug("Failed to allocate resp data");
@@ -554,13 +554,13 @@ static cttpresp_t *handle_auth(cttpreq_t *req) {
     }
 
 #ifndef PATCHED_2
-    memcpy(tmpbuf, file->body, s);
-    key = randint();
+    cgc_memcpy(tmpbuf, file->body, s);
+    key = cgc_randint();
     for (i=0; i < s; i++)
         *(resp->data+i) = tmpbuf[i] ^ key;
 #else
-    memcpy(resp->data, file->body, s);
-    key = randint();
+    cgc_memcpy(resp->data, file->body, s);
+    key = cgc_randint();
     for (i=0; i < s; i++)
         *(resp->data+i) ^= key;
 #endif
@@ -572,12 +572,12 @@ static cttpresp_t *handle_auth(cttpreq_t *req) {
     return resp;
 
 out_free:
-    free(resp);
+    cgc_free(resp);
 out:
     if (req)
         LOGERR(req);
     STACKPROTECTCHK
-    return internalerror();
+    return cgc_internalerror();
 }
 
 /**
@@ -587,21 +587,21 @@ out:
  *
  * @return response struct
  */
-static cttpresp_t *handle_v1(cttpreq_t *req) {
+static cgc_cttpresp_t *cgc_handle_v1(cgc_cttpreq_t *req) {
     debug("Got v1 req\n");
     //just simple stuff
     if (!req) {
         debug("Passed null request\n");
-        return internalerror();
+        return cgc_internalerror();
     }
     switch (req->type) {
         case RETRIEVE:
-            return handle_retrieve(req);
+            return cgc_handle_retrieve(req);
         case SUBMIT:
-            return handle_submit(req);
+            return cgc_handle_submit(req);
         default:
             LOGERR(req);
-            return notimplemented();
+            return cgc_notimplemented();
     }
 }
 
@@ -612,26 +612,26 @@ static cttpresp_t *handle_v1(cttpreq_t *req) {
  *
  * @return response struct
  */
-static cttpresp_t *handle_v2(cttpreq_t *req) {
+static cgc_cttpresp_t *cgc_handle_v2(cgc_cttpreq_t *req) {
     debug("Got v2 req\n");
     //some new features!
     if (!req) {
         debug("Passed null request\n");
-        return internalerror();
+        return cgc_internalerror();
     }
 
     switch (req->type) {
         case RETRIEVE:
-            return handle_retrieve(req);
+            return cgc_handle_retrieve(req);
         case SUBMIT:
-            return handle_submit(req);
+            return cgc_handle_submit(req);
         case CHECK:
-            return handle_check(req);
+            return cgc_handle_check(req);
         case DELETE:
-            return handle_delete(req);
+            return cgc_handle_delete(req);
         default: 
             LOGERR(req);
-            return notimplemented();
+            return cgc_notimplemented();
     }
 }
 
@@ -642,28 +642,28 @@ static cttpresp_t *handle_v2(cttpreq_t *req) {
  *
  * @return response struct
  */
-static cttpresp_t *handle_v3(cttpreq_t *req) {
+static cgc_cttpresp_t *cgc_handle_v3(cgc_cttpreq_t *req) {
     debug("Got v3 req\n");
     //we now support the robotic transport security protocol!
     if (!req) {
         debug("Passed null request\n");
-        return internalerror();
+        return cgc_internalerror();
     }
 
     switch (req->type) {
         case RETRIEVE:
-            return handle_retrieve(req);
+            return cgc_handle_retrieve(req);
         case SUBMIT:
-            return handle_submit(req);
+            return cgc_handle_submit(req);
         case CHECK:
-            return handle_check(req);
+            return cgc_handle_check(req);
         case DELETE:
-            return handle_delete(req);
+            return cgc_handle_delete(req);
         case AUTH:
-            return handle_auth(req);
+            return cgc_handle_auth(req);
         default:
             LOGERR(req);
-            return notimplemented();
+            return cgc_notimplemented();
     }
 }
 
@@ -674,10 +674,10 @@ static cttpresp_t *handle_v3(cttpreq_t *req) {
  *
  * @return response struct
  */
-static cttpresp_t *handle_v4(cttpreq_t *req) {
+static cgc_cttpresp_t *cgc_handle_v4(cgc_cttpreq_t *req) {
     debug("Got v4 req\n");
     LOGERR(req);
-    return notimplemented();
+    return cgc_notimplemented();
 }
 
 /**
@@ -686,22 +686,22 @@ static cttpresp_t *handle_v4(cttpreq_t *req) {
  *
  * @return true if a robot, false if a human
  */
-bool do_challenge() {
+cgc_bool cgc_do_challenge() {
     int i;
-    size_t clen;
+    cgc_size_t clen;
     char *encoded, *decoded;
-    bool res;
-    char *challenge = challenges[randint()%(sizeof(challenges)/sizeof(challenges[0]))];
-    char key = (randint()^randint()) % 256;
-    uint32_t token = randint();
-    uint32_t etoken = token;
-    uint32_t dtoken;
+    cgc_bool res;
+    char *challenge = challenges[cgc_randint()%(sizeof(challenges)/sizeof(challenges[0]))];
+    char key = (cgc_randint()^cgc_randint()) % 256;
+    cgc_uint32_t token = cgc_randint();
+    cgc_uint32_t etoken = token;
+    cgc_uint32_t dtoken;
 
-    clen = strlen(challenge);
+    clen = cgc_strlen(challenge);
 
-    encoded = calloc(clen+1);
+    encoded = cgc_calloc(clen+1);
 
-    decoded = calloc(clen+1);
+    decoded = cgc_calloc(clen+1);
 
     if (!encoded || !decoded) {
         debug("Failed to allocate encode/decode buffers.\n");
@@ -731,10 +731,10 @@ bool do_challenge() {
     RECV(sizeof(dtoken), (char*)&dtoken);
     debug("grabbed all\n");
 
-    res = (memcmp(challenge, decoded, clen) == 0) && (token == (dtoken^0x127a1b76));
+    res = (cgc_memcmp(challenge, decoded, clen) == 0) && (token == (dtoken^0x127a1b76));
 
-    free(encoded);
-    free(decoded);
+    cgc_free(encoded);
+    cgc_free(decoded);
 
     return res;
 }
@@ -744,14 +744,14 @@ bool do_challenge() {
  *
  * @return true if processing should continue, false if it should stop
  */
-bool handle_request() {
-    cttpreq_t req = {0};
-    cttpresp_t *resp;
+cgc_bool cgc_handle_request() {
+    cgc_cttpreq_t req = {0};
+    cgc_cttpresp_t *resp;
 
     dolog = 1;
 
     if (READDATA(req)) {
-        debug("Failed to recv request.\n");
+        debug("Failed to cgc_recv request.\n");
         _terminate(3);
     }
 
@@ -774,7 +774,7 @@ bool handle_request() {
     }
 
     if (req.psize > MAX_PATH_SIZE || req.bodysize > MAX_BODY_SIZE) {
-        resp = calloc(sizeof(cttpresp_t));
+        resp = cgc_calloc(sizeof(cgc_cttpresp_t));
         
 
         if (!resp) {
@@ -782,21 +782,21 @@ bool handle_request() {
             _terminate(1);
         }
 
-        resp->data = calloc(sizeof(WAYTOOBIG));
+        resp->data = cgc_calloc(sizeof(WAYTOOBIG));
         
         if (!resp->data) {
             debug("Failed to allocate resp data.\n");
             _terminate(1);
         }
 
-        strcpy(resp->data, WAYTOOBIG);
-        resp->rsize = strlen(resp->data)+1;
+        cgc_strcpy(resp->data, WAYTOOBIG);
+        resp->rsize = cgc_strlen(resp->data)+1;
         resp->code = NOK;
 
         LOGERR(&req);
     } else {
         //NO HUMANS ALLOWED
-        if (!verified && !do_challenge()) {
+        if (!verified && !cgc_do_challenge()) {
             LOGERR(&req);
             return false;
         }
@@ -805,7 +805,7 @@ bool handle_request() {
 
         if (req.psize > 0) {
             int res = 0;
-            req.path = calloc(req.psize);
+            req.path = cgc_calloc(req.psize);
 
             if (!req.path) {
                 debug("Failed to allocate path.\n");
@@ -816,7 +816,7 @@ bool handle_request() {
         }
 
         if (req.bodysize > 0) {
-            req.body = calloc(req.bodysize);
+            req.body = cgc_calloc(req.bodysize);
 
             if (!req.body) {
                 debug("Failed to allocate body.\n");
@@ -829,29 +829,29 @@ bool handle_request() {
 
         switch (req.version) {
             case ONE:
-                resp = handle_v1(&req);
+                resp = cgc_handle_v1(&req);
                 break;
             case TWO:
-                resp = handle_v2(&req);
+                resp = cgc_handle_v2(&req);
                 break;
             case THREE:
-                resp = handle_v3(&req);
+                resp = cgc_handle_v3(&req);
                 break;
             case FOUR:
-                resp = handle_v4(&req);
+                resp = cgc_handle_v4(&req);
                 break;
             default:
                 LOGERR(&req);
-                resp = notimplemented();
+                resp = cgc_notimplemented();
         }
     }
 
     if (resp) {
-        size_t osize = resp->rsize;
+        cgc_size_t osize = resp->rsize;
         if(ISLE(&req)) {
-            memcpy(resp->hdr, LEHDR, sizeof(resp->hdr));
+            cgc_memcpy(resp->hdr, LEHDR, sizeof(resp->hdr));
         } else {
-            memcpy(resp->hdr, BEHDR, sizeof(resp->hdr));
+            cgc_memcpy(resp->hdr, BEHDR, sizeof(resp->hdr));
             SWAP32(resp->rsize);
             SWAP32(resp->code);
         }
@@ -861,21 +861,21 @@ bool handle_request() {
         
         if (req.path) {
             debug("freeing path\n");
-            free(req.path);
+            cgc_free(req.path);
         }
 
         if (req.body) {
             debug("freeing body\n");
-            free(req.body);
+            cgc_free(req.body);
         }
 
         if (resp->data) {
             debug("freeing resp data\n");
-            free(resp->data);
+            cgc_free(resp->data);
         }
 
         debug("freeing resp\n");
-        free(resp);
+        cgc_free(resp);
         
 
         return true;
@@ -888,12 +888,12 @@ bool handle_request() {
  * Print out all our requests. All stats calculations are left up to the users,
  * who, as robots, enjoy that sort of thing.
  */
-void print_stats() {
-    list_node_t *cur, *n;
-    logmsg_t* msg = NULL;
+void cgc_print_stats() {
+    cgc_list_node_t *cur, *n;
+    cgc_logmsg_t* msg = NULL;
 
     list_for_each_safe(&loglist, n, cur) {
-        msg = (logmsg_t*) cur->data;
+        msg = (cgc_logmsg_t*) cur->data;
         if (msg->req->path && msg->req->psize) {
             SSEND(sizeof(msg->level), (char*)&msg->level);
             SSEND(msg->req->psize, msg->req->path);

@@ -30,51 +30,51 @@
 #include "conv.h"
 
 int
-isdigit(int c)
+cgc_isdigit(int c)
 {
     return c >= '0' && c <= '9';
 }
 
 int
-ishexdigit(int c)
+cgc_ishexdigit(int c)
 {
-    return isdigit(c) ||
+    return cgc_isdigit(c) ||
         (c >= 'a' && c <= 'f') ||
         (c >= 'A' && c <= 'F');
 }
 
 int
-isalpha(int c)
+cgc_isalpha(int c)
 {
-    return isupper(c) || islower(c);
+    return cgc_isupper(c) || cgc_islower(c);
 }
 
 int
-islower(int c)
+cgc_islower(int c)
 {
     return c >= 'a' && c <= 'z';
 }
 
 int
-isupper(int c)
+cgc_isupper(int c)
 {
     return c >= 'A' && c <= 'Z';
 }
 
 int
-toupper(int c)
+cgc_toupper(int c)
 {
-    return islower(c) ? c - 'a' + 'A' : c;
+    return cgc_islower(c) ? c - 'a' + 'A' : c;
 }
  
 int
-tolower(int c)
+cgc_tolower(int c)
 {
-    return isupper(c) ? c - 'A' + 'a' : c;
+    return cgc_isupper(c) ? c - 'A' + 'a' : c;
 }
 
 char
-todigit(unsigned int value, unsigned int base)
+cgc_todigit(unsigned int value, unsigned int base)
 {
     if (base < 2 || base > 16 || value >= base)
         return '\0';
@@ -86,15 +86,15 @@ todigit(unsigned int value, unsigned int base)
 }
 
 int
-fromdigit(char digit, unsigned int base)
+cgc_fromdigit(char digit, unsigned int base)
 {
     int ret;
 
     if (base < 2 || base > 16)
         return EXIT_FAILURE;
 
-    digit = tolower(digit);
-    if (isdigit(digit))
+    digit = cgc_tolower(digit);
+    if (cgc_isdigit(digit))
         ret = digit - '0';
     else
         ret = digit - 'a' + 10;
@@ -103,10 +103,10 @@ fromdigit(char digit, unsigned int base)
 }
 
 int
-utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t num)
+cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, cgc_size_t num)
 {
     unsigned int i, tmp;
-    size_t len = 1;
+    cgc_size_t len = 1;
 
     if (base < 2 || base > 16 || num < 1)
         return EXIT_FAILURE;
@@ -119,11 +119,11 @@ utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t n
         return EXIT_FAILURE;
 
     for (i = 0; i < len; i++) {
-        str[len - i - 1] = todigit(value % base, base);
+        str[len - i - 1] = cgc_todigit(value % base, base);
         value /= base;
 
         if (uppercase)
-            str[len - i - 1] = toupper(str[len - i - 1]);
+            str[len - i - 1] = cgc_toupper(str[len - i - 1]);
     }
 
     str[len] = '\0';
@@ -131,7 +131,7 @@ utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t n
 }
 
 int
-itostr(int value, unsigned int base, int uppercase, char *str, size_t num)
+cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_t num)
 {
     if (num < (value < 0 ? 2 : 1))
         return EXIT_FAILURE;
@@ -141,38 +141,38 @@ itostr(int value, unsigned int base, int uppercase, char *str, size_t num)
         num--;
     }
 
-    return utostr(value < 0 ? -value : value, base, uppercase, str, num);
+    return cgc_utostr(value < 0 ? -value : value, base, uppercase, str, num);
 }
 
 int
-dtostr(double value, char *str, size_t num)
+cgc_dtostr(double value, char *str, cgc_size_t num)
 {
     unsigned int i, fractional_len;
     char fractional_buf[DTOSTR_PRECISION + 1];
     unsigned int whole_part, fractional_part;
 
-    if (isnan(value)) {
+    if (cgc_isnan(value)) {
         if (num < 4)
             return EXIT_FAILURE;
 
-        strncpy(str, "nan", 4);
+        cgc_strncpy(str, "nan", 4);
         return EXIT_SUCCESS;
     }
 
-    if (sign(value)) {
+    if (cgc_sign(value)) {
         if (num < 2)
             return EXIT_FAILURE;
 
         *str++ = '-';
         num--;
-        value = abs(value);
+        value = cgc_abs(value);
     }
 
-    if (isinf(value)) {
+    if (cgc_isinf(value)) {
         if (num < 4)
             return EXIT_FAILURE;
 
-        strncpy(str, "inf", 4);
+        cgc_strncpy(str, "inf", 4);
         return EXIT_SUCCESS;
     }
 
@@ -183,34 +183,34 @@ dtostr(double value, char *str, size_t num)
     whole_part = value;
     fractional_part = (value - whole_part) * pow(10.0, DTOSTR_PRECISION);
 
-    if (utostr(fractional_part, 10, 0, fractional_buf, sizeof(fractional_buf)) != 0)
+    if (cgc_utostr(fractional_part, 10, 0, fractional_buf, sizeof(fractional_buf)) != 0)
         return EXIT_FAILURE;
 
-    if (utostr(whole_part, 10, 0, str, num - DTOSTR_PRECISION - 1) != 0)
+    if (cgc_utostr(whole_part, 10, 0, str, num - DTOSTR_PRECISION - 1) != 0)
         return EXIT_FAILURE;
 
-    str += strlen(str);
+    str += cgc_strlen(str);
     *str++ = '.';
 
-    fractional_len = strlen(fractional_buf);
+    fractional_len = cgc_strlen(fractional_buf);
     for (i = 0; i < DTOSTR_PRECISION - fractional_len; i++)
         *str++ = '0';
 
-    strcpy(str, fractional_buf);
+    cgc_strcpy(str, fractional_buf);
     return EXIT_SUCCESS;
 }
 
-ssize_t
-strtou(char *str, unsigned int base, unsigned int *result)
+cgc_ssize_t
+cgc_strtou(char *str, unsigned int base, unsigned int *result)
 {
-    ssize_t ret = 0;
+    cgc_ssize_t ret = 0;
     unsigned long long acc = 0;
     int digit;
 
     if (base < 2 || base > 16)
         return EXIT_FAILURE;
 
-    while (*str && (digit = fromdigit(*str++, base)) != EXIT_FAILURE) {
+    while (*str && (digit = cgc_fromdigit(*str++, base)) != EXIT_FAILURE) {
         if ((acc *= base) > UINT_MAX)
             return EXIT_FAILURE;
 
@@ -225,17 +225,17 @@ strtou(char *str, unsigned int base, unsigned int *result)
     return ret;
 }
 
-ssize_t
-strtoi(char *str, unsigned int base, int *result)
+cgc_ssize_t
+cgc_strtoi(char *str, unsigned int base, int *result)
 {
-    ssize_t ret;
+    cgc_ssize_t ret;
     unsigned int u;
     int isnegative = 0;
 
     if (*str == '-')
         isnegative = 1;
 
-    if ((ret = strtou(str + isnegative, base, &u)) == EXIT_FAILURE)
+    if ((ret = cgc_strtou(str + isnegative, base, &u)) == EXIT_FAILURE)
         return EXIT_FAILURE;
 
     if (u > ((unsigned int)INT_MAX + isnegative))
@@ -246,21 +246,21 @@ strtoi(char *str, unsigned int base, int *result)
 }
 
 
-ssize_t
-strtod(char *str, double *result)
+cgc_ssize_t
+cgc_strtod(char *str, double *result)
 {
-    ssize_t ret, frac_size = 0;
+    cgc_ssize_t ret, frac_size = 0;
     int whole_part;
     unsigned int frac_part = 0;
     char *frac_str;
 
-    if ((frac_str = strrchr(str, '.')) != NULL)
+    if ((frac_str = cgc_strrchr(str, '.')) != NULL)
         *frac_str++ = '\0';
 
-    if ((ret = strtoi(str, 10, &whole_part)) == EXIT_FAILURE)
+    if ((ret = cgc_strtoi(str, 10, &whole_part)) == EXIT_FAILURE)
         return EXIT_FAILURE;
 
-    if (frac_str && (frac_size = strtou(frac_str, 10, &frac_part)) == EXIT_FAILURE)
+    if (frac_str && (frac_size = cgc_strtou(frac_str, 10, &frac_part)) == EXIT_FAILURE)
         return EXIT_FAILURE;
 
     *result = whole_part < 0 ? -(double)frac_part : (double)frac_part;

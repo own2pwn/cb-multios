@@ -19,18 +19,18 @@ typedef struct __attribute__ ((__packed__)) {
     unsigned length : 16;
     unsigned channel : 16;
     unsigned char payload[];
-} session_hdr_t;
+} cgc_session_hdr_t;
 
 typedef struct __attribute__ ((__packed__)) {
     unsigned code : 8;
     unsigned id : 8;
     unsigned length : 16;
-} control_hdr_t;
+} cgc_control_hdr_t;
 
 typedef struct {
-    control_hdr_t hdr;
+    cgc_control_hdr_t hdr;
     unsigned char payload[];
-} command_t;
+} cgc_command_t;
 
 typedef union {
     int type;
@@ -41,15 +41,15 @@ typedef union {
         unsigned char *data;
         unsigned int length;
     } rx;
-} event_t;
+} cgc_event_t;
 
-typedef void (*connect_handler_t) (void *channel);
-typedef void (*event_handler_t) (void *channel, void *userdata, event_t *event);
+typedef void (*cgc_connect_handler_t) (void *channel);
+typedef void (*cgc_event_handler_t) (void *channel, void *userdata, cgc_event_t *event);
 
-void session_loop();
-void session_register_psm(unsigned int psm, connect_handler_t handler);
-void session_register_events(void *channel, event_handler_t handler);
-void session_register_userdata(void *channel, void *userdata);
-void session_send(void *channel, unsigned int length, unsigned char *data);
+void cgc_session_loop();
+void cgc_session_register_psm(unsigned int psm, cgc_connect_handler_t handler);
+void cgc_session_register_events(void *channel, cgc_event_handler_t handler);
+void cgc_session_register_userdata(void *channel, void *userdata);
+void cgc_session_send(void *channel, unsigned int length, unsigned char *data);
 
 #endif

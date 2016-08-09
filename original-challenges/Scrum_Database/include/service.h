@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -42,7 +42,7 @@ typedef struct backlogItem {
 
 	struct backlogItem *next;
 
-} backlogItemType;
+} cgc_backlogItemType;
 
 
 typedef struct sprintEntry {
@@ -53,30 +53,30 @@ typedef struct sprintEntry {
 	unsigned short total_points;
 	unsigned short velocity_required;
 
-	backlogItemType *sprintBacklogList;
+	cgc_backlogItemType *sprintBacklogList;
 
 	struct sprintEntry *next;
 
-} sprintEntryType;
+} cgc_sprintEntryType;
 
 
 typedef struct productDef {
 
 	unsigned short ID;
 	char *title;
-	backlogItemType *productBacklog;
-	sprintEntryType *sprintList;
+	cgc_backlogItemType *productBacklog;
+	cgc_sprintEntryType *sprintList;
 
 	struct productDef *next;
 
-} productDefType;
+} cgc_productDefType;
 
 
-int init_database( productDefType **database );
-int destroy_database ( productDefType **database );
-unsigned int calc_version();
-int receive_commands( productDefType **database );
-int receive_bytes (unsigned char *buffer, size_t count);
+int cgc_init_database( cgc_productDefType **database );
+int cgc_destroy_database ( cgc_productDefType **database );
+unsigned int cgc_calc_version();
+int cgc_receive_commands( cgc_productDefType **database );
+int cgc_receive_bytes (unsigned char *buffer, cgc_size_t count);
 
 #endif
 

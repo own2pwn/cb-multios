@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,25 +31,25 @@
 #include "match_objects.h"
 
 #ifdef DEBUG
-  #define dbg(s, ...) fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+  #define dbg(s, ...) cgc_fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #else
   #define dbg(s, ...)
 #endif
 
 #define err(s, ...) \
 ({ \
-  fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
-  exit(1); \
+  cgc_fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
+  cgc_exit(1); \
 })
 
 
-int send_n_bytes(int fd, size_t n, char* buf)
+int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  size_t tx = 0;
-  size_t to_send = n;
+  cgc_size_t tx = 0;
+  cgc_size_t to_send = n;
 
   while (to_send > 0) {
     if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0)
@@ -68,13 +68,13 @@ int send_n_bytes(int fd, size_t n, char* buf)
   return n - to_send;
 }
 
-int read_n_bytes(int fd, size_t n, char* buf)
+int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  size_t rx = 0;
-  size_t to_read = n;
+  cgc_size_t rx = 0;
+  cgc_size_t to_read = n;
 
   while (to_read > 0) {
     if (receive(fd, buf + (n - to_read), to_read, &rx) != 0)
@@ -94,12 +94,12 @@ int read_n_bytes(int fd, size_t n, char* buf)
   return n - to_read;
 }
 
-int read_until(int fd, size_t n, char terminator, char* buf)
+int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf)
 {
-  size_t read = 0;
+  cgc_size_t read = 0;
   while (read < n)
   {
-    ssize_t tmp_read = read_n_bytes(fd, 1, buf + read);
+    cgc_ssize_t tmp_read = cgc_read_n_bytes(fd, 1, buf + read);
     if (tmp_read < 0)
     {
       return -1;
@@ -109,9 +109,9 @@ int read_until(int fd, size_t n, char terminator, char* buf)
       break;
     }
 
-    if (memchr(buf + read, terminator, tmp_read) != NULL)
+    if (cgc_memchr(buf + read, terminator, tmp_read) != NULL)
     {
-      *((char* )memchr(buf + read, terminator, tmp_read)) = '\0';
+      *((char* )cgc_memchr(buf + read, terminator, tmp_read)) = '\0';
       return read + tmp_read;
     }
     else
@@ -123,30 +123,30 @@ int read_until(int fd, size_t n, char terminator, char* buf)
   return -1;
 }
 
-size_t read_image(int fd, size_t width, size_t height, u8** input)
+cgc_size_t cgc_read_image(int fd, cgc_size_t width, cgc_size_t height, cgc_u8** input)
 {
   if (!input)
     return 0;
 
   *input = NULL;
-  u8* tmp_input = calloc(width * height, sizeof(char));
+  cgc_u8* tmp_input = cgc_calloc(width * height, sizeof(char));
   if (!tmp_input)
-    err("calloc() failed");
+    err("cgc_calloc() failed");
 
-  size_t idx = 0;
+  cgc_size_t idx = 0;
   int mid_line = 0;
 
   while (idx < width * height)
   {
     int tmp_read;
     if (!mid_line)
-      tmp_read = read_until(fd, width + 1, '\n', (char *)tmp_input + idx);
+      tmp_read = cgc_read_until(fd, width + 1, '\n', (char *)tmp_input + idx);
     else
-      tmp_read = read_until(fd, width + 1, '\n', (char *)tmp_input + idx + mid_line);
+      tmp_read = cgc_read_until(fd, width + 1, '\n', (char *)tmp_input + idx + mid_line);
 
     if (tmp_read < 0)
     {
-      free(tmp_input);
+      cgc_free(tmp_input);
       return 0;
     }
     else if (tmp_read == 0)
@@ -172,30 +172,30 @@ size_t read_image(int fd, size_t width, size_t height, u8** input)
     goto done;
 
 error:
-  free(tmp_input);
+  cgc_free(tmp_input);
   return 0;
 done:
   *input = tmp_input;
   return idx / width;
 }
 
-typedef struct array_2d_view_t array_2d_view_t;
-struct array_2d_view_t
+typedef struct cgc_array_2d_view_t cgc_array_2d_view_t;
+struct cgc_array_2d_view_t
 {
-  u8* data;
-  u32 width, height;
-  u32 dwidth, dheight;
-  u32 x_off, y_off;
+  cgc_u8* data;
+  cgc_u32 width, height;
+  cgc_u32 dwidth, dheight;
+  cgc_u32 x_off, y_off;
 };
 
-array_2d_view_t* make_2d_view(u8* data, u32 w, u32 h, u32 x_off, u32 y_off)
+cgc_array_2d_view_t* cgc_make_2d_view(cgc_u8* data, cgc_u32 w, cgc_u32 h, cgc_u32 x_off, cgc_u32 y_off)
 {
-  array_2d_view_t* view = calloc(1, sizeof(array_2d_view_t));
+  cgc_array_2d_view_t* view = cgc_calloc(1, sizeof(cgc_array_2d_view_t));
   if (!view)
-    err("calloc() failed");
+    err("cgc_calloc() failed");
   view->data = data;
   if (!view->data)
-    err("calloc() failed");
+    err("cgc_calloc() failed");
 
   view->dwidth = w;
   view->dheight = h;
@@ -210,42 +210,42 @@ array_2d_view_t* make_2d_view(u8* data, u32 w, u32 h, u32 x_off, u32 y_off)
 }
 
 // index is view relative
-int index_through_view(u32 x, u32 y, array_2d_view_t* view, u8* val)
+int cgc_index_through_view(cgc_u32 x, cgc_u32 y, cgc_array_2d_view_t* view, cgc_u8* val)
 {
   if (x >= view->width || y >= view->height ||
       x + view->x_off >= view->dwidth ||
       y + view->y_off >= view->dheight)
     return -1;
 
-  u32 drow = y + view->y_off;
-  u32 dcol = x + view->x_off;;
+  cgc_u32 drow = y + view->y_off;
+  cgc_u32 dcol = x + view->x_off;;
   *val = view->data[drow * view->dwidth + dcol];
   return 0;
 }
 
 
-int parse_dimensions(char* buf, u32 max, u32* w, u32* h)
+int cgc_parse_dimensions(char* buf, cgc_u32 max, cgc_u32* w, cgc_u32* h)
 {
   char* endptr = NULL;
 
   for (char* p = buf; p < buf + max && *p != '\0'; p++)
-    if (!(isspace(*p) || isdigit(*p)))
+    if (!(cgc_isspace(*p) || cgc_isdigit(*p)))
         return -1;
 
-  if (!isdigit(*buf))
+  if (!cgc_isdigit(*buf))
     return -1;
 
-  *w = strtol(buf, &endptr, 10);
+  *w = cgc_strtol(buf, &endptr, 10);
   if (*w == 0)
     return -1;
 
-  while (endptr <  buf + max && isspace(*endptr))
+  while (endptr <  buf + max && cgc_isspace(*endptr))
     endptr++;
 
   if (endptr == buf + max)
     return -1;
 
-  *h = strtol(endptr, &endptr, 10);
+  *h = cgc_strtol(endptr, &endptr, 10);
   if (*h == 0)
     return -1;
 
@@ -255,15 +255,15 @@ int parse_dimensions(char* buf, u32 max, u32* w, u32* h)
   return 0;
 }
 
-float match_percent(array_2d_view_t* view, match_object_t* match_object)
+float cgc_match_percent(cgc_array_2d_view_t* view, cgc_match_object_t* match_object)
 {
-  u32 match_count = 0;
-  for (u32 y = 0; y < match_object->height; y++)
+  cgc_u32 match_count = 0;
+  for (cgc_u32 y = 0; y < match_object->height; y++)
   {
-    for (u32 x = 0; x < match_object->width; x++)
+    for (cgc_u32 x = 0; x < match_object->width; x++)
     {
-      u8 val;
-      if (index_through_view(x, y, view, &val) < 0)
+      cgc_u8 val;
+      if (cgc_index_through_view(x, y, view, &val) < 0)
         continue;
       else
         match_count += val == match_object->map[y* match_object->width + x];
@@ -273,17 +273,17 @@ float match_percent(array_2d_view_t* view, match_object_t* match_object)
   return (float) match_count / (match_object->height * match_object->width);
 }
 
-match_object_t* find_matching_object(array_2d_view_t* view, float match_threshold_pct)
+cgc_match_object_t* cgc_find_matching_object(cgc_array_2d_view_t* view, float match_threshold_pct)
 {
   float best_match_pct = .0;
-  match_object_t* best_match = NULL;
+  cgc_match_object_t* best_match = NULL;
 
-  for (u32 i = 0; i < NUM_MATCH_OBJECTS; i++)
+  for (cgc_u32 i = 0; i < NUM_MATCH_OBJECTS; i++)
   {
     if (match_objects[i].height > view->height || match_objects[i].width > view->width)
       continue;
 
-    float match_pct = match_percent(view, &match_objects[i]);
+    float match_pct = cgc_match_percent(view, &match_objects[i]);
     // dbg("%c -> %d\n", match_objects[i].character, (int)(match_pct * 100.0));
     if (match_pct >= best_match_pct && match_pct < 0.958)
     {
@@ -298,18 +298,18 @@ match_object_t* find_matching_object(array_2d_view_t* view, float match_threshol
     return NULL;
 }
 
-char* perform_ocr(u8* image, u32 width, u32 height, float match_threshold_pct)
+char* cgc_perform_ocr(cgc_u8* image, cgc_u32 width, cgc_u32 height, float match_threshold_pct)
 {
 #define MAX_OCR_DATA_SIZE 64
   char output[MAX_OCR_DATA_SIZE];
 
-  u32 x_off= 0, y_off = 0;
-  u32 out_idx = 0;
+  cgc_u32 x_off= 0, y_off = 0;
+  cgc_u32 out_idx = 0;
 
   while (x_off < width && y_off < height)
   {
-    array_2d_view_t* view = make_2d_view(image, width, height, x_off, y_off);
-    match_object_t* match = find_matching_object(view, match_threshold_pct);
+    cgc_array_2d_view_t* view = cgc_make_2d_view(image, width, height, x_off, y_off);
+    cgc_match_object_t* match = cgc_find_matching_object(view, match_threshold_pct);
     if (!match)
     {
       if (x_off < width)
@@ -352,23 +352,23 @@ char* perform_ocr(u8* image, u32 width, u32 height, float match_threshold_pct)
 
   if (out_idx)
   {
-    char *ret = calloc(out_idx, sizeof(char));
+    char *ret = cgc_calloc(out_idx, sizeof(char));
     if (!ret)
-      err("calloc() failed");
-    strncpy(ret, output, out_idx);
+      err("cgc_calloc() failed");
+    cgc_strncpy(ret, output, out_idx);
     return ret;
   }
   else
     return NULL;
 }
 
-int check_junk(void)
+int cgc_check_junk(void)
 {
-  u32 chk = 0;
-  size_t max = strlen(junk);
-  for (size_t k = 0; k < 0x10; k++)
+  cgc_u32 chk = 0;
+  cgc_size_t max = cgc_strlen(junk);
+  for (cgc_size_t k = 0; k < 0x10; k++)
   {
-    for(size_t i = 0; i < max; i++)
+    for(cgc_size_t i = 0; i < max; i++)
     {
       if (i + k > 256)
         chk ^= ((junk[i + k - 256]) << (i + k % 64));
@@ -388,7 +388,7 @@ static const char* magic = "Z1";
 
 int main(void)
 {
-  if (!check_junk())
+  if (!cgc_check_junk())
     err("bad junk");
 
   printf("Welcome to the super awesome OCR engine! Enter your input to have it OCR'd\n");
@@ -397,31 +397,31 @@ int main(void)
 
   #define LINE_SIZE 32
   char line[LINE_SIZE];
-  memset(line, 0, LINE_SIZE);
-  if (read_until(infd, LINE_SIZE, '\n', line) < 0)
+  cgc_memset(line, 0, LINE_SIZE);
+  if (cgc_read_until(infd, LINE_SIZE, '\n', line) < 0)
     err("bad line");
   else
     dbg("good line");
 
-  if (strlen(line) != strlen(magic) || strncmp(line, magic, strlen(line)) != 0)
+  if (cgc_strlen(line) != cgc_strlen(magic) || cgc_strncmp(line, magic, cgc_strlen(line)) != 0)
     err("bad magic");
   else
     dbg("good magic");
 
-  memset(line, 0, LINE_SIZE);
-  if (read_until(infd, LINE_SIZE, '\n', line) < 0)
+  cgc_memset(line, 0, LINE_SIZE);
+  if (cgc_read_until(infd, LINE_SIZE, '\n', line) < 0)
     err("bad line");
   else
     dbg("good line");
 
-  u32 w, h;
-  if (parse_dimensions(line, strlen(line), &w, &h) != 0)
+  cgc_u32 w, h;
+  if (cgc_parse_dimensions(line, cgc_strlen(line), &w, &h) != 0)
     err("bad dimensions");
   else
     dbg("good dimensions, %dx%d", w, h);
 
-  u8 *image;
-  u32 read_height = read_image(infd, w, h, &image);
+  cgc_u8 *image;
+  cgc_u32 read_height = cgc_read_image(infd, w, h, &image);
   if (read_height != h || !image)
     err("bad image");
   else
@@ -429,7 +429,7 @@ int main(void)
 
 
 #define MATCH_THRESHOLD .90
-  char* output = perform_ocr(image, w, h, MATCH_THRESHOLD);
+  char* output = cgc_perform_ocr(image, w, h, MATCH_THRESHOLD);
 
   if (output)
     printf("Result: %s\n", output);

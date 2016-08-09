@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -29,8 +29,8 @@
  * @param  topRight   The top most right most coordinate of the map
  * @return            A pointer of the newly created map
  */
-Map* newMap(Coordinate bottomLeft, Coordinate topRight) {
-	Map* map;
+cgc_Map* cgc_newMap(cgc_Coordinate bottomLeft, cgc_Coordinate topRight) {
+	cgc_Map* map;
 	int minX, maxX;
 	int minY, maxY;
 	int xWidth, yWidth;
@@ -40,7 +40,7 @@ Map* newMap(Coordinate bottomLeft, Coordinate topRight) {
 	minY = bottomLeft.y;
 	maxY = topRight.y;
 
-	if(!(map = malloc(sizeof(Map))))
+	if(!(map = cgc_malloc(sizeof(cgc_Map))))
 		_terminate(ALLOCATE_ERROR);
 
 	map->bottomLeft = bottomLeft;
@@ -49,7 +49,7 @@ Map* newMap(Coordinate bottomLeft, Coordinate topRight) {
 	xWidth = maxX - minX + 1;
 	yWidth = maxY - minY + 1;
 
-	if(!(map->data = malloc(xWidth * yWidth * sizeof(unsigned int)))) 
+	if(!(map->data = cgc_malloc(xWidth * yWidth * sizeof(unsigned int)))) 
 		_terminate(ALLOCATE_ERROR);
 
 	for(int c=0; c<=xWidth; c++) {
@@ -65,33 +65,33 @@ Map* newMap(Coordinate bottomLeft, Coordinate topRight) {
 }
 
 /**
- * Free all memory for a Map 
- * @param map_ptr Pointer to the Map pointer containing the Map
+ * Free all memory for a cgc_Map 
+ * @param map_ptr Pointer to the cgc_Map pointer containing the cgc_Map
  */
-void freeMap(Map **map_ptr) {
-	Map *map;
+void cgc_freeMap(cgc_Map **map_ptr) {
+	cgc_Map *map;
 
 	map = *map_ptr;
 	map->columns = 0;
 	map->rows = 0;
-	free(map->data);
+	cgc_free(map->data);
 	map->data = NULL;
 	map->topRight.x = 0;
 	map->topRight.y = 0;
 	map->bottomLeft.x = 0;
 	map->bottomLeft.y = 0;
-	free(map);
+	cgc_free(map);
 	map = NULL;
 }
 
 /**
  * Determine if the coordinate (x,y) is within the existing map
- * @param  map The Map to be tested
+ * @param  map The cgc_Map to be tested
  * @param  x   The X-coordinate of the coordinate to find
  * @param  y   The Y-coordinate of the coordinate to find
- * @return     1 if coordinate is in Map, 0 if not
+ * @return     1 if coordinate is in cgc_Map, 0 if not
  */
-int inBounds(Map* map, int x, int y) {
+int cgc_inBounds(cgc_Map* map, int x, int y) {
 	if(x < map->bottomLeft.x || x > map->topRight.x || y < map->bottomLeft.y || y > map->topRight.y)
 		return 0;
 
@@ -99,33 +99,33 @@ int inBounds(Map* map, int x, int y) {
 }
 
 /**
- * Make a copy of a Map from srcMap to dstMap
- * @param destMap The destination of the Map to copy
- * @param srcMap  The source of the Map to copy
+ * Make a copy of a cgc_Map from srcMap to dstMap
+ * @param destMap The destination of the cgc_Map to copy
+ * @param srcMap  The source of the cgc_Map to copy
  */
-void copyMap(Map* destMap, Map* srcMap) {
+void cgc_copyMap(cgc_Map* destMap, cgc_Map* srcMap) {
 	unsigned int value;
 
 	for(int x=srcMap->bottomLeft.x; x<=srcMap->topRight.x; x++) {
 		for(int y=srcMap->bottomLeft.y; y<=srcMap->topRight.y; y++) {
-			value = getCoordinate(srcMap, x, y);
-			setCoordinate(&destMap, x, y, value);
+			value = cgc_getCoordinate(srcMap, x, y);
+			cgc_setCoordinate(&destMap, x, y, value);
 		}
 	}
 }
 
 /**
- * Add a new coordinate to a Map.
- * Note: If Map is not big enough, create a new Map that is
- * and copy old Map to new Map
+ * Add a new coordinate to a cgc_Map.
+ * Note: If cgc_Map is not big enough, create a new cgc_Map that is
+ * and copy old cgc_Map to new cgc_Map
  * 
  * @param map_ptr [description]
  * @param x       [description]
  * @param y       [description]
  */
-void addCoordinate(Map** map_ptr, int x, int y) {
-	Coordinate bottomLeft, topRight;
-	Map *nMap, *map;
+void cgc_addCoordinate(cgc_Map** map_ptr, int x, int y) {
+	cgc_Coordinate bottomLeft, topRight;
+	cgc_Map *nMap, *map;
 
 	map = *map_ptr;
 	if(map == NULL) {
@@ -133,11 +133,11 @@ void addCoordinate(Map** map_ptr, int x, int y) {
 		bottomLeft.y = y;
 		topRight.x = x;
 		topRight.y = y;
-		*map_ptr = newMap(bottomLeft, topRight);
+		*map_ptr = cgc_newMap(bottomLeft, topRight);
 		return;
 	}
 
-	if(inBounds(map, x,y))
+	if(cgc_inBounds(map, x,y))
 		return;
 
 	if(x < map->bottomLeft.x) {
@@ -162,26 +162,26 @@ void addCoordinate(Map** map_ptr, int x, int y) {
 		topRight.y = map->topRight.y;
 	}
 
-	nMap = newMap(bottomLeft, topRight);
-	copyMap(nMap, *map_ptr);
-	freeMap(map_ptr);
+	nMap = cgc_newMap(bottomLeft, topRight);
+	cgc_copyMap(nMap, *map_ptr);
+	cgc_freeMap(map_ptr);
 	*map_ptr = nMap;
 }
 
 /**
- * Set the value of a Coordinate
- * Note: If the coordinate does not exit in the Map, the coordinate will be added
- * @param map_ptr The address of the Map containing the Coordinate
+ * Set the value of a cgc_Coordinate
+ * Note: If the coordinate does not exit in the cgc_Map, the coordinate will be added
+ * @param map_ptr The address of the cgc_Map containing the cgc_Coordinate
  * @param x       The X-coordinate of the coordinate to set
  * @param y       The Y-coordinate of the coordinate to set
  * @param value   The value to set the coordinate to
  */
-void setCoordinate(Map** map_ptr, int x, int y, unsigned int value) {
+void cgc_setCoordinate(cgc_Map** map_ptr, int x, int y, unsigned int value) {
 	unsigned int column, row;
-	Map *map;
+	cgc_Map *map;
 
-	if(*map_ptr == NULL || !inBounds(*map_ptr, x, y))
-		addCoordinate(map_ptr, x, y);
+	if(*map_ptr == NULL || !cgc_inBounds(*map_ptr, x, y))
+		cgc_addCoordinate(map_ptr, x, y);
 
 	map = *map_ptr;
 	column = x - map->bottomLeft.x + 1;
@@ -191,17 +191,17 @@ void setCoordinate(Map** map_ptr, int x, int y, unsigned int value) {
 }
 
 /**
- * Get the value at a specific coordinate in a Map
+ * Get the value at a specific coordinate in a cgc_Map
  * Note: All values at valid coordinates should be greater than zero
- * @param  map The Map to search
+ * @param  map The cgc_Map to search
  * @param  x   The X-coordinate of the coordinate to find
  * @param  y   The Y-coordinate of the coordinate to find
  * @return     The value at the coordinate, or -1 if the coordinate is not in bounds
  */
-unsigned int getCoordinate(Map* map, int x, int y) {
+unsigned int cgc_getCoordinate(cgc_Map* map, int x, int y) {
 	unsigned int column, row;
 
-	if(!inBounds(map, x, y))
+	if(!cgc_inBounds(map, x, y))
 		return -1;
 
 	column = x - map->bottomLeft.x + 1;

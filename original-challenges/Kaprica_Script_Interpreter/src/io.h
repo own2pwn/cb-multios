@@ -7,18 +7,18 @@ typedef struct {
     int pos;
     int length;
     int mark;
-} io_t;
+} cgc_io_t;
 
-void io_init_fd(io_t *io, int fd);
-void io_init_bytes(io_t *io, const char *str, unsigned int length);
-void io_init_string(io_t *io, const char *str);
-void io_mark(io_t *io);
-int io_rewind(io_t *io);
-int io_tell(io_t *io);
-int io_seek(io_t *io, int pos);
-int io_getc(io_t *io);
-int io_ungetc(io_t *io);
-int io_peek(io_t *io);
-int io_read(io_t *io, char *buf, unsigned int cnt);
+void cgc_io_init_fd(cgc_io_t *io, int fd);
+void cgc_io_init_bytes(cgc_io_t *io, const char *str, unsigned int length);
+void cgc_io_init_string(cgc_io_t *io, const char *str);
+void cgc_io_mark(cgc_io_t *io);
+int cgc_io_rewind(cgc_io_t *io);
+int cgc_io_tell(cgc_io_t *io);
+int cgc_io_seek(cgc_io_t *io, int pos);
+int cgc_io_getc(cgc_io_t *io);
+int cgc_io_ungetc(cgc_io_t *io);
+int cgc_io_peek(cgc_io_t *io);
+int cgc_io_read(cgc_io_t *io, char *buf, unsigned int cnt);
 
 #endif

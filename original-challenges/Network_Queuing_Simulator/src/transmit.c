@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,29 +30,29 @@ THE SOFTWARE.
 #include "receive.h"
 #include "mt.h"
 
-extern interface iface;
+extern cgc_interface iface;
 double wall_clock;
 double max_wall_clock;
 extern double delta_sum;
 
-// get the interface bit rate, init the PRNG, and init some state variables
-int InitInterface(void) {
+// get the cgc_interface bit rate, init the PRNG, and init some state variables
+int cgc_InitInterface(void) {
 	unsigned int speed = 0;
 	int len;
 	char buf[12];
 
-	// what speed is the interface
+	// what speed is the cgc_interface
 	while (speed == 0 || speed > MAX_SPEED) {
-		printf("What's the interface speed (in bps up to @d bps): ", MAX_SPEED);
-		if ((len = readUntil(buf, 11, '\n')) == -1) {
+		cgc_printf("What's the cgc_interface speed (in bps up to @d bps): ", MAX_SPEED);
+		if ((len = cgc_readUntil(buf, 11, '\n')) == -1) {
 			return(-1);
 		}
-		speed = (unsigned int)atoi(buf);
+		speed = (unsigned int)cgc_atoi(buf);
         }
 	iface.speed = speed;
 
 	// init the PRNG with this speed
-	init_mt(speed);
+	cgc_init_mt(speed);
 
 	// set the inter-frame gap time
 	iface.ifg = 96.0 / (double)speed;
@@ -60,43 +60,43 @@ int InitInterface(void) {
 	// init wall clock time...because it needs to be done somewhere
 	wall_clock = 0.0;
 
-	// init the interface packet counter
+	// init the cgc_interface packet counter
 	iface.total_pkts = 0;
 	iface.total_bytes = 0;
 
 	return(0);
 }
 
-// transmit a packet from the designated queue
-int TransmitPktFromQueue(unsigned char queue) {
-	pkt *p;
+// transmit a packet from the designated cgc_queue
+int cgc_TransmitPktFromQueue(unsigned char cgc_queue) {
+	cgc_pkt *p;
 
-	// make sure the queue number is valid
-	if (queue >= iface.num_queues) {
-		puts("Invalid queue number");
+	// make sure the cgc_queue number is valid
+	if (cgc_queue >= iface.num_queues) {
+		cgc_puts("Invalid cgc_queue number");
 		return(-1);
 	}
 
 	// get a pointer to the packet we're transmitting
-	p = iface.ifqueue[queue]->head;
+	p = iface.ifqueue[cgc_queue]->head;
 
-	// see how long it waited in the queue
-	iface.ifqueue[queue]->cumulative_latency += (wall_clock - p->timestamp);
+	// see how long it waited in the cgc_queue
+	iface.ifqueue[cgc_queue]->cumulative_latency += (wall_clock - p->timestamp);
 
 	// update wall clock time
 	wall_clock += ((p->bytes * 8.0) / (double)iface.speed) + iface.ifg;
 
-	// decrement the queue depth
-	iface.ifqueue[queue]->curr_depth--;
+	// decrement the cgc_queue depth
+	iface.ifqueue[cgc_queue]->curr_depth--;
 
-	// decrement the token bucket (if this isn't the priority queue)
-	if (!iface.priority_queue_enabled || queue != 0) {
-		iface.ifqueue[queue]->bucket -= p->bytes;
+	// decrement the token bucket (if this isn't the priority cgc_queue)
+	if (!iface.priority_queue_enabled || cgc_queue != 0) {
+		iface.ifqueue[cgc_queue]->bucket -= p->bytes;
 	}
 
 	// keep some stats
-	iface.ifqueue[queue]->total_pkts++;
-	iface.ifqueue[queue]->total_bytes += p->bytes;
+	iface.ifqueue[cgc_queue]->total_pkts++;
+	iface.ifqueue[cgc_queue]->total_bytes += p->bytes;
 	iface.total_pkts++;
 	iface.total_bytes += p->bytes;
 
@@ -105,16 +105,16 @@ int TransmitPktFromQueue(unsigned char queue) {
 	p->priority = 0;
 	p->timestamp = 0;
 
-	// update the queue head pointer
-	iface.ifqueue[queue]->head = p->next;
+	// update the cgc_queue head pointer
+	iface.ifqueue[cgc_queue]->head = p->next;
 
 	return(0);
 
 }
 
-// put back the max_tokens into each queue's token bucket
-void ReplinishTokens(void) {
-	queue *q;
+// put back the max_tokens into each cgc_queue's token bucket
+void cgc_ReplinishTokens(void) {
+	cgc_queue *q;
 	int i;
 
 	// set all queues back to their max_tokens
@@ -125,7 +125,7 @@ void ReplinishTokens(void) {
 }
 
 // convert unsigned int to string
-void uint_to_str(unsigned int val, char *buf) {
+void cgc_uint_to_str(unsigned int val, char *buf) {
 	char temp_buf[32];
 	char *c = temp_buf;
 	int count = 0;
@@ -159,59 +159,59 @@ struct local_vars {
 	char outbuf[32];
 	char *p;
 };
-void print_uint(char *buf, unsigned int val) {
+void cgc_print_uint(char *buf, unsigned int val) {
 	struct local_vars l;
 	l.p = l.outbuf;
 
-	strncpy(l.outbuf, buf, 31);
-	uint_to_str(val, l.outbuf+strlen(l.outbuf));
-	printf("@s\n", l.p);
+	cgc_strncpy(l.outbuf, buf, 31);
+	cgc_uint_to_str(val, l.outbuf+cgc_strlen(l.outbuf));
+	cgc_printf("@s\n", l.p);
 }
 
-// dump out queue stats
-void PrintStats(void) {
+// dump out cgc_queue stats
+void cgc_PrintStats(void) {
 	int i;
 	int j;
 	unsigned int bytes;
-	pkt *p;
+	cgc_pkt *p;
 
-	printf("wall_clock: @f (s)\n", wall_clock);
+	cgc_printf("wall_clock: @f (s)\n", wall_clock);
 	for (i = 0; i < iface.num_queues; i++) {
-		printf("Queue @d\n", i);
-		printf("  Pkts Transmitted:       @d\n", iface.ifqueue[i]->total_pkts);
-		printf("  Pkts Dropped:           @d\n", iface.ifqueue[i]->dropped_pkts);
+		cgc_printf("Queue @d\n", i);
+		cgc_printf("  Pkts Transmitted:       @d\n", iface.ifqueue[i]->total_pkts);
+		cgc_printf("  Pkts Dropped:           @d\n", iface.ifqueue[i]->dropped_pkts);
 		if (iface.ifqueue[i]->total_pkts == 0) {
-			printf("  Average Latency (s):    @f\n", 0.0);
+			cgc_printf("  Average Latency (s):    @f\n", 0.0);
 		} else {
-			printf("  Average Latency (s):    @f\n", iface.ifqueue[i]->cumulative_latency/iface.ifqueue[i]->total_pkts);
+			cgc_printf("  Average Latency (s):    @f\n", iface.ifqueue[i]->cumulative_latency/iface.ifqueue[i]->total_pkts);
 		}
-		printf("  Enqueued Pkts:          @d\n", iface.ifqueue[i]->curr_depth);
+		cgc_printf("  Enqueued Pkts:          @d\n", iface.ifqueue[i]->curr_depth);
 		bytes = 0;
 		p = iface.ifqueue[i]->head;
 		for (j = 0; j < iface.ifqueue[i]->curr_depth; j++) {
 			bytes += p->bytes;
 			p = p->next;
 		}
-		printf("  Queue Depth (bytes):    @d\n", bytes);
+		cgc_printf("  Queue Depth (bytes):    @d\n", bytes);
 	}
-	printf("Interface Stats\n");
-	print_uint("  Pkts Transmitted:       ", iface.total_pkts);
+	cgc_printf("Interface Stats\n");
+	cgc_print_uint("  Pkts Transmitted:       ", iface.total_pkts);
 }
 
 // service the priority (if defined) and other queues
-int TX(void) {
-	queue *q;
+int cgc_TX(void) {
+	cgc_queue *q;
 	int i;
 
-	// replinish tokens at the beginning of the queue run
-	ReplinishTokens();
+	// replinish tokens at the beginning of the cgc_queue run
+	cgc_ReplinishTokens();
 
-	// see if there are packets waiting in the priority queue
+	// see if there are packets waiting in the priority cgc_queue
 	if (iface.priority_queue_enabled) {
 		while (iface.ifqueue[0]->curr_depth) {
-			// transmit the packet at the head of the queue
-			if (TransmitPktFromQueue(0)) {
-				puts("Packet transmission failed");
+			// transmit the packet at the head of the cgc_queue
+			if (cgc_TransmitPktFromQueue(0)) {
+				cgc_puts("Packet transmission failed");
 				return(-1);
 			}
 
@@ -220,24 +220,24 @@ int TX(void) {
 			}
 
 			// receive any new packets
-			RX();
+			cgc_RX();
 		}
 	}
 
-	// For each remaining queue
+	// For each remaining cgc_queue
 	for (i = 0; i < iface.num_queues; i++) {
-		// don't service the priority queue...it has already been done
+		// don't service the priority cgc_queue...it has already been done
 		if (iface.priority_queue_enabled && i == 0)
 			continue;
 
-		// are there packets ready to be transmitted in the queue?
+		// are there packets ready to be transmitted in the cgc_queue?
 		q = iface.ifqueue[i];
 		while (q->curr_depth) {
 			// are there tokens available to transmit the packet?
 			if (q->head->bytes <= q->bucket) {
 				// transmit the packet
-				if (TransmitPktFromQueue(i)) {
-					puts("Packet transmission failed");
+				if (cgc_TransmitPktFromQueue(i)) {
+					cgc_puts("Packet transmission failed");
 					return(-1);
 				}
 
@@ -246,7 +246,7 @@ int TX(void) {
 				}
 
 				// receive any new packets
-				RX();
+				cgc_RX();
 			} else {
 				break;
 			}

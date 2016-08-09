@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -96,7 +96,7 @@ enum {
  * @param len Length of xml char buf
  * @return SUCCESS or ERR_INVALID_XML on error
  */
-extern int parse_xml_player_name(char *xml, char **player_name, uint8_t len);
+extern int cgc_parse_xml_player_name(char *xml, char **player_name, cgc_uint8_t len);
 
 /**
  * Parse binary xml to extract cards.
@@ -111,7 +111,7 @@ extern int parse_xml_player_name(char *xml, char **player_name, uint8_t len);
  * @return Number of cards extracted or ERR_INVALID_XML,
  *	ERR_INVALID_CARD on error
  */
-extern int parse_xml_cards(char *xml, struct card *cards[], uint8_t qty);
+extern int cgc_parse_xml_cards(char *xml, struct card *cards[], cgc_uint8_t qty);
 
 /**
  * Generate binary xml containing cards from cards array.
@@ -125,7 +125,7 @@ extern int parse_xml_cards(char *xml, struct card *cards[], uint8_t qty);
  * @param qty Quantity of cards to convert.
  * @return Length of xml char string
  */
-extern int gen_xml_cards(char *xml, struct card *cards[], uint8_t qty);
+extern int cgc_gen_xml_cards(char *xml, struct card *cards[], cgc_uint8_t qty);
 
 /**
  * Parse binary xml to extract draw request.
@@ -135,7 +135,7 @@ extern int gen_xml_cards(char *xml, struct card *cards[], uint8_t qty);
  * @param xml Char buf containing binary xml to parse
  * @return SUCCESS or ERR_INVALID_XML on error
  */
-extern int parse_xml_draw(char *xml);
+extern int cgc_parse_xml_draw(char *xml);
 
 /**
  * Parse binary xml to extract go fish notice.
@@ -145,7 +145,7 @@ extern int parse_xml_draw(char *xml);
  * @param xml Char buf containing binary xml to parse
  * @return Count of cards being sent or ERR_INVALID_XML on error
  */
-extern int parse_xml_go_fish(char *xml);
+extern int cgc_parse_xml_go_fish(char *xml);
 
 /**
  * Generate binary xml containing go fish notice.
@@ -156,7 +156,7 @@ extern int parse_xml_go_fish(char *xml);
  * @param qty Number of cards player is giving; 0 means "Go Fish"
  * @return Length of xml char string.
  */
-extern int gen_xml_go_fish(char *xml, uint8_t qty);
+extern int cgc_gen_xml_go_fish(char *xml, cgc_uint8_t qty);
 
 /**
  * Parse binary xml to extract ask 
@@ -166,7 +166,7 @@ extern int gen_xml_go_fish(char *xml, uint8_t qty);
  * @param xml Char buf containing binary xml to parse
  * @return Card rank or ERR_INVALID_XML, ERR_INVALID_RANK on error
  */
-extern int parse_xml_ask(char *xml);
+extern int cgc_parse_xml_ask(char *xml);
 
 /**
  * Generate binary xml containing ask for card of rank.
@@ -177,7 +177,7 @@ extern int parse_xml_ask(char *xml);
  * @param rank Rank of card
  * @return Length of xml char string
  */
-extern int gen_xml_ask(char *xml, uint8_t rank);
+extern int cgc_gen_xml_ask(char *xml, cgc_uint8_t rank);
 
 /**
  * Parse binary xml to extract fishing request
@@ -187,7 +187,7 @@ extern int gen_xml_ask(char *xml, uint8_t rank);
  * @param xml Char buf containing binary xml to parse
  * @return SUCCESS or ERR_INVALID_XML on error
  */
-extern int parse_xml_fishing(char *xml);
+extern int cgc_parse_xml_fishing(char *xml);
 
 /**
  * Parse binary xml to extract book count notice
@@ -197,7 +197,7 @@ extern int parse_xml_fishing(char *xml);
  * @param xml Char buf containing binary xml to parse
  * @return Number of books or ERR_INVALID_XML on error
  */
-extern int parse_xml_books(char *xml);
+extern int cgc_parse_xml_books(char *xml);
 
 /**
  * Generate binary xml containing book count notice
@@ -208,7 +208,7 @@ extern int parse_xml_books(char *xml);
  * @param count Number of books
  * @return Length of xml char string
  */
-extern int gen_xml_books(char *xml, uint8_t count);
+extern int cgc_gen_xml_books(char *xml, cgc_uint8_t count);
 
 /**
  * Generate binary xml containing turn notice.
@@ -219,7 +219,7 @@ extern int gen_xml_books(char *xml, uint8_t count);
  * @param player_id ID of player whos turn it is
  * @return Length of xml char string.
  */
-extern int gen_xml_turn(char *xml, uint8_t player_id);
+extern int cgc_gen_xml_turn(char *xml, cgc_uint8_t player_id);
 
 /**
  * Generate binary xml containing final game results
@@ -232,7 +232,7 @@ extern int gen_xml_turn(char *xml, uint8_t player_id);
  * @param p1_books Number of books bot player had
  * @return Length of xml char string
  */
-extern int gen_xml_final_results(char *xml, uint8_t p0_books, uint8_t p1_books);
+extern int cgc_gen_xml_final_results(char *xml, cgc_uint8_t p0_books, cgc_uint8_t p1_books);
 
 /**
  * Generate binary xml containing error code
@@ -243,6 +243,6 @@ extern int gen_xml_final_results(char *xml, uint8_t p0_books, uint8_t p1_books);
  * @param err_code Error code
  * @return Length of xml char string
  */
-extern int gen_xml_error(char *xml, int8_t err_code);
+extern int cgc_gen_xml_error(char *xml, cgc_int8_t err_code);
 
 #endif

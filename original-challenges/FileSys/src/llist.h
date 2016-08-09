@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,33 +30,33 @@ extern "C" {
 };
 
 template <typename T>
-class List
+class cgc_List
 {
-  struct Element
+  struct cgc_Element
   {
     T obj;
-    Element *next;
-    Element(T o, Element *n = 0) : obj(o), next(n) {}
+    cgc_Element *next;
+    cgc_Element(T o, cgc_Element *n = 0) : obj(o), next(n) {}
   };
-  Element *head;
+  cgc_Element *head;
   unsigned int len;
 
   public:
-    List(Element *h = 0) : head(h), len(0) {}
-    ~List();
+    cgc_List(cgc_Element *h = 0) : head(h), len(0) {}
+    ~cgc_List();
 
-    void add(T o);
-    void remove(T o);
-    Element* find(T o);
-    T get(int idx);
-    unsigned int length() { return len; }
-    void debug();
+    void cgc_add(T o);
+    void cgc_remove(T o);
+    cgc_Element* cgc_find(T o);
+    T cgc_get(int idx);
+    unsigned int cgc_length() { return len; }
+    void cgc_debug();
 };
 
 template <typename T>
-List<T>::~List()
+cgc_List<T>::~cgc_List()
 {
-  Element *tmp;
+  cgc_Element *tmp;
   while (head)
   {
     tmp = head;
@@ -66,14 +66,14 @@ List<T>::~List()
 }
 
 template <typename T>
-void List<T>::add(T o)
+void cgc_List<T>::cgc_add(T o)
 {
-  Element *item = new Element(o, 0);
+  cgc_Element *item = new cgc_Element(o, 0);
   if (!head)
     head = item;
   else
   {
-    Element *tmp = head;
+    cgc_Element *tmp = head;
     while (tmp && tmp->next) tmp = tmp->next;
     tmp->next = item;
   }
@@ -81,9 +81,9 @@ void List<T>::add(T o)
 }
 
 template <typename T>
-void List<T>::remove(T o)
+void cgc_List<T>::cgc_remove(T o)
 {
-  Element *item = find(o), *tmp;
+  cgc_Element *item = cgc_find(o), *tmp;
   if (!item)
     return;
   if (item == head)
@@ -103,34 +103,34 @@ void List<T>::remove(T o)
 }
 
 template <typename T>
-typename List<T>::Element* List<T>::find(T o)
+typename cgc_List<T>::cgc_Element* cgc_List<T>::cgc_find(T o)
 {
   if (!head)
     return 0;
-  Element *tmp = head;
+  cgc_Element *tmp = head;
   while (tmp && tmp->obj != o) tmp = tmp->next;
   return tmp;
 }
 
 template <typename T>
-T List<T>::get(int idx)
+T cgc_List<T>::cgc_get(int idx)
 {
   if (!head || idx >= len)
     return 0;
-  Element *tmp = head;
+  cgc_Element *tmp = head;
   while (idx--) tmp = tmp->next;
   return tmp->obj;
 }
 
 template <typename T>
-void List<T>::debug()
+void cgc_List<T>::cgc_debug()
 {
   if (!head)
   {
     printf("Empty list!\n");
     return;
   }
-  Element *tmp = head;
+  cgc_Element *tmp = head;
   while (tmp)
   {
     printf("[%d (%08x)] ", tmp->obj, tmp->obj);

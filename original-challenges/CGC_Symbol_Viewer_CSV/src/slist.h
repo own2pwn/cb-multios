@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,15 +24,15 @@
 #ifndef SLIST_H
 #define SLIST_H
 
-typedef struct sl_node {
+typedef struct cgc_sl_node {
   void *elem;
-  struct sl_node *next;
-} sl_node;
+  struct cgc_sl_node *next;
+} cgc_sl_node;
 
-typedef int (*cmp_fn) (void *e1, void *e2);
-typedef void (*free_fn) (void *e);
+typedef int (*cgc_cmp_fn) (void *e1, void *e2);
+typedef void (*cgc_free_fn) (void *e);
 
-sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp);
-void sl_destroy(sl_node *head, free_fn ffn);
+cgc_sl_node* cgc_sl_insert(cgc_sl_node *head, void *elem, cgc_cmp_fn cmp);
+void cgc_sl_destroy(cgc_sl_node *head, cgc_free_fn ffn);
 
 #endif

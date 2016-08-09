@@ -35,28 +35,28 @@ typedef struct
 {
 	int stak[MAX_NUM_COUNT+1];
 	int count;
-} Stack_i; // int stack
+} cgc_Stack_i; // int stack
 
 
 typedef struct
 {
 	char stak[MAX_NUM_COUNT+1];
 	int count;
-} Stack_c; // char stack
+} cgc_Stack_c; // char stack
 
 // tracks numbers
-extern Stack_i num_stack;
+extern cgc_Stack_i num_stack;
 extern int curr_num_stack;
 
 // tracks symbols (+,-)
-extern Stack_c op_stack;
+extern cgc_Stack_c op_stack;
 extern int curr_op_stack;
 
 
-int push_num(int num);
-int pop_num(int *num);
-int peek_op(char *op);
-int push_op(char op);
-int pop_op(char *op);
+int cgc_push_num(int num);
+int cgc_pop_num(int *num);
+int cgc_peek_op(char *op);
+int cgc_push_op(char op);
+int cgc_pop_op(char *op);
 
 #endif

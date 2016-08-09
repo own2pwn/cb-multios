@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "protocol.h"
 #include "set.h"
 
-#define HANDLER(name) void handle_##name(set_t set, protocol_frame* frame)
+#define HANDLER(name) void cgc_handle_##name(cgc_set_t set, cgc_protocol_frame* frame)
 
 HANDLER(scramble);
 

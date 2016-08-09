@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,33 +33,33 @@
 
 typedef struct {
     int status;
-    size_t num_chals;
-    size_t num_teams;
-    size_t num_users;
-    size_t sz_chals;
-    size_t sz_teams;
-    size_t sz_users;
-    chal_t **chals;
-    team_t **teams;
-    user_t **users;
-    flgmgr_t flg;
-    user_t *logged_in;
-} ctf_t;
+    cgc_size_t num_chals;
+    cgc_size_t num_teams;
+    cgc_size_t num_users;
+    cgc_size_t sz_chals;
+    cgc_size_t sz_teams;
+    cgc_size_t sz_users;
+    cgc_chal_t **chals;
+    cgc_team_t **teams;
+    cgc_user_t **users;
+    cgc_flgmgr_t flg;
+    cgc_user_t *logged_in;
+} cgc_ctf_t;
 
-error_t ctf_init(ctf_t *ctf);
+cgc_error_t cgc_ctf_init(cgc_ctf_t *ctf);
 
 /* Feature */
-error_t ctf_submit_flag(ctf_t *ctf, team_t *team, const char *flag);
-error_t ctf_add_user(ctf_t *ctf, user_t *user);
-error_t ctf_auth_user(ctf_t *ctf, user_t **user, const char *nick, const char *pass);
-error_t ctf_add_team(ctf_t *ctf, team_t *team);
-error_t ctf_add_chal(ctf_t *ctf, chal_t *chal);
-error_t ctf_open_chal(ctf_t *ctf, size_t cid);
+cgc_error_t cgc_ctf_submit_flag(cgc_ctf_t *ctf, cgc_team_t *team, const char *flag);
+cgc_error_t cgc_ctf_add_user(cgc_ctf_t *ctf, cgc_user_t *user);
+cgc_error_t cgc_ctf_auth_user(cgc_ctf_t *ctf, cgc_user_t **user, const char *nick, const char *pass);
+cgc_error_t cgc_ctf_add_team(cgc_ctf_t *ctf, cgc_team_t *team);
+cgc_error_t cgc_ctf_add_chal(cgc_ctf_t *ctf, cgc_chal_t *chal);
+cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, cgc_size_t cid);
 
 /* Ticker & Info */
-error_t ctf_get_solves(ctf_t *ctf, flag_t ***solves, size_t *n);
-error_t ctf_get_ranks(ctf_t *ctf, team_t ***ranks, size_t *page);
-error_t ctf_get_team(ctf_t *ctf, team_t **team, size_t tid);
-error_t ctf_get_chal(ctf_t *ctf, chal_t **chal, size_t cid);
+cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, cgc_size_t *n);
+cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, cgc_size_t *page);
+cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, cgc_size_t tid);
+cgc_error_t cgc_ctf_get_chal(cgc_ctf_t *ctf, cgc_chal_t **chal, cgc_size_t cid);
 
 #endif

@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "service.h"
 
-query *DestroyQuery(query *pQuery) 
+cgc_query *cgc_DestroyQuery(cgc_query *pQuery) 
 {
   if (pQuery == NULL) 
   {
@@ -37,21 +37,21 @@ query *DestroyQuery(query *pQuery)
   }
   if(pQuery->data != NULL) 
   {
-    free(pQuery->data);
+    cgc_free(pQuery->data);
   }
-  free(pQuery);
+  cgc_free(pQuery);
   return NULL;
 }
 
-query *ParseQuery(char *inputBuffer)
+cgc_query *cgc_ParseQuery(char *inputBuffer)
 {
   if (inputBuffer == NULL) {
     return NULL;
   }
-  query *pQuery = calloc(sizeof(query));
+  cgc_query *pQuery = cgc_calloc(sizeof(cgc_query));
   pQuery->type = inputBuffer[0];
-  pQuery->length = strlen(&inputBuffer[1]);
-  pQuery->data = calloc(pQuery->length + 1);
-  strcpy((char *)pQuery->data, &inputBuffer[1]);
+  pQuery->length = cgc_strlen(&inputBuffer[1]);
+  pQuery->data = cgc_calloc(pQuery->length + 1);
+  cgc_strcpy((char *)pQuery->data, &inputBuffer[1]);
   return pQuery;
 }

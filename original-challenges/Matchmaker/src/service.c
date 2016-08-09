@@ -36,15 +36,15 @@ struct {
 } state;
 
 static unsigned int
-calculate_csum(char *line)
+cgc_calculate_csum(char *line)
 {
     unsigned int ret = 0;
     unsigned int i, len;
 
     for (i = 0; i < 1024; i++)
-        ret ^= get_flag_byte(i);
+        ret ^= cgc_get_flag_byte(i);
 
-    len = strlen(line);
+    len = cgc_strlen(line);
     for (i = 0; i < len; i++)
         ret ^= line[i];
 
@@ -52,19 +52,19 @@ calculate_csum(char *line)
 }
 
 static void __attribute__((regparm(1)))
-default_onmatch(void *data)
+cgc_default_onmatch(void *data)
 {
-    printf("Got a match! \"%s\"\n", (char *)data);
+    cgc_printf("Got a match! \"%s\"\n", (char *)data);
 }
 
 static void __attribute__((regparm(1)))
-length_onmatch(void *data)
+cgc_length_onmatch(void *data)
 {
-    printf("Got a match of length %u\n", strlen((char *)data));
+    cgc_printf("Got a match of length %u\n", cgc_strlen((char *)data));
 }
 
 static void __attribute__((regparm(1)))
-xor_onmatch(void *data)
+cgc_xor_onmatch(void *data)
 {
     char *p;
     unsigned int sum = 0;
@@ -72,11 +72,11 @@ xor_onmatch(void *data)
     for (p = data; *p; p++)
         sum ^= *p;
 
-    printf("Checksum: %u\n", sum);
+    cgc_printf("Checksum: %u\n", sum);
 }
 
 static void __attribute__((regparm(1)))
-magic_onmatch(void *data)
+cgc_magic_onmatch(void *data)
 {
     char *p;
     unsigned int sum = 0, guess = UINT_MAX, magic;
@@ -90,30 +90,30 @@ magic_onmatch(void *data)
     magic = ((unsigned char *)FLAG_PAGE)[sum];
 #endif
 
-    printf("I'm thinking of a magic number, can you guess it?!?!\n");
+    cgc_printf("I'm thinking of a magic number, can you guess it?!?!\n");
     while (guess != magic) {
-        if (fread_until(state.line, '\n', sizeof(state.line), stdin) == EXIT_FAILURE)
+        if (cgc_fread_until(state.line, '\n', sizeof(state.line), stdin) == EXIT_FAILURE)
             goto fail;
 
-        if ((p = strchr(state.line, '\n')) != NULL)
+        if ((p = cgc_strchr(state.line, '\n')) != NULL)
             *p = '\0';
         else
             return;
 
-        if (strtou(state.line, 10, &guess) == EXIT_FAILURE)
+        if (cgc_strtou(state.line, 10, &guess) == EXIT_FAILURE)
             goto fail;
 
         if (guess < magic)
-            printf("Haha, too small!\n");
+            cgc_printf("Haha, too small!\n");
         else if (guess > magic)
-            printf("Whoa, too big\n");
+            cgc_printf("Whoa, too big\n");
         else {
-            printf("Just right!\n");
+            cgc_printf("Just right!\n");
             break;
         }
 
 fail:
-        printf("WRONG!\n");
+        cgc_printf("WRONG!\n");
         continue;
     }
 }
@@ -123,80 +123,80 @@ main(void)
 {
     char *p;
     int ret, parsing_dfa = 1;
-    onmatch_handler onmatch = default_onmatch;
+    cgc_onmatch_handler onmatch = cgc_default_onmatch;
 
-    dfa_init(&state.dfa);
+    cgc_dfa_init(&state.dfa);
 
     while (1) {
-        memset(state.line, '\0', sizeof(state.line));
-        if (fread_until(state.line, '\n', sizeof(state.line), stdin) == EXIT_FAILURE)
+        cgc_memset(state.line, '\0', sizeof(state.line));
+        if (cgc_fread_until(state.line, '\n', sizeof(state.line), stdin) == EXIT_FAILURE)
             return EXIT_FAILURE;
 
-        if ((p = strchr(state.line, '\n')) != NULL)
+        if ((p = cgc_strchr(state.line, '\n')) != NULL)
             *p = '\0';
         else
             return EXIT_FAILURE;
 
         // Pre-command checking, note that this means you can't match these
         // commands in a parser
-        if (strcmp(state.line, "quit") == 0)
+        if (cgc_strcmp(state.line, "quit") == 0)
             break;
 
-        if (strcmp(state.line, "reset") == 0) {
-            printf("Please re-enter state machine\n");
-            dfa_init(&state.dfa);
+        if (cgc_strcmp(state.line, "reset") == 0) {
+            cgc_printf("Please re-enter state machine\n");
+            cgc_dfa_init(&state.dfa);
             parsing_dfa = 1;
             continue;
         }
 
-        if (strcmp(state.line, "example") == 0) {
-            if (dfa_give_example(&state.dfa, state.line, 40) != EXIT_SUCCESS)
-                printf("Error, are you done initializing?\n");
+        if (cgc_strcmp(state.line, "example") == 0) {
+            if (cgc_dfa_give_example(&state.dfa, state.line, 40) != EXIT_SUCCESS)
+                cgc_printf("Error, are you done initializing?\n");
             else
-                printf("Here's an example: \"%s\"\n", state.line);
+                cgc_printf("Here's an example: \"%s\"\n", state.line);
             continue;
         }
 
-        if (strncmp(state.line, "onmatch ", sizeof("onmatch ") - 1) == 0) {
+        if (cgc_strncmp(state.line, "onmatch ", sizeof("onmatch ") - 1) == 0) {
             p = state.line + sizeof("onmatch ") - 1;
 
-            if (strcmp(p, "default") == 0)
-                onmatch = default_onmatch;
-            else if (strcmp(p, "length") == 0)
-                onmatch = length_onmatch;
-            else if (strcmp(p, "xor") == 0)
-                onmatch = xor_onmatch;
-            else if (strcmp(p, "magic") == 0)
-                onmatch = magic_onmatch;
+            if (cgc_strcmp(p, "default") == 0)
+                onmatch = cgc_default_onmatch;
+            else if (cgc_strcmp(p, "length") == 0)
+                onmatch = cgc_length_onmatch;
+            else if (cgc_strcmp(p, "xor") == 0)
+                onmatch = cgc_xor_onmatch;
+            else if (cgc_strcmp(p, "magic") == 0)
+                onmatch = cgc_magic_onmatch;
             else {
-                printf("Unrecognized action\n");
+                cgc_printf("Unrecognized action\n");
                 continue;
             }
 
-            dfa_update_onmatch(&state.dfa, onmatch, state.line);
-            printf("Match action updated\n");
+            cgc_dfa_update_onmatch(&state.dfa, onmatch, state.line);
+            cgc_printf("Match action updated\n");
             continue;
         }
 
         if (parsing_dfa) {
-            ret = dfa_parse_desc(&state.dfa, state.line, onmatch, state.line);
+            ret = cgc_dfa_parse_desc(&state.dfa, state.line, onmatch, state.line);
             if (ret == EXIT_FAILURE) {
-                printf("Invalid\n");
+                cgc_printf("Invalid\n");
                 continue;
             } else if (ret == 1) {
-                printf("Ok, matching input now\n");
+                cgc_printf("Ok, matching input now\n");
                 parsing_dfa = 0;
             }
         } else {
-            dfa_reset(&state.dfa);
+            cgc_dfa_reset(&state.dfa);
             for (p = state.line; *p; p++)
-                if ((ret = dfa_process_input(&state.dfa, *p)) != 0)
+                if ((ret = cgc_dfa_process_input(&state.dfa, *p)) != 0)
                     break;
 
             if (ret == 0 || ret == EXIT_FAILURE)
-                printf("No match :( \"%s\"\n", state.line);
+                cgc_printf("No match :( \"%s\"\n", state.line);
             else
-                printf("%x\n", calculate_csum(state.line));
+                cgc_printf("%x\n", cgc_calculate_csum(state.line));
         }
     }
 

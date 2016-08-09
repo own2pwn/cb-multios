@@ -1,0 +1,7 @@
+set( NO_CB_DPKG "1" )
+set( VULN_COUNT "1" )
+set( CXXFLAGS "--std=c++11 -fno-exceptions -fno-rtti -DCPLUSPLUS -Dmain=_main" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O3 -g  -Wno-overlength-strings -Wno-packed" )
+set( SERVICE_ID "00081" )
+set( AUTHOR_ID "KPRCA" )
+buildCB(${CFLAGS})

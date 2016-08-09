@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,14 +27,14 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "error.h"
 
-void PrintErrorAndTerminate(char *message) {
-  printf("ERROR: @s\n", message);
+void cgc_PrintErrorAndTerminate(char *message) {
+  cgc_printf("ERROR: @s\n", message);
   _terminate(1);
 }
 
-void VerifyPointerOrTerminate(void *ptr, char *message) {
+void cgc_VerifyPointerOrTerminate(void *ptr, char *message) {
   if (ptr == NULL) {
-    printf("ERROR: Allocation failed: @s\n", message);
+    cgc_printf("ERROR: Allocation failed: @s\n", message);
     _terminate(1);
   }
 }

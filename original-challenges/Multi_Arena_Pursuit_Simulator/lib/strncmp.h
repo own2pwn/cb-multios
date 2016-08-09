@@ -30,4 +30,4 @@
 *
 * @return 0 if buffers are the same, -1 if s1 < s2, 1 if s1 > s2
 */
-int strncmp(const char* s1, const char* s2, size_t size);
+int cgc_strncmp(const char* s1, const char* s2, cgc_size_t size);

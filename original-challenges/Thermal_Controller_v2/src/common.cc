@@ -37,7 +37,7 @@ extern "C"
 
 #define INPUT_CAP 512
 
-bool HexCharToInt( char c, uint8_t &outValue )
+bool cgc_HexCharToInt( char c, cgc_uint8_t &outValue )
 {
 	if ( c >= 'A' && c <= 'F' )
 		outValue = (10 + (c - 'A'));
@@ -51,15 +51,15 @@ bool HexCharToInt( char c, uint8_t &outValue )
 	return (true);
 }
 
-char* ConvertToHexChars( uint8_t *pData, uint32_t dataLen )
+char* cgc_ConvertToHexChars( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	int len = dataLen * 2;
 	char* str = new char[len];
 
-	for ( uint32_t i = 0; i < dataLen; i++ )
+	for ( cgc_uint32_t i = 0; i < dataLen; i++ )
 	{
-		sprintf( &str[ i * 2 ], "$x", (pData[i] >> 4) & 0xF );
-		sprintf( &str[ ( i * 2 )+1 ], "$x", pData[i] & 0xF );
+		cgc_sprintf( &str[ i * 2 ], "$x", (pData[i] >> 4) & 0xF );
+		cgc_sprintf( &str[ ( i * 2 )+1 ], "$x", pData[i] & 0xF );
 	}
 	
 	return str;
@@ -67,33 +67,33 @@ char* ConvertToHexChars( uint8_t *pData, uint32_t dataLen )
 
 
 //
-// Read the value at the offset and return as a BYTE (two hex nibbles)
+// Read the value at the offset and return as a cgc_BYTE (two hex nibbles)
 //
-uint16_t GetByte( CUtil::String val, int offset )
+cgc_uint16_t cgc_GetByte( CUtil::cgc_String val, int offset )
 {
-	uint8_t a = 0;
-	uint8_t b = 0;
-	uint16_t ret_value = 0;
-	HexCharToInt( val.c_str()[offset], a );
-	HexCharToInt( val.c_str()[offset+1], b );
+	cgc_uint8_t a = 0;
+	cgc_uint8_t b = 0;
+	cgc_uint16_t ret_value = 0;
+	cgc_HexCharToInt( val.cgc_c_str()[offset], a );
+	cgc_HexCharToInt( val.cgc_c_str()[offset+1], b );
 	ret_value = a << 4; // move to high nibble
 	ret_value += b;
 	return ret_value;
 }
 
-uint8_t* ConvertBackHexChars( uint8_t *pData, uint32_t dataLen )
+cgc_uint8_t* cgc_ConvertBackHexChars( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	int len = dataLen / 2;
-	uint8_t* str = new uint8_t[len];
+	cgc_uint8_t* str = new cgc_uint8_t[len];
 
 	int j = 0;
 
-	for ( uint32_t i = 0; i < dataLen; )
+	for ( cgc_uint32_t i = 0; i < dataLen; )
 	{
-		uint16_t var = 0;
-		uint8_t a,b;
-		HexCharToInt( pData[i], a );
-		HexCharToInt( pData[i+1], b );
+		cgc_uint16_t var = 0;
+		cgc_uint8_t a,b;
+		cgc_HexCharToInt( pData[i], a );
+		cgc_HexCharToInt( pData[i+1], b );
 		var = a << 4; // move to high nibble
 		var += b;
 		str[j++] = var;
@@ -103,11 +103,11 @@ uint8_t* ConvertBackHexChars( uint8_t *pData, uint32_t dataLen )
 	return str;
 }
 
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen )
+void cgc_PrintHexBytes( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
-	for ( uint32_t i = 0; i < dataLen; i++ )
-		printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
+	for ( cgc_uint32_t i = 0; i < dataLen; i++ )
+		cgc_printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
 	
-	printf( "\n" );
+	cgc_printf( "\n" );
 }
 

@@ -28,25 +28,25 @@ THE SOFTWARE.
 
 #include "peripheral.h"
 
-class CMMU;
+class cgc_CMMU;
 
-class CDMA
+class cgc_CDMA
 {
 public:
-	static const uint32_t MAX_DMA_WORKERS = 5;	// Max number of individual DMA workers
-	static const uint32_t MAX_DMA_TRANSFER_COUNT = 4; // Max number of DMA transfers that can be serviced at a time
+	static const cgc_uint32_t MAX_DMA_WORKERS = 5;	// Max number of individual DMA workers
+	static const cgc_uint32_t MAX_DMA_TRANSFER_COUNT = 4; // Max number of DMA transfers that can be serviced at a time
 
 public:
-	CDMA( );
-	~CDMA( );
+	cgc_CDMA( );
+	~cgc_CDMA( );
 
-	void InitDMA( void );
-	bool AddPeripheral( uint8_t deviceID, CPeripheral *pPeripheral );
+	void cgc_InitDMA( void );
+	bool cgc_AddPeripheral( cgc_uint8_t deviceID, cgc_CPeripheral *pPeripheral );
 
-	void ServiceDMA( CMMU *pMMU );
+	void cgc_ServiceDMA( cgc_CMMU *pMMU );
 
-	bool InitReadWorker( uint8_t deviceID, uint16_t address, uint16_t length );
-	bool InitWriteWorker( uint8_t deviceID, uint16_t address, uint16_t length );
+	bool cgc_InitReadWorker( cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length );
+	bool cgc_InitWriteWorker( cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length );
 
 private:
 	typedef enum
@@ -54,39 +54,39 @@ private:
 		DMA_WORKER_NONE = 0,
 		DMA_WORKER_READ = 1,
 		DMA_WORKER_WRITE = 2,
-	} eDMAWorkerAction;
+	} cgc_eDMAWorkerAction;
 
-	class CDMAWorker
+	class cgc_CDMAWorker
 	{
 	public:
-		CDMAWorker( )
+		cgc_CDMAWorker( )
 			: m_actionType( DMA_WORKER_NONE )
 		{
 
 		}
 
-		CDMAWorker( eDMAWorkerAction actionType, uint8_t deviceID, uint16_t address, uint16_t length )
+		cgc_CDMAWorker( cgc_eDMAWorkerAction actionType, cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length )
 			: m_actionType( actionType ), m_deviceID( deviceID ), m_address( address ), m_length( length )
 		{
 
 		}
 
-		~CDMAWorker( )
+		~cgc_CDMAWorker( )
 		{
 
 		}
 
-		eDMAWorkerAction GetType( void ) const { return m_actionType; };
-		uint8_t GetDeviceID( void ) const { return m_deviceID; };
-		uint16_t GetAddress( void ) const { return m_address; };
-		uint16_t GetLength( void ) const { return m_length; };
-		uint16_t GetPosition( void ) const { return m_curPos; };
+		cgc_eDMAWorkerAction cgc_GetType( void ) const { return m_actionType; };
+		cgc_uint8_t cgc_GetDeviceID( void ) const { return m_deviceID; };
+		cgc_uint16_t cgc_GetAddress( void ) const { return m_address; };
+		cgc_uint16_t cgc_GetLength( void ) const { return m_length; };
+		cgc_uint16_t cgc_GetPosition( void ) const { return m_curPos; };
 
-		void AdvancePosition( uint16_t amount ) { m_curPos += amount; };
+		void cgc_AdvancePosition( cgc_uint16_t amount ) { m_curPos += amount; };
 
-		void ClearWorker( void ) { m_actionType = DMA_WORKER_NONE; };
+		void cgc_ClearWorker( void ) { m_actionType = DMA_WORKER_NONE; };
 
-		void StartWorker( eDMAWorkerAction actionType, uint8_t deviceID, uint16_t address, uint16_t length )
+		void cgc_StartWorker( cgc_eDMAWorkerAction actionType, cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length )
 		{
 			m_actionType = actionType;
 			m_address = address;
@@ -96,21 +96,21 @@ private:
 			m_curPos = 0;
 		}
 
-		bool IsWorkerAvailable( void ) const { return m_actionType != DMA_WORKER_NONE; };
+		bool cgc_IsWorkerAvailable( void ) const { return m_actionType != DMA_WORKER_NONE; };
 		
 	private:
-		eDMAWorkerAction m_actionType;
-		uint8_t m_deviceID;
-		uint16_t m_curPos;
-		uint16_t m_address;
-		uint16_t m_length;
+		cgc_eDMAWorkerAction m_actionType;
+		cgc_uint8_t m_deviceID;
+		cgc_uint16_t m_curPos;
+		cgc_uint16_t m_address;
+		cgc_uint16_t m_length;
 	};
 
-	CDMAWorker m_dmaWorkers[MAX_DMA_WORKERS];
-	uint8_t m_workerCount;
-	uint8_t m_workerLast;
+	cgc_CDMAWorker m_dmaWorkers[MAX_DMA_WORKERS];
+	cgc_uint8_t m_workerCount;
+	cgc_uint8_t m_workerLast;
 
-	CPeripheral *m_pPeripherals[256];
+	cgc_CPeripheral *m_pPeripherals[256];
 };
 
 #endif // __DMA_H__

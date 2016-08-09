@@ -27,14 +27,14 @@
 #include "tokenizer.h"
 
 static int
-parse_variable(char *str, struct token *token)
+cgc_parse_variable(char *str, struct token *token)
 {
     char *start = str, *end = str;
 
     if (*end == '_')
         end++;
     else
-        while (islower(*end))
+        while (cgc_islower(*end))
             end++;
 
     if (end == NULL || end - start > 4)
@@ -42,18 +42,18 @@ parse_variable(char *str, struct token *token)
 
     token->type = TOK_VARIABLE;
 
-    memset(token->val.s, '\0', 4);
-    strncpy(token->val.s, start, end - start);
+    cgc_memset(token->val.s, '\0', 4);
+    cgc_strncpy(token->val.s, start, end - start);
 
     return end - start;
 }
 
 static int
-parse_constant(char *str, struct token *token)
+cgc_parse_constant(char *str, struct token *token)
 {
     int ret, result;
 
-    if ((ret = strtoi(str, 10, &result)) < 0)
+    if ((ret = cgc_strtoi(str, 10, &result)) < 0)
         return ret;
 
     token->type = TOK_CONSTANT;
@@ -61,16 +61,16 @@ parse_constant(char *str, struct token *token)
     return ret;
 }
 
-ssize_t
-tokenize(char *str, struct token *tokens)
+cgc_ssize_t
+cgc_tokenize(char *str, struct token *tokens)
 {
     int ret;
     char c;
     struct token *token = tokens;
 
     while ((c = *str++)) {
-        if (c == '_' || islower(c)) {
-            if ((ret = parse_variable(str - 1, token)) < 0)
+        if (c == '_' || cgc_islower(c)) {
+            if ((ret = cgc_parse_variable(str - 1, token)) < 0)
                 return ret;
 
             str += ret - 1;
@@ -78,8 +78,8 @@ tokenize(char *str, struct token *tokens)
             continue;
         }
 
-        if (isdigit(c)) {
-            if ((ret = parse_constant(str - 1, token)) < 0)
+        if (cgc_isdigit(c)) {
+            if ((ret = cgc_parse_constant(str - 1, token)) < 0)
                 return ret;
 
             str += ret - 1;

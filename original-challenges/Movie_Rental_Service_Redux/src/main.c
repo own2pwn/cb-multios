@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,7 +35,7 @@ int main()
     int exited = 0;
     int user = USER;
 
-    init_movies();
+    cgc_init_movies();
     printf("========= Movie Rental Service v0.1 =========\n");
     printf("   . . . Initializing the inventory . . .\n");
     printf("         (movie info from IMDb.com)\n");
@@ -44,14 +44,14 @@ int main()
 
     while (!exited) {
         if (user == USER)
-            exited = run_user_mode(&user);
+            exited = cgc_run_user_mode(&user);
         else if(user == ADMIN)
         {
-            if (run_admin_mode(&user) < 0)
+            if (cgc_run_admin_mode(&user) < 0)
                 exited = 1;
         }
         else if(user == DEBUG)
-            run_debug_mode(&user);
+            cgc_run_debug_mode(&user);
 
         if (!exited)
             printf("\n");

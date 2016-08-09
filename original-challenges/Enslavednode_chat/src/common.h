@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,8 +27,8 @@
 #define HASH unsigned long long
 #define DATA void *
 
-#define error(e) _error(e, __FILE__, __LINE__)
+#define error(e) cgc__error(e, __FILE__, __LINE__)
 
-int readline(int fd, char *buf, size_t max, size_t *nrx);
-char *str_to_hex(char *s);
+int cgc_readline(int fd, char *buf, cgc_size_t max, cgc_size_t *nrx);
+char *cgc_str_to_hex(char *s);
 #endif /* __COMMON__H */

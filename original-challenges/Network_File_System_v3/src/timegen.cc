@@ -35,23 +35,23 @@ extern "C"
 
 #include "timegen.h"
 
-CTimeGen::CTimeGen( uint32_t *pGeneratorSource, uint32_t generatorSize )
+cgc_CTimeGen::cgc_CTimeGen( cgc_uint32_t *pGeneratorSource, cgc_uint32_t generatorSize )
 	: m_lastTimestamp( START_UNIX_TIMESTAMP ), m_lastMix( 0 ), m_pGeneratorSource( pGeneratorSource ), m_generatorSize( generatorSize ), m_lastPos( 0 )
 {
-	m_pGeneratorSource = new uint32_t[generatorSize];
+	m_pGeneratorSource = new cgc_uint32_t[generatorSize];
 
-	memcpy( m_pGeneratorSource, pGeneratorSource, sizeof(uint32_t)*generatorSize );
+	cgc_memcpy( m_pGeneratorSource, pGeneratorSource, sizeof(cgc_uint32_t)*generatorSize );
 }
 
-CTimeGen::~CTimeGen( )
+cgc_CTimeGen::~cgc_CTimeGen( )
 {
 	if ( m_pGeneratorSource )
 		delete m_pGeneratorSource;
 }
 
-uint32_t CTimeGen::GetUnixTimestamp( void )
+cgc_uint32_t cgc_CTimeGen::cgc_GetUnixTimestamp( void )
 {
-	uint32_t newDelta = (GetGeneratorMix());
+	cgc_uint32_t newDelta = (cgc_GetGeneratorMix());
 
 	newDelta = (newDelta % 120);	// Up to 2 minutes max deltas
 	
@@ -60,15 +60,15 @@ uint32_t CTimeGen::GetUnixTimestamp( void )
 	return (m_lastTimestamp);	
 }
 
-uint32_t CTimeGen::GetGeneratorMix( void )
+cgc_uint32_t cgc_CTimeGen::cgc_GetGeneratorMix( void )
 {
-	uint32_t a = m_lastMix;
-	uint32_t b = 0;
-	uint32_t c = 0;
+	cgc_uint32_t a = m_lastMix;
+	cgc_uint32_t b = 0;
+	cgc_uint32_t c = 0;
 
 	// Do some random math
-	uint32_t pos = m_lastPos;
-	for ( uint32_t i = 0; i < GENERATOR_ROUNDS; i++ )
+	cgc_uint32_t pos = m_lastPos;
+	for ( cgc_uint32_t i = 0; i < GENERATOR_ROUNDS; i++ )
 	{
 		if ( pos >= m_generatorSize )
 			pos = 0;

@@ -1,6 +1,6 @@
 #pragma once
 #include "charter.h"
-void bars(data_package);
+void cgc_bars(cgc_data_package);
 
-double bar_scale_factor(uint32 column_count, uint32 max_value);
-uint32 bar_use_columns(uint32 datum, double scale_factor, uint32 column_count);
+double cgc_bar_scale_factor(cgc_uint32 column_count, cgc_uint32 max_value);
+cgc_uint32 cgc_bar_use_columns(cgc_uint32 datum, double scale_factor, cgc_uint32 column_count);

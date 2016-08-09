@@ -26,51 +26,51 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-size_t strlen( const char *str )
+cgc_size_t cgc_strlen( const char *str )
 {
-	size_t len = 0;
+	cgc_size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
 	return len;
 }
 
-void bzero(void *s, size_t n) {
+void cgc_bzero(void *s, cgc_size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *memset( void *ptr, int value, size_t num )
+void *cgc_memset( void *ptr, int value, cgc_size_t num )
 {
 	void *ptr_temp = ptr;
-	uint8_t set_value_byte = (uint8_t)value;
-	uint32_t set_value_dword = (set_value_byte << 24) | (set_value_byte << 16) | (set_value_byte << 8) | set_value_byte;
+	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
+	cgc_uint32_t set_value_dword = (set_value_byte << 24) | (set_value_byte << 16) | (set_value_byte << 8) | set_value_byte;
 
 	while ( num >= 4 )
 	{
-		*((uint32_t*)ptr) = set_value_dword;	
+		*((cgc_uint32_t*)ptr) = set_value_dword;	
 		ptr+=4;
 		num-=4;	
 	}
 
 	while ( num > 0 )
 	{
-		*((uint8_t*)ptr++) = set_value_byte;	
+		*((cgc_uint8_t*)ptr++) = set_value_byte;	
 		num--;
 	}
 
 	return (ptr_temp);
 }
 
-char *strchr(char *s, int c) {
-	uint32_t i;
+char *cgc_strchr(char *s, int c) {
+	cgc_uint32_t i;
 
 	if (!s) {
 		return(NULL);
 	}
-	for (i = 0; i < strlen(s); i++) {
+	for (i = 0; i < cgc_strlen(s); i++) {
 		if (s[i] == c) {
 			return(s+i);
 		}
@@ -80,20 +80,20 @@ char *strchr(char *s, int c) {
 
 }
 
-char *strstr( char *str, char *sub, size_t len ) 
+char *cgc_strstr( char *str, char *sub, cgc_size_t len ) 
 {
-	size_t index = 0;
-	size_t stlen = 0;
+	cgc_size_t index = 0;
+	cgc_size_t stlen = 0;
 
 	if ( str == NULL || sub == NULL || len == 0 ) {
 		return NULL;
 	}
 
-	stlen = strlen( sub );
+	stlen = cgc_strlen( sub );
 
 	while ( index < ( len - ( stlen-1)  ) ) {
 		if ( str[index] == sub[0] ) {
-			if ( strncmp( str + index, sub, stlen ) == 0 ) {
+			if ( cgc_strncmp( str + index, sub, stlen ) == 0 ) {
 				return str + index;
 			}
 		} 
@@ -105,9 +105,9 @@ char *strstr( char *str, char *sub, size_t len )
 
 
 char *StrtokNext = NULL;
-char *strtok(char *str, char *sep) {
-	uint32_t i, j;
-	uint32_t str_len;
+char *cgc_strtok(char *str, char *sep) {
+	cgc_uint32_t i, j;
+	cgc_uint32_t str_len;
 	char *tok;
 
 	if (!sep) {
@@ -123,7 +123,7 @@ char *strtok(char *str, char *sep) {
 	}
 
 	// deal with any leading sep chars
-	while (strchr(sep, *str) && *str != '\0') {
+	while (cgc_strchr(sep, *str) && *str != '\0') {
 		str++;
 	}
 	if (*str == '\0') {
@@ -131,14 +131,14 @@ char *strtok(char *str, char *sep) {
 		return(NULL);
 	}
 
-	str_len = strlen(str);
+	str_len = cgc_strlen(str);
 	for (i = 0; i < str_len; i++) {
-		if (strchr(sep, str[i])) {
+		if (cgc_strchr(sep, str[i])) {
 			// found a sep character
 			str[i] = '\0';
 			// see if there are any subsequent tokens
 			for (j = i+1; j < str_len; j++) {
-				if (strchr(sep, str[j])) {
+				if (cgc_strchr(sep, str[j])) {
 					// found one
 					str[j] = '\0';
 				} else {
@@ -159,7 +159,7 @@ char *strtok(char *str, char *sep) {
 	return(str);
 }
 
-int strcmp(const char *s1, const char *s2) {
+int cgc_strcmp(const char *s1, const char *s2) {
 
 	if (s1 && !s2) {
 		return(1);
@@ -191,7 +191,7 @@ int strcmp(const char *s1, const char *s2) {
 
 }
 
-int strncmp(const char *s1, const char *s2, size_t n) {
+int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n) {
 
 	if (s1 && !s2) {
 		return(1);
@@ -227,14 +227,14 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 }
 
 
-char *strcat(char *restrict s1, const char *restrict s2) {
-	uint32_t i,j;
+char *cgc_strcat(char *restrict s1, const char *restrict s2) {
+	cgc_uint32_t i,j;
 
 	if (!s1 || !s2) {
 		return(NULL);
 	}
 
-	for (i = strlen(s1), j = 0; j < strlen(s2); i++, j++) {
+	for (i = cgc_strlen(s1), j = 0; j < cgc_strlen(s2); i++, j++) {
 		s1[i] = s2[j];
 	}
 	s1[i] = '\0';
@@ -243,15 +243,15 @@ char *strcat(char *restrict s1, const char *restrict s2) {
 }
 
 
-char *strncat(char *s1, char *s2, size_t n)
+char *cgc_strncat(char *s1, char *s2, cgc_size_t n)
 {
-	uint32_t i,j;
+	cgc_uint32_t i,j;
 
 	if (!s1 || !s2) {
 		return(NULL);
 	}
 
-	for (i = strlen(s1), j = 0; j < strlen(s2); i++, j++) {
+	for (i = cgc_strlen(s1), j = 0; j < cgc_strlen(s2); i++, j++) {
 		if (j >= n)
 		{
 			break;
@@ -263,12 +263,12 @@ char *strncat(char *s1, char *s2, size_t n)
 	return(s1);
 }
 
-int memcmp( const void *s1, const void *s2, size_t n )
+int cgc_memcmp( const void *s1, const void *s2, cgc_size_t n )
 {
-	for ( size_t pos = 0; pos < n; pos++ )
+	for ( cgc_size_t pos = 0; pos < n; pos++ )
 	{
-		uint8_t val1 = ((uint8_t*)s1)[pos];
-		uint8_t val2 = ((uint8_t*)s2)[pos];
+		cgc_uint8_t val1 = ((cgc_uint8_t*)s1)[pos];
+		cgc_uint8_t val2 = ((cgc_uint8_t*)s2)[pos];
 
 		if ( val1 < val2 )
 			return (-1);

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,31 +23,31 @@
 #include "insn.h"
 
 typedef struct {
-    filter_t *filter;
+    cgc_filter_t *filter;
     unsigned int pc;
     unsigned int registers[16];
-} state_t;
+} cgc_state_t;
 
 typedef struct {
     unsigned int ret;
     unsigned int args[8];
-} call_t;
+} cgc_call_t;
 
-call_t syscalls[] = {
+cgc_call_t syscalls[] = {
     { VALUE_NUMBER, { VALUE_PTR_FRAME, VALUE_NUMBER, 0 } }, // receive
     { VALUE_NUMBER, { VALUE_PTR_CTX | VALUE_PTR_FRAME, VALUE_NUMBER, 0 } }, // transmit
     { VALUE_UNKNOWN, { VALUE_PTR_FRAME, VALUE_NUMBER, 0 } }, // random
     { 0 }
 };
 
-int validate_state(state_t *state);
+int cgc_validate_state(cgc_state_t *state);
 
 #include <stdio.h>
-int validate_jmp(state_t *state)
+int cgc_validate_jmp(cgc_state_t *state)
 {
     unsigned int i;
-    state_t copy;
-    insn_t *insn = &state->filter->insn[state->pc]; 
+    cgc_state_t copy;
+    cgc_insn_t *insn = &state->filter->insn[state->pc]; 
     if (insn->op.alu.code == JMP_EQ || insn->op.alu.code == JMP_NE || insn->op.alu.code == JMP_GT || insn->op.alu.code == JMP_GTE)
     {
         unsigned int src;
@@ -63,7 +63,7 @@ int validate_jmp(state_t *state)
         copy = *state;
         copy.pc += insn->offset + 1;
         /* recursively check other execution path */
-        return validate_state(&copy);
+        return cgc_validate_state(&copy);
     }
     else if (insn->op.alu.code == JMP_CALL)
     {
@@ -92,10 +92,10 @@ int validate_jmp(state_t *state)
     return 0;
 }
 
-int validate_alu(state_t *state)
+int cgc_validate_alu(cgc_state_t *state)
 {
     unsigned int src;
-    insn_t *insn = &state->filter->insn[state->pc]; 
+    cgc_insn_t *insn = &state->filter->insn[state->pc]; 
     if (insn->op.alu.code >= ALU__COUNT)
         return 0;
 
@@ -146,9 +146,9 @@ int validate_alu(state_t *state)
     return 1;
 }
 
-int validate_ld(state_t *state)
+int cgc_validate_ld(cgc_state_t *state)
 {
-    insn_t *insn = &state->filter->insn[state->pc]; 
+    cgc_insn_t *insn = &state->filter->insn[state->pc]; 
     if (insn->op.mem.mode >= MODE__COUNT || insn->op.mem.size >= S__COUNT)
         return 0;
 
@@ -164,9 +164,9 @@ int validate_ld(state_t *state)
     return 1;
 }
 
-int validate_st(state_t *state)
+int cgc_validate_st(cgc_state_t *state)
 {
-    insn_t *insn = &state->filter->insn[state->pc]; 
+    cgc_insn_t *insn = &state->filter->insn[state->pc]; 
     if (insn->op.mem.mode >= MODE__COUNT || insn->op.mem.size >= S__COUNT)
         return 0;
 
@@ -184,31 +184,31 @@ int validate_st(state_t *state)
     return 1;
 }
 
-int validate_state(state_t *state)
+int cgc_validate_state(cgc_state_t *state)
 {
     for (; state->pc < state->filter->length; state->pc++)
     {
-        insn_t *insn = &state->filter->insn[state->pc]; 
+        cgc_insn_t *insn = &state->filter->insn[state->pc]; 
         if (insn->op.alu.type == TYPE_JMP)
         {
-            if (!validate_jmp(state))
+            if (!cgc_validate_jmp(state))
                 return 0;
             if (insn->op.alu.code == JMP_RET)
                 return 1;
         }
         else if (insn->op.alu.type == TYPE_ALU)
         {
-            if (!validate_alu(state))
+            if (!cgc_validate_alu(state))
                 return 0;
         }
         else if (insn->op.alu.type == TYPE_LDX)
         {
-            if (!validate_ld(state))
+            if (!cgc_validate_ld(state))
                 return 0;
         }
         else if (insn->op.alu.type == TYPE_ST || insn->op.alu.type == TYPE_STX)
         {
-            if (!validate_st(state))
+            if (!cgc_validate_st(state))
                 return 0;
         }
         else
@@ -219,10 +219,10 @@ int validate_state(state_t *state)
     return 0;
 }
 
-int filter_validate(filter_t *filter)
+int cgc_filter_validate(cgc_filter_t *filter)
 {
     unsigned int i;
-    state_t state;
+    cgc_state_t state;
     state.filter = filter;
     state.pc = 0;
     for (i = 0; i < 16; i++)
@@ -230,5 +230,5 @@ int filter_validate(filter_t *filter)
     state.registers[0] = VALUE_PTR_CTX;
     state.registers[REG_FRAME] = VALUE_PTR_FRAME;
 
-    return validate_state(&state);
+    return cgc_validate_state(&state);
 }

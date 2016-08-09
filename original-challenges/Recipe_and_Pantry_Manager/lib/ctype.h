@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,18 +26,18 @@ THE SOFTWARE.
 #ifndef __CTYPE_H__
 #define __CTYPE_H__
 
-int isdigit( int c );
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isalnum( int c );
-int isprint( int c );
-int isspace( int c );
+int cgc_isdigit( int c );
+int cgc_islower( int c );
+int cgc_isupper( int c );
+int cgc_isalpha( int c );
+int cgc_isalnum( int c );
+int cgc_isprint( int c );
+int cgc_isspace( int c );
 
-int toupper( int c );
-int tolower( int c );
+int cgc_toupper( int c );
+int cgc_tolower( int c );
 
-double multiply( double a, double b);
-double add( double a, double b);
+double cgc_multiply( double a, double b);
+double cgc_add( double a, double b);
 
 #endif // __CTYPE_H__

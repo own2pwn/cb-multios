@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 
 
 #pragma pack(push, 1)
-struct fs_file
+struct cgc_fs_file
 {
     unsigned char name[11];
     unsigned char attrib;
@@ -42,16 +42,16 @@ struct fs_file
 namespace CgFsFile
 {
 
-bool FreeEntry(const fs_file *file_metadata);
-bool SkipEntry(const fs_file *file_metadata);
-bool IsDotEntry(const fs_file *file_metadata);
-bool IsDirectory(const fs_file *file_metadata);
-bool IsFile(const fs_file *file_metadata);
-bool IsSystemFile(const fs_file *file_metadata);
-bool IsHiddenFile(const fs_file *file_metadata);
-bool IsArchive(const fs_file *file_metadata);
-bool NameEquals(const fs_file *file_metadata, const char *filename, unsigned int name_len);
-void DeleteMetadataEntry(fs_file *file_metadata);
+bool cgc_FreeEntry(const cgc_fs_file *file_metadata);
+bool cgc_SkipEntry(const cgc_fs_file *file_metadata);
+bool cgc_IsDotEntry(const cgc_fs_file *file_metadata);
+bool cgc_IsDirectory(const cgc_fs_file *file_metadata);
+bool cgc_IsFile(const cgc_fs_file *file_metadata);
+bool cgc_IsSystemFile(const cgc_fs_file *file_metadata);
+bool cgc_IsHiddenFile(const cgc_fs_file *file_metadata);
+bool cgc_IsArchive(const cgc_fs_file *file_metadata);
+bool cgc_NameEquals(const cgc_fs_file *file_metadata, const char *filename, unsigned int name_len);
+void cgc_DeleteMetadataEntry(cgc_fs_file *file_metadata);
 
 };
 

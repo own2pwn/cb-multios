@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -66,27 +66,27 @@ enum
     INS_popf
 };
 
-class Operand
+class cgc_Operand
 {
 public:
-    Operand() : d_type(OPR_invalid) {}
-    Operand(int type) : d_type(type) {}
+    cgc_Operand() : d_type(OPR_invalid) {}
+    cgc_Operand(int type) : d_type(type) {}
     
-    static inline Operand new_imm(int imm)
+    static inline cgc_Operand cgc_new_imm(int imm)
     {
-        Operand opr(OPR_imm);
+        cgc_Operand opr(OPR_imm);
         opr.d_imm = imm;
         return opr;
     }
-    static inline Operand new_reg(int reg)
+    static inline cgc_Operand cgc_new_reg(int reg)
     {
-        Operand opr(OPR_reg);
+        cgc_Operand opr(OPR_reg);
         opr.d_reg = reg;
         return opr;
     }
-    static inline Operand new_mem(int base, int disp)
+    static inline cgc_Operand cgc_new_mem(int base, int disp)
     {
-        Operand opr(OPR_mem);
+        cgc_Operand opr(OPR_mem);
         opr.d_mem.d_base = base;
         opr.d_mem.d_disp = disp;
         opr.d_mem.d_index = REG_invalid;
@@ -94,7 +94,7 @@ public:
         return opr;
     }
     
-    inline bool is_valid() { return d_type != OPR_invalid; }
+    inline bool cgc_is_valid() { return d_type != OPR_invalid; }
 public:
     int d_type;
     union {
@@ -109,18 +109,18 @@ public:
     };
 };
 
-class Instruction
+class cgc_Instruction
 {
 public:
-    Instruction() : d_type(INS_invalid), d_size(0) {}
-    Instruction(int type, int size) : d_type(type), d_size(size) {}
+    cgc_Instruction() : d_type(INS_invalid), d_size(0) {}
+    cgc_Instruction(int type, int size) : d_type(type), d_size(size) {}
 
-    static Instruction disassemble(unsigned char *data, unsigned int len);
+    static cgc_Instruction cgc_disassemble(unsigned char *data, unsigned int len);
 
-    inline bool is_valid() { return d_type != INS_invalid; }
+    inline bool cgc_is_valid() { return d_type != INS_invalid; }
 private:
 public:
     int d_type;
     int d_size;
-    Operand d_operands[3];
+    cgc_Operand d_operands[3];
 };

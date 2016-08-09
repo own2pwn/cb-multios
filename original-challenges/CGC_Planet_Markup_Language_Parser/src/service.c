@@ -27,37 +27,37 @@ THE SOFTWARE.
 #include "service.h"
 #include "planetParsers.h"
 
-pPlanet solarSystem[10];
+cgc_pPlanet solarSystem[10];
 
 int main( void )
 {
 	int choice = 0;
 	char selection[30];
-	pstring tl = NULL;
-	pPlanet pp = NULL;
+	cgc_pstring tl = NULL;
+	cgc_pPlanet pp = NULL;
 	char *temp = NULL;
 
-	bzero( solarSystem, sizeof(pPlanet) * 10 );
+	cgc_bzero( solarSystem, sizeof(cgc_pPlanet) * 10 );
 
 	while (1) {
-		printf("\nPlanet Markup Language Main\n");
-		printf("1) Print Planets\n");
-		printf("2) Add PML\n");
-		printf("3) Add Planet\n");
-		printf("4) Select Planet\n");
-		printf("5) Exit\n");
-		printf("Selection: ");
+		cgc_printf("\nPlanet Markup Language Main\n");
+		cgc_printf("1) Print Planets\n");
+		cgc_printf("2) Add PML\n");
+		cgc_printf("3) Add cgc_Planet\n");
+		cgc_printf("4) Select cgc_Planet\n");
+		cgc_printf("5) Exit\n");
+		cgc_printf("Selection: ");
 
-		bzero(selection, 30);
-		receive_until( selection, '\n', 4 );
+		cgc_bzero(selection, 30);
+		cgc_receive_until( selection, '\n', 4 );
 
-		choice = atoi( selection );
+		choice = cgc_atoi( selection );
 
 		switch (choice) {
 			case 1:
 				for ( choice = 0; choice < 10; choice++ ) {
 					if ( solarSystem[choice] != NULL ) {
-						printPlanetInfo( solarSystem[choice] );
+						cgc_printPlanetInfo( solarSystem[choice] );
 					}
 				}
 				break;
@@ -67,16 +67,16 @@ int main( void )
 					continue;
 				}
 	
-				printf("PML: ");
-				bzero( temp, 4096);
-				receive_until( temp, '\n', 4095);
-				tl = initString( temp );
+				cgc_printf("PML: ");
+				cgc_bzero( temp, 4096);
+				cgc_receive_until( temp, '\n', 4095);
+				tl = cgc_initString( temp );
 				deallocate(temp, 4096);
 
 				if ( tl == NULL ) {
 					continue;
 				} else if ( tl->buffer == NULL ) {
-					deallocate( tl, sizeof(string));
+					deallocate( tl, sizeof(cgc_string));
 					continue;
 				}
 
@@ -87,7 +87,7 @@ int main( void )
 						continue;
 					}
 
-					solarSystem[choice] = planetTopLevel(tl);
+					solarSystem[choice] = cgc_planetTopLevel(tl);
 
 					if ( solarSystem[choice] == NULL ) {
 						break;
@@ -96,13 +96,13 @@ int main( void )
 					choice++;
 				}
 				
-				freeString(tl);
+				cgc_freeString(tl);
 				break;
 			case 3:
-				printf("\n-> ");
-				bzero(selection, 30);
+				cgc_printf("\n-> ");
+				cgc_bzero(selection, 30);
 
-				receive_until( selection, '\n', 29 );
+				cgc_receive_until( selection, '\n', 29 );
 
 				choice = 0;
 				while ( choice < 10 ) {
@@ -116,18 +116,18 @@ int main( void )
 					continue;
 				}
 
-				if ( allocate( sizeof(Planet), 0, (void**)&pp) != 0 ) {
+				if ( allocate( sizeof(cgc_Planet), 0, (void**)&pp) != 0 ) {
 					pp = NULL;
 					break;
 				}
 
-				initPlanet(pp);
+				cgc_initPlanet(pp);
 
 
 				solarSystem[choice] = pp;
 
 				choice = 0;
-				while ( isalnum(selection[choice]) ) {
+				while ( cgc_isalnum(selection[choice]) ) {
 					pp->name[choice] = selection[choice];
 					choice++;
 				}
@@ -136,43 +136,43 @@ int main( void )
 			case 4:
 				for (choice=0; choice < 10; choice++) {
 					if ( solarSystem[choice] != NULL ) {
-						printf("@d) @s\n", choice +1, solarSystem[choice]->name);
+						cgc_printf("@d) @s\n", choice +1, solarSystem[choice]->name);
 					}
 				}
 
-				bzero( selection, 30);
-				printf("\n-> ");
-				receive_until(selection, '\n', 4 );
+				cgc_bzero( selection, 30);
+				cgc_printf("\n-> ");
+				cgc_receive_until(selection, '\n', 4 );
 
-				choice = atoi(selection);
+				choice = cgc_atoi(selection);
 
 				if ( choice < 1 || choice > 10 ) {
-					printf("Invalid\n");
+					cgc_printf("Invalid\n");
 					continue;
 				}
 
 				if ( solarSystem[choice-1] == NULL ) {
-					printf("Invalid\n");
+					cgc_printf("Invalid\n");
 					continue;
 				}
 
-				if ( planetMenu( solarSystem[choice-1] ) == 0 ) {
+				if ( cgc_planetMenu( solarSystem[choice-1] ) == 0 ) {
 					solarSystem[choice-1] = NULL;
 				}
 
 				break;
 			case 5:
-				printf("Exitting..\n");
+				cgc_printf("Exitting..\n");
 				return 0;
 			default:
-				printf("Invalid...\n");
+				cgc_printf("Invalid...\n");
 				break;
 		};
 	}
 
-	pPlanet pl = planetTopLevel( tl );
+	cgc_pPlanet pl = cgc_planetTopLevel( tl );
 
-	planetMenu(pl);
+	cgc_planetMenu(pl);
 
 	_terminate(0);
 	return 0;

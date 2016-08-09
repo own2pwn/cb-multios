@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,37 +24,37 @@
 #include "asciiart.h"
 #include "picture.h"
 
-BlogPost *BlogPost::create_blog_post(User *user, char *_title)
+cgc_BlogPost *cgc_BlogPost::cgc_create_blog_post(cgc_User *user, char *_title)
 {
     if (!user || !_title || !*_title)
         return NULL;
 
-    return new BlogPost(user, _title);
+    return new cgc_BlogPost(user, _title);
 }
 
-BlogPost::BlogPost(User *user, char *_title)
+cgc_BlogPost::cgc_BlogPost(cgc_User *user, char *_title)
 {
     owner = user;
-    strcpy(title, _title);
-    memset(post_order, 0, sizeof(post_order));
+    cgc_strcpy(title, _title);
+    cgc_memset(post_order, 0, sizeof(post_order));
     total_views = 0;
 }
 
-BlogPost::~BlogPost()
+cgc_BlogPost::~cgc_BlogPost()
 {
 
 }
 
-char *BlogPost::get_title()
+char *cgc_BlogPost::cgc_get_title()
 {
     return title;
 }
 
-bool BlogPost::add_text_block(char *text)
+bool cgc_BlogPost::cgc_add_text_block(char *text)
 {
-    size_t len = strlen(post_order);
+    cgc_size_t len = cgc_strlen(post_order);
     if (!text || !*text) {
-        printf("Can't add empty text\n");
+        printf("Can't cgc_add empty text\n");
         return false;
     }
 
@@ -63,61 +63,61 @@ bool BlogPost::add_text_block(char *text)
         return false;
     }
 
-    text_blocks.add(text);
+    text_blocks.cgc_add(text);
     post_order[len++] = 't';
     return true;
 }
 
-bool BlogPost::add_file(File *file)
+bool cgc_BlogPost::cgc_add_file(cgc_File *file)
 {
-    size_t len;
+    cgc_size_t len;
     if (!file) {
         printf("Bad file\n");
         return false;
     }
 
-    len = strlen(post_order);
+    len = cgc_strlen(post_order);
     if (len >= sizeof(post_order)) {
         printf("Post is too big\n");
         return false;
     }
 
-    files.add(file);
+    files.cgc_add(file);
     post_order[len] = 'f';
     post_order[++len] = '\0';
     return true;
 }
 
-void BlogPost::like(User *user)
+void cgc_BlogPost::cgc_like(cgc_User *user)
 {
-    for (int i=0; i < likes.length(); i++) {
+    for (int i=0; i < likes.cgc_length(); i++) {
         if (likes[i] == user) {
             printf("You already liked this\n");
             return;
         }
     }
 
-    likes.add(user);
-    owner->add_like();
+    likes.cgc_add(user);
+    owner->cgc_add_like();
 }
 
-void BlogPost::print_post()
+void cgc_BlogPost::cgc_print_post()
 {
-    size_t text_idx = 0, file_idx = 0;
-    File *file;
+    cgc_size_t text_idx = 0, file_idx = 0;
+    cgc_File *file;
 
     printf("---%s---\n", title);
-    for(size_t i = 0; i < strlen(post_order); i++) {
+    for(cgc_size_t i = 0; i < cgc_strlen(post_order); i++) {
         switch(post_order[i]) {
         case 't':
             printf("%s\n", text_blocks[text_idx++]); break;
         case 'f':
             file = files[file_idx++];
-            switch(file->tell_filetype()) {
+            switch(file->cgc_tell_filetype()) {
             case ASCIIART:
-                ((AsciiArt *)(file))->print_asciiart(); break;
+                ((cgc_AsciiArt *)(file))->cgc_print_asciiart(); break;
             case PICTURE:
-                ((Picture *)(file))->print_picture(); break;
+                ((cgc_Picture *)(file))->cgc_print_picture(); break;
             default:
                 printf("Unsupported file type\n");
             }

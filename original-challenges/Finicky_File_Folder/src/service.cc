@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,49 +26,49 @@
 #include <cstdlib.h>
 #include <cstring.h>
 #ifdef DEBUG
-#define dbg(s, ...) fprintf(stderr, "DEBUG:\t" s "\n", ##__VA_ARGS__)
+#define dbg(s, ...) cgc_fprintf(stderr, "DEBUG:\t" s "\n", ##__VA_ARGS__)
 #else
 #define dbg(s, ...)
 #endif
 #define err(s, ...) ({ \
-    fprintf(stderr, "ERROR:\t" s "\n", ##__VA_ARGS__); \
-    exit(1); \
+    cgc_fprintf(stderr, "ERROR:\t" s "\n", ##__VA_ARGS__); \
+    cgc_exit(1); \
 })
 #define assert(__x) ({ \
     if (!(__x)) err("failed assertion"); \
 })
 #define min(__x, __y) (__x) < (__y) ? (__x) : (__y)
 #define BUFFER_SZ 0x1000
-typedef ssize_t off_t;
-typedef uint32_t buffer_id_t;
+typedef cgc_ssize_t cgc_off_t;
+typedef cgc_uint32_t cgc_buffer_id_t;
 typedef enum
 {
   RDONLY = 1 << 0,
   RDWR   = 1 << 1,
   TRUNC  = 1 << 2,
   APPEND = 1 << 3,
-} open_flags_t;
+} cgc_open_flags_t;
 template<typename T>
-class ArrayList
+class cgc_ArrayList
 {
   private:
-    static const size_t default_capacity_ = 1024;
-    size_t capacity_;
-    size_t length_;
+    static const cgc_size_t default_capacity_ = 1024;
+    cgc_size_t capacity_;
+    cgc_size_t length_;
     T** array_;
   public:
-    ArrayList(void)
+    cgc_ArrayList(void)
     {
       capacity_ = default_capacity_;
       length_ = 0;
       array_ = new T*[default_capacity_];
     }
-    ~ArrayList(void)
+    ~cgc_ArrayList(void)
     {
       delete array_;
     }
 
-    int Append(T* value)
+    int cgc_Append(T* value)
     {
       if (!value)
       {
@@ -80,13 +80,13 @@ class ArrayList
       if (length_ == capacity_)
       {
         capacity_ *= 2;
-        array_ = static_cast<T**>(realloc(array_, sizeof(T *) * capacity_));
+        array_ = static_cast<T**>(cgc_realloc(array_, sizeof(T *) * capacity_));
       }
 
       return 0;
     }
 
-    T* Get(size_t index)
+    T* cgc_Get(cgc_size_t index)
     {
       if (index >= length_)
       {
@@ -96,7 +96,7 @@ class ArrayList
       return array_[index];
     }
 
-    T* Last(void)
+    T* cgc_Last(void)
     {
       if (length_ < 1)
       {
@@ -106,20 +106,20 @@ class ArrayList
       return array_[length_ - 1];
     }
 
-    T* RemoveByValue(T* elem)
+    T* cgc_RemoveByValue(T* elem)
     {
-      for (size_t i = 0; i < length_; ++i)
+      for (cgc_size_t i = 0; i < length_; ++i)
       {
         if (array_[i] == elem)
         {
-          return RemoveByIndex(i);
+          return cgc_RemoveByIndex(i);
         }
       }
 
       return nullptr;
     }
 
-    T* RemoveByIndex(size_t idx)
+    T* cgc_RemoveByIndex(cgc_size_t idx)
     {
       if (idx >= length_)
       {
@@ -129,7 +129,7 @@ class ArrayList
       T* removed = array_[idx];
       array_[idx] = nullptr;
 
-      for (size_t i = idx; i < length_ - 1; ++i)
+      for (cgc_size_t i = idx; i < length_ - 1; ++i)
       {
         array_[i] = array_[i + 1];
       }
@@ -140,44 +140,44 @@ class ArrayList
       return removed;
     }
 
-    size_t Size()
+    cgc_size_t cgc_Size()
     {
       return length_;
     }
 };
 
-class Buffer
+class cgc_Buffer
 {
   public:
-    uint8_t data[BUFFER_SZ];
-    static uint32_t counter;
-    buffer_id_t id;
-    uint32_t left_;
+    cgc_uint8_t data[BUFFER_SZ];
+    static cgc_uint32_t counter;
+    cgc_buffer_id_t id;
+    cgc_uint32_t left_;
     bool free_;
 
-    void MarkUsed(void);
-    void MarkFree(void);
+    void cgc_MarkUsed(void);
+    void cgc_MarkFree(void);
 
-    Buffer(void)
+    cgc_Buffer(void)
     {
       id = counter++;
       left_ = BUFFER_SZ;
       free_ = true;
     }
 
-    size_t Size(void)
+    cgc_size_t cgc_Size(void)
     {
       return BUFFER_SZ - left_;
     }
 
-    int SetContents(uint8_t* bytes, size_t offset, size_t len)
+    int cgc_SetContents(cgc_uint8_t* bytes, cgc_size_t offset, cgc_size_t len)
     {
       if (len > BUFFER_SZ - offset)
       {
         return -1;
       }
 
-      memcpy(data + offset, bytes, len);
+      cgc_memcpy(data + offset, bytes, len);
       if (BUFFER_SZ - offset - len < left_)
       {
         left_ = BUFFER_SZ - offset - len;
@@ -187,78 +187,78 @@ class Buffer
     }
 };
 
-class BufferCache
+class cgc_BufferCache
 {
 #define NUM_BUFS 32
 #define NUM_QS 32
   private:
-    ArrayList<Buffer>* Queues_[NUM_QS];
-    ArrayList<Buffer>* Free_;
+    cgc_ArrayList<cgc_Buffer>* Queues_[NUM_QS];
+    cgc_ArrayList<cgc_Buffer>* Free_;
 
   public:
-    BufferCache(void)
+    cgc_BufferCache(void)
     {
-      for (size_t i = 0; i < NUM_QS; ++i)
+      for (cgc_size_t i = 0; i < NUM_QS; ++i)
       {
-        Queues_[i] = new ArrayList<Buffer>();
+        Queues_[i] = new cgc_ArrayList<cgc_Buffer>();
       }
 
-      Free_ = new ArrayList<Buffer>();
-      AllocateMore();
+      Free_ = new cgc_ArrayList<cgc_Buffer>();
+      cgc_AllocateMore();
     }
 
-    Buffer* GetFree(void)
+    cgc_Buffer* cgc_GetFree(void)
     {
-      if (!Free_->Size())
+      if (!Free_->cgc_Size())
       {
-        AllocateMore();
+        cgc_AllocateMore();
       }
 
-      Buffer* B = Free_->Get(0);
-      Free_->RemoveByIndex(0);
+      cgc_Buffer* B = Free_->cgc_Get(0);
+      Free_->cgc_RemoveByIndex(0);
       return B;
     }
 
-    void AllocateMore(void)
+    void cgc_AllocateMore(void)
     {
-      for (size_t i = 0; i < NUM_BUFS; ++i)
+      for (cgc_size_t i = 0; i < NUM_BUFS; ++i)
       {
-        Free_->Append(new Buffer());
+        Free_->cgc_Append(new cgc_Buffer());
       }
     }
 
-    size_t FreeLeft(void)
+    cgc_size_t cgc_FreeLeft(void)
     {
-      return Free_->Size();
+      return Free_->cgc_Size();
     }
 
-    void AddFree(Buffer* B)
+    void cgc_AddFree(cgc_Buffer* B)
     {
-      B->MarkFree();
-      Free_->Append(B);
+      B->cgc_MarkFree();
+      Free_->cgc_Append(B);
     }
 
-    void MarkUsed(Buffer* B)
+    void cgc_MarkUsed(cgc_Buffer* B)
     {
-      Free_->RemoveByValue(B);
+      Free_->cgc_RemoveByValue(B);
       auto q = Queues_[B->id % NUM_QS];
-      q->Append(B);
+      q->cgc_Append(B);
     }
 
-    void MarkFree(Buffer* B)
+    void cgc_MarkFree(cgc_Buffer* B)
     {
       return;
     }
 
-    Buffer* Get(uint32_t id)
+    cgc_Buffer* cgc_Get(cgc_uint32_t id)
     {
-      size_t idx = id % NUM_QS;
+      cgc_size_t idx = id % NUM_QS;
       auto q = Queues_[idx];
-      for(size_t i = 0; i < q->Size(); ++i)
+      for(cgc_size_t i = 0; i < q->cgc_Size(); ++i)
       {
-        if (q->Get(i)->id == id)
+        if (q->cgc_Get(i)->id == id)
         {
-          return q->Get(i);
+          return q->cgc_Get(i);
         }
       }
 
@@ -267,82 +267,82 @@ class BufferCache
 };
 
 
-uint32_t Buffer::counter = 0;
-static BufferCache* BCache = new BufferCache();
+cgc_uint32_t cgc_Buffer::counter = 0;
+static cgc_BufferCache* BCache = new cgc_BufferCache();
 
-void Buffer::MarkFree(void)
+void cgc_Buffer::cgc_MarkFree(void)
 {
   free_ = true;
   left_ = BUFFER_SZ;
-  BCache->MarkFree(this);
+  BCache->cgc_MarkFree(this);
 }
 
-void Buffer::MarkUsed(void)
+void cgc_Buffer::cgc_MarkUsed(void)
 {
   free_ = false;
-  BCache->MarkUsed(this);
+  BCache->cgc_MarkUsed(this);
 }
 
-class Chunk
+class cgc_Chunk
 {
   private:
-    size_t len_;
-    uint8_t* bytes_;
+    cgc_size_t len_;
+    cgc_uint8_t* bytes_;
   public:
-    Chunk(uint8_t* bytes, size_t len)
+    cgc_Chunk(cgc_uint8_t* bytes, cgc_size_t len)
     {
       len_ = len;
-      bytes_ = (uint8_t*)calloc(sizeof(uint8_t), len);
-      memcpy(bytes_, bytes, len);
+      bytes_ = (cgc_uint8_t*)cgc_calloc(sizeof(cgc_uint8_t), len);
+      cgc_memcpy(bytes_, bytes, len);
     }
 
-    ~Chunk(void)
+    ~cgc_Chunk(void)
     {
       delete bytes_;
     }
 
-    size_t Size(void)
+    cgc_size_t cgc_Size(void)
     {
       return len_;
     }
 
-    uint8_t* operator[](const size_t idx)
+    cgc_uint8_t* operator[](const cgc_size_t idx)
     {
       return bytes_ + idx;
     }
 };
 
-class BytesReader
+class cgc_BytesReader
 {
   private:
-    size_t index_;
-    Chunk* chunk_;
+    cgc_size_t index_;
+    cgc_Chunk* chunk_;
 
   public:
-    BytesReader(uint8_t* bytes, size_t len)
+    cgc_BytesReader(cgc_uint8_t* bytes, cgc_size_t len)
     {
-      chunk_ = new Chunk(bytes, len);
+      chunk_ = new cgc_Chunk(bytes, len);
       index_ = 0;
     }
 
-    ~BytesReader(void)
+    ~cgc_BytesReader(void)
     {
       delete chunk_;
     }
 
-    size_t Size(void)
+    cgc_size_t cgc_Size(void)
     {
-      return chunk_->Size() - index_;;
+      return chunk_->cgc_Size() - index_;;
     }
 
-    bool Empty(void)
+    bool cgc_Empty(void)
     {
-      return index_ >= chunk_->Size();
+      return index_ >= chunk_->cgc_Size();
     }
 
-    uint8_t Read(void)
+    cgc_uint8_t cgc_Read(void)
     {
-      if (index_ >= chunk_->Size())
+      if (index_ >= chunk_->cgc_Size())
       {
         return 0;
       }
@@ -350,14 +350,14 @@ class BytesReader
       return *(*chunk_)[index_++];
     }
 
-    uint8_t* ReadN(size_t len, bool is_str = false)
+    cgc_uint8_t* cgc_ReadN(cgc_size_t len, bool is_str = false)
     {
-      if (index_ + len > chunk_->Size())
+      if (index_ + len > chunk_->cgc_Size())
       {
         return nullptr;
       }
 
-      uint8_t* ret = nullptr;
+      cgc_uint8_t* ret = nullptr;
 
       if (!is_str)
       {
@@ -365,8 +365,8 @@ class BytesReader
       }
       else
       {
-        ret = new uint8_t(len + 1);
-        memcpy(ret, (*chunk_)[index_], len);
+        ret = new cgc_uint8_t(len + 1);
+        cgc_memcpy(ret, (*chunk_)[index_], len);
         ret[len] = '\x00';
       }
 
@@ -376,7 +376,7 @@ class BytesReader
     }
 };
 
-class Response
+class cgc_Response
 {
 #define MAX_RESP_SZ (32 * 1024)
   private:
@@ -387,43 +387,43 @@ class Response
 
   public:
     int Status;
-    size_t Length;
-    uint8_t Bytes[MAX_RESP_SZ];
+    cgc_size_t Length;
+    cgc_uint8_t Bytes[MAX_RESP_SZ];
 
-    Response(void)
+    cgc_Response(void)
     {
       Status = STATUS_ERR;
       Length = 0;
     }
 
-    void SetOK(void)
+    void cgc_SetOK(void)
     {
       Status = STATUS_OK;
     }
 
-    int Append(uint8_t* bytes, size_t len)
+    int cgc_Append(cgc_uint8_t* bytes, cgc_size_t len)
     {
       if (Length + len >= MAX_RESP_SZ)
       {
         return -1;
       }
 
-      memcpy(Bytes + Length, bytes, len);
+      cgc_memcpy(Bytes + Length, bytes, len);
       Length += len;
 
       return 0;
     }
 };
 
-class Request
+class cgc_Request
 {
   private:
-    uint32_t f_num_;
-    uint32_t size_;
-    uint8_t* data_;
+    cgc_uint32_t f_num_;
+    cgc_uint32_t size_;
+    cgc_uint8_t* data_;
 
   public:
-    Request(uint8_t n, uint32_t size, uint8_t* data)
+    cgc_Request(cgc_uint8_t n, cgc_uint32_t size, cgc_uint8_t* data)
     {
       size_ = size;
       f_num_ = n;
@@ -431,52 +431,52 @@ class Request
       assert(data_);
     }
 
-    uint8_t Num(void)
+    cgc_uint8_t cgc_Num(void)
     {
       return f_num_;
     }
 
-    uint32_t Size(void)
+    cgc_uint32_t cgc_Size(void)
     {
       return size_;
     }
 
-    uint8_t* Data(void)
+    cgc_uint8_t* cgc_Data(void)
     {
       return data_;
     }
 };
 
 template<typename T>
-class Pair
+class cgc_Pair
 {
   public:
     T fst;
     T snd;
 
-    Pair(T fst, T snd) : fst(fst), snd(snd) {}
+    cgc_Pair(T fst, T snd) : fst(fst), snd(snd) {}
 };
 
 
-class Pathname
+class cgc_Pathname
 {
   private:
-    static const uint8_t seperator = '/';
+    static const cgc_uint8_t seperator = '/';
 
-    size_t size_;
-    uint8_t* data_;
-    ArrayList<Pair<size_t>>* components_ = new ArrayList<Pair<size_t>>();
+    cgc_size_t size_;
+    cgc_uint8_t* data_;
+    cgc_ArrayList<cgc_Pair<cgc_size_t>>* components_ = new cgc_ArrayList<cgc_Pair<cgc_size_t>>();
 
 
   public:
-    Pathname(const char* pathname)
+    cgc_Pathname(const char* pathname)
     {
-      size_ = strlen((char *)pathname);
-      size_t i;
-      size_t start;
+      size_ = cgc_strlen((char *)pathname);
+      cgc_size_t i;
+      cgc_size_t start;
 
-      data_ = new uint8_t[size_ + 1];
-      memcpy(data_, pathname, size_);
+      data_ = new cgc_uint8_t[size_ + 1];
+      cgc_memcpy(data_, pathname, size_);
       start = i = 0;
       for (;i < size_; ++i)
       {
@@ -484,7 +484,7 @@ class Pathname
         {
           if (i > start)
           {
-            components_->Append(new Pair<size_t>(start, i));
+            components_->cgc_Append(new cgc_Pair<cgc_size_t>(start, i));
           }
 
           while (pathname[i] == seperator)
@@ -498,138 +498,138 @@ class Pathname
 
       if (i == size_ && i > start)
       {
-        components_->Append(new Pair<size_t>(start, i));
+        components_->cgc_Append(new cgc_Pair<cgc_size_t>(start, i));
       }
     }
 
-    const char* Get(size_t index)
+    const char* cgc_Get(cgc_size_t index)
     {
-      Pair<size_t>* p =  components_->Get(index);
+      cgc_Pair<cgc_size_t>* p =  components_->cgc_Get(index);
       char* cpy = new char[p->snd - p->fst + 1];
-      memcpy(cpy, data_ + p->fst, p->snd - p->fst);
+      cgc_memcpy(cpy, data_ + p->fst, p->snd - p->fst);
       cpy[p->snd - p->fst] = '\0';
       return cpy;
     }
 
-    char* AsString(void)
+    char* cgc_AsString(void)
     {
       char* s = new char[size_ + 1];
-      memcpy(s, data_, size_);
+      cgc_memcpy(s, data_, size_);
       s[size_] = '\0';
       return s;
     }
 
-    size_t Size()
+    cgc_size_t cgc_Size()
     {
-      return components_->Size();
+      return components_->cgc_Size();
     }
 };
 
-class File
+class cgc_File
 {
   private:
-    ArrayList<buffer_id_t> buffers_;
-    size_t ref_cnt_;
+    cgc_ArrayList<cgc_buffer_id_t> buffers_;
+    cgc_size_t ref_cnt_;
 
   public:
     const char* name;
-    File(const char* path)
+    cgc_File(const char* path)
     {
       name = path;
       ref_cnt_ = 0;
     }
 
-    ~File(void)
+    ~cgc_File(void)
     {
-      for (size_t i = 0; i < buffers_.Size(); ++i)
+      for (cgc_size_t i = 0; i < buffers_.cgc_Size(); ++i)
       {
-        auto A = buffers_.Get(i);
-        auto B = BCache->Get(*A);
-        BCache->AddFree(B);
+        auto A = buffers_.cgc_Get(i);
+        auto B = BCache->cgc_Get(*A);
+        BCache->cgc_AddFree(B);
       }
     }
 
-    bool operator ==(const File &b) const
+    bool operator ==(const cgc_File &b) const
     {
-      return strcmp(name, b.name) == 0;
+      return cgc_strcmp(name, b.name) == 0;
     }
 
-    virtual size_t Size(void)
+    virtual cgc_size_t cgc_Size(void)
     {
-      size_t ret = 0;
-      for (size_t i = 0; i < buffers_.Size(); ++i)
+      cgc_size_t ret = 0;
+      for (cgc_size_t i = 0; i < buffers_.cgc_Size(); ++i)
       {
-        ret += BCache->Get(*buffers_.Get(i))->Size();
+        ret += BCache->cgc_Get(*buffers_.cgc_Get(i))->cgc_Size();
       }
 
       return ret;
     }
 
-    int IncRef(void)
+    int cgc_IncRef(void)
     {
       ref_cnt_++;
       return 0;
     }
 
-    int DecRef(void)
+    int cgc_DecRef(void)
     {
       ref_cnt_--;
       return 0;
     }
 
-    virtual int RefCnt(void)
+    virtual int cgc_RefCnt(void)
     {
       return ref_cnt_;
     }
 
-    int Write(uint8_t* bytes, size_t offset, size_t len)
+    int cgc_Write(cgc_uint8_t* bytes, cgc_size_t offset, cgc_size_t len)
     {
       if (!bytes)
       {
         return -1;
       }
 
-      size_t cnt = 0;
-      size_t buf = 0;
-      size_t cpy = 0;
+      cgc_size_t cnt = 0;
+      cgc_size_t buf = 0;
+      cgc_size_t cpy = 0;
 
       if (offset)
       {
         buf = offset / BUFFER_SZ;
       }
 
-      size_t req_buffs = (len + (BUFFER_SZ - 1)) / BUFFER_SZ;
-      size_t cur_buffs = buffers_.Size();
-      size_t offset_in_bufs = offset / BUFFER_SZ;
-      size_t n_new_buffs = 0;
+      cgc_size_t req_buffs = (len + (BUFFER_SZ - 1)) / BUFFER_SZ;
+      cgc_size_t cur_buffs = buffers_.cgc_Size();
+      cgc_size_t offset_in_bufs = offset / BUFFER_SZ;
+      cgc_size_t n_new_buffs = 0;
       if (req_buffs + offset_in_bufs > cur_buffs)
       {
         n_new_buffs = req_buffs - cur_buffs + offset_in_bufs;
       }
 
-      if (BCache->FreeLeft() < n_new_buffs)
+      if (BCache->cgc_FreeLeft() < n_new_buffs)
       {
-        BCache->AllocateMore();
+        BCache->cgc_AllocateMore();
       }
 
-      Buffer* bufp;
+      cgc_Buffer* bufp;
       while (cnt < len)
       {
-        if (buf >= buffers_.Size())
+        if (buf >= buffers_.cgc_Size())
         {
-          bufp = BCache->GetFree();
-          bufp->MarkUsed();
-          buffers_.Append(&bufp->id);
+          bufp = BCache->cgc_GetFree();
+          bufp->cgc_MarkUsed();
+          buffers_.cgc_Append(&bufp->id);
         }
         else
         {
-          bufp = BCache->Get(*buffers_.Get(buf));
+          bufp = BCache->cgc_Get(*buffers_.cgc_Get(buf));
         }
 
         if (offset && buf == (offset / BUFFER_SZ))
         {
           cpy = min(len, BUFFER_SZ - (offset % BUFFER_SZ));
-          if (bufp->SetContents(bytes + cnt, offset % BUFFER_SZ, cpy) != 0)
+          if (bufp->cgc_SetContents(bytes + cnt, offset % BUFFER_SZ, cpy) != 0)
           {
             err("Bad buffer write");
           }
@@ -637,7 +637,7 @@ class File
         else
         {
           cpy = min((len - cnt), BUFFER_SZ);
-          if (bufp->SetContents(bytes + cnt, 0, cpy) != 0)
+          if (bufp->cgc_SetContents(bytes + cnt, 0, cpy) != 0)
           {
             err("Bad buffer write");
           }
@@ -650,16 +650,16 @@ class File
       return 0;
     }
 
-    int Read(uint8_t* bytes, size_t offset, size_t len)
+    int cgc_Read(cgc_uint8_t* bytes, cgc_size_t offset, cgc_size_t len)
     {
-      if (!bytes || len + offset > Size())
+      if (!bytes || len + offset > cgc_Size())
       {
         return -1;
       }
 
-      size_t cnt = 0;
-      size_t buf = 0;
-      size_t cpy = 0;
+      cgc_size_t cnt = 0;
+      cgc_size_t buf = 0;
+      cgc_size_t cpy = 0;
 
       if (offset)
       {
@@ -668,16 +668,16 @@ class File
 
       while (cnt < len)
       {
-        auto buf_idx = buffers_.Get(buf);
-        auto bufp = BCache->Get(*buf_idx);
+        auto buf_idx = buffers_.cgc_Get(buf);
+        auto bufp = BCache->cgc_Get(*buf_idx);
 
         if (offset && buf == (offset / BUFFER_SZ))
         {
           cpy = min(len, BUFFER_SZ - (offset % BUFFER_SZ));
-          memcpy(bytes + cnt, bufp->data + (offset % BUFFER_SZ), cpy);
+          cgc_memcpy(bytes + cnt, bufp->data + (offset % BUFFER_SZ), cpy);
         } else {
           cpy = min((len - cnt), BUFFER_SZ);
-          memcpy(bytes + cnt, bufp->data, cpy);
+          cgc_memcpy(bytes + cnt, bufp->data, cpy);
         }
 
         cnt += cpy;
@@ -689,7 +689,7 @@ class File
 };
 
 template<typename L, typename R>
-class Either
+class cgc_Either
 {
   private:
     bool is_left_;
@@ -697,11 +697,11 @@ class Either
     L* l;
     R* r;
 
-    Either(L* left = nullptr, R* right = nullptr)
+    cgc_Either(L* left = nullptr, R* right = nullptr)
     {
       if (left && right)
       {
-        err("Either can't be both");
+        err("cgc_Either can't be both");
       }
 
       l = left;
@@ -716,7 +716,7 @@ class Either
       }
     }
 
-    ~Either(void)
+    ~cgc_Either(void)
     {
       if (l)
       {
@@ -729,38 +729,38 @@ class Either
       }
     }
 
-    bool IsLeft(void)
+    bool cgc_IsLeft(void)
     {
       return is_left_;
     }
 };
 
-class DirTree
+class cgc_DirTree
 {
   public:
-    ArrayList<Either<DirTree, File>> children;
+    cgc_ArrayList<cgc_Either<cgc_DirTree, cgc_File>> children;
     const char* name;
 
-    DirTree(const char* n)
+    cgc_DirTree(const char* n)
     {
       name = n;
     }
 
-    Either<DirTree, File>* Search(const char* s)
+    cgc_Either<cgc_DirTree, cgc_File>* cgc_Search(const char* s)
     {
-      for (size_t i = 0; i < children.Size(); i++)
+      for (cgc_size_t i = 0; i < children.cgc_Size(); i++)
       {
-        auto E = children.Get(i);
-        if (E->IsLeft())
+        auto E = children.cgc_Get(i);
+        if (E->cgc_IsLeft())
         {
-          if (strcmp(E->l->name, s) == 0)
+          if (cgc_strcmp(E->l->name, s) == 0)
           {
             return E;
           };
         }
         else
         {
-          if (strcmp(E->r->name, s) == 0)
+          if (cgc_strcmp(E->r->name, s) == 0)
           {
             return E;
           }
@@ -772,19 +772,19 @@ class DirTree
 
 
 
-class FileHandle
+class cgc_FileHandle
 {
   public:
-    File& file_;
-    off_t offset_;
-    open_flags_t flags_;
+    cgc_File& file_;
+    cgc_off_t offset_;
+    cgc_open_flags_t flags_;
 
-  FileHandle(File& file, open_flags_t flags) : file_(file), flags_(flags)
+  cgc_FileHandle(cgc_File& file, cgc_open_flags_t flags) : file_(file), flags_(flags)
   {
-    file.IncRef();
+    file.cgc_IncRef();
     if (flags & APPEND)
     {
-      offset_ = file_.Size();
+      offset_ = file_.cgc_Size();
     }
     else
     {
@@ -792,14 +792,14 @@ class FileHandle
     }
   }
 
-  ~FileHandle(void)
+  ~cgc_FileHandle(void)
   {
-    file_.DecRef();
+    file_.cgc_DecRef();
   }
 
-  int Read(uint8_t* bytes, size_t len)
+  int cgc_Read(cgc_uint8_t* bytes, cgc_size_t len)
   {
-    if (file_.Read(bytes, offset_, len) != 0)
+    if (file_.cgc_Read(bytes, offset_, len) != 0)
     {
       err("Bad fh read");
     }
@@ -808,19 +808,19 @@ class FileHandle
     return len;
   }
 
-  size_t Size(void)
+  cgc_size_t cgc_Size(void)
   {
-    return file_.Size();
+    return file_.cgc_Size();
   }
 
-  int Write(uint8_t* bytes, size_t len)
+  int cgc_Write(cgc_uint8_t* bytes, cgc_size_t len)
   {
     if (flags_ & RDONLY)
     {
       return -1;
     }
 
-    if (file_.Write(bytes, offset_, len) != 0)
+    if (file_.cgc_Write(bytes, offset_, len) != 0)
     {
       err("Bad fh write");
     }
@@ -830,12 +830,12 @@ class FileHandle
   }
 };
 
-auto Root = DirTree(nullptr);
+auto Root = cgc_DirTree(nullptr);
 
 #define MAX_FDS 1024
-FileHandle* UserFDs[MAX_FDS];
+cgc_FileHandle* UserFDs[MAX_FDS];
 
-int api_open(const char* pathname, open_flags_t flags, uint32_t mode)
+int cgc_api_open(const char* pathname, cgc_open_flags_t flags, cgc_uint32_t mode)
 {
   dbg("Called open(%s, %x, %x)", pathname, flags, mode);
   int fd = -1;
@@ -852,27 +852,27 @@ int api_open(const char* pathname, open_flags_t flags, uint32_t mode)
 
   if (flags & RDONLY)
   {
-    flags = (open_flags_t)(RDONLY | TRUNC);
+    flags = (cgc_open_flags_t)(RDONLY | TRUNC);
   }
 
   if (!(flags & TRUNC || flags & APPEND))
   {
-    flags = (open_flags_t)(flags | APPEND);
+    flags = (cgc_open_flags_t)(flags | APPEND);
   }
 
   if (!(flags & RDONLY || flags & RDWR))
   {
-    flags = (open_flags_t)(flags | RDONLY);
+    flags = (cgc_open_flags_t)(flags | RDONLY);
   }
 
-  auto node = new Either<DirTree, File>(&Root, nullptr);
-  auto pn = new Pathname(pathname);
+  auto node = new cgc_Either<cgc_DirTree, cgc_File>(&Root, nullptr);
+  auto pn = new cgc_Pathname(pathname);
 
-  for (size_t i = 0; i < pn->Size(); ++i)
+  for (cgc_size_t i = 0; i < pn->cgc_Size(); ++i)
   {
-    if (node && node->IsLeft())
+    if (node && node->cgc_IsLeft())
     {
-      node = node->l->Search(pn->Get(i));
+      node = node->l->cgc_Search(pn->cgc_Get(i));
     }
     else
     {
@@ -880,12 +880,12 @@ int api_open(const char* pathname, open_flags_t flags, uint32_t mode)
     }
   }
 
-  if (!node || node->IsLeft() || strcmp(node->r->name, pn->Get(pn->Size() - 1)) != 0)
+  if (!node || node->cgc_IsLeft() || cgc_strcmp(node->r->name, pn->cgc_Get(pn->cgc_Size() - 1)) != 0)
   {
     goto done;
   }
 
-  size_t i;
+  cgc_size_t i;
   for (i = 0; i < MAX_FDS; ++i)
   {
     if (UserFDs[i] == nullptr)
@@ -898,56 +898,56 @@ int api_open(const char* pathname, open_flags_t flags, uint32_t mode)
   {
     goto done;
   }
-  UserFDs[i] = new FileHandle(*node->r, flags);
+  UserFDs[i] = new cgc_FileHandle(*node->r, flags);
   fd = i;
 
 done:
   return fd;
 }
 
-ssize_t api_read(int fd, uint8_t* buffer, size_t count)
+cgc_ssize_t cgc_api_read(int fd, cgc_uint8_t* buffer, cgc_size_t count)
 {
   if (fd >= MAX_FDS)
   {
     return -1;
   }
 
-  FileHandle* FH = UserFDs[fd];
+  cgc_FileHandle* FH = UserFDs[fd];
   if (!FH)
   {
     return -1;
   }
 
-  if (count > FH->Size() - FH->offset_)
+  if (count > FH->cgc_Size() - FH->offset_)
   {
     return -1;
   }
 
-  return FH->Read(buffer, count);
+  return FH->cgc_Read(buffer, count);
 }
 
 
-ssize_t api_write(int fd, uint8_t* buffer, size_t count)
+cgc_ssize_t cgc_api_write(int fd, cgc_uint8_t* buffer, cgc_size_t count)
 {
   if (fd >= MAX_FDS)
   {
     return -1;
   }
 
-  FileHandle* FH = UserFDs[fd];
+  cgc_FileHandle* FH = UserFDs[fd];
 
   if (!FH)
   {
     return -1;
   }
 
-  return FH->Write(buffer, count);
+  return FH->cgc_Write(buffer, count);
 }
 
-off_t api_lseek(int fd, off_t offset, int whence)
+cgc_off_t cgc_api_lseek(int fd, cgc_off_t offset, int whence)
 {
   dbg("Called lseek(%d, %u, %d)", fd, offset, whence);
-  off_t position = -1;
+  cgc_off_t position = -1;
 
 #define SEEK_SET  0
 #define SEEK_CUR  1
@@ -956,7 +956,7 @@ off_t api_lseek(int fd, off_t offset, int whence)
     return -1;
   }
 
-  FileHandle* FH = UserFDs[fd];
+  cgc_FileHandle* FH = UserFDs[fd];
 
   if (!FH)
   {
@@ -965,7 +965,7 @@ off_t api_lseek(int fd, off_t offset, int whence)
 
   if (whence == SEEK_SET)
   {
-    if (offset >= FH->Size())
+    if (offset >= FH->cgc_Size())
     {
       return -1;
     }
@@ -975,7 +975,7 @@ off_t api_lseek(int fd, off_t offset, int whence)
   }
   else if (whence == SEEK_CUR)
   {
-    if (offset + FH->offset_ >= FH->Size())
+    if (offset + FH->offset_ >= FH->cgc_Size())
     {
       return -1;
     }
@@ -987,7 +987,7 @@ off_t api_lseek(int fd, off_t offset, int whence)
   return position;
 }
 
-int api_close(int fd)
+int cgc_api_close(int fd)
 {
   dbg("Called close(%d)", fd);
   int ret = 0;
@@ -996,7 +996,7 @@ int api_close(int fd)
     return -1;
   }
 
-  FileHandle* FH = UserFDs[fd];
+  cgc_FileHandle* FH = UserFDs[fd];
 
   if (!FH)
   {
@@ -1009,7 +1009,7 @@ int api_close(int fd)
 }
 
 #define MAKE_PARENTS (1 << 1)
-int api_creat(const char* pathname, int mode)
+int cgc_api_creat(const char* pathname, int mode)
 {
   int ret = -1;
 
@@ -1019,24 +1019,24 @@ int api_creat(const char* pathname, int mode)
   }
 
   dbg("Called create(%s, %d)", pathname, mode);
-  auto pn = Pathname(pathname);
-  auto node = new Either<DirTree, File>(&Root);
-  File* f = nullptr;
+  auto pn = cgc_Pathname(pathname);
+  auto node = new cgc_Either<cgc_DirTree, cgc_File>(&Root);
+  cgc_File* f = nullptr;
 
-  for (size_t i = 0; i < pn.Size() - 1; ++i)
+  for (cgc_size_t i = 0; i < pn.cgc_Size() - 1; ++i)
   {
-    auto x = pn.Get(i);
-    if (node->IsLeft())
+    auto x = pn.cgc_Get(i);
+    if (node->cgc_IsLeft())
     {
       auto old = node;
-      node = node->l->Search(x);
+      node = node->l->cgc_Search(x);
       if (!node)
       {
         node = old;
         if (mode & MAKE_PARENTS)
         {
-          auto new_node = new Either<DirTree, File>(new DirTree(x));
-          node->l->children.Append(new_node);
+          auto new_node = new cgc_Either<cgc_DirTree, cgc_File>(new cgc_DirTree(x));
+          node->l->children.cgc_Append(new_node);
           node = new_node;
         }
         else
@@ -1051,57 +1051,57 @@ int api_creat(const char* pathname, int mode)
     }
   }
 
-  if (!node->IsLeft())
+  if (!node->cgc_IsLeft())
   {
     return -1;
   }
 
-  for (size_t i = 0; i < node->l->children.Size(); ++i)
+  for (cgc_size_t i = 0; i < node->l->children.cgc_Size(); ++i)
   {
-    auto name = pn.Get(pn.Size() -1);
-    auto c = node->l->children.Get(i);
-    if (c->IsLeft())
+    auto name = pn.cgc_Get(pn.cgc_Size() -1);
+    auto c = node->l->children.cgc_Get(i);
+    if (c->cgc_IsLeft())
     {
-      if (strcmp(c->l->name, name) == 0)
+      if (cgc_strcmp(c->l->name, name) == 0)
       {
         goto done;
       }
     }
     else
     {
-      if (strcmp(c->r->name, name) == 0)
+      if (cgc_strcmp(c->r->name, name) == 0)
       {
         goto done;
       }
     }
   }
 
-  f = new File(pn.Get(pn.Size() - 1));
-  node->l->children.Append(new Either<DirTree, File>(nullptr, f));
+  f = new cgc_File(pn.cgc_Get(pn.cgc_Size() - 1));
+  node->l->children.cgc_Append(new cgc_Either<cgc_DirTree, cgc_File>(nullptr, f));
   ret = 0;
 
 done:
   return ret;
 }
 
-int api_unlink(const char* pathname)
+int cgc_api_unlink(const char* pathname)
 {
   dbg("Called unlink(%s)", pathname);
 
   int ret = -1;
 
-  DirTree* dir;
-  auto pn = Pathname(pathname);
-  auto node = new Either<DirTree, File>(&Root);
-  File* f = nullptr;
+  cgc_DirTree* dir;
+  auto pn = cgc_Pathname(pathname);
+  auto node = new cgc_Either<cgc_DirTree, cgc_File>(&Root);
+  cgc_File* f = nullptr;
 
-  for (size_t i = 0; i < pn.Size(); ++i)
+  for (cgc_size_t i = 0; i < pn.cgc_Size(); ++i)
   {
-    auto x = pn.Get(i);
-    if (node->IsLeft())
+    auto x = pn.cgc_Get(i);
+    if (node->cgc_IsLeft())
     {
       dir = node->l;
-      node = node->l->Search(x);
+      node = node->l->cgc_Search(x);
       if (!node)
       {
         goto done;
@@ -1113,16 +1113,16 @@ int api_unlink(const char* pathname)
     }
   }
 
-  if (!node->IsLeft())
+  if (!node->cgc_IsLeft())
   {
     f = node->r;
 #ifdef PATCHED_1
-    if (f->RefCnt() < 1)
+    if (f->cgc_RefCnt() < 1)
 #else
-    if (f->RefCnt() <= 1)
+    if (f->cgc_RefCnt() <= 1)
 #endif
     {
-      auto x = dir->children.RemoveByValue(node);
+      auto x = dir->children.cgc_RemoveByValue(node);
       delete x;
       ret = 0;
     }
@@ -1132,13 +1132,13 @@ done:
  return ret;
 }
 
-int load_req(FILE* fd, Request** req)
+int cgc_load_req(cgc_FILE* fd, cgc_Request** req)
 {
-  uint32_t f_num;
-  uint32_t size;
+  cgc_uint32_t f_num;
+  cgc_uint32_t size;
   *req = nullptr;
 
-  if (fread(&f_num, sizeof(f_num), fd) != sizeof(f_num))
+  if (cgc_fread(&f_num, sizeof(f_num), fd) != sizeof(f_num))
   {
     return -1;
   }
@@ -1149,20 +1149,20 @@ int load_req(FILE* fd, Request** req)
     return -1;
   }
 
-  if (fread(&size, sizeof(size), fd) != sizeof(size))
+  if (cgc_fread(&size, sizeof(size), fd) != sizeof(size))
   {
     return -1;
   }
 
 
-  uint8_t* data = new uint8_t[size];
+  cgc_uint8_t* data = new cgc_uint8_t[size];
 
-  if (fread(data, size, fd) != size)
+  if (cgc_fread(data, size, fd) != size)
   {
     return -1;
   }
 
-  *req = new Request(f_num, size, data);
+  *req = new cgc_Request(f_num, size, data);
 
   return 0;
 }
@@ -1176,165 +1176,165 @@ typedef enum {
   CLOSE_F_NUM,
   CREAT_F_NUM,
   UNLINK_F_NUM,
-} FuncID;
+} cgc_FuncID;
 
-Response* process_req(Request* req)
+cgc_Response* cgc_process_req(cgc_Request* req)
 {
-  Response* resp = nullptr;
-  BytesReader* br = new BytesReader(req->Data(), req->Size());
+  cgc_Response* resp = nullptr;
+  cgc_BytesReader* br = new cgc_BytesReader(req->cgc_Data(), req->cgc_Size());
 
-  switch (req->Num())
+  switch (req->cgc_Num())
   {
     case OPEN_F_NUM:
       {
-        size_t pathlen = *(size_t*)br->ReadN(sizeof(pathlen));
-        const char* pathname = (const char*)br->ReadN(pathlen, true);
-        open_flags_t flags = *(open_flags_t*)br->ReadN(sizeof(flags));
-        uint32_t mode = *(uint32_t*)br->ReadN(sizeof(mode));
-        int fd = api_open(pathname, flags, mode);
+        cgc_size_t pathlen = *(cgc_size_t*)br->cgc_ReadN(sizeof(pathlen));
+        const char* pathname = (const char*)br->cgc_ReadN(pathlen, true);
+        cgc_open_flags_t flags = *(cgc_open_flags_t*)br->cgc_ReadN(sizeof(flags));
+        cgc_uint32_t mode = *(cgc_uint32_t*)br->cgc_ReadN(sizeof(mode));
+        int fd = cgc_api_open(pathname, flags, mode);
 
-        resp = new Response();
+        resp = new cgc_Response();
         if (fd >= 0)
         {
-          resp->Append((uint8_t*)&fd, sizeof(fd));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&fd, sizeof(fd));
+          resp->cgc_SetOK();
         }
 
         break;
       }
     case READ_F_NUM:
       {
-        int fd = *(int *)br->ReadN(sizeof(fd));
-        size_t count = *(size_t *)br->ReadN(sizeof(count));
+        int fd = *(int *)br->cgc_ReadN(sizeof(fd));
+        cgc_size_t count = *(cgc_size_t *)br->cgc_ReadN(sizeof(count));
 
-        uint8_t* buf = new uint8_t[count];
-        ssize_t rx_cnt = api_read(fd, buf, count);
+        cgc_uint8_t* buf = new cgc_uint8_t[count];
+        cgc_ssize_t rx_cnt = cgc_api_read(fd, buf, count);
 
-        resp = new Response();
+        resp = new cgc_Response();
         if (rx_cnt >= 0)
         {
-          resp->Append((uint8_t*)&rx_cnt, sizeof(rx_cnt));
-          resp->Append(buf, rx_cnt);
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&rx_cnt, sizeof(rx_cnt));
+          resp->cgc_Append(buf, rx_cnt);
+          resp->cgc_SetOK();
         }
 
         break;
       }
     case WRITE_F_NUM:
       {
-        int fd = *(int *)br->ReadN(sizeof(fd));
-        size_t count = *(size_t *)br->ReadN(sizeof(count));
-        uint8_t* buf = (uint8_t *)br->ReadN(count);
+        int fd = *(int *)br->cgc_ReadN(sizeof(fd));
+        cgc_size_t count = *(cgc_size_t *)br->cgc_ReadN(sizeof(count));
+        cgc_uint8_t* buf = (cgc_uint8_t *)br->cgc_ReadN(count);
 
-        ssize_t tx_cnt = api_write(fd, buf, count);
+        cgc_ssize_t tx_cnt = cgc_api_write(fd, buf, count);
 
-        resp = new Response();
+        resp = new cgc_Response();
 
         if (tx_cnt >= 0)
         {
-          resp->Append((uint8_t*)&tx_cnt, sizeof(tx_cnt));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&tx_cnt, sizeof(tx_cnt));
+          resp->cgc_SetOK();
         }
 
         break;
       }
     case LSEEK_F_NUM:
       {
-        int fd = *(int *)br->ReadN(sizeof(fd));
-        off_t offset = *(off_t *)br->ReadN(sizeof(offset));
-        int whence = *(int *)br->ReadN(sizeof(whence));
-        off_t noffset = api_lseek(fd, offset, whence);
-        resp = new Response();
+        int fd = *(int *)br->cgc_ReadN(sizeof(fd));
+        cgc_off_t offset = *(cgc_off_t *)br->cgc_ReadN(sizeof(offset));
+        int whence = *(int *)br->cgc_ReadN(sizeof(whence));
+        cgc_off_t noffset = cgc_api_lseek(fd, offset, whence);
+        resp = new cgc_Response();
         if (noffset >= 0)
         {
-          resp->Append((uint8_t *)&noffset, sizeof(noffset));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t *)&noffset, sizeof(noffset));
+          resp->cgc_SetOK();
         }
         break;
       }
     case CLOSE_F_NUM:
       {
-        int fd = *(int *)br->ReadN(sizeof(fd));
-        int ret = api_close(fd);
-        resp = new Response();
+        int fd = *(int *)br->cgc_ReadN(sizeof(fd));
+        int ret = cgc_api_close(fd);
+        resp = new cgc_Response();
         if (ret == 0)
         {
-          resp->Append((uint8_t*)&ret, sizeof(fd));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&ret, sizeof(fd));
+          resp->cgc_SetOK();
         }
         break;
       }
     case CREAT_F_NUM:
       {
-        size_t pathlen = *(size_t*)br->ReadN(sizeof(pathlen));
-        const char* pathname = (const char*)br->ReadN(pathlen, true);
-        uint32_t mode = *(uint32_t *)br->ReadN(sizeof(mode));
-        int fd = api_creat(pathname, mode);
-        resp = new Response();
+        cgc_size_t pathlen = *(cgc_size_t*)br->cgc_ReadN(sizeof(pathlen));
+        const char* pathname = (const char*)br->cgc_ReadN(pathlen, true);
+        cgc_uint32_t mode = *(cgc_uint32_t *)br->cgc_ReadN(sizeof(mode));
+        int fd = cgc_api_creat(pathname, mode);
+        resp = new cgc_Response();
         if (fd >= 0)
         {
-          resp->Append((uint8_t*)&fd, sizeof(fd));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&fd, sizeof(fd));
+          resp->cgc_SetOK();
         }
         break;
       }
     case UNLINK_F_NUM:
       {
-        size_t pathlen = *(size_t*)br->ReadN(sizeof(pathlen));
-        const char* pathname = (const char*)br->ReadN(pathlen, true);
-        int ret = api_unlink(pathname);
-        resp = new Response();
+        cgc_size_t pathlen = *(cgc_size_t*)br->cgc_ReadN(sizeof(pathlen));
+        const char* pathname = (const char*)br->cgc_ReadN(pathlen, true);
+        int ret = cgc_api_unlink(pathname);
+        resp = new cgc_Response();
         if (ret == 0)
         {
-          resp->Append((uint8_t*)&ret, sizeof(ret));
-          resp->SetOK();
+          resp->cgc_Append((cgc_uint8_t*)&ret, sizeof(ret));
+          resp->cgc_SetOK();
         }
         break;
       }
   }
   return resp;
 }
-void send_resp(FILE* fd, Response* resp)
+void cgc_send_resp(cgc_FILE* fd, cgc_Response* resp)
 {
   if (!fd || !resp)
   {
-    err("Bad send_resp");
+    err("Bad cgc_send_resp");
   }
-  fwrite(&resp->Status, sizeof(resp->Status), stdout);
-  fwrite(&resp->Length, sizeof(resp->Length), stdout);
-  fwrite(resp->Bytes, resp->Length, stdout);
+  cgc_fwrite(&resp->Status, sizeof(resp->Status), stdout);
+  cgc_fwrite(&resp->Length, sizeof(resp->Length), stdout);
+  cgc_fwrite(resp->Bytes, resp->Length, stdout);
 }
 extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
-    uint32_t volatile *secret_page = (uint32_t *)secret_page_i;
-    uint64_t delim = 0x8442e492f255bf31;
-    /* fxlat(stdin, "HASHTAGYOLOSWAG"); */
-    /* fxlat(stdout, "HASHTAGYOLOSWAG"); */
-    uint32_t sig = 0;
-    for (size_t i = 0; i < 0x1000 / sizeof(uint32_t); i++)
+    cgc_uint32_t volatile *secret_page = (cgc_uint32_t *)secret_page_i;
+    cgc_uint64_t delim = 0x8442e492f255bf31;
+    /* cgc_fxlat(stdin, "HASHTAGYOLOSWAG"); */
+    /* cgc_fxlat(stdout, "HASHTAGYOLOSWAG"); */
+    cgc_uint32_t sig = 0;
+    for (cgc_size_t i = 0; i < 0x1000 / sizeof(cgc_uint32_t); i++)
     {
       sig ^= *(secret_page + i);
     }
-    Request* cur_req;
-    printf("FSAAS\n");
-    printf("%x\n", sig);
-    fbuffered(stdout, 1);
+    cgc_Request* cur_req;
+    cgc_printf("FSAAS\n");
+    cgc_printf("%x\n", sig);
+    cgc_fbuffered(stdout, 1);
     while (1)
     {
-      printf("QQQ\n");
-      fflush(stdout);
-      if (load_req(stdin, &cur_req) != 0)
+      cgc_printf("QQQ\n");
+      cgc_fflush(stdout);
+      if (cgc_load_req(stdin, &cur_req) != 0)
       {
         break;
       }
-      Response* resp = process_req(cur_req);
+      cgc_Response* resp = cgc_process_req(cur_req);
       if (!resp)
       {
         break;
       }
-      send_resp(stdout, resp);
-      fwrite(&delim, sizeof(delim), stdout);
+      cgc_send_resp(stdout, resp);
+      cgc_fwrite(&delim, sizeof(delim), stdout);
     }
-    fflush(stdout);
+    cgc_fflush(stdout);
     return 0;
 }

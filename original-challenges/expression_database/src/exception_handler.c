@@ -27,13 +27,13 @@ THE SOFTWARE.
 #include "exception_handler.h"
 #include "mem_global.h"
 
-extern tGlobalMemoryLayout g_memoryGlobal;
+extern cgc_tGlobalMemoryLayout g_memoryGlobal;
 
-uint8_t g_exceptionFrameCur = 0;
+cgc_uint8_t g_exceptionFrameCur = 0;
 
-void init_exception_handler( void )
+void cgc_init_exception_handler( void )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     // Reset the stack position
     g_exceptionFrameCur = 0;
@@ -43,9 +43,9 @@ void init_exception_handler( void )
         g_memoryGlobal.mem_reserve[i] = 0;
 }
 
-tExceptionFrame *get_next_exception_frame( void )
+cgc_tExceptionFrame *cgc_get_next_exception_frame( void )
 {
-    tExceptionFrame *pCur;
+    cgc_tExceptionFrame *pCur;
 
     if ( g_exceptionFrameCur < MAX_EXCEPTION_FRAME_SIZE )
         pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur++]);
@@ -56,9 +56,9 @@ tExceptionFrame *get_next_exception_frame( void )
     return (pCur);
 }
 
-tExceptionFrame *get_current_exception_frame( void )
+cgc_tExceptionFrame *cgc_get_current_exception_frame( void )
 {
-    tExceptionFrame *pCur;
+    cgc_tExceptionFrame *pCur;
 
     if ( g_exceptionFrameCur > 0 )
         pCur = (&g_memoryGlobal.exceptionFrameList[g_exceptionFrameCur-1]);
@@ -68,9 +68,9 @@ tExceptionFrame *get_current_exception_frame( void )
     return (pCur);
 }
 
-tExceptionFrame *pop_exception_frame( void )
+cgc_tExceptionFrame *cgc_pop_exception_frame( void )
 {
-    tExceptionFrame *pCur;
+    cgc_tExceptionFrame *pCur;
 
     if ( g_exceptionFrameCur > 0 )
     {

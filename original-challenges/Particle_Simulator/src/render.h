@@ -32,15 +32,15 @@ typedef struct _RENDER_GRID_DATA
 {
     double bounds_x, bounds_y;
 
-    uint32_t particles_in_grid;
-} tRenderGrid;
+    cgc_uint32_t particles_in_grid;
+} cgc_tRenderGrid;
 
 #define RENDER_GRID_X_SIZE      (20)
 #define RENDER_GRID_Y_SIZE      (20)
 
-void init_render_grid( void );
-void clear_render_grid( void );
-void add_render_grid( tParticleData *pItem );
-void display_render_grid( void );
+void cgc_init_render_grid( void );
+void cgc_clear_render_grid( void );
+void cgc_add_render_grid( cgc_tParticleData *pItem );
+void cgc_display_render_grid( void );
 
 #endif // __RENDER_H__

@@ -3,17 +3,17 @@
 
 #include "card.h"
 
-typedef struct hand hand_t;
+typedef struct hand cgc_hand_t;
 struct hand
 {
-    card_t *card;
-    hand_t *next;
+    cgc_card_t *card;
+    cgc_hand_t *next;
 };
 
-int get_card(hand_t **h, card_t *card);
-int get_card_in_order(hand_t **h, card_t *card);
-int replace_card(hand_t **h, card_t *new_card, card_t *old_card);
-int remove_card(hand_t **h, card_t *card);
-void discard_hand(hand_t **h);
+int cgc_get_card(cgc_hand_t **h, cgc_card_t *card);
+int cgc_get_card_in_order(cgc_hand_t **h, cgc_card_t *card);
+int cgc_replace_card(cgc_hand_t **h, cgc_card_t *new_card, cgc_card_t *old_card);
+int cgc_remove_card(cgc_hand_t **h, cgc_card_t *card);
+void cgc_discard_hand(cgc_hand_t **h);
 
 #endif /* HAND_H_ */

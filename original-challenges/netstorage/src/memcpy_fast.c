@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,23 +25,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef unsigned int intptr_t;
-typedef unsigned int uint128_t __attribute__((__vector_size__(16)));
+typedef unsigned int cgc_intptr_t;
+typedef unsigned int cgc_uint128_t __attribute__((__vector_size__(16)));
 
-void *memcpy_fast(void *dst, void *src, size_t length)
+void *cgc_memcpy_fast(void *dst, void *src, cgc_size_t length)
 {
-    if ((length % 16) || ((intptr_t)dst % 16) || ((intptr_t)src % 16))
-        return memcpy(dst, src, length);
+    if ((length % 16) || ((cgc_intptr_t)dst % 16) || ((cgc_intptr_t)src % 16))
+        return cgc_memcpy(dst, src, length);
 
 #if PATCHED
     if (length == 0)
         return dst;
 #endif
 
-    size_t i = 0;
+    cgc_size_t i = 0;
     do
     {
-        ((uint128_t*)dst)[i] = ((uint128_t*)src)[i];
+        ((cgc_uint128_t*)dst)[i] = ((cgc_uint128_t*)src)[i];
     }
     while (++i < (length / 16));
     return dst;

@@ -2,9 +2,9 @@
 #define IO_H_
 #include <stdlib.h>
 
-int read_bytes(void *buf, size_t n);
-int read_until(char *buf, size_t n, char el);
-void write_bytes(void *buf, size_t n);
-void write_string(char *buf);
+int cgc_read_bytes(void *buf, cgc_size_t n);
+int cgc_read_until(char *buf, cgc_size_t n, char el);
+void cgc_write_bytes(void *buf, cgc_size_t n);
+void cgc_write_string(char *buf);
 
 #endif

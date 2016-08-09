@@ -54,7 +54,7 @@
  * @param n The number of bytes to read
  * @return The number of bytes read, or negative on failure
  */
-ssize_t read_all(int fd, void *buf, size_t n);
+cgc_ssize_t cgc_read_all(int fd, void *buf, cgc_size_t n);
 
 /**
  * Write exactly n bytes to an fd from a buffer.
@@ -64,7 +64,7 @@ ssize_t read_all(int fd, void *buf, size_t n);
  * @param n The number of bytes to write
  * @return The number of bytes written, or negative on failure
  */
-ssize_t write_all(int fd, void *buf, size_t n);
+cgc_ssize_t cgc_write_all(int fd, void *buf, cgc_size_t n);
 
 /**
  * Set the first n bytes of a block of memory to a value.
@@ -74,7 +74,7 @@ ssize_t write_all(int fd, void *buf, size_t n);
  * @param n The number of bytes to set
  * @return ptr
  */
-void *memset(void *ptr, int val, size_t n);
+void *cgc_memset(void *ptr, int val, cgc_size_t n);
 
 /**
  * Copy a null-terminated string from src to dst.
@@ -83,7 +83,7 @@ void *memset(void *ptr, int val, size_t n);
  * @param src The source buffer
  * @return dst
  */
-char *strcpy(char *dst, const char *src);
+char *cgc_strcpy(char *dst, const char *src);
 
 /**
  * Copy at most the first n characters of a null-terminated string from src to
@@ -94,7 +94,7 @@ char *strcpy(char *dst, const char *src);
  * @param n The maximum number of bytes to copy
  * @return dst
  */
-char *strncpy(char *dst, const char *src, size_t n);
+char *cgc_strncpy(char *dst, const char *src, cgc_size_t n);
 
 /**
  * Append the bytes of a null-terminated string to another.
@@ -103,7 +103,7 @@ char *strncpy(char *dst, const char *src, size_t n);
  * @param src The source buffer
  * @return dst
  */
-char *strcat(char *dst, const char *src);
+char *cgc_strcat(char *dst, const char *src);
 
 /**
  * Append at most the first n bytes of a null-terminated string to another.
@@ -113,7 +113,7 @@ char *strcat(char *dst, const char *src);
  * @param n The maximum number of bytes to copy
  * @return dst
  */
-char *strncat(char *dst, const char *src, size_t n);
+char *cgc_strncat(char *dst, const char *src, cgc_size_t n);
 
 /**
  * Return the length of a null-terminated string.
@@ -121,7 +121,7 @@ char *strncat(char *dst, const char *src, size_t n);
  * @param s The string
  * @return The length of s
  */
-size_t strlen(const char *s);
+cgc_size_t cgc_strlen(const char *s);
 
 /**
  * Return the length of a null-terminated string, checking at most n bytes.
@@ -130,7 +130,7 @@ size_t strlen(const char *s);
  * @param n Maximum number of bytes to check
  * @return The lesser of the length of s or n
  */
-size_t strnlen(const char *s, size_t n);
+cgc_size_t cgc_strnlen(const char *s, cgc_size_t n);
 
 /**
  * Compare the first n bytes of two null-terminated strings
@@ -139,12 +139,12 @@ size_t strnlen(const char *s, size_t n);
  * @param b The second string
  * @return negative if a < b, 0 if a == b, positive if a > b
  */
-int strncmp(const char *a, const char *b, size_t n);
+int cgc_strncmp(const char *a, const char *b, cgc_size_t n);
 
 /**
  * Convert an integer value to its decimal string representation.
  *
- * This functionality differs from itoa, primarily in only dealing with decimal
+ * This functionality differs from cgc_itoa, primarily in only dealing with decimal
  * representations.
  *
  * @param val The value to convert
@@ -152,7 +152,7 @@ int strncmp(const char *a, const char *b, size_t n);
  *      hold all digits
  * @return s
  */
-char *itoa(int val, char *s);
+char *cgc_itoa(int val, char *s);
 
 #ifdef DEBUG
 /* The following is verbatim from EAGLE_00004, but isn't included in the 

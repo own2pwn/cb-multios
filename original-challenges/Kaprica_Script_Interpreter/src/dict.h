@@ -1,26 +1,26 @@
 #ifndef DICT_H_
 #define DICT_H_
 
-typedef void (*record_free_t) (void *);
+typedef void (*cgc_record_free_t) (void *);
 
-typedef struct _record_t {
-    struct _record_t *next, *prev;
-    struct _record_t *tbl_next, *tbl_prev;
+typedef struct cgc__record_t {
+    struct cgc__record_t *next, *prev;
+    struct cgc__record_t *tbl_next, *tbl_prev;
     char *name;
-} _record_t;
+} cgc__record_t;
 
 typedef struct {
-    record_free_t free_fn;
-    _record_t *head;
-    _record_t **tbl;
+    cgc_record_free_t free_fn;
+    cgc__record_t *head;
+    cgc__record_t **tbl;
 
     unsigned int count;
     unsigned int length;
-} dict_t;
+} cgc_dict_t;
 
-int dict_init(dict_t *dict, record_free_t);
-void dict_free(dict_t *dict);
-void *dict_get(dict_t *dict, const char *name);
-int dict_add(dict_t *dict, const char *name, void *value);
+int cgc_dict_init(cgc_dict_t *dict, cgc_record_free_t);
+void cgc_dict_free(cgc_dict_t *dict);
+void *cgc_dict_get(cgc_dict_t *dict, const char *name);
+int cgc_dict_add(cgc_dict_t *dict, const char *name, void *value);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,13 +24,13 @@
 #include <stdlib.h>
 #include "hand.h"
 
-int get_card(hand_t **h, card_t *card)
+int cgc_get_card(cgc_hand_t **h, cgc_card_t *card)
 {
     if (card == NULL)
         return -1;
 
-    hand_t *drawn_card = malloc(sizeof(hand_t));
-    hand_t *temp = *h;
+    cgc_hand_t *drawn_card = cgc_malloc(sizeof(cgc_hand_t));
+    cgc_hand_t *temp = *h;
     drawn_card->card = card;
     drawn_card->next = NULL;
 
@@ -46,13 +46,13 @@ int get_card(hand_t **h, card_t *card)
     return 0;
 }
 
-int get_card_in_order(hand_t **h, card_t *card)
+int cgc_get_card_in_order(cgc_hand_t **h, cgc_card_t *card)
 {
     if (card == NULL)
         return -1;
 
-    hand_t *drawn_card = malloc(sizeof(hand_t));
-    hand_t *temp = *h, *prev;
+    cgc_hand_t *drawn_card = cgc_malloc(sizeof(cgc_hand_t));
+    cgc_hand_t *temp = *h, *prev;
     drawn_card->card = card;
     drawn_card->next = NULL;
 
@@ -75,12 +75,12 @@ int get_card_in_order(hand_t **h, card_t *card)
     return 0;
 }
 
-int replace_card(hand_t **h, card_t *new_card, card_t *old_card)
+int cgc_replace_card(cgc_hand_t **h, cgc_card_t *new_card, cgc_card_t *old_card)
 {
     if (*h == NULL)
         return -1;
 
-    hand_t *temp = *h;
+    cgc_hand_t *temp = *h;
     while (temp != NULL) {
         if(temp->card == old_card) {
             temp->card = new_card;
@@ -92,20 +92,20 @@ int replace_card(hand_t **h, card_t *new_card, card_t *old_card)
     return -1;
 }
 
-int remove_card(hand_t **h, card_t *card)
+int cgc_remove_card(cgc_hand_t **h, cgc_card_t *card)
 {
     if (*h == NULL)
         return -1;
 
-    hand_t *temp = *h;
-    hand_t *prev = *h;
+    cgc_hand_t *temp = *h;
+    cgc_hand_t *prev = *h;
     while (temp != NULL) {
         if(temp->card->face == card->face && temp->card->suit == card->suit) {
             if (*h == temp)
                 *h = temp->next;
             else
                 prev->next = temp->next;
-            free(temp);
+            cgc_free(temp);
             return 0;
         }
         prev = temp;
@@ -115,17 +115,17 @@ int remove_card(hand_t **h, card_t *card)
     return -1;
 }
 
-void discard_hand(hand_t **h)
+void cgc_discard_hand(cgc_hand_t **h)
 {
     if (*h == NULL)
         return;
 
-    hand_t *temp, *temp_h = *h;
+    cgc_hand_t *temp, *temp_h = *h;
     while (temp_h->next != NULL) {
         temp = temp_h;
         temp_h = temp_h->next;
-        free(temp);
+        cgc_free(temp);
     }
-    free(temp_h);
+    cgc_free(temp_h);
     *h = NULL;
 }

@@ -32,47 +32,47 @@ THE SOFTWARE.
 #include "admin.h"
 
 int CURRENT_USER;
-users_t *USERS;
+cgc_users_t *USERS;
 int NUM_USERS;
 extern int ADMIN_ACCESS;
 
-void PrintLoggedOutMenu(void) {
-	print("1) Create User\n");
-	print("2) Login\n");
-	print("3) Exit\n");
-	print(": ");
+void cgc_PrintLoggedOutMenu(void) {
+	cgc_print("1) Create User\n");
+	cgc_print("2) cgc_Login\n");
+	cgc_print("3) Exit\n");
+	cgc_print(": ");
 }
 
-void PrintLoggedInMenu(void) {
+void cgc_PrintLoggedInMenu(void) {
 
-	print("1) Send Message\n");
-	print("2) Read Message\n");
-	print("3) List Messages\n");
-	print("4) Delete Message\n");
-	print("5) Logout\n");
-	print("6) Exit\n");
-	print(": ");
+	cgc_print("1) Send Message\n");
+	cgc_print("2) Read Message\n");
+	cgc_print("3) List Messages\n");
+	cgc_print("4) Delete Message\n");
+	cgc_print("5) Logout\n");
+	cgc_print("6) Exit\n");
+	cgc_print(": ");
 
 }
 
-void BusyWork(void) {
+void cgc_BusyWork(void) {
 	char array[4096];
-	int addr = (int)(&PrintLoggedOutMenu) & 0xfffff000;
+	int addr = (int)(&cgc_PrintLoggedOutMenu) & 0xfffff000;
 	int i = 20;
 
 	while (i--) {
-		memcopy(array, (char *)addr, 4096);
-		sort_n_sum(array, 4096);
+		cgc_memcopy(array, (char *)addr, 4096);
+		cgc_sort_n_sum(array, 4096);
 	}
 
 }
 
 int main(void) {
-	users_t users[MAX_USERS];
+	cgc_users_t users[MAX_USERS];
 	char buf[100];
 	int done = 0;
 
-//	BusyWork();
+//	cgc_BusyWork();
 
 	// set a global pointer for easier function access
 	USERS = users;
@@ -81,22 +81,22 @@ int main(void) {
 	ADMIN_ACCESS = 0;
 	CURRENT_USER = -1;
 	NUM_USERS = 0;
-	zero((char *)USERS, sizeof(users_t)*MAX_USERS);
+	cgc_zero((char *)USERS, sizeof(cgc_users_t)*MAX_USERS);
 
 	while (!done) {
 		if (ADMIN_ACCESS) {
-			zero(buf, 100);
-			PrintAdminMenu();
-			if (read_until(buf, '\n', 100) == -1) {
+			cgc_zero(buf, 100);
+			cgc_PrintAdminMenu();
+			if (cgc_read_until(buf, '\n', 100) == -1) {
 				_terminate(-1);
 			}
-			if (strlen(buf) > 1) {
-				print("[-] Invalid choice\n");
+			if (cgc_strlen(buf) > 1) {
+				cgc_print("[-] Invalid choice\n");
 				continue;
 			}
 			switch (buf[0]) {
 				case '1':
-					SendBroadcastMessage();
+					cgc_SendBroadcastMessage();
 					break;
 
 				case '2':
@@ -104,7 +104,7 @@ int main(void) {
 					break;
 
 				case '3':
-					print("Exiting...\n");
+					cgc_print("Exiting...\n");
 					done = 1;
 					break;
 
@@ -112,67 +112,67 @@ int main(void) {
 					continue;
 			}
 		} else if (CURRENT_USER == -1) {
-			zero(buf, 100);
-			PrintLoggedOutMenu();
-			if (read_until(buf, '\n', 100) == -1) {
+			cgc_zero(buf, 100);
+			cgc_PrintLoggedOutMenu();
+			if (cgc_read_until(buf, '\n', 100) == -1) {
 				_terminate(-1);
 			}
-			if (strlen(buf) > 1) {
-				print("[-] Invalid choice\n");
+			if (cgc_strlen(buf) > 1) {
+				cgc_print("[-] Invalid choice\n");
 				continue;
 			}
 			switch (buf[0]) {
 				case '1':
-					CreateUser();
+					cgc_CreateUser();
 					break;
 				case '2':
-					Login();
+					cgc_Login();
 					break;
 				case '3':
-					print("Exiting...\n");
+					cgc_print("Exiting...\n");
 					_terminate(0);
 					break;
 				default:
-					print("[-] Invalid choice\n");
+					cgc_print("[-] Invalid choice\n");
 					continue;
 			}
 		} else {
-			zero(buf, 100);
-			PrintNewMessages();
-			PrintLoggedInMenu();
-			if (read_until(buf, '\n', 100) == -1) {
+			cgc_zero(buf, 100);
+			cgc_PrintNewMessages();
+			cgc_PrintLoggedInMenu();
+			if (cgc_read_until(buf, '\n', 100) == -1) {
 				_terminate(-1);
 			}
-			if (strlen(buf) > 1) {
-				print("[-] Invalid choice\n");
+			if (cgc_strlen(buf) > 1) {
+				cgc_print("[-] Invalid choice\n");
 				continue;
 			}
 			switch (buf[0]) {
 				case '1':
-					SendMessage();
+					cgc_SendMessage();
 					break;
 				case '2':
-					ReadMessage();
+					cgc_ReadMessage();
 					break;
 				case '3':
-					ListMessages();
+					cgc_ListMessages();
 					break;
 				case '4':
-					DeleteMessage();
+					cgc_DeleteMessage();
 					break;
 				case '5':
 					CURRENT_USER = -1;
-					print("Logging out...\n");
+					cgc_print("Logging out...\n");
 					break;
 				case '6':
-					print("Exiting...\n");
+					cgc_print("Exiting...\n");
 					_terminate(0);
 					break;
 				case 'a':
-					AdminLogin();
+					cgc_AdminLogin();
 					break;
 				default:
-					print("[-] Invalid choice\n");
+					cgc_print("[-] Invalid choice\n");
 					continue;
 			}
 		}

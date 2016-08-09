@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,9 +23,9 @@
 #include "course.h"
 #include <string.h>
 
-static ptrlist_t *g_all_courses = NULL;
+static cgc_ptrlist_t *g_all_courses = NULL;
 
-void _print_course(course_t *course)
+void cgc__print_course(cgc_course_t *course)
 {
     if (!course) {
         printf("Bad Course\n");
@@ -33,7 +33,7 @@ void _print_course(course_t *course)
     }
 
     char daystr[9];
-    daystostr(course->days, daystr);
+    cgc_daystostr(course->days, daystr);
     printf("%d|%s %d|%s|CR:%d|CE:%d|MC:%d|%s|%02d:%02d|%02d:%02d|%s",
             course->course_id, course->dept->name, course->course_num, course->prof->name,
             course->credits, course->current_enrollment, course->max_enrollment, daystr,
@@ -42,70 +42,70 @@ void _print_course(course_t *course)
     printf("\n");
 }
 
-ptrlist_t *find_courses_by_id(int course_id)
+cgc_ptrlist_t *cgc_find_courses_by_id(int course_id)
 {
     if (!g_all_courses)
         return NULL;
 
     int i = 0;
-    course_t *iter;
-    ptrlist_t *courses = create_ptrlist();
+    cgc_course_t *iter;
+    cgc_ptrlist_t *courses = cgc_create_ptrlist();
     for (i = 0; i < g_all_courses->length; i++) {
-        iter = get_item(course_t, g_all_courses, i);
+        iter = get_item(cgc_course_t, g_all_courses, i);
         if (course_id == iter->course_id)
-            add_item(courses, iter);
+            cgc_add_item(courses, iter);
     }
 
     return courses;
 }
 
-ptrlist_t *find_courses_by_num(char *name, short course_num)
+cgc_ptrlist_t *cgc_find_courses_by_num(char *name, short course_num)
 {
-    department_t *dept = get_department(name);
+    cgc_department_t *dept = cgc_get_department(name);
     if (!dept)
         return NULL;
 
     int i = 0;
-    course_t *iter;
-    ptrlist_t *courses = create_ptrlist();
+    cgc_course_t *iter;
+    cgc_ptrlist_t *courses = cgc_create_ptrlist();
     for (i = 0; i < dept->courses_available->length; i++) {
-        iter = get_item(course_t, dept->courses_available, i);
+        iter = get_item(cgc_course_t, dept->courses_available, i);
         if (course_num == iter->course_num)
-            add_item(courses, iter);
+            cgc_add_item(courses, iter);
     }
 
     return courses;
 }
 
 
-void add_course(course_t *course)
+void cgc_add_course(cgc_course_t *course)
 {
     if (!course)
         return;
 
     if (!g_all_courses)
-        g_all_courses = create_ptrlist();
+        g_all_courses = cgc_create_ptrlist();
 
-    if (add_item(g_all_courses, course) != 0) {
+    if (cgc_add_item(g_all_courses, course) != 0) {
         printf("Out of Memory. Terminating\n");
-        exit(1);
+        cgc_exit(1);
     }
 }
 
-course_t *create_course(unsigned int course_id, char *prof_name, char *dept_name, short course_num,
+cgc_course_t *cgc_create_course(unsigned int course_id, char *prof_name, char *dept_name, short course_num,
                         short credits, short current_enrollment, short max_enrollment,
-                        days_t days, time_t start, time_t end, char *title)
+                        cgc_days_t days, cgc_time_t start, cgc_time_t end, char *title)
 {
     if (!prof_name || !dept_name || !title)
         return NULL;
 
-    professor_t *prof = get_professor(prof_name);
+    cgc_professor_t *prof = cgc_get_professor(prof_name);
     if (!prof)
         return NULL;
-    department_t *dept = get_department(dept_name);
+    cgc_department_t *dept = cgc_get_department(dept_name);
     if (!dept)
         return NULL;
-    course_t *course = malloc(sizeof(course_t));
+    cgc_course_t *course = cgc_malloc(sizeof(cgc_course_t));
     if (!course)
         return NULL;
 
@@ -119,104 +119,104 @@ course_t *create_course(unsigned int course_id, char *prof_name, char *dept_name
     course->days = days;
     course->start = start;
     course->end = end;
-    course->title = strdup(title);
-    course->print_course = &_print_course;
+    course->title = cgc_strdup(title);
+    course->print_course = &cgc__print_course;
 
-    add_course(course);
-    add_course_to_professor(prof, course);
-    add_course_to_department(dept, course);
+    cgc_add_course(course);
+    cgc_add_course_to_professor(prof, course);
+    cgc_add_course_to_department(dept, course);
     return course;
 }
 
-ptrlist_t *get_courses(int course_id)
+cgc_ptrlist_t *cgc_get_courses(int course_id)
 {
     if (!g_all_courses)
         return NULL;
 
     int i = 0;
-    course_t *iter;
-    ptrlist_t *courses = create_ptrlist();
+    cgc_course_t *iter;
+    cgc_ptrlist_t *courses = cgc_create_ptrlist();
     for (i = 0; i < courses->length; i++) {
-        iter = get_item(course_t, g_all_courses, i);
+        iter = get_item(cgc_course_t, g_all_courses, i);
         if (iter->course_id == course_id)
-            add_item(courses, iter);
+            cgc_add_item(courses, iter);
     }
 
     return courses;
 }
 
-course_t *select_course_id(int course_id, size_t idx)
+cgc_course_t *cgc_select_course_id(int course_id, cgc_size_t idx)
 {
-    course_t *course = NULL;
-    ptrlist_t *courses = find_courses_by_id(course_id);
+    cgc_course_t *course = NULL;
+    cgc_ptrlist_t *courses = cgc_find_courses_by_id(course_id);
 
     if (idx < courses->length)
-        course = get_item(course_t, courses, idx);
+        course = get_item(cgc_course_t, courses, idx);
 
     if (courses)
-        free(courses);
+        cgc_free(courses);
 
     return course;
 }
 
-course_t *select_course_num(char *name, int course_num, size_t idx)
+cgc_course_t *cgc_select_course_num(char *name, int course_num, cgc_size_t idx)
 {
-    course_t *course = NULL;
-    ptrlist_t *courses = find_courses_by_num(name, course_num);
+    cgc_course_t *course = NULL;
+    cgc_ptrlist_t *courses = cgc_find_courses_by_num(name, course_num);
 
     if (courses && idx < courses->length)
-        course = get_item(course_t, courses, idx);
+        course = get_item(cgc_course_t, courses, idx);
 
     if (courses)
-        free(courses);
+        cgc_free(courses);
 
     return course;
 }
 
-void list_courses_by_num(char *name, short course_num)
+void cgc_list_courses_by_num(char *name, short course_num)
 {
-    ptrlist_t *courses = find_courses_by_num(name, course_num);
-    print_course_list(courses);
+    cgc_ptrlist_t *courses = cgc_find_courses_by_num(name, course_num);
+    cgc_print_course_list(courses);
     if (courses)
-        free(courses);
+        cgc_free(courses);
 }
 
-void list_courses_by_id(int course_id)
+void cgc_list_courses_by_id(int course_id)
 {
-    ptrlist_t *courses = find_courses_by_id(course_id);
-    print_course_list(courses);
+    cgc_ptrlist_t *courses = cgc_find_courses_by_id(course_id);
+    cgc_print_course_list(courses);
     if (courses)
-        free(courses);
+        cgc_free(courses);
 }
 
-void print_course_banner()
+void cgc_print_course_banner()
 {
     printf("IDX|CID|Course|Professor|Credits|Enrolled|Max|Days|Start|End|Title\n");
 }
 
-void print_course_list(ptrlist_t *courses)
+void cgc_print_course_list(cgc_ptrlist_t *courses)
 {
     if (!courses)
         return;
 
     int i = 0;
-    course_t *iter;
-    print_course_banner();
+    cgc_course_t *iter;
+    cgc_print_course_banner();
     for (i = 0; i < courses->length; i++) {
-        iter = get_item(course_t, courses, i);
+        iter = get_item(cgc_course_t, courses, i);
         printf("#%d|", i+1);
         iter->print_course(iter);
     }
 }
 
-int check_time_conflict(course_t *course1, course_t *course2)
+int cgc_check_time_conflict(cgc_course_t *course1, cgc_course_t *course2)
 {
-    if (!days_intersect(course1->days, course2->days))
+    if (!cgc_days_intersect(course1->days, course2->days))
         return 0;
 
-    if (timecmp(course1->start, course2->start) >= 0 && timecmp(course1->end, course2->end) <= 0)
+    if (cgc_timecmp(course1->start, course2->start) >= 0 && cgc_timecmp(course1->end, course2->end) <= 0)
         return -1;
-    if (timecmp(course2->start, course1->start) >= 0 && timecmp(course2->end, course1->end) <= 0)
+    if (cgc_timecmp(course2->start, course1->start) >= 0 && cgc_timecmp(course2->end, course1->end) <= 0)
         return -1;
 
     return 0;

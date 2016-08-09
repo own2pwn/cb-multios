@@ -41,61 +41,61 @@ extern "C"
 #include <stdint.h>
 
 // Cromulence Utilities Library
-// String class
+// cgc_String class
 
 namespace CUtil
 {
-	class String
+	class cgc_String
 	{
 	public:
 		// End position marker
-		const static size_t npos = 0xffffffff;
+		const static cgc_size_t npos = 0xffffffff;
 
 	public:
-		String( );
-		String( const String &str );
-		String( const char *pszStr );
+		cgc_String( );
+		cgc_String( const cgc_String &str );
+		cgc_String( const char *pszStr );
 
-		~String( );
+		~cgc_String( );
 
 		// Operators
-		bool operator==( const String &rhs ) const;
-		bool operator!=( const String &rhs ) const;
-		void operator=( const String &rhs );
+		bool operator==( const cgc_String &rhs ) const;
+		bool operator!=( const cgc_String &rhs ) const;
+		void operator=( const cgc_String &rhs );
 		void operator=( const char *rhs );
 
-		const String& operator+( const String &rhs ) const;
-		String& operator+=( const String &rhs );
+		const cgc_String& operator+( const cgc_String &rhs ) const;
+		cgc_String& operator+=( const cgc_String &rhs );
 
 		// Conversion
-		const char* c_str( void ) const;
-		String Upper( void ) const;
-		String Lower( void ) const;
+		const char* cgc_c_str( void ) const;
+		cgc_String cgc_Upper( void ) const;
+		cgc_String cgc_Lower( void ) const;
 
-		// Trim to a specific length
-		String Trim( size_t length ) const;
+		// cgc_Trim to a specific length
+		cgc_String cgc_Trim( cgc_size_t length ) const;
 
 		// Accessor method
-		char operator[]( const size_t &loc ) const;
+		char operator[]( const cgc_size_t &loc ) const;
 
 		// Get string within string from start to end positions
-		String SubString( size_t startPos, size_t endPos ) const;
+		cgc_String cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) const;
 		
-		// Trim leading spaces (TrimSpaces)	
-		String TrimSpaces( void ) const;
+		// cgc_Trim leading spaces (cgc_TrimSpaces)	
+		cgc_String cgc_TrimSpaces( void ) const;
 
-		bool ToInt( uint32_t &value );
+		bool cgc_ToInt( cgc_uint32_t &value );
 
-		size_t GetLength( void ) const;
-		bool IsEmpty( void ) const;
+		cgc_size_t cgc_GetLength( void ) const;
+		bool cgc_IsEmpty( void ) const;
 
 	protected:
-		void SetInternal( const String &str );
-		void SetInternal( const char *pszStr );
+		void cgc_SetInternal( const cgc_String &str );
+		void cgc_SetInternal( const char *pszStr );
 	
 	protected:
 		char 	*m_pData;
-		size_t	m_length;	
+		cgc_size_t	m_length;	
 	};
 }
 

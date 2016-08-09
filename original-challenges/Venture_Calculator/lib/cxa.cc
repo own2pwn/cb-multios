@@ -2,7 +2,7 @@
 
 extern "C"
 {
-    void __cxa_pure_virtual()
+    void cgc___cxa_pure_virtual()
     {
         _terminate(1);
     }

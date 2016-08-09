@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Dan Czarnecki <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,11 +41,11 @@ enum {
 int red_blue[8]  = { 0x00, 0x20, 0x40, 0x60, 0xA0, 0xC0, 0xE0, 0xFF };
 int green[4]     = { 0x00, 0x60, 0xB0, 0xFF };
 
-uint8_t ClosestMatch(uint8_t type, int16_t val) {
-  uint8_t close_diff = 0xff;
-  uint8_t temp_diff = 0;
-  uint8_t max_idx = ((type == R || type == B) ? 8 : 4);
-  uint8_t close_idx = max_idx;
+cgc_uint8_t cgc_ClosestMatch(cgc_uint8_t type, cgc_int16_t val) {
+  cgc_uint8_t close_diff = 0xff;
+  cgc_uint8_t temp_diff = 0;
+  cgc_uint8_t max_idx = ((type == R || type == B) ? 8 : 4);
+  cgc_uint8_t close_idx = max_idx;
 
   int i;
 
@@ -65,70 +65,70 @@ uint8_t ClosestMatch(uint8_t type, int16_t val) {
 
 }
 
-void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len) {
+void cgc_Compress(cgc_t3DCPixel **px_list, cgc_uint8_t *compressed_data, cgc_uint16_t *data_len) {
   if (px_list == NULL) {
     return;
   }
 
-  uint8_t color = 0;
-  uint8_t coord = 0;
+  cgc_uint8_t color = 0;
+  cgc_uint8_t coord = 0;
 
-  t3DCPixel *px = NULL;
-  uint16_t count = MAX_PIXELS * 7; // (x, y, z, color)
-  uint16_t i = 0;
+  cgc_t3DCPixel *px = NULL;
+  cgc_uint16_t count = MAX_PIXELS * 7; // (x, y, z, color)
+  cgc_uint16_t i = 0;
   int p_idx = 0;
 
   while (i < count) {
     color = 0;
     px = px_list[p_idx++];
     // red
-    color += (ClosestMatch(R, px->r) << 5);
+    color += (cgc_ClosestMatch(R, px->r) << 5);
 
     // green
-    color += (ClosestMatch(G, px->g) << 3);
+    color += (cgc_ClosestMatch(G, px->g) << 3);
 
     // blue
-    color += (ClosestMatch(B, px->b) << 0);
+    color += (cgc_ClosestMatch(B, px->b) << 0);
 
-    memcpy(compressed_data+i, &px->x, sizeof(int16_t));
-    i += sizeof(int16_t);
+    cgc_memcpy(compressed_data+i, &px->x, sizeof(cgc_int16_t));
+    i += sizeof(cgc_int16_t);
 
-    memcpy(compressed_data+i, &px->y, sizeof(int16_t));
-    i += sizeof(int16_t);
+    cgc_memcpy(compressed_data+i, &px->y, sizeof(cgc_int16_t));
+    i += sizeof(cgc_int16_t);
 
-    memcpy(compressed_data+i, &px->z, sizeof(int16_t));
-    i += sizeof(int16_t);
+    cgc_memcpy(compressed_data+i, &px->z, sizeof(cgc_int16_t));
+    i += sizeof(cgc_int16_t);
 
-    memcpy(compressed_data+i, &color, 1);
+    cgc_memcpy(compressed_data+i, &color, 1);
     i++;
   }
 
-  memcpy(data_len, &i, 2);
+  cgc_memcpy(data_len, &i, 2);
 
   return;
 }
 
 
-void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len) {
-  uint32_t in_offset = 0;
-  uint32_t out_offset = 0;
+void cgc_Decompress(cgc_uint8_t *in_data, cgc_uint8_t *out_data, cgc_uint16_t *data_len) {
+  cgc_uint32_t in_offset = 0;
+  cgc_uint32_t out_offset = 0;
 
   int p_idx = 0;
-  uint8_t color;
-  uint8_t r,g,b;
+  cgc_uint8_t color;
+  cgc_uint8_t r,g,b;
 
   while (in_offset < *data_len) {
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
-    out_offset += sizeof(int16_t);
-    in_offset += sizeof(int16_t);
+    cgc_memcpy(out_data+out_offset, in_data+in_offset, sizeof(cgc_int16_t));
+    out_offset += sizeof(cgc_int16_t);
+    in_offset += sizeof(cgc_int16_t);
 
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
-    out_offset += sizeof(int16_t);
-    in_offset += sizeof(int16_t);
+    cgc_memcpy(out_data+out_offset, in_data+in_offset, sizeof(cgc_int16_t));
+    out_offset += sizeof(cgc_int16_t);
+    in_offset += sizeof(cgc_int16_t);
 
-    memcpy(out_data+out_offset, in_data+in_offset, sizeof(int16_t));
-    out_offset += sizeof(int16_t);
-    in_offset += sizeof(int16_t);
+    cgc_memcpy(out_data+out_offset, in_data+in_offset, sizeof(cgc_int16_t));
+    out_offset += sizeof(cgc_int16_t);
+    in_offset += sizeof(cgc_int16_t);
 
     color = in_data[in_offset++];
 
@@ -149,32 +149,32 @@ void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len) {
 
   }
 
-  memcpy(data_len, &out_offset, 2);
+  cgc_memcpy(data_len, &out_offset, 2);
 
   return;
 }
 
-void WriteOut(t3DCPixel **px_list, uint8_t *data, uint16_t data_len) {
+void cgc_WriteOut(cgc_t3DCPixel **px_list, cgc_uint8_t *data, cgc_uint16_t data_len) {
   // load into our pixel data
 
   if (px_list == NULL) {
     return;
   }
 
-  uint16_t offset = 0;
-  uint16_t i = 0;
-  t3DCPixel *tmp;
+  cgc_uint16_t offset = 0;
+  cgc_uint16_t i = 0;
+  cgc_t3DCPixel *tmp;
 
   while (offset < data_len) {
     tmp = px_list[i];
 
     offset += 6;
 
-    memcpy(&tmp->r, data+offset, 1);
+    cgc_memcpy(&tmp->r, data+offset, 1);
     offset++;
-    memcpy(&tmp->g, data+offset, 1);
+    cgc_memcpy(&tmp->g, data+offset, 1);
     offset++;
-    memcpy(&tmp->b, data+offset, 1);
+    cgc_memcpy(&tmp->b, data+offset, 1);
     offset++;
     tmp->a = 0xff;
     offset++;

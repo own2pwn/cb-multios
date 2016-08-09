@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,42 +27,42 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "service.h"
 
-uint16_t entry_count;
-uint16_t chapter_count;
+cgc_uint16_t entry_count;
+cgc_uint16_t chapter_count;
 
-uint16_t read_short()
+cgc_uint16_t cgc_read_short()
 {
-	uint16_t val;
-	//size_t rx;
+	cgc_uint16_t val;
+	//cgc_size_t rx;
 
 	//if ( receive( STDIN, &val, sizeof(val), &rx ) != 0 ) 
-	if (receive_bytes( (uint8_t*)&val, sizeof(val) ) != 2 )
+	if (cgc_receive_bytes( (cgc_uint8_t*)&val, sizeof(val) ) != 2 )
 	{
         return 0;
     }
     return val;
 }
 
-void populate_entry(int entry, int num, char* str, int str_len, uint8_t req, uint8_t mult, uint8_t type)
+void cgc_populate_entry(int entry, int num, char* str, int str_len, cgc_uint8_t req, cgc_uint8_t mult, cgc_uint8_t type)
 {
-	entry_info_table[entry][num] = (Entry_Info*)malloc(sizeof(Entry_Info));
+	entry_info_table[entry][num] = (cgc_Entry_Info*)cgc_malloc(sizeof(cgc_Entry_Info));
 	entry_info_table[entry][num]->format = type;
 	entry_info_table[entry][num]->mult_ok = mult;
 	entry_info_table[entry][num]->required = req;
 	entry_info_table[entry][num]->str_len = str_len;
-	strncpy(entry_info_table[entry][num]->entry_str, str, str_len);
-	bzero(str, NAME_LEN_MAX);	
+	cgc_strncpy(entry_info_table[entry][num]->entry_str, str, str_len);
+	cgc_bzero(str, NAME_LEN_MAX);	
 }
 
-void populate_sub_entry(int entry, int num, char* str, int str_len, uint8_t req, uint8_t mult, uint8_t type)
+void cgc_populate_sub_entry(int entry, int num, char* str, int str_len, cgc_uint8_t req, cgc_uint8_t mult, cgc_uint8_t type)
 {
-	sub_entry_info_list[entry][num] = (Entry_Info*)malloc(sizeof(Entry_Info));
+	sub_entry_info_list[entry][num] = (cgc_Entry_Info*)cgc_malloc(sizeof(cgc_Entry_Info));
 	sub_entry_info_list[entry][num]->format = type;
 	sub_entry_info_list[entry][num]->mult_ok = mult;
 	sub_entry_info_list[entry][num]->required = req;
 	sub_entry_info_list[entry][num]->str_len = str_len;
-	strncpy(sub_entry_info_list[entry][num]->entry_str, str, str_len);
-	bzero(str, NAME_LEN_MAX);	
+	cgc_strncpy(sub_entry_info_list[entry][num]->entry_str, str, str_len);
+	cgc_bzero(str, NAME_LEN_MAX);	
 }
 
 #define REQ 1
@@ -70,196 +70,196 @@ void populate_sub_entry(int entry, int num, char* str, int str_len, uint8_t req,
 #define MULT_OK 1
 #define MULT_NO 0
 // populate the entry_info_table with valid fields
-void populateEntryInfo()
+void cgc_populateEntryInfo()
 {
 	char ss[NAME_LEN_MAX];
-	bzero(ss, NAME_LEN_MAX);
+	cgc_bzero(ss, NAME_LEN_MAX);
 	int num, entry;
 
 // IDENTITY
 	num = 0;
 	entry = IDENTITY;
 
-	strcpy(ss, "first name");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "first name");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "middle name");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "middle name");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "last name");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "last name");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "age");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "age");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
-	strcpy(ss, "weight");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, SHORT);
+	cgc_strcpy(ss, "weight");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, SHORT);
 
-	strcpy(ss, "birth country");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "birth country");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "birth state");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "birth state");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "birth city");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "birth city");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "married");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "married");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
 // MOVIE
 	num = 0;
 	entry = MOVIES;
-	strcpy(ss, "title");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "title");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "actor");
-	populate_entry(entry, num++, ss, strlen(ss), 0, MULT_OK, STR);
+	cgc_strcpy(ss, "actor");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, MULT_OK, STR);
 
-	strcpy(ss, "director");
-	populate_entry(entry, num++, ss, strlen(ss), 0, MULT_OK, STR);
+	cgc_strcpy(ss, "director");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, MULT_OK, STR);
 
-	strcpy(ss, "producer");
-	populate_entry(entry, num++, ss, strlen(ss), 0, MULT_OK, STR);
+	cgc_strcpy(ss, "producer");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, MULT_OK, STR);
 
-	strcpy(ss, "year released");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, SHORT);
+	cgc_strcpy(ss, "year released");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, SHORT);
 
-	strcpy(ss, "plot summary");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "plot summary");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
 // VEHICLES
 	num = 0;
 	entry = VEHICLES;
 
-	strcpy(ss, "make");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "make");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "model");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "model");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "color");
-	populate_entry(entry, num++, ss, strlen(ss), 0, MULT_OK, STR);
+	cgc_strcpy(ss, "color");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, MULT_OK, STR);
 
-	strcpy(ss, "displacement");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, SHORT);
+	cgc_strcpy(ss, "displacement");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, SHORT);
 
-	strcpy(ss, "displacement units");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "displacement units");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "doors");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);	
+	cgc_strcpy(ss, "doors");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);	
 
 // BOOKS
 	num = 0;
 	entry = BOOKS;
 
-	strcpy(ss, "author");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "author");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "year");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "year");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "summary");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "summary");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "publisher");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "publisher");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "character");
-	populate_entry(entry, num++, ss, strlen(ss), 0, MULT_OK, STR);
+	cgc_strcpy(ss, "character");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, MULT_OK, STR);
 
-	strcpy(ss, "made into a movie");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);	
+	cgc_strcpy(ss, "made into a movie");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);	
 
 // SONG
 	num = 0;
 	entry = SONGS;
 
-	strcpy(ss, "writer");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "writer");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "year");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "year");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "genre");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "genre");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "publisher");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "publisher");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "free online");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);	
+	cgc_strcpy(ss, "cgc_free online");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);	
 
 // JOB
 	num = 0;
 	entry = JOBS;
 
-	strcpy(ss, "title");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "title");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "years");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "years");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "job category");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "job category");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "company");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "company");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "have a best friend");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "have a best friend");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "salary");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, INT);
+	cgc_strcpy(ss, "salary");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, INT);
 
 	num = 0;
 	entry = HOBBIES;
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
-	strcpy(ss, "");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, PTR);
+	cgc_strcpy(ss, "");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, PTR);
 
 	num = 0;
 	entry = PETS;
 
-	strcpy(ss, "name");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "name");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "species");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "species");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "legs");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "legs");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "inside only");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "inside only");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "age");
-	populate_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "age");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "shots updated");
-	populate_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);
+	cgc_strcpy(ss, "shots updated");
+	cgc_populate_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);
 }
 
-void populateSubEntryInfo()
+void cgc_populateSubEntryInfo()
 {
 	char ss[NAME_LEN_MAX];
-	bzero(ss, NAME_LEN_MAX);
+	cgc_bzero(ss, NAME_LEN_MAX);
 	int num, entry;
 
 // HOBBIES
@@ -267,164 +267,164 @@ void populateSubEntryInfo()
 // SHOOTING
 	num = 0;
 	entry = SHOOTING;
-	strcpy(ss, "make");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "make");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "model");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "model");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "league");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "league");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "length");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "length");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "length units");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "length units");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "years experience");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "years experience");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
-	strcpy(ss, "injury");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "injury");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
 // KNIVES
 	num = 0;
 	entry = KNIVES;
-	strcpy(ss, "make");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "make");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "model");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "model");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "value");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, SHORT);
+	cgc_strcpy(ss, "value");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, SHORT);
 
-	strcpy(ss, "style");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "style");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "blade length");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "blade length");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
-	strcpy(ss, "length units");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "length units");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "comes with sheath");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "comes with sheath");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "injury");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);
+	cgc_strcpy(ss, "injury");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);
 
 // STAMPS
 	num = 0;
 	entry = STAMPS;
-	strcpy(ss, "name");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "name");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "value");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, SHORT);
+	cgc_strcpy(ss, "value");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, SHORT);
 
-	strcpy(ss, "seller");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "seller");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "mint");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);
+	cgc_strcpy(ss, "mint");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);
 
-	strcpy(ss, "count");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "count");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
 // KAYAKING
 	num = 0;
 	entry = KAYAKING;
-	strcpy(ss, "make");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "make");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "model");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "model");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "length");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "length");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "style");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "style");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "initial stability");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "initial stability");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "years experience");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "years experience");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "highest class");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "highest class");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "touring");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "touring");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "surfing");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "surfing");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "tricking");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "tricking");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
-	strcpy(ss, "injury");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "injury");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
 // COINS
 	num = 0;
 	entry = COINS;
-	strcpy(ss, "name");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "name");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "seller");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, STR);
+	cgc_strcpy(ss, "seller");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, STR);
 
-	strcpy(ss, "value");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, INT);
+	cgc_strcpy(ss, "value");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, INT);
 
-	strcpy(ss, "mint");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, BOOL);
+	cgc_strcpy(ss, "mint");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, BOOL);
 
-	strcpy(ss, "count");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "count");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
 // EXERCISES
 	num = 0;
 	entry = EXERCISES;
-	strcpy(ss, "name");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "name");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "max weight");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, SHORT);
+	cgc_strcpy(ss, "max weight");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, SHORT);
 
-	strcpy(ss, "reps");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, CHAR);
+	cgc_strcpy(ss, "reps");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, CHAR);
 
-	strcpy(ss, "sets");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "sets");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
-	strcpy(ss, "injury");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "injury");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 
 // SPORTS
 	num = 0;
 	entry = SPORTS;
 
-	strcpy(ss, "name");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, STR);
+	cgc_strcpy(ss, "name");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, STR);
 
-	strcpy(ss, "position");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, MULT_OK, STR);
+	cgc_strcpy(ss, "position");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, MULT_OK, STR);
 
-	strcpy(ss, "years experience");
-	populate_sub_entry(entry, num++, ss, strlen(ss), REQ, 0, CHAR);
+	cgc_strcpy(ss, "years experience");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), REQ, 0, CHAR);
 
-	strcpy(ss, "injury");
-	populate_sub_entry(entry, num++, ss, strlen(ss), 0, 0, BOOL);
+	cgc_strcpy(ss, "injury");
+	cgc_populate_sub_entry(entry, num++, ss, cgc_strlen(ss), 0, 0, BOOL);
 }
 
 
 // return an entry_info with the proper title field name
-uint8_t getEntryInfo(uint16_t title, uint8_t entry, uint8_t is_sub, Entry_Info *entry_info)
+cgc_uint8_t cgc_getEntryInfo(cgc_uint16_t title, cgc_uint8_t entry, cgc_uint8_t is_sub, cgc_Entry_Info *entry_info)
 {
 	if (is_sub) 
 		#ifdef PATCHED 
@@ -432,10 +432,10 @@ uint8_t getEntryInfo(uint16_t title, uint8_t entry, uint8_t is_sub, Entry_Info *
 				if (sub_entry_info_list[title][entry] == NULL) {
 					return 0;
 				}
-				memcpy(entry_info,sub_entry_info_list[title][entry], sizeof(Entry_Info));
+				cgc_memcpy(entry_info,sub_entry_info_list[title][entry], sizeof(cgc_Entry_Info));
 			}
 		#else
-			memcpy(entry_info,sub_entry_info_list[title][entry], sizeof(Entry_Info));
+			cgc_memcpy(entry_info,sub_entry_info_list[title][entry], sizeof(cgc_Entry_Info));
 		#endif
 	else 
 		#ifdef PATCHED
@@ -443,14 +443,14 @@ uint8_t getEntryInfo(uint16_t title, uint8_t entry, uint8_t is_sub, Entry_Info *
 				if (entry_info_table[title][entry] == NULL) {
 					return 0;
 				}
-				memcpy(entry_info,entry_info_table[title][entry], sizeof(Entry_Info));
+				cgc_memcpy(entry_info,entry_info_table[title][entry], sizeof(cgc_Entry_Info));
 			}
 		#else
-			memcpy(entry_info,entry_info_table[title][entry], sizeof(Entry_Info));
+			cgc_memcpy(entry_info,entry_info_table[title][entry], sizeof(cgc_Entry_Info));
 		#endif
 	if (entry_info->mult_ok > 1 || entry_info->required > 1)
 	{
-		printf("WRONG FORMAT in getEntryInfo\n");
+		cgc_printf("WRONG FORMAT in cgc_getEntryInfo\n");
 	}
 
 
@@ -459,7 +459,7 @@ uint8_t getEntryInfo(uint16_t title, uint8_t entry, uint8_t is_sub, Entry_Info *
 
 int buffer_length;
 
-int verify_entry(Entry *entry)
+int cgc_verify_entry(cgc_Entry *entry)
 {
 	if (!entry)
 		return 1;
@@ -483,7 +483,7 @@ int verify_entry(Entry *entry)
 	return 0;
 }
 
-int verify_chapter(Chapter *chap)
+int cgc_verify_chapter(cgc_Chapter *chap)
 {
 	if (!chap)
 		return 1;
@@ -503,23 +503,23 @@ int verify_chapter(Chapter *chap)
 	return 0;
 }
 
-int parse_book(uint8_t* buff, int rcv_len, int first_offset)
+int cgc_parse_book(cgc_uint8_t* buff, int rcv_len, int first_offset)
 {
-	Entry *entry;
+	cgc_Entry *entry;
 
-	uint16_t next_offset = first_offset;
+	cgc_uint16_t next_offset = first_offset;
 
 	int first = 1; // used for checking required entries in a chapter
 
 	char is_subtitle = 0;
-	uint16_t parent_of_subtitle = 0;
+	cgc_uint16_t parent_of_subtitle = 0;
 	
 	char **names;
 	char is_initial_subtitle = 0;
 
-	Entry_Info *(*entry_table)[MAX_ENTRY_PER_TITLE];
+	cgc_Entry_Info *(*entry_table)[MAX_ENTRY_PER_TITLE];
 
-	Chapter *chapter = NULL;
+	cgc_Chapter *chapter = NULL;
 	do
 	{
 		// start parsing a new chapter
@@ -534,24 +534,24 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 					is_subtitle = 0;
 					if (!parent_of_subtitle)
 						continue;
-					chapter = (Chapter*)(buff+parent_of_subtitle); 
+					chapter = (cgc_Chapter*)(buff+parent_of_subtitle); 
 				}
 			}
 			else
 			{
-				chapter = (Chapter*)(buff+next_offset); // normal flow after a chapter is done
+				chapter = (cgc_Chapter*)(buff+next_offset); // normal flow after a chapter is done
 				is_initial_subtitle = 0;
 			}
 		}
 		else 
 		{	
 			// first chapter handled here
-			chapter = (Chapter*)(buff+next_offset);
+			chapter = (cgc_Chapter*)(buff+next_offset);
 		}
 		int t = 0;
 		#ifdef PATCHED
-		if ((uint8_t *)chapter + sizeof(Chapter) > buff + rcv_len) {
-			printf("bad book.\n");
+		if ((cgc_uint8_t *)chapter + sizeof(cgc_Chapter) > buff + rcv_len) {
+			cgc_printf("bad book.\n");
 			return -1;
 		}
 		#endif
@@ -559,8 +559,8 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 		//if (chapter->title >= NUM_TITLES-1 && !is_subtitle)
 		if (chapter->title == HOBBIES && !is_subtitle)
 		{ 	// we just found HOBBIES, change over
-			printf("Title: @s\n", titles[chapter->title]);
-			printf("Entry Count: 0x@x\n", chapter->entry_count);
+			cgc_printf("Title: @s\n", titles[chapter->title]);
+			cgc_printf("cgc_Entry Count: 0x@x\n", chapter->entry_count);
 			names = subtitles;
 			entry_table = sub_entry_info_list;
 			next_offset = (chapter->offset_first_entry);
@@ -577,48 +577,48 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 
 			#ifndef PATCHED
 
-			if ((t = verify_chapter(chapter)) != 0)
+			if ((t = cgc_verify_chapter(chapter)) != 0)
 			{
-				printf("Malformed chapter found! @d Exiting.\n", t);
+				cgc_printf("Malformed chapter found! @d Exiting.\n", t);
 				_terminate(-2);
 			}
 		}
 		#else
 		}
 		
-		if ((t = verify_chapter(chapter)) != 0)
+		if ((t = cgc_verify_chapter(chapter)) != 0)
 		{
-			printf("Malformed chapter found! @d Exiting.\n", t);
+			cgc_printf("Malformed chapter found! @d Exiting.\n", t);
 			_terminate(-2);
 		}
 		#endif
 		
 
-		printf("Title: @s\n", names[chapter->title]);
+		cgc_printf("Title: @s\n", names[chapter->title]);
 
 		if (chapter->entry_count > MAX_NUM_ENTRIES)
 		{
-			printf("ERROR: Too many entries: @d\n", chapter->entry_count);
+			cgc_printf("ERROR: Too many entries: @d\n", chapter->entry_count);
 			_terminate(-1);
 		}
-		printf("Entry Count: 0x@x\n", chapter->entry_count);
+		cgc_printf("cgc_Entry Count: 0x@x\n", chapter->entry_count);
 
 		if (!chapter->offset_first_entry || !chapter->entry_count)
 		{
 			// go to the next chapter. no entries here
 			next_offset = (chapter->offset_next_chapter);
-			printf("NO entries found\n");
+			cgc_printf("NO entries found\n");
 			continue;
 		}
 
 		int req_cnt = 1;
 		int prev_read_counter = 0;
 		first = 1;
-		entry = (Entry*)(buff+((chapter->offset_first_entry)));
+		entry = (cgc_Entry*)(buff+((chapter->offset_first_entry)));
 		//int t = 0;
-		if ((t = verify_entry(entry)) != 0)
+		if ((t = cgc_verify_entry(entry)) != 0)
 		{
-			printf("Malformed entry found! @d Exiting.\n", t);
+			cgc_printf("Malformed entry found! @d Exiting.\n", t);
 			_terminate(-1);
 		}
 
@@ -627,17 +627,17 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 			// parse a chapter. all of its entries
 			int data_offset = 0;
 
-			Entry_Info entry_info;
+			cgc_Entry_Info entry_info;
 			if (names == subtitles)
-				getEntryInfo(chapter->title, entry->entry, 1, &entry_info);
+				cgc_getEntryInfo(chapter->title, entry->entry, 1, &entry_info);
 			else
-				getEntryInfo(chapter->title, entry->entry, 0, &entry_info);
+				cgc_getEntryInfo(chapter->title, entry->entry, 0, &entry_info);
 
 			// once per chapter, check the required entries
 			if (first)
 			{
-				memset(prev_read_entries, -1, chapter->entry_count); 
-				memset(required_entries, -1, MAX_ENTRY_PER_TITLE);
+				cgc_memset(prev_read_entries, -1, chapter->entry_count); 
+				cgc_memset(required_entries, -1, MAX_ENTRY_PER_TITLE);
 
 				// record the required entries for this chapter
 				// later, make sure that these are populated 
@@ -661,7 +661,7 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 			}
   
 			// if this entry was in the required_entry list, remove it (it has been satisfied)
-			for (uint8_t i = 1; i <= req_cnt; i++)
+			for (cgc_uint8_t i = 1; i <= req_cnt; i++)
 			{
 				if (entry->entry == required_entries[i])
 				{
@@ -671,14 +671,14 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 				}	
 			}
 
-			for (uint8_t i = 1; i <= prev_read_counter; i++)
+			for (cgc_uint8_t i = 1; i <= prev_read_counter; i++)
 			{
 				if (entry->entry == prev_read_entries[i])
 				{
 					if (entry_info.mult_ok != MULT_OK)
 					{
 						// Duplicate! Not allowed.
-						printf("Duplicate entry found! Exiting...\n");
+						cgc_printf("Duplicate entry found! Exiting...\n");
 						_terminate(-1);
 					}
 				}	
@@ -689,7 +689,7 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 			if (entry_info.format != entry->format)
 			{
 				// they sent us the wrong format. exit
-				printf("WRONG FORMAT: @d vs @d\n", entry_info.format, entry->format);
+				cgc_printf("WRONG FORMAT: @d vs @d\n", entry_info.format, entry->format);
 				_terminate(-2);
 			}
 
@@ -723,33 +723,33 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 			{
 				// go to the offset and retrieve the string
 				char str[NAME_LEN_MAX];
-				memcpy(str, (char*)&buff[(entry->offset_data)], entry->len);
+				cgc_memcpy(str, (char*)&buff[(entry->offset_data)], entry->len);
 				if (entry->len < NAME_LEN_MAX)
 					str[entry->len] = '\0';
 				else
 					str[NAME_LEN_MAX-1] = '\0';
-				printf("@s: @s\n", entry_info.entry_str, str);
+				cgc_printf("@s: @s\n", entry_info.entry_str, str);
 				data_offset += entry->len;
 			}
 			else if (entry_info.format == INT)
 			{
-				uint32_t num = *(uint32_t*)&buff[(entry->offset_data)];
-				printf("@s: 0x@x\n", entry_info.entry_str, num);
+				cgc_uint32_t num = *(cgc_uint32_t*)&buff[(entry->offset_data)];
+				cgc_printf("@s: 0x@x\n", entry_info.entry_str, num);
 				data_offset += 4;
 			}
 			else if (entry_info.format == BOOL)
 			{
 				short num = *(short*)&entry->offset_data;
 				if (num == 1)
-					printf("@s: true\n", entry_info.entry_str);
+					cgc_printf("@s: true\n", entry_info.entry_str);
 				else if (num == 0)
-					printf("@s: false\n", entry_info.entry_str);
+					cgc_printf("@s: false\n", entry_info.entry_str);
 				else
-					printf("@s!!: 0x@x\n", entry_info.entry_str, num);
+					cgc_printf("@s!!: 0x@x\n", entry_info.entry_str, num);
 				data_offset += 0;
 			}
 			else
-				printf("@s: 0x@x\n", entry_info.entry_str, (entry->offset_data));
+				cgc_printf("@s: 0x@x\n", entry_info.entry_str, (entry->offset_data));
 
 			if (chapter->title == IDENTITY)
 			{
@@ -784,11 +784,11 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 			if ((entry->offset_next_entry) == 0)
 				break;
 
-			entry = (Entry*)(buff+((entry->offset_next_entry)));
+			entry = (cgc_Entry*)(buff+((entry->offset_next_entry)));
 
-			if ((t = verify_entry(entry)) != 0)
+			if ((t = cgc_verify_entry(entry)) != 0)
 			{
-				printf("Malformed entry found! @d @d Exiting..\n", t, entry->format);
+				cgc_printf("Malformed entry found! @d @d Exiting..\n", t, entry->format);
 				_terminate(-1);
 			}
 		} while (entry != NULL);
@@ -798,7 +798,7 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 		// if there are any left in 'required_entries', fail
 		if (required_entries[0] != 0)
 		{
-			printf("DIDN'T SEND ME ALL THE REQUIRED ENTRIES! @c  ", required_entries[0]);
+			cgc_printf("DIDN'T SEND ME ALL THE REQUIRED ENTRIES! @c  ", required_entries[0]);
 			return -1;
 		}
 
@@ -807,13 +807,13 @@ int parse_book(uint8_t* buff, int rcv_len, int first_offset)
 	return 1;
 }
 
-void init()
+void cgc_init()
 {
-	populateEntryInfo();
-	populateSubEntryInfo();
+	cgc_populateEntryInfo();
+	cgc_populateSubEntryInfo();
 }
 
-void test_win()
+void cgc_test_win()
 {
 	int success = 0;
 	for (int i = 0; i < 5; i++)
@@ -833,12 +833,12 @@ void test_win()
 		#endif
 
 		// WIN
-		printf("What is your family's last name?\n");
-		int len = receive_until(buff, '\n', max_len);
+		cgc_printf("What is your family's last name?\n");
+		int len = cgc_receive_until(buff, '\n', max_len);
 		buff[len] = 0;
 
 		// names of two parents and kid put together
-		printf("Congratulations, @s family! You have a great diary!\n",buff);
+		cgc_printf("Congratulations, @s family! You have a great diary!\n",buff);
 	}
 }
 
@@ -846,68 +846,68 @@ void test_win()
 // parse and print the content
 int main()
 {
-	init();
+	cgc_init();
 
-	memset(successful, 0, 5);
-	memset(success_info, 0, 10*sizeof(uint16_t));
+	cgc_memset(successful, 0, 5);
+	cgc_memset(success_info, 0, 10*sizeof(cgc_uint16_t));
 
 	int current_buffer_offset = 0;
-	printf("Welcome to the diary logger!\n");
+	cgc_printf("Welcome to the diary logger!\n");
 
 	// read the size of the input (uint16)
-	uint16_t buffer_size = read_short();
+	cgc_uint16_t buffer_size = cgc_read_short();
 
 	buffer_length = buffer_size;
 
 	if (buffer_size < 1)
 	{
-		printf("Buffer length is too small.\n");
+		cgc_printf("Buffer length is too small.\n");
 		_terminate(-3);
 	}
 
 	// create a buffer of 'size' size
-	uint8_t *buffer = (uint8_t*)malloc( buffer_size );
+	cgc_uint8_t *buffer = (cgc_uint8_t*)cgc_malloc( buffer_size );
 
 	if (buffer == NULL)
 	{
-		printf("Failed to allocate enough space for this buffer.\n");
+		cgc_printf("Failed to allocate enough space for this buffer.\n");
 		_terminate(-3);
 	}
 
-	int rcv_len = receive_bytes(buffer, buffer_size);
+	int rcv_len = cgc_receive_bytes(buffer, buffer_size);
 
 	if (rcv_len != buffer_size)
 	{
-		printf("Buffer received is not correct size.\n");
+		cgc_printf("Buffer received is not correct size.\n");
 		_terminate(-3);
 	}
 
-	if (buffer_size < sizeof(Header))
+	if (buffer_size < sizeof(cgc_Header))
 	{
-		printf("Buffer received is not correct size.\n");
+		cgc_printf("Buffer received is not correct size.\n");
 		_terminate(-3);
 	}
 
 	// read in the HEADER
-	Header *header = (Header*)(buffer+current_buffer_offset);
-	current_buffer_offset += sizeof(Header);
+	cgc_Header *header = (cgc_Header*)(buffer+current_buffer_offset);
+	current_buffer_offset += sizeof(cgc_Header);
 
 	// print header info
-	printf("Length: @d\n", buffer_size);	
-	printf("Magic number: 0x@x\n", header->magic_number);
-	printf("Future: 0x@x\n", header->future);
-	printf("Offset: 0x@x\n", header->offset_to_first_chapter);
+	cgc_printf("Length: @d\n", buffer_size);	
+	cgc_printf("Magic number: 0x@x\n", header->magic_number);
+	cgc_printf("Future: 0x@x\n", header->future);
+	cgc_printf("Offset: 0x@x\n", header->offset_to_first_chapter);
 
-	int ret = parse_book(buffer, rcv_len, header->offset_to_first_chapter);
+	int ret = cgc_parse_book(buffer, rcv_len, header->offset_to_first_chapter);
 	if (ret == -1)
 	{
-		printf("bad book.\n");
+		cgc_printf("bad book.\n");
 		return -1;
 	}
-	test_win();
+	cgc_test_win();
 	
 
-	free(buffer);
-	printf("good book.\n");
+	cgc_free(buffer);
+	cgc_printf("good book.\n");
 	return 0;
 }

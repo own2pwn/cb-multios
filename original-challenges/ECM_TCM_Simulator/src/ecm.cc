@@ -31,8 +31,8 @@ extern "C"
 
 #include "ecm.h"
 
-CECM::CECM( CLANBus *pLANBus, uint64_t equipmentID )
-	: CSimulationComponent( pLANBus ), m_equipmentID( equipmentID )
+cgc_CECM::cgc_CECM( cgc_CLANBus *pLANBus, cgc_uint64_t equipmentID )
+	: cgc_CSimulationComponent( pLANBus ), m_equipmentID( equipmentID )
 {
 	m_bRunning = false;
 	m_bLastRunningState = false;
@@ -47,82 +47,82 @@ CECM::CECM( CLANBus *pLANBus, uint64_t equipmentID )
 	m_engineO2_2 = 0;	// 0%
 }
 
-CECM::~CECM()
+cgc_CECM::~cgc_CECM()
 {
 
 }
 
-void CECM::Run( void )
+void cgc_CECM::cgc_Run( void )
 {
-	uint8_t destList[] = { ECM_LANBUS_ID, 0xFF };
+	cgc_uint8_t destList[] = { ECM_LANBUS_ID, 0xFF };
 
-	CLANMessage *pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList) );
+	cgc_CLANMessage *pMsg = m_pLANBus->cgc_RecvMessage( destList, sizeof(destList) );
 
-	for ( ; pMsg; pMsg = m_pLANBus->RecvMessage( destList, sizeof(destList), pMsg ) )
+	for ( ; pMsg; pMsg = m_pLANBus->cgc_RecvMessage( destList, sizeof(destList), pMsg ) )
 	{
 
-		if ( pMsg->GetDestID() == ECM_LANBUS_ID )
-			ProcessMessage( pMsg );
-		else if ( pMsg->GetDestID() == 0xFF )
-			ProcessBroadcastMessage( pMsg );
+		if ( pMsg->cgc_GetDestID() == ECM_LANBUS_ID )
+			cgc_ProcessMessage( pMsg );
+		else if ( pMsg->cgc_GetDestID() == 0xFF )
+			cgc_ProcessBroadcastMessage( pMsg );
 	}
 
-	// Run engine routines
-	EngineTick();
+	// cgc_Run engine routines
+	cgc_EngineTick();
 }
 
-void CECM::ProcessBroadcastMessage( CLANMessage *pMessage )
+void cgc_CECM::cgc_ProcessBroadcastMessage( cgc_CLANMessage *pMessage )
 {
 	// ECM does not handle any broadcast messages
 	return;
 }
 
-void CECM::ProcessMessage( CLANMessage *pMessage )
+void cgc_CECM::cgc_ProcessMessage( cgc_CLANMessage *pMessage )
 {
-	uint8_t *pData = pMessage->GetMessageData();
-	uint16_t dataLen = pMessage->GetMessageLen();
+	cgc_uint8_t *pData = pMessage->cgc_GetMessageData();
+	cgc_uint16_t dataLen = pMessage->cgc_GetMessageLen();
 
-	uint8_t srcID = pMessage->GetSourceID();
-	uint8_t destID = pMessage->GetDestID();
+	cgc_uint8_t srcID = pMessage->cgc_GetSourceID();
+	cgc_uint8_t destID = pMessage->cgc_GetDestID();
 
 	// Handle ECM messages
 	if ( dataLen == 0 )
 		return;
 
 	// Process messages
-	CResponse oResponse;
+	cgc_CResponse oResponse;
 	
 	do
 	{
 		if ( dataLen < 3 )
 		{
 			// Send failure response
-			uint8_t failureResponse[4];
+			cgc_uint8_t failureResponse[4];
 			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
+			*((cgc_uint16_t*)(failureResponse+1)) = 1;	
 			failureResponse[3] = FAILURE_INVALID_DATA;
 
-			oResponse.AddResponse( failureResponse, 4 );
+			oResponse.cgc_AddResponse( failureResponse, 4 );
 			break;
 		}
 
-		uint8_t messageTypeID = pData[0];
-		uint16_t messageLength = *((uint16_t *)(pData+1));
+		cgc_uint8_t messageTypeID = pData[0];
+		cgc_uint16_t messageLength = *((cgc_uint16_t *)(pData+1));
 
 		if ( dataLen < (messageLength+3) )
 		{
 			// Send failure response
-			uint8_t failureResponse[4];
+			cgc_uint8_t failureResponse[4];
 			failureResponse[0] = FAILURE_RESPONSE_TYPE;
-			*((uint16_t*)(failureResponse+1)) = 1;	
+			*((cgc_uint16_t*)(failureResponse+1)) = 1;	
 			failureResponse[3] = FAILURE_INVALID_DATA;
 
-			oResponse.AddResponse( failureResponse, 4 );
+			oResponse.cgc_AddResponse( failureResponse, 4 );
 			break;
 		}
 
 		// Handle a TLV message
-		HandleTLVMessage( messageTypeID, messageLength, pData+3, &oResponse );
+		cgc_HandleTLVMessage( messageTypeID, messageLength, pData+3, &oResponse );
 
 		// Continue to next TLV field
 		dataLen -= (messageLength+3);
@@ -131,20 +131,20 @@ void CECM::ProcessMessage( CLANMessage *pMessage )
 	while ( dataLen > 0 );
 
 	// Get response
-	uint16_t responseLength = oResponse.GetResponseLength();
+	cgc_uint16_t responseLength = oResponse.cgc_GetResponseLength();
 
 	if ( responseLength > 0 )
 	{
-		uint8_t *pResponseData = new uint8_t[responseLength];
+		cgc_uint8_t *pResponseData = new cgc_uint8_t[responseLength];
 
-		if ( oResponse.GetResponseData( pResponseData, responseLength ) )
-			m_pLANBus->SendMessage( destID, srcID, pResponseData, responseLength );
+		if ( oResponse.cgc_GetResponseData( pResponseData, responseLength ) )
+			m_pLANBus->cgc_SendMessage( destID, srcID, pResponseData, responseLength );
 
 		delete [] pResponseData;
 	}
 }
 
-void CECM::HandleTLVMessage( uint8_t typeID, uint16_t length, uint8_t *pData, CResponse *pResponse )
+void cgc_CECM::cgc_HandleTLVMessage( cgc_uint8_t typeID, cgc_uint16_t length, cgc_uint8_t *pData, cgc_CResponse *pResponse )
 {
 	if ( pResponse == NULL )
 		return;
@@ -159,41 +159,41 @@ void CECM::HandleTLVMessage( uint8_t typeID, uint16_t length, uint8_t *pData, CR
 	switch( typeID )
 	{
 	case READ_DATA_TYPE:
-		HandleReadDataMessage( pData, length, pResponse );
+		cgc_HandleReadDataMessage( pData, length, pResponse );
 		break;
 
 	case SET_DATA_TYPE:
-		HandleSetDataMessage( pData, length, pResponse );
+		cgc_HandleSetDataMessage( pData, length, pResponse );
 		break;
 
 	case ACTION_DATA_TYPE:
-		HandleActionMessage( pData, length, pResponse );
+		cgc_HandleActionMessage( pData, length, pResponse );
 		break;
 
 	case CHECK_EQUIPMENT_TYPE:
 		if ( length < 8 )
 		{
 			// Fail
-			uint8_t setResponse[4];
+			cgc_uint8_t setResponse[4];
 			setResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 1;	
+			*((cgc_uint16_t*)(setResponse+1)) = 1;	
 			setResponse[3] = CHECK_RESPONSE_INVALID_LENGTH;
 
-			pResponse->AddResponse( setResponse, 4 );
+			pResponse->cgc_AddResponse( setResponse, 4 );
 		}
 		else
 		{
-			uint64_t checkID = *((uint64_t*)(pData));
+			cgc_uint64_t checkID = *((cgc_uint64_t*)(pData));
 
-			uint8_t checkResponse[4];
+			cgc_uint8_t checkResponse[4];
 			checkResponse[0] = CHECK_RESPONSE_TYPE;
-			*((uint16_t*)(checkResponse+1)) = 1;	
+			*((cgc_uint16_t*)(checkResponse+1)) = 1;	
 			if ( checkID == m_equipmentID )
 				checkResponse[3] = 1;	
 			else
 				checkResponse[3] = 0;
 
-			pResponse->AddResponse( checkResponse, 4 );
+			pResponse->cgc_AddResponse( checkResponse, 4 );
 		}
 		break;
 
@@ -203,50 +203,50 @@ void CECM::HandleTLVMessage( uint8_t typeID, uint16_t length, uint8_t *pData, CR
 	}
 }
 
-void CECM::HandleReadDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
+void cgc_CECM::cgc_HandleReadDataMessage( cgc_uint8_t *pData, cgc_uint16_t length, cgc_CResponse *pResponse )
 {
 	if ( length < 1 )
 		return;
 
-	uint8_t fieldID = pData[0];
+	cgc_uint8_t fieldID = pData[0];
 
 	switch( fieldID )
 	{
 	case READ_EGT_COMMAND:
 		{
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_EGT;
-			*((uint16_t*)(readResponse+4)) = m_engineEGT;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineEGT;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 
 	case READ_RPM_COMMAND:
 		{
 
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_RPM;
-			*((uint16_t*)(readResponse+4)) = m_engineRPM;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineRPM;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 	
 	case READ_IAT_COMMAND:
 		{
 
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_IAT;
-			*((uint16_t*)(readResponse+4)) = m_engineIAT;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineIAT;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 
@@ -255,97 +255,97 @@ void CECM::HandleReadDataMessage( uint8_t *pData, uint16_t length, CResponse *pR
 			if ( length < 2 )
 			{
 				// Send failure response
-				uint8_t failureResponse[4];
+				cgc_uint8_t failureResponse[4];
 				failureResponse[0] = FAILURE_RESPONSE_TYPE;
-				*((uint16_t*)(failureResponse+1)) = 1;	
+				*((cgc_uint16_t*)(failureResponse+1)) = 1;	
 				failureResponse[3] = FAILURE_INVALID_DATA;
 
-				pResponse->AddResponse( failureResponse, 4 );
+				pResponse->cgc_AddResponse( failureResponse, 4 );
 			}
 			else
 			{
-				uint8_t readResponse[7];
+				cgc_uint8_t readResponse[7];
 				readResponse[0] = READ_RESPONSE_TYPE;
-				*((uint16_t*)(readResponse+1)) = 4;	
+				*((cgc_uint16_t*)(readResponse+1)) = 4;	
 				readResponse[3] = READ_RESPONSE_O2;
 				readResponse[4] = pData[1];
 
 				if ( pData[1] == 0 )
-					*((uint16_t*)(readResponse+5)) = m_engineO2_1;
+					*((cgc_uint16_t*)(readResponse+5)) = m_engineO2_1;
 				else
-					*((uint16_t*)(readResponse+5)) = m_engineO2_2;
+					*((cgc_uint16_t*)(readResponse+5)) = m_engineO2_2;
 
-				pResponse->AddResponse( readResponse, 7 );
+				pResponse->cgc_AddResponse( readResponse, 7 );
 			}
 		}
 		break;
 
 	case READ_TEMP_COMMAND:
 		{
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_TEMP;
-			*((uint16_t*)(readResponse+4)) = m_engineTemp;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineTemp;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 
 	case READ_TORQUE_COMMAND:
 		{
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_TORQUE;
-			*((uint16_t*)(readResponse+4)) = m_engineTorque;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineTorque;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 
 	case READ_THROTTLEPOS_COMMAND:
 		{
-			uint8_t readResponse[6];
+			cgc_uint8_t readResponse[6];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 3;	
+			*((cgc_uint16_t*)(readResponse+1)) = 3;	
 			readResponse[3] = READ_RESPONSE_THROTTLEPOS;
-			*((uint16_t*)(readResponse+4)) = m_engineThrottlePos;
+			*((cgc_uint16_t*)(readResponse+4)) = m_engineThrottlePos;
 
-			pResponse->AddResponse( readResponse, 6 );
+			pResponse->cgc_AddResponse( readResponse, 6 );
 		}
 		break;
 
 	default:
 		{
-			uint8_t readResponse[5];
+			cgc_uint8_t readResponse[5];
 			readResponse[0] = READ_RESPONSE_TYPE;
-			*((uint16_t*)(readResponse+1)) = 2;	
+			*((cgc_uint16_t*)(readResponse+1)) = 2;	
 			readResponse[3] = READ_RESPONSE_INVALID_FIELD;
 			readResponse[4] = fieldID;
 
-			pResponse->AddResponse( readResponse, 5 );
+			pResponse->cgc_AddResponse( readResponse, 5 );
 		}
 		break;
 
 	}
 }
 
-void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
+void cgc_CECM::cgc_HandleSetDataMessage( cgc_uint8_t *pData, cgc_uint16_t length, cgc_CResponse *pResponse )
 {
 	if ( length < 3 )
 	{
-		uint8_t setResponse[4];
+		cgc_uint8_t setResponse[4];
 		setResponse[0] = SET_RESPONSE_TYPE;
-		*((uint16_t*)(setResponse+1)) = 1;	
+		*((cgc_uint16_t*)(setResponse+1)) = 1;	
 		setResponse[3] = SET_RESPONSE_INVALID_LENGTH;
 
-		pResponse->AddResponse( setResponse, 4 );
+		pResponse->cgc_AddResponse( setResponse, 4 );
 		return;
 	}
 
-	uint8_t fieldID = pData[0];
-	uint16_t setValue = *((uint16_t*)(pData+1));
+	cgc_uint8_t fieldID = pData[0];
+	cgc_uint16_t setValue = *((cgc_uint16_t*)(pData+1));
 
 	switch( fieldID )
 	{
@@ -353,12 +353,12 @@ void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pRe
 		{
 			if ( !m_bRunning )
 			{
-				uint8_t setResponse[4];
+				cgc_uint8_t setResponse[4];
 				setResponse[0] = SET_RESPONSE_TYPE;
-				*((uint16_t*)(setResponse+1)) = 1;	
+				*((cgc_uint16_t*)(setResponse+1)) = 1;	
 				setResponse[3] = SET_RESPONSE_ENGINE_OFF;
 
-				pResponse->AddResponse( setResponse, 4 );
+				pResponse->cgc_AddResponse( setResponse, 4 );
 
 				break;
 			}
@@ -372,13 +372,13 @@ void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pRe
 			// Set throttle position
 			m_engineThrottlePos = setValue;
 
-			uint8_t setResponse[6];
+			cgc_uint8_t setResponse[6];
 			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 3;	
+			*((cgc_uint16_t*)(setResponse+1)) = 3;	
 			setResponse[3] = SET_THROTTLEPOS_COMMAND;
-			*((uint16_t*)(setResponse+4)) = setValue;
+			*((cgc_uint16_t*)(setResponse+4)) = setValue;
 
-			pResponse->AddResponse( setResponse, 6 );
+			pResponse->cgc_AddResponse( setResponse, 6 );
 		}
 		break;
 	
@@ -386,12 +386,12 @@ void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pRe
 		{
 			if ( !m_bRunning )
 			{
-				uint8_t setResponse[4];
+				cgc_uint8_t setResponse[4];
 				setResponse[0] = SET_RESPONSE_TYPE;
-				*((uint16_t*)(setResponse+1)) = 1;	
+				*((cgc_uint16_t*)(setResponse+1)) = 1;	
 				setResponse[3] = SET_RESPONSE_ENGINE_OFF;
 
-				pResponse->AddResponse( setResponse, 4 );
+				pResponse->cgc_AddResponse( setResponse, 4 );
 
 				break;
 			}
@@ -400,53 +400,53 @@ void CECM::HandleSetDataMessage( uint8_t *pData, uint16_t length, CResponse *pRe
 				setValue = ENGINE_MAX_TORQUE;
 
 			// Ask engine for this much torque
-			CommandTorque( setValue );
+			cgc_CommandTorque( setValue );
 
 			// Response with the current torque value of the engine!
-			uint8_t setResponse[6];
+			cgc_uint8_t setResponse[6];
 			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 3;	
+			*((cgc_uint16_t*)(setResponse+1)) = 3;	
 			setResponse[3] = SET_TORQUE_COMMAND;
-			*((uint16_t*)(setResponse+4)) = m_engineTorque;
+			*((cgc_uint16_t*)(setResponse+4)) = m_engineTorque;
 
-			pResponse->AddResponse( setResponse, 6 );
+			pResponse->cgc_AddResponse( setResponse, 6 );
 		}
 		break;
 
 	default:
 		{
-			uint8_t setResponse[5];
+			cgc_uint8_t setResponse[5];
 			setResponse[0] = SET_RESPONSE_TYPE;
-			*((uint16_t*)(setResponse+1)) = 2;	
+			*((cgc_uint16_t*)(setResponse+1)) = 2;	
 			setResponse[3] = SET_RESPONSE_INVALID_FIELD;
 			setResponse[4] = fieldID;
 
-			pResponse->AddResponse( setResponse, 5 );
+			pResponse->cgc_AddResponse( setResponse, 5 );
 		}
 		break;
 	}
 }
 
-void CECM::HandleActionMessage( uint8_t *pData, uint16_t length, CResponse *pResponse )
+void cgc_CECM::cgc_HandleActionMessage( cgc_uint8_t *pData, cgc_uint16_t length, cgc_CResponse *pResponse )
 {
 	if ( length < 1 )
 		return;
 
-	uint8_t fieldID = pData[0];
+	cgc_uint8_t fieldID = pData[0];
 
 	switch( fieldID )
 	{
 	case START_ENGINE_COMMAND:
 		{	
 			if ( !m_bRunning )
-				StartEngine( pResponse );
+				cgc_StartEngine( pResponse );
 		
-			uint8_t actionResponse[4];
+			cgc_uint8_t actionResponse[4];
 			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 1;	
+			*((cgc_uint16_t*)(actionResponse+1)) = 1;	
 			actionResponse[3] = ACTION_ENGINE_ON;
 
-			pResponse->AddResponse( actionResponse, 4 );
+			pResponse->cgc_AddResponse( actionResponse, 4 );
 		}
 
 		break;
@@ -454,20 +454,20 @@ void CECM::HandleActionMessage( uint8_t *pData, uint16_t length, CResponse *pRes
 	case STOP_ENGINE_COMMAND:
 		{
 			if ( m_bRunning )
-				StopEngine( pResponse );
+				cgc_StopEngine( pResponse );
 
-			uint8_t actionResponse[4];
+			cgc_uint8_t actionResponse[4];
 			actionResponse[0] = ACTION_RESPONSE_TYPE;
-			*((uint16_t*)(actionResponse+1)) = 1;	
+			*((cgc_uint16_t*)(actionResponse+1)) = 1;	
 			actionResponse[3] = ACTION_ENGINE_OFF;
 
-			pResponse->AddResponse( actionResponse, 4 );
+			pResponse->cgc_AddResponse( actionResponse, 4 );
 		}
 		break;
 	}
 }
 
-void CECM::StartEngine( CResponse *pResponse )
+void cgc_CECM::cgc_StartEngine( cgc_CResponse *pResponse )
 {
 	if ( m_bRunning )
 		return;
@@ -484,7 +484,7 @@ void CECM::StartEngine( CResponse *pResponse )
 	m_engineO2_2 = 17;	// 17%
 }
 
-void CECM::StopEngine( CResponse *pResponse )
+void cgc_CECM::cgc_StopEngine( cgc_CResponse *pResponse )
 {
 	if ( !m_bRunning )
 		return;
@@ -501,9 +501,9 @@ void CECM::StopEngine( CResponse *pResponse )
 	m_engineO2_2 = 0;	// 0%
 }
 
-void CECM::CommandTorque( uint16_t newTorque )
+void cgc_CECM::cgc_CommandTorque( cgc_uint16_t newTorque )
 {
-	uint16_t deltaTorque;
+	cgc_uint16_t deltaTorque;
 	bool bTorqueDecrease = false;
 
 	if ( newTorque < m_engineTorque )
@@ -524,15 +524,15 @@ void CECM::CommandTorque( uint16_t newTorque )
 	m_engineTorque = newTorque;
 }
 
-void CECM::EngineTick( void )
+void cgc_CECM::cgc_EngineTick( void )
 {
 	// Check engine state
 	if ( m_bLastRunningState != m_bRunning )
 	{	
-		uint8_t ecmBroadcastMessage[5];
+		cgc_uint8_t ecmBroadcastMessage[5];
 
 		ecmBroadcastMessage[0] = ENGINE_STATE_CHANGE;
-		*((uint16_t*)(ecmBroadcastMessage+1)) = 1;
+		*((cgc_uint16_t*)(ecmBroadcastMessage+1)) = 1;
 
 		if ( m_bRunning )
 			ecmBroadcastMessage[3] = 1;
@@ -540,7 +540,7 @@ void CECM::EngineTick( void )
 			ecmBroadcastMessage[3] = 0;
 
 		// Inform everyone the engine is on
-		m_pLANBus->SendMessage( ECM_LANBUS_ID, 0xFF, ecmBroadcastMessage, 4 );
+		m_pLANBus->cgc_SendMessage( ECM_LANBUS_ID, 0xFF, ecmBroadcastMessage, 4 );
 	}
 
 	// Record last state

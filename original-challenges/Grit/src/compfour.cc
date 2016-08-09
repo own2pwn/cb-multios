@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -39,20 +39,20 @@ const int step_table[90] = {
     15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767 
 };
 
-unsigned int CompressionFour::getId() const
+unsigned int cgc_CompressionFour::cgc_getId() const
 {
     return COMPRESSION_4;
 }
 
-unsigned int CompressionFour::getMaxBufferSize(const AudioTrack &track) const
+unsigned int cgc_CompressionFour::cgc_getMaxBufferSize(const cgc_AudioTrack &track) const
 {
-    if (track.getStereo())
-        return track.getLength() + 7 * ((track.getLength() + 504) / 505);
+    if (track.cgc_getStereo())
+        return track.cgc_getLength() + 7 * ((track.cgc_getLength() + 504) / 505);
     else
-        return track.getLength() / 2 + 3 * ((track.getLength() + 508) / 509);
+        return track.cgc_getLength() / 2 + 3 * ((track.cgc_getLength() + 508) / 509);
 }
 
-static void decode(int *pred, int *index, int nibble)
+static void cgc_decode(int *pred, int *index, int nibble)
 {
     int step;
     step = step_table[index[0]];
@@ -77,7 +77,7 @@ static void decode(int *pred, int *index, int nibble)
         pred[0] = INT16_MIN;
 }
 
-static int encode(int *pred, int *index, int16_t sample)
+static int cgc_encode(int *pred, int *index, cgc_int16_t sample)
 {
     int nibble = 0;
 
@@ -101,11 +101,11 @@ static int encode(int *pred, int *index, int16_t sample)
         nibble |= 8;
 
     // update state
-    decode(pred, index, nibble);
+    cgc_decode(pred, index, nibble);
     return nibble;
 }
 
-int bestIndex(int diff)
+int cgc_bestIndex(int diff)
 {
     if (diff < 0)
         diff = -diff;
@@ -125,91 +125,91 @@ int bestIndex(int diff)
     return best;
 }
 
-void CompressionFour::compress(const AudioTrack &track, uint8_t *dest) const
+void cgc_CompressionFour::cgc_compress(const cgc_AudioTrack &track, cgc_uint8_t *dest) const
 {
     unsigned int i, j;
     int index[2], pred[2];
-    for (i = 0, j = 0; i < track.getLength(); i++)
+    for (i = 0, j = 0; i < track.cgc_getLength(); i++)
     {
         if ((j % 512) == 0)
         {
-            pred[0] = track.getChannel(0)->getSample(i) >> 16;
-            index[0] = bestIndex((track.getChannel(0)->getSample(i+1) >> 16) - pred[0]);
-            *(int16_t *)(dest + j) = pred[0];
+            pred[0] = track.cgc_getChannel(0)->cgc_getSample(i) >> 16;
+            index[0] = cgc_bestIndex((track.cgc_getChannel(0)->cgc_getSample(i+1) >> 16) - pred[0]);
+            *(cgc_int16_t *)(dest + j) = pred[0];
             j += 2;
-            *(int16_t *)(dest + j) = index[0];
+            *(cgc_int16_t *)(dest + j) = index[0];
             j += 2;
-            if (track.getStereo())
+            if (track.cgc_getStereo())
             {
-                pred[1] = track.getChannel(1)->getSample(i) >> 16;
-                index[1] = bestIndex((track.getChannel(1)->getSample(i+1) >> 16) - pred[1]);
-                *(int16_t *)(dest + j) = pred[1];
+                pred[1] = track.cgc_getChannel(1)->cgc_getSample(i) >> 16;
+                index[1] = cgc_bestIndex((track.cgc_getChannel(1)->cgc_getSample(i+1) >> 16) - pred[1]);
+                *(cgc_int16_t *)(dest + j) = pred[1];
                 j += 2;
-                *(int16_t *)(dest + j) = index[1];
+                *(cgc_int16_t *)(dest + j) = index[1];
                 j += 2;
             }
         }
         else
         {
-            int16_t sample[2];
-            sample[0] = track.getChannel(0)->getSample(i) >> 16;
-            if (track.getStereo())
-                sample[1] = track.getChannel(1)->getSample(i) >> 16;
+            cgc_int16_t sample[2];
+            sample[0] = track.cgc_getChannel(0)->cgc_getSample(i) >> 16;
+            if (track.cgc_getStereo())
+                sample[1] = track.cgc_getChannel(1)->cgc_getSample(i) >> 16;
             else
-                sample[0] = track.getChannel(0)->getSample(++i) >> 16;
+                sample[0] = track.cgc_getChannel(0)->cgc_getSample(++i) >> 16;
 
-            uint8_t token = 0;
-            token |= encode(&pred[0], &index[0], sample[0]) << 4;
-            if (track.getStereo())
-                token |= encode(&pred[1], &index[1], sample[1]);
+            cgc_uint8_t token = 0;
+            token |= cgc_encode(&pred[0], &index[0], sample[0]) << 4;
+            if (track.cgc_getStereo())
+                token |= cgc_encode(&pred[1], &index[1], sample[1]);
             else
-                token |= encode(&pred[0], &index[0], sample[1]);
+                token |= cgc_encode(&pred[0], &index[0], sample[1]);
 
             dest[j++] = token;
         }
     }
 }
 
-void CompressionFour::decompress(AudioTrack &track, uint8_t *src) const
+void cgc_CompressionFour::cgc_decompress(cgc_AudioTrack &track, cgc_uint8_t *src) const
 {
     unsigned int i, j;
     int index[2], pred[2];
-    for (i = 0, j = 0; i < track.getLength(); i++)
+    for (i = 0, j = 0; i < track.cgc_getLength(); i++)
     {
         if ((j % 512) == 0)
         {
-            pred[0] = *(int16_t *)(&src[j]);
+            pred[0] = *(cgc_int16_t *)(&src[j]);
             j += 2;
             index[0] = src[j];
             j += 2;
-            track.getChannel(0)->setSample(i, pred[0] << 16);
-            if (track.getStereo())
+            track.cgc_getChannel(0)->cgc_setSample(i, pred[0] << 16);
+            if (track.cgc_getStereo())
             {
-                pred[1] = *(int16_t *)(&src[j]);
+                pred[1] = *(cgc_int16_t *)(&src[j]);
                 j += 2;
                 index[1] = src[j];
                 j += 2;
-                track.getChannel(1)->setSample(i, pred[1] << 16);
+                track.cgc_getChannel(1)->cgc_setSample(i, pred[1] << 16);
             }
         }
         else
         {
-            uint8_t token1 = src[j] >> 4, token2 = src[j] & 0xf;
+            cgc_uint8_t token1 = src[j] >> 4, token2 = src[j] & 0xf;
             j++;
 
-            decode(&pred[0], &index[0], token1);
-            track.getChannel(0)->setSample(i, pred[0] << 16);
+            cgc_decode(&pred[0], &index[0], token1);
+            track.cgc_getChannel(0)->cgc_setSample(i, pred[0] << 16);
 
-            if (track.getStereo())
+            if (track.cgc_getStereo())
             {
-                decode(&pred[1], &index[1], token2);
-                track.getChannel(1)->setSample(i, pred[1] << 16);
+                cgc_decode(&pred[1], &index[1], token2);
+                track.cgc_getChannel(1)->cgc_setSample(i, pred[1] << 16);
             }
             else
             {
-                decode(&pred[0], &index[0], token2);
+                cgc_decode(&pred[0], &index[0], token2);
                 i++;
-                track.getChannel(0)->setSample(i, pred[0] << 16);
+                track.cgc_getChannel(0)->cgc_setSample(i, pred[0] << 16);
             }
         }
     }

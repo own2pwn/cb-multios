@@ -21,9 +21,9 @@
 */
 #include "comms.h"
 
-static File std_input = { .fd = STDIN, .index = 0};
+static cgc_File std_input = { .fd = STDIN, .index = 0};
 
-int fill_buffer() {
+int cgc_fill_buffer() {
 	std_input.index = 0;
 	std_input.num = 0;
 
@@ -36,11 +36,11 @@ int fill_buffer() {
 	return 0;
 }
 
-int get_char(char *ch) {
+int cgc_get_char(char *ch) {
 	int result;
 
 	if (std_input.num == 0 || std_input.num <= std_input.index) {
-		if((result = fill_buffer()))
+		if((result = cgc_fill_buffer()))
 			return result;
 	}
 
@@ -51,9 +51,9 @@ int get_char(char *ch) {
 
 }
 
-int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t size, size_t* read) {
+int cgc_read_until_delim_or_n(unsigned int socket, char* buffer, char delim, cgc_size_t size, cgc_size_t* read) {
 
-	size_t tmp=0;
+	cgc_size_t tmp=0;
 	*read = 0;
 	char tmp_char;
 	int result=0;
@@ -65,7 +65,7 @@ int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t 
 		return SIZE_ERROR;
 
 	for (unsigned int i = 0; i < size; i++) {
-		if((result = get_char(&tmp_char)))
+		if((result = cgc_get_char(&tmp_char)))
 			return result;
 
 		if (delim != 0 && tmp_char == delim)
@@ -78,14 +78,14 @@ int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t 
 	return 0;
 }
 
-int read_n_bytes(unsigned int socket, char* buffer, size_t size, size_t* read) {
-	return read_until_delim_or_n(socket, buffer, 0, size, read);
+int cgc_read_n_bytes(unsigned int socket, char* buffer, cgc_size_t size, cgc_size_t* read) {
+	return cgc_read_until_delim_or_n(socket, buffer, 0, size, read);
 }
 
-int transmit_all(int fd, const void *buf, const size_t size) {
-	size_t bytes = 0;
+int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size) {
+	cgc_size_t bytes = 0;
 
-	for(size_t sent=0; sent < size; sent++) {
+	for(cgc_size_t sent=0; sent < size; sent++) {
 		if(transmit(fd, buf+sent, size - sent, &bytes))
 			return -1;
 		sent += bytes;

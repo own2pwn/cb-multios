@@ -22,20 +22,20 @@
  */
 #include "rng.h"
 
-Random::Random() : state(0xDEADBEEF12345678ULL)
+cgc_Random::cgc_Random() : state(0xDEADBEEF12345678ULL)
 {
 }
 
-void Random::addEntropy(const uint8_t *entropy, unsigned int length)
+void cgc_Random::cgc_addEntropy(const cgc_uint8_t *entropy, unsigned int length)
 {
-    uint8_t *tmp = new uint8_t[(length + 3) & (~3)];
+    cgc_uint8_t *tmp = new cgc_uint8_t[(length + 3) & (~3)];
     for (unsigned int i = 0; i < length; i++)
         tmp[i] = entropy[i] ^ 0x55;
     for (unsigned int i = 1; i < length; i++)
         tmp[i] ^= tmp[i - 1] >> 1;
     for (unsigned int i = 0; i < length; i += 4)
     {
-        uint32_t x = *(uint32_t *)&tmp[i];
+        cgc_uint32_t x = *(cgc_uint32_t *)&tmp[i];
         state ^= state >> 7;
         state ^= x & 0x77777777;
         state ^= state << 17;
@@ -43,9 +43,9 @@ void Random::addEntropy(const uint8_t *entropy, unsigned int length)
     delete tmp;
 }
 
-int32_t Random::randomInt32()
+cgc_int32_t cgc_Random::cgc_randomInt32()
 {
-    int32_t result = state >> 6;
+    cgc_int32_t result = state >> 6;
 
     state ^= state >> 7;
     state ^= state << 17;

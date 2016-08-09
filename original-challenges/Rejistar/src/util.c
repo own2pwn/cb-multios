@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -29,22 +29,22 @@
 #include "comms.h"
 #include <libcgc.h>
 
-Attribute* attributes;
+cgc_Attribute* attributes;
 
 /**
 * Zeroize and deallocate all memory used for attributes
 *
 * @return None
 */
-void clearAttributes() {
-	Attribute* attr_ptr;
+void cgc_clearAttributes() {
+	cgc_Attribute* attr_ptr;
 	void* next_attr;
 	for(attr_ptr=attributes; attr_ptr != NULL; attr_ptr = next_attr) {
 		next_attr = attr_ptr->next;
 		attr_ptr->value = 0;
 		attr_ptr->key = 0;
 		attr_ptr->next = 0;
-		free(attr_ptr);
+		cgc_free(attr_ptr);
 	}
 	attributes = NULL;
 }
@@ -57,32 +57,32 @@ void clearAttributes() {
 *
 * @return None
 */
-void initializeAttributes(char* body) {
+void cgc_initializeAttributes(char* body) {
 	char *key, *value;
-	Attribute *new_attr;
-	size_t size;
+	cgc_Attribute *new_attr;
+	cgc_size_t size;
 
-	clearAttributes();
+	cgc_clearAttributes();
 
-	key = strtok(body, "=");
+	key = cgc_strtok(body, "=");
 	do {
-		value = strtok(0, ";");
-		if(!(new_attr = malloc(sizeof(Attribute))))
+		value = cgc_strtok(0, ";");
+		if(!(new_attr = cgc_malloc(sizeof(cgc_Attribute))))
 			_terminate(1);
-		bzero((char *)new_attr, sizeof(Attribute));
-		size = strlen(key);
-		if(!(new_attr->key = malloc(size+1)))
+		cgc_bzero((char *)new_attr, sizeof(cgc_Attribute));
+		size = cgc_strlen(key);
+		if(!(new_attr->key = cgc_malloc(size+1)))
 			_terminate(1);
-		bzero(new_attr->key, size+1);
-		memcpy(new_attr->key, key, size);
-		size = strlen(value);
-		if(!(new_attr->value = malloc(size+1)))
+		cgc_bzero(new_attr->key, size+1);
+		cgc_memcpy(new_attr->key, key, size);
+		size = cgc_strlen(value);
+		if(!(new_attr->value = cgc_malloc(size+1)))
 			_terminate(1);
-		bzero(new_attr->value, size+1);
-		memcpy(new_attr->value, value, size);
+		cgc_bzero(new_attr->value, size+1);
+		cgc_memcpy(new_attr->value, value, size);
 		new_attr->next = attributes;
 		attributes = new_attr;
-	} while((key = strtok(0, "=")));
+	} while((key = cgc_strtok(0, "=")));
 }
 
 /**
@@ -92,20 +92,20 @@ void initializeAttributes(char* body) {
 *
 * @return None
 */
-void sendErrorResponse(const char* response) {
+void cgc_sendErrorResponse(const char* response) {
 	char* buffer;
-	size_t bytes;
+	cgc_size_t bytes;
 	int ret;
 
-	if(!(buffer = malloc(sizeof(RESPONSE_HDR)+strlen(response)+1)))
+	if(!(buffer = cgc_malloc(sizeof(RESPONSE_HDR)+cgc_strlen(response)+1)))
 		_terminate(1);
 
-	bzero(buffer, sizeof(RESPONSE_HDR)+strlen(response)+1);
-	sprintf(buffer, "!X=!X?", RESPONSE_HDR, response);
-	if((ret = transmit_all(STDOUT, buffer, strlen(buffer)))) 
+	cgc_bzero(buffer, sizeof(RESPONSE_HDR)+cgc_strlen(response)+1);
+	cgc_sprintf(buffer, "!X=!X?", RESPONSE_HDR, response);
+	if((ret = cgc_transmit_all(STDOUT, buffer, cgc_strlen(buffer)))) 
 		_terminate(1);
 
-	free(buffer);
+	cgc_free(buffer);
 }
 
 /**
@@ -116,15 +116,15 @@ void sendErrorResponse(const char* response) {
 *
 * @return None
 */
-void getStringAttribute(char** buffer_ptr, const char* name) {
-	Attribute* attr_ptr;
-	size_t size, size1, size2;
+void cgc_getStringAttribute(char** buffer_ptr, const char* name) {
+	cgc_Attribute* attr_ptr;
+	cgc_size_t size, size1, size2;
 
 	for(attr_ptr=attributes; attr_ptr != NULL; attr_ptr = attr_ptr->next) {
-		size1 = strlen(attr_ptr->key);
-		size2 = strlen(name);
+		size1 = cgc_strlen(attr_ptr->key);
+		size2 = cgc_strlen(name);
 		size = size1 > size2 ? size1 : size2;
-		if(!strncmp(attr_ptr->key, name, size)) {
+		if(!cgc_strncmp(attr_ptr->key, name, size)) {
 			*buffer_ptr = attr_ptr->value;
 			return;
 		}
@@ -141,12 +141,12 @@ void getStringAttribute(char** buffer_ptr, const char* name) {
 *
 * @return None
 */
-void getIntegerAttribute(unsigned int* int_ptr, const char* name) {
+void cgc_getIntegerAttribute(unsigned int* int_ptr, const char* name) {
 	char* buffer=NULL;
 
-	getStringAttribute((char **) &buffer, name);
+	cgc_getStringAttribute((char **) &buffer, name);
 	if(buffer)
-		*int_ptr = atoi(buffer);
+		*int_ptr = cgc_atoi(buffer);
 	else
 		*int_ptr = 0;
 

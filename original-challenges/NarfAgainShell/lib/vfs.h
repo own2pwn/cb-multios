@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -33,13 +33,13 @@
 
 #define MAX_FILE_NAME_LENGTH 16
 #define ROOT_UID 0
-#define INVALID_UID ((uid_t)-1)
+#define INVALID_UID ((cgc_uid_t)-1)
 
-typedef unsigned int uid_t;
+typedef unsigned int cgc_uid_t;
 
 struct directory {
     char name[MAX_FILE_NAME_LENGTH];
-    uid_t owner;
+    cgc_uid_t owner;
     struct directory *parent;
     struct list subdirectories;
     struct list files;
@@ -48,10 +48,10 @@ struct directory {
 
 struct file {
     char name[MAX_FILE_NAME_LENGTH];
-    uid_t owner;
+    cgc_uid_t owner;
     int is_symlink;
     struct directory *parent;
-    size_t size;
+    cgc_size_t size;
     unsigned char *contents;
     struct list_node list;
 };
@@ -66,14 +66,14 @@ struct vfs {
  * @param vfs The vfs to initialize
  * @return 0 on success, -1 on failure
  */
-int vfs_init(struct vfs *vfs);
+int cgc_vfs_init(struct vfs *vfs);
 
 /**
  * Destroy a virtual file system.
  *
  * @param vfs The vfs to destroy
  */
-void vfs_destroy(struct vfs *vfs);
+void cgc_vfs_destroy(struct vfs *vfs);
 
 /**
  * Lookup a directory in a virtual file system by path.
@@ -83,7 +83,7 @@ void vfs_destroy(struct vfs *vfs);
  * @param follow_links Whether or not to follow symbolic links
  * @return A pointer to the directory structure, or NULL if not found
  */
-struct directory *lookup_dir(const struct vfs *vfs, const char *path, int follow_links);
+struct directory *cgc_lookup_dir(const struct vfs *vfs, const char *path, int follow_links);
 
 /**
  * Lookup a file in a virtual file system by path.
@@ -93,7 +93,7 @@ struct directory *lookup_dir(const struct vfs *vfs, const char *path, int follow
  * @param follow_links Whether or not to follow symbolic links
  * @return A pointer to the file structure, or NULL if not found
  */
-struct file *lookup_file(const struct vfs *vfs, const char *path, int follow_links);
+struct file *cgc_lookup_file(const struct vfs *vfs, const char *path, int follow_links);
 
 /**
  * Get the path from the root of a directory structure.
@@ -102,7 +102,7 @@ struct file *lookup_file(const struct vfs *vfs, const char *path, int follow_lin
  * @param dir The directory structure
  * @return The path, or NULL if not found. Caller is responsible for freeing
  */
-char *get_path_from_dir(const struct vfs *vfs, const struct directory *dir);
+char *cgc_get_path_from_dir(const struct vfs *vfs, const struct directory *dir);
 
 /**
  * Get the path from the root of a file structure.
@@ -111,7 +111,7 @@ char *get_path_from_dir(const struct vfs *vfs, const struct directory *dir);
  * @param file The file structure
  * @return The path, or NULL if not found. Caller is responsible for freeing
  */
-char *get_path_from_file(const struct vfs *vfs, const struct file *file);
+char *cgc_get_path_from_file(const struct vfs *vfs, const struct file *file);
 
 /**
  * Get the owner of a file or directory.
@@ -120,7 +120,7 @@ char *get_path_from_file(const struct vfs *vfs, const struct file *file);
  * @param path The path to check
  * @return The uid of the owner of the path, or INVALID_UID on error
  */
-uid_t get_owner(const struct vfs *vfs, const char *path);
+cgc_uid_t cgc_get_owner(const struct vfs *vfs, const char *path);
 
 /**
  * Read the contents of a file, respecting permissions.
@@ -133,7 +133,7 @@ uid_t get_owner(const struct vfs *vfs, const char *path);
  * @param contents Set to the contents of the file on success
  * @return 0 on success, -1 on failure
  */
-int read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char **contents);
+int cgc_read_file(const struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char **contents);
 
 /**
  * Write the contents of a file, respecting permissions.
@@ -146,7 +146,7 @@ int read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char
  * @param size The new size of the file
  * @return 0 on success, -1 on failure
  */
-int write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *contents, size_t size);
+int cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, cgc_size_t size);
 
 /**
  * Create a new directory at the given path.
@@ -155,7 +155,7 @@ int write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *con
  * @param path The path to create a directory at
  * @return A pointer to the new directory structure, or NULL on failure
  */
-struct directory *create_dir(struct vfs *vfs, const char *path);
+struct directory *cgc_create_dir(struct vfs *vfs, const char *path);
 
 /**
  * Create a new directory under the given directory.
@@ -165,7 +165,7 @@ struct directory *create_dir(struct vfs *vfs, const char *path);
  * @param name The name of the new directory
  * @return A pointer to the new directory structure, or NULL on failure
  */
-struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
+struct directory *cgc_create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
 
 /**
  * Create a new file at the given path.
@@ -174,7 +174,7 @@ struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir, cons
  * @param path The path to create a file at
  * @return A pointer to the new file structure, or NULL on failure
  */
-struct file *create_file(struct vfs *vfs, const char *path);
+struct file *cgc_create_file(struct vfs *vfs, const char *path);
 
 /**
  * Create a new file under the given directory.
@@ -184,7 +184,7 @@ struct file *create_file(struct vfs *vfs, const char *path);
  * @param name The name of the new file
  * @return A pointer to the new file structure, or NULL on failure
  */
-struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
+struct file *cgc_create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name);
 
 /**
  * Create a new symbolic link, respecting permissions.
@@ -195,7 +195,7 @@ struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const ch
  * @param dst_path The path to point the link at
  * @return 0 on success, -1 on failure
  */
-int create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *dst_path);
+int cgc_create_symlink(struct vfs *vfs, cgc_uid_t user, const char *src_path, const char *dst_path);
 
 /**
  * Delete a file, respecting permissions.
@@ -205,7 +205,7 @@ int create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char
  * @param file The file to delete
  * @return 0 on success, -1 on failure
  */
-int delete_file(struct vfs *vfs, uid_t user, struct file *file);
+int cgc_delete_file(struct vfs *vfs, cgc_uid_t user, struct file *file);
 
 #ifdef DEBUG
 void dump_vfs(const struct vfs *vfs);

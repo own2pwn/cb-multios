@@ -1,0 +1,7 @@
+set( POLLS_TESTING_COUNT "0" )
+set( CXXFLAGS "-fno-exceptions -fno-rtti" )
+set( POLLS_RELEASE_SEED "0" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O0 -g -Wall -fno-exceptions -fno-rtti" )
+set( SERVICE_ID "00002" )
+set( AUTHOR_ID "TNETS" )
+buildCB(${CFLAGS})

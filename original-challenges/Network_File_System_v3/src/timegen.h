@@ -30,25 +30,25 @@ THE SOFTWARE.
 #define GENERATOR_ROUNDS	(20)
 
 // Unix Timestamp generator, utilizes magic page data
-class CTimeGen
+class cgc_CTimeGen
 {
 public:
-	CTimeGen( uint32_t *pGeneratorSource, uint32_t generatorSize );
-	~CTimeGen( );
+	cgc_CTimeGen( cgc_uint32_t *pGeneratorSource, cgc_uint32_t generatorSize );
+	~cgc_CTimeGen( );
 
-	uint32_t GetUnixTimestamp( void );
-
-private:
-	uint32_t GetGeneratorMix( void );
+	cgc_uint32_t cgc_GetUnixTimestamp( void );
 
 private:
-	uint32_t *m_pGeneratorSource;
-	uint32_t m_generatorSize;
+	cgc_uint32_t cgc_GetGeneratorMix( void );
 
-	uint32_t m_lastPos;
+private:
+	cgc_uint32_t *m_pGeneratorSource;
+	cgc_uint32_t m_generatorSize;
 
-	uint32_t m_lastTimestamp;
-	uint32_t m_lastMix;
+	cgc_uint32_t m_lastPos;
+
+	cgc_uint32_t m_lastTimestamp;
+	cgc_uint32_t m_lastMix;
 };
 
 #endif // __TIME_GEN_H__

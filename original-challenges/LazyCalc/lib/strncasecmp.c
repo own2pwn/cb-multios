@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,10 +22,10 @@
  */
 #include "ctype.h"
 #include "string.h"
-int strncasecmp(const char *s1, const char *s2, size_t n)
+int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n)
 {
   const char *end = s1 + n;
-  while (*s1 && *s2 && tolower(*s1) == tolower(*s2) && s1 < end)
+  while (*s1 && *s2 && cgc_tolower(*s1) == cgc_tolower(*s2) && s1 < end)
     s1++, s2++;
   if (s1 == end)
       return 0;

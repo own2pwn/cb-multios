@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -24,12 +24,12 @@
 //simple xorshift PRNG
 
 static int initialized;
-static uint32_t x, y, z, w;
+static cgc_uint32_t x, y, z, w;
 
-void srand(uint32_t *seed) {
+void cgc_srand(cgc_uint32_t *seed) {
     //SHOW ME WHAT YOU GOT
     if (!seed) {
-        seed = (uint32_t*)FLAG_PAGE;
+        seed = (cgc_uint32_t*)FLAG_PAGE;
     }
 
     //I LIKE WHAT YOU GOT
@@ -40,11 +40,11 @@ void srand(uint32_t *seed) {
     initialized = 1;
 }
 
-unsigned int getshifty() {
-    uint32_t tmp;
+unsigned int cgc_getshifty() {
+    cgc_uint32_t tmp;
 
     if (!initialized) {
-        srand(NULL);
+        cgc_srand(NULL);
     }
 
     tmp = x ^ (x << 12);

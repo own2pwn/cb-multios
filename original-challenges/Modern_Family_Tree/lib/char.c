@@ -22,40 +22,40 @@
 #include <stdint.h>
 #include "char.h"
 
-unsigned int is_non_printable(unsigned char ch) {
-	return (FALSE == is_printable(ch));
+unsigned int cgc_is_non_printable(unsigned char ch) {
+	return (FALSE == cgc_is_printable(ch));
 }
 
-unsigned int is_printable(unsigned char ch) {
-	return (is_digit(ch)  ||
-			is_letter(ch) ||
-			is_symbol(ch) ||
-			is_white_space(ch));
+unsigned int cgc_is_printable(unsigned char ch) {
+	return (cgc_is_digit(ch)  ||
+			cgc_is_letter(ch) ||
+			cgc_is_symbol(ch) ||
+			cgc_is_white_space(ch));
 }
 
-unsigned int is_letter(unsigned char ch) {
-	return (is_upper(ch) || is_lower(ch));
+unsigned int cgc_is_letter(unsigned char ch) {
+	return (cgc_is_upper(ch) || cgc_is_lower(ch));
 }
 
-unsigned int is_digit(unsigned char ch) {
+unsigned int cgc_is_digit(unsigned char ch) {
 	return (('0' <= ch) && (ch <= '9'));
 }
 
-unsigned int is_symbol(unsigned char ch) {
+unsigned int cgc_is_symbol(unsigned char ch) {
 	return ((('!' <= ch) && (ch <='@'))  ||
 			(('[' <= ch) && (ch <= '`')) ||
 			(('{' <= ch) && (ch <= '~')));
 }
 
-unsigned int is_upper(unsigned char ch) {
+unsigned int cgc_is_upper(unsigned char ch) {
 	return (('A' <= ch) && (ch <= 'Z'));
 }
 
-unsigned int is_lower(unsigned char ch) {
+unsigned int cgc_is_lower(unsigned char ch) {
 	return (('a' <= ch) && (ch <= 'z'));
 }
 
-unsigned int is_white_space(unsigned char ch) {
+unsigned int cgc_is_white_space(unsigned char ch) {
 	return ((' ' == ch)  || 
 			('\n' == ch) || 
 			('\t' == ch) || 

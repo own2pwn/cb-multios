@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "printf.h"
 
 
-airportInfoType *airports;
+cgc_airportInfoType *airports;
 
 int main(void) {
 
@@ -41,74 +41,74 @@ unsigned int databaseCheck;
 
 
 	// compare the consistency of the database (magic page)
-	databaseCheck = check_db();
+	databaseCheck = cgc_check_db();
 
-	printf("Database checksum: @d\n", databaseCheck);
+	cgc_printf("Database checksum: @d\n", databaseCheck);
 
 	// load data from the magic page
-	if (loadDB(&airports) == -1)
+	if (cgc_loadDB(&airports) == -1)
 		_terminate(-1);
 
 
 	while(1) {
 
-		getline(command, sizeof(command));
+		cgc_getline(command, sizeof(command));
 
-		retval = execute_cmd(&airports, command);
+		retval = cgc_execute_cmd(&airports, command);
 
 
 		switch (retval) {
 
 			case COMMAND_OK:
 
-				printf("OK\n");
+				cgc_printf("OK\n");
 				break;
 
 			case BAD_COMMAND:
 
-				printf("BAD COMMAND FORMAT\n");
+				cgc_printf("BAD COMMAND FORMAT\n");
 				break;
 
 			case DUPLICATE_CODE:
 
-				printf("AIRPORT CODE EXISTS\n");
+				cgc_printf("AIRPORT CODE EXISTS\n");
 				break;
 
 			case UNKN_CODE:
 
-				printf("UNKNOWN AIRPORT\n");
+				cgc_printf("UNKNOWN AIRPORT\n");
 				break;
 
 			case DATABASE_EMPTY:
 
-				printf("EMPTY DB\n");
+				cgc_printf("EMPTY DB\n");
 				break;
 
 			case COMMAND_TERMINATED:
 
-				printf("COMMAND TERMINATED\n");
+				cgc_printf("COMMAND TERMINATED\n");
 				break;
 
 			case NO_RESULTS:
 
-				printf("NO RESULTS\n");
+				cgc_printf("NO RESULTS\n");
 				break;
 
 			case UNRECOVERABLE_ERROR:
 
-				printf("TERMINATING\n");
+				cgc_printf("TERMINATING\n");
 				_terminate(-1);
 				break;
 
 				// quit command
 			case -99:
 
-				printf("OK\n");
+				cgc_printf("OK\n");
 				break;
 
 			default:
 
-				printf("UNSPECIFIED ERROR\n");
+				cgc_printf("UNSPECIFIED ERROR\n");
 
 
 		} // switch

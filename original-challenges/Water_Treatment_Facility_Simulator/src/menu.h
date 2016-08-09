@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef MENU_H
 #define MENU_H
 
-uint8_t PrintMenu(void);
-void PrintSystemBanner(void);
+cgc_uint8_t cgc_PrintMenu(void);
+void cgc_PrintSystemBanner(void);
 
 #endif

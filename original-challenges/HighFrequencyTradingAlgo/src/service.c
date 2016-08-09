@@ -23,11 +23,11 @@
 #include "libc.h"
 #include "service.h"
 
-int nextRecord(Record* record) {
+int cgc_nextRecord(cgc_Record* record) {
 	int bytesRead = 0;
 	int ret;
 
-	bytesRead = recv(STDIN, (char *)record, sizeof(Record));
+	bytesRead = cgc_recv(STDIN, (char *)record, sizeof(cgc_Record));
 	if(bytesRead < 0)
 		_terminate(RECEIVE_ERROR);
 
@@ -41,7 +41,7 @@ int nextRecord(Record* record) {
 
 }
 
-float squareRoot(float value) {
+float cgc_squareRoot(float value) {
 	float low, high, mid, oldmid, midsqr;
 
 	low = 0;
@@ -64,7 +64,7 @@ float squareRoot(float value) {
 	return mid;
 }
 
-void addRecordToDataset(Dataset* dataset, Record record) {
+void cgc_addRecordToDataset(cgc_Dataset* dataset, cgc_Record record) {
 
 	float priceRelative, oldMean;
 
@@ -77,17 +77,17 @@ void addRecordToDataset(Dataset* dataset, Record record) {
 	dataset->Q = dataset->Q + (priceRelative - oldMean) * (priceRelative - dataset->mean);
 	dataset->variance = dataset->Q / dataset->sampleSize;
 
-	dataset->stdDev = squareRoot(dataset->variance);
+	dataset->stdDev = cgc_squareRoot(dataset->variance);
 	
 
 }
 
-Stock* getNextFreeEntry(Portfolio* portfolio) {
+cgc_Stock* cgc_getNextFreeEntry(cgc_Portfolio* portfolio) {
 
 	int entry;
 	for(entry=0; entry<portfolio->numEntries; entry++) {
 
-		Stock* stock; 
+		cgc_Stock* stock; 
 		stock = &portfolio->stocks[entry];
 		if(stock->symbol == 0) {
 			return stock;
@@ -95,7 +95,7 @@ Stock* getNextFreeEntry(Portfolio* portfolio) {
 	}
 
 	int ret, oldNumEntries;
-	Stock* oldStocks;
+	cgc_Stock* oldStocks;
 	oldStocks = portfolio->stocks;
 	oldNumEntries = portfolio->numEntries;
 #ifdef PATCHED
@@ -105,7 +105,7 @@ Stock* getNextFreeEntry(Portfolio* portfolio) {
 	// Causes numEntries to be set to 65, which will cause a Segmentation Fault when entry = 66 on the for loop.
 	portfolio->numEntries = oldNumEntries*64 + 1;
 #endif
-	ret = allocate(sizeof(Stock)*portfolio->numEntries, 0, (void **) &portfolio->stocks);
+	ret = allocate(sizeof(cgc_Stock)*portfolio->numEntries, 0, (void **) &portfolio->stocks);
 	if(ret != 0)
 		_terminate(ALLOCATE_ERROR);
 
@@ -116,47 +116,47 @@ Stock* getNextFreeEntry(Portfolio* portfolio) {
 
 	}
 
-	ret = deallocate(oldStocks, sizeof(Stock)*oldNumEntries);
+	ret = deallocate(oldStocks, sizeof(cgc_Stock)*oldNumEntries);
 	if(ret !=0)
 		_terminate(DEALLOCATE_ERROR);
 
 	return &portfolio->stocks[oldNumEntries];
 }
 
-void addStockToPortfolio(Stock stock, Portfolio* portfolio)
+void cgc_addStockToPortfolio(cgc_Stock stock, cgc_Portfolio* portfolio)
 {
 
-	Stock* newStock;
-	newStock = getNextFreeEntry(portfolio);
+	cgc_Stock* newStock;
+	newStock = cgc_getNextFreeEntry(portfolio);
 	newStock->symbol = stock.symbol;
 	newStock->purchasedPrice = stock.purchasedPrice;
 	newStock->currentPrice = stock.currentPrice;
 }
 
-void buyStock(const char symbol, unsigned int price, Portfolio* portfolio)
+void cgc_buyStock(const char symbol, unsigned int price, cgc_Portfolio* portfolio)
 {
 	if(portfolio->cashBalance >= price) {
 
-		Stock stock;
+		cgc_Stock stock;
 		stock.symbol = symbol;
 		stock.purchasedPrice = price;
 		stock.currentPrice = price;
 
-		addStockToPortfolio(stock, portfolio);
+		cgc_addStockToPortfolio(stock, portfolio);
 		portfolio->cashBalance -= price;
 
 	}
 
 }
 
-Stock* findMostExpensiveStock(char symbol, Portfolio* portfolio) {
+cgc_Stock* cgc_findMostExpensiveStock(char symbol, cgc_Portfolio* portfolio) {
 
-	Stock* mostExpensiveStock=NULL;
+	cgc_Stock* mostExpensiveStock=NULL;
 	int entry;
 	int price=0;
 	// Checks to make sure portfolio has been initiated.
 	for(entry = 0; portfolio->numEntries > 0 && portfolio->stocks[entry].purchasedPrice != 0 && entry<portfolio->numEntries; entry++) {				
-		Stock* stock;
+		cgc_Stock* stock;
 		stock = &portfolio->stocks[entry];
 		if(stock->symbol == symbol) {
 			if(stock->purchasedPrice > price) {
@@ -170,13 +170,13 @@ Stock* findMostExpensiveStock(char symbol, Portfolio* portfolio) {
 }
 
 
-void sellStock(char symbol, unsigned int price, Portfolio* portfolio)
+void cgc_sellStock(char symbol, unsigned int price, cgc_Portfolio* portfolio)
 {
 	
 	if(portfolio->numEntries > 0) {
-		Stock *stock;
+		cgc_Stock *stock;
 
-		stock = findMostExpensiveStock(symbol, portfolio);
+		stock = cgc_findMostExpensiveStock(symbol, portfolio);
 
 		if(stock != NULL) {
 			portfolio->cashBalance += price;
@@ -190,37 +190,37 @@ void sellStock(char symbol, unsigned int price, Portfolio* portfolio)
 
 }
 
-void tradeStocks(Record record, Dataset dataset, Portfolio* portfolio)
+void cgc_tradeStocks(cgc_Record record, cgc_Dataset dataset, cgc_Portfolio* portfolio)
 {
 	float priceRelative;
 
 	priceRelative = (float)record.x / record.y;
 
 	if(priceRelative > dataset.mean + dataset.stdDev) {
-		sellStock(X_STR, record.x, portfolio);
-		buyStock(Y_STR, record.y, portfolio);
+		cgc_sellStock(X_STR, record.x, portfolio);
+		cgc_buyStock(Y_STR, record.y, portfolio);
 	}
 
 	if(priceRelative < dataset.mean - dataset.stdDev) {
-		sellStock(Y_STR, record.y, portfolio);
-		buyStock(X_STR, record.x, portfolio);
+		cgc_sellStock(Y_STR, record.y, portfolio);
+		cgc_buyStock(X_STR, record.x, portfolio);
 	}
 
 
 
 }
 
-void sendGoalNotification() {
+void cgc_sendGoalNotification() {
 
 	int ret;
 
-	ret = transmit_all(STDOUT, GOAL_STR, strlen(GOAL_STR));
+	ret = cgc_transmit_all(STDOUT, GOAL_STR, cgc_strlen(GOAL_STR));
 	if(ret != 0)
 		_terminate(TRANSMIT_ERROR);
 
 }
 
-void sellAllStock(Record record, Portfolio* portfolio) {
+void cgc_sellAllStock(cgc_Record record, cgc_Portfolio* portfolio) {
 
 	int entry;
 #ifdef PATCHED
@@ -230,11 +230,11 @@ void sellAllStock(Record record, Portfolio* portfolio) {
 	// If a Balance record has not been set, then portfolio isn't initailized and the for loop condition will cause a Segementation fault.
 	for(entry = 0; portfolio->stocks[entry].purchasedPrice != 0; entry++) {
 #endif			
-		sellStock(portfolio->stocks[entry].symbol, portfolio->stocks[entry].currentPrice, portfolio);
+		cgc_sellStock(portfolio->stocks[entry].symbol, portfolio->stocks[entry].currentPrice, portfolio);
 	}
 }
 
-void updateStockValues(Record record, Portfolio* portfolio) {
+void cgc_updateStockValues(cgc_Record record, cgc_Portfolio* portfolio) {
 	
 	int entry;
 #ifdef PATCHED
@@ -244,7 +244,7 @@ void updateStockValues(Record record, Portfolio* portfolio) {
 	// If a Balance record has not been set, then portfolio isn't initailized and the for loop condition will cause a Segementation fault.
 	for(entry = 0; portfolio->stocks[entry].purchasedPrice != 0; entry++) {
 #endif		
-		Stock* stock;
+		cgc_Stock* stock;
 		stock = &portfolio->stocks[entry];
 
 		portfolio->assetBalance -= stock->currentPrice;
@@ -260,7 +260,7 @@ void updateStockValues(Record record, Portfolio* portfolio) {
 	}
 }
 
-void initPortfolio(Portfolio* portfolio, unsigned int startingBalance)
+void cgc_initPortfolio(cgc_Portfolio* portfolio, unsigned int startingBalance)
 {
 	int ret;
 
@@ -268,35 +268,35 @@ void initPortfolio(Portfolio* portfolio, unsigned int startingBalance)
 	portfolio->assetBalance = portfolio->cashBalance;
 	portfolio->goal = portfolio->assetBalance*2;
 	portfolio->numEntries = INIT_ENTRY_LIST;
-	ret = allocate(sizeof(Stock)*portfolio->numEntries, 0, (void **) &portfolio->stocks);
+	ret = allocate(sizeof(cgc_Stock)*portfolio->numEntries, 0, (void **) &portfolio->stocks);
 	if(ret != 0)
 		_terminate(ALLOCATE_ERROR);
 
 }
 
 int main(void) {
-	Dataset dataset;
-	Portfolio portfolio;
-	Record record;
+	cgc_Dataset dataset;
+	cgc_Portfolio portfolio;
+	cgc_Record record;
 	int recordType;
 
 	dataset.sampleSize = 0;
 
-	while((recordType = nextRecord(&record)) != NO_MORE_RECORDS) {
+	while((recordType = cgc_nextRecord(&record)) != NO_MORE_RECORDS) {
 
 		if(recordType == BALANCE_RECORD) {
-			initPortfolio(&portfolio, record.y);
+			cgc_initPortfolio(&portfolio, record.y);
 			continue;
 		}
 
 		if(dataset.sampleSize > LEARNING_MODE_SIZE) {
 
-			updateStockValues(record, &portfolio);
+			cgc_updateStockValues(record, &portfolio);
 			
 			if(portfolio.assetBalance >= portfolio.goal) {
 
-				sellAllStock(record, &portfolio);
-				sendGoalNotification();
+				cgc_sellAllStock(record, &portfolio);
+				cgc_sendGoalNotification();
 			}
 
 			// check to see if out of cash
@@ -307,15 +307,15 @@ int main(void) {
 					break;
 
 				// sell all stock to raise cash
-				sellAllStock(record, &portfolio);
+				cgc_sellAllStock(record, &portfolio);
 			}
 
 
-			tradeStocks(record, dataset, &portfolio);
+			cgc_tradeStocks(record, dataset, &portfolio);
 
 		}
 
-		addRecordToDataset(&dataset, record);
+		cgc_addRecordToDataset(&dataset, record);
 
 
 

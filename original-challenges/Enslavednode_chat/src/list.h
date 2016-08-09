@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,20 +25,20 @@
 #define __LIST__H
 #include "common.h"
 
-// Linked list w/ void * data
-typedef struct list list;
-struct list {
-  list *n;
-  list *p;
+// Linked cgc_list w/ void * data
+typedef struct cgc_list cgc_list;
+struct cgc_list {
+  cgc_list *n;
+  cgc_list *p;
   const DATA d;
 };
 
-list *init_list(const DATA d);
-void append_list(list **l, const DATA d, int dups);
-size_t len_list(const list *l);
-list *copy_list(const list *l, size_t start, size_t stop);
-const DATA lindex(const list *l, ssize_t i);
-const void *random_element(list *l);
-void free_list(const list *l, int ld);
-void free_list_of_lists(const list *l, int ld);
+cgc_list *cgc_init_list(const DATA d);
+void cgc_append_list(cgc_list **l, const DATA d, int dups);
+cgc_size_t cgc_len_list(const cgc_list *l);
+cgc_list *cgc_copy_list(const cgc_list *l, cgc_size_t start, cgc_size_t stop);
+const DATA cgc_lindex(const cgc_list *l, cgc_ssize_t i);
+const void *cgc_random_element(cgc_list *l);
+void cgc_free_list(const cgc_list *l, int ld);
+void cgc_free_list_of_lists(const cgc_list *l, int ld);
 #endif /* __LIST__H */

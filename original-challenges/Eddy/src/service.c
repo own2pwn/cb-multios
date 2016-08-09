@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@
 #define COMMAND_SIZE (sizeof(struct command) + MAX_COMMAND_SIZE + 1)
 
 static unsigned int
-generate_csum(char *buf, size_t size)
+cgc_generate_csum(char *buf, cgc_size_t size)
 {
     int i;
     unsigned char *flag_page = (void *)0x4347c000;
@@ -49,23 +49,23 @@ main(void)
     struct command *command;
     struct result *result;
 
-    if ((command = calloc(COMMAND_SIZE)) == NULL)
+    if ((command = cgc_calloc(COMMAND_SIZE)) == NULL)
         return -1;
 
     while (1) {
-        memset(command, '\0', COMMAND_SIZE);
-        read_all(STDIN, command, sizeof(struct command));
+        cgc_memset(command, '\0', COMMAND_SIZE);
+        cgc_read_all(STDIN, command, sizeof(struct command));
         if (command->size && command->size <= MAX_COMMAND_SIZE)
-            read_all(STDIN, command->buf, command->size);
+            cgc_read_all(STDIN, command->buf, command->size);
 
-        ret = run_command(command, &result);
+        ret = cgc_run_command(command, &result);
         if (result) {
             result->result = ret;
-            result->csum = generate_csum(result->buf, result->size);
-            write_all(STDOUT, result, sizeof(struct result) + result->size);
-            free(result);
+            result->csum = cgc_generate_csum(result->buf, result->size);
+            cgc_write_all(STDOUT, result, sizeof(struct result) + result->size);
+            cgc_free(result);
         } else {
-            write_all(STDOUT, &ret, sizeof(int));
+            cgc_write_all(STDOUT, &ret, sizeof(int));
         }
     }
 

@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,14 +30,14 @@ THE SOFTWARE.
 
 #define IO_ERROR_TERMINATE      (-1)
 
-void setup_io( int readFD, int writeFD );
+void cgc_setup_io( int readFD, int writeFD );
 
-uint8_t read_u8( void );
-uint16_t read_u16( void );
-uint32_t read_u32( void );
+cgc_uint8_t cgc_read_u8( void );
+cgc_uint16_t cgc_read_u16( void );
+cgc_uint32_t cgc_read_u32( void );
 
-void write_u8( uint8_t val );
-void write_u16( uint16_t val );
-void write_u32( uint32_t val );
+void cgc_write_u8( cgc_uint8_t val );
+void cgc_write_u16( cgc_uint16_t val );
+void cgc_write_u32( cgc_uint32_t val );
 
 #endif // __IO_H__

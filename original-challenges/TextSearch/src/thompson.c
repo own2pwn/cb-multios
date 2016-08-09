@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,22 +33,22 @@
 #define OPERATOR "|*+?()"
 #define TOKEN "|*+?()[]\\"
 
-static int normalize_infix(unsigned char **pinfix, size_t size)
+static int cgc_normalize_infix(unsigned char **pinfix, cgc_size_t size)
 {
     unsigned char *new_str = *pinfix;
     unsigned char unions[200], i = 0;
     unsigned char *infix = *pinfix, *s, *e, *t = *pinfix;
     int error;
     for (; *infix ; infix++ ) {
-        if ( !isprint(*infix) ) {
+        if ( !cgc_isprint(*infix) ) {
             error = BAD_CHARACTER;
             goto failed;
         }
 
-        if (strchr(OPERATOR, *infix) != NULL) {
+        if (cgc_strchr(OPERATOR, *infix) != NULL) {
             *infix += CHAR_OFFSET;
         } else if (*infix == '\\') {
-            if (infix[1] != '\0' && strchr(TOKEN, infix[1]) != NULL) {
+            if (infix[1] != '\0' && cgc_strchr(TOKEN, infix[1]) != NULL) {
                 *infix++ = SKIP;
             } else {
                 error = BAD_RE;
@@ -83,12 +83,12 @@ static int normalize_infix(unsigned char **pinfix, size_t size)
 
             unions[i] = '\0';
             unions[--i] = RPAREN;
-            new_str = malloc(strlen(t) + strlen(unions) + 1);
-            memcpy(new_str, t, s - t);
-            memcpy(new_str + (s - t), unions, strlen(unions));
-            memcpy(new_str + ((s - t) + strlen(unions)), e, strlen(e) + 1);
-            infix = new_str + ((s - t) + strlen(unions)) - 1;
-            free(t);
+            new_str = cgc_malloc(cgc_strlen(t) + cgc_strlen(unions) + 1);
+            cgc_memcpy(new_str, t, s - t);
+            cgc_memcpy(new_str + (s - t), unions, cgc_strlen(unions));
+            cgc_memcpy(new_str + ((s - t) + cgc_strlen(unions)), e, cgc_strlen(e) + 1);
+            infix = new_str + ((s - t) + cgc_strlen(unions)) - 1;
+            cgc_free(t);
             t = new_str;
         }
     }
@@ -100,18 +100,18 @@ failed:
     return BAD_RE;
 }
 
-static unsigned char peek(unsigned char *list) {
+static unsigned char cgc_peek(unsigned char *list) {
     return *--list;
 }
 
-static int is_nonconcat_char(unsigned char c)
+static int cgc_is_nonconcat_char(unsigned char c)
 {
     return (c == UNION || c == STAR || c == PLUS || c == QMARK || c == RPAREN || c == SKIP);
 }
 
-void debug_print_re(unsigned char* re)
+void cgc_debug_print_re(unsigned char* re)
 {
-    unsigned char *temp = malloc(strlen(re) + 1);
+    unsigned char *temp = cgc_malloc(cgc_strlen(re) + 1);
     unsigned char *ptemp = temp, *pre = re;
     for( ; *re; re++)
         *temp++ = *re > CHAR_OFFSET ? *re - CHAR_OFFSET : *re;
@@ -119,32 +119,32 @@ void debug_print_re(unsigned char* re)
 
     printf("Normalized re = %s\n", ptemp);
     printf("Original re = %s\n", pre);
-    free(temp);
+    cgc_free(temp);
 }
 
-int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
+int cgc_retorpn(unsigned char *infix, cgc_size_t size, unsigned char **rpn)
 {
     *rpn = NULL;
-    if(strlen(infix) == 0)
+    if(cgc_strlen(infix) == 0)
         return BAD_RE;
-    else if(strlen(infix) > MAX_RE_SIZE)
+    else if(cgc_strlen(infix) > MAX_RE_SIZE)
         return RE_TOO_LONG;
-    else if(strlen(infix) > size)
+    else if(cgc_strlen(infix) > size)
         return BUF_OVERFLOW;
 
-    unsigned char *output = calloc(1, (strlen(infix) * 2) + 1); // Factor in all the concats
-    unsigned char *operators = calloc(1, strlen(infix) + 1);
+    unsigned char *output = cgc_calloc(1, (cgc_strlen(infix) * 2) + 1); // Factor in all the concats
+    unsigned char *operators = cgc_calloc(1, cgc_strlen(infix) + 1);
     unsigned char *out_iter = output;
     unsigned char *op_iter = operators;
-    unsigned char *ninfix = malloc(size);
+    unsigned char *ninfix = cgc_malloc(size);
 
     int error = 0;
     int bad_paren = 0;
     unsigned char c;
 
-    strcpy(ninfix, infix);
+    cgc_strcpy(ninfix, infix);
     infix = ninfix;
-    error = normalize_infix(&infix, size);
+    error = cgc_normalize_infix(&infix, size);
     if (error != 0)
         goto failed;
 
@@ -153,7 +153,7 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
         case SKIP:
             break;
         case LPAREN:
-            if (infix[1] == '\0' || is_nonconcat_char(infix[1])) {
+            if (infix[1] == '\0' || cgc_is_nonconcat_char(infix[1])) {
                 error = BAD_RE;
                 goto failed;
             }
@@ -163,7 +163,7 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
         case RPAREN:
             bad_paren = 1;
             while(op_iter != operators) {
-                if(peek(op_iter) != LPAREN) {
+                if(cgc_peek(op_iter) != LPAREN) {
                     POP(op_iter, c);
                     PUSH(out_iter, c);
                 } else {
@@ -174,13 +174,13 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
             }
             break;
         case UNION:
-            if (out_iter == output || infix[1] == '\0' || is_nonconcat_char(infix[1])) {
+            if (out_iter == output || infix[1] == '\0' || cgc_is_nonconcat_char(infix[1])) {
                 error = BAD_RE;
                 goto failed;
             }
 
             while(op_iter != operators) {
-                if(peek(op_iter) != LPAREN && peek(op_iter) != UNION) {
+                if(cgc_peek(op_iter) != LPAREN && cgc_peek(op_iter) != UNION) {
                     POP(op_iter, c);
                     PUSH(out_iter, c);
                 } else {
@@ -197,7 +197,7 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
                 goto failed;
             }
             while(op_iter != operators) {
-                c = peek(op_iter);
+                c = cgc_peek(op_iter);
                 if(c == STAR || c == PLUS || c == QMARK) {
                     POP(op_iter, c);
                     PUSH(out_iter, c);
@@ -212,9 +212,9 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
             break;
         }
 
-        if (*infix != UNION && infix[1] != '\0' && !is_nonconcat_char(infix[1])) {
+        if (*infix != UNION && infix[1] != '\0' && !cgc_is_nonconcat_char(infix[1])) {
             while(op_iter != operators) {
-                c = peek(op_iter);
+                c = cgc_peek(op_iter);
                 if(c == STAR || c == PLUS || c == QMARK || c == CONCAT) {
                     POP(op_iter, c);
                     PUSH(out_iter, c);
@@ -237,14 +237,14 @@ int retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
     }
 
     *rpn = output;
-    free(ninfix);
-    free(operators);
+    cgc_free(ninfix);
+    cgc_free(operators);
     return 0;
 
 failed:
-    free(ninfix);
-    free(output);
-    free(operators);
+    cgc_free(ninfix);
+    cgc_free(output);
+    cgc_free(operators);
     return error;
 }
 

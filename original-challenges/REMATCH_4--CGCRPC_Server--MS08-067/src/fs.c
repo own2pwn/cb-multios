@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,63 +30,63 @@ THE SOFTWARE.
 #include "stdio.h"
 #include "fs.h"
 
-fs_tree allTrees[MAX_TREES];
+cgc_fs_tree allTrees[MAX_TREES];
 char serviceTypes[MAX_SERVICE_TYPES][MAX_SERVICE_NAME];
 
-void InitializeFileSystem()
+void cgc_InitializeFileSystem()
 {
   // Create Service Types
   for (int i=0; i< MAX_SERVICE_TYPES; i++)
   {
-    populate_random_string(serviceTypes[i], random_in_range(MAX_SERVICE_NAME/2, MAX_SERVICE_NAME));
+    cgc_populate_random_string(serviceTypes[i], cgc_random_in_range(MAX_SERVICE_NAME/2, MAX_SERVICE_NAME));
   }
 
-  int treeNameLen = random_in_range(MAX_TREENAME_LEN / 2, MAX_TREENAME_LEN);
+  int treeNameLen = cgc_random_in_range(MAX_TREENAME_LEN / 2, MAX_TREENAME_LEN);
   for (int i=0; i < MAX_TREES - 1; i++)
   {
-    fs_tree *tree = &allTrees[i];
-    tree->treeID = rand();
-    populate_random_string(tree->treeName, treeNameLen - i);
-    strcpy(tree->serviceType, serviceTypes[random_in_range(0, MAX_SERVICE_TYPES - 1)]);
-    int numFiles = random_in_range(1, MAX_FILES_PER_TREE);
+    cgc_fs_tree *tree = &allTrees[i];
+    tree->treeID = cgc_rand();
+    cgc_populate_random_string(tree->treeName, treeNameLen - i);
+    cgc_strcpy(tree->serviceType, serviceTypes[cgc_random_in_range(0, MAX_SERVICE_TYPES - 1)]);
+    int numFiles = cgc_random_in_range(1, MAX_FILES_PER_TREE);
     int fileIndex = 0;
-    int fileNameLen = random_in_range(MAX_FILENAME_LEN/2, MAX_FILENAME_LEN);
+    int fileNameLen = cgc_random_in_range(MAX_FILENAME_LEN/2, MAX_FILENAME_LEN);
     while (numFiles > 0)
     {
       char filename[MAX_FILENAME_LEN];
-      populate_random_string(filename, fileNameLen - numFiles);
-      fs_file *file = CreateFile(tree, (uint8_t *)filename, 0, FS_MODE_CREATE);
-      int length = random_in_range(10, MAX_FILESIZE);
-      uint8_t *buffer = calloc(length);
-      populate_random_string((char *)buffer, length);
-      WriteFile(file, buffer, 0, length);
-      CloseFile(file);
-      free(buffer);
+      cgc_populate_random_string(filename, fileNameLen - numFiles);
+      cgc_fs_file *file = cgc_CreateFile(tree, (cgc_uint8_t *)filename, 0, FS_MODE_CREATE);
+      int length = cgc_random_in_range(10, MAX_FILESIZE);
+      cgc_uint8_t *buffer = cgc_calloc(length);
+      cgc_populate_random_string((char *)buffer, length);
+      cgc_WriteFile(file, buffer, 0, length);
+      cgc_CloseFile(file);
+      cgc_free(buffer);
       tree->files[fileIndex++] = file;
       numFiles--;
     }
   }
 
-  fs_tree *lastTree = &allTrees[MAX_TREES - 1];
-  lastTree->treeID = rand();
-  strcpy(lastTree->treeName, "SOMETREE");
-  strcpy(lastTree->serviceType, "EYEPSEE");   
-  fs_file *file = calloc(sizeof(fs_file));
-  strcpy(file->filename, "NETSTUFF");
-  file->fileID = rand() & 0xffff;
+  cgc_fs_tree *lastTree = &allTrees[MAX_TREES - 1];
+  lastTree->treeID = cgc_rand();
+  cgc_strcpy(lastTree->treeName, "SOMETREE");
+  cgc_strcpy(lastTree->serviceType, "EYEPSEE");   
+  cgc_fs_file *file = cgc_calloc(sizeof(cgc_fs_file));
+  cgc_strcpy(file->filename, "NETSTUFF");
+  file->fileID = cgc_rand() & 0xffff;
   lastTree->files[0] = file;
   return;
 
 }
 
-fs_file *FindFileByName(fs_tree *tree, uint8_t *filename)
+cgc_fs_file *cgc_FindFileByName(cgc_fs_tree *tree, cgc_uint8_t *filename)
 {
   for (int i=0; i< MAX_FILES_PER_TREE; i++)
   {
-    fs_file *file = tree->files[i];
+    cgc_fs_file *file = tree->files[i];
     if (file != NULL)
     {
-     if (strcmp(file->filename, (char *)filename) == 0)
+     if (cgc_strcmp(file->filename, (char *)filename) == 0)
       {
         return file;
       }
@@ -95,9 +95,9 @@ fs_file *FindFileByName(fs_tree *tree, uint8_t *filename)
   return NULL;
 }
 
-fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID, uint32_t mode)
+cgc_fs_file *cgc_CreateFile(cgc_fs_tree *tree, cgc_uint8_t *filename, cgc_uint32_t userID, cgc_uint32_t mode)
 {
-  fs_file *file = FindFileByName(tree, filename);
+  cgc_fs_file *file = cgc_FindFileByName(tree, filename);
   if (file == NULL)
   {
     if (mode != FS_MODE_CREATE)
@@ -111,14 +111,14 @@ fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID, uint32_t 
       if (tree->files[i] == NULL)
       {
         // Create new file in open slot
-        fs_file *newfile = calloc(sizeof(fs_file));
-        newfile->fileID = rand() & 0xffff;
-        int len = strlen((char *)filename);
+        cgc_fs_file *newfile = cgc_calloc(sizeof(cgc_fs_file));
+        newfile->fileID = cgc_rand() & 0xffff;
+        int len = cgc_strlen((char *)filename);
         if (len > MAX_FILENAME_LEN)
         {
           len = MAX_FILENAME_LEN;
         }
-        strncpy(newfile->filename, (char *)filename, MAX_FILENAME_LEN);
+        cgc_strncpy(newfile->filename, (char *)filename, MAX_FILENAME_LEN);
         newfile->isOpen = 1;
         tree->files[i] = newfile;
         return newfile;
@@ -137,7 +137,7 @@ fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID, uint32_t 
   return file;
 }
 
-void CloseFile(fs_file *file)
+void cgc_CloseFile(cgc_fs_file *file)
 {
   if (file != NULL)
   {
@@ -145,7 +145,7 @@ void CloseFile(fs_file *file)
   }
 }
 
-int ReadFile(uint8_t *dest, fs_file *file, uint16_t offset, uint16_t length)
+int cgc_ReadFile(cgc_uint8_t *dest, cgc_fs_file *file, cgc_uint16_t offset, cgc_uint16_t length)
 {
   if ((file == NULL) || (dest == NULL) || (length == 0))
   {
@@ -159,11 +159,11 @@ int ReadFile(uint8_t *dest, fs_file *file, uint16_t offset, uint16_t length)
   {
     length = file->numBytes - offset;
   }
-  memcpy(dest, file->bytes + offset, length);
+  cgc_memcpy(dest, file->bytes + offset, length);
   return 0;
 }
 
-int WriteFile(fs_file *file, uint8_t *source, uint16_t offset, uint16_t length)
+int cgc_WriteFile(cgc_fs_file *file, cgc_uint8_t *source, cgc_uint16_t offset, cgc_uint16_t length)
 {
   if ((file == NULL) || (source == NULL) || (length == 0))
   {
@@ -173,34 +173,34 @@ int WriteFile(fs_file *file, uint8_t *source, uint16_t offset, uint16_t length)
   {
     return -1;
   }
-  uint8_t *oldData = file->bytes;
-  file->bytes = calloc(offset + length);
+  cgc_uint8_t *oldData = file->bytes;
+  file->bytes = cgc_calloc(offset + length);
   if (offset > 0)
   {
     if (oldData != NULL)
     {
       if (file->numBytes >= offset)
       {
-        memcpy(file->bytes, oldData, offset);
+        cgc_memcpy(file->bytes, oldData, offset);
       } else {
-        memcpy(file->bytes, oldData, file->numBytes);
+        cgc_memcpy(file->bytes, oldData, file->numBytes);
       }
     }
   }
-  memcpy(file->bytes + offset, source, length);
+  cgc_memcpy(file->bytes + offset, source, length);
   file->numBytes = offset + length;
-  free(oldData);
+  cgc_free(oldData);
   return 0;
 }
 
-fs_tree *FindTreeByPath(uint32_t userID, uint8_t *path, uint8_t *service)
+cgc_fs_tree *cgc_FindTreeByPath(cgc_uint32_t userID, cgc_uint8_t *path, cgc_uint8_t *service)
 {
   for (int i=0; i < MAX_TREES; i++)
   {
-    fs_tree *tree = &allTrees[i];
-    if (strcmp(tree->treeName, (char *)path) == 0)
+    cgc_fs_tree *tree = &allTrees[i];
+    if (cgc_strcmp(tree->treeName, (char *)path) == 0)
     {
-      if (strcmp(tree->serviceType, (char *)service) == 0)
+      if (cgc_strcmp(tree->serviceType, (char *)service) == 0)
       {
         return tree;
       }

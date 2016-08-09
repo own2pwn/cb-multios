@@ -31,20 +31,20 @@ THE SOFTWARE.
 #include "shell.h"
 #include "screen.h"
 
-environment ENV;
+cgc_environment ENV;
 
-uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
-	size_t total_len = 0;
-	size_t rx_bytes;
-	size_t i;
+cgc_uint32_t cgc_ReadShellPrompt(int fd, char *buf, cgc_size_t len) {
+	cgc_size_t total_len = 0;
+	cgc_size_t rx_bytes;
+	cgc_size_t i;
 	char c;
 	char t[2];
 	t[1] = '\0';
-	int8_t CurrCommandHistory = -1;
+	cgc_int8_t CurrCommandHistory = -1;
 	char TmpBuf[MAX_CMD_LEN];
-	uint32_t CursorPos = 0;
+	cgc_uint32_t CursorPos = 0;
 	
-	bzero(TmpBuf, MAX_CMD_LEN);
+	cgc_bzero(TmpBuf, MAX_CMD_LEN);
 
 	while ((receive(fd, &c, 1, &rx_bytes) == 0) && total_len < len-1) {
 		if (rx_bytes == 0) {
@@ -52,12 +52,12 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 			return(0);
 		}
 //		t[0] = c;
-//		printf("$08x\n", t[0]);
+//		cgc_printf("$08x\n", t[0]);
 
 		// backspace
 		if (c == '\x7f') {
 			if (CursorPos == total_len) {
-				printf("\b\b\b   \b\b\b");
+				cgc_printf("\b\b\b   \b\b\b");
 				total_len--;
 				CursorPos--;
 				continue;
@@ -67,11 +67,11 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 			}
 			total_len--;
 			CursorPos--;
-			EraseLine(0);
-			PrintPrompt();
+			cgc_EraseLine(0);
+			cgc_PrintPrompt();
 			buf[total_len] = '\0';
-			printf("$s", buf);
-			CursorLeft(total_len-CursorPos);
+			cgc_printf("$s", buf);
+			cgc_CursorLeft(total_len-CursorPos);
 			continue;
 		}
 
@@ -83,18 +83,18 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 		// ctrl-e
 		if (c == '\x05') {
 			// move the cursor to the end
-			EraseLine(0);
-			PrintPrompt();
+			cgc_EraseLine(0);
+			cgc_PrintPrompt();
 			buf[total_len] = '\0';
-			printf("$s", buf);
+			cgc_printf("$s", buf);
 			CursorPos = total_len;
 			continue;
 		}
 
 		// ctrl-u
 		if (c == '\x15') {
-			EraseLine(0);
-			PrintPrompt();
+			cgc_EraseLine(0);
+			cgc_PrintPrompt();
 			total_len = 0;
 			CursorPos = 0;
 			continue;
@@ -103,12 +103,12 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 		// ctrl-d
 		if (c == '\x04') {
 			if (total_len > 0) {
-				printf("\b\b  \b\b");
+				cgc_printf("\b\b  \b\b");
 				continue;
 			} else {
-				printf("\b\b  \b\b");
-				printf("exit  ");
-				strcpy(buf, "exit");
+				cgc_printf("\b\b  \b\b");
+				cgc_printf("exit  ");
+				cgc_strcpy(buf, "exit");
 				return(1);
 			}
 		}
@@ -140,10 +140,10 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 					// up arrow	
 					// if there's no command history
 					if (ENV.NumCommandHistory == 0) {
-						EraseLine(0);
-						PrintPrompt();
+						cgc_EraseLine(0);
+						cgc_PrintPrompt();
 						buf[total_len] = '\0';
-						printf("$s", buf);
+						cgc_printf("$s", buf);
 						CursorPos = total_len;
 						continue;
 					}
@@ -153,95 +153,95 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 					// arrow's back to it
 					if (CurrCommandHistory == -1) {
 						buf[total_len] = '\0';
-						strcpy(TmpBuf, buf);
+						cgc_strcpy(TmpBuf, buf);
 					}
 					CurrCommandHistory++;
 					if (CurrCommandHistory >= ENV.NumCommandHistory) {
 						CurrCommandHistory = ENV.NumCommandHistory-1;
 					}
 					// print the next command in the history buf
-					EraseLine(0);
-					PrintPrompt();
-					strcpy(buf, ENV.CommandHistory[CurrCommandHistory]);
-					total_len = strlen(ENV.CommandHistory[CurrCommandHistory]);
+					cgc_EraseLine(0);
+					cgc_PrintPrompt();
+					cgc_strcpy(buf, ENV.CommandHistory[CurrCommandHistory]);
+					total_len = cgc_strlen(ENV.CommandHistory[CurrCommandHistory]);
 					CursorPos = total_len;
-					printf("$s", ENV.CommandHistory[CurrCommandHistory]);
+					cgc_printf("$s", ENV.CommandHistory[CurrCommandHistory]);
 					continue;
 				} else if (c == '\x42') {
 					// down arrow	
 					if (CurrCommandHistory == -1) {
 						// nothing to do
-						EraseLine(0);
-						PrintPrompt();
+						cgc_EraseLine(0);
+						cgc_PrintPrompt();
 						buf[total_len] = '\0';
-						printf("$s", buf);
+						cgc_printf("$s", buf);
 						continue;
 					}
 
 					// see if we're at the first command in the history
 					if (CurrCommandHistory == 0) {
 						// go back to the user's original command
-						EraseLine(0);
-						PrintPrompt();
-						strcpy(buf, TmpBuf);
-						total_len = strlen(buf);
+						cgc_EraseLine(0);
+						cgc_PrintPrompt();
+						cgc_strcpy(buf, TmpBuf);
+						total_len = cgc_strlen(buf);
 						CursorPos = total_len;
-						printf("$s", buf);
+						cgc_printf("$s", buf);
 						CurrCommandHistory = -1;
 						continue;
 					}
 
 					// print the next command in the history
 					CurrCommandHistory--;
-					EraseLine(0);
-					PrintPrompt();
-					strcpy(buf, ENV.CommandHistory[CurrCommandHistory]);
-					total_len = strlen(ENV.CommandHistory[CurrCommandHistory]);
+					cgc_EraseLine(0);
+					cgc_PrintPrompt();
+					cgc_strcpy(buf, ENV.CommandHistory[CurrCommandHistory]);
+					total_len = cgc_strlen(ENV.CommandHistory[CurrCommandHistory]);
 					CursorPos = total_len;
-					printf("$s", ENV.CommandHistory[CurrCommandHistory]);
+					cgc_printf("$s", ENV.CommandHistory[CurrCommandHistory]);
 					continue;
 
 				} else if (c == '\x43') {
 					// right arrow	
 					if (CursorPos == total_len) {
 						// nothing to do but remove the arrow control chars
-						EraseLine(0);
-						PrintPrompt();
+						cgc_EraseLine(0);
+						cgc_PrintPrompt();
 						buf[total_len] = '\0';
-						printf("$s", buf);
+						cgc_printf("$s", buf);
 						continue;
 					}
 
 					// not at the end of the line, so move the cursor
 					// right one character
 					CursorPos++;
-					EraseLine(0);
-					PrintPrompt();
+					cgc_EraseLine(0);
+					cgc_PrintPrompt();
 					buf[total_len] = '\0';
-					printf("$s", buf);
+					cgc_printf("$s", buf);
 					if (total_len != CursorPos) {
-						CursorLeft(total_len-CursorPos);
+						cgc_CursorLeft(total_len-CursorPos);
 					}
 					continue;
 				} else if (c == '\x44') {
 					// left arrow	
 					if (CursorPos == 0) {
 						// nothing to do, re-print the line (to remove the control chars)
-						EraseLine(0);
-						PrintPrompt();
+						cgc_EraseLine(0);
+						cgc_PrintPrompt();
 						buf[total_len] = '\0';
-						printf("$s", buf);
-						CursorLeft(total_len);
+						cgc_printf("$s", buf);
+						cgc_CursorLeft(total_len);
 						continue;
 					}
 					// not at the beginning of the line, so move the cursor
 					// left one character
 					CursorPos--;
-					EraseLine(0);
-					PrintPrompt();
+					cgc_EraseLine(0);
+					cgc_PrintPrompt();
 					buf[total_len] = '\0';
-					printf("$s", buf);
-					CursorLeft(total_len-CursorPos);
+					cgc_printf("$s", buf);
+					cgc_CursorLeft(total_len-CursorPos);
 					continue;
 				}
 			}
@@ -266,7 +266,7 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 				return(0);
 			}
 			buf[CursorPos] = '\0';
-//			EraseToEOL();
+//			cgc_EraseToEOL();
 			break;
 		}
 		if (CursorPos == total_len) {
@@ -286,12 +286,12 @@ uint32_t ReadShellPrompt(int fd, char *buf, size_t len) {
 	return(total_len);
 }
 
-uint32_t ReadUntilNewline(int fd, char *buf, size_t len) {
-	size_t total_len = 0;
-	size_t rx_bytes;
-	size_t i;
+cgc_uint32_t cgc_ReadUntilNewline(int fd, char *buf, cgc_size_t len) {
+	cgc_size_t total_len = 0;
+	cgc_size_t rx_bytes;
+	cgc_size_t i;
 	char c;
-	uint32_t CursorPos = 0;
+	cgc_uint32_t CursorPos = 0;
 
 	while ((receive(fd, &c, 1, &rx_bytes) == 0) && total_len < len-1) {
 		if (rx_bytes == 0) {
@@ -302,10 +302,10 @@ uint32_t ReadUntilNewline(int fd, char *buf, size_t len) {
 		// backspace
 		if (c == '\x7f') {
 			if (CursorPos == 0) {
-				printf("\b\b  \b\b");
+				cgc_printf("\b\b  \b\b");
 				continue;
 			}
-			printf("\b\b\b   \b\b\b");
+			cgc_printf("\b\b\b   \b\b\b");
 			total_len--;
 			CursorPos--;
 			continue;

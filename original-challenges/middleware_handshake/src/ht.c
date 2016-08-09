@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,18 +30,18 @@
 #define MAX_COUNT 8192
 #define THRESHOLD (0.5)
 
-static unsigned int _hash(unsigned int size, const char *k)
+static unsigned int cgc__hash(unsigned int size, const char *k)
 {
     unsigned int result = 0x3505;
-    size_t i;
+    cgc_size_t i;
     for (i = 0; k[i]; i++)
-        result = result * 37 + tolower(k[i]);
+        result = result * 37 + cgc_tolower(k[i]);
     return result % size;
 }
 
-static int _do_insert(struct ht_node_t **tbl, unsigned int size, struct ht_node_t *node)
+static int cgc__do_insert(struct cgc_ht_node_t **tbl, unsigned int size, struct cgc_ht_node_t *node)
 {
-    unsigned int idx = _hash(size, node->k), i;
+    unsigned int idx = cgc__hash(size, node->k), i;
     // linear probing
     for (i = idx; tbl[i] != NULL; i = (i + 1) & (size-1))
         if (i == ((idx - 1) & (size-1)))
@@ -51,51 +51,51 @@ static int _do_insert(struct ht_node_t **tbl, unsigned int size, struct ht_node_
     return SUCCESS;
 }
 
-static int _ht_resize(ht_t *tbl)
+static int cgc__ht_resize(cgc_ht_t *tbl)
 {
     unsigned int new_size = tbl->tbl_size * 2;
-    struct ht_node_t **new_entries, *iter;
+    struct cgc_ht_node_t **new_entries, *iter;
 
     // allocate new table
-    new_entries = calloc(new_size, sizeof(ht_node_t *));
+    new_entries = cgc_calloc(new_size, sizeof(cgc_ht_node_t *));
     if (new_entries == NULL)
         return FAILURE;
 
     // re-insert nodes into new table
     for (iter = tbl->first; iter != NULL; iter = iter->next)
     {
-        if (_do_insert(new_entries, new_size, iter) != SUCCESS)
+        if (cgc__do_insert(new_entries, new_size, iter) != SUCCESS)
             goto fail;
     }
 
-    free(tbl->tbl);
+    cgc_free(tbl->tbl);
     tbl->tbl = new_entries;
     tbl->tbl_size = new_size;
     return SUCCESS;
 
 fail:
-    free(new_entries);
+    cgc_free(new_entries);
     return FAILURE;
 }
 
-int ht_init(ht_t *tbl)
+int cgc_ht_init(cgc_ht_t *tbl)
 {
-    memset(tbl, 0, sizeof(ht_t));
+    cgc_memset(tbl, 0, sizeof(cgc_ht_t));
     tbl->tbl_size = INITIAL_COUNT;
-    return _ht_resize(tbl);
+    return cgc__ht_resize(tbl);
 }
 
-int ht_compare(const char *a, const char *b)
+int cgc_ht_compare(const char *a, const char *b)
 {
-    return strcasecmp(a, b);
+    return cgc_strcasecmp(a, b);
 }
 
-int ht_lookup(ht_t *tbl, const char *k, ht_node_t **node)
+int cgc_ht_lookup(cgc_ht_t *tbl, const char *k, cgc_ht_node_t **node)
 {
-    unsigned int idx = _hash(tbl->tbl_size, k), i;
+    unsigned int idx = cgc__hash(tbl->tbl_size, k), i;
 
     for (i = idx; tbl->tbl[i] != NULL; i = (i + 1) % tbl->tbl_size)
-        if (ht_compare(tbl->tbl[i]->k, k) == 0)
+        if (cgc_ht_compare(tbl->tbl[i]->k, k) == 0)
             break;
 
     if (tbl->tbl[i] == NULL)
@@ -105,11 +105,11 @@ int ht_lookup(ht_t *tbl, const char *k, ht_node_t **node)
     return SUCCESS;
 }
 
-int ht_delete(ht_t *tbl, const char *k, void **v)
+int cgc_ht_delete(cgc_ht_t *tbl, const char *k, void **v)
 {
     unsigned int idx, i, last;
-    ht_node_t *node = NULL;
-    if (ht_lookup(tbl, k, &node) != SUCCESS)
+    cgc_ht_node_t *node = NULL;
+    if (cgc_ht_lookup(tbl, k, &node) != SUCCESS)
         return FAILURE;
     
     *v = node->value;
@@ -121,7 +121,7 @@ int ht_delete(ht_t *tbl, const char *k, void **v)
     if (node->next)
         node->next->prev = node->prev;
 
-    idx = _hash(tbl->tbl_size, node->k);
+    idx = cgc__hash(tbl->tbl_size, node->k);
     for (i = idx; tbl->tbl[i] != node; i = (i + 1) % tbl->tbl_size) ;
 
     tbl->tbl[i] = NULL;
@@ -132,7 +132,7 @@ int ht_delete(ht_t *tbl, const char *k, void **v)
         idx = i;
     for (i = (last + 1) % tbl->tbl_size; tbl->tbl[i] != NULL; i = (i + 1) % tbl->tbl_size)
     {
-        unsigned int idx2 = _hash(tbl->tbl_size, tbl->tbl[i]->k);
+        unsigned int idx2 = cgc__hash(tbl->tbl_size, tbl->tbl[i]->k);
         if ((idx <= last && idx <= idx2 && idx2 <= last) ||
             (idx > last && (idx <= idx2 || idx2 <= last)))
         {
@@ -142,35 +142,35 @@ int ht_delete(ht_t *tbl, const char *k, void **v)
         }
     }
 
-    free(node->k);
-    free(node);
+    cgc_free(node->k);
+    cgc_free(node);
     return SUCCESS;
 }
 
-int ht_insert(ht_t *tbl, const char *k_, void *v)
+int cgc_ht_insert(cgc_ht_t *tbl, const char *k_, void *v)
 {
     char *k;
-    ht_node_t *node = NULL;
-    if (ht_lookup(tbl, k_, &node) == SUCCESS)
+    cgc_ht_node_t *node = NULL;
+    if (cgc_ht_lookup(tbl, k_, &node) == SUCCESS)
         return FAILURE;
 
     if (tbl->tbl_count == MAX_COUNT)
         return FAILURE;
 
-    k = strdup(k_);
+    k = cgc_strdup(k_);
     if (k == NULL)
         return FAILURE;
-    node = malloc(sizeof(ht_node_t));
+    node = cgc_malloc(sizeof(cgc_ht_node_t));
     node->k = k;
     node->value = v;
 
     if (tbl->tbl_count+1 >= tbl->tbl_size * THRESHOLD)
     {
-        if (_ht_resize(tbl) != SUCCESS)
+        if (cgc__ht_resize(tbl) != SUCCESS)
             goto fail;
     }
 
-    if (_do_insert(tbl->tbl, tbl->tbl_size, node) != SUCCESS)
+    if (cgc__do_insert(tbl->tbl, tbl->tbl_size, node) != SUCCESS)
         goto fail;
 
     tbl->tbl_count++;
@@ -182,17 +182,17 @@ int ht_insert(ht_t *tbl, const char *k_, void *v)
     return SUCCESS;
 
 fail:
-    free(k);
-    free(node);
+    cgc_free(k);
+    cgc_free(node);
     return FAILURE;
 }
 
-ht_node_t *ht_first(ht_t *tbl)
+cgc_ht_node_t *cgc_ht_first(cgc_ht_t *tbl)
 {
     return tbl->first;
 }
 
-ht_node_t *ht_next(ht_t *tbl, ht_node_t *n)
+cgc_ht_node_t *cgc_ht_next(cgc_ht_t *tbl, cgc_ht_node_t *n)
 {
     return n->next;
 }

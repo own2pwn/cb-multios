@@ -38,7 +38,7 @@ typedef struct
 	int next_correct_answer; // used to compare the user's next answer
 	int last_correct_answer; // TODO how use this?
 	char *next_correct_equation; // used to compare the user's next equation
-} Game_Info;
+} cgc_Game_Info;
 
 typedef struct
 {
@@ -63,10 +63,10 @@ typedef struct
 	// area correct
 	int num_won_area;
 	int num_lost_area;
-} Statistics;
+} cgc_Statistics;
 
-extern Statistics game_stats;
-extern Game_Info game_info;
+extern cgc_Statistics game_stats;
+extern cgc_Game_Info game_info;
 
-void print_statistics();
-int print_menu();
+void cgc_print_statistics();
+int cgc_print_menu();

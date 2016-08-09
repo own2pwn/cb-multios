@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,9 +35,9 @@
 #define REAUTH_STR "Please re-authenticate.\n"
 #define AUTH_STR "Please log in.\n"
 #define LOGGED_OUT_STR "Logged out successfully.\n"
-#define CMD_FAIL_STR "Command failed.\n"
+#define CMD_FAIL_STR "cgc_Command failed.\n"
 #define REVOKE_DENIED_STR "Revocation denied.\n"
-#define RES_REVOKED_STR "Resource revoked.\n"
+#define RES_REVOKED_STR "cgc_Resource revoked.\n"
 
 #define REQUEST_CMD "REQR"
 #define AUTH_CMD "AUTH"
@@ -60,19 +60,19 @@ typedef struct {
 	unsigned long id;
 	unsigned long token;
 	char input[MAX_ARGS_SIZE];
-} Command;
+} cgc_Command;
 
 typedef struct resource_t {
 	struct resource_t *next;
 	char name[RESOURCE_SIZE];
 	unsigned long token;
-} Resource;
+} cgc_Resource;
 
 typedef struct user_t {
 	struct user_t *next;
 	unsigned long id;
 	unsigned long token;
-	Resource* resourceList;
-} User;
+	cgc_Resource* resourceList;
+} cgc_User;
 
 #endif

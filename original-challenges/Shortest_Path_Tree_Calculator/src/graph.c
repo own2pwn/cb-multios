@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,18 +32,18 @@ THE SOFTWARE.
 #include "ll.h"
 #include "io.h"
 
-extern pNode Nodes;
-extern pEdge Edges;
+extern cgc_pNode Nodes;
+extern cgc_pEdge Edges;
 
-uint32_t NumNodes = 0;
-uint32_t NumEdges = 0;
+cgc_uint32_t NumNodes = 0;
+cgc_uint32_t NumEdges = 0;
 
 // find the node with the minimum distance
 // not already in the SPT
-pNode FindMinDistanceNode(void) {
-	pNode n;
-	pNode MinDistanceNode = NULL;
-	uint32_t MinDistance = SIZE_MAX;
+cgc_pNode cgc_FindMinDistanceNode(void) {
+	cgc_pNode n;
+	cgc_pNode MinDistanceNode = NULL;
+	cgc_uint32_t MinDistance = SIZE_MAX;
 
 	n = Nodes;
 	while (n) {
@@ -57,16 +57,16 @@ pNode FindMinDistanceNode(void) {
 	return(MinDistanceNode);
 }
 
-//uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint32_t *NodeCount) {
-uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *NodeCount) {
-	pNode StartingNode;
-	pNode EndingNode;
-	int32_t i;
-	pNode MinDistanceNode;
-	pNode n;
-	pEdge e;
-	pNode AdjacentNode;
-	uint32_t *Response;
+//cgc_uint32_t *cgc_FindSpt(cgc_uint32_t StartingNodeName, cgc_uint32_t EndingNodeName, cgc_uint32_t *NodeCount) {
+cgc_uint32_t *cgc_FindSpt(cgc_uint32_t StartingNodeName, cgc_uint32_t EndingNodeName, cgc_uint8_t *NodeCount) {
+	cgc_pNode StartingNode;
+	cgc_pNode EndingNode;
+	cgc_int32_t i;
+	cgc_pNode MinDistanceNode;
+	cgc_pNode n;
+	cgc_pEdge e;
+	cgc_pNode AdjacentNode;
+	cgc_uint32_t *cgc_Response;
 
 	if (Nodes == NULL || NodeCount == NULL) {
 		return(NULL);
@@ -82,19 +82,19 @@ uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *N
 	}
 
 	// find the ending node
-	if ((EndingNode = FindNode(EndingNodeName)) == NULL) {
+	if ((EndingNode = cgc_FindNode(EndingNodeName)) == NULL) {
 		return(NULL);
 	}
 	
 	// find the starting node and set its distance to 0
-	if ((StartingNode = FindNode(StartingNodeName)) == NULL) {
+	if ((StartingNode = cgc_FindNode(StartingNodeName)) == NULL) {
 		return(NULL);
 	}
 	StartingNode->Distance = 0;
 
 	for (i = 0; i < NumNodes; i++) {
 		// find the node with the minimum distance
-		if ((MinDistanceNode = FindMinDistanceNode()) == NULL) {
+		if ((MinDistanceNode = cgc_FindMinDistanceNode()) == NULL) {
 			// unable to find the next node in the SPT
 			// due to disconnected graph
 			return(NULL);
@@ -140,8 +140,8 @@ uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *N
 		(*NodeCount)++;
 		n = n->PrevSPT;
 	}
-	// allocate space for the uint32_t array
-	if ((Response = (uint32_t *)calloc(sizeof(uint32_t)*(*NodeCount))) == NULL) {
+	// allocate space for the cgc_uint32_t array
+	if ((cgc_Response = (cgc_uint32_t *)cgc_calloc(sizeof(cgc_uint32_t)*(*NodeCount))) == NULL) {
 		_terminate(-1);
 	}
 	
@@ -151,7 +151,7 @@ uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *N
 	n = EndingNode;
 	i = *NodeCount;
 	while (n != StartingNode) {
-		Response[--i] = n->Name;
+		cgc_Response[--i] = n->Name;
 
 		if (!(n->PrevSPT)) {
 			return(NULL);
@@ -159,13 +159,13 @@ uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *N
 
 		n = n->PrevSPT;
 	}
-	Response[--i] = n->Name;
+	cgc_Response[--i] = n->Name;
 
 	// Free the graph data
-	DestroyNodes();
-	DestroyEdges();
+	cgc_DestroyNodes();
+	cgc_DestroyEdges();
 	NumNodes = 0;
 	NumEdges = 0;
 
-	return(Response);
+	return(cgc_Response);
 }

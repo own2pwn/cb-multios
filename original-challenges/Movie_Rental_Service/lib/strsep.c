@@ -25,13 +25,13 @@
 #include <libcgc.h>
 #include <string.h>
 
-char *strsep(char **stringp, const char *delim)
+char *cgc_strsep(char **stringp, const char *delim)
 {
   if (*stringp == NULL)
     return NULL;
 
   char *i;
-  for (i = *stringp; *i && !strchr(delim, *i); i++);
+  for (i = *stringp; *i && !cgc_strchr(delim, *i); i++);
 
   // No longer need delim. Ditch semantic integrity for stack space
   delim = *stringp;

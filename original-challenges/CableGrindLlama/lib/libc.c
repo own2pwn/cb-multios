@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,35 +25,35 @@
 
 
 void (*freep)(void *);
-void *(*mallocp)(size_t);
+void *(*mallocp)(cgc_size_t);
 
 bool heapinit_done = false;
 
-heap_chunk_t freedc[3] = {0};
+cgc_heap_chunk_t freedc[3] = {0};
 
-heap_chunk_t allocatedc[3] = {0};
+cgc_heap_chunk_t allocatedc[3] = {0};
 
-heap_chunk_t *freed[3] = {0};
+cgc_heap_chunk_t *freed[3] = {0};
 
-heap_chunk_t *allocated[3] = {0};
+cgc_heap_chunk_t *allocated[3] = {0};
 
 uint8_t *lastpage[3] = {0};
 uint32_t curleft[3] = {0};
 
 uint32_t __cookie[3] = {0};
 uint32_t __hcookie[3] = {0};
-heaptype __htype = 0;
+cgc_heaptype __htype = 0;
 
-void promptc(char *buf, uint16_t  size, char *prompt) {
+void cgc_promptc(char *buf, uint16_t  size, char *prompt) {
 
-    SSEND(strlen(prompt), prompt);
+    SSEND(cgc_strlen(prompt), prompt);
 
     SRECV((uint32_t)size, buf);
 }
 
-int sendall(int fd, const char *buf, size_t size) {
-    size_t sent = 0;
-    size_t total = 0;
+int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t total = 0;
 
     if (!buf)
         return -1;
@@ -74,9 +74,9 @@ int sendall(int fd, const char *buf, size_t size) {
     return total;
 }
 
-int sendline(int fd, const char *buf, size_t size) {
+int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
     int ret;
-    ret = sendall(fd, buf, size);
+    ret = cgc_sendall(fd, buf, size);
     if (ret < 0) {
         return ret;
     } else {
@@ -87,9 +87,9 @@ int sendline(int fd, const char *buf, size_t size) {
     }
 }
 
-int recv(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recv(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if (!size)
         return 0;
@@ -108,9 +108,9 @@ int recv(int fd, char *buf, size_t size) {
     return total_read;
 
 }
-int recvline(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if (!size)
         return 0;
@@ -138,7 +138,7 @@ int recvline(int fd, char *buf, size_t size) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-size_t strcpy(char *s1, char *s2) {
+cgc_size_t cgc_strcpy(char *s1, char *s2) {
     char *tmp = s1;
     while (*s2) {
         *tmp = *s2;
@@ -150,7 +150,7 @@ size_t strcpy(char *s1, char *s2) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-size_t strncpy(char *s1, char *s2, size_t n) {
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
     char *tmp = s1;
     while ((tmp-s1 < n) && *s2) {
         *tmp = *s2;
@@ -161,20 +161,20 @@ size_t strncpy(char *s1, char *s2, size_t n) {
     return tmp-s1-1;
 }
 
-char * strcat(char *s1, char *s2) {
+char * cgc_strcat(char *s1, char *s2) {
     char *tmp = s1;
     while (*tmp) tmp++;
-    strcpy(tmp,s2);
+    cgc_strcpy(tmp,s2);
     return s1;
 }
 
-size_t strlen(char *s) {
+cgc_size_t cgc_strlen(char *s) {
     char *tmp = s;
     while (*tmp) tmp++;
-    return (size_t)(tmp-s);
+    return (cgc_size_t)(tmp-s);
 }
 
-int streq(char *s1, char *s2) {
+int cgc_streq(char *s1, char *s2) {
     while (*s1 && *s2){
         if (*s1 != *s2)
             return 0;
@@ -184,7 +184,7 @@ int streq(char *s1, char *s2) {
     return (*s1 == '\0') && (*s2 == '\0');
 }
 
-int strncmp(char *s1, char *s2, size_t n) {
+int cgc_strncmp(char *s1, char *s2, cgc_size_t n) {
     while (*s1 && *s2 && n--){
         if (*s1 != *s2)
             return 1;
@@ -194,7 +194,7 @@ int strncmp(char *s1, char *s2, size_t n) {
     return !((*s1 == '\0') && (*s2 == '\0'));
 }
 
-int startswith(char *s1, char *s2) {
+int cgc_startswith(char *s1, char *s2) {
     while (*s1 && *s2) {
         if (*s1 != *s2)
             return 0;
@@ -204,7 +204,7 @@ int startswith(char *s1, char *s2) {
     return *s2 == '\0';
 }
 
-int uint2str(char* str_buf, int buf_size, uint32_t i) {
+int cgc_uint2str(char* str_buf, int buf_size, uint32_t i) {
 
     int idx = 0;
     uint32_t tmp;
@@ -227,7 +227,7 @@ int uint2str(char* str_buf, int buf_size, uint32_t i) {
     if (idx >= buf_size)
         return -1;
 
-    // insert '\0'
+    // cgc_insert '\0'
     str_buf[idx--] = '\0';
 
     // move left through string, writing digits along the way
@@ -240,7 +240,7 @@ int uint2str(char* str_buf, int buf_size, uint32_t i) {
     return 0;
 }
 
-int int2str(char* str_buf, int buf_size, int i) {
+int cgc_int2str(char* str_buf, int buf_size, int i) {
 
     int idx = 0;
     int tmp;
@@ -272,7 +272,7 @@ int int2str(char* str_buf, int buf_size, int i) {
     if (idx >= buf_size)
         return -1;
 
-    // insert '\0'
+    // cgc_insert '\0'
     str_buf[idx--] = '\0';
 
     // move left through string, writing digits along the way
@@ -285,7 +285,7 @@ int int2str(char* str_buf, int buf_size, int i) {
     return 0;
 }
 
-uint32_t str2uint(const char* str_buf) {
+uint32_t cgc_str2uint(const char* str_buf) {
     int result = 0;
     int max_chars = 10; // max number of chars read from str_buf
     int i = 0;
@@ -306,23 +306,23 @@ uint32_t str2uint(const char* str_buf) {
     return result;
 }
 
-void * memset(void *dst, char c, size_t n) {
-    size_t i;
+void * cgc_memset(void *dst, char c, cgc_size_t n) {
+    cgc_size_t i;
     for (i=0; i<n; i++) {
         *((uint8_t*)dst+i) = c;
     }
     return dst;
 }
 
-void * memcpy(void *dst, void *src, size_t n) {
-    size_t i;
+void * cgc_memcpy(void *dst, void *src, cgc_size_t n) {
+    cgc_size_t i;
     for (i=0; i<n; i++) {
         *((uint8_t*)dst+i) = *((uint8_t*)src+i);
     }
     return dst;
 }
 
-char * b2hex(uint8_t b, char *h) {
+char * cgc_b2hex(uint8_t b, char *h) {
     if (b>>4 < 10)
         h[0] = (b>>4)+0x30;
     else
@@ -336,7 +336,7 @@ char * b2hex(uint8_t b, char *h) {
     return h;
 }
 
-char * strchr(char *str, char c) {
+char * cgc_strchr(char *str, char c) {
     char *tmp = str;
     while (*tmp) {
         if (*tmp == c)
@@ -347,26 +347,26 @@ char * strchr(char *str, char c) {
 }
 
 //modulus
-int __umoddi3(int a, int b) {
+int cgc___umoddi3(int a, int b) {
     return a-(a/b*b);
 }
 
-void sleep(int s) {
-    struct timeval tv;
+void cgc_sleep(int s) {
+    struct cgc_timeval tv;
     tv.tv_sec = s;
     tv.tv_usec = 0;
-    fdwait(0, NULL, NULL, &tv, NULL);
+    cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }
 
-int memcmp(void *a, void *b, size_t n) {
-    size_t i;
+int cgc_memcmp(void *a, void *b, cgc_size_t n) {
+    cgc_size_t i;
     for (i=0; i < n; i++)
         if ( *(uint8_t*)(a+i) != *(uint8_t*)(b+i))
             return -1;
     return 0;
 }
 
-static void heapinit() {
+static void cgc_heapinit() {
     int i;
     RAND(&__hcookie[SSHEAP], sizeof(__hcookie[SSHEAP]), NULL);
     __hcookie[SHEAP] = 0x50C0FFEE;
@@ -383,7 +383,7 @@ static void heapinit() {
     }
 }
 
-static void insert(heap_chunk_t *head, heap_chunk_t *node, heaptype type) {
+static void cgc_insert(cgc_heap_chunk_t *head, cgc_heap_chunk_t *node, cgc_heaptype type) {
     node->cookie = __hcookie[type];
     node->next = head;
     node->prev = head->prev;
@@ -391,88 +391,88 @@ static void insert(heap_chunk_t *head, heap_chunk_t *node, heaptype type) {
     head->prev = node;
 }
 
-static void remove(heap_chunk_t *node) {
+static void cgc_remove(cgc_heap_chunk_t *node) {
     node->prev->next = node->next;
     node->next->prev = node->prev;
     node->next = NULL;
     node->prev = NULL;
 }
 
-static void *__malloc(size_t size, heaptype type) {
+static void *cgc___malloc(cgc_size_t size, cgc_heaptype type) {
     /*
-     * A very stupid malloc implementation, meant to be simple.
+     * A very stupid cgc_malloc implementation, meant to be simple.
      * Keeps a list of allocated and freed chunks
      * Alloc walks list of freed chunks to see if any are large enough
      * If not, it allocates space large enough to store
-     * Oh, and we never actually free pages. It's quality software.
+     * Oh, and we never actually cgc_free pages. It's quality software.
      *
      */
     if (!heapinit_done) 
-        heapinit();
+        cgc_heapinit();
 
     if (size == 0)
         return NULL;
 
-    heap_chunk_t *chunk = freed[type];
-    heap_chunk_t *frag = NULL;
-    heap_chunk_t *prev = NULL;
+    cgc_heap_chunk_t *chunk = freed[type];
+    cgc_heap_chunk_t *frag = NULL;
+    cgc_heap_chunk_t *prev = NULL;
 
     //need space for inline metadata
-    size += sizeof(heap_chunk_t);
+    size += sizeof(cgc_heap_chunk_t);
 
     //walk freed list to see if we can find match
-    //while we're walking free list, might as well coalesce as we go
+    //while we're walking cgc_free list, might as well coalesce as we go
     //this will only coalesce adjacent blocks in the freelist
-    while (chunk->size < size && HNEXT(chunk,type) != freed[type]) {
+    while (chunk->size < size && cgc_HNEXT(chunk,type) != freed[type]) {
 
-        //ommitted type of HNEXT(chunk,type) != freed here because freed is only node in BSS
+        //ommitted type of cgc_HNEXT(chunk,type) != freed here because freed is only node in BSS
         //should never be adjacent
-        while ((uint8_t*)HNEXT(chunk,type) == ((uint8_t*)chunk)+chunk->size) {
-            frag = HNEXT(chunk,type);
-            remove(frag);
+        while ((uint8_t*)cgc_HNEXT(chunk,type) == ((uint8_t*)chunk)+chunk->size) {
+            frag = cgc_HNEXT(chunk,type);
+            cgc_remove(frag);
             chunk->size += frag->size;
         }
 
-        //make sure HNEXT(chunk,type) isn't freed after coalesce, though
-        if (HNEXT(chunk,type) == freed[type])
+        //make sure cgc_HNEXT(chunk,type) isn't freed after coalesce, though
+        if (cgc_HNEXT(chunk,type) == freed[type])
             break;
 
-        chunk = HNEXT(chunk,type);
+        chunk = cgc_HNEXT(chunk,type);
 
     }
 
     if (type && __hcookie[type] != chunk->cookie)
-        __heap_cookie_fail();
+        cgc___heap_cookie_fail();
 
 
     if (chunk->size >= size) {
-        //found a match, remove from freed list, add to allocated list, and return
-        //SSSENDL("found free chunk");
+        //found a match, cgc_remove from freed list, add to allocated list, and return
+        //SSSENDL("found cgc_free chunk");
         
-        remove(chunk);
+        cgc_remove(chunk);
 
         //first, break up chunk if we can create another valid chunk out of it
         //this will fragment badly under some workloads, but meh
-        if (chunk->size > (size+sizeof(heap_chunk_t)+1)) {
-            frag = (heap_chunk_t*)(((uint8_t*)chunk)+size);
+        if (chunk->size > (size+sizeof(cgc_heap_chunk_t)+1)) {
+            frag = (cgc_heap_chunk_t*)(((uint8_t*)chunk)+size);
             frag->size = chunk->size - size;
             chunk->size = size;
-            insert(freed[type],frag,type);
+            cgc_insert(freed[type],frag,type);
         }
 
-        insert(allocated[type],chunk,type);
-        return ((uint8_t*)chunk)+sizeof(heap_chunk_t);
+        cgc_insert(allocated[type],chunk,type);
+        return ((uint8_t*)chunk)+sizeof(cgc_heap_chunk_t);
     }
 
-    //see if free space in last allocated page is enough
+    //see if cgc_free space in last allocated page is enough
     if (size <= curleft[type]) {
         //SSSENDL("had enough left in current page");
-        chunk = (heap_chunk_t*)lastpage[type];
+        chunk = (cgc_heap_chunk_t*)lastpage[type];
         chunk->size = size;
         lastpage[type] += size;
         curleft[type] -= size;
-        insert(allocated[type],chunk,type);
-        return ((uint8_t*)chunk)+sizeof(heap_chunk_t);
+        cgc_insert(allocated[type],chunk,type);
+        return ((uint8_t*)chunk)+sizeof(cgc_heap_chunk_t);
     }
 
     //need to allocate new page
@@ -480,18 +480,18 @@ static void *__malloc(size_t size, heaptype type) {
     //SSSENDL("allocating new page");
     //first add the remaining page to our freed list as a lazy hack
     //if there's not enough left, we just let it leak
-    if (curleft[type] > sizeof(heap_chunk_t)) {
-        //SSSENDL("adding remainder to free list");
-        chunk = (heap_chunk_t*)lastpage[type];
+    if (curleft[type] > sizeof(cgc_heap_chunk_t)) {
+        //SSSENDL("adding remainder to cgc_free list");
+        chunk = (cgc_heap_chunk_t*)lastpage[type];
         chunk->size = curleft[type];
-        insert(freed[type],chunk,type);
+        cgc_insert(freed[type],chunk,type);
     }
 
     if (allocate(size,0,(void**)&chunk) != 0)
         return NULL;
 
     chunk->size = size;
-    insert(allocated[type],chunk,type);
+    cgc_insert(allocated[type],chunk,type);
 
     lastpage[type] = ((uint8_t*)chunk)+size;
     //this is bad.
@@ -499,122 +499,122 @@ static void *__malloc(size_t size, heaptype type) {
         curleft[type] = PAGE_SIZE-(size&(PAGE_SIZE-1));
     else
         curleft[type] = 0;
-    return ((uint8_t*)chunk)+sizeof(heap_chunk_t);
+    return ((uint8_t*)chunk)+sizeof(cgc_heap_chunk_t);
 }
 
-void __free(void *p, heaptype type) {
+void cgc___free(void *p, cgc_heaptype type) {
     /*
-     * A very stupid free for a very stupid malloc
-     * Simply moves pointer from allocated to free list
+     * A very stupid cgc_free for a very stupid cgc_malloc
+     * Simply moves pointer from allocated to cgc_free list
      * With no typeing of anything, obviously
      *
      */
     if (!p)
         return;
 
-    heap_chunk_t *chunk = (heap_chunk_t*)((uint8_t*)p - sizeof(heap_chunk_t));
+    cgc_heap_chunk_t *chunk = (cgc_heap_chunk_t*)((uint8_t*)p - sizeof(cgc_heap_chunk_t));
 
     if (type && __hcookie[type] != chunk->cookie)
-        __heap_cookie_fail();
+        cgc___heap_cookie_fail();
 
     //fix allocated list
-    remove(chunk);
+    cgc_remove(chunk);
 
     //add chunk to the freed list
-    insert(freed[type],chunk,type);
+    cgc_insert(freed[type],chunk,type);
     return;
 }
 
-void *nmalloc(size_t size) {
-    return __malloc(size, YOLO);
+void *cgc_nmalloc(cgc_size_t size) {
+    return cgc___malloc(size, YOLO);
 }
 
-void *smalloc(size_t size) {
-    return __malloc(size, SHEAP);
+void *cgc_smalloc(cgc_size_t size) {
+    return cgc___malloc(size, SHEAP);
 }
 
-void *ssmalloc(size_t size) {
-    return __malloc(size, SSHEAP);
+void *cgc_ssmalloc(cgc_size_t size) {
+    return cgc___malloc(size, SSHEAP);
 }
 
-void *malloc(size_t size) {
+void *cgc_malloc(cgc_size_t size) {
     if (!mallocp)
-        setheap(0);
+        cgc_setheap(0);
     return mallocp(size);
 }
 
-void nfree(void *p) {
-    return __free(p, YOLO);
+void cgc_nfree(void *p) {
+    return cgc___free(p, YOLO);
 }
 
-void sfree(void *p) {
-    return __free(p, SHEAP);
+void cgc_sfree(void *p) {
+    return cgc___free(p, SHEAP);
 }
 
-void ssfree(void *p) {
-    return __free(p, SSHEAP);
+void cgc_ssfree(void *p) {
+    return cgc___free(p, SSHEAP);
 }
 
-void free(void *p) {
+void cgc_free(void *p) {
     if (!freep)
-        setheap(0);
+        cgc_setheap(0);
     freep(p);
 }
 
-void *calloc(size_t size) {
+void *cgc_calloc(cgc_size_t size) {
     void *ptr;
 
-    if (!(ptr = malloc(size)))
+    if (!(ptr = cgc_malloc(size)))
         return NULL;
 
-    memset(ptr,'\0',size);
+    cgc_memset(ptr,'\0',size);
     return ptr;
 }
 
 
-void setheap(uint32_t type) {
+void cgc_setheap(uint32_t type) {
     if (type == 0x10100110) {
         __htype = YOLO;
-        mallocp = nmalloc;
-        freep = nfree;
+        mallocp = cgc_nmalloc;
+        freep = cgc_nfree;
     } else if (type == 0xF0C0FFEE) {
         __htype = SHEAP;
-        mallocp = smalloc;
-        freep = sfree;
+        mallocp = cgc_smalloc;
+        freep = cgc_sfree;
     } else {
         __htype = SSHEAP;
-        mallocp = ssmalloc;
-        freep = ssfree;
+        mallocp = cgc_ssmalloc;
+        freep = cgc_ssfree;
     }
 }
 
-void checkheap() {
-    //validate free and allocated lists!
+void cgc_checkheap() {
+    //validate cgc_free and allocated lists!
     uint32_t type = __htype;
-    heap_chunk_t *chunk = freed[type];
+    cgc_heap_chunk_t *chunk = freed[type];
 
     //forward and backwards
 
-    while((chunk=HNEXT(chunk,type)) != freed[type]);
-    while((chunk=HPREV(chunk,type)) != freed[type]);
+    while((chunk=cgc_HNEXT(chunk,type)) != freed[type]);
+    while((chunk=cgc_HPREV(chunk,type)) != freed[type]);
     chunk = allocated[type];
-    while((chunk=HNEXT(chunk,type)) != allocated[type]);
-    while((chunk=HPREV(chunk,type)) != allocated[type]);
+    while((chunk=cgc_HNEXT(chunk,type)) != allocated[type]);
+    while((chunk=cgc_HPREV(chunk,type)) != allocated[type]);
 }
 
-void __stack_cookie_init() {
+void cgc___stack_cookie_init() {
     RAND(&__cookie, sizeof(__cookie), NULL);
 }
 
-void __cookie_fail() {
+void cgc___cookie_fail() {
     SSENDL(sizeof(COOKIEFAIL)-1,COOKIEFAIL);
     _terminate(66);
 }
 
-void __stack_cookie_fail() {
-    __cookie_fail();
+void cgc___stack_cookie_fail() {
+    cgc___cookie_fail();
 }
 
-void __heap_cookie_fail() {
-    __cookie_fail();
+void cgc___heap_cookie_fail() {
+    cgc___cookie_fail();
 }

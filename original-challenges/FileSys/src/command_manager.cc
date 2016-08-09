@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,53 +23,53 @@
 
 #include "command_manager.h"
 
-CommandManager::CommandManager(FileManager *fm)
+cgc_CommandManager::cgc_CommandManager(cgc_FileManager *fm)
 {
   this->fm = fm;
-  commands = new List<Command *>(0);
+  commands = new cgc_List<cgc_Command *>(0);
 }
 
-CommandManager::~CommandManager()
+cgc_CommandManager::~cgc_CommandManager()
 {
 }
 
-List<Command *>* CommandManager::GetCommands()
+cgc_List<cgc_Command *>* cgc_CommandManager::cgc_GetCommands()
 {
   return commands;
 }
 
-void CommandManager::InstallCommand(Command *cmd)
+void cgc_CommandManager::cgc_InstallCommand(cgc_Command *cmd)
 {
-  commands->add(cmd);
+  commands->cgc_add(cmd);
 }
 
-void CommandManager::UninstallCommand(const char* name)
+void cgc_CommandManager::cgc_UninstallCommand(const char* name)
 {
   int i;
-  for (i = 0; i < commands->length(); ++i)
+  for (i = 0; i < commands->cgc_length(); ++i)
   {
-    Command *cmd = commands->get(i);
-    if (strcmp(cmd->GetName(), name) == 0)
+    cgc_Command *cmd = commands->cgc_get(i);
+    if (cgc_strcmp(cmd->cgc_GetName(), name) == 0)
     {
-      commands->remove(cmd);
+      commands->cgc_remove(cmd);
       delete cmd;
       return;
     }
   }
 }
 
-int CommandManager::ExecuteCommand(const char* name, int argc, char** argv)
+int cgc_CommandManager::cgc_ExecuteCommand(const char* name, int argc, char** argv)
 {
   int i;
-  for (i = 0; i < commands->length(); ++i)
+  for (i = 0; i < commands->cgc_length(); ++i)
   {
-    Command *cmd = commands->get(i);
-    if (strcmp(cmd->GetName(), name) == 0 || strcmp(cmd->GetAlias(), name) == 0)
+    cgc_Command *cmd = commands->cgc_get(i);
+    if (cgc_strcmp(cmd->cgc_GetName(), name) == 0 || cgc_strcmp(cmd->cgc_GetAlias(), name) == 0)
     {
-      if (cmd->GetType() == Command::CT_HELP)
-        cmd->Execute((FileManager *) this, argc, argv); 	// HACKZ
+      if (cmd->cgc_GetType() == cgc_Command::CT_HELP)
+        cmd->cgc_Execute((cgc_FileManager *) this, argc, argv); 	// HACKZ
       else
-        cmd->Execute(fm, argc, argv);
+        cmd->cgc_Execute(fm, argc, argv);
       return 0;
     }
   }

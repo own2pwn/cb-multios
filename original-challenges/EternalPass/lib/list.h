@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,11 +32,11 @@
  */
 
 /**
- * Pointer to function to free the data element of a node.
+ * Pointer to function to cgc_free the data element of a node.
  *
  * @param data Data element of a struct node
  */
-typedef void (*nodeDataFreeFn)(void *);
+typedef void (*cgc_nodeDataFreeFn)(void *);
 
 struct node {
 	void *data;
@@ -47,7 +47,7 @@ struct node {
 struct list {
 	unsigned int length;
 	struct node dummy;
-	nodeDataFreeFn ndf;
+	cgc_nodeDataFreeFn ndf;
 };
 
 /**
@@ -56,7 +56,7 @@ struct list {
  * @param data Data element
  * @return VA of new node, or NULL on error
  */
-struct node *list_create_node(void *data);
+struct node *cgc_list_create_node(void *data);
 
 /**
  * Destroy the node and its data element. 
@@ -65,22 +65,22 @@ struct node *list_create_node(void *data);
  * @param l List containing node n
  * @param n Node to destory
  */
-void list_destroy_node(struct list *l, struct node **n);
+void cgc_list_destroy_node(struct list *l, struct node **n);
 
 /**
  * Allocate a new list
  *
  * @param l List
- * @param ndf Node data free'ing function
+ * @param ndf Node data cgc_free'ing function
  */
-void list_init(struct list *l, nodeDataFreeFn ndf);
+void cgc_list_init(struct list *l, cgc_nodeDataFreeFn ndf);
 
 /**
  * Destroy a list
  *
  * @param l List
  */
-void list_destroy(struct list *l);
+void cgc_list_destroy(struct list *l);
 
 /**
  * Insert new node at end of list.
@@ -88,7 +88,7 @@ void list_destroy(struct list *l);
  * @param l List
  * @param d Pointer to data to insert into new node
  */
-void list_insert_node_at_end(struct list *l, struct node *new);
+void cgc_list_insert_node_at_end(struct list *l, struct node *new);
 
 /**
  * Insert data element into a new node at end of list.
@@ -96,7 +96,7 @@ void list_insert_node_at_end(struct list *l, struct node *new);
  * @param l List
  * @param d Pointer to data to insert into new node
  */
-void list_insert_at_end(struct list *l, void *d);
+void cgc_list_insert_at_end(struct list *l, void *d);
 
 /**
  * Insert new node at start of list
@@ -104,7 +104,7 @@ void list_insert_at_end(struct list *l, void *d);
  * @param l List
  * @param d Pointer to data to insert into new node
  */
-void list_insert_node_at_start(struct list *l, struct node *new);
+void cgc_list_insert_node_at_start(struct list *l, struct node *new);
 
 /**
  * Insert data element into a new node at start of list
@@ -112,7 +112,7 @@ void list_insert_node_at_start(struct list *l, struct node *new);
  * @param l List
  * @param d Pointer to data to insert into new node
  */
-void list_insert_at_start(struct list *l, void *d);
+void cgc_list_insert_at_start(struct list *l, void *d);
 
 /**
  * Remove the first node from the start of list.
@@ -120,7 +120,7 @@ void list_insert_at_start(struct list *l, void *d);
  * @param l List
  * @return VA of node or NULL of empty list
  */
-struct node *list_pop(struct list *l);
+struct node *cgc_list_pop(struct list *l);
 
 /**
  * Remove node from list
@@ -128,7 +128,7 @@ struct node *list_pop(struct list *l);
  * @param l Pointer to list
  * @param n Node to remove from list
  */
-void list_remove_node(struct list *l, struct node *n);
+void cgc_list_remove_node(struct list *l, struct node *n);
 
 /**
  * Get head node of list
@@ -136,7 +136,7 @@ void list_remove_node(struct list *l, struct node *n);
  * @param l Pointer to list
  * @return VA of head node or NULL if empty
  */
-struct node *list_head_node(struct list *l);
+struct node *cgc_list_head_node(struct list *l);
 
 /**
  * Get tail node of list
@@ -144,7 +144,7 @@ struct node *list_head_node(struct list *l);
  * @param l Pointer to list
  * @return VA of tail node or NULL if empty
  */
-struct node *list_tail_node(struct list *l);
+struct node *cgc_list_tail_node(struct list *l);
 
 /**
  * Get length of list
@@ -152,7 +152,7 @@ struct node *list_tail_node(struct list *l);
  * @param l List
  * @return Length of list
  */
-unsigned int list_length(struct list *l);
+unsigned int cgc_list_length(struct list *l);
 
 /**
  * Find the node in the list that contains the given data
@@ -162,7 +162,7 @@ unsigned int list_length(struct list *l);
  * @param data Pointer to data element to pass into predicate fn
  * @return VA of node or NULL if not found
  */
-struct node *list_find_node_with_data(struct list *l, unsigned char (*predFn)(void *, void *), void *data);
+struct node *cgc_list_find_node_with_data(struct list *l, unsigned char (*predFn)(void *, void *), void *data);
 
 /**
  * Run a function against every item in the list
@@ -170,7 +170,7 @@ struct node *list_find_node_with_data(struct list *l, unsigned char (*predFn)(vo
  * @param l list
  * @param iter The iterator function
  */
-struct node *list_foreach(struct list *l, void (*iter)(void *)); 
+struct node *cgc_list_foreach(struct list *l, void (*iter)(void *)); 
 
 /**
  * Find the node (not necessarily in the list) that contains the given data
@@ -180,6 +180,6 @@ struct node *list_foreach(struct list *l, void (*iter)(void *));
  * @param data Pointer to data element to pass into predicate fn
  * @return VA of node or NULL if not found
  */
-struct node *list_find_node_with_data_recurse(struct list *l, struct node * (*predFn)(struct node *, void *), void *data);
+struct node *cgc_list_find_node_with_data_recurse(struct list *l, struct node * (*predFn)(struct node *, void *), void *data);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,29 +28,29 @@
  * @param  name         The name of the new subscription
  * @param  index        The initial index of the new subscription
  * @param  deliveryType The delivery type of the new subscription
- * @return              The address of the new Subscription structure
+ * @return              The address of the new cgc_Subscription structure
  */
-Subscription* newSubscription(char* name, unsigned index, char* deliveryType) {
-	Subscription* subscription;
-	size_t channelNameLength;
+cgc_Subscription* cgc_newSubscription(char* name, unsigned index, char* deliveryType) {
+	cgc_Subscription* subscription;
+	cgc_size_t channelNameLength;
 
-	if(!(subscription = malloc(sizeof(Subscription))))
+	if(!(subscription = cgc_malloc(sizeof(cgc_Subscription))))
 		return NULL;
 
-	if(setDeliveryType(&subscription, deliveryType)) {
-		free(subscription);
-		return NULL;
-	}
-
-	channelNameLength  = strlen(name);
-	if(!(subscription->name = malloc(channelNameLength+1))) {
-		free(subscription->deliveryType);
-		free(subscription);
+	if(cgc_setDeliveryType(&subscription, deliveryType)) {
+		cgc_free(subscription);
 		return NULL;
 	}
 
-	memset(subscription->name, 0, channelNameLength+1);
-	strncpy(subscription->name, name, channelNameLength);
+	channelNameLength  = cgc_strlen(name);
+	if(!(subscription->name = cgc_malloc(channelNameLength+1))) {
+		cgc_free(subscription->deliveryType);
+		cgc_free(subscription);
+		return NULL;
+	}
+
+	cgc_memset(subscription->name, 0, channelNameLength+1);
+	cgc_strncpy(subscription->name, name, channelNameLength);
 	subscription->index = index;
 	subscription->next = NULL;
 
@@ -61,12 +61,12 @@ Subscription* newSubscription(char* name, unsigned index, char* deliveryType) {
  * Find a channel that matches channelName
  * @param  channelList The list of channels to search
  * @param  channelName The channel name to match
- * @return             The address of the found Channel structure,
+ * @return             The address of the found cgc_Channel structure,
  *                     NULL if not found.
  */
-Channel* getChannel(Channel* channelList, char* channelName) {
-	for(Channel* channel=channelList; channel!=NULL; channel=channel->next) {
-		if(!strcmp(channel->name, channelName)) 
+cgc_Channel* cgc_getChannel(cgc_Channel* channelList, char* channelName) {
+	for(cgc_Channel* channel=channelList; channel!=NULL; channel=channel->next) {
+		if(!cgc_strcmp(channel->name, channelName)) 
 			return channel;
 	}
 
@@ -77,12 +77,12 @@ Channel* getChannel(Channel* channelList, char* channelName) {
  * Find a subscription that matches subscriptionName
  * @param  subscriptions 	 The list of subscriptions to search
  * @param  subscriptionName  The subscription name to match
- * @return                   The address of the found Subscription structure,
+ * @return                   The address of the found cgc_Subscription structure,
  *                           NULL if not found.
  */
-Subscription* getSubscription(Subscription* subscriptions, char* subscriptionName) {
-	for(Subscription* subscription=subscriptions; subscription!=NULL; subscription=subscription->next) {
-		if(!strcmp(subscription->name, subscriptionName)) 
+cgc_Subscription* cgc_getSubscription(cgc_Subscription* subscriptions, char* subscriptionName) {
+	for(cgc_Subscription* subscription=subscriptions; subscription!=NULL; subscription=subscription->next) {
+		if(!cgc_strcmp(subscription->name, subscriptionName)) 
 			return subscription;
 	}
 
@@ -91,32 +91,32 @@ Subscription* getSubscription(Subscription* subscriptions, char* subscriptionNam
 
 /**
  * Set the delivery type of the subscription
- * @param  subscriptionPtr The address of the pointer to the Subscription
+ * @param  subscriptionPtr The address of the pointer to the cgc_Subscription
  * @param  deliveryType    The delivery type to assign
  * @return                 1 if the assignment fails, 0 otherwise.
  */
-int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType) {
-	Subscription* subscription;
+int cgc_setDeliveryType(cgc_Subscription** subscriptionPtr, char* deliveryType) {
+	cgc_Subscription* subscription;
 
 	subscription = *subscriptionPtr;
 
-	if(!strcmp(GUARANTEED_DELIVERY, deliveryType) ||
-	   !strcmp(FRESH_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_HIGH_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_MEDIUM_DELIVERY, deliveryType) ||
-	   !strcmp(PRIORITY_LOW_DELIVERY, deliveryType)) {
+	if(!cgc_strcmp(GUARANTEED_DELIVERY, deliveryType) ||
+	   !cgc_strcmp(FRESH_DELIVERY, deliveryType) ||
+	   !cgc_strcmp(PRIORITY_HIGH_DELIVERY, deliveryType) ||
+	   !cgc_strcmp(PRIORITY_MEDIUM_DELIVERY, deliveryType) ||
+	   !cgc_strcmp(PRIORITY_LOW_DELIVERY, deliveryType)) {
 
-		if(!(subscription->deliveryType = malloc(strlen(deliveryType)+1)))
+		if(!(subscription->deliveryType = cgc_malloc(cgc_strlen(deliveryType)+1)))
 			return 1;
 
-		memset(subscription->deliveryType, 0, strlen(deliveryType)+1);
-		strcpy(subscription->deliveryType, deliveryType);
-	} else if(atoi(deliveryType) > 0) {
-		if(!(subscription->deliveryType = malloc(strlen(deliveryType)+1)))
+		cgc_memset(subscription->deliveryType, 0, cgc_strlen(deliveryType)+1);
+		cgc_strcpy(subscription->deliveryType, deliveryType);
+	} else if(cgc_atoi(deliveryType) > 0) {
+		if(!(subscription->deliveryType = cgc_malloc(cgc_strlen(deliveryType)+1)))
 			return 1;
 
-		memset(subscription->deliveryType, 0, strlen(deliveryType)+1);
-		strcpy(subscription->deliveryType, deliveryType);			
+		cgc_memset(subscription->deliveryType, 0, cgc_strlen(deliveryType)+1);
+		cgc_strcpy(subscription->deliveryType, deliveryType);			
 	} else {
 		return 1;
 	}
@@ -130,11 +130,11 @@ int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType) {
  * Get the message from the queue with the matching id
  * @param  queue The queue to search
  * @param  id    The message id to match
- * @return       The address of the found Message structure,
+ * @return       The address of the found cgc_Message structure,
  *               NULL if not found.
  */
-Message* getMessageById(Message* queue, unsigned int id) {
-	Message* message=NULL;
+cgc_Message* cgc_getMessageById(cgc_Message* queue, unsigned int id) {
+	cgc_Message* message=NULL;
 
 	for(message=queue; message!=NULL; message=message->next) {
 		if(message->id == id)
@@ -147,11 +147,11 @@ Message* getMessageById(Message* queue, unsigned int id) {
 /**
  * Get the last message in the queue
  * @param  queue The queue to search
- * @return       The address of the found Message structure,
+ * @return       The address of the found cgc_Message structure,
  *               NULL if not found.
  */
-Message* getLastMessage(Message* queue) {
-	Message* lastMessage;
+cgc_Message* cgc_getLastMessage(cgc_Message* queue) {
+	cgc_Message* lastMessage;
 
 	if(!queue)
 		return NULL;
@@ -166,17 +166,17 @@ Message* getLastMessage(Message* queue) {
  * and update head value
  * @param channel The address of the channel to cleanup
  */
-void cleanupChannel(Channel* channel) {
+void cgc_cleanupChannel(cgc_Channel* channel) {
 	unsigned int head;
 
 	head = channel->tail;
-	for(Subscription* subscription=channel->subscriptions; subscription!= NULL; subscription=subscription->next) {
+	for(cgc_Subscription* subscription=channel->subscriptions; subscription!= NULL; subscription=subscription->next) {
 		if(subscription->index < head)
 			head = subscription->index;
 	}
 
 	while(head > channel->head) {
-		Message* message;
+		cgc_Message* message;
 
 		message = channel->queue;
 		channel->queue = message->next;
@@ -187,22 +187,22 @@ void cleanupChannel(Channel* channel) {
 /**
  * Create a new channel
  * @param  name The name to assign the channel
- * @return      The address of the new Channel structure
+ * @return      The address of the new cgc_Channel structure
  */
-Channel* newChannel(char* name) {
-	Channel* channel;
-	size_t nameSize;
+cgc_Channel* cgc_newChannel(char* name) {
+	cgc_Channel* channel;
+	cgc_size_t nameSize;
 
-	if(!(channel = malloc(sizeof(Channel))))
+	if(!(channel = cgc_malloc(sizeof(cgc_Channel))))
 		return NULL;
 
-	nameSize = strlen(name);
-	if(!(channel->name = malloc(nameSize))) {
-		free(channel);
+	nameSize = cgc_strlen(name);
+	if(!(channel->name = cgc_malloc(nameSize))) {
+		cgc_free(channel);
 		return NULL;
 	}
-	memset(channel->name, 0, nameSize);
-	strcpy(channel->name, name);
+	cgc_memset(channel->name, 0, nameSize);
+	cgc_strcpy(channel->name, name);
 	channel->head = 0;
 	channel->tail = 0;
 	channel->subscriptions = NULL;
@@ -219,33 +219,33 @@ Channel* newChannel(char* name) {
  * @param userName             The name of the user
  * @param channelName          The name of the channel to subscribe the user to
  */
-void addSubscriptions(Channel** channelListPtr, Subscription** userSubscriptionsPtr, char* userName, char* channelName) {
-	Subscription* userSubscription;
-	Subscription* channelSubscription;
-	Subscription* subscriptions;
-	Channel* channelList;
-	Channel* channel;
+void cgc_addSubscriptions(cgc_Channel** channelListPtr, cgc_Subscription** userSubscriptionsPtr, char* userName, char* channelName) {
+	cgc_Subscription* userSubscription;
+	cgc_Subscription* channelSubscription;
+	cgc_Subscription* subscriptions;
+	cgc_Channel* channelList;
+	cgc_Channel* channel;
 
 	channelList = *channelListPtr;
-	if(!(channel = getChannel(channelList, channelName))) {
-		if(!(channel = newChannel(channelName)))
+	if(!(channel = cgc_getChannel(channelList, channelName))) {
+		if(!(channel = cgc_newChannel(channelName)))
 			return;
 		channel->next = *channelListPtr;
 		*channelListPtr = channel;
 	}
 
 	subscriptions = *userSubscriptionsPtr;
-	if((userSubscription = getSubscription(subscriptions, channel->name))) {
+	if((userSubscription = cgc_getSubscription(subscriptions, channel->name))) {
 		userSubscription->index = channel->tail;
 		return;
 	}
 
 
-	userSubscription = newSubscription(channel->name, channel->tail, FRESH_DELIVERY);
+	userSubscription = cgc_newSubscription(channel->name, channel->tail, FRESH_DELIVERY);
 	userSubscription->next = subscriptions;
 	subscriptions = userSubscription;
 
-	channelSubscription = newSubscription(userName, channel->tail, FRESH_DELIVERY);
+	channelSubscription = cgc_newSubscription(userName, channel->tail, FRESH_DELIVERY);
 	channelSubscription->next = channel->subscriptions;
 	channel->subscriptions = channelSubscription;
 

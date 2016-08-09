@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,16 +34,16 @@ typedef struct thread {
     struct message *messages;
     unsigned int id;
     char topic[64];
-} thread_t;
+} cgc_thread_t;
 
 typedef struct message {
     struct message *next;
     unsigned int id;
     char topic[64];
     const char *body;
-} message_t;
+} cgc_message_t;
 
-static thread_t *g_threads;
+static cgc_thread_t *g_threads;
 static unsigned int g_next_id = 1000;
 static struct {
 #define S_MENU 0
@@ -54,25 +54,25 @@ static struct {
     int state;
     union {
         struct {
-            thread_t *next_thread;
-            message_t *next_message;
+            cgc_thread_t *next_thread;
+            cgc_message_t *next_message;
         } list;
         struct {
-            thread_t *thread;
+            cgc_thread_t *thread;
             char topic[64];
         } post;
     };
 } g_state;
 
-static void send_string(const char *str)
+static void cgc_send_string(const char *str)
 {
 #ifdef DEBUG
-    fdprintf(STDERR, "%s\n", str);
+    cgc_fdprintf(STDERR, "%s\n", str);
 #endif
-    modem_output((void *)str, strlen(str));
+    cgc_modem_output((void *)str, cgc_strlen(str));
 }
 
-void bbs_help()
+void cgc_bbs_help()
 {
     const static char help_text[] = \
         "Available commands:\n" \
@@ -84,19 +84,19 @@ void bbs_help()
         "\t\tGet message contents\n" \
         "\t(H)elp\n" \
         "\t\tThis screen\n";
-    send_string(help_text);
+    cgc_send_string(help_text);
 }
 
-void bbs_menu()
+void cgc_bbs_menu()
 {
     const static char menu_text[] = \
         "(L)ist, (H)elp, (P)ost, (R)ead\n";
-    send_string(menu_text);
+    cgc_send_string(menu_text);
 }
 
-thread_t *find_thread(int id)
+cgc_thread_t *cgc_find_thread(int id)
 {
-    thread_t *t;
+    cgc_thread_t *t;
     for (t = g_threads; t != NULL; t = t->next)
     {
         if (t->id < id)
@@ -109,10 +109,10 @@ thread_t *find_thread(int id)
     return NULL;
 }
 
-message_t *find_message(int id)
+cgc_message_t *cgc_find_message(int id)
 {
-    thread_t *t;
-    message_t *m;
+    cgc_thread_t *t;
+    cgc_message_t *m;
 
     for (t = g_threads; t != NULL; t = t->next)
     {
@@ -129,38 +129,38 @@ message_t *find_message(int id)
     return NULL;
 }
 
-void send_thread(thread_t *t)
+void cgc_send_thread(cgc_thread_t *t)
 {
     char buf[100];
-    sprintf(buf, "%08d - %s\n", t->id, t->topic);
-    send_string(buf);
+    cgc_sprintf(buf, "%08d - %s\n", t->id, t->topic);
+    cgc_send_string(buf);
 }
 
-void send_message_brief(message_t *m)
+void cgc_send_message_brief(cgc_message_t *m)
 {
     char buf[100];
-    sprintf(buf, "%08d - %s\n", m->id, m->topic);
-    send_string(buf);
+    cgc_sprintf(buf, "%08d - %s\n", m->id, m->topic);
+    cgc_send_string(buf);
 }
 
-void send_message(message_t *m)
+void cgc_send_message(cgc_message_t *m)
 {
     char buf[100];
-    sprintf(buf, "%08d - %s\n", m->id, m->topic);
-    send_string(buf);
-    send_string(m->body);
+    cgc_sprintf(buf, "%08d - %s\n", m->id, m->topic);
+    cgc_send_string(buf);
+    cgc_send_string(m->body);
 }
 
-void send_thread_list(thread_t *t)
+void cgc_send_thread_list(cgc_thread_t *t)
 {
     int i;
     for (i = 0; i < PAGE_LINES && t != NULL; i++, t = t->next)
-        send_thread(t);
+        cgc_send_thread(t);
     if (t)
     {
         g_state.state = S_LIST_THREAD;
         g_state.list.next_thread = t;
-        send_string("(N)ext page, (Q)uit\n");
+        cgc_send_string("(N)ext page, (Q)uit\n");
     }
     else
     {
@@ -168,16 +168,16 @@ void send_thread_list(thread_t *t)
     }
 }
 
-void send_message_list(message_t *t)
+void cgc_send_message_list(cgc_message_t *t)
 {
     int i;
     for (i = 0; i < PAGE_LINES && t != NULL; i++, t = t->next)
-        send_message_brief(t);
+        cgc_send_message_brief(t);
     if (t)
     {
         g_state.state = S_LIST_MESSAGE;
         g_state.list.next_message = t;
-        send_string("(N)ext page, (Q)uit\n");
+        cgc_send_string("(N)ext page, (Q)uit\n");
     }
     else
     {
@@ -185,90 +185,90 @@ void send_message_list(message_t *t)
     }
 }
 
-void do_list(const char *str)
+void cgc_do_list(const char *str)
 {
     if (str[1] == ' ')
     {
-        int id = strtol(&str[2], NULL, 10);
-        thread_t *t = find_thread(id);
+        int id = cgc_strtol(&str[2], NULL, 10);
+        cgc_thread_t *t = cgc_find_thread(id);
         if (t)
-            send_message_list(t->messages);
+            cgc_send_message_list(t->messages);
         else
-            send_string("Thread ID not found.\n");
+            cgc_send_string("Thread ID not found.\n");
     }
     else
     {
-        send_thread_list(g_threads);
+        cgc_send_thread_list(g_threads);
     }
 }
 
-void do_post(const char *str)
+void cgc_do_post(const char *str)
 {
-    thread_t *t = NULL;
+    cgc_thread_t *t = NULL;
     if (str[1] == ' ')
     {
-        int id = strtol(&str[2], NULL, 10);
-        t = find_thread(id);
+        int id = cgc_strtol(&str[2], NULL, 10);
+        t = cgc_find_thread(id);
         if (t == NULL)
         {
-            send_string("Thread ID not found.\n");
+            cgc_send_string("Thread ID not found.\n");
             return;
         }
     }
 
-    send_string("Subject?\n");
+    cgc_send_string("Subject?\n");
     g_state.state = S_POST_WAIT_TOPIC;
     g_state.post.thread = t;
 }
 
-void do_read(const char *str)
+void cgc_do_read(const char *str)
 {
     if (str[1] != ' ')
     {
-        send_string("Missing required argument.\n");
+        cgc_send_string("Missing required argument.\n");
         return;
     }
 
-    int id = strtol(&str[2], NULL, 10);
-    message_t *m = find_message(id);
+    int id = cgc_strtol(&str[2], NULL, 10);
+    cgc_message_t *m = cgc_find_message(id);
     if (m)
-        send_message(m);
+        cgc_send_message(m);
     else
-        send_string("Message ID not found.\n");
+        cgc_send_string("Message ID not found.\n");
 }
 
-void handle_post(const char *str)
+void cgc_handle_post(const char *str)
 {
     if (g_state.state == S_POST_WAIT_TOPIC)
     {
-        strncpy(g_state.post.topic, str, sizeof(g_state.post.topic)-1);
+        cgc_strncpy(g_state.post.topic, str, sizeof(g_state.post.topic)-1);
         g_state.post.topic[sizeof(g_state.post.topic)-1] = 0;
 
-        send_string("Body?\n");
+        cgc_send_string("Body?\n");
         g_state.state = S_POST_WAIT_BODY;
     }
     else if (g_state.state == S_POST_WAIT_BODY)
     {
-        thread_t *t = g_state.post.thread;
+        cgc_thread_t *t = g_state.post.thread;
         if (t == NULL)
         {
-            t = malloc(sizeof(thread_t));
+            t = cgc_malloc(sizeof(cgc_thread_t));
             if (t == NULL)
                 goto fail;
 
-            strcpy(t->topic, g_state.post.topic);
+            cgc_strcpy(t->topic, g_state.post.topic);
             t->id = g_next_id++;
             t->next = g_threads;
             t->messages = NULL;
             g_threads = t;
         }
 
-        message_t *m = malloc(sizeof(message_t));
+        cgc_message_t *m = cgc_malloc(sizeof(cgc_message_t));
         if (m)
         {
             m->id = g_next_id++;
-            strcpy(m->topic, g_state.post.topic);
-            m->body = strdup(str);
+            cgc_strcpy(m->topic, g_state.post.topic);
+            m->body = cgc_strdup(str);
             if (m->body == NULL)
                 goto fail;
 
@@ -281,26 +281,26 @@ fail:
     }
 }
 
-void handle_list(const char *str)
+void cgc_handle_list(const char *str)
 {
-    if (tolower(str[0]) == 'q')
+    if (cgc_tolower(str[0]) == 'q')
     {
         g_state.state = S_MENU;
     }
-    else if (tolower(str[0]) == 'n')
+    else if (cgc_tolower(str[0]) == 'n')
     {
         if (g_state.state == S_LIST_THREAD)
-            send_thread_list(g_state.list.next_thread);
+            cgc_send_thread_list(g_state.list.next_thread);
         else
-            send_message_list(g_state.list.next_message);
+            cgc_send_message_list(g_state.list.next_message);
     }
     else
     {
-        send_string("Bad input.\n");
+        cgc_send_string("Bad input.\n");
     }
 }
 
-void handle_menu(const char *str)
+void cgc_handle_menu(const char *str)
 {
     int cmd = str[0];
 
@@ -313,31 +313,31 @@ void handle_menu(const char *str)
     case 'H':
     case 'h':
     case '?':
-        bbs_help();
+        cgc_bbs_help();
         break;
     case 'L':
     case 'l':
-        do_list(str);
+        cgc_do_list(str);
         break;
     case 'P':
     case 'p':
-        do_post(str);
+        cgc_do_post(str);
         break;
     case 'R':
     case 'r':
-        do_read(str);
+        cgc_do_read(str);
         break;
     case 'Q':
     case 'q':
-        exit(0);
+        cgc_exit(0);
         break;
     default:
-        send_string("Bad input. Unknown command.\n");
+        cgc_send_string("Bad input. Unknown command.\n");
         break;
     }
 }
 
-void bbs_rx(const uint8_t *data, size_t count)
+void cgc_bbs_rx(const cgc_uint8_t *data, cgc_size_t count)
 {
     char str[101];
 
@@ -346,39 +346,39 @@ void bbs_rx(const uint8_t *data, size_t count)
         count = sizeof(str)-1;
 #endif
 
-    memcpy(str, data, count);
+    cgc_memcpy(str, data, count);
     str[count] = 0; // make sure string is NULL-terminated
 
-    if (strlen(str) == 0)
+    if (cgc_strlen(str) == 0)
         return;
 
 #ifdef DEBUG
-    fdprintf(STDERR, "%s\n", str);
+    cgc_fdprintf(STDERR, "%s\n", str);
 #endif
 
     if (g_state.state == S_MENU)
     {
-        handle_menu(str);
+        cgc_handle_menu(str);
     }
     else if (g_state.state == S_LIST_THREAD || g_state.state == S_LIST_MESSAGE)
     {
-        handle_list(str);
+        cgc_handle_list(str);
     }
     else if (g_state.state == S_POST_WAIT_TOPIC || g_state.state == S_POST_WAIT_BODY)
     {
-        handle_post(str);
+        cgc_handle_post(str);
     }
 
     if (g_state.state == S_MENU)
-        bbs_menu();
+        cgc_bbs_menu();
 }
 
 int main()
 {
-    modem_init();
+    cgc_modem_init();
 
-    bbs_menu();
-    modem_loop(bbs_rx);
+    cgc_bbs_menu();
+    cgc_modem_loop(cgc_bbs_rx);
     return 0;
 }
 

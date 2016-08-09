@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,10 +28,10 @@ THE SOFTWARE.
 #include "stdlib.h"
 
 
-time_t datetime2time_t(datetime_struct_type *tm)  {
+cgc_time_t cgc_datetime2time_t(cgc_datetime_struct_type *tm)  {
 
 int i;
-time_t result=0;
+cgc_time_t result=0;
 
     // the epoch starts at 1/1/1970
     if (tm->year < 1970)
@@ -39,11 +39,11 @@ time_t result=0;
 
     // add up the number of days in the years since the epoch
     for (i=1970; i < tm->year; ++i)
-        result+= 365 + leap_year(i);
+        result+= 365 + cgc_leap_year(i);
 
 
     // now add the days from this year--correcting for the numbering starting at 1 not 0
-    result+= tm->doy -1;
+    result+= tm->cgc_doy -1;
 
 
     // now convert to seconds
@@ -60,7 +60,7 @@ time_t result=0;
 }
 
 
-int time_t2datetime(time_t epoch, datetime_struct_type *tm)  {
+int cgc_time_t2datetime(cgc_time_t epoch, cgc_datetime_struct_type *tm)  {
 
 unsigned int day_seconds;
 unsigned int num_days_since_epoch;
@@ -86,27 +86,27 @@ int cumulative_days_by_month[]= { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 3
 
     // count up the elapsed days by year until we exceed the target date
     for (i=1970; cum_days_since_epoch <= num_days_since_epoch; ++i)  {
-        cum_days_since_epoch+= (365+ leap_year(i));
+        cum_days_since_epoch+= (365+ cgc_leap_year(i));
 
     }
 
     // one less is the year of this date
     tm->year = i-1;
 
-    // now that we have the year, we can do leap_year calcs
+    // now that we have the year, we can do cgc_leap_year calcs
 
     // find the number of days to 1 Jan of our year
-    cum_days_since_epoch -= (365 + leap_year(tm->year));
+    cum_days_since_epoch -= (365 + cgc_leap_year(tm->year));
 
 
     // now calculate the day of the year
     day_of_year = num_days_since_epoch - cum_days_since_epoch + 1;
 
 
-    tm->doy = day_of_year;
+    tm->cgc_doy = day_of_year;
 
     // based on the day of year, figure out the month
-    for (i=0; (cumulative_days_by_month[i]+ ((i>1)*leap_year(tm->year))) < day_of_year; ++i)  {
+    for (i=0; (cumulative_days_by_month[i]+ ((i>1)*cgc_leap_year(tm->year))) < day_of_year; ++i)  {
 
       
     }
@@ -115,13 +115,13 @@ int cumulative_days_by_month[]= { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 3
     tm->month= i;
 
     // now figure out the day of the month
-    tm->day = day_of_year - cumulative_days_by_month[tm->month-1]  - ((tm->month > 2) * leap_year(tm->year));
+    tm->day = day_of_year - cumulative_days_by_month[tm->month-1]  - ((tm->month > 2) * cgc_leap_year(tm->year));
 
     return 0;
 }
 
 
-time_t str2datetime(char *buff, datetime_struct_type *tm) {
+cgc_time_t cgc_str2datetime(char *buff, cgc_datetime_struct_type *tm) {
 
 
 unsigned mon, mday, year;
@@ -133,12 +133,12 @@ char *tmp;
 
 //parse string in the from of "MM/DD/YYYY HH:MM:SS" into the structure elements
 
-    while (isspace(*buff))
+    while (cgc_isspace(*buff))
         ++buff;
 
     tmp=buff;
     
-    mon=atoi(tmp);
+    mon=cgc_atoi(tmp);
     
     if (mon < 1 || mon > 12)
         return(-2);
@@ -148,7 +148,7 @@ char *tmp;
         
     ++tmp;
     
-    mday=atoi(tmp);
+    mday=cgc_atoi(tmp);
     
     if (mday < 1)
         return (-2);
@@ -164,27 +164,27 @@ char *tmp;
         
     ++tmp;
     
-    year=atoi(tmp);
+    year=cgc_atoi(tmp);
     
     // constrain the year so that other calculations are valid
     if (year < 1970 || year > 2050)
         return (-2);
 
     // now that we have the year and if its a leap year, validate the Feb dates
-    if (mon == 2 && mday > 28+ leap_year(year))
+    if (mon == 2 && mday > 28+ cgc_leap_year(year))
         return (-2);
     
     tm->year = year;
     tm->day = mday;
     tm->month = mon;
 
-    while (!isspace(*tmp))
+    while (!cgc_isspace(*tmp))
         ++tmp;
 
-    while (isspace(*tmp))
+    while (cgc_isspace(*tmp))
         ++tmp;
 
-    hours = atoi(tmp);
+    hours = cgc_atoi(tmp);
 
 
     while (*tmp!=':' && *tmp!=0)
@@ -192,7 +192,7 @@ char *tmp;
 
     ++tmp;
 
-    mins = atoi(tmp);
+    mins = cgc_atoi(tmp);
 
 
     while (*tmp!=':' && *tmp!=0)
@@ -200,53 +200,53 @@ char *tmp;
 
     ++tmp;
     
-    secs = atoi(tmp);
+    secs = cgc_atoi(tmp);
 
     tm->hour = hours;
     tm->min = mins;
     tm->sec = secs;
 
-    tm->doy = doy(tm->year, tm->month, tm->day);
+    tm->cgc_doy = cgc_doy(tm->year, tm->month, tm->day);
 
-    return (datetime2time_t(tm));
+    return (cgc_datetime2time_t(tm));
 
 }
 
 
-void print_time_t (time_t date) {
+void cgc_print_time_t (cgc_time_t date) {
     
-    datetime_struct_type tm;
+    cgc_datetime_struct_type tm;
 
-    time_t2datetime(date, &tm);
+    cgc_time_t2datetime(date, &tm);
 
-    printf("@d/@d/@d @02d:@02d:@02d", tm.month, tm.day, tm.year,
+    cgc_printf("@d/@d/@d @02d:@02d:@02d", tm.month, tm.day, tm.year,
                 tm.hour, tm.min, tm.sec);
     
 }
 
-void print_datetime(datetime_struct_type *tm)  {
+void cgc_print_datetime(cgc_datetime_struct_type *tm)  {
 
-    printf("@d/@d/@d @02d:@02d:@02d", tm->month, tm->day, tm->year,
+    cgc_printf("@d/@d/@d @02d:@02d:@02d", tm->month, tm->day, tm->year,
                 tm->hour, tm->min, tm->sec);
 
 }
 
-int to_date_str(datetime_struct_type *tm, char *buffer) {
+int cgc_to_date_str(cgc_datetime_struct_type *tm, char *buffer) {
 
-    sprintf(buffer, "@d/@d/@d", tm->month, tm->day, tm->year);
+    cgc_sprintf(buffer, "@d/@d/@d", tm->month, tm->day, tm->year);
     return 0;
 
 }
 
-int to_time_str(datetime_struct_type *tm, char *buffer) {
+int cgc_to_time_str(cgc_datetime_struct_type *tm, char *buffer) {
 
-    sprintf(buffer, "@02d:@02d:@02d", tm->hour, tm->min, tm->sec);
+    cgc_sprintf(buffer, "@02d:@02d:@02d", tm->hour, tm->min, tm->sec);
     return 0;
     
 }
 
 
-int diff_between_dates(time_t start, time_t end) {
+int cgc_diff_between_dates(cgc_time_t start, cgc_time_t end) {
 
 // unimplemented right now
 return 0;
@@ -254,7 +254,7 @@ return 0;
 }
 
 // classic leap year calculation
-unsigned int leap_year(unsigned int year) {
+unsigned int cgc_leap_year(unsigned int year) {
     
     if ((year%400==0 || year%100!=0) && (year%4==0))
         return 1;
@@ -264,17 +264,17 @@ unsigned int leap_year(unsigned int year) {
 }
 
 // for accounting reasons it might be handy to have the day of the year number
-unsigned int doy(unsigned year, unsigned month, unsigned day) {
+unsigned int cgc_doy(unsigned year, unsigned month, unsigned day) {
 
-unsigned int doy;
+unsigned int cgc_doy;
 int cumulative_days[]= { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
 
-    doy=cumulative_days[month-1] + day;
+    cgc_doy=cumulative_days[month-1] + day;
     
     if (month > 2)
-        doy+=leap_year(year);
+        cgc_doy+=cgc_leap_year(year);
         
-    return (doy);
+    return (cgc_doy);
 
 }
 

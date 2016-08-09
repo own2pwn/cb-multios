@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,7 +28,7 @@
 *
 * @return The first index in s where c occurs
 */
-char *strchr(const char* s, int c);
+char *cgc_strchr(const char* s, int c);
 
 /**
 * Spans the initial part of a null-terminated string as long as s1 does 
@@ -39,7 +39,7 @@ char *strchr(const char* s, int c);
 *
 * @return The index in s2 after s1
 */
-size_t strspn(const char *s1, const char *s2) ;
+cgc_size_t cgc_strspn(const char *s1, const char *s2) ;
 
 /**
 * Spans the initial part of a null-terminated string as long as s1 does not 
@@ -50,7 +50,7 @@ size_t strspn(const char *s1, const char *s2) ;
 *
 * @return The index in s2 which starts s1
 */
-size_t strcspn(const char *s1, const char *s2);
+cgc_size_t cgc_strcspn(const char *s1, const char *s2);
 
 /**
 * Remove sequential tokens from a null-terminated string
@@ -64,4 +64,4 @@ size_t strcspn(const char *s1, const char *s2);
 *
 * @return A null-terminated string containing the token
 */
-char *strtok(char* string,const char *delim);
+char *cgc_strtok(char* string,const char *delim);

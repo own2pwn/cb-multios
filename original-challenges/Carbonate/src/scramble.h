@@ -29,10 +29,10 @@ THE SOFTWARE.
 #include "carbonate.h"
 
 typedef union {
-  uint32 i;
-  float32 f;
-} scramble_item;
+  cgc_uint32 i;
+  cgc_float32 f;
+} cgc_scramble_item;
 
-uint8 scramble_done();
-uint8 scramble_okay();
-void scramble_add(uint16 payload);
+cgc_uint8 cgc_scramble_done();
+cgc_uint8 cgc_scramble_okay();
+void cgc_scramble_add(cgc_uint16 payload);

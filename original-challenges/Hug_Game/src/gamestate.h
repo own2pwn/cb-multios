@@ -31,6 +31,6 @@ typedef struct _gamestate {
 	char name[256];
 	int hugcount;
 	unsigned char hangmanguess;
-} gamestate;
+} cgc_gamestate;
 
 #endif

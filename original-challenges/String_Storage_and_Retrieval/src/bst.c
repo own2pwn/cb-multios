@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,11 +31,11 @@ THE SOFTWARE.
 #include "service.h"
 
     
-int insert_node(bst_node_type **head, data_item_type *data, unsigned long make_key()) {
+int cgc_insert_node(cgc_bst_node_type **head, cgc_data_item_type *data, unsigned long make_key()) {
 
-bst_node_type *tmp_node;
+cgc_bst_node_type *tmp_node;
 unsigned long key_val=0;
-data_item_type *next_ptr;
+cgc_data_item_type *next_ptr;
 	
 
 	// if no data was passed in, return error
@@ -46,7 +46,7 @@ data_item_type *next_ptr;
 	// make sure the tree already exists
 	if (!*head) {
 
-		*head=(bst_node_type *)calloc(1, sizeof(bst_node_type));
+		*head=(cgc_bst_node_type *)cgc_calloc(1, sizeof(cgc_bst_node_type));
 
 		// memory allocation failed
 		if (!*head) {
@@ -89,7 +89,7 @@ data_item_type *next_ptr;
 			}
 			else {
 
-				tmp_node->left=(bst_node_type *)calloc(1, sizeof(bst_node_type));
+				tmp_node->left=(cgc_bst_node_type *)cgc_calloc(1, sizeof(cgc_bst_node_type));
 
 				if (!tmp_node->left) {
 					return(-1);
@@ -111,7 +111,7 @@ data_item_type *next_ptr;
 			}
 			else {
 
-				tmp_node->right=(bst_node_type *)calloc(1, sizeof(bst_node_type));
+				tmp_node->right=(cgc_bst_node_type *)cgc_calloc(1, sizeof(cgc_bst_node_type));
 
 				if (!tmp_node->right) {
 					return(-1);
@@ -128,7 +128,7 @@ data_item_type *next_ptr;
 		else   {  
 		
 			// if the strings don't match, its a key collision
-			if (strcmp(tmp_node->data->name, data->name)!=0) {
+			if (cgc_strcmp(tmp_node->data->name, data->name)!=0) {
 
 				// so move to the end of the linked list and add the new data
 				next_ptr=tmp_node->data;
@@ -150,14 +150,14 @@ data_item_type *next_ptr;
 	}
 
 
-}  // insert_node()
+}  // cgc_insert_node()
 
 
 
-int delete_node(bst_node_type **head, char *str, unsigned long key) {
+int cgc_delete_node(cgc_bst_node_type **head, char *str, unsigned long key) {
 
-bst_node_type *tmp_node, *promote_node, *previous_node;
-data_item_type *prev_ptr, *next_ptr;
+cgc_bst_node_type *tmp_node, *promote_node, *previous_node;
+cgc_data_item_type *prev_ptr, *next_ptr;
 
 	if (!*head) {
 
@@ -196,9 +196,9 @@ data_item_type *prev_ptr, *next_ptr;
 		next_ptr=prev_ptr->next;
 
 		// check the first entry because if its the match we need to update the pointer stored in the BST node
-		if (strcmp(tmp_node->data->name, str)==0) {
+		if (cgc_strcmp(tmp_node->data->name, str)==0) {
 
-			free(prev_ptr);
+			cgc_free(prev_ptr);
 			tmp_node->data=next_ptr;
 			tmp_node->data_count--;
 			return (0);
@@ -208,8 +208,8 @@ data_item_type *prev_ptr, *next_ptr;
 		// otherwise, cycle through the remainder of the linked list looking for a match
 		while (next_ptr!= 0) {
 
-			//	printf("looking for appended element\n");
-			if (strcmp(next_ptr->name, str)==0) {
+			//	cgc_printf("looking for appended element\n");
+			if (cgc_strcmp(next_ptr->name, str)==0) {
 
 				prev_ptr->next = next_ptr->next;
 				tmp_node->data_count--;
@@ -218,7 +218,7 @@ data_item_type *prev_ptr, *next_ptr;
 #else				
 				next_ptr=next_ptr->next;
 #endif
-				free(next_ptr);
+				cgc_free(next_ptr);
 
 				break;
 			}
@@ -237,11 +237,11 @@ data_item_type *prev_ptr, *next_ptr;
 	// if the node has no children, delete it
 	if (tmp_node->left == 0 && tmp_node->right == 0) {
 
-		//printf("only one child node on this delete\n");
+		//cgc_printf("only one child node on this delete\n");
 		if (tmp_node==*head) {
 
-			free((*head)->data);
-			free(*head);
+			cgc_free((*head)->data);
+			cgc_free(*head);
 			*head=0;
 			return 0;
 		}
@@ -252,8 +252,8 @@ data_item_type *prev_ptr, *next_ptr;
 		else
 			previous_node->right=0;
 
-		free(tmp_node->data);
-		free(tmp_node);
+		cgc_free(tmp_node->data);
+		cgc_free(tmp_node);
 	}
 
 	// if the node has two children, promote its in-order predecessor and then delete the old node.
@@ -269,7 +269,7 @@ data_item_type *prev_ptr, *next_ptr;
 		}
 
 		// Now delete the data from the node to be deleted  and move the promote node's data there
-		free(tmp_node->data);
+		cgc_free(tmp_node->data);
 		tmp_node->data=promote_node->data;
 		
 
@@ -286,7 +286,7 @@ data_item_type *prev_ptr, *next_ptr;
 
 		tmp_node->key=promote_node->key;
 		tmp_node->data_count=promote_node->data_count;
-		free(promote_node);
+		cgc_free(promote_node);
 
 
 	}
@@ -296,14 +296,14 @@ data_item_type *prev_ptr, *next_ptr;
 
 		if (tmp_node==*head) {
 
-			free((*head)->data);
+			cgc_free((*head)->data);
 
 			if (tmp_node->left !=0)
 				*head=(*head)->left;
 			else
 				*head=(*head)->right;
 
-			free(tmp_node);
+			cgc_free(tmp_node);
 
 			return 0;
 		}
@@ -320,19 +320,19 @@ data_item_type *prev_ptr, *next_ptr;
 		else
 			previous_node->right=promote_node;
 
-		free(tmp_node->data);
-		free(tmp_node);	
+		cgc_free(tmp_node->data);
+		cgc_free(tmp_node);	
 
 	}
 
 return(0);
 
 
-} // delete_node()
+} // cgc_delete_node()
 
-void *find_node_by_key(bst_node_type *head, unsigned long key) {
+void *cgc_find_node_by_key(cgc_bst_node_type *head, unsigned long key) {
 
-bst_node_type *tmp_node;
+cgc_bst_node_type *tmp_node;
 
 
 	if (!head) {
@@ -369,8 +369,8 @@ bst_node_type *tmp_node;
 
 
 
-int walk_tree(bst_node_type *node) {
-data_item_type *tmp_ptr;
+int cgc_walk_tree(cgc_bst_node_type *node) {
+cgc_data_item_type *tmp_ptr;
 
 	if (node==0)
 		return 0;
@@ -380,7 +380,7 @@ data_item_type *tmp_ptr;
 
 	// first go left
 	if (node->left != 0)
-		walk_tree(node->left);
+		cgc_walk_tree(node->left);
 
 	// now process this node
 	// since this can now be a linked list of data, set a pointer to the head
@@ -388,21 +388,21 @@ data_item_type *tmp_ptr;
 
 	// walk the linked list
 	while (tmp_ptr!= 0) {
-		printf("@s\n", tmp_ptr->name);
+		cgc_printf("@s\n", tmp_ptr->name);
 		tmp_ptr=tmp_ptr->next;
 	}
 
 	// now walk the right side of the node
 	if (node->right !=0)
-		walk_tree(node->right);
+		cgc_walk_tree(node->right);
 
 	return(0);
 
-} // walk_tree()
+} // cgc_walk_tree()
 
 
 // this is used to make a key for the BST based on the input string
-unsigned long make_key_from_name(void *data_item) {
+unsigned long cgc_make_key_from_name(void *data_item) {
 
 unsigned long key_val;
 char *tmp;
@@ -410,16 +410,16 @@ char *tmp;
 
 	key_val = 0;
 
-	tmp=((data_item_type *)data_item)->name;
+	tmp=((cgc_data_item_type *)data_item)->name;
 
-	key_val=str_token(tmp);
+	key_val=cgc_str_token(tmp);
 
 	return(key_val);
 
 }
 
 // count the nodes in the tree, noting how many are in the left vs right of the tree
-int count_bst_stats(bst_node_type *head, bst_stats_type *stats) {
+int cgc_count_bst_stats(cgc_bst_node_type *head, cgc_bst_stats_type *stats) {
 
 	unsigned int total_node_count;
 	unsigned int left_node_count;
@@ -427,7 +427,7 @@ int count_bst_stats(bst_node_type *head, bst_stats_type *stats) {
 	unsigned int percent_left;
 	unsigned int percent_right;
 
-	bst_stats_type left_stats, right_stats;
+	cgc_bst_stats_type left_stats, right_stats;
 
 	if (head == 0 || stats == 0)
 		return -1;
@@ -439,7 +439,7 @@ int count_bst_stats(bst_node_type *head, bst_stats_type *stats) {
 	// first count the left side of the tree
 	if (head->left != 0) {
 
-		count_nodes(head->left, & left_stats);
+		cgc_count_nodes(head->left, & left_stats);
 	}
 
 	left_node_count= left_stats.node_count;
@@ -448,7 +448,7 @@ int count_bst_stats(bst_node_type *head, bst_stats_type *stats) {
 	// then count the right side
 	if (head->right != 0) {
 
-		count_nodes(head->right, &right_stats);
+		cgc_count_nodes(head->right, &right_stats);
 	}
 
 	right_node_count= right_stats.node_count;
@@ -481,12 +481,12 @@ return 0;
 
  
  // recursive function to count the number of nodes in the tree
-int count_nodes(bst_node_type *node, bst_stats_type *stats) {
+int cgc_count_nodes(cgc_bst_node_type *node, cgc_bst_stats_type *stats) {
 
 
 	if (node->left != 0) {
 
-		count_nodes(node->left, stats);
+		cgc_count_nodes(node->left, stats);
 	}
 
 	stats->node_count++;
@@ -494,7 +494,7 @@ int count_nodes(bst_node_type *node, bst_stats_type *stats) {
 
 	if (node->right != 0) {
 
-		count_nodes(node->right, stats);
+		cgc_count_nodes(node->right, stats);
 	}
 
 	return 0;

@@ -32,22 +32,22 @@ THE SOFTWARE.
 
 #pragma pack(push, 1)
 typedef struct RGB_Color_s {
-  uint8_t red;
-  uint8_t blue;
-  uint8_t green;
-} RGB_Color;
+  cgc_uint8_t red;
+  cgc_uint8_t blue;
+  cgc_uint8_t green;
+} cgc_RGB_Color;
 #pragma pack(pop)
 
 typedef struct Canvas_s {
-  uint16_t y_size;
-  uint16_t x_size;
-  uint8_t num_layers;
-  uint8_t *layers[CANVAS_MAX_LAYERS];
-  RGB_Color colors[CANVAS_MAX_COLORS + 1];
-} Canvas;
+  cgc_uint16_t y_size;
+  cgc_uint16_t x_size;
+  cgc_uint8_t num_layers;
+  cgc_uint8_t *layers[CANVAS_MAX_LAYERS];
+  cgc_RGB_Color colors[CANVAS_MAX_COLORS + 1];
+} cgc_Canvas;
 
-int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers);
-void FlattenCanvas(Canvas *c);
-void DestroyCanvas(Canvas **c);
+int cgc_CreateCanvas(cgc_Canvas **can, cgc_uint16_t y_size, cgc_uint16_t x_size, cgc_uint8_t layers);
+void cgc_FlattenCanvas(cgc_Canvas *c);
+void cgc_DestroyCanvas(cgc_Canvas **c);
 
 #endif

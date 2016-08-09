@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "jlib.h"
 
-void zero(char *buf, unsigned int len) {
+void cgc_zero(char *buf, unsigned int len) {
 	unsigned int i;
 
 	if (!buf) {
@@ -40,8 +40,8 @@ void zero(char *buf, unsigned int len) {
 	return;
 }
 
-size_t strlen(char *buf) {
-	size_t i = 0;
+cgc_size_t cgc_strlen(char *buf) {
+	cgc_size_t i = 0;
 
 	if (!buf) {
 		return(0);
@@ -54,16 +54,16 @@ size_t strlen(char *buf) {
 	return(i);
 }
 
-void print(char *buf) {
-	size_t len;
-	size_t total_sent = 0;
-	size_t tx_bytes;
+void cgc_print(char *buf) {
+	cgc_size_t len;
+	cgc_size_t total_sent = 0;
+	cgc_size_t tx_bytes;
 
 	if (!buf) {
 		return;
 	}
 
-	len = strlen(buf);
+	len = cgc_strlen(buf);
 	while (total_sent < len) {
 		if (transmit(STDOUT, buf+total_sent, len-total_sent, &tx_bytes) != 0) {
 			_terminate(-1);
@@ -72,10 +72,10 @@ void print(char *buf) {
 	}
 }
 
-int read_until(char *buf, char delim, size_t max_len) {
-	size_t total_received = 0;
+int cgc_read_until(char *buf, char delim, cgc_size_t max_len) {
+	cgc_size_t total_received = 0;
 	char c;
-	size_t rx_bytes;
+	cgc_size_t rx_bytes;
 
 	if (!buf) {
 		return(-1);
@@ -98,16 +98,16 @@ int read_until(char *buf, char delim, size_t max_len) {
 	return(0);
 }
 
-int strmatch(char *buf1, char *buf2) {
-	size_t len1;	
+int cgc_strmatch(char *buf1, char *buf2) {
+	cgc_size_t len1;	
 	int i;
 
 	if (!buf1 || !buf2) {
 		return(0);
 	}
 
-	len1 = strlen(buf1);
-	if (len1 != strlen(buf2)) {
+	len1 = cgc_strlen(buf1);
+	if (len1 != cgc_strlen(buf2)) {
 		return(0);
 	}
 
@@ -120,21 +120,21 @@ int strmatch(char *buf1, char *buf2) {
 	return(1);
 }
 
-void strcopy(char *dst, char *src) {
+void cgc_strcopy(char *dst, char *src) {
 	int i;
 
 	if (!dst || !src) {
 		return;
 	}
 
-	for (i = 0; i < strlen(src); i++) {
+	for (i = 0; i < cgc_strlen(src); i++) {
 		dst[i] = src[i];
 	}
 
 	return;
 }
 
-void memcopy(char *dst, char *src, unsigned int len) {
+void cgc_memcopy(char *dst, char *src, unsigned int len) {
 	int i;
 
 	if (!dst || !src) {
@@ -148,14 +148,14 @@ void memcopy(char *dst, char *src, unsigned int len) {
 	return;
 }
 
-int isdigits(char *buf) {
+int cgc_isdigits(char *buf) {
 	int i;
 
 	if (!buf) {
 		return(0);
 	}
 
-	for (i = 0; i < strlen(buf); i++) {
+	for (i = 0; i < cgc_strlen(buf); i++) {
 		if (buf[i] < '0' || buf[i] > '9') {
 			return(0);
 		}
@@ -163,7 +163,7 @@ int isdigits(char *buf) {
 	return(1);
 }
 
-int atoi(char *buf) {
+int cgc_atoi(char *buf) {
 	int i;
 	int val = 0;
 	int m = 1;
@@ -172,7 +172,7 @@ int atoi(char *buf) {
 		return(0);
 	}
 
-	i = strlen(buf);
+	i = cgc_strlen(buf);
 	if (!i) {
 		return(0);
 	}
@@ -185,14 +185,14 @@ int atoi(char *buf) {
 	return(val);
 }
 
-void print_uint(unsigned int val) {
+void cgc_print_uint(unsigned int val) {
 	char buf[100];
 	char buf2[100];
 	int i = 0;
 	int j = 0;
 
 	if (val == 0) {
-		print("0");
+		cgc_print("0");
 		return;
 	}
 
@@ -202,12 +202,12 @@ void print_uint(unsigned int val) {
 	}
 	buf[i] = '\0';
 
-	for (i = strlen(buf)-1; i >= 0; i--) {
+	for (i = cgc_strlen(buf)-1; i >= 0; i--) {
 		buf2[j++] = buf[i];
 	}
 	buf2[j] = '\0';
 
-	print(buf2);
+	cgc_print(buf2);
 
 	return;
 

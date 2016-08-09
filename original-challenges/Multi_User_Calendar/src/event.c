@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,16 +28,16 @@
 
 int g_event_id = 0;
 
-event_t *create_event(struct user *owner, char *name, char *desc, duration_t *duration, bool is_all_day)
+cgc_event_t *cgc_create_event(struct user *owner, char *name, char *desc, cgc_duration_t *duration, cgc_bool is_all_day)
 {
-    if (!owner || !name || !strlen(name) || !desc || !strlen(desc) || !duration)
+    if (!owner || !name || !cgc_strlen(name) || !desc || !cgc_strlen(desc) || !duration)
         return NULL;
 
-    event_t *event = malloc(sizeof(event_t));
+    cgc_event_t *event = cgc_malloc(sizeof(cgc_event_t));
     event->id = g_event_id++;
     event->owner = owner;
-    strcpy(event->name, name);
-    strcpy(event->desc, desc);
+    cgc_strcpy(event->name, name);
+    cgc_strcpy(event->desc, desc);
     event->duration = *duration;
     event->is_all_day = is_all_day;
 
@@ -45,19 +45,19 @@ event_t *create_event(struct user *owner, char *name, char *desc, duration_t *du
 }
 
 
-bool delete_event(event_t **event)
+cgc_bool cgc_delete_event(cgc_event_t **event)
 {
     if (!*event)
         return false;
-    free(*event);
+    cgc_free(*event);
     *event = NULL;
     return true;
 }
 
-int compare_events(void *_event1, void *_event2)
+int cgc_compare_events(void *_event1, void *_event2)
 {
-    event_t *event1 = (event_t *)_event1;
-    event_t *event2 = (event_t *)_event2;
+    cgc_event_t *event1 = (cgc_event_t *)_event1;
+    cgc_event_t *event2 = (cgc_event_t *)_event2;
 
     if (!event1 || !event2)
         return -1;
@@ -70,59 +70,59 @@ int compare_events(void *_event1, void *_event2)
         return 1;
 }
 
-int compare_event_dates(void *_event1, void *_event2)
+int cgc_compare_event_dates(void *_event1, void *_event2)
 {
-    event_t *event1 = (event_t *)_event1;
-    event_t *event2 = (event_t *)_event2;
+    cgc_event_t *event1 = (cgc_event_t *)_event1;
+    cgc_event_t *event2 = (cgc_event_t *)_event2;
 
     if (!event1 || !event2)
         return -1;
 
-    return compare_date(&event1->duration.start.date, &event2->duration.start.date);
+    return cgc_compare_date(&event1->duration.start.date, &event2->duration.start.date);
 }
 
-event_t *find_event_from_list(char *buf, size_t buflen, int *recv_status, event_list_t *list)
+cgc_event_t *cgc_find_event_from_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_event_list_t *list)
 {
     if (!buf || buflen < 2)
         return NULL;
 
     char *event_id = NULL;;
-    event_t temp_event;
+    cgc_event_t temp_event;
     int tries = 0;
 
-    event_id = q_and_a("Enter eventid: ", 10, buf, buflen, recv_status, true);
+    event_id = cgc_q_and_a("Enter eventid: ", 10, buf, buflen, recv_status, true);
     if (!event_id)
         return NULL;
 
     if (*recv_status != SUCCESS) {
-        free(event_id);
+        cgc_free(event_id);
         return NULL;
     } else {
-        temp_event.id = strtol(event_id, NULL, 10);
-        free(event_id);
-        return find((list_t *)list, &temp_event, &compare_events);
+        temp_event.id = cgc_strtol(event_id, NULL, 10);
+        cgc_free(event_id);
+        return cgc_find((cgc_list_t *)list, &temp_event, &cgc_compare_events);
     }
 }
 
-void print_event(event_t *event)
+void cgc_print_event(cgc_event_t *event)
 {
     char date_str[16];
     char time_str[8];
 
-    printf("Event ID: %d - %s\n", event->id, event->name);
-    printf("About the event: %s\n", event->desc);
+    cgc_printf("Event ID: %d - %s\n", event->id, event->name);
+    cgc_printf("About the event: %s\n", event->desc);
     if (event->is_all_day) {
-        get_date_str(date_str, &event->duration.start.date);
-        printf("Starts %s\n", date_str);
-        get_date_str(date_str, &event->duration.end.date);
-        printf("Ends %s\n", date_str);
+        cgc_get_date_str(date_str, &event->duration.start.date);
+        cgc_printf("Starts %s\n", date_str);
+        cgc_get_date_str(date_str, &event->duration.end.date);
+        cgc_printf("Ends %s\n", date_str);
     } else {
-        get_date_str(date_str, &event->duration.start.date);
-        get_time_str(time_str, &event->duration.start.time);
-        printf("Starts %s @ %s\n", date_str, time_str);
-        get_date_str(date_str, &event->duration.end.date);
-        get_time_str(time_str, &event->duration.end.time);
-        printf("Ends %s @ %s\n", date_str, time_str);
+        cgc_get_date_str(date_str, &event->duration.start.date);
+        cgc_get_time_str(time_str, &event->duration.start.time);
+        cgc_printf("Starts %s @ %s\n", date_str, time_str);
+        cgc_get_date_str(date_str, &event->duration.end.date);
+        cgc_get_time_str(time_str, &event->duration.end.time);
+        cgc_printf("Ends %s @ %s\n", date_str, time_str);
     }
 }
 

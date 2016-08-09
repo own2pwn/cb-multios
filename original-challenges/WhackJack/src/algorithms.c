@@ -32,12 +32,12 @@ THE SOFTWARE.
 #include "input.h"
 
 // algo 1
-char matchDealer(unsigned char dealer_show_card, unsigned char *player_cards) {
+char cgc_matchDealer(unsigned char dealer_show_card, unsigned char *player_cards) {
 
 int player_score;
 
 
-	player_score = score_cards(player_cards);
+	player_score = cgc_score_cards(player_cards);
 
 	if (player_score > 16)
 		return('S');
@@ -48,11 +48,11 @@ int player_score;
 }
 
 // algo 4
-char neverBustAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char cgc_neverBustAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
 
 int player_score;
 
-	player_score = score_cards(player_cards);
+	player_score = cgc_score_cards(player_cards);
 
  	if (player_score > 11 )
  		return 'S';
@@ -62,7 +62,7 @@ int player_score;
 }
 
 // algo 2
-char basicAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char cgc_basicAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
 
 
 int i;
@@ -80,7 +80,7 @@ char answer;
 		}
 	}
 
-	player_score = score_cards(player_cards);
+	player_score = cgc_score_cards(player_cards);
 
 	switch (hard) {
 
@@ -124,7 +124,7 @@ char answer;
 
 
 // algo 3
-char simpleAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char cgc_simpleAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
 
 int i;
 int hard;
@@ -139,7 +139,7 @@ int player_score;
 		}
 	}
 
-	player_score = score_cards(player_cards);
+	player_score = cgc_score_cards(player_cards);
 
 	if (hard) {
 
@@ -176,7 +176,7 @@ int player_score;
 }
 
 // algo 5
-char superDuperAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
+char cgc_superDuperAlgo( unsigned char dealer_show_card, unsigned char *player_cards ) {
 
 int i;
 int hard;
@@ -223,7 +223,7 @@ char decision_table_soft[14][21] = { 	'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H
 
 	}
 
-	player_score = score_cards(player_cards);
+	player_score = cgc_score_cards(player_cards);
 
 	if (hard) {
 

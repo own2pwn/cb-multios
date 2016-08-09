@@ -22,26 +22,26 @@
 #include <stdint.h>
 #include "char.h"
 
-unsigned char is_non_printable(const unsigned char ch) {
-	if (FALSE == is_printable(ch)) {
+unsigned char cgc_is_non_printable(const unsigned char ch) {
+	if (FALSE == cgc_is_printable(ch)) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-unsigned char is_printable(const unsigned char ch) {
+unsigned char cgc_is_printable(const unsigned char ch) {
 	// (0x1F < ch) and (0x7F > ch)
-	if ((TRUE == is_digit(ch)) ||
-		(TRUE == is_letter(ch)) ||
-		(TRUE == is_symbol(ch))) {
+	if ((TRUE == cgc_is_digit(ch)) ||
+		(TRUE == cgc_is_letter(ch)) ||
+		(TRUE == cgc_is_symbol(ch))) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-unsigned char is_digit(const unsigned char ch) {
+unsigned char cgc_is_digit(const unsigned char ch) {
 	if ((0x30 <= ch) && (0x39 >= ch)) {
 		return TRUE;
 	} else {
@@ -49,16 +49,16 @@ unsigned char is_digit(const unsigned char ch) {
 	}
 }
 
-unsigned char is_letter(const unsigned char ch) {
-	if ((TRUE == is_upper(ch)) ||
-		(TRUE == is_lower(ch))) {
+unsigned char cgc_is_letter(const unsigned char ch) {
+	if ((TRUE == cgc_is_upper(ch)) ||
+		(TRUE == cgc_is_lower(ch))) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-unsigned char is_upper(const unsigned char ch) {
+unsigned char cgc_is_upper(const unsigned char ch) {
 	if ((0x41 <= ch) && (0x5A >= ch)) {
 		return TRUE;
 	} else {
@@ -66,7 +66,7 @@ unsigned char is_upper(const unsigned char ch) {
 	}
 }
 
-unsigned char is_lower(const unsigned char ch) {
+unsigned char cgc_is_lower(const unsigned char ch) {
 	if ((0x61 <= ch) && (0x7A >= ch)) {
 		return TRUE;
 	} else {
@@ -74,7 +74,7 @@ unsigned char is_lower(const unsigned char ch) {
 	}
 }
 
-unsigned char is_symbol(const unsigned char ch) {
+unsigned char cgc_is_symbol(const unsigned char ch) {
 	if 	(((0x21 <= ch) && (ch <= 0x2F)) || 
 		 ((0x3A <= ch) && (ch <= 0x40)) ||
 		 ((0x5B <= ch) && (ch <= 0x60)) ||

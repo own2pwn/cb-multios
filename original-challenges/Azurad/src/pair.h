@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -25,32 +25,32 @@
 #include <algorithm.h>
 
 template <class T1, class T2>
-struct pair
+struct cgc_pair
 {
 public:
-    pair() {}
-    pair(T1 left_, T2 right_) : left(left_), right(right_) {}
-    pair(const pair& other)
+    cgc_pair() {}
+    cgc_pair(T1 left_, T2 right_) : left(left_), right(right_) {}
+    cgc_pair(const cgc_pair& other)
     {
         left = other.left;
         right = other.right;
     }
-    pair(pair&& other)
+    cgc_pair(cgc_pair&& other)
     {
-        std::swap(left, other.left);
-        std::swap(right, other.right);
+        std::cgc_swap(left, other.left);
+        std::cgc_swap(right, other.right);
     }
 
-    pair& operator=(const pair& other)
+    cgc_pair& operator=(const cgc_pair& other)
     {
         left = other.left;
         right = other.right;
         return *this;
     }
-    pair& operator=(pair&& other)
+    cgc_pair& operator=(cgc_pair&& other)
     {
-        std::swap(left, other.left);
-        std::swap(right, other.right);
+        std::cgc_swap(left, other.left);
+        std::cgc_swap(right, other.right);
         return *this;
     }
 

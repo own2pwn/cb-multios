@@ -36,10 +36,10 @@
 typedef struct {
 	short value[NUM_VALS];
 	short** result;
-} Message;
+} cgc_Message;
 
 typedef struct {
- 	Message* inbox;
- 	Message* outbox;
- 	void (* processMessage)(Message* );
-} Worker;
+ 	cgc_Message* inbox;
+ 	cgc_Message* outbox;
+ 	void (* cgc_processMessage)(cgc_Message* );
+} cgc_Worker;

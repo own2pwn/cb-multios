@@ -24,7 +24,7 @@
 
 #define BANNER_TIP "Just the Tip!\n" \
                    "-------------\n"
-int do_tip(char *uri) {
+int cgc_do_tip(char *uri) {
     
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -32,14 +32,14 @@ int do_tip(char *uri) {
     SENDNULLTRUNC(BANNER_TIP, sizeof(BANNER_TIP), bytes_sent);
     if (sizeof(BANNER_TIP) != bytes_sent) { return ERRNO_SEND; }
 
-    if ((ret = head_file(uri)) != SUCCESS) { return ret; }
+    if ((ret = cgc_head_file(uri)) != SUCCESS) { return ret; }
 
     return ret;
 }
 
 #define BANNER_STATUS "FASTLANE fully operational!\n" \
                       "Thank you for asking kind sir/madam!\n"
-int do_status() {
+int cgc_do_status() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -51,7 +51,7 @@ int do_status() {
 
 #define BANNER_GIMME "Your FASTLANE file contents; we appreciate your business!\n" \
                      "---------------------------------------------------------\n"
-int do_gimme(char *uri) {
+int cgc_do_gimme(char *uri) {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -59,30 +59,30 @@ int do_gimme(char *uri) {
     SENDNULLTRUNC(BANNER_GIMME, sizeof(BANNER_GIMME), bytes_sent);
     if (sizeof(BANNER_GIMME) != bytes_sent) { return ERRNO_SEND; }
 
-    if ((ret = dump_file(uri)) != SUCCESS) { return ret; }
+    if ((ret = cgc_dump_file(uri)) != SUCCESS) { return ret; }
 
     return ret;
 }
 
 #define BANNER_LIST "Your files, kind sir/madam!\n" \
                     "---------------------------\n"
-int do_list() {
+int cgc_do_list() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
-    size_t i;
+    cgc_size_t i;
 
     SENDNULLTRUNC(BANNER_LIST, sizeof(BANNER_LIST), bytes_sent);
     if (sizeof(BANNER_LIST) != bytes_sent) { return ERRNO_SEND; }
 
-    if ((ret = list_files()) != SUCCESS) { return ret; }
+    if ((ret = cgc_list_files()) != SUCCESS) { return ret; }
 
     return ret;
 }
 
 #define BANNER_SMORE "here's a lil' bit\n" \
                      "-----------------\n"
-int do_smore(char *uri) {
+int cgc_do_smore(char *uri) {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -90,14 +90,14 @@ int do_smore(char *uri) {
     SENDNULLTRUNC(BANNER_SMORE, sizeof(BANNER_SMORE), bytes_sent);
     if (sizeof(BANNER_SMORE) != bytes_sent) { return ERRNO_SEND; }
 
-    if ((ret = head_file(uri)) != SUCCESS) { return ret; }
+    if ((ret = cgc_head_file(uri)) != SUCCESS) { return ret; }
 
     return ret;
 }
 
 #define BANNER_YOUUP "Yep, i'm up, but all our basic lines are \"clogged\"\n" \
                         "Upgrade to FASTLANE today!\n"
-int do_youup() {
+int cgc_do_youup() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -109,7 +109,7 @@ int do_youup() {
 
 #define BANNER_MOOCH "the tubes are \"clogged\" right now...\n" \
                       "------------------------------------\n"
-int do_mooch(char *uri) {
+int cgc_do_mooch(char *uri) {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
@@ -118,26 +118,26 @@ int do_mooch(char *uri) {
     if (sizeof(BANNER_MOOCH) != bytes_sent) { return ERRNO_SEND; }
 
 #ifndef DEBUG_ENABLE
-    pause(CLOG_DELAY);
+    cgc_pause(CLOG_DELAY);
 #endif
 
-    if ((ret = dump_file(uri)) != SUCCESS) { return ret; }
+    if ((ret = cgc_dump_file(uri)) != SUCCESS) { return ret; }
 
     return ret;
 }
 
 #define BANNER_SUP "here're your files, plebian:\n" \
                    "----------------------------\n"
-int do_sup() {
+int cgc_do_sup() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
-    size_t i;
+    cgc_size_t i;
 
     SENDNULLTRUNC(BANNER_SUP, sizeof(BANNER_SUP), bytes_sent);
     if (sizeof(BANNER_SUP) != bytes_sent) { return ERRNO_SEND; }
 
-    if ((ret = list_files()) != SUCCESS) { return ret; }
+    if ((ret = cgc_list_files()) != SUCCESS) { return ret; }
 
     return ret;
 }
@@ -146,15 +146,15 @@ int do_sup() {
                     "--------------------------\n"
 #define AUTH_SUCCESS "Authentication successful!\n"
 #define AUTH_FAILURE "Sorry, failed to add credits.\n"
-int do_auth(char *uri) {
+int cgc_do_auth(char *uri) {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
 
     SENDNULLTRUNC(BANNER_AUTH, sizeof(BANNER_AUTH), ret);
 
-    // interpret the URI as a hex-encoded UINT32 value
-    UINT32 attempt = hex2UINT32(uri);
+    // interpret the URI as a hex-encoded cgc_UINT32 value
+    cgc_UINT32 attempt = cgc_hex2UINT32(uri);
 
     // We're sometimes expiring a timer installed by the make infrastructure 
     // when attempt is too large and pow() recurses too many times.
@@ -164,7 +164,7 @@ int do_auth(char *uri) {
     attempt &= AUTH_KEY_SPACE;
 
     if (0xFFFFFFFF == attempt || 
-        AUTH_PRODUCT != my_pow(AUTH_GENERATOR, attempt) % AUTH_ORDER) { 
+        AUTH_PRODUCT != cgc_my_pow(AUTH_GENERATOR, attempt) % AUTH_ORDER) { 
         SENDNULLTRUNC(AUTH_FAILURE, sizeof(AUTH_FAILURE), ret);
     } else {
         SENDNULLTRUNC(AUTH_SUCCESS, sizeof(AUTH_SUCCESS), ret);

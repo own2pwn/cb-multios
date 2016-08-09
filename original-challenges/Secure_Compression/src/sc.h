@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,24 +31,24 @@ typedef struct bit_io {
     unsigned char *data;
     unsigned int didx;
     unsigned int bidx;
-} bio_t;
+} cgc_bio_t;
 
-bio_t* bit_new(unsigned char *data);
-unsigned char bit_read(bio_t *bio, size_t n);
-void bit_write(bio_t *bio, unsigned char data, size_t n);
+cgc_bio_t* cgc_bit_new(unsigned char *data);
+unsigned char cgc_bit_read(cgc_bio_t *bio, cgc_size_t n);
+void cgc_bit_write(cgc_bio_t *bio, unsigned char data, cgc_size_t n);
 
 typedef struct sc_obj {
     unsigned char order[95];
     unsigned char *data;
-    size_t data_len;
-    int (*cmp) (unsigned char *, unsigned char *, unsigned char *, size_t);
-} sc_obj_t;
+    cgc_size_t data_len;
+    int (*cmp) (unsigned char *, unsigned char *, unsigned char *, cgc_size_t);
+} cgc_sc_obj_t;
 
-sc_obj_t* sc_new(unsigned char *key);
-int sc_scompress(sc_obj_t *sc, unsigned char **out, size_t *outlen);
-int sc_sdecompress(sc_obj_t *sc, unsigned char **out, size_t *outlen);
-int sc_set_data(sc_obj_t *sc, unsigned char *data, size_t data_len);
-unsigned char* sc_bwt(sc_obj_t *sc, int op, size_t *outlen);
-unsigned char* sc_mtf(sc_obj_t *sc, int op, size_t *outlen);
+cgc_sc_obj_t* cgc_sc_new(unsigned char *key);
+int cgc_sc_scompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen);
+int cgc_sc_sdecompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen);
+int cgc_sc_set_data(cgc_sc_obj_t *sc, unsigned char *data, cgc_size_t data_len);
+unsigned char* cgc_sc_bwt(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen);
+unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen);
 
 #endif

@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Bryce Kerley <bk@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,25 +37,25 @@ typedef enum operation_type_enum {
   OP_MULTIPLY,
   OP_DIVIDE,
   OP_FUNCALL
-} operation_type;
+} cgc_operation_type;
 
 typedef struct operation_str {
   struct operation_str* next;
-  operation_type type;
-  sint32 sint32_value;
-  uint16 character_literal_length;
+  cgc_operation_type type;
+  cgc_sint32 sint32_value;
+  cgc_uint16 character_literal_length;
   char* character_literal_value;
   char* function_name;
-} operation;
+} cgc_operation;
 
 typedef struct compiler_str {
-  operation* find_list;
+  cgc_operation* find_list;
   char* relation_name;
-  uint16 error_position;
-  lexeme* error_lexeme;
-} compiler;
+  cgc_uint16 error_position;
+  cgc_lexeme* error_lexeme;
+} cgc_compiler;
 
-compiler* compile(lexer_list* lexemes);
-void compiler_free(compiler* cmp);
+cgc_compiler* cgc_compile(cgc_lexer_list* lexemes);
+void cgc_compiler_free(cgc_compiler* cmp);
 
-void compiler_test();
+void cgc_compiler_test();

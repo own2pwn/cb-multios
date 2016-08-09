@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,11 +28,11 @@
 #include "stdlib.h"
 
 /* Get some more memory through allocate */
-static int allocate_new_blk(void)
+static int cgc_allocate_new_blk(void)
 {
   void *ret;
   struct blk_t *new_blk;
-  size_t size = NEW_CHUNK_SIZE;
+  cgc_size_t size = NEW_CHUNK_SIZE;
 
   if (allocate(size, 0, &ret) != 0) {
     return 1;
@@ -43,20 +43,20 @@ static int allocate_new_blk(void)
 
   new_blk = (struct blk_t *)ret;
   new_blk->size = size;
-  new_blk->free = 1;
+  new_blk->cgc_free = 1;
   new_blk->fpred = NULL;
   new_blk->fsucc = NULL;
   new_blk->prev = NULL;
   new_blk->next = NULL;
 
-  insert_into_flist(new_blk);
+  cgc_insert_into_flist(new_blk);
   return 0;
 }
 
 /* Find first fit block for a size */
-static int find_fit(size_t size, struct blk_t **blk)
+static int cgc_find_fit(cgc_size_t size, struct blk_t **blk)
 {
-  int sc_i = get_size_class(size);
+  int sc_i = cgc_get_size_class(size);
 
   for (; sc_i < NUM_FREE_LISTS; sc_i++) {
     *blk = free_lists[sc_i];
@@ -69,7 +69,7 @@ static int find_fit(size_t size, struct blk_t **blk)
   return -1;
 }
 
-void *malloc(size_t size)
+void *cgc_malloc(cgc_size_t size)
 {
   if (size == 0)
     return NULL;
@@ -80,11 +80,11 @@ void *malloc(size_t size)
   size += HEADER_PADDING;
 
   struct blk_t *blk = NULL;
-  int sc_i = find_fit(size, &blk);
+  int sc_i = cgc_find_fit(size, &blk);
 
   /* Allocate a new block if no fit */
   if (blk == NULL) {
-    if (allocate_new_blk() != 0) {
+    if (cgc_allocate_new_blk() != 0) {
       return NULL;
     } else {
       sc_i = NUM_FREE_LISTS - 1;
@@ -92,16 +92,16 @@ void *malloc(size_t size)
     }
   }
 
-  /* Remove the block we're going to use from the free list */
-  remove_from_flist(blk);
+  /* Remove the block we're going to use from the cgc_free list */
+  cgc_remove_from_flist(blk);
 
   /* Split the block into two pieces if possible */
-  size_t sdiff = blk->size - size;
+  cgc_size_t sdiff = blk->size - size;
   if (sdiff > HEADER_PADDING) {
-    struct blk_t *nb = (struct blk_t *)((intptr_t)blk + size);
+    struct blk_t *nb = (struct blk_t *)((cgc_intptr_t)blk + size);
 
     nb->size = sdiff;
-    nb->free = 1;
+    nb->cgc_free = 1;
     nb->fsucc = NULL;
     nb->fpred = NULL;
 
@@ -114,9 +114,9 @@ void *malloc(size_t size)
       blk->next->prev = nb;
     blk->next = nb;
 
-    /* Put the new block into the free list */
-    insert_into_flist(nb);
+    /* Put the new block into the cgc_free list */
+    cgc_insert_into_flist(nb);
   }
 
-  return (void *)((intptr_t)blk + HEADER_PADDING);
+  return (void *)((cgc_intptr_t)blk + HEADER_PADDING);
 }

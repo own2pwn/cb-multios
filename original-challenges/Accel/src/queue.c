@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,7 +25,7 @@
 
 #include "queue.h"
 
-char *peek_front(queue_t *queue)
+char *cgc_peek_front(cgc_queue_t *queue)
 {
     if (queue == NULL)
         return NULL;
@@ -33,19 +33,19 @@ char *peek_front(queue_t *queue)
     return queue->data;
 }
 
-int enqueue(queue_t **queue, char *data)
+int cgc_enqueue(cgc_queue_t **queue, char *data)
 {
     if (data == NULL)
         return -1;
 
-    queue_t *back = malloc(sizeof(queue_t));
+    cgc_queue_t *back = cgc_malloc(sizeof(cgc_queue_t));
     back->data = data;
     back->next = NULL;
 
     if(*queue == NULL) {
         *queue = back;
     } else {
-        queue_t *iter = *queue;
+        cgc_queue_t *iter = *queue;
         while (iter->next != NULL)
             iter = iter->next;
 
@@ -55,24 +55,24 @@ int enqueue(queue_t **queue, char *data)
     return 0;
 }
 
-int enqueue_copy(queue_t **queue, char *data, size_t size)
+int cgc_enqueue_copy(cgc_queue_t **queue, char *data, cgc_size_t size)
 {
     if (data == NULL)
         return -1;
 
-    int data_len = strlen(data) + 1;
+    int data_len = cgc_strlen(data) + 1;
     if (data_len > size)
         return -1;
 
-    queue_t *back = malloc(sizeof(queue_t));
-    back->data = malloc(data_len);
-    memcpy(back->data, data, data_len);
+    cgc_queue_t *back = cgc_malloc(sizeof(cgc_queue_t));
+    back->data = cgc_malloc(data_len);
+    cgc_memcpy(back->data, data, data_len);
     back->next = NULL;
 
     if(*queue == NULL) {
         *queue = back;
     } else {
-        queue_t *iter = *queue;
+        cgc_queue_t *iter = *queue;
         while (iter->next != NULL)
             iter = iter->next;
 
@@ -82,33 +82,33 @@ int enqueue_copy(queue_t **queue, char *data, size_t size)
     return 0;
 }
 
-char *dequeue_copy(queue_t **queue)
+char *cgc_dequeue_copy(cgc_queue_t **queue)
 {
     if(*queue == NULL)
         return NULL;
 
-    queue_t *front = *queue;
+    cgc_queue_t *front = *queue;
     char *popped_data = front->data;
     *queue = front->next;
-    free(front);
+    cgc_free(front);
 
     return popped_data;
 }
 
 
-void clear_queue(queue_t **queue)
+void cgc_clear_queue(cgc_queue_t **queue)
 {
     if (*queue == NULL)
         return;
 
-    queue_t *front = *queue, *old_front;
+    cgc_queue_t *front = *queue, *old_front;
     while(front->next != NULL) {
-        free(front->data);
+        cgc_free(front->data);
         old_front = front;
         front = front->next;
-        free(old_front);
+        cgc_free(old_front);
     }
-    free(front->data);
-    free(front);
+    cgc_free(front->data);
+    cgc_free(front);
     *queue = NULL;
 }

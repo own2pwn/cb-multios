@@ -26,7 +26,7 @@ static char* digits = "0123456789ABCDEF";
 /*F*************************/
 
 int
-b16_2w(buf, num)
+cgc_b16_2w(buf, num)
 
 char *buf;				/* buffer to hold the hex string */
 unsigned int num;		/* the 1-byte value to convert */
@@ -38,7 +38,7 @@ unsigned int num;		/* the 1-byte value to convert */
 *F*/
 {
 	char tmp[2];
-	bzero(tmp, 0);
+	cgc_bzero(tmp, 0);
 
 	if (num > 0xff) {
 		buf[0] = '|';
@@ -71,7 +71,7 @@ unsigned int num;		/* the 1-byte value to convert */
 /*F*************************/
 
 int
-b10_uint(buf, num)
+cgc_b10_uint(buf, num)
 
 char *buf;				/* buffer to hold the number string */
 unsigned int num;		/* the number to convert */
@@ -83,7 +83,7 @@ unsigned int num;		/* the number to convert */
 *F*/
 {
 	char tmp[12];
-	bzero(tmp, 12);
+	cgc_bzero(tmp, 12);
 
 	if (num == 0) {
 		buf[0] = '0';
@@ -109,11 +109,11 @@ unsigned int num;		/* the number to convert */
 /*F*************************/
 
 int
-vsprintf(buf, fmt, args)
+cgc_vsprintf(buf, fmt, args)
 
 char *buf;				/* buffer to hold formatted string */
 const char *fmt;        /* format of string */
-va_list args;			/* list of arguments */
+cgc_va_list args;			/* list of arguments */
 
 /*
 * PURPOSE : Store a formatted string into a buffer
@@ -144,20 +144,20 @@ va_list args;			/* list of arguments */
 			case 'X': 			// null-terminated string
 				x = va_arg(args, char *);
 				if (!x) x = "|BAD|";
-				len = strlen(x);
+				len = cgc_strlen(x);
 				for(i = len; i > 0; i--) 
 					str[d++] = x[len-i];
 				continue; 
 			
 			case 'U':			// unsigned int
 				u = va_arg(args, unsigned int);
-				len = b10_uint(&str[d], u);
+				len = cgc_b10_uint(&str[d], u);
 				d+=len;
 				continue;
 
 			case 'H': 			// unsigned char to 0x00
 				h = va_arg(args, unsigned int);
-				len = b16_2w(&str[d], h);
+				len = cgc_b16_2w(&str[d], h);
 				d+=len;
 				continue;
 
@@ -174,13 +174,13 @@ va_list args;			/* list of arguments */
 }
 
 int
-sprintf(char *buf, const char* fmt, ...)
+cgc_sprintf(char *buf, const char* fmt, ...)
 {
 	int n;
-	va_list ap;
+	cgc_va_list ap;
 
 	va_start(ap, fmt);
-	n = vsprintf (buf, fmt, ap);
+	n = cgc_vsprintf (buf, fmt, ap);
 	va_end(ap);
 	return (n);
 }

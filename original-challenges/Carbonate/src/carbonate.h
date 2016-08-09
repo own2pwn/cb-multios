@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 #define UINT16_MAX 65535U
 #define UINT32_MAX 4294967295U
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-typedef float float32;
+typedef unsigned char cgc_uint8;
+typedef unsigned short cgc_uint16;
+typedef unsigned int cgc_uint32;
+typedef float cgc_float32;

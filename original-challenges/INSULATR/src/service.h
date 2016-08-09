@@ -59,24 +59,24 @@ typedef enum __attribute__ ((__packed__)) {
 	CMD_DESERIALIZE, // 0x01
 	CMD_SERIALIZE, // 0x02
 	CMD_EXIT // 0x03
-} command_t;
+} cgc_command_t;
 
 typedef enum {
 	TYPE_UNKNOWN = 0,
 	TYPE_NUMBER, // 1 
 	TYPE_STRING, // 2
 	TYPE_BOGUS = MAX_UINT32
-} objtype_t;
+} cgc_objtype_t;
 
 typedef struct {
 	uint8_t id;
-	objtype_t type;
+	cgc_objtype_t type;
 	uint32_t *number;
 	char *string;
-} object_t;
+} cgc_object_t;
 
 typedef struct {
-	object_t *obj[NUM_OBJS];
-} namespace_t;
+	cgc_object_t *obj[NUM_OBJS];
+} cgc_namespace_t;
 
 #endif

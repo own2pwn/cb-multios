@@ -25,7 +25,7 @@ fixed point precision: 16 bits
 
 #define BANDPASS_COUNT 17
 
-static int16_t BANDPASS_COEFFS[BANDPASS_COUNT] = {
+static cgc_int16_t BANDPASS_COEFFS[BANDPASS_COUNT] = {
   2468,
   -3051,
   -4673,
@@ -66,7 +66,7 @@ fixed point precision: 16 bits
 
 #define LOWPASS_COUNT 45
 
-static int16_t LOWPASS_COEFFS [LOWPASS_COUNT] = {
+static cgc_int16_t LOWPASS_COEFFS [LOWPASS_COUNT] = {
   -497,
   -410,
   -542,

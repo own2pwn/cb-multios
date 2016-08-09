@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,24 +29,24 @@ THE SOFTWARE.
 extern "C"
 {
 // Add external commands here (if they are in .c files)
-extern void sort_command( char * );
-extern void matrix_command( char * );
-extern void simon_command( char *);
-extern void encode_command( char * );
+extern void cgc_sort_command( char * );
+extern void cgc_matrix_command( char * );
+extern void cgc_simon_command( char *);
+extern void cgc_encode_command( char * );
 
 }
 
 int main(void)
 {
-    CCommandHandler oCmdHandler;
+    cgc_CCommandHandler oCmdHandler;
 
     // Make sure to register your command with the command handler and add a description...
-    oCmdHandler.RegisterCommand( "sort", "This command sorts integers.", &sort_command );
-    oCmdHandler.RegisterCommand( "matrix", "This command performs matrix math.", &matrix_command );
-    oCmdHandler.RegisterCommand( "simon", "This command plays a game like Simon Says.", &simon_command );
-    oCmdHandler.RegisterCommand( "encode", "This command encodes data.", &encode_command );
+    oCmdHandler.cgc_RegisterCommand( "sort", "This command sorts integers.", &cgc_sort_command );
+    oCmdHandler.cgc_RegisterCommand( "matrix", "This command performs matrix math.", &cgc_matrix_command );
+    oCmdHandler.cgc_RegisterCommand( "simon", "This command plays a game like Simon Says.", &cgc_simon_command );
+    oCmdHandler.cgc_RegisterCommand( "encode", "This command encodes data.", &cgc_encode_command );
 
-    oCmdHandler.Run();
+    oCmdHandler.cgc_Run();
 
     return 0;
 }

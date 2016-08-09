@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #ifndef _VA_LIST
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define _VA_LIST
 #endif
 
@@ -54,34 +54,34 @@ typedef __builtin_va_list va_list;
 #define EXIT_FAILURE (-1)
 #define EXIT_SUCCESS (0)
 
-struct FILE;
-typedef struct FILE FILE;
-extern FILE *stdin, *stdout, *stderr;
+struct cgc_FILE;
+typedef struct cgc_FILE cgc_FILE;
+extern cgc_FILE *stdin, *stdout, *stderr;
 
 /**
- * Read exactly size bytes from FILE pointer into ptr, buffered.
+ * Read exactly size bytes from cgc_FILE pointer into ptr, buffered.
  *
  * @param ptr The output buffer
  * @param size The size to read
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t fread(void *ptr, size_t size, FILE *stream);
+cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
 
 /**
- * Read at most size bytes from FILE pointer into ptr, stopping on delim, buffered.
+ * Read at most size bytes from cgc_FILE pointer into ptr, stopping on delim, buffered.
  *
  * @param ptr The output buffer
  * @param delim The byte to stop on
  * @param size The size to read
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
+cgc_ssize_t cgc_fread_until(void *ptr, unsigned char delim, cgc_size_t size, cgc_FILE *stream);
 
 //#define DEBUG 1
 #ifdef DEBUG
-#define debug(args...) fdprintf(stderr,args)
+#define debug(args...) cgc_fdprintf(stderr,args)
 #else
 #define debug(args...)
 #endif
@@ -128,7 +128,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param b Buffer to write random bytes to.
  * @return Bytes in b.
  */
-#define RANDOM(s,b)  if(random(b, s, NULL)) DIE(RANDFAIL)
+#define RANDOM(s,b)  if(cgc_random(b, s, NULL)) DIE(RANDFAIL)
 
 /**
  * Simple conversion for hex char
@@ -144,7 +144,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s struct to read into
  * @return 1 on success, 0 on failure
  */
-#define READDATA(s) (sizeof(s) == readall(STDIN,(char *)&s,sizeof(s)) ? 1 : 0)
+#define READDATA(s) (sizeof(s) == cgc_readall(STDIN,(char *)&s,sizeof(s)) ? 1 : 0)
 
 /**
  * Send data to stdout
@@ -152,7 +152,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s struct to write
  * @return 1 on success, 0 on failure
  */
-#define SENDDATA(s) (sizeof(s) == sendall(STDOUT,(char *)&s,sizeof(s)) ? 1 : 0)
+#define SENDDATA(s) (sizeof(s) == cgc_sendall(STDOUT,(char *)&s,sizeof(s)) ? 1 : 0)
 
 /**
  * Send a string to stdout
@@ -160,7 +160,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s string to write
  * @return 1 on success, 0 on failure
  */
-#define SENDSTR(s) (strlen(s) == sendall(STDOUT,s,strlen(s)) ? 1 : 0)
+#define SENDSTR(s) (cgc_strlen(s) == cgc_sendall(STDOUT,s,cgc_strlen(s)) ? 1 : 0)
 
 /**
  * Send a string followed by newline to stdout
@@ -185,7 +185,7 @@ ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
  * @param s Maximum number of bytes to read
  * @return Number of bytes read
  */
-size_t readline(int fd, char *buf, size_t s);
+cgc_size_t cgc_readline(int fd, char *buf, cgc_size_t s);
 
 /**
  * Attempt to read a fixed number of bytes
@@ -195,7 +195,7 @@ size_t readline(int fd, char *buf, size_t s);
  * @param s Maximum number of bytes to read
  * @return Number of bytes read 
  */
-size_t readall(int fd, char *buf, size_t s);
+cgc_size_t cgc_readall(int fd, char *buf, cgc_size_t s);
 
 /**
  * Attempt to send a fixed number of bytes
@@ -205,7 +205,7 @@ size_t readall(int fd, char *buf, size_t s);
  * @param s Number of bytes to send
  * @return Number of bytes sent.
  */
-size_t sendall(int fd, char *buf, size_t s);
+cgc_size_t cgc_sendall(int fd, char *buf, cgc_size_t s);
 
 /**
  * Set memory to value.
@@ -215,7 +215,7 @@ size_t sendall(int fd, char *buf, size_t s);
  * @param n Number of bytes to set
  * @return Pointer to buffer
  */
-void *memset(void *s, int c, size_t n);
+void *cgc_memset(void *s, int c, cgc_size_t n);
 
 /**
  * Compare two strings for equality.
@@ -224,7 +224,7 @@ void *memset(void *s, int c, size_t n);
  * @param s2 Second string.
  * @return Non-zero if equal, zero if not equal.
  */
-int streq(char *s1, char *s2);
+int cgc_streq(char *s1, char *s2);
 
 /**
  * Get string length.
@@ -232,7 +232,7 @@ int streq(char *s1, char *s2);
  * @param s1 Input string.
  * @return Length of string, not including NULL terminator..
  */
-int strlen(const char *s); 
+int cgc_strlen(const char *s); 
 
 /**
  * Format string and store in buffer
@@ -242,7 +242,7 @@ int strlen(const char *s);
  * @param ... Additional format arguments
  * @return None.
  */
-void sprintf(char *buf, const char *fmt, ...); 
+void cgc_sprintf(char *buf, const char *fmt, ...); 
 
 /**
  * Format string and store in buffer
@@ -252,7 +252,7 @@ void sprintf(char *buf, const char *fmt, ...);
  * @param argp Additional format arguments
  * @return None.
  */
-void vsprintf(char *buf, const char *fmt, va_list argp); 
+void cgc_vsprintf(char *buf, const char *fmt, cgc_va_list argp); 
 
 /**
  * Print things to stdout.
@@ -261,7 +261,7 @@ void vsprintf(char *buf, const char *fmt, va_list argp);
  * @param ... Additional format arguments
  * @return None.
  */
-void printf(const char *fmt, ...); 
+void cgc_printf(const char *fmt, ...); 
 
 /**
  * Print things to file descriptor.
@@ -271,7 +271,7 @@ void printf(const char *fmt, ...);
  * @param ... Additional format arguments
  * @return None.
  */
-void fdprintf(int fd, const char *fmt, ...);
+void cgc_fdprintf(int fd, const char *fmt, ...);
 
 /**
  * Print things to file descriptor.
@@ -281,7 +281,7 @@ void fdprintf(int fd, const char *fmt, ...);
  * @param argp Additional format arguments
  * @return None.
  */
-void vfdprintf(int fd, const char *fmt, va_list argp); 
+void cgc_vfdprintf(int fd, const char *fmt, cgc_va_list argp); 
 
 /**
  * Tokenize string
@@ -290,7 +290,7 @@ void vfdprintf(int fd, const char *fmt, va_list argp);
  * @param sep Seperator to tokenize off of
  * @return Next token in string.
  */
-char *strtok(char *s, char sep); 
+char *cgc_strtok(char *s, char sep); 
 
 /**
  * String copy
@@ -299,14 +299,14 @@ char *strtok(char *s, char sep);
  * @param s2 src
  * @return None.
  */
-void strcpy(char *s1, const char *s2); 
+void cgc_strcpy(char *s1, const char *s2); 
 
 /**
  * String to int
  * @param s String to convert to int
  * @return Integer value
  */
-unsigned int atoi(char *s);
+unsigned int cgc_atoi(char *s);
 
 /**
  * String cat
@@ -315,7 +315,7 @@ unsigned int atoi(char *s);
  * @param src src
  * @return None.
  */
-char * strcat(char *dest, const char *src);
+char * cgc_strcat(char *dest, const char *src);
 
 /**
  * Memory copy
@@ -325,7 +325,7 @@ char * strcat(char *dest, const char *src);
  * @param len length
  * @return None.
  */
-void memcpy(void *dest, void *src, size_t len); 
+void cgc_memcpy(void *dest, void *src, cgc_size_t len); 
 
 /**
  * Check if two buffers are equal
@@ -335,5 +335,5 @@ void memcpy(void *dest, void *src, size_t len);
  * @param len length
  * @return 0 if not equal, 1 if equal
  */
-int memeq(void *b1, void *b2, size_t len);
+int cgc_memeq(void *b1, void *b2, cgc_size_t len);
 #endif

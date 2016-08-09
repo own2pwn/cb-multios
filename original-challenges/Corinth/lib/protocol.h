@@ -3,10 +3,10 @@
 #include "types.h"
 
 typedef struct {
-  uint8 id;
-  uint16 length;
+  cgc_uint8 id;
+  cgc_uint16 length;
   void* value;
-} protocol_frame;
+} cgc_protocol_frame;
 
-void protocol_send(protocol_frame* frame);
-void protocol_with_recv_frame(uint8 (^block)(protocol_frame* frame));
+void cgc_protocol_send(cgc_protocol_frame* frame);
+void cgc_protocol_with_recv_frame(cgc_uint8 (^block)(cgc_protocol_frame* frame));

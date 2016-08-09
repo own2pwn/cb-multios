@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,7 +28,7 @@
 * @param c int to test
 * @return 1 if yes, 0 if no
 */
-int isdigit(int c);
+int cgc_isdigit(int c);
 
 /**
 * Convert the string representation of a number to an integer
@@ -37,4 +37,4 @@ int isdigit(int c);
 * @param str The string to convert
 * @return an int containing the value represented in str
 */
-int atoi(char* str);
+int cgc_atoi(char* str);

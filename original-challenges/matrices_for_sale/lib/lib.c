@@ -24,9 +24,9 @@
 #include "libc.h"
 
 // modified to remove "ret"
-int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
 
     if (!size)
         return 2;
@@ -42,8 +42,8 @@ int transmit_all(int fd, const char *buf, const size_t size) {
     return 0;
 }
 
-void * memset(void *dst, char c, size_t n) {
-    size_t i;
+void * cgc_memset(void *dst, char c, cgc_size_t n) {
+    cgc_size_t i;
     for(i=0; i<n; i++){
         *((unsigned char*)dst+i) = c;
     }

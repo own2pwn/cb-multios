@@ -35,13 +35,13 @@ THE SOFTWARE.
 #include "genericParsers.h"
 #include "territoryParsers.h"
 
-int countryMenu( pCountry co );
-void freeCountry( pCountry co );
-void printCountryInfo( pCountry co);
-pCountry countryTopLevel( pstring str);
-void initCountry( pCountry co );
-char *extractLanguage( pstring str );
-char *extractCapitol( pstring str );
+int cgc_countryMenu( cgc_pCountry co );
+void cgc_freeCountry( cgc_pCountry co );
+void cgc_printCountryInfo( cgc_pCountry co);
+cgc_pCountry cgc_countryTopLevel( cgc_pstring str);
+void cgc_initCountry( cgc_pCountry co );
+char *cgc_extractLanguage( cgc_pstring str );
+char *cgc_extractCapitol( cgc_pstring str );
 
 #endif
 

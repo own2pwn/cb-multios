@@ -35,7 +35,7 @@ THE SOFTWARE.
 #define INITIALIZATION_DATA 0x4347C000
 
 // authenticates from the magic page.  Returns a security ID on success, or 0 on failure
-securityIdType authenticate(char *name, unsigned int token) {
+cgc_securityIdType cgc_authenticate(char *name, unsigned int token) {
 
 int i;
 int x;
@@ -43,7 +43,7 @@ int offset;
 unsigned char tmpchar;
 char userID[8];
 unsigned int tmp_token;
-securityIdType security_ID;
+cgc_securityIdType security_ID;
 unsigned char *readPtr;
 unsigned int maxEntries;
 
@@ -64,7 +64,7 @@ unsigned int maxEntries;
 
 		userID[7] = 0;
 
-		if (strncmp(name, userID, 7) == 0) {
+		if (cgc_strncmp(name, userID, 7) == 0) {
 			
 			tmp_token = 0;
 
@@ -86,7 +86,7 @@ unsigned int maxEntries;
 		}
 	}
 
-	if (strcmp(name, "GUEST") == 0) {
+	if (cgc_strcmp(name, "GUEST") == 0) {
 
 		if ( token > 1 & token < 8 && token % 2 == 0 ) {
 		
@@ -99,14 +99,14 @@ unsigned int maxEntries;
 
 }
 
-int lookupName( char *name, securityIdType ID ) {
+int cgc_lookupName( char *name, cgc_securityIdType ID ) {
 
 int i;
 int x;
 int offset;
 unsigned char tmpchar;
 char userID[8];
-securityIdType security_ID;
+cgc_securityIdType security_ID;
 unsigned char *readPtr;
 unsigned int maxEntries;
 
@@ -139,7 +139,7 @@ unsigned int maxEntries;
 
 			userID[7] = 0;
 
-			strcpy(name, userID);
+			cgc_strcpy(name, userID);
 
 			return 0;
 
@@ -150,7 +150,7 @@ unsigned int maxEntries;
 
 	if (ID > 2 && ID < 8 ) {
 
-		strcpy(name, "GUEST");
+		cgc_strcpy(name, "GUEST");
 		name[5] = ID + '0';
 		name[6] = 0;
 

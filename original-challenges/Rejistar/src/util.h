@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,9 +25,9 @@ typedef struct {
 	char* key;
 	char* value;
 	void* next;
-} Attribute;
+} cgc_Attribute;
 
-void initializeAttributes(char* body);
-void sendErrorResponse(const char* response);
-void getStringAttribute(char** buffer_ptr, const char* name);
-void getIntegerAttribute(unsigned int* int_ptr, const char* name);
+void cgc_initializeAttributes(char* body);
+void cgc_sendErrorResponse(const char* response);
+void cgc_getStringAttribute(char** buffer_ptr, const char* name);
+void cgc_getIntegerAttribute(unsigned int* int_ptr, const char* name);

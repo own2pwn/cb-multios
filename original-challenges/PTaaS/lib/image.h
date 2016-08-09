@@ -46,14 +46,14 @@ struct image {
  * @param height THe height of the image
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int image_init(struct image *img, unsigned width, unsigned height);
+int cgc_image_init(struct image *img, unsigned width, unsigned height);
 
 /**
  * Destroy an image
  *
  * @param img The image to destroy
  */
-void image_destroy(struct image *img);
+void cgc_image_destroy(struct image *img);
 
 /**
  * Write a pixel to the image at a specific coordinate
@@ -64,7 +64,7 @@ void image_destroy(struct image *img);
  * @param pixel The color to write
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel);
+int cgc_image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel);
 
 /**
  * Get a pixel from the image at a specific coordinate
@@ -75,7 +75,7 @@ int image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pi
  * @param pixel Out parameter for the color
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel);
+int cgc_image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel);
 
 /**
  * Convert a vector representing a color to a pixel value
@@ -84,7 +84,7 @@ int image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pix
  * @param gamma Gamma correction
  * @return A pixel value representing the given color
  */
-struct pixel color_to_pixel(struct vector color, double gamma);
+struct pixel cgc_color_to_pixel(struct vector color, double gamma);
 
 #endif /* IMAGE_H_ */
 

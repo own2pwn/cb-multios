@@ -27,11 +27,11 @@
 #include "games.h"
 
 static int
-read_board(char *board)
+cgc_read_board(char *board)
 {
     int i;
 
-    if (fread(board, 10 * 9, stdin) != 10 * 9)
+    if (cgc_fread(board, 10 * 9, stdin) != 10 * 9)
         return EXIT_FAILURE;
 
     for (i = 0; i < 10 * 9; i++) {
@@ -39,7 +39,7 @@ read_board(char *board)
             if (board[i] != '\n')
                 return EXIT_FAILURE;
         } else {
-            if (strchr("123456789 ", board[i]) == NULL)
+            if (cgc_strchr("123456789 ", board[i]) == NULL)
                 return EXIT_FAILURE;
         }
     }
@@ -48,7 +48,7 @@ read_board(char *board)
 }
 
 static char
-get_square(char *board, int x, int y)
+cgc_get_square(char *board, int x, int y)
 {
     if (x < 0 || y < 0 || x >= 9 || y >= 9)
         return '\0';
@@ -57,7 +57,7 @@ get_square(char *board, int x, int y)
 }
 
 static void
-set_square(char *board, char num, int x, int y)
+cgc_set_square(char *board, char num, int x, int y)
 {
     if (x < 0 || y < 0 || x >= 9 || y >= 9)
         return;
@@ -69,17 +69,17 @@ set_square(char *board, char num, int x, int y)
 }
 
 static void
-get_super_square(char *board, char *set, int x, int y)
+cgc_get_super_square(char *board, char *set, int x, int y)
 {
     int i, j;
 
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
-            set[j * 3 + i] = get_square(board, x + i, y + j);
+            set[j * 3 + i] = cgc_get_square(board, x + i, y + j);
 }
 
 static int
-count_duplicates(char *set)
+cgc_count_duplicates(char *set)
 {
     int ret = 0;
     int i, j, count;
@@ -98,7 +98,7 @@ count_duplicates(char *set)
 }
 
 static int
-validate_board(char *board)
+cgc_validate_board(char *board)
 {
     int ret;
     char set[9];
@@ -106,25 +106,25 @@ validate_board(char *board)
 
     for (i = 0; i < 9; i++) {
         for (j = 0; j < 9; j++)
-            set[j] = get_square(board, j, i);
+            set[j] = cgc_get_square(board, j, i);
 
-        if ((ret = count_duplicates(set)) != 0)
+        if ((ret = cgc_count_duplicates(set)) != 0)
             return -ret + 1;
     }
 
     for (i = 0; i < 9; i++) {
         for (j = 0; j < 9; j++)
-            set[j] = get_square(board, i, j);
+            set[j] = cgc_get_square(board, i, j);
 
-        if ((ret = count_duplicates(set)) != 0)
+        if ((ret = cgc_count_duplicates(set)) != 0)
             return -ret;
     }
 
     for (i = 0; i < 9; i += 3) {
         for (j = 0; j < 9; j += 3) {
-            get_super_square(board, set, i, j);
+            cgc_get_super_square(board, set, i, j);
 
-            if ((ret = count_duplicates(set)) != 0)
+            if ((ret = cgc_count_duplicates(set)) != 0)
                 return -ret;
         }
     }
@@ -132,17 +132,17 @@ validate_board(char *board)
     return EXIT_SUCCESS;
 }
 
-static int solve_board(char *board, char *square)
+static int cgc_solve_board(char *board, char *square)
 {
     char num, *next_square;
 
-    if ((next_square = strchr(square, ' ')) == NULL)
+    if ((next_square = cgc_strchr(square, ' ')) == NULL)
         return EXIT_SUCCESS;
 
     for (num = '1'; num <= '9'; num++) {
         *next_square = num;
-        if (validate_board(board) == EXIT_SUCCESS) {
-            if (solve_board(board, next_square + 1) == EXIT_SUCCESS)
+        if (cgc_validate_board(board) == EXIT_SUCCESS) {
+            if (cgc_solve_board(board, next_square + 1) == EXIT_SUCCESS)
                 return EXIT_SUCCESS;
         }
     }
@@ -152,23 +152,23 @@ static int solve_board(char *board, char *square)
 }
 
 int
-do_sudoku()
+cgc_do_sudoku()
 {
     // 9 rows of 9 chars + newlines for each row
     char board[10 * 9];
 
-    printf("Let me help you cheat at sudoku, enter your board n00b:\n");
+    cgc_printf("Let me help you cheat at sudoku, enter your board n00b:\n");
 
-    if (read_board(board) != EXIT_SUCCESS) {
-        printf("Invalid board\n");
+    if (cgc_read_board(board) != EXIT_SUCCESS) {
+        cgc_printf("Invalid board\n");
         return EXIT_SUCCESS;
     }
 
-    game_state.games.sudoku.fitness = validate_board(board);
-    if (solve_board(board, board) != EXIT_SUCCESS)
-        printf("Nice try\n");
+    game_state.games.sudoku.fitness = cgc_validate_board(board);
+    if (cgc_solve_board(board, board) != EXIT_SUCCESS)
+        cgc_printf("Nice try\n");
     else
-        printf("Solved!\n%s\n", board);
+        cgc_printf("Solved!\n%s\n", board);
 
     return EXIT_SUCCESS;
 }

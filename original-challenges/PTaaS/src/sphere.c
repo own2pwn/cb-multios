@@ -31,24 +31,24 @@
 
 #include "sphere.h"
 
-static double __attribute__((regparm(3))) sphere_intersect(struct sphere *, struct ray *ray, void *);
+static double __attribute__((regparm(3))) cgc_sphere_intersect(struct sphere *, struct ray *ray, void *);
 
 void
-sphere_init(struct sphere *sphere, double radius)
+cgc_sphere_init(struct sphere *sphere, double radius)
 {
     sphere->data = NULL;
     sphere->radius = fabs(radius);
-    sphere->intersect = sphere_intersect;
+    sphere->intersect = cgc_sphere_intersect;
 }
 
 static double __attribute__((regparm(3)))
-sphere_intersect(struct sphere *sphere, struct ray *ray, void *data)
+cgc_sphere_intersect(struct sphere *sphere, struct ray *ray, void *data)
 {
     // See https://en.wikipedia.org/wiki/Line-sphere_intersection
     double ret;
-    struct vector o_minus_c = vector_trunc(vector_sub(ray->origin, sphere->shape.position));
-    double b = vector_dot(vector_trunc(ray->direction), o_minus_c);
-    double c = vector_dot(o_minus_c, o_minus_c) - (sphere->radius * sphere->radius);
+    struct vector o_minus_c = cgc_vector_trunc(cgc_vector_sub(ray->origin, sphere->shape.position));
+    double b = cgc_vector_dot(cgc_vector_trunc(ray->direction), o_minus_c);
+    double c = cgc_vector_dot(o_minus_c, o_minus_c) - (sphere->radius * sphere->radius);
     double disc = b * b - c;
 
     if (disc < 0)

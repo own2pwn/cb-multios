@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,49 +32,49 @@ THE SOFTWARE.
 #include "linkedlist.h"
 #include "service.h"
 
-linkedList *serverList;
+cgc_linkedList *serverList;
 int adminPortOffset;
 
-int GetNextAdminPort()
+int cgc_GetNextAdminPort()
 {
   adminPortOffset = (adminPortOffset + 4) % 4096;
   return adminPortOffset;
 }
 
-serverInfo *CreateServer(int length)
+cgc_serverInfo *cgc_CreateServer(int length)
 {
-  serverInfo *pServer = calloc(sizeof(serverInfo));
-  pServer->name = GenerateRandomString(length);
-  pServer->instances = NewList(LIST_INSTANCE);
+  cgc_serverInfo *pServer = cgc_calloc(sizeof(cgc_serverInfo));
+  pServer->name = cgc_GenerateRandomString(length);
+  pServer->instances = cgc_NewList(LIST_INSTANCE);
   return pServer;
 }
 
-instanceInfo *CreateInstance(int length)
+cgc_instanceInfo *cgc_CreateInstance(int length)
 {
-  instanceInfo *pInstance = calloc(sizeof(instanceInfo));
-  pInstance->name = GenerateRandomString(length);
-  pInstance->port = GenerateRandomNumber(0, 65535);
-  pInstance->adminPortOffset = GetNextAdminPort();
+  cgc_instanceInfo *pInstance = cgc_calloc(sizeof(cgc_instanceInfo));
+  pInstance->name = cgc_GenerateRandomString(length);
+  pInstance->port = cgc_GenerateRandomNumber(0, 65535);
+  pInstance->adminPortOffset = cgc_GetNextAdminPort();
   return pInstance;
 }
 
-void AddInstanceToServer(serverInfo *pServer, instanceInfo *pInstance)
+void cgc_AddInstanceToServer(cgc_serverInfo *pServer, cgc_instanceInfo *pInstance)
 {
-  AddToList(pServer->instances, pInstance, LIST_INSTANCE);
+  cgc_AddToList(pServer->instances, pInstance, LIST_INSTANCE);
   pInstance->server = pServer;
 }
 
-serverInfo *FindServer(char *name)
+cgc_serverInfo *cgc_FindServer(char *name)
 {
-  link *listItem = serverList->root;
+  cgc_link *listItem = serverList->root;
   while (listItem != NULL) 
   {
-    serverInfo *server = listItem->object;
+    cgc_serverInfo *server = listItem->object;
     if (server == NULL) 
     {
       continue;
     }
-    if (strcmp(server->name, name) == 0)
+    if (cgc_strcmp(server->name, name) == 0)
     {
       return server;
     }
@@ -83,25 +83,25 @@ serverInfo *FindServer(char *name)
   return NULL;
 }
 
-instanceInfo *FindInstance(char *name)
+cgc_instanceInfo *cgc_FindInstance(char *name)
 {
-  link *listItem = serverList->root;
+  cgc_link *listItem = serverList->root;
   while (listItem != NULL) 
   {
-    serverInfo *server = listItem->object;
+    cgc_serverInfo *server = listItem->object;
     if (server == NULL) 
     {
       continue;
     }
-    link *listItem2 = server->instances->root;
+    cgc_link *listItem2 = server->instances->root;
     while (listItem2 != NULL) 
     {
-      instanceInfo *instance = listItem2->object;
+      cgc_instanceInfo *instance = listItem2->object;
       if (instance == NULL)
       {
         continue;
       }
-      if (strcmp(instance->name, name) == 0)
+      if (cgc_strcmp(instance->name, name) == 0)
       {
         return instance;
       }
@@ -112,58 +112,58 @@ instanceInfo *FindInstance(char *name)
   return NULL;
 }
 
-void InitializeSimulation() 
+void cgc_InitializeSimulation() 
 {
   adminPortOffset = 0;
-  serverList = NewList(LIST_SERVER);
+  serverList = cgc_NewList(LIST_SERVER);
   // Create Servers
-  int numServers = GenerateRandomNumber(10,32);
-  int nameLength = GenerateRandomNumber(34, 64);
+  int numServers = cgc_GenerateRandomNumber(10,32);
+  int nameLength = cgc_GenerateRandomNumber(34, 64);
   for (int i=0; i<numServers; i++) 
   {
-    serverInfo *server = CreateServer(nameLength - i);
-    AddToList(serverList, server, LIST_SERVER);
-    // Create and link instances to servers
-    int numInstances = GenerateRandomNumber(1, 15);
-    int instanceLength = GenerateRandomNumber(32, 64);
+    cgc_serverInfo *server = cgc_CreateServer(nameLength - i);
+    cgc_AddToList(serverList, server, LIST_SERVER);
+    // Create and cgc_link instances to servers
+    int numInstances = cgc_GenerateRandomNumber(1, 15);
+    int instanceLength = cgc_GenerateRandomNumber(32, 64);
     for(int j=0; j<numInstances; j++) 
     {
-      instanceInfo *instance = CreateInstance(instanceLength - j);
-      AddInstanceToServer(server, instance);
+      cgc_instanceInfo *instance = cgc_CreateInstance(instanceLength - j);
+      cgc_AddInstanceToServer(server, instance);
     }
   }
 }
 
-void QueryOne(query *pCurrentQuery, response *pCurrentResponse) 
+void cgc_QueryOne(cgc_query *pCurrentQuery, cgc_response *pCurrentResponse) 
 {
   char name[64];
   for (int i=0; i< 64; i++) {
     name[i] = i;
   }
-  printf("Query One\n");
+  cgc_printf("Query One\n");
   // Send info for one instance
 #ifdef PATCHED_1
-  strncpy(name, (char *)pCurrentQuery->data, 64);
+  cgc_strncpy(name, (char *)pCurrentQuery->data, 64);
 #else
-  strcpy(name, (char *)pCurrentQuery->data);
+  cgc_strcpy(name, (char *)pCurrentQuery->data);
 #endif
-  instanceInfo *instance = FindInstance(name);
+  cgc_instanceInfo *instance = cgc_FindInstance(name);
   if (instance == NULL) 
   {
-    printf("Not found\n");
+    cgc_printf("Not found\n");
     return;
   }
-  AddToResponse(pCurrentResponse, "instance:");
-  AddToResponse(pCurrentResponse, instance->name);
-  AddToResponse(pCurrentResponse, ":");
-  AddToResponse(pCurrentResponse, "tcp:");
+  cgc_AddToResponse(pCurrentResponse, "instance:");
+  cgc_AddToResponse(pCurrentResponse, instance->name);
+  cgc_AddToResponse(pCurrentResponse, ":");
+  cgc_AddToResponse(pCurrentResponse, "tcp:");
   char number[12];
-  sprintf(number, "$d", instance->port);
-  AddToResponse(pCurrentResponse, number);
-  AddToResponse(pCurrentResponse, ":");
-  AddToResponse(pCurrentResponse, "server:");
-  AddToResponse(pCurrentResponse, instance->server->name);
-  AddToResponse(pCurrentResponse, ":");
+  cgc_sprintf(number, "$d", instance->port);
+  cgc_AddToResponse(pCurrentResponse, number);
+  cgc_AddToResponse(pCurrentResponse, ":");
+  cgc_AddToResponse(pCurrentResponse, "server:");
+  cgc_AddToResponse(pCurrentResponse, instance->server->name);
+  cgc_AddToResponse(pCurrentResponse, ":");
   return;
 }
 
@@ -171,14 +171,14 @@ int main(void)
 {
   char inputBuffer[1024];
   
-  InitializeRandomness();
-  InitializeSimulation();
+  cgc_InitializeRandomness();
+  cgc_InitializeSimulation();
 
 
   while (1) 
   {
 
-    int bytesReceived = ReceiveUntil(inputBuffer, sizeof(inputBuffer), '\n');
+    int bytesReceived = cgc_ReceiveUntil(inputBuffer, sizeof(inputBuffer), '\n');
     if (bytesReceived < 0) 
     {
       break;
@@ -187,97 +187,97 @@ int main(void)
     {
       continue;
     }
-    query *pCurrentQuery = ParseQuery(inputBuffer);
-    response *pCurrentResponse = GenerateBlankResponse();
+    cgc_query *pCurrentQuery = cgc_ParseQuery(inputBuffer);
+    cgc_response *pCurrentResponse = cgc_GenerateBlankResponse();
     switch (pCurrentQuery->type)
     {
       case QUERY_ALL:
       {
-        printf("Query All\n");
+        cgc_printf("Query All\n");
         // List all servers in network
-        link *listItem = serverList->root;
+        cgc_link *listItem = serverList->root;
         while (listItem != NULL) 
         {
-          serverInfo *server = listItem->object;
+          cgc_serverInfo *server = listItem->object;
           if (server == NULL) 
           {
             continue;
           }
-          AddToResponse(pCurrentResponse, "server:");
-          AddToResponse(pCurrentResponse, server->name);
-          AddToResponse(pCurrentResponse, ":");
+          cgc_AddToResponse(pCurrentResponse, "server:");
+          cgc_AddToResponse(pCurrentResponse, server->name);
+          cgc_AddToResponse(pCurrentResponse, ":");
           listItem = listItem->next;
         } 
         break;
       }
       case QUERY_SERVER:
       {
-        printf("Query Server\n");
+        cgc_printf("Query Server\n");
         // List all instances on a server
         char *name = (char *)pCurrentQuery->data;
-        serverInfo *server = FindServer(name);
+        cgc_serverInfo *server = cgc_FindServer(name);
         if (server == NULL) 
         {
           continue;
         }
-        link *listItem = server->instances->root;
+        cgc_link *listItem = server->instances->root;
         while (listItem != NULL) 
         {
-          instanceInfo *instance = listItem->object;
+          cgc_instanceInfo *instance = listItem->object;
           if (instance == NULL) 
           {
             continue;
           }
-          AddToResponse(pCurrentResponse, "instance:");
-          AddToResponse(pCurrentResponse, instance->name);
-          AddToResponse(pCurrentResponse, ":");
+          cgc_AddToResponse(pCurrentResponse, "instance:");
+          cgc_AddToResponse(pCurrentResponse, instance->name);
+          cgc_AddToResponse(pCurrentResponse, ":");
           listItem = listItem->next;
         }
         break;
       }
       case QUERY_ONE:
       {
-        QueryOne(pCurrentQuery, pCurrentResponse);
+        cgc_QueryOne(pCurrentQuery, pCurrentResponse);
         break;
       }
       case QUERY_ADMIN:
       {
         // Send admin info for one instance
-        printf("Query Admin\n");
+        cgc_printf("Query Admin\n");
         int version = pCurrentQuery->data[0];
         if (version != 1)
         {
-          printf("Invalid Query\n");
+          cgc_printf("Invalid Query\n");
           _terminate(0);
         }
         char instanceName[64];
-        strncpy(instanceName, (char *)&pCurrentQuery->data[1], 64);
-        instanceInfo *instance = FindInstance(instanceName);
+        cgc_strncpy(instanceName, (char *)&pCurrentQuery->data[1], 64);
+        cgc_instanceInfo *instance = cgc_FindInstance(instanceName);
         if (instance == NULL) 
         {
-          printf("Instance Not Found\n");
+          cgc_printf("Instance Not Found\n");
           _terminate(0);
         }
-        AddToResponse(pCurrentResponse, "admin:");
+        cgc_AddToResponse(pCurrentResponse, "admin:");
         char number[12];
-        memset(number, 0, sizeof(number));
-        uint16_t adminPort = *(uint16_t *)((uint8_t *)FLAG_PAGE + instance->adminPortOffset);
-        sprintf(number, "$x", (int)adminPort);
-        AddToResponse(pCurrentResponse, number);
-        AddToResponse(pCurrentResponse, ":");
+        cgc_memset(number, 0, sizeof(number));
+        cgc_uint16_t adminPort = *(cgc_uint16_t *)((cgc_uint8_t *)FLAG_PAGE + instance->adminPortOffset);
+        cgc_sprintf(number, "$x", (int)adminPort);
+        cgc_AddToResponse(pCurrentResponse, number);
+        cgc_AddToResponse(pCurrentResponse, ":");
         break;
       }
       default:
       {
         // Invalid Query
-        printf("Invalid Query\n");
+        cgc_printf("Invalid Query\n");
         _terminate(0);
         break;
       }
     }
-    SendResponse(pCurrentResponse);
-    pCurrentQuery = DestroyQuery(pCurrentQuery);
-    pCurrentResponse = DestroyResponse(pCurrentResponse);
+    cgc_SendResponse(pCurrentResponse);
+    pCurrentQuery = cgc_DestroyQuery(pCurrentQuery);
+    pCurrentResponse = cgc_DestroyResponse(pCurrentResponse);
   }
   return 0;
 }

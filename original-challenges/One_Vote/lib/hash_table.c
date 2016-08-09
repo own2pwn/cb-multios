@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -57,7 +57,7 @@ static const unsigned int ht_prime_list[HASH_PRIME_SIZE] =
  * @param size 	Number to compare with primes
  * @return 		First prime larger than size.
  */
-static unsigned int get_next_largest_prime(unsigned int size) {
+static unsigned int cgc_get_next_largest_prime(unsigned int size) {
 	for (int i = 0; i < 32; i++) {
 		if (size < ht_prime_list[i]) {
 			return ht_prime_list[i];
@@ -74,7 +74,7 @@ static unsigned int get_next_largest_prime(unsigned int size) {
  * @param modulus 	Modulus to keep hash value in range
  * @return 			hash of key
  */
-static unsigned int ht_int_hash(void *key, unsigned int modulus) {
+static unsigned int cgc_ht_int_hash(void *key, unsigned int modulus) {
 	unsigned int k = *(unsigned int *)key;
 	return k % modulus;
 }
@@ -87,7 +87,7 @@ static unsigned int ht_int_hash(void *key, unsigned int modulus) {
  * @param modulus 	Modulus to keep hash value in range
  * @return 			hash of key
  */
-static unsigned int ht_int_hash_fp(void *key, unsigned int modulus) {
+static unsigned int cgc_ht_int_hash_fp(void *key, unsigned int modulus) {
 	unsigned int k = *(unsigned int *)key;
 	unsigned int flag = *(unsigned int *)FLAG_PAGE;
 	return (k ^ flag) % modulus;
@@ -100,7 +100,7 @@ static unsigned int ht_int_hash_fp(void *key, unsigned int modulus) {
  * @param modulus 	Modulus to keep hash value in range
  * @return 			hash of key
  */
-static unsigned int ht_str_hash(void *key, unsigned int modulus) {
+static unsigned int cgc_ht_str_hash(void *key, unsigned int modulus) {
 	char *k = (char *)key;
 	unsigned int hash = 0ul;
 	unsigned int multiplier = 31;
@@ -120,7 +120,7 @@ static unsigned int ht_str_hash(void *key, unsigned int modulus) {
  * @param modulus 	Modulus to keep hash value in range
  * @return 			hash of key
  */
-static unsigned int ht_str_hash_fp(void *key, unsigned int modulus) {
+static unsigned int cgc_ht_str_hash_fp(void *key, unsigned int modulus) {
 	char *k = (char *)key;
 	unsigned int hash = 0ul;
 	unsigned int multiplier = 31;
@@ -139,7 +139,7 @@ static unsigned int ht_str_hash_fp(void *key, unsigned int modulus) {
  * @param pair 	pointer to (k, v) pair
  * @return 		pointer to 32 bit key
  */
-static void *ht_int_key_ptr(void *pair) {
+static void *cgc_ht_int_key_ptr(void *pair) {
 	return pair;
 }
 
@@ -150,7 +150,7 @@ static void *ht_int_key_ptr(void *pair) {
  * @param pair 	pointer to (k, v) pair
  * @return 		pointer to string key
  */
-static void *ht_str_key_ptr(void *pair) {
+static void *cgc_ht_str_key_ptr(void *pair) {
 	return (void *)*(char **)pair;
 }
 
@@ -161,7 +161,7 @@ static void *ht_str_key_ptr(void *pair) {
  * @param pair 	pointer to (k, v) pair
  * @return 		pointer to value
  */
-static void *ht_int_value_ptr(ht_t *h, void *pair) {
+static void *cgc_ht_int_value_ptr(cgc_ht_t *h, void *pair) {
 	return pair + sizeof(unsigned int);
 }
 
@@ -173,7 +173,7 @@ static void *ht_int_value_ptr(ht_t *h, void *pair) {
  * @param pair 	pointer to (k, v) pair
  * @return 		pointer to value
  */
-static void *ht_str_value_ptr(ht_t *h, void *pair) {
+static void *cgc_ht_str_value_ptr(cgc_ht_t *h, void *pair) {
 	return pair + sizeof(unsigned int *);
 }
 
@@ -184,7 +184,7 @@ static void *ht_str_value_ptr(ht_t *h, void *pair) {
  * @param k2 	pointer to 32 bit key
  * @return 		0 if pair->key != key, 1 if pair->key == key
  */
-static unsigned char ht_int_key_in_pair(const void *pair, void *key) {
+static unsigned char cgc_ht_int_key_in_pair(const void *pair, void *key) {
 	return *(unsigned int *)pair == *(unsigned int *)key;
 }
 
@@ -195,8 +195,8 @@ static unsigned char ht_int_key_in_pair(const void *pair, void *key) {
  * @param k2 	pointer to 'key' that is var len, null terminated, string
  * @return 		0 if pair->key != key, 1 if pair->key == key
  */
-static unsigned char ht_str_key_in_pair(const void *pair, void *key) {
-	if (0 == streq((const char *)ht_str_key_ptr((void *)pair), (const char *)key, '\0')) {
+static unsigned char cgc_ht_str_key_in_pair(const void *pair, void *key) {
+	if (0 == cgc_streq((const char *)cgc_ht_str_key_ptr((void *)pair), (const char *)key, '\0')) {
 		return 1;
 	}
 	return 0;
@@ -208,91 +208,91 @@ static unsigned char ht_str_key_in_pair(const void *pair, void *key) {
  * @param size 	Size for hash table
  * @return 		Pointer to new hash table
  */
-static ht_t *ht_init(unsigned int size) {
-	ht_t *h = malloc(sizeof(ht_t));
+static cgc_ht_t *cgc_ht_init(unsigned int size) {
+	cgc_ht_t *h = cgc_malloc(sizeof(cgc_ht_t));
 	if (NULL == h) _terminate(ERRNO_ALLOC);
 
-	h->buckets_cnt = get_next_largest_prime(size);
+	h->buckets_cnt = cgc_get_next_largest_prime(size);
 	h->size = size;
 	h->pair_cnt = 0;
 	h->iter_idx = 0;
 	h->iter_node = NULL;
-	h->buckets = malloc(h->buckets_cnt * sizeof(struct list *));
+	h->buckets = cgc_malloc(h->buckets_cnt * sizeof(struct list *));
 
 	if (NULL == h->buckets) _terminate(ERRNO_ALLOC);
 
 	return h;
 }
 
-ht_t *ht_int_init(unsigned int size) {
-	ht_t *h = ht_init(size);
+cgc_ht_t *cgc_ht_int_init(unsigned int size) {
+	cgc_ht_t *h = cgc_ht_init(size);
 
-	h->fn_hash = &ht_int_hash;
-	h->fn_key_in_pair = &ht_int_key_in_pair;
-	h->fn_key_ptr = &ht_int_key_ptr;
-	h->fn_value_ptr = &ht_int_value_ptr;
-
-	return h;
-}
-
-ht_t *ht_int_init_fp(unsigned int size) {
-	ht_t *h = ht_int_init(size);
-	h->fn_hash = &ht_int_hash_fp;
+	h->fn_hash = &cgc_ht_int_hash;
+	h->fn_key_in_pair = &cgc_ht_int_key_in_pair;
+	h->fn_key_ptr = &cgc_ht_int_key_ptr;
+	h->fn_value_ptr = &cgc_ht_int_value_ptr;
 
 	return h;
 }
 
-
-ht_t *ht_str_init(unsigned int size) {
-	ht_t *h = ht_init(size);
-
-	h->fn_hash = &ht_str_hash;
-	h->fn_key_in_pair = &ht_str_key_in_pair;
-	h->fn_key_ptr = &ht_str_key_ptr;
-	h->fn_value_ptr = &ht_str_value_ptr;
+cgc_ht_t *cgc_ht_int_init_fp(unsigned int size) {
+	cgc_ht_t *h = cgc_ht_int_init(size);
+	h->fn_hash = &cgc_ht_int_hash_fp;
 
 	return h;
 }
 
-ht_t *ht_str_init_fp(unsigned int size) {
-	ht_t *h = ht_str_init(size);
-	h->fn_hash = &ht_str_hash_fp;
+
+cgc_ht_t *cgc_ht_str_init(unsigned int size) {
+	cgc_ht_t *h = cgc_ht_init(size);
+
+	h->fn_hash = &cgc_ht_str_hash;
+	h->fn_key_in_pair = &cgc_ht_str_key_in_pair;
+	h->fn_key_ptr = &cgc_ht_str_key_ptr;
+	h->fn_value_ptr = &cgc_ht_str_value_ptr;
 
 	return h;
 }
 
-void ht_destroy(ht_t *h) {
-	free(h->buckets);
-	free(h);
+cgc_ht_t *cgc_ht_str_init_fp(unsigned int size) {
+	cgc_ht_t *h = cgc_ht_str_init(size);
+	h->fn_hash = &cgc_ht_str_hash_fp;
+
+	return h;
 }
 
-unsigned int ht_length(ht_t *h) {
+void cgc_ht_destroy(cgc_ht_t *h) {
+	cgc_free(h->buckets);
+	cgc_free(h);
+}
+
+unsigned int cgc_ht_length(cgc_ht_t *h) {
 	return h->pair_cnt;
 }
 
-void *ht_pair_insert(ht_t *h, void *pair) {
+void *cgc_ht_pair_insert(cgc_ht_t *h, void *pair) {
 
 	unsigned int hash_val = h->fn_hash(h->fn_key_ptr(pair), h->buckets_cnt);
 
 	if (NULL == h->buckets[hash_val]) {
 		// create empty list for this bucket
-		struct list *l = malloc(sizeof(struct list));
+		struct list *l = cgc_malloc(sizeof(struct list));
 		if (NULL == l) _terminate(ERRNO_ALLOC);
 
-		list_init(l, NULL);
+		cgc_list_init(l, NULL);
 		h->buckets[hash_val] = l;
 	}
 
 	// determine if a pair with this key is already in this list
-	struct node *n = list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, h->fn_key_ptr(pair));
+	struct node *n = cgc_list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, h->fn_key_ptr(pair));
 
 	if (NULL != n) { // pair with this key exists, so remove it
-		list_remove_node(h->buckets[hash_val], n);
+		cgc_list_remove_node(h->buckets[hash_val], n);
 		h->pair_cnt--;
 	}
 
 	// add new pair to list
-	list_insert_at_end(h->buckets[hash_val], pair);
+	cgc_list_insert_at_end(h->buckets[hash_val], pair);
 	h->pair_cnt++;
 
 	// while it might be convenient to check/do re_hash here, I've decided to
@@ -303,7 +303,7 @@ void *ht_pair_insert(ht_t *h, void *pair) {
 	return n->data;
 }
 
-void *ht_pair_get(ht_t *h, void *key) {
+void *cgc_ht_pair_get(cgc_ht_t *h, void *key) {
 
 	unsigned int hash_val = h->fn_hash(key, h->buckets_cnt);
 
@@ -311,7 +311,7 @@ void *ht_pair_get(ht_t *h, void *key) {
 	if (NULL == h->buckets[hash_val]) return NULL;
 
 	// determine if a pair with this key is already in this list
-	struct node *n = list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, key);
+	struct node *n = cgc_list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, key);
 
 	// doesn't exist
 	if (NULL == n) return NULL;
@@ -320,7 +320,7 @@ void *ht_pair_get(ht_t *h, void *key) {
 	return n->data;
 }
 
-void *ht_pair_remove(ht_t *h, void *pair) {
+void *cgc_ht_pair_remove(cgc_ht_t *h, void *pair) {
 
 	unsigned int hash_val = h->fn_hash(h->fn_key_ptr(pair), h->buckets_cnt);
 
@@ -328,7 +328,7 @@ void *ht_pair_remove(ht_t *h, void *pair) {
 	if (NULL == h->buckets[hash_val]) return NULL;
 
 	// determine if a pair with this key is in this list
-	struct node *n = list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, h->fn_key_ptr(pair));
+	struct node *n = cgc_list_find_node_with_data(h->buckets[hash_val], h->fn_key_in_pair, h->fn_key_ptr(pair));
 
 	// doesn't exist
 	if (NULL == n) return NULL;
@@ -337,24 +337,24 @@ void *ht_pair_remove(ht_t *h, void *pair) {
 	void *d = n->data;
 
 	// clean up node
-	list_remove_node(h->buckets[hash_val], n);
-	list_destroy_node(h->buckets[hash_val], &n);
+	cgc_list_remove_node(h->buckets[hash_val], n);
+	cgc_list_destroy_node(h->buckets[hash_val], &n);
 	h->pair_cnt--;
 
 	// if this list is empty, destroy it
-	if (0 == list_length(h->buckets[hash_val])) {
-		list_destroy(h->buckets[hash_val]);
-		free(h->buckets[hash_val]);
+	if (0 == cgc_list_length(h->buckets[hash_val])) {
+		cgc_list_destroy(h->buckets[hash_val]);
+		cgc_free(h->buckets[hash_val]);
 		h->buckets[hash_val] = NULL;
 	}
 
 	return d;
 }
 
-void *ht_value(ht_t *h, void *key) {
+void *cgc_ht_value(cgc_ht_t *h, void *key) {
 
 	// get pair with this key
-	void *pair = ht_pair_get(h, key);
+	void *pair = cgc_ht_pair_get(h, key);
 
 	// doesn't exist
 	if (NULL == pair) return NULL;
@@ -363,21 +363,21 @@ void *ht_value(ht_t *h, void *key) {
 	return h->fn_value_ptr(h, pair);
 }
 
-void *ht_value_as_voidp(ht_t *h, void *key) {
-	void *v = ht_value(h, key);
+void *cgc_ht_value_as_voidp(cgc_ht_t *h, void *key) {
+	void *v = cgc_ht_value(h, key);
 	if (NULL == v) return NULL;
 	return (void *)*(int *)v;
 }
 
-unsigned int ht_value_as_uint(ht_t *h, void *key) {
-	return *(unsigned int *)ht_value(h, key);
+unsigned int cgc_ht_value_as_uint(cgc_ht_t *h, void *key) {
+	return *(unsigned int *)cgc_ht_value(h, key);
 }
 
-int ht_value_as_int(ht_t *h, void *key) {
-	return *(int *)ht_value(h, key);
+int cgc_ht_value_as_int(cgc_ht_t *h, void *key) {
+	return *(int *)cgc_ht_value(h, key);
 }
 
-void *ht_pair_iter_start(ht_t *h) {
+void *cgc_ht_pair_iter_start(cgc_ht_t *h) {
 	// reset iter state
 	h->iter_idx = 0;
 	h->iter_node = NULL;
@@ -387,9 +387,9 @@ void *ht_pair_iter_start(ht_t *h) {
 
 	// find first bucket with a pair
 	for (unsigned int i = 0; i < h->buckets_cnt; i++) {
-		if ((NULL != h->buckets[i]) && (0 != list_length(h->buckets[i]))) {
+		if ((NULL != h->buckets[i]) && (0 != cgc_list_length(h->buckets[i]))) {
 			h->iter_idx = i;
-			h->iter_node = list_head_node(h->buckets[i]);
+			h->iter_node = cgc_list_head_node(h->buckets[i]);
 			return (h->iter_node)->data;
 		}
 	}
@@ -397,7 +397,7 @@ void *ht_pair_iter_start(ht_t *h) {
 	return NULL;
 }
 
-void *ht_pair_iter_next(ht_t *h) {
+void *cgc_ht_pair_iter_next(cgc_ht_t *h) {
 
 	void *pair = NULL;
 	struct node *n = NULL;
@@ -405,17 +405,17 @@ void *ht_pair_iter_next(ht_t *h) {
 	if (0 == h->pair_cnt) return NULL;
 
 	// check list in current bucket to see if there is another node
-	h->iter_node = list_next_node(h->iter_node);
-	n = list_end_marker(h->buckets[h->iter_idx]);
+	h->iter_node = cgc_list_next_node(h->iter_node);
+	n = cgc_list_end_marker(h->buckets[h->iter_idx]);
 	if (n != h->iter_node) {
 		return (h->iter_node)->data;
 	}
 
 	// if not, start at next iter_idx and move ahead to find the next bucket in use.
 	for (unsigned int i = h->iter_idx + 1; i < h->buckets_cnt; i++) {
-		if ((NULL != h->buckets[i]) && (0 != list_length(h->buckets[i]))) {
+		if ((NULL != h->buckets[i]) && (0 != cgc_list_length(h->buckets[i]))) {
 			h->iter_idx = i;
-			h->iter_node = list_head_node(h->buckets[i]);
+			h->iter_node = cgc_list_head_node(h->buckets[i]);
 			return (h->iter_node)->data;
 		}
 	}
@@ -423,14 +423,14 @@ void *ht_pair_iter_next(ht_t *h) {
 	return NULL;
 }
 
-unsigned int ht_is_re_hash_needed(ht_t *h) {
+unsigned int cgc_ht_is_re_hash_needed(cgc_ht_t *h) {
 	return HT_MAX_FILL_PERCENTAGE < ( (double)h->pair_cnt / (double)h->buckets_cnt );
 }
 
-ht_t *ht_re_hash(ht_t *h) {
+cgc_ht_t *cgc_ht_re_hash(cgc_ht_t *h) {
 
-	ht_t *h_new = NULL;
-	ht_t *h_old = h;
+	cgc_ht_t *h_new = NULL;
+	cgc_ht_t *h_old = h;
 	void *pair = NULL;
 	unsigned int new_size = 2 * h_old->pair_cnt;
 
@@ -440,27 +440,27 @@ ht_t *ht_re_hash(ht_t *h) {
 	}
 
 	// create new ht
-	h_new = ht_init(new_size);
+	h_new = cgc_ht_init(new_size);
 	h_new->fn_hash 			= h_old->fn_hash;
 	h_new->fn_key_in_pair 	= h_old->fn_key_in_pair;
 	h_new->fn_key_ptr		= h_old->fn_key_ptr;
 	h_new->fn_value_ptr		= h_old->fn_value_ptr;
 
 	// move all pairs from h_old to h_new
-	// cannot use ht_pair_iter_next since we are changing h_old as we go.
-	while (NULL != (pair = ht_pair_iter_start(h_old))) {
-		if (NULL == (pair = ht_pair_remove(h_old, pair))) _terminate(ERRNO_HASH);
-		ht_pair_insert(h_new, pair);
+	// cannot use cgc_ht_pair_iter_next since we are changing h_old as we go.
+	while (NULL != (pair = cgc_ht_pair_iter_start(h_old))) {
+		if (NULL == (pair = cgc_ht_pair_remove(h_old, pair))) _terminate(ERRNO_HASH);
+		cgc_ht_pair_insert(h_new, pair);
 	}
 
-	ht_destroy(h);
+	cgc_ht_destroy(h);
 
 	return h_new;
 }
 
 
-uint_uint_pair_t *get_ui_ui_pair(unsigned int k, unsigned int v) {
-	uint_uint_pair_t *pair = malloc(sizeof(uint_uint_pair_t));
+cgc_uint_uint_pair_t *cgc_get_ui_ui_pair(unsigned int k, unsigned int v) {
+	cgc_uint_uint_pair_t *pair = cgc_malloc(sizeof(cgc_uint_uint_pair_t));
 	if (NULL == pair) _terminate(ERRNO_ALLOC);
 
 	pair->key = k;
@@ -469,8 +469,8 @@ uint_uint_pair_t *get_ui_ui_pair(unsigned int k, unsigned int v) {
 	return pair;
 }
 
-int_int_pair_t *get_i_i_pair(int k, int v) {
-	int_int_pair_t *pair = malloc(sizeof(int_int_pair_t));
+cgc_int_int_pair_t *cgc_get_i_i_pair(int k, int v) {
+	cgc_int_int_pair_t *pair = cgc_malloc(sizeof(cgc_int_int_pair_t));
 	if (NULL == pair) _terminate(ERRNO_ALLOC);
 
 	pair->key = k;
@@ -479,34 +479,34 @@ int_int_pair_t *get_i_i_pair(int k, int v) {
 	return pair;
 }
 
-str_uint_pair_t *get_s_ui_pair(char *s, unsigned int i) {
+cgc_str_uint_pair_t *cgc_get_s_ui_pair(char *s, unsigned int i) {
 	if (NULL == s) return NULL;
 
-	str_uint_pair_t *pair = malloc(sizeof(str_uint_pair_t));
+	cgc_str_uint_pair_t *pair = cgc_malloc(sizeof(cgc_str_uint_pair_t));
 	if (NULL == pair) _terminate(ERRNO_ALLOC);
 
-	unsigned int len = strlen(s, '\0') + 1;
-	pair->key = malloc(len * sizeof(char));
+	unsigned int len = cgc_strlen(s, '\0') + 1;
+	pair->key = cgc_malloc(len * sizeof(char));
 	if (NULL == pair->key) _terminate(ERRNO_ALLOC);
 
-	memcpy(pair->key, s, len);
+	cgc_memcpy(pair->key, s, len);
 
 	pair->value = i;
 
 	return pair;
 }
 
-str_int_pair_t *get_s_i_pair(char *s, int i) {
+cgc_str_int_pair_t *cgc_get_s_i_pair(char *s, int i) {
 	if (NULL == s) return NULL;
 
-	str_int_pair_t *pair = malloc(sizeof(str_int_pair_t));
+	cgc_str_int_pair_t *pair = cgc_malloc(sizeof(cgc_str_int_pair_t));
 	if (NULL == pair) _terminate(ERRNO_ALLOC);
 
-	unsigned int len = strlen(s, '\0') + 1;
-	pair->key = malloc(len * sizeof(char));
+	unsigned int len = cgc_strlen(s, '\0') + 1;
+	pair->key = cgc_malloc(len * sizeof(char));
 	if (NULL == pair->key) _terminate(ERRNO_ALLOC);
 
-	memcpy(pair->key, s, len);
+	cgc_memcpy(pair->key, s, len);
 
 	pair->value = i;
 

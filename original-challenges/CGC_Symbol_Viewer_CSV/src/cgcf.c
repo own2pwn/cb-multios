@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 #include "readuntil.h"
 #include "cgcf.h"
 
-char* cgcf_section_type2str(unsigned int type)
+char* cgc_cgcf_section_type2str(unsigned int type)
 {
   switch (type)
   {
@@ -55,7 +55,7 @@ char* cgcf_section_type2str(unsigned int type)
   }
 }
 
-char* cgcf_symbol_bind2str(unsigned char bind)
+char* cgc_cgcf_symbol_bind2str(unsigned char bind)
 {
   switch (bind)
   {
@@ -68,7 +68,7 @@ char* cgcf_symbol_bind2str(unsigned char bind)
   }
 }
 
-char* cgcf_symbol_type2str(unsigned char type)
+char* cgc_cgcf_symbol_type2str(unsigned char type)
 {
   switch (type)
   {
@@ -85,37 +85,37 @@ char* cgcf_symbol_type2str(unsigned char type)
   }
 }
 
-int cgcf_is_valid(cgcf_Ehdr *hdr)
+int cgc_cgcf_is_valid(cgc_cgcf_Ehdr *hdr)
 {
-  return (memcmp(hdr->e_ident, "\x7f""CGC", 4) == 0);
+  return (cgc_memcmp(hdr->e_ident, "\x7f""CGC", 4) == 0);
 }
 
-int cgcf_parse_file_header(const char *buf, size_t buf_len, cgcf_Ehdr *hdr)
+int cgc_cgcf_parse_file_header(const char *buf, cgc_size_t buf_len, cgc_cgcf_Ehdr *hdr)
 {
   /* Check if the pointers are NULL */
   if (buf == NULL || hdr == NULL)
     return -1;
 
   /* Check if the buffer is large enough */
-  if (buf_len < sizeof(cgcf_Ehdr))
+  if (buf_len < sizeof(cgc_cgcf_Ehdr))
     return -1;
 
   /* Copy over the file header */
-  memmove(hdr, buf, sizeof(cgcf_Ehdr));
+  cgc_memmove(hdr, buf, sizeof(cgc_cgcf_Ehdr));
 
   return 0;
 }
 
-int cgcf_parse_section_header(const char *buf, size_t buf_len, short idx, cgcf_Shdr *shdr)
+int cgc_cgcf_parse_section_header(const char *buf, cgc_size_t buf_len, short idx, cgc_cgcf_Shdr *shdr)
 {
   /* Check if the pointers are NULL */
   if (buf == NULL || shdr == NULL)
     return -1;
 
   short shnum = 0;
-  size_t sz = sizeof(cgcf_Shdr) - sizeof(char *);
-  cgcf_Ehdr ehdr;
-  cgcf_parse_file_header(buf, buf_len, &ehdr);
+  cgc_size_t sz = sizeof(cgc_cgcf_Shdr) - sizeof(char *);
+  cgc_cgcf_Ehdr ehdr;
+  cgc_cgcf_parse_file_header(buf, buf_len, &ehdr);
   if (ehdr.e_shoff + ehdr.e_shentsize * idx + sz > buf_len)
     return -1;
   shnum = ehdr.e_shnum;
@@ -125,7 +125,7 @@ int cgcf_parse_section_header(const char *buf, size_t buf_len, short idx, cgcf_S
   if (idx < shnum)
 #endif
   {
-    memmove(shdr, buf + ehdr.e_shoff + ehdr.e_shentsize * idx, sz);
+    cgc_memmove(shdr, buf + ehdr.e_shoff + ehdr.e_shentsize * idx, sz);
     return 0;
   }
   return -1;

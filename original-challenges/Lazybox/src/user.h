@@ -28,11 +28,11 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "stdint.h"
 
-void Login(void);
-uint8_t ChUser(Command *pCmd);
-uint8_t ChPw(Command *pCmd);
-uint8_t ID(Command *pCmd);
-uint8_t NewUser(Command *pCmd);
-uint8_t DelUser(Command *pCmd);
+void cgc_Login(void);
+cgc_uint8_t cgc_ChUser(cgc_Command *pCmd);
+cgc_uint8_t cgc_ChPw(cgc_Command *pCmd);
+cgc_uint8_t cgc_ID(cgc_Command *pCmd);
+cgc_uint8_t cgc_NewUser(cgc_Command *pCmd);
+cgc_uint8_t cgc_DelUser(cgc_Command *pCmd);
 
 #endif

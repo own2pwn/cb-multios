@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,7 +26,7 @@
 
 // VA defs for xxprintf functions
 #ifndef _VA_LIST
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define _VA_LIST 1
 #endif
 
@@ -68,7 +68,7 @@ typedef __builtin_va_list va_list;
 #define va_copy(d, s)       __builtin_va_copy(d, s)
 
 /**
- * A simple, non-standard vsnprintf.
+ * A simple, non-standard cgc_vsnprintf.
  *
  * Supported format specifiers:
  *  'n' for numbers (signed ints)
@@ -82,19 +82,19 @@ typedef __builtin_va_list va_list;
  * For each format specifier, it will take a value from args
  *  and insert it at that location as that type.
  *
- * Note: vsnprintf does not call va_end, because it takes a va_list, 
+ * Note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, 
  *  caller does so.
  *
  * @param buf Output buffer
  * @param size Max number of chars to copy into buf
  * @param fmt Null-terminated format string
- * @param args Ptr to va_list of arguments to insert into fmt
+ * @param args Ptr to cgc_va_list of arguments to insert into fmt
  * @return Number of bytes written to buf, not counting '\0'
  */
-int vsnprintf(char * buf, size_t buf_size, const char * fmt, va_list args);
+int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char * fmt, cgc_va_list args);
 
 /**
- * A simple, non-standard snprintf.
+ * A simple, non-standard cgc_snprintf.
  *
  * Supported format specifiers:
  *  'n' for numbers (signed ints)
@@ -108,7 +108,7 @@ int vsnprintf(char * buf, size_t buf_size, const char * fmt, va_list args);
  * For each format specifier, it will take a value from args
  *  and insert it at that location as that type.
  *
- * Note: vsnprintf does not call va_end, because it takes a va_list, 
+ * Note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, 
  *  caller does so.
  *
  * @param buf Output buffer
@@ -117,6 +117,6 @@ int vsnprintf(char * buf, size_t buf_size, const char * fmt, va_list args);
  * @param ... Optional arguments to insert into fmt
  * @return Number of bytes written to buf, not counting '\0'
  */
-int snprintf(char * buf, size_t buf_size, const char * fmt, ...);
+int cgc_snprintf(char * buf, cgc_size_t buf_size, const char * fmt, ...);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,12 +26,12 @@
 #include <string.h>
 #include "io.h"
 
-static uint8_t ikey = 0xAA;
-static uint8_t okey = 0x55;
+static cgc_uint8_t ikey = 0xAA;
+static cgc_uint8_t okey = 0x55;
 
-int read_bytes(void *_buf, size_t n)
+int cgc_read_bytes(void *_buf, cgc_size_t n)
 {
-    size_t bytes, i;
+    cgc_size_t bytes, i;
     char *buf = _buf;
 
     while (n != 0)
@@ -49,12 +49,12 @@ int read_bytes(void *_buf, size_t n)
     return 1;
 }
 
-int read_until(char *buf, size_t n, char el)
+int cgc_read_until(char *buf, cgc_size_t n, char el)
 {
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < n; i++)
     {
-        if (read_bytes(&buf[i], 1) == 0)
+        if (cgc_read_bytes(&buf[i], 1) == 0)
             return 0;
         if (buf[i] == el)
             break;
@@ -68,9 +68,9 @@ int read_until(char *buf, size_t n, char el)
     return 1;
 }
 
-void write_bytes(void *_buf, size_t n)
+void cgc_write_bytes(void *_buf, cgc_size_t n)
 {
-    size_t bytes, i;
+    cgc_size_t bytes, i;
     char *buf = _buf;
 
     for (i = 0; i < n; i++)
@@ -89,7 +89,7 @@ void write_bytes(void *_buf, size_t n)
     }
 }
 
-void write_string(char *buf)
+void cgc_write_string(char *buf)
 {
-    write_bytes(buf, strlen(buf));
+    cgc_write_bytes(buf, cgc_strlen(buf));
 }

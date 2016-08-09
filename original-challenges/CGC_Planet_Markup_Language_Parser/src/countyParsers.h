@@ -35,14 +35,14 @@ THE SOFTWARE.
 #include "genericParsers.h"
 #include "cityParsers.h"
 
-int countyMenu( pCounty co );
-void initCounty( pCounty co );
-void freeCounty( pCounty co );
-void printCountyInfo( pCounty co);
-pCounty countyTopLevel( pstring str);
-double extractArea( pstring str );
-double extractDensity( pstring str );
-char *extractSeat( pstring str );
+int cgc_countyMenu( cgc_pCounty co );
+void cgc_initCounty( cgc_pCounty co );
+void cgc_freeCounty( cgc_pCounty co );
+void cgc_printCountyInfo( cgc_pCounty co);
+cgc_pCounty cgc_countyTopLevel( cgc_pstring str);
+double cgc_extractArea( cgc_pstring str );
+double cgc_extractDensity( cgc_pstring str );
+char *cgc_extractSeat( cgc_pstring str );
 
 #endif
 

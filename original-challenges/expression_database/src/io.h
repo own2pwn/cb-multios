@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <stdint.h>
 
-int readLine( int fd, char *buffer, size_t maxLen );
-char *sanitize_string( char *buffer );
+int cgc_readLine( int fd, char *buffer, cgc_size_t maxLen );
+char *cgc_sanitize_string( char *buffer );
 
 #endif // __IO_H__

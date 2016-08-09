@@ -28,35 +28,35 @@ THE SOFTWARE.
 #include "protocol.h"
 #include "messages.h"
 
-void* extract_seed_req(protocol_frame* frame) {
+void* cgc_extract_seed_req(cgc_protocol_frame* frame) {
   if (frame->type != 1) _terminate(-1);
   if (frame->length != 32) _terminate(-1);
   return frame->value;
 }
 
-void* extract_rand_req(protocol_frame* frame) {
+void* cgc_extract_rand_req(cgc_protocol_frame* frame) {
   if (frame->type != 10) _terminate(-1);
   if (frame->length != 1) _terminate(-1);
   return frame->value;
 }
 
-void* extract_rand_resp(protocol_frame* frame) {
+void* cgc_extract_rand_resp(cgc_protocol_frame* frame) {
   if (frame->type != 11) _terminate(-1);
   return frame->value;
 }
 
-void* extract_guess_req(protocol_frame* frame) {
+void* cgc_extract_guess_req(cgc_protocol_frame* frame) {
   if (frame->type != 20) _terminate(-1);
   if (frame->length != 8) _terminate(-1);
   return frame->value;
 }
 
-void* extract_echo_req(protocol_frame* frame) {
+void* cgc_extract_echo_req(cgc_protocol_frame* frame) {
   if (frame->type != 30) _terminate(-1);
   return frame->value;
 }
 
-void* extract_echo_resp(protocol_frame* frame) {
+void* cgc_extract_echo_resp(cgc_protocol_frame* frame) {
   if (frame->type != 31) _terminate(-1);
   return frame->value;
 }

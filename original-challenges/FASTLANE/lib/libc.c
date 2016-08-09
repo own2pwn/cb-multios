@@ -25,7 +25,7 @@
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: void
-void memcpy(unsigned char *dst, const unsigned char *src, size_t n) {
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n) {
 
     while (n) {
         dst[n-1] = src[n-1];
@@ -36,7 +36,7 @@ void memcpy(unsigned char *dst, const unsigned char *src, size_t n) {
 // NOTE: not POSIX
 // MOD: returns +/- i (the iterator)
 // RETURN: +/- i
-int memcmp(const char *s1, const char *s2, size_t n) {
+int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
 
     int i = 1;
     while (i < n) {
@@ -54,9 +54,9 @@ int memcmp(const char *s1, const char *s2, size_t n) {
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: the first argument
-unsigned char * memset(unsigned char *b, unsigned char c, size_t len) {
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
 
-    size_t i = 0;
+    cgc_size_t i = 0;
     while (len) {
         b[len-1] = c;
         len--;
@@ -66,9 +66,9 @@ unsigned char * memset(unsigned char *b, unsigned char c, size_t len) {
 
 // Like strtok, except it's dumb and only finds the first instance.
 // RETURN: location of the needle, -1 on error
-size_t findchar(char *haystack, char needle) {
+cgc_size_t cgc_findchar(char *haystack, char needle) {
 
-    size_t i = 0;
+    cgc_size_t i = 0;
     while ('\0' != haystack[i]) {
         if (haystack[i] == needle) { return i; }
         i++;
@@ -76,33 +76,33 @@ size_t findchar(char *haystack, char needle) {
     return -1;
 }
 
-// Emulate sleep() via a timeout given to fdwait().
-void pause(size_t usec) {
+// Emulate sleep() via a timeout given to cgc_fdwait().
+void cgc_pause(cgc_size_t usec) {
 
-    struct timeval tv;
+    struct cgc_timeval tv;
 
     tv.tv_sec = 0;
     tv.tv_usec = usec;
 
-    fdwait(0, NULL, NULL, &tv, NULL);
+    cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }
 
 // hack because sizeof(MY_STRING) returns the length with NULL and that's messy
 // also it makes this libc a little different
-int sendallnulltrunc(int fd, const char *buf, size_t size) {
+int cgc_sendallnulltrunc(int fd, const char *buf, cgc_size_t size) {
 
     int ret = SUCCESS;
 
     if ('\0' == buf[size-1]) {
-        return sendall(fd, buf, size-1) + 1;
+        return cgc_sendall(fd, buf, size-1) + 1;
     }
 
-    return sendall(fd, buf, size);
+    return cgc_sendall(fd, buf, size);
 }
 
-int sendall(int fd, const char *buf, size_t size) {
+int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
 
-    size_t sent = 0;
+    cgc_size_t sent = 0;
     char *curbuf = (char *)buf;
 
     while ((curbuf-(char*)buf) < size) {
@@ -113,34 +113,34 @@ int sendall(int fd, const char *buf, size_t size) {
         curbuf += sent;
     }
 
-    return (size_t)(curbuf-(char*)buf);
+    return (cgc_size_t)(curbuf-(char*)buf);
 }
 
-// raise x to the power of y, modulo UINT32
+// raise x to the power of y, modulo cgc_UINT32
 // implemented as a recusive function for flair
-UINT32 my_pow(UINT32 x, UINT32 y) {
+cgc_UINT32 cgc_my_pow(cgc_UINT32 x, cgc_UINT32 y) {
 
     // base case: anything raised to 0 is 1
     if (0 == y) { return 1; }
 
     // divide (in halves) and conquer
-    UINT32 halve = my_pow(x, y/2) * my_pow(x, y/2);
+    cgc_UINT32 halve = cgc_my_pow(x, y/2) * cgc_my_pow(x, y/2);
     if (0 != y%2) {
         return x * halve;
     }
     return halve;
 }
 
-// given a char array of hex values, convert it into a UINT32
+// given a char array of hex values, convert it into a cgc_UINT32
 // goes until the NULL or 4 bytes, whichever is shorter
 // 0xFFFFFFFF is an error value
 #define ERR_hex2UINT32 "invalid hex\n"
-UINT32 hex2UINT32(char *hex) {
+cgc_UINT32 cgc_hex2UINT32(char *hex) {
 
     int ret = SUCCESS;
-    UINT32 result = 0;
-    size_t i = 0;
-    UINT8 len = 0;
+    cgc_UINT32 result = 0;
+    cgc_size_t i = 0;
+    cgc_UINT8 len = 0;
     char curr;
 
     for (len=0; '\0' != hex[len]; ++len);
@@ -167,10 +167,10 @@ UINT32 hex2UINT32(char *hex) {
 // Read until size or we see a '\n'.
 // If we receive 0 bytes, keep reading.  
 // Reuse should not be concern; rewrote much from original function.
-int recvline(int fd, char *buf, size_t size) {
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
 
-    size_t bytes_read = 0;
-    size_t cursize = size;
+    cgc_size_t bytes_read = 0;
+    cgc_size_t cursize = size;
 
     if(!size)
         return 0;

@@ -33,23 +33,23 @@ THE SOFTWARE.
  * Structure to hold the fpti image data.
  * It points to the current byte/bit to be read
  **/
-typedef struct fpti_image_data {
+typedef struct cgc_fpti_image_data {
         char *buffer;
         int max;
         int cbyte;
         int cbit;
 	char pixel;
-} fpti_image_data, *pfpti_image_data;
+} cgc_fpti_image_data, *cgc_pfpti_image_data;
 
-int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at);
-int fpti_display_img( pfpti_image_data fid );
-int fpti_read_magic( pfpti_image_data fid );
-int fpti_read_xaxis( pfpti_image_data fid );
-int fpti_read_yaxis( pfpti_image_data fid );
-int fpti_read_axist( pfpti_image_data fid );
-int fpti_read_ptype( pfpti_image_data fid, int *ptype);
-int fpti_read_pixel( pfpti_image_data fid, int *x, int *y);
-int fpti_read_check( pfpti_image_data fid, int bitcount);
-int fpti_read_nbits( pfpti_image_data fid, int bitcount, int *value);
+int cgc_fpti_add_pixel( cgc_pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at);
+int cgc_fpti_display_img( cgc_pfpti_image_data fid );
+int cgc_fpti_read_magic( cgc_pfpti_image_data fid );
+int cgc_fpti_read_xaxis( cgc_pfpti_image_data fid );
+int cgc_fpti_read_yaxis( cgc_pfpti_image_data fid );
+int cgc_fpti_read_axist( cgc_pfpti_image_data fid );
+int cgc_fpti_read_ptype( cgc_pfpti_image_data fid, int *ptype);
+int cgc_fpti_read_pixel( cgc_pfpti_image_data fid, int *x, int *y);
+int cgc_fpti_read_check( cgc_pfpti_image_data fid, int bitcount);
+int cgc_fpti_read_nbits( cgc_pfpti_image_data fid, int bitcount, int *value);
 
 #endif

@@ -1,16 +1,16 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-typedef struct queue queue_t;
+typedef struct queue cgc_queue_t;
 struct queue {
     char *data;
-    queue_t *next;
+    cgc_queue_t *next;
 };
 
-char *peek_front(queue_t *queue);
-int enqueue(queue_t **queue, char *data);
-int enqueue_copy(queue_t **queue, char *data, size_t size);
-char *dequeue_copy(queue_t **queue);
-void clear_queue(queue_t **queue);
+char *cgc_peek_front(cgc_queue_t *queue);
+int cgc_enqueue(cgc_queue_t **queue, char *data);
+int cgc_enqueue_copy(cgc_queue_t **queue, char *data, cgc_size_t size);
+char *cgc_dequeue_copy(cgc_queue_t **queue);
+void cgc_clear_queue(cgc_queue_t **queue);
 
 #endif /* QUEUE_H */

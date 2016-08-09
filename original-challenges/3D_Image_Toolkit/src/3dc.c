@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Dan Czarnecki <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 #include "3dc.h"
 
-extern t3DCPixel **px_list;
+extern cgc_t3DCPixel **px_list;
 
-void Push(t3DCPixel **px_list, t3DCPixel *px) {
+void cgc_Push(cgc_t3DCPixel **px_list, cgc_t3DCPixel *px) {
     if (px == NULL)
       return;
 
@@ -37,9 +37,9 @@ void Push(t3DCPixel **px_list, t3DCPixel *px) {
 
     int i;
 
-    t3DCPixel *new = malloc(sizeof(t3DCPixel));
+    cgc_t3DCPixel *new = cgc_malloc(sizeof(cgc_t3DCPixel));
 
-    memcpy(new, px, sizeof(t3DCPixel));
+    cgc_memcpy(new, px, sizeof(cgc_t3DCPixel));
 
     for (i = 0; i <= MAX_PIXELS; i++) {
       if (px_list[i] == NULL) {
@@ -51,9 +51,9 @@ void Push(t3DCPixel **px_list, t3DCPixel *px) {
     return;
 }
 
-void RunTask(t3DCPixel **px_list, task_callback exec_task, int16_t fptr_arg) {
-  int16_t count = MAX_PIXELS;
-  int16_t i = 0;
+void cgc_RunTask(cgc_t3DCPixel **px_list, cgc_task_callback exec_task, cgc_int16_t fptr_arg) {
+  cgc_int16_t count = MAX_PIXELS;
+  cgc_int16_t i = 0;
 
   while (count--) {
     exec_task(px_list[i++], fptr_arg);
@@ -63,147 +63,147 @@ void RunTask(t3DCPixel **px_list, task_callback exec_task, int16_t fptr_arg) {
   return;
 }
 
-void ReadFile(t3DCPixel **px_list) {
-  int32_t dataSize = MAGIC_PAGE_SIZE;
-  seed_prng(*(unsigned int*)MAGIC_PAGE);
+void cgc_ReadFile(cgc_t3DCPixel **px_list) {
+  cgc_int32_t dataSize = MAGIC_PAGE_SIZE;
+  cgc_seed_prng(*(unsigned int*)MAGIC_PAGE);
 
-  t3DCPixel *px;
-  uint32_t offset = 0;
+  cgc_t3DCPixel *px;
+  cgc_uint32_t offset = 0;
 
   while(dataSize > 0) {
-    px = malloc(sizeof(t3DCPixel));
+    px = cgc_malloc(sizeof(cgc_t3DCPixel));
 
-    px->x = (int16_t) prng();
-    px->y = (int16_t) prng();
-    px->z = (int16_t) prng();
-    px->r = (uint8_t) prng();
-    px->g = (uint8_t) prng();
-    px->b = (uint8_t) prng();
-    px->a = (uint8_t) prng();
+    px->x = (cgc_int16_t) cgc_prng();
+    px->y = (cgc_int16_t) cgc_prng();
+    px->z = (cgc_int16_t) cgc_prng();
+    px->r = (cgc_uint8_t) cgc_prng();
+    px->g = (cgc_uint8_t) cgc_prng();
+    px->b = (cgc_uint8_t) cgc_prng();
+    px->a = (cgc_uint8_t) cgc_prng();
 
-    Push(px_list, px);
+    cgc_Push(px_list, px);
 
-    dataSize -= sizeof(t3DCPixel);
+    dataSize -= sizeof(cgc_t3DCPixel);
 
-    free(px);
+    cgc_free(px);
   }
 
 }
 
-void NewFile(t3DCPixel **px_list, char *buf) {
-  uint16_t maxSize = MAX_FILE_SIZE;
-  printf("Please submit your new file data ($d bytes):\n", maxSize);
-  receive_bytes(buf, maxSize);
+void cgc_NewFile(cgc_t3DCPixel **px_list, char *buf) {
+  cgc_uint16_t maxSize = MAX_FILE_SIZE;
+  cgc_printf("Please submit your new file data ($d bytes):\n", maxSize);
+  cgc_receive_bytes(buf, maxSize);
 
-  uint16_t offset = 0;
-  uint16_t i = 0;
-  t3DCPixel *tmp;
+  cgc_uint16_t offset = 0;
+  cgc_uint16_t i = 0;
+  cgc_t3DCPixel *tmp;
 
   while (offset < maxSize) {
     tmp = px_list[i++];
 
-    memcpy(&tmp->x, buf+offset, sizeof(int16_t));
-    offset += sizeof(int16_t);
+    cgc_memcpy(&tmp->x, buf+offset, sizeof(cgc_int16_t));
+    offset += sizeof(cgc_int16_t);
 
-    memcpy(&tmp->y, buf+offset, sizeof(int16_t));
-    offset += sizeof(int16_t);
+    cgc_memcpy(&tmp->y, buf+offset, sizeof(cgc_int16_t));
+    offset += sizeof(cgc_int16_t);
 
-    memcpy(&tmp->z, buf+offset, sizeof(int16_t));
-    offset += sizeof(int16_t);
+    cgc_memcpy(&tmp->z, buf+offset, sizeof(cgc_int16_t));
+    offset += sizeof(cgc_int16_t);
 
-    memcpy(&tmp->r, buf+offset, sizeof(uint8_t));
-    offset += sizeof(uint8_t);
+    cgc_memcpy(&tmp->r, buf+offset, sizeof(cgc_uint8_t));
+    offset += sizeof(cgc_uint8_t);
 
-    memcpy(&tmp->g, buf+offset, sizeof(uint8_t));
-    offset += sizeof(uint8_t);
+    cgc_memcpy(&tmp->g, buf+offset, sizeof(cgc_uint8_t));
+    offset += sizeof(cgc_uint8_t);
 
-    memcpy(&tmp->b, buf+offset, sizeof(uint8_t));
-    offset += sizeof(uint8_t);
+    cgc_memcpy(&tmp->b, buf+offset, sizeof(cgc_uint8_t));
+    offset += sizeof(cgc_uint8_t);
 
-    memcpy(&tmp->a, buf+offset, sizeof(uint8_t));
-    offset += sizeof(uint8_t);
+    cgc_memcpy(&tmp->a, buf+offset, sizeof(cgc_uint8_t));
+    offset += sizeof(cgc_uint8_t);
 
   }
 
-  printf("New file loaded\n");
+  cgc_printf("New file loaded\n");
 
 }
 
-void ShowPixel(t3DCPixel *px) {
+void cgc_ShowPixel(cgc_t3DCPixel *px) {
 
-  printf("XYZ:  ($d, $d, $d)\n", px->x, px->y, px->z);
-  printf("RGBA: (#$02x$02x$02x$02x)\n", px->r, px->g, px->b, px->a);
-  printf("\n");
+  cgc_printf("XYZ:  ($d, $d, $d)\n", px->x, px->y, px->z);
+  cgc_printf("RGBA: (#$02x$02x$02x$02x)\n", px->r, px->g, px->b, px->a);
+  cgc_printf("\n");
 
   return;
 }
 
 // Check File
-void CheckFile(t3DCPixel **px, int16_t num) {
+void cgc_CheckFile(cgc_t3DCPixel **px, cgc_int16_t num) {
   if (px == NULL)
     return;
 
   for (int i=0; i < num; i++) {
-    printf("XYZ:  ($d, $d, $d)\n", px[i]->x, px[i]->y, px[i]->z);
-    printf("RGBA: (#$02x$02x$02x$02x)\n", px[i]->r, px[i]->g, px[i]->b, px[i]->a);
-    printf("\n");
+    cgc_printf("XYZ:  ($d, $d, $d)\n", px[i]->x, px[i]->y, px[i]->z);
+    cgc_printf("RGBA: (#$02x$02x$02x$02x)\n", px[i]->r, px[i]->g, px[i]->b, px[i]->a);
+    cgc_printf("\n");
   }
 
 }
 
 // Rotate
-void RotateX(t3DCPixel *px, int16_t degree) {
+void cgc_RotateX(cgc_t3DCPixel *px, cgc_int16_t degree) {
   // degree to rad
-  double a = degree_to_radian(degree);
+  double a = cgc_degree_to_radian(degree);
 
-  px->y = (int16_t)multiply(px->y, cos(a)) - multiply(px->z, sin(a));
-  px->z = (int16_t)multiply(px->y, sin(a)) + multiply(px->z, cos(a));
+  px->y = (cgc_int16_t)cgc_multiply(px->y, cos(a)) - cgc_multiply(px->z, sin(a));
+  px->z = (cgc_int16_t)cgc_multiply(px->y, sin(a)) + cgc_multiply(px->z, cos(a));
 
 }
 
-void RotateY(t3DCPixel *px, int16_t degree) {
+void cgc_RotateY(cgc_t3DCPixel *px, cgc_int16_t degree) {
   // degree to rad
-  double a = degree_to_radian(degree);
+  double a = cgc_degree_to_radian(degree);
 
-  px->x = (int16_t)multiply(px->z, sin(a)) + multiply(px->x, cos(a));
-  px->z = (int16_t)multiply(px->z, cos(a)) - multiply(px->x, sin(a));
+  px->x = (cgc_int16_t)cgc_multiply(px->z, sin(a)) + cgc_multiply(px->x, cos(a));
+  px->z = (cgc_int16_t)cgc_multiply(px->z, cos(a)) - cgc_multiply(px->x, sin(a));
 
 }
 
-void RotateZ(t3DCPixel *px, int16_t degree) {
+void cgc_RotateZ(cgc_t3DCPixel *px, cgc_int16_t degree) {
   // degree to rad
-  double a = degree_to_radian(degree);
+  double a = cgc_degree_to_radian(degree);
 
-  px->x = (int16_t)multiply(px->x, cos(a)) - multiply(px->y, sin(a));
-  px->y = (int16_t)multiply(px->x, sin(a)) + multiply(px->y, cos(a));
+  px->x = (cgc_int16_t)cgc_multiply(px->x, cos(a)) - cgc_multiply(px->y, sin(a));
+  px->y = (cgc_int16_t)cgc_multiply(px->x, sin(a)) + cgc_multiply(px->y, cos(a));
 
 }
 
 // Skew
-void SkewX(t3DCPixel *px, int16_t skew_val) {
-    px->x = (int16_t)(skew_val + px->x);
+void cgc_SkewX(cgc_t3DCPixel *px, cgc_int16_t skew_val) {
+    px->x = (cgc_int16_t)(skew_val + px->x);
 }
 
-void SkewY(t3DCPixel *px, int16_t skew_val) {
+void cgc_SkewY(cgc_t3DCPixel *px, cgc_int16_t skew_val) {
     px->y += skew_val;
 }
 
-void SkewZ(t3DCPixel *px, int16_t skew_val) {
+void cgc_SkewZ(cgc_t3DCPixel *px, cgc_int16_t skew_val) {
     px->z += skew_val;
 }
 
-void Scale(t3DCPixel *px, int16_t scale_val) {
+void cgc_Scale(cgc_t3DCPixel *px, cgc_int16_t scale_val) {
   if (scale_val < 1 ||scale_val > 200) {
     return;
   }
 
-  double percent = divide(scale_val, 100);
+  double percent = cgc_divide(scale_val, 100);
 
-  int32_t tmp_x, tmp_y, tmp_z;
+  cgc_int32_t tmp_x, tmp_y, tmp_z;
 
-  tmp_x = multiply(px->x, percent);
-  tmp_y = multiply(px->y, percent);
-  tmp_z = multiply(px->z, percent);
+  tmp_x = cgc_multiply(px->x, percent);
+  tmp_y = cgc_multiply(px->y, percent);
+  tmp_z = cgc_multiply(px->z, percent);
 
   if (tmp_x > 0xffff) {
     if(px->x < 0) {
@@ -212,7 +212,7 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
       px->x = 32767;
     }
   } else {
-    px->x = (int16_t)tmp_x;
+    px->x = (cgc_int16_t)tmp_x;
   }
 
   if (tmp_y > 0xffff) {
@@ -222,7 +222,7 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
       px->y = 32767;
     }
   } else {
-    px->y = (int16_t)tmp_y;
+    px->y = (cgc_int16_t)tmp_y;
   }
 
   if (tmp_z > 0xffff) {
@@ -232,29 +232,29 @@ void Scale(t3DCPixel *px, int16_t scale_val) {
       px->z = 32767;
     }
   } else {
-    px->z = (int16_t)tmp_z;
+    px->z = (cgc_int16_t)tmp_z;
   }
 
 }
 
-// Brightness
-void Brightness(t3DCPixel *px, int16_t bright_val) {
+// cgc_Brightness
+void cgc_Brightness(cgc_t3DCPixel *px, cgc_int16_t bright_val) {
   if (bright_val < -255  || bright_val > 255) {
     return;
   }
 
-  int16_t new_r, new_g, new_b;
+  cgc_int16_t new_r, new_g, new_b;
 
-  new_r = (int16_t)(px->r + bright_val);
-  new_g = (int16_t)(px->g + bright_val);
-  new_b = (int16_t)(px->b + bright_val);
+  new_r = (cgc_int16_t)(px->r + bright_val);
+  new_g = (cgc_int16_t)(px->g + bright_val);
+  new_b = (cgc_int16_t)(px->b + bright_val);
 
   if (new_r > 255) {
     px->r = 255;
   } else if (new_r < 0) {
     px->r = 0;
   } else {
-    px->r = (uint8_t)new_r;
+    px->r = (cgc_uint8_t)new_r;
   }
 
   if (new_g > 255) {
@@ -262,7 +262,7 @@ void Brightness(t3DCPixel *px, int16_t bright_val) {
   } else if (new_g < 0) {
     px->g = 0;
   } else {
-    px->g = (uint8_t)new_g;
+    px->g = (cgc_uint8_t)new_g;
   }
 
   if (new_b > 255) {
@@ -270,36 +270,36 @@ void Brightness(t3DCPixel *px, int16_t bright_val) {
   } else if (new_b < 0) {
     px->b = 0;
   } else {
-    px->b = (uint8_t)new_b;
+    px->b = (cgc_uint8_t)new_b;
   }
 
   return;
 }
 
-// Opacity
-void Opacity(t3DCPixel *px, int16_t opacity_val) {
+// cgc_Opacity
+void cgc_Opacity(cgc_t3DCPixel *px, cgc_int16_t opacity_val) {
 
-  px->a = (uint8_t)opacity_val;
+  px->a = (cgc_uint8_t)opacity_val;
 
 }
 
 // math helpers
-int32_t multiply(double a, double b) {
-  return (int32_t)((double)a * (double) b);
+cgc_int32_t cgc_multiply(double a, double b) {
+  return (cgc_int32_t)((double)a * (double) b);
 }
 
-int16_t divide(double a, double b) {
-  return (int16_t)((double)a / (double) b);
+cgc_int16_t cgc_divide(double a, double b) {
+  return (cgc_int16_t)((double)a / (double) b);
 }
 
-int16_t degree_to_radian(int16_t degree) {
-  return multiply(degree, divide(M_PI,180));
+cgc_int16_t cgc_degree_to_radian(cgc_int16_t degree) {
+  return cgc_multiply(degree, cgc_divide(M_PI,180));
 }
 
-double cosine(int16_t a) {
+double cgc_cosine(cgc_int16_t a) {
   return cos(a);
 }
 
-double sine(int16_t a) {
+double cgc_sine(cgc_int16_t a) {
   return sin(a);
 }

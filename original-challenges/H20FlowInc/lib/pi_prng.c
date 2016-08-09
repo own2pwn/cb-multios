@@ -24,21 +24,21 @@
 
 #define PI_TERMS_LEN 2800
 
-typedef struct prng_data {
+typedef struct cgc_prng_data {
     int pi_terms[PI_TERMS_LEN + 1];
     int pi_idx;
     int pi_total;
     int pi_cur_set[4];
     int pi_cur_set_idx;
-} prng_data;
+} cgc_prng_data;
 
-prng_data prng;
+cgc_prng_data prng;
 int prng_setup = 0;
 
 
 // prep the pi_terms array
-void _prng_setup() {
-    prng.pi_cur_set_idx = 4; // start at 4 to trigger _prng_load_four()
+void cgc__prng_setup() {
+    prng.pi_cur_set_idx = 4; // start at 4 to trigger cgc__prng_load_four()
     prng.pi_idx = PI_TERMS_LEN;
     prng.pi_total = 0;
     for (int i = 0; i < PI_TERMS_LEN; i++) {
@@ -47,7 +47,7 @@ void _prng_setup() {
 }
 
 // get the next 4 digits of pi as an int, split it into digits
-int _prng_load_four() {
+int cgc__prng_load_four() {
 
     int i = 0;
     int b = 0;
@@ -81,24 +81,24 @@ int _prng_load_four() {
     return 0;
 }
 
-int prng_get_next() {
+int cgc_prng_get_next() {
 
     int result = 0;
 
     // inital setup of values in prng struct
     if (!prng_setup) {
-        _prng_setup();
+        cgc__prng_setup();
         prng_setup++;
     }
 
     // run through 800 digits of pi, then repeat.
     if ( (prng.pi_idx <= 0) && (prng.pi_cur_set_idx > 3) ) {
-        _prng_setup();
+        cgc__prng_setup();
     }
 
     if (prng.pi_cur_set_idx > 3) {
         // load the next 4 digits
-        result = _prng_load_four();
+        result = cgc__prng_load_four();
         
         // reset idx to 0 so result gets first digit.
         prng.pi_cur_set_idx = 0;

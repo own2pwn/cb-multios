@@ -23,16 +23,16 @@ char parts[]  = {'O', '|', '/', '\\', '|', '/', '\\'};
 
 int bad_guesses;
 
-void clearBoard() {
+void cgc_clearBoard() {
    int i;
    for (i = 0; i < NUM_PARTS; i++) {
       gallows[indexes[i]] = ' ';
    }
 }
 
-void reset() {
+void cgc_reset() {
    int i;
-   clearBoard();
+   cgc_clearBoard();
    for (i = 0; i < 26; i++) {
       avail[i] = 'a' + i;
       used[i] = 0;
@@ -40,41 +40,41 @@ void reset() {
    bad_guesses = 0;
 }
 
-void addPart(int partNo) {
+void cgc_addPart(int partNo) {
    gallows[indexes[partNo]] = parts[partNo];
 }
 
-void printBoard() {
-   printf("\n%s\n", gallows);
+void cgc_printBoard() {
+   cgc_printf("\n%s\n", gallows);
 }
 
-void getWord() {
+void cgc_getWord() {
    unsigned int w;
-   printf("Choose your word seed. Please send 4 bytes\n");
-   if (fread(&w, sizeof(w), 1, stdin) != 1) {
+   cgc_printf("Choose your word seed. Please send 4 bytes\n");
+   if (cgc_fread(&w, sizeof(w), 1, stdin) != 1) {
       //read failure just quit
       _terminate(1);
    }
    unsigned int magic_index = w % 4093;
    w = *(unsigned int*)(secret + magic_index);
-   strcpy(word, words[w % NUM_WORDS]);
-   for (w = 0; w < strlen(word); w++) {
+   cgc_strcpy(word, words[w % NUM_WORDS]);
+   for (w = 0; w < cgc_strlen(word); w++) {
       current[w] = '_';
    }
    current[w] = 0;
 }
 
-void getHighScore() {
+void cgc_getHighScore() {
    char *lf;
    char name[32];
-   printf("Congratulations blondie, add yourself to the high score list\n");
-   printf("What is your name? ");
+   cgc_printf("Congratulations blondie, add yourself to the high score list\n");
+   cgc_printf("What is your name? ");
 #ifndef PATCHED_1
-   if (fgets(name, 80, stdin) == NULL) {
+   if (cgc_fgets(name, 80, stdin) == NULL) {
       _terminate(0);
    }
 #else
-   if (fgets(name, sizeof(name), stdin) == NULL) {
+   if (cgc_fgets(name, sizeof(name), stdin) == NULL) {
       _terminate(0);
    }
 #endif
@@ -83,17 +83,17 @@ void getHighScore() {
       lf++;
    }
    *lf = 0;
-   printf("New member of the HOF: ");
+   cgc_printf("New member of the HOF: ");
 #ifndef PATCHED_2
-   printf(name);
+   cgc_printf(name);
 #else
-   printf("%s", name);
+   cgc_printf("%s", name);
 #endif
-   printf("\n");
+   cgc_printf("\n");
 }
 
-int isValid(char c) {
-   char *p = strchr(avail, c);
+int cgc_isValid(char c) {
+   char *p = cgc_strchr(avail, c);
    if (p) {
       while (*p) {
          p[0] = p[1];
@@ -104,96 +104,96 @@ int isValid(char c) {
    return 0;
 }
 
-int makeGuess(char c) {
+int cgc_makeGuess(char c) {
    int i;
    int found = 0;
-   for (i = 0; i < strlen(word); i++) {
+   for (i = 0; i < cgc_strlen(word); i++) {
       if (word[i] == c) {
          current[i] = c;
          found = 1;
       }
    }
    if (found) {
-      for (i = 0; i < strlen(word); i++) {
+      for (i = 0; i < cgc_strlen(word); i++) {
          if (current[i] == '_') {
-            printf("\nMiraculously, you have manage to prolong Tuco's life.\n");
+            cgc_printf("\nMiraculously, you have manage to prolong Tuco's life.\n");
             return 0;
          }
       }
-      printf("\nNice shot Blondie, you freed Tuco.\n");
-      printf("The correct word is: %s.\n", word);
-      getHighScore();
+      cgc_printf("\nNice shot Blondie, you freed Tuco.\n");
+      cgc_printf("The correct word is: %s.\n", word);
+      cgc_getHighScore();
       return 1;
    }
    else {
       if (bad_guesses < NUM_PARTS) {
-         addPart(bad_guesses++);
+         cgc_addPart(bad_guesses++);
          if (bad_guesses == NUM_PARTS) {
             //you lose
-            printBoard();
-            printf("\nBlondie, you missed, Tuco has been hanged.\n");
-            printf("The correct word is: ");
-            printf(word);
-            printf(".\n");
+            cgc_printBoard();
+            cgc_printf("\nBlondie, you missed, Tuco has been hanged.\n");
+            cgc_printf("The correct word is: ");
+            cgc_printf(word);
+            cgc_printf(".\n");
             return 1;
          }
          else {
-            printf("\nHaha, Tuco is feeling that rope a little more!\n");
+            cgc_printf("\nHaha, Tuco is feeling that rope a little more!\n");
          }
       }
    }
    return 0;
 }
 
-int askYN(char *prompt) {
+int cgc_askYN(char *prompt) {
    char c;
-   printf(prompt);
-   printf(" (y/n)? ");
-   c = getchar();
-   if (getchar() != '\n') _terminate(0);
-   return tolower(c) == 'y';
+   cgc_printf(prompt);
+   cgc_printf(" (y/n)? ");
+   c = cgc_getchar();
+   if (cgc_getchar() != '\n') _terminate(0);
+   return cgc_tolower(c) == 'y';
 }
 
-int doTurn() {
+int cgc_doTurn() {
    char c;
-   printBoard();
-   printf("used:      \"");
-   printf(used);
-   printf("\"\n");
-   printf("available: \"");
-   printf(avail);
-   printf("\"\n");
-   printf("\ncurrent: ");
-   printf(current);
-   printf("\n");
+   cgc_printBoard();
+   cgc_printf("used:      \"");
+   cgc_printf(used);
+   cgc_printf("\"\n");
+   cgc_printf("available: \"");
+   cgc_printf(avail);
+   cgc_printf("\"\n");
+   cgc_printf("\ncurrent: ");
+   cgc_printf(current);
+   cgc_printf("\n");
    // int len;
-   printf("\nYour guess: ");
+   cgc_printf("\nYour guess: ");
 
-   c = getchar();
-   if (getchar() == '\n') {
-      c = tolower(c);
-      if (isValid(c)) {
-         used[strlen(used)] = c;
-         return makeGuess(c);
+   c = cgc_getchar();
+   if (cgc_getchar() == '\n') {
+      c = cgc_tolower(c);
+      if (cgc_isValid(c)) {
+         used[cgc_strlen(used)] = c;
+         return cgc_makeGuess(c);
       }
    }
-   printf("Invalid guess, game over.\n");
+   cgc_printf("Invalid guess, game over.\n");
    return 1;
 }
 
-void playGame() {
-   reset();
-   getWord();
+void cgc_playGame() {
+   cgc_reset();
+   cgc_getWord();
    while (1) {
-      if (doTurn()) return;
+      if (cgc_doTurn()) return;
    }
 }
 
 int main() {
    //interact with the client socket
    char *lf;
-   printf("Password: ");
-   if (fgets(inbuf, sizeof(inbuf) - 1, stdin) == NULL) {
+   cgc_printf("Password: ");
+   if (cgc_fgets(inbuf, sizeof(inbuf) - 1, stdin) == NULL) {
       return 0;
    }
    lf = inbuf;
@@ -201,12 +201,12 @@ int main() {
       lf++;
    }
    *lf = 0; 
-   if (strcmp(inbuf, "HANGEMHIGH!")) return 0;
-   printf("Welcome to Hangman Blondie!\n");
+   if (cgc_strcmp(inbuf, "HANGEMHIGH!")) return 0;
+   cgc_printf("Welcome to Hangman Blondie!\n");
    
    while (1) {
-      playGame();
-      if (!askYN("Play again")) break;
+      cgc_playGame();
+      if (!cgc_askYN("Play again")) break;
    }
    
    return 0;

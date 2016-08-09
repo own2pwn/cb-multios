@@ -28,65 +28,65 @@ THE SOFTWARE.
 #include "jlib.h"
 
 extern int CURRENT_USER;
-//extern users_t USERS[MAX_USERS];
-extern users_t *USERS;
+//extern cgc_users_t USERS[MAX_USERS];
+extern cgc_users_t *USERS;
 extern int NUM_USERS;
 
 char ADMIN_PASSWD[] = "GIMMIE";
 int ADMIN_ACCESS;
 
-void PrintAdminMenu(void) {
+void cgc_PrintAdminMenu(void) {
 
-        print("1) Send Broadcast Message\n");
-        print("2) Leave Admin Mode\n");
-        print("3) Exit\n");
-        print(": ");
+        cgc_print("1) Send Broadcast Message\n");
+        cgc_print("2) Leave Admin Mode\n");
+        cgc_print("3) Exit\n");
+        cgc_print(": ");
 
 	return;
 }
 
-void AdminLogin(void) {
+void cgc_AdminLogin(void) {
 	char buf[100];
 
-	zero(buf, 100);
-	print("Admin Password: ");
-	if (read_until(buf, '\n', 100) == -1) {
+	cgc_zero(buf, 100);
+	cgc_print("Admin Password: ");
+	if (cgc_read_until(buf, '\n', 100) == -1) {
 		_terminate(-1);
 	}
 
-	if (strmatch(ADMIN_PASSWD, buf)) {
+	if (cgc_strmatch(ADMIN_PASSWD, buf)) {
 		ADMIN_ACCESS = 1;
-		print("[-] Admin access granted\n");
+		cgc_print("[-] Admin access granted\n");
 		return;
 	}
 
-	print("[-] Admin access denied\n");
+	cgc_print("[-] Admin access denied\n");
 	ADMIN_ACCESS = 0;
 
 	return;
 }
 
 // send a message to all users
-void SendBroadcastMessage(void) {
+void cgc_SendBroadcastMessage(void) {
 	int i, j;
 #ifdef PATCHED
 	char message[MAX_MESSAGE_LEN];
 
 	// read in the Message:
-	zero(message, MAX_MESSAGE_LEN);
-	print("Message: ");
-	if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
+	cgc_zero(message, MAX_MESSAGE_LEN);
+	cgc_print("Message: ");
+	if (cgc_read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
 #else
 	char message[1024];
 
 	// read in the Message:
-	zero(message, 1024);
-	print("Message: ");
-	if (read_until(message, '\n', 1024) == -1) {
+	cgc_zero(message, 1024);
+	cgc_print("Message: ");
+	if (cgc_read_until(message, '\n', 1024) == -1) {
 #endif
 		_terminate(-1);
 	}
-	if (strlen(message) == 0) {
+	if (cgc_strlen(message) == 0) {
 		return;
 	}
 
@@ -97,15 +97,15 @@ void SendBroadcastMessage(void) {
 		}
 
 		if (USERS[i].top_message == MAX_MESSAGES) {
-			print("[*] Unable to send message to ");
-			print(USERS[i].name);
-			print(". Their mailbox is full.\n");
+			cgc_print("[*] Unable to send message to ");
+			cgc_print(USERS[i].name);
+			cgc_print(". Their mailbox is full.\n");
 			continue;
 		}
 
 		// store the message
 		j = USERS[i].top_message+1;
-		strcopy(USERS[i].messages[j], message);
+		cgc_strcopy(USERS[i].messages[j], message);
 		USERS[i].msg_read[j] = 0;
 		USERS[i].top_message = j;
 

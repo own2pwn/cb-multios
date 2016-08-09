@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -21,8 +21,8 @@
 */
 #include "malloc.h"
 
-static Run* pool[POOL_NUM];
-static LargeChunk* largeChunks;
+static cgc_Run* pool[POOL_NUM];
+static cgc_LargeChunk* largeChunks;
 
 /**
 * Get the most significant bit of the value
@@ -31,7 +31,7 @@ static LargeChunk* largeChunks;
 *
 * @return an integer containing only the most significant bit of the value
 */
-unsigned int getMSB(unsigned int value)
+unsigned int cgc_getMSB(unsigned int value)
 {
 	unsigned int mask = 1 << 31;
 	for(int i=31; i >=0; i--) {
@@ -43,13 +43,13 @@ unsigned int getMSB(unsigned int value)
 }
 
 /**
-* Set all values in Run to zero
+* Set all values in cgc_Run to zero
 * 
-* @param run_ptr The address of the Run
+* @param run_ptr The address of the cgc_Run
 *
 * @return None
 */
-void clearRun(Run* run_ptr) {
+void cgc_clearRun(cgc_Run* run_ptr) {
 	run_ptr->size = 0;
 
 	for(int i=0; i<BITMAP_SIZE; i++)
@@ -60,20 +60,20 @@ void clearRun(Run* run_ptr) {
 }
 
 /**
-* Initialize the Run
+* Initialize the cgc_Run
 * 
-* @param run_ptr The address of the Run
-* @param size The number of bytes of chunks provided by the Run
+* @param run_ptr The address of the cgc_Run
+* @param size The number of bytes of chunks provided by the cgc_Run
 *
 * @return 0 if successfull, else the error number returned by allocate
 */
-int initRun(Run** run_ptr, unsigned int size)
+int cgc_initRun(cgc_Run** run_ptr, unsigned int size)
 {
 	int ret;
 	if((ret = allocate(_SC_PAGESIZE, 0, (void**) run_ptr)))
 		return ret;
 	
-	Run* run;
+	cgc_Run* run;
 	run = *run_ptr;
 	if((ret = allocate(_SC_PAGESIZE, 0, &run->memory)))
 		return ret;
@@ -86,22 +86,22 @@ int initRun(Run** run_ptr, unsigned int size)
 }
 
 /**
-* Get the next free chunk 
+* Get the next cgc_free chunk 
 * 
 * @param size The size of the chunk to allocate
 * @param allocated The address to store the address of the allocated chunk
 *
 * @return 0 if successful, -42 is something went terribly wrong
 */
-int getNextFreeChunk(int size, void** allocated)
+int cgc_getNextFreeChunk(int size, void** allocated)
 {
 	int ret=0;
 	int chunk_size=0;
 	int bitmap_size=0;
 	int index;
-	Run* run_ptr;
+	cgc_Run* run_ptr;
 
-	// Get the next run with free space
+	// Get the next run with cgc_free space
 	chunk_size = (1 << size);
 	bitmap_size = _SC_PAGESIZE/(1 << size);
 	for(run_ptr=pool[size-1]; run_ptr != NULL && testBit(run_ptr->bitmap, bitmap_size-1); run_ptr=run_ptr->next) {
@@ -118,14 +118,14 @@ int getNextFreeChunk(int size, void** allocated)
 
 	// If all runs are full
 	if(run_ptr == NULL) {
-		initRun(&run_ptr, chunk_size);
+		cgc_initRun(&run_ptr, chunk_size);
 		run_ptr->next = pool[size-1];
 		pool[size-1] = run_ptr;
 		*allocated = run_ptr->memory;
 		return 0;
 	}
 
-	// Find free space in run
+	// Find cgc_free space in run
 	for(int i=0; i<bitmap_size; i++) {
 		if(!testBit(run_ptr->bitmap, i)) {
 			char* mem_ptr;
@@ -142,16 +142,16 @@ int getNextFreeChunk(int size, void** allocated)
 }
 
 /**
-* Find the Run that contains the specific chunk at addr
+* Find the cgc_Run that contains the specific chunk at addr
 * 
 * @param addr The address of the chunk
 *
-* @return The address of the Run containing the chunk
+* @return The address of the cgc_Run containing the chunk
 */
-Run* getRun(void* addr) {
+cgc_Run* cgc_getRun(void* addr) {
 
 	for(int j=0; j<POOL_NUM; j++) {
-		for(Run* run_ptr = pool[j]; run_ptr != NULL; run_ptr=run_ptr->next) {
+		for(cgc_Run* run_ptr = pool[j]; run_ptr != NULL; run_ptr=run_ptr->next) {
 			if(run_ptr->memory == addr)
 				return run_ptr;
 		}
@@ -167,7 +167,7 @@ Run* getRun(void* addr) {
 *
 * @return 1 if it is clear, 0 if it is not
 */
-int isClear(unsigned int* bitmap) {
+int cgc_isClear(unsigned int* bitmap) {
 	for(int i = 0; i < 64; i++) {
 		if(bitmap[i] != 0)
 			return 0;
@@ -183,21 +183,21 @@ int isClear(unsigned int* bitmap) {
 *
 * @return a pointer the allocated memory
 */
-void* malloc(size_t size) {
+void* cgc_malloc(cgc_size_t size) {
 
 	void* allocated=NULL;
 	unsigned int msb=0;
 	int ret=0;
 
 	// Get pool
-	msb = getMSB(size);
+	msb = cgc_getMSB(size);
 
 	if(size > (1 << msb) || msb == 0)
 		msb+=1;
 	if(msb > 11) {
-		LargeChunk* lc_ptr;
+		cgc_LargeChunk* lc_ptr;
 		for(lc_ptr = largeChunks; lc_ptr != NULL; lc_ptr=lc_ptr->next);
-		lc_ptr = (LargeChunk *) malloc(sizeof(LargeChunk));
+		lc_ptr = (cgc_LargeChunk *) cgc_malloc(sizeof(cgc_LargeChunk));
 		if((ret = allocate(size, 0, &lc_ptr->memory)))
 			return NULL;
 		lc_ptr->next = largeChunks;
@@ -206,7 +206,7 @@ void* malloc(size_t size) {
 		return lc_ptr->memory;
 	}
 
-	if((ret = getNextFreeChunk(msb, &allocated)))
+	if((ret = cgc_getNextFreeChunk(msb, &allocated)))
 		return NULL;
 
 	return allocated;
@@ -219,12 +219,12 @@ void* malloc(size_t size) {
 *
 * @return None
 */
-void free(void* ptr) {
+void cgc_free(void* ptr) {
 
-	Run* run_ptr=NULL, *prev_run_ptr=NULL;
+	cgc_Run* run_ptr=NULL, *prev_run_ptr=NULL;
 	int bit_index=0;
 	int ret=0;
-	LargeChunk *lc_ptr=NULL, *prev_ptr=NULL;
+	cgc_LargeChunk *lc_ptr=NULL, *prev_ptr=NULL;
 
 	// Check to see if ptr is a large chunk
 	if(((unsigned int)ptr & 0xfff) == 0 && largeChunks != NULL) {
@@ -241,7 +241,7 @@ void free(void* ptr) {
 			largeChunks = lc_ptr->next;
 		else
 			prev_ptr->next = lc_ptr->next;
-		free(lc_ptr);
+		cgc_free(lc_ptr);
 		return;
 	}
 
@@ -266,17 +266,17 @@ void free(void* ptr) {
 	// Free and zero chunk
 	bit_index = (ptr - run_ptr->memory) / run_ptr->size;
 	clearBit(run_ptr->bitmap, bit_index);
-	bzero(ptr, run_ptr->size);
+	cgc_bzero(ptr, run_ptr->size);
 
 	// Deallocate empty run
-	if(isClear(run_ptr->bitmap)) {
+	if(cgc_isClear(run_ptr->bitmap)) {
 		if(prev_run_ptr == NULL)
 			pool[j] = run_ptr->next;
 		else
 			prev_run_ptr->next = run_ptr->next;
 		if((ret = deallocate(run_ptr->memory, _SC_PAGESIZE)))
 			_terminate(4);
-		clearRun(run_ptr);
+		cgc_clearRun(run_ptr);
 		if((ret = deallocate(run_ptr, _SC_PAGESIZE)))
 			_terminate(4);
 		run_ptr = NULL;

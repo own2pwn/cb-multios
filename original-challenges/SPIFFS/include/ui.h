@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,15 +27,15 @@ THE SOFTWARE.
 #ifndef ui_h
 #define ui_h
 
-unsigned int get_int(char *);
-unsigned int get_string(char *, unsigned int, char *);
-void start_UI(pDataStruct );
-void displayWallOfText();
-void main_loop(pDataStruct );
-void date_from_epoch(unsigned int , int *);
-void strofdate( unsigned int );
-unsigned int make_epoch( int, int, int, int, int, int);
-unsigned int get_time();
+unsigned int cgc_get_int(char *);
+unsigned int cgc_get_string(char *, unsigned int, char *);
+void cgc_start_UI(cgc_pDataStruct );
+void cgc_displayWallOfText();
+void cgc_main_loop(cgc_pDataStruct );
+void cgc_date_from_epoch(unsigned int , int *);
+void cgc_strofdate( unsigned int );
+unsigned int cgc_make_epoch( int, int, int, int, int, int);
+unsigned int cgc_get_time();
 
 
 #endif

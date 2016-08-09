@@ -28,24 +28,24 @@ THE SOFTWARE.
 #include "jlib.h"
 
 extern int CURRENT_USER;
-//extern users_t USERS[MAX_USERS];
-extern users_t *USERS;
+//extern cgc_users_t USERS[MAX_USERS];
+extern cgc_users_t *USERS;
 extern int NUM_USERS;
 
-void CreateUser(void) {
+void cgc_CreateUser(void) {
 	char buf[MAX_USER_NAME_LEN+1];
 	int i;
 	int available_slot = -1;
 
 	// prompt for a username
-	zero(buf, MAX_USER_NAME_LEN+1);
-	print("username: ");
-	if (read_until(buf, '\n', MAX_USER_NAME_LEN+1) == -1) {
+	cgc_zero(buf, MAX_USER_NAME_LEN+1);
+	cgc_print("username: ");
+	if (cgc_read_until(buf, '\n', MAX_USER_NAME_LEN+1) == -1) {
 		_terminate(-1);
 	}
 
 	// did we get one?
-	if (strlen(buf) == 0) {
+	if (cgc_strlen(buf) == 0) {
 		// nope
 		return;
 	}
@@ -56,61 +56,61 @@ void CreateUser(void) {
 		if (USERS[i].name[0] == '\0') {
 			available_slot = i;
 		}
-		if (strmatch(buf, USERS[i].name)) {
-			print("[-] Error user exists\n");
+		if (cgc_strmatch(buf, USERS[i].name)) {
+			cgc_print("[-] Error user exists\n");
 			return;
 		}
 	}
 
 	// nope, create it
 	if (available_slot != -1) {
-		zero((char *)(&(USERS[available_slot])), sizeof(users_t));
-		strcopy(USERS[available_slot].name, buf);
+		cgc_zero((char *)(&(USERS[available_slot])), sizeof(cgc_users_t));
+		cgc_strcopy(USERS[available_slot].name, buf);
 	} else {
 		if (NUM_USERS < MAX_USERS) {
-			zero((char *)(&(USERS[NUM_USERS])), sizeof(users_t));
-			strcopy(USERS[NUM_USERS].name, buf);
+			cgc_zero((char *)(&(USERS[NUM_USERS])), sizeof(cgc_users_t));
+			cgc_strcopy(USERS[NUM_USERS].name, buf);
 			NUM_USERS++;
 		} else {
-			print("[-] Max users already created\n");
+			cgc_print("[-] Max users already created\n");
 		}
 	}
 
 	return;
 }
 
-void Login(void) {
+void cgc_Login(void) {
 	char buf[MAX_USER_NAME_LEN+1];
 	int i;
 
 	// prompt for a username
-	zero(buf, MAX_USER_NAME_LEN+1);
-	print("username: ");
-	if (read_until(buf, '\n', MAX_USER_NAME_LEN+1) == -1) {
+	cgc_zero(buf, MAX_USER_NAME_LEN+1);
+	cgc_print("username: ");
+	if (cgc_read_until(buf, '\n', MAX_USER_NAME_LEN+1) == -1) {
 		_terminate(-1);
 	}
 
 	// did we get one?
-	if (strlen(buf) == 0) {
+	if (cgc_strlen(buf) == 0) {
 		// nope
 		return;
 	}
 
 	// see if that user is in the list
 	for (i = 0; i < NUM_USERS; i++) {
-		if (strmatch(buf, USERS[i].name)) {
+		if (cgc_strmatch(buf, USERS[i].name)) {
 			break;
 		}
 	}
 	if (i == NUM_USERS) {
 		// nope
-		print("Login Failed\n");
+		cgc_print("cgc_Login Failed\n");
 		return;
 	}
 
 	// yep, log them in
 	CURRENT_USER = i;
-	print("Login Success\n");
+	cgc_print("cgc_Login Success\n");
 
 	return;
 }

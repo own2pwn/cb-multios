@@ -27,31 +27,31 @@
 #define MAGICWORD "You didn't say the magic word."
 #define MEMERR "Clever girl."
 #define RNDERR "The essence of chaos."
-#define SSEND(s,b) if(sendall(STDOUT,b,s)<0)  _terminate(3);
-#define SSENDL(s,b) if(sendline(STDOUT,b,s)<0) _terminate(6);
-#define SRECV(s,b) if(recvline(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(2);}
-#define RECV(s,b) if(recv(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(4);}
+#define SSEND(s,b) if(cgc_sendall(STDOUT,b,s)<0)  _terminate(3);
+#define SSENDL(s,b) if(cgc_sendline(STDOUT,b,s)<0) _terminate(6);
+#define SRECV(s,b) if(cgc_recvline(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(2);}
+#define RECV(s,b) if(cgc_recv(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(4);}
 #define ALLOC(x,a,s) if(allocate(s,x,a)!=0){ SSENDL(sizeof(MEMERR)-1,MEMERR); _terminate(9);}
 #define DEALLOC(a,s) if(deallocate(a,s)!=0){ SSENDL(sizeof(MEMERR)-1,MEMERR); _terminate(18);}
-#define RAND(b,s,r) if (random(b,s,r)){ SSENDL(sizeof(RNDERR)-1,RNDERR); _terminate(19);}
+#define RAND(b,s,r) if (cgc_random(b,s,r)){ SSENDL(sizeof(RNDERR)-1,RNDERR); _terminate(19);}
 
-void promptc(char *buf, uint16_t  size, char *prompt);
-int int2str(char* str_buf, int buf_size, int i);
-uint32_t str2uint(const char* str_buf);
-int sendall(int fd, const char *buf, size_t size);
-int sendline(int fd, const char *buf, size_t size);
-int recvline(int fd, char *buf, size_t size);
-int recv(int fd, char *buf, size_t size); 
-size_t strcpy(char *s1, char *s2);
-size_t strncpy(char *s1, char *s2, size_t n);
-char * strcat(char *s1, char *s2);
-size_t strlen(char *s);
-int streq(char *s1, char *s2);
-int startswith(char *s1, char *s2);
-void * memset(void *dst, char c, size_t n); 
-void * memcpy(void *dst, void *src, size_t n); 
-char * b2hex(uint8_t b, char *h);
-char * strchr(char *str, char c); 
+void cgc_promptc(char *buf, uint16_t  size, char *prompt);
+int cgc_int2str(char* str_buf, int buf_size, int i);
+uint32_t cgc_str2uint(const char* str_buf);
+int cgc_sendall(int fd, const char *buf, cgc_size_t size);
+int cgc_sendline(int fd, const char *buf, cgc_size_t size);
+int cgc_recvline(int fd, char *buf, cgc_size_t size);
+int cgc_recv(int fd, char *buf, cgc_size_t size); 
+cgc_size_t cgc_strcpy(char *s1, char *s2);
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
+char * cgc_strcat(char *s1, char *s2);
+cgc_size_t cgc_strlen(char *s);
+int cgc_streq(char *s1, char *s2);
+int cgc_startswith(char *s1, char *s2);
+void * cgc_memset(void *dst, char c, cgc_size_t n); 
+void * cgc_memcpy(void *dst, void *src, cgc_size_t n); 
+char * cgc_b2hex(uint8_t b, char *h);
+char * cgc_strchr(char *str, char c); 
 
 #endif
 

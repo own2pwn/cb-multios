@@ -32,56 +32,56 @@ THE SOFTWARE.
 #include "prng.h"
 
 int main(void) {
-        uint32_t MaxFiles = 10;
-	pRequest pReq;
-	pResponse pResp;
+        cgc_uint32_t MaxFiles = 10;
+	cgc_pRequest pReq;
+	cgc_pResponse pResp;
 	const char *rand_page = (const char *)0x4347C000;
 	char user_password[11];
-	uint32_t i;
+	cgc_uint32_t i;
 
 	// init the filesystem
-        if (!InitFilesystem(MaxFiles, "rootpasswd")) {
-                puts(FsError());
+        if (!cgc_InitFilesystem(MaxFiles, "rootpasswd")) {
+                cgc_puts(cgc_FsError());
                 _terminate(0);
         }
 
-	// init the prng
-	seed_prng(*(unsigned int *)rand_page);
+	// init the cgc_prng
+	cgc_seed_prng(*(unsigned int *)rand_page);
 
 	// generate a random user password
-	bzero(user_password, 11);
+	cgc_bzero(user_password, 11);
 	for (i = 0; i < 10; i++) {
-		user_password[i] = (char)random_in_range(65,122);
+		user_password[i] = (char)cgc_random_in_range(65,122);
 	}
 
 	// Add the random user
-	if (!AddUser("user", user_password)) {
+	if (!cgc_AddUser("user", user_password)) {
 		_terminate(0);
 	}
 
 	// loop receiving packets
 	while (1) {
 		// Receive the packet
-		if ((pReq = ReceiveRequest()) == NULL) {
+		if ((pReq = cgc_ReceiveRequest()) == NULL) {
 			continue;
 		}
 
 		// Handle the request
-		if ((pResp = HandleRequest(pReq)) == NULL) {
-			FreeRequest(pReq);
+		if ((pResp = cgc_HandleRequest(pReq)) == NULL) {
+			cgc_FreeRequest(pReq);
 			continue;
 		}
 
 		// Send the response
-		SendResponse(pResp);
+		cgc_SendResponse(pResp);
 
-		// Free the Request and Response
-		FreeRequest(pReq);
-		FreeResponse(pResp);
+		// Free the cgc_Request and cgc_Response
+		cgc_FreeRequest(pReq);
+		cgc_FreeResponse(pResp);
 
 	}
 
 	// all done
-        DestroyFilesystem();
+        cgc_DestroyFilesystem();
 	return(0);
 }

@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __COMMS_H__
 #define __COMMS_H__
 
-uint32_t RecvData( int32_t fd, uint8_t *pDest, uint32_t maxLen );
-uint32_t SendData( int32_t fd, uint8_t *pSource, uint32_t sendLen );
+cgc_uint32_t cgc_RecvData( cgc_int32_t fd, cgc_uint8_t *pDest, cgc_uint32_t maxLen );
+cgc_uint32_t cgc_SendData( cgc_int32_t fd, cgc_uint8_t *pSource, cgc_uint32_t sendLen );
 
 #endif // __COMMS_H__

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -60,7 +60,7 @@
  * @param member The member to calculate the offset of
  * @return The offset of member in type
  */
-#define OFFSETOF(type, member) ((size_t)(&((type *)NULL)->member))
+#define OFFSETOF(type, member) ((cgc_size_t)(&((type *)NULL)->member))
 
 /**
  * Find the container structure from a pointer to a member.
@@ -83,7 +83,7 @@
  * @param n The number of bytes to read
  * @return The number of bytes read, or negative on failure
  */
-ssize_t read_all(int fd, void *buf, size_t n);
+cgc_ssize_t cgc_read_all(int fd, void *buf, cgc_size_t n);
 
 /**
  * Write exactly n bytes to an fd from a buffer.
@@ -93,7 +93,7 @@ ssize_t read_all(int fd, void *buf, size_t n);
  * @param n The number of bytes to write
  * @return The number of bytes written, or negative on failure
  */
-ssize_t write_all(int fd, void *buf, size_t n);
+cgc_ssize_t cgc_write_all(int fd, void *buf, cgc_size_t n);
 
 /**
  * Allocate a chunk of memory on the heap.
@@ -101,34 +101,34 @@ ssize_t write_all(int fd, void *buf, size_t n);
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *malloc(size_t size);
+void *cgc_malloc(cgc_size_t size);
 
 /**
- * Free a chunk of memory allocated with malloc().
+ * Free a chunk of memory allocated with cgc_malloc().
  *
- * @param ptr The chunk to free
+ * @param ptr The chunk to cgc_free
  */
-void free(void *ptr);
+void cgc_free(void *ptr);
 
 /**
  * Allocate a zeroed chunk of memory on the heap.
  *
- * Note: This differs from standard libc malloc by taking the full size of the
+ * Note: This differs from standard libc cgc_malloc by taking the full size of the
  *      chunk to allocate as its only parameter.
  *
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *calloc(size_t size);
+void *cgc_calloc(cgc_size_t size);
 
 /**
- * Resize a chunk of memory allocated with malloc().
+ * Resize a chunk of memory allocated with cgc_malloc().
  *
  * @param ptr The chunk to resize
  * @param size The new size of the chunk
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *realloc(void *ptr, size_t size);
+void *cgc_realloc(void *ptr, cgc_size_t size);
 
 /**
  * Set the first n bytes of a block of memory to a value.
@@ -138,7 +138,7 @@ void *realloc(void *ptr, size_t size);
  * @param n The number of bytes to set
  * @return ptr
  */
-void *memset(void *ptr_, int val, size_t n);
+void *cgc_memset(void *ptr_, int val, cgc_size_t n);
 
 /**
  * Copy n bytes from src to dst.
@@ -148,7 +148,7 @@ void *memset(void *ptr_, int val, size_t n);
  * @param n The number of bytes to copy
  * @return dst
  */
-void *memcpy(void *dst_, const void *src_, size_t n);
+void *cgc_memcpy(void *dst_, const void *src_, cgc_size_t n);
 
 /**
  * Copy at most the first n characters of a null-terminated string from src to
@@ -159,7 +159,7 @@ void *memcpy(void *dst_, const void *src_, size_t n);
  * @param n The maximum number of bytes to copy
  * @return dst
  */
-char *strncpy(char *dst, const char *src, size_t n);
+char *cgc_strncpy(char *dst, const char *src, cgc_size_t n);
 
 /**
  * Return the length of a null-terminated string.
@@ -167,7 +167,7 @@ char *strncpy(char *dst, const char *src, size_t n);
  * @param s The string
  * @return The length of s
  */
-size_t strlen(const char *s);
+cgc_size_t cgc_strlen(const char *s);
 
 /**
  * Compare two null-terminated strings
@@ -176,7 +176,7 @@ size_t strlen(const char *s);
  * @param b The second string
  * @return negative if a < b, 0 if a == b, positive if a > b
  */
-int strcmp(const char *a, const char *b);
+int cgc_strcmp(const char *a, const char *b);
 
 /**
  * Compare the first n bytes of two null-terminated strings
@@ -186,7 +186,7 @@ int strcmp(const char *a, const char *b);
  * @param n The number of bytes to compare
  * @return negative if a < b, 0 if a == b, positive if a > b
  */
-int strncmp(const char *a, const char *b, size_t n);
+int cgc_strncmp(const char *a, const char *b, cgc_size_t n);
 
 /**
  * Find the first instance of character c in s.
@@ -195,7 +195,7 @@ int strncmp(const char *a, const char *b, size_t n);
  * @param c The character to find
  * @return A pointer to the first instance of c in s or NULL if not found
  */
-char *strchr(const char *s, char c);
+char *cgc_strchr(const char *s, char c);
 
 /**
  * Find the last instance of character c in s.
@@ -204,19 +204,19 @@ char *strchr(const char *s, char c);
  * @param c The character to find
  * @return A pointer to the last instance of c in s or NULL if not found
  */
-char *strrchr(const char *s, char c);
+char *cgc_strrchr(const char *s, char c);
 
 /**
  * Break up a string into tokens separated by a character.
  *
- * NOTE: This differs from standard strtok by only accepting on delimiter
+ * NOTE: This differs from standard cgc_strtok by only accepting on delimiter
  * character.
  *
  * @param s The string to tokenize or NULL to continue, may be modified
  * @param d The delimeter character
  * @return The next token
  */
-char *strtok(char *s, char d);
+char *cgc_strtok(char *s, char d);
 
 /* The following is verbatim from EAGLE_00004, but isn't included in the 
  * released binary (DEBUG is not defined), so this reuse shouldn't be a concern.

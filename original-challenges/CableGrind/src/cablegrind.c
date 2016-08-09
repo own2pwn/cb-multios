@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,14 +27,14 @@
 #include "phydissectors.h"
 
 void (*phy_dissectors[]) (uint8_t *payload, int size) = {
-                                process_rofl,
-                                process_lol
+                                cgc_process_rofl,
+                                cgc_process_lol
 };
 
-void process_rofl(uint8_t *payload, int size) {
-    rofl_hdr_t *hdr = (rofl_hdr_t*)payload;
+void cgc_process_rofl(uint8_t *payload, int size) {
+    cgc_rofl_hdr_t *hdr = (cgc_rofl_hdr_t*)payload;
 
-    if (sizeof(rofl_hdr_t) > size)
+    if (sizeof(cgc_rofl_hdr_t) > size)
         return;
     LOG("\n\n===rofl===\n\n")
 
@@ -43,17 +43,17 @@ void process_rofl(uint8_t *payload, int size) {
     #else
     if (hdr->type < sizeof(rofl_dissectors)) {
     #endif
-        size -= sizeof(rofl_hdr_t);
-        payload += sizeof(rofl_hdr_t);
+        size -= sizeof(cgc_rofl_hdr_t);
+        payload += sizeof(cgc_rofl_hdr_t);
         if (size > 0)
             rofl_dissectors[hdr->type](&payload,&size);
     }
 }
 
-void process_lol(uint8_t *payload, int size) {
-    lol_hdr_t *hdr = (lol_hdr_t*)payload;
+void cgc_process_lol(uint8_t *payload, int size) {
+    cgc_lol_hdr_t *hdr = (cgc_lol_hdr_t*)payload;
 
-    if (sizeof(lol_hdr_t) > size)
+    if (sizeof(cgc_lol_hdr_t) > size)
         return;
 
     LOG("\n\n===lol===\n\n")
@@ -63,17 +63,17 @@ void process_lol(uint8_t *payload, int size) {
     #else
     if (hdr->type < sizeof(lol_dissectors)) {
     #endif
-        size -= sizeof(lol_hdr_t);
-        payload += sizeof(lol_hdr_t);
+        size -= sizeof(cgc_lol_hdr_t);
+        payload += sizeof(cgc_lol_hdr_t);
         if (size > 0)
             lol_dissectors[hdr->type](&payload,&size);
     }
 }
 
-void process_dupe(dupefile_t *f) {
-    dupepkt_t *cur = NULL;
+void cgc_process_dupe(cgc_dupefile_t *f) {
+    cgc_dupepkt_t *cur = NULL;
     LOG("Starting dissection...")
-    while ((cur = dupe_next(f)) && cur != NULL) {
+    while ((cur = cgc_dupe_next(f)) && cur != NULL) {
         LOG("\n\n====New Packet====");
         #ifdef PATCHED
         if (cur->hdr.size > f->framelen || f->captype >= (sizeof(phy_dissectors)/sizeof(phy_dissectors[0])))

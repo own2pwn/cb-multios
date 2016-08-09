@@ -29,7 +29,7 @@
 *
 * @return The first index in s where c occurs
 */
-char *strchr(const char* s, int c) {
+char *cgc_strchr(const char* s, int c) {
 
 	int i;
 	for(i=0; s[0] != (char) c; i++) {
@@ -49,10 +49,10 @@ char *strchr(const char* s, int c) {
 *
 * @return The index in s2 after s1
 */
-size_t strspn(const char *s1, const char *s2) {
-	size_t result=0;
+cgc_size_t cgc_strspn(const char *s1, const char *s2) {
+	cgc_size_t result=0;
 
-	for(int i=0; s1[i] != '\0' && strchr(s2, s1[i]); i++, result++);
+	for(int i=0; s1[i] != '\0' && cgc_strchr(s2, s1[i]); i++, result++);
 
 	return result;
 }
@@ -66,11 +66,11 @@ size_t strspn(const char *s1, const char *s2) {
 *
 * @return The index in s2 which starts s1
 */
-size_t strcspn(const char *s1, const char *s2) {
-	size_t result=0;
+cgc_size_t cgc_strcspn(const char *s1, const char *s2) {
+	cgc_size_t result=0;
 
 	for(int i=0; s1[i] != '\0'; i++, result++) {
-		if(strchr(s2, s1[i]))
+		if(cgc_strchr(s2, s1[i]))
 			return result;
 	}
 
@@ -89,7 +89,7 @@ size_t strcspn(const char *s1, const char *s2) {
 *
 * @return A null-terminated string containing the token
 */
-char *strtok(char* string,const char *delim) {
+char *cgc_strtok(char* string,const char *delim) {
 	static char *ptr=0;
 	int start, finish;
 
@@ -99,9 +99,9 @@ char *strtok(char* string,const char *delim) {
 		return 0;
 	}
 
-	start = strspn(ptr, delim);
+	start = cgc_strspn(ptr, delim);
 	string = &ptr[start];
-	finish = strcspn(string, delim);
+	finish = cgc_strcspn(string, delim);
 	ptr = &string[finish];
 
 	if(ptr == string)

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,7 +38,7 @@
 #define DEC "December"
 #define BAD_MONTH "Undefined Month"
 
-bool is_valid_date(date_t *date)
+cgc_bool cgc_is_valid_date(cgc_date_t *date)
 {
     if (!date || date->year < 2015 || date->year > 2025 || date->month < 1 || date->month > 12 || date->day < 1)
         return false;
@@ -75,28 +75,28 @@ bool is_valid_date(date_t *date)
     return true;
 }
 
-bool is_valid_time(time_t *time)
+cgc_bool cgc_is_valid_time(cgc_time_t *time)
 {
     return (time && time->hour >= 0 && time->hour <= 23 && time->minute >= 0 && time->minute <= 59);
 }
 
-bool set_date(date_t *date, char month, char day, short year)
+cgc_bool cgc_set_date(cgc_date_t *date, char month, char day, short year)
 {
     if (!date)
         return false;
 
-    date_t temp;
+    cgc_date_t temp;
     temp.year = year;
     temp.month = month;
     temp.day = day;
-    if(!is_valid_date(&temp))
+    if(!cgc_is_valid_date(&temp))
         return false;
 
     *date = temp;
     return true;
 }
 
-bool set_time(time_t *time, char hour, char minute)
+cgc_bool cgc_set_time(cgc_time_t *time, char hour, char minute)
 {
     if (!time || hour < 0 || hour > 23 || minute < 0 || minute > 59)
         return false;
@@ -106,9 +106,9 @@ bool set_time(time_t *time, char hour, char minute)
     return true;
 }
 
-bool set_datetime(datetime_t *dt, date_t date, time_t time)
+cgc_bool cgc_set_datetime(cgc_datetime_t *dt, cgc_date_t date, cgc_time_t time)
 {
-    if (!dt || !is_valid_date(&date) || !is_valid_time(&time))
+    if (!dt || !cgc_is_valid_date(&date) || !cgc_is_valid_time(&time))
         return false;
 
     dt->date = date;
@@ -116,26 +116,26 @@ bool set_datetime(datetime_t *dt, date_t date, time_t time)
     return true;
 }
 
-bool set_duration(duration_t *d, datetime_t dt1, datetime_t dt2)
+cgc_bool cgc_set_duration(cgc_duration_t *d, cgc_datetime_t dt1, cgc_datetime_t dt2)
 {
     if (!d)
         return false;
 
-    if (compare_date(&dt1, &dt2) >= 0)
+    if (cgc_compare_date(&dt1, &dt2) >= 0)
         return false;
 
-    if (!set_datetime(&d->start, dt1.date, dt1.time))
+    if (!cgc_set_datetime(&d->start, dt1.date, dt1.time))
         return false;
-    if (!set_datetime(&d->end, dt2.date, dt2.time))
+    if (!cgc_set_datetime(&d->end, dt2.date, dt2.time))
         return false;
 
     return true;
 }
 
-int compare_date(void *_date1, void *_date2)
+int cgc_compare_date(void *_date1, void *_date2)
 {
-    date_t *date1 = (date_t *)_date1;
-    date_t *date2 = (date_t *)_date2;
+    cgc_date_t *date1 = (cgc_date_t *)_date1;
+    cgc_date_t *date2 = (cgc_date_t *)_date2;
 
     if (!date1 || !date2)
         return -1;
@@ -156,10 +156,10 @@ int compare_date(void *_date1, void *_date2)
     return 0;
 }
 
-int compare_time(void *_time1, void *_time2)
+int cgc_compare_time(void *_time1, void *_time2)
 {
-    time_t *time1 = (time_t *)_time1;
-    time_t *time2 = (time_t *)_time2;
+    cgc_time_t *time1 = (cgc_time_t *)_time1;
+    cgc_time_t *time2 = (cgc_time_t *)_time2;
 
     if (!time1 || !time2)
         return -1;
@@ -176,77 +176,77 @@ int compare_time(void *_time1, void *_time2)
     return 0;
 }
 
-int compare_datetime(void *_dt1, void *_dt2)
+int cgc_compare_datetime(void *_dt1, void *_dt2)
 {
     int comp_val = 0;
-    datetime_t *dt1 = (datetime_t *)_dt1;
-    datetime_t *dt2 = (datetime_t *)_dt2;
+    cgc_datetime_t *dt1 = (cgc_datetime_t *)_dt1;
+    cgc_datetime_t *dt2 = (cgc_datetime_t *)_dt2;
 
-    comp_val = compare_date(&dt1->date, &dt2->date);
+    comp_val = cgc_compare_date(&dt1->date, &dt2->date);
     if (comp_val != 0)
         return comp_val;
 
-    return compare_time(&dt1->time, &dt2->time);
+    return cgc_compare_time(&dt1->time, &dt2->time);
 }
 
-bool durations_overlap(duration_t d1, duration_t d2)
+cgc_bool cgc_durations_overlap(cgc_duration_t d1, cgc_duration_t d2)
 {
     int comp1, comp2;
-    comp1 = compare_datetime(&d1.start, &d2.end);
-    comp2 = compare_datetime(&d1.end, &d2.start);
+    comp1 = cgc_compare_datetime(&d1.start, &d2.end);
+    comp2 = cgc_compare_datetime(&d1.end, &d2.start);
     if (comp1 == -1 && comp2 == 1)
         return true;
 
-    comp1 = compare_datetime(&d2.start, &d1.end);
-    comp2 = compare_datetime(&d2.end, &d1.start);
+    comp1 = cgc_compare_datetime(&d2.start, &d1.end);
+    comp2 = cgc_compare_datetime(&d2.end, &d1.start);
     if (comp1 == -1 && comp2 == 1)
         return true;
 
     return false;
 }
 
-bool date_within(duration_t d, date_t date)
+cgc_bool cgc_date_within(cgc_duration_t d, cgc_date_t date)
 {
     int comp1, comp2;
-    comp1 = compare_date(&d.start.date, &date);
-    comp2 = compare_date(&d.end.date, &date);
+    comp1 = cgc_compare_date(&d.start.date, &date);
+    comp2 = cgc_compare_date(&d.end.date, &date);
     if (comp1 <= 0 && comp2 >= 0)
         return true;
 
     return false;
 }
 
-bool datetime_within(duration_t d, datetime_t dt)
+cgc_bool cgc_datetime_within(cgc_duration_t d, cgc_datetime_t dt)
 {
     int comp1, comp2;
-    comp1 = compare_datetime(&d.start, &dt);
-    comp2 = compare_datetime(&d.end, &dt);
+    comp1 = cgc_compare_datetime(&d.start, &dt);
+    comp2 = cgc_compare_datetime(&d.end, &dt);
     if (comp1 == -1 && comp2 == 1)
         return true;
 
     return false;
 }
 
-bool strtodate(char *datestr, date_t *date)
+cgc_bool cgc_strtodate(char *datestr, cgc_date_t *date)
 {
-    if (!datestr || !date || strlen(datestr) < 8)
+    if (!datestr || !date || cgc_strlen(datestr) < 8)
         return false;
 
-    date_t temp;
-    memset(&temp, 0, sizeof(date_t));
+    cgc_date_t temp;
+    cgc_memset(&temp, 0, sizeof(cgc_date_t));
     char *year, *month, *day;
-    if ((month = strsep(&datestr, "-")) == NULL)
+    if ((month = cgc_strsep(&datestr, "-")) == NULL)
         return false;
-    if ((day = strsep(&datestr, "-")) == NULL)
+    if ((day = cgc_strsep(&datestr, "-")) == NULL)
         return false;
-    if ((year = strsep(&datestr, "-")) == NULL)
+    if ((year = cgc_strsep(&datestr, "-")) == NULL)
         return false;
 
-    temp.year = strtol(year, NULL, 10);
-    temp.month = strtol(month, NULL, 10);
-    temp.day = strtol(day, NULL, 10);
+    temp.year = cgc_strtol(year, NULL, 10);
+    temp.month = cgc_strtol(month, NULL, 10);
+    temp.day = cgc_strtol(day, NULL, 10);
 
-    if (is_valid_date(&temp)) {
+    if (cgc_is_valid_date(&temp)) {
         *date = temp;
         return true;
     } else {
@@ -254,24 +254,24 @@ bool strtodate(char *datestr, date_t *date)
     }
 }
 
-bool strtotime(char *timestr, time_t *time)
+cgc_bool cgc_strtotime(char *timestr, cgc_time_t *time)
 {
-    if (!timestr || !time || strlen(timestr) < 4)
+    if (!timestr || !time || cgc_strlen(timestr) < 4)
         return false;
 
-    time_t temp;
+    cgc_time_t temp;
     char *hour, *minute;
-    if ((hour = strsep(&timestr, ":")) == NULL)
+    if ((hour = cgc_strsep(&timestr, ":")) == NULL)
         return false;
-    if ((minute = strsep(&timestr, "-")) == NULL)
+    if ((minute = cgc_strsep(&timestr, "-")) == NULL)
         return false;
 
-    temp.hour = strtol(hour, NULL, 10);
-    temp.minute = strtol(minute, NULL, 10);
+    temp.hour = cgc_strtol(hour, NULL, 10);
+    temp.minute = cgc_strtol(minute, NULL, 10);
 
     if (temp.hour == 0) {
         int i;
-        for (i = 0; i < strlen(hour); i++) {
+        for (i = 0; i < cgc_strlen(hour); i++) {
             if (hour[i] != '0')
                 return false;
         }
@@ -279,13 +279,13 @@ bool strtotime(char *timestr, time_t *time)
 
     if (temp.minute == 0) {
         int i;
-        for (i = 0; i < strlen(minute); i++) {
+        for (i = 0; i < cgc_strlen(minute); i++) {
             if (minute[i] != '0')
                 return false;
         }
     }
 
-    if (is_valid_time(&temp)) {
+    if (cgc_is_valid_time(&temp)) {
         *time = temp;
         return true;
     } else {
@@ -293,17 +293,17 @@ bool strtotime(char *timestr, time_t *time)
     }
 }
 
-void print_date(date_t *date)
+void cgc_print_date(cgc_date_t *date)
 {
-    printf("%d-%d-%d", date->month, date->day, date->year);
+    cgc_printf("%d-%d-%d", date->month, date->day, date->year);
 }
 
-void get_date_str(char *date_str, date_t *date)
+void cgc_get_date_str(char *date_str, cgc_date_t *date)
 {
-    sprintf(date_str, "%d-%d-%d", date->month, date->day, date->year);
+    cgc_sprintf(date_str, "%d-%d-%d", date->month, date->day, date->year);
 }
 
-char *get_month(date_t *date)
+char *cgc_get_month(cgc_date_t *date)
 {
     if (!date)
         return BAD_MONTH;
@@ -338,7 +338,7 @@ char *get_month(date_t *date)
     }
 }
 
-void print_time(time_t *time)
+void cgc_print_time(cgc_time_t *time)
 {
     char *zero = "0";
     char *emptystr = "";
@@ -348,10 +348,10 @@ void print_time(time_t *time)
     else
         min_pad = emptystr;
 
-    printf("%d:%s%d", time->hour, min_pad, time->minute);
+    cgc_printf("%d:%s%d", time->hour, min_pad, time->minute);
 }
 
-void get_time_str(char *time_str, time_t *time)
+void cgc_get_time_str(char *time_str, cgc_time_t *time)
 {
     char *zero = "0";
     char *emptystr = "";
@@ -361,6 +361,6 @@ void get_time_str(char *time_str, time_t *time)
     else
         min_pad = emptystr;
 
-    sprintf(time_str, "%d:%s%d", time->hour, min_pad, time->minute);
+    cgc_sprintf(time_str, "%d:%s%d", time->hour, min_pad, time->minute);
 }
 

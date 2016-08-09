@@ -26,50 +26,50 @@ THE SOFTWARE.
 
 #include "territoryParsers.h"
 
-int territoryMenu( pTerritory ty )
+int cgc_territoryMenu( cgc_pTerritory ty )
 {
 	int choice = 0;
-	size_t length = 0;
+	cgc_size_t length = 0;
 	char selection[30];
 	char *temp = NULL;
-	pBorder pb = NULL;
-	pCounty pc = NULL;
+	cgc_pBorder pb = NULL;
+	cgc_pCounty pc = NULL;
 
 	if ( ty == NULL ) {
 		return 0;
 	}
 
 	while( 1 ) {
-		printf("\nTerritory: @s\n", ty->name);
-		printf("1) Display Territory Info\n");
-		printf("2) Set Founder\n");
-		printf("3) Set Population\n");
-		printf("4) Set Established\n");
-		printf("5) Add Border\n");
-		printf("6) Add County\n");
-		printf("7) Select County\n");
-		printf("8) Delete County and Exit Menu\n");
-		printf("9) Exit Menu\n");
+		cgc_printf("\nTerritory: @s\n", ty->name);
+		cgc_printf("1) Display cgc_Territory Info\n");
+		cgc_printf("2) Set Founder\n");
+		cgc_printf("3) Set Population\n");
+		cgc_printf("4) Set Established\n");
+		cgc_printf("5) Add cgc_Border\n");
+		cgc_printf("6) Add cgc_County\n");
+		cgc_printf("7) Select cgc_County\n");
+		cgc_printf("8) Delete cgc_County and Exit Menu\n");
+		cgc_printf("9) Exit Menu\n");
 
-		bzero( selection, 4 );
-		printf("Selection: ");
-		receive_until( selection, '\n', 3);
+		cgc_bzero( selection, 4 );
+		cgc_printf("Selection: ");
+		cgc_receive_until( selection, '\n', 3);
 
-		choice = atoi( selection );
+		choice = cgc_atoi( selection );
 
-		bzero(selection, 30);
+		cgc_bzero(selection, 30);
 
 		switch (choice) {
 			case 1:
-				printTerritoryInfo( ty );
+				cgc_printTerritoryInfo( ty );
 				break;
 			case 2:
-				printf("\n-> ");
-				receive_until( selection, '\n', 29);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 29);
 
 				/// Copy as long as the data is alpha numeric
 				choice = 0;
-				while ( isalnum( selection[choice] ) || selection[choice] == ' ' ) {
+				while ( cgc_isalnum( selection[choice] ) || selection[choice] == ' ' ) {
 					ty->founder[choice] = selection[choice];
 					choice++;
 				}
@@ -77,47 +77,47 @@ int territoryMenu( pTerritory ty )
 
 				break;
 			case 3:
-				printf("\n-> ");
-				receive_until( selection, '\n', 29);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 29);
 
-				ty->population = atoi(selection);
+				ty->population = cgc_atoi(selection);
 				break;
 			case 4:
-				printf("\n-> ");
-				receive_until( selection, '\n', 29);
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 29);
 
-				ty->established = atoi( selection );
+				ty->established = cgc_atoi( selection );
 				break;
 			case 5:
                         	if ( ty->border_count >= TERRITORYBORDERMAX) {
-                                	printf("!!Max borders reached\n");
+                                	cgc_printf("!!Max borders reached\n");
                                 	continue;
                         	}
 
-                        	if ( allocate( sizeof(Border), 0, (void**)&pb) != 0 ) {
+                        	if ( allocate( sizeof(cgc_Border), 0, (void**)&pb) != 0 ) {
                                 	pb = NULL;
                                 	continue;
                         	}
 
-	                        printf("Lat Start: ");
-        	                bzero(selection, 30 );
-				receive_until( selection, '\n', 19 );
-                        	pb->latStart = atof(selection);
+	                        cgc_printf("Lat Start: ");
+        	                cgc_bzero(selection, 30 );
+				cgc_receive_until( selection, '\n', 19 );
+                        	pb->latStart = cgc_atof(selection);
 
-             	           	printf("Long Start: ");
-                	        bzero(selection, 30 );
-				receive_until( selection, '\n', 19 );
-                        	pb->lngStart = atof(selection);
+             	           	cgc_printf("Long Start: ");
+                	        cgc_bzero(selection, 30 );
+				cgc_receive_until( selection, '\n', 19 );
+                        	pb->lngStart = cgc_atof(selection);
 
-	                        printf("Lat End: ");
-        	                bzero(selection, 30 );
-				receive_until( selection, '\n', 19 );
-                        	pb->latEnd = atof(selection);
+	                        cgc_printf("Lat End: ");
+        	                cgc_bzero(selection, 30 );
+				cgc_receive_until( selection, '\n', 19 );
+                        	pb->latEnd = cgc_atof(selection);
 
-                        	printf("Long End: ");
-                        	bzero(selection, 30 );
-				receive_until( selection, '\n', 19 );
-                        	pb->lngEnd = atof(selection);
+                        	cgc_printf("Long End: ");
+                        	cgc_bzero(selection, 30 );
+				cgc_receive_until( selection, '\n', 19 );
+                        	pb->lngEnd = cgc_atof(selection);
 
                     	    	ty->borders[ ty->border_count ] = pb;
                         	ty->border_count++;
@@ -134,24 +134,24 @@ int territoryMenu( pTerritory ty )
 				}
 
 				if ( choice == TERRITORYCOUNTYMAX ) {
-					printf("!!Max counties reached\n");
+					cgc_printf("!!Max counties reached\n");
 					continue;
 				}
 
-				printf("\nNew County Name: ");
-				receive_until( selection, '\n', 19 );
+				cgc_printf("\nNew cgc_County Name: ");
+				cgc_receive_until( selection, '\n', 19 );
 		
-				if ( allocate( sizeof(County), 0, (void**)&pc) != 0 ) {
+				if ( allocate( sizeof(cgc_County), 0, (void**)&pc) != 0 ) {
 					pc = NULL;
 					continue;
 				}
 
-				initCounty( pc );
+				cgc_initCounty( pc );
 
 				ty->counties[choice] = pc;
 	
 				choice = 0;
-				while ( isalnum( selection[choice]) ) {
+				while ( cgc_isalnum( selection[choice]) ) {
 					pc->name[choice] = selection[choice];
 					choice++;
 				}
@@ -162,38 +162,38 @@ int territoryMenu( pTerritory ty )
 			case 7:
 				for ( choice = 0; choice < TERRITORYCOUNTYMAX; choice++) {
 					if ( ty->counties[choice] != NULL ) {
-						printf("@d) @s\n", choice+1, ty->counties[choice]->name);
+						cgc_printf("@d) @s\n", choice+1, ty->counties[choice]->name);
 					}
 				}
 
-				printf("\n-> ");
-				receive_until( selection, '\n', 19);
-				choice = atoi( selection );
+				cgc_printf("\n-> ");
+				cgc_receive_until( selection, '\n', 19);
+				choice = cgc_atoi( selection );
 
 				if ( choice < 1 || choice > TERRITORYCOUNTYMAX ) {
-					printf("Invalid choice...\n");
+					cgc_printf("Invalid choice...\n");
 					continue;
 				}
 
 				if ( ty->counties[choice-1] == NULL ) {
-					printf("Invalid choice...\n");
+					cgc_printf("Invalid choice...\n");
 					continue;
 				}
 
-				if ( countyMenu(ty->counties[choice-1]) == 0 ) {
+				if ( cgc_countyMenu(ty->counties[choice-1]) == 0 ) {
 					ty->counties[choice-1] = NULL;
 					ty->county_count--;
 				}
 				break;
 			case 8:
-				freeTerritory(ty);
+				cgc_freeTerritory(ty);
 				return 0;
 				break;
 			case 9:
 				return 1;
 				break;
 			default:
-				printf("Invalid\n");
+				cgc_printf("Invalid\n");
 				break;
 		};
 
@@ -207,34 +207,34 @@ int territoryMenu( pTerritory ty )
  * @param ty Pointer to the territory structure
  * @return Returns nothing
  */
-void printTerritoryInfo( pTerritory ty )
+void cgc_printTerritoryInfo( cgc_pTerritory ty )
 {
 	int index = 0;
-	pBorder b = NULL;
+	cgc_pBorder b = NULL;
 
 	if ( ty == NULL ) {
 		return;
 	}
 	
-	printf("\t\tTerritory: ");
+	cgc_printf("\t\tTerritory: ");
 
 	if ( ty->name[0] == '\x00' ) {
-		printf("Unknown\n");
+		cgc_printf("Unknown\n");
 	} else {
-		printf("@s\n", ty->name);
+		cgc_printf("@s\n", ty->name);
 	}
 
 	if ( ty->population >= 0 ) {
-		printf("\t\t\tPopulation: @d\n", ty->population);
+		cgc_printf("\t\t\tPopulation: @d\n", ty->population);
 	}
 
-	printf("\t\t\tEstablished: @d\n", ty->established);
+	cgc_printf("\t\t\tEstablished: @d\n", ty->established);
 	
-	printf("\t\t\tFounder: ");
+	cgc_printf("\t\t\tFounder: ");
 	if ( ty->founder[0] == '\x00' ) {
-		printf("Unknown\n");
+		cgc_printf("Unknown\n");
 	} else {
-		printf("@s\n", ty->founder);
+		cgc_printf("@s\n", ty->founder);
 	}
 
 	index = 0;
@@ -242,7 +242,7 @@ void printTerritoryInfo( pTerritory ty )
 	while ( index < ty->border_count ) {
 		b = ty->borders[index];
 		if ( b != NULL ) {
-			printf("\t\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
+			cgc_printf("\t\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
 		}
 		index++;
 	}
@@ -251,7 +251,7 @@ void printTerritoryInfo( pTerritory ty )
 
 	for ( index = 0; index < TERRITORYCOUNTYMAX; index++ ) {
 		if ( ty->counties[index] != NULL ) {
-			printCountyInfo( ty->counties[index]);
+			cgc_printCountyInfo( ty->counties[index]);
 		}
 	}
 
@@ -259,11 +259,11 @@ void printTerritoryInfo( pTerritory ty )
 }
 
 /**
- * Frees a Territory structure
+ * Frees a cgc_Territory structure
  * @param ty Pointer to a territory structure to free
  * @return Returns nothing
  **/
-void freeTerritory( pTerritory ty )
+void cgc_freeTerritory( cgc_pTerritory ty )
 {
 	int index = 0;
 
@@ -273,18 +273,18 @@ void freeTerritory( pTerritory ty )
 
 	while (index < ty->border_count) {
 		if ( ty->borders[index] != NULL ) {
-			deallocate( ty->borders[index], sizeof( Border ) );
+			deallocate( ty->borders[index], sizeof( cgc_Border ) );
 			ty->borders[index] = NULL;
 		}
 		index++;
 	}
 
 	for ( index = 0; index < ty->county_count; index++ ) {
-		freeCounty( ty->counties[index]);
+		cgc_freeCounty( ty->counties[index]);
 		ty->counties[index] = NULL;
 	}
 
-	deallocate( ty, sizeof(Territory) );
+	deallocate( ty, sizeof(cgc_Territory) );
 
 	return;
 }
@@ -294,7 +294,7 @@ void freeTerritory( pTerritory ty )
  * @param ty Pointer to a territory structure to initialize
  * @return Returns nothing
  **/
-void initTerritory( pTerritory ty )
+void cgc_initTerritory( cgc_pTerritory ty )
 {
 	int index = 0;
 
@@ -302,129 +302,129 @@ void initTerritory( pTerritory ty )
 		return;
 	}
 
-	bzero( ty->name, 20 );
-	bzero( ty->founder, 30);
+	cgc_bzero( ty->name, 20 );
+	cgc_bzero( ty->founder, 30);
 
 	ty->population = -1;
 	ty->county_count = 0;
 
 	ty->border_count = 0;
 
-	bzero( ty->borders, sizeof(pBorder) * TERRITORYBORDERMAX);
-	bzero( ty->counties, sizeof(pCounty) * TERRITORYCOUNTYMAX);
+	cgc_bzero( ty->borders, sizeof(cgc_pBorder) * TERRITORYBORDERMAX);
+	cgc_bzero( ty->counties, sizeof(cgc_pCounty) * TERRITORYCOUNTYMAX);
 
 	return;
 }
 
 /**
  * This function handles the top level parsing of territory elements
- * @param str Pointer to a string structure
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to a territory structure or NULL on failure
  **/
-pTerritory territoryTopLevel( pstring str )
+cgc_pTerritory cgc_territoryTopLevel( cgc_pstring str )
 {
-	pTerritory newTerritory = NULL;
+	cgc_pTerritory newTerritory = NULL;
 	char * temp_name = NULL;
 	int lastGood = 0;
 	int startIndex = 0;
 	int endIndex = 0;
-	element el = 0;
+	cgc_element el = 0;
 
 	if ( str == NULL ) {
 		goto end;
 	}
 
 	/// Allocate a new territory structure
-	if ( allocate(sizeof(Territory), 0, (void**)&newTerritory) != 0 ) {
+	if ( allocate(sizeof(cgc_Territory), 0, (void**)&newTerritory) != 0 ) {
 		newTerritory = NULL;
 		goto end;
 	}
 
-	initTerritory( newTerritory );
+	cgc_initTerritory( newTerritory );
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	lastGood = getIndex( str, &lastGood );
+	lastGood = cgc_getIndex( str, &lastGood );
 
-	if ( !atChar( str, '{' ) ) {
+	if ( !cgc_atChar( str, '{' ) ) {
 		goto error;
 	}
 
-	if ( incChar( str ) < 0 ) {
+	if ( cgc_incChar( str ) < 0 ) {
 		goto error;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	getIndex( str, &startIndex );
+	cgc_getIndex( str, &startIndex );
 
-	endIndex = skipAlpha( str );
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex == -1 || startIndex == endIndex ) {
 		goto error;
 	}
 	
-	/// Confirm the opening element;		
-	temp_name = copyData( str, startIndex, endIndex );
+	/// Confirm the opening cgc_element;		
+	temp_name = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp_name == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp_name, "Territory" ) != 0 ) {
-		printf("!!Territory: Invalid opening element id\n");
-		deallocate( temp_name, strlen(temp_name) + 1 );
+	if ( cgc_strcmp( temp_name, "cgc_Territory" ) != 0 ) {
+		cgc_printf("!!cgc_Territory: Invalid opening cgc_element id\n");
+		deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 		goto error;
 	}
 
-	deallocate(temp_name, strlen(temp_name) + 1 );
+	deallocate(temp_name, cgc_strlen(temp_name) + 1 );
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '}') ) {
+	if ( !cgc_atChar( str, '}') ) {
 		goto error;
 	}
 
-	incChar( str );
+	cgc_incChar( str );
 
 	lastGood = str->index;
 
-	temp_name = pullNextElementName( str );
+	temp_name = cgc_pullNextElementName( str );
 
 	while ( temp_name != NULL ) {
-		el = elementNameToEnum( temp_name );
+		el = cgc_elementNameToEnum( temp_name );
 
-		deallocate( temp_name, strlen(temp_name) + 1 );
+		deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 
 		switch (el) {
 			case name:
-				temp_name = extractName( str );
+				temp_name = cgc_extractName( str );
 
 				if ( temp_name == NULL ) {
 					goto error;
 				}
 
-				bzero( newTerritory->name, 20 );
-				strncpy( newTerritory->name, temp_name, 19 );
+				cgc_bzero( newTerritory->name, 20 );
+				cgc_strncpy( newTerritory->name, temp_name, 19 );
 
-				deallocate( temp_name, strlen(temp_name)+1);
+				deallocate( temp_name, cgc_strlen(temp_name)+1);
 				temp_name = NULL;
 				break;
 			case founder:
-				temp_name = extractFounder(str);
+				temp_name = cgc_extractFounder(str);
 
 				if ( !temp_name ) {
 					goto error;
 				}
 
-				bzero( newTerritory->founder, 30 );
-				strncpy( newTerritory->founder, temp_name, 29 );
+				cgc_bzero( newTerritory->founder, 30 );
+				cgc_strncpy( newTerritory->founder, temp_name, 29 );
 
-				deallocate(temp_name, strlen(temp_name)+1);
+				deallocate(temp_name, cgc_strlen(temp_name)+1);
 				temp_name = NULL;
 				break;
 			case population:
-				newTerritory->population = extractPopulation(str);
+				newTerritory->population = cgc_extractPopulation(str);
 
 				if (newTerritory->population < 0 ) {
 					goto error;
@@ -432,16 +432,16 @@ pTerritory territoryTopLevel( pstring str )
 
 				break;
 			case established:
-				newTerritory->established = extractEstablished( str );
+				newTerritory->established = cgc_extractEstablished( str );
 
 				break;
 			case border:
 				if ( newTerritory->border_count >= TERRITORYBORDERMAX ) {
-					printf("!!Max territory border count is @d\n", TERRITORYBORDERMAX);
+					cgc_printf("!!Max territory border count is @d\n", TERRITORYBORDERMAX);
 					goto error;
 				}
 
-				newTerritory->borders[newTerritory->border_count] = extractBorder(str);
+				newTerritory->borders[newTerritory->border_count] = cgc_extractBorder(str);
 
 				if ( newTerritory->borders[ newTerritory->border_count] == NULL ) {
 					goto error;
@@ -452,11 +452,11 @@ pTerritory territoryTopLevel( pstring str )
 				break;
 			case county:
 				if ( newTerritory->county_count >= TERRITORYCOUNTYMAX ) {
-					printf("!!Max territory county count is @d\n", TERRITORYCOUNTYMAX);
+					cgc_printf("!!Max territory county count is @d\n", TERRITORYCOUNTYMAX);
 					goto error;
 				}
 	
-				newTerritory->counties[newTerritory->county_count] = countyTopLevel( str );
+				newTerritory->counties[newTerritory->county_count] = cgc_countyTopLevel( str );
 
 				if ( newTerritory->counties[ newTerritory->county_count] == NULL ) {
 					goto error;
@@ -466,39 +466,39 @@ pTerritory territoryTopLevel( pstring str )
 
 				break;
 			default:
-				printf("Invalid for territory\n");
+				cgc_printf("Invalid for territory\n");
 				goto error;
 				break;
 		};
 
 		lastGood = str->index;
 
-		temp_name = pullNextElementName( str );
+		temp_name = cgc_pullNextElementName( str );
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if ( !atChar( str, '{' ) ) {
+	if ( !cgc_atChar( str, '{' ) ) {
 		goto error;
 	}
 
-	if ( skipLength( str, 1 ) < 0 ) {
+	if ( cgc_skipLength( str, 1 ) < 0 ) {
 		goto error;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if ( !atChar( str, '#' ) ) {
+	if ( !cgc_atChar( str, '#' ) ) {
 		goto error;
 	}
 
-	if ( skipLength( str, 1 ) < 0 ) {
+	if ( cgc_skipLength( str, 1 ) < 0 ) {
 		goto error;
 	}
 
 	startIndex = str->index;
 
-	endIndex = skipAlpha( str );
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex < 0 ) {
 		goto error;
@@ -508,48 +508,48 @@ pTerritory territoryTopLevel( pstring str )
 		goto error;
 	}
 
-	temp_name = copyData( str, startIndex, endIndex );
+	temp_name = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp_name == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp_name, "Territory" ) != 0 ) {
-		deallocate(temp_name, strlen(temp_name) + 1 );
+	if ( cgc_strcmp( temp_name, "cgc_Territory" ) != 0 ) {
+		deallocate(temp_name, cgc_strlen(temp_name) + 1 );
 		goto error;
 	}
 
-	deallocate( temp_name, strlen(temp_name) + 1 );
+	deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if ( !atChar( str, '}' ) ) {
+	if ( !cgc_atChar( str, '}' ) ) {
 		goto error;
 	}
 
-	incChar( str );
+	cgc_incChar( str );
 
 	goto end;
 error:
 	if ( newTerritory ) {
-		freeTerritory( newTerritory );
+		cgc_freeTerritory( newTerritory );
 		newTerritory = NULL;
 	}
 
 	str->index = lastGood;
 
-	printf("Error at: @s\n", str->buffer + str->index);
+	cgc_printf("Error at: @s\n", str->buffer + str->index);
 
 end:
 	return newTerritory;
 }
 
 /**
- * Parse the Founder element and return the stored value
- * @param str Pointer to a string structure
- * @return Returns the Founder string or NULL on failure
+ * Parse the Founder cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
+ * @return Returns the Founder cgc_string or NULL on failure
  **/
-char* extractFounder( pstring str )
+char* cgc_extractFounder( cgc_pstring str )
 {
 	char *temp = NULL;
 	char *founder = NULL;
@@ -560,143 +560,143 @@ char* extractFounder( pstring str )
 		return NULL;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return NULL;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return NULL;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return NULL;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return NULL;
 	}
 
-	if ( strcmp( temp, "Founder") != 0 ) {
-		deallocate( temp, strlen(temp) + 1 );
+	if ( cgc_strcmp( temp, "Founder") != 0 ) {
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		return NULL;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return NULL;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return NULL;
 	}
 
-	start = skipWhiteSpace( str );
-	end = skipToNonAlphaNumSpace( str );
+	start = cgc_skipWhiteSpace( str );
+	end = cgc_skipToNonAlphaNumSpace( str );
 
 	if ( start == end ) {
 		return NULL;
 	}
 	
 	/// Do not copy trailing whitespace
-	while( isspace( str->buffer[end-1] ) ) {
+	while( cgc_isspace( str->buffer[end-1] ) ) {
 		end--;
 	}
 
-	founder = copyData( str, start, end );
+	founder = cgc_copyData( str, start, end );
 
 	if ( founder == NULL ) {
 		return NULL;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		goto error;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		goto error;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		goto error;
 	}
 
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		goto error;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "Founder") != 0 ) {
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Founder") != 0 ) {
+		deallocate(temp, cgc_strlen(temp)+1);
 		goto error;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto error;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
 
 	goto end;
 
 error:
 	if (founder != NULL) {
-		deallocate( founder, strlen(founder) + 1 );
+		deallocate( founder, cgc_strlen(founder) + 1 );
 		founder = NULL;
 	}
 
@@ -705,11 +705,11 @@ end:
 }
 
 /**
- * Parse the Established element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Established cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the date established. It can be negative
  **/
-int extractEstablished( pstring str )
+int cgc_extractEstablished( cgc_pstring str )
 {
 	char *temp = NULL;
 	int established = 0;
@@ -724,146 +724,146 @@ int extractEstablished( pstring str )
 		goto error;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return established;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return established;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return established;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		goto error;
 	}
 
-	/// If the element id is not "Established" then this is the wrong function
-	if ( strcmp( temp, "Established") != 0 ) {
-		printf("!!Element id is not \"Established\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Established" then this is the wrong function
+	if ( cgc_strcmp( temp, "Established") != 0 ) {
+		cgc_printf("!!Element id is not \"Established\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return established;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		goto error;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return established;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
-	getIndex( str, &es );
+	cgc_getIndex( str, &es );
 
 	/// The established data must be an integer
-	ee = skipInt( str );
+	ee = cgc_skipInt( str );
 
 	if ( ee == -1 ) {
-		printf("!!Failed to locate the end of the established data\n");
+		cgc_printf("!!Failed to locate the end of the established data\n");
 		return established;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return established;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		goto error;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return established;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		goto error;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
-	if ( strcmp( temp, "Established") != 0 ) {
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Established") != 0 ) {
+		deallocate(temp, cgc_strlen(temp)+1);
 		return established;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto error;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the established element data
-	temp = copyData( str, es, ee );
+	/// Copy the established cgc_element data
+	temp = cgc_copyData( str, es, ee );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy established data\n");
+		cgc_printf("!!Failed to copy established data\n");
 		goto error;
 	}
 
-	established = atoi( temp );
+	established = cgc_atoi( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return established;
 

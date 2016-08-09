@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,7 +35,7 @@
  * @param end A pointer to hold the end of a match
  * @return EXIT_SUCCESS or EXIT_FAILURE
  */
-int regex_match(char *regex, char *line, char **begin, char **end);
+int cgc_regex_match(char *regex, char *line, char **begin, char **end);
 
 #endif /* REGEX_H_ */
 

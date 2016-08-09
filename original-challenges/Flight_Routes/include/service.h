@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,7 +41,7 @@ typedef struct connectionList {
 
 	struct connectionList *next;
 
-} connectionListType;
+} cgc_connectionListType;
 
 
 typedef struct airportInfo {
@@ -49,22 +49,22 @@ typedef struct airportInfo {
 	char code[4];
 	unsigned short delayFactor;
 
-	connectionListType *connections;
+	cgc_connectionListType *connections;
 
 	struct airportInfo *next;
 
-} airportInfoType;
+} cgc_airportInfoType;
 
 
-int loadDB( airportInfoType **airports );
-int showAirports( airportInfoType *airports, char *command );
-int addAirport( airportInfoType **airports, char *command );
-int deleteAirport( airportInfoType **airports, char *command );
-int findRoutes( airportInfoType *airports, char *command );
-int check4Code( airportInfoType *airports, char apCode[4]);
-int check4ConnectionCode( connectionListType *connections, char apCode[4] );
-int execute_cmd(airportInfoType **airports, char *buffer);
-unsigned int check_db();
+int cgc_loadDB( cgc_airportInfoType **airports );
+int cgc_showAirports( cgc_airportInfoType *airports, char *command );
+int cgc_addAirport( cgc_airportInfoType **airports, char *command );
+int cgc_deleteAirport( cgc_airportInfoType **airports, char *command );
+int cgc_findRoutes( cgc_airportInfoType *airports, char *command );
+int cgc_check4Code( cgc_airportInfoType *airports, char apCode[4]);
+int cgc_check4ConnectionCode( cgc_connectionListType *connections, char apCode[4] );
+int cgc_execute_cmd(cgc_airportInfoType **airports, char *buffer);
+unsigned int cgc_check_db();
 
 #endif
 

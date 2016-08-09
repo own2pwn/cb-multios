@@ -31,32 +31,32 @@ THE SOFTWARE.
 
 #define CSI "\x1b\x5b"
 
-void EraseToEOL(void) {
-	printf("$sK", CSI);
+void cgc_EraseToEOL(void) {
+	cgc_printf("$sK", CSI);
 }
 
-void EraseLine(uint8_t StartingX) {
+void cgc_EraseLine(cgc_uint8_t StartingX) {
 	// move to X
-	printf("$s$dG", CSI, StartingX);
+	cgc_printf("$s$dG", CSI, StartingX);
 	// clear to the end of the line
-	EraseToEOL();
+	cgc_EraseToEOL();
 }
 
-void MoveCursor(uint8_t x, uint8_t y) {
-	printf("$s$d;$dH", CSI, x, y);
+void cgc_MoveCursor(cgc_uint8_t x, cgc_uint8_t y) {
+	cgc_printf("$s$d;$dH", CSI, x, y);
 }
 
-void ClearScreen(void) {
-	printf("$s$d$c", CSI, 2, 'J');
-	MoveCursor(1,1);
+void cgc_ClearScreen(void) {
+	cgc_printf("$s$d$c", CSI, 2, 'J');
+	cgc_MoveCursor(1,1);
 }
 
-void CursorRight(uint8_t NumSpaces) {
-	printf("$s$dC", CSI, NumSpaces);
+void cgc_CursorRight(cgc_uint8_t NumSpaces) {
+	cgc_printf("$s$dC", CSI, NumSpaces);
 }
 
-void CursorLeft(uint8_t NumSpaces) {
-	printf("$s$dD", CSI, NumSpaces);
+void cgc_CursorLeft(cgc_uint8_t NumSpaces) {
+	cgc_printf("$s$dD", CSI, NumSpaces);
 }
 
 

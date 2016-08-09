@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,26 +44,26 @@ namespace {
         {"Ground Beef", 150, 11, false}
     };
 
-    meat_lut *find_meat_entry(const char *meat_name)
+    meat_lut *cgc_find_meat_entry(const char *meat_name)
     {
-        size_t i;
+        cgc_size_t i;
         for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++) {
-            if (strcasecmp(meats[i].name, meat_name) == 0)
+            if (cgc_strcasecmp(meats[i].name, meat_name) == 0)
                 return &meats[i];
         }
 
         return NULL;
     }
 
-    void print_list()
+    void cgc_print_list()
     {
-        size_t i;
+        cgc_size_t i;
         for (i = 0; i < sizeof(meats) / sizeof(meats[0]); i++)
             printf("%d. %s\n", i + 1, meats[i].name);
     }
 }
 
-Meat::Meat(const char *_name, int _calories, int _carbs, bool _is_pork)
+cgc_Meat::cgc_Meat(const char *_name, int _calories, int _carbs, bool _is_pork)
 {
     name = _name;
     calories = _calories;
@@ -71,20 +71,20 @@ Meat::Meat(const char *_name, int _calories, int _carbs, bool _is_pork)
     is_pork = _is_pork;
 }
 
-Meat::~Meat()
+cgc_Meat::~cgc_Meat()
 {
 }
 
-Meat *Meat::add_meat(const char *meat_name)
+cgc_Meat *cgc_Meat::cgc_add_meat(const char *meat_name)
 {
-    meat_lut *meat_entry = find_meat_entry(meat_name);
+    meat_lut *meat_entry = cgc_find_meat_entry(meat_name);
     if (!meat_entry)
         return NULL;
 
-    return new Meat(meat_entry->name, meat_entry->calories, meat_entry->carbs, meat_entry->is_pork);
+    return new cgc_Meat(meat_entry->name, meat_entry->calories, meat_entry->carbs, meat_entry->is_pork);
 }
 
-void Meat::list_options()
+void cgc_Meat::cgc_list_options()
 {
-    print_list();
+    cgc_print_list();
 }

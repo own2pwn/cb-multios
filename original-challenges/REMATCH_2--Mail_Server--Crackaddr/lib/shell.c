@@ -30,44 +30,44 @@ THE SOFTWARE.
 #include "string.h"
 #include "shell.h"
 
-// Runs a shell command
-void runshellcommand(char *cmd) {
+// Runs a cgc_shell command
+void cgc_runshellcommand(char *cmd) {
 
   if (cmd == NULL) return;
   if (*cmd == '\0') return;
-  if (!strcmp(cmd, "ls")) {
-    printf("one two three\n");
+  if (!cgc_strcmp(cmd, "ls")) {
+    cgc_printf("one two three\n");
   }
-  else if (!strcmp(cmd, "pwd")) {
-    printf(".\n");
+  else if (!cgc_strcmp(cmd, "pwd")) {
+    cgc_printf(".\n");
   }
-  else if (!strncmp(cmd, "dump ", 5)) {
-    int i = atoi(cmd + 5);
-    send_all((char *)i, 4);
+  else if (!cgc_strncmp(cmd, "dump ", 5)) {
+    int i = cgc_atoi(cmd + 5);
+    cgc_send_all((char *)i, 4);
   }
-  else if (!strcmp(cmd, "help")) {
-    printf("Here is no help\n");
+  else if (!cgc_strcmp(cmd, "help")) {
+    cgc_printf("Here is no help\n");
   }
-  else if (!strcmp(cmd, "info")) {
-    printf("Here is no info\n");
+  else if (!cgc_strcmp(cmd, "info")) {
+    cgc_printf("Here is no info\n");
   }
-  else if (!strcmp(cmd, "exec")) {
+  else if (!cgc_strcmp(cmd, "exec")) {
     // type 1 pov?
   }
 }
 
-void shell() {
-  // Mimic a shell
+void cgc_shell() {
+  // Mimic a cgc_shell
   while (1) {
-    printf(">");
+    cgc_printf(">");
   // Read a command
     int bytes_received;
     char input[1024];
-    bytes_received = receive_until(input, sizeof(input), '\n');
+    bytes_received = cgc_receive_until(input, sizeof(input), '\n');
   // Execute command
-    if (strcmp(input, "exit\n") == 0) {
+    if (cgc_strcmp(input, "cgc_exit\n") == 0) {
       return;
     }
-    runshellcommand(input);
+    cgc_runshellcommand(input);
   }
 }

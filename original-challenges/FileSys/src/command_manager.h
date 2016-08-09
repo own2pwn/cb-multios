@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,20 +33,20 @@ extern "C" {
 #include "file_manager.h"
 #include "llist.h"
 
-class CommandManager
+class cgc_CommandManager
 {
   protected:
-    List<Command *> *commands;
-    FileManager *fm;
+    cgc_List<cgc_Command *> *commands;
+    cgc_FileManager *fm;
 
   public:
-    CommandManager(FileManager *fm);
-    ~CommandManager();
+    cgc_CommandManager(cgc_FileManager *fm);
+    ~cgc_CommandManager();
 
-    List<Command *>* GetCommands();
-    void InstallCommand(Command *cmd);
-    void UninstallCommand(const char* name);
-    int ExecuteCommand(const char* name, int argc, char** argv);
+    cgc_List<cgc_Command *>* cgc_GetCommands();
+    void cgc_InstallCommand(cgc_Command *cmd);
+    void cgc_UninstallCommand(const char* name);
+    int cgc_ExecuteCommand(const char* name, int argc, char** argv);
 };
 
 #endif

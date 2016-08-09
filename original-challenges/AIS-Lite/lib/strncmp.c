@@ -21,7 +21,7 @@
 */
 #include "strncmp.h"
 
-int strncmp(const char *str1, const char *str2, unsigned int n) {
+int cgc_strncmp(const char *str1, const char *str2, unsigned int n) {
 	int idx = 0;
 
 	if (0 == n) {

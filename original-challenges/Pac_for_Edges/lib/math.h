@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,12 +26,12 @@
 #define NAN __builtin_nan("")
 #define PI 3.14159265358979323846264338327950288
 
-static inline double fmin(double a, double b)
+static inline double cgc_fmin(double a, double b)
 {
     return a < b ? a : b;
 }
 
-static inline double fmax(double a, double b)
+static inline double cgc_fmax(double a, double b)
 {
     return a > b ? a : b;
 }

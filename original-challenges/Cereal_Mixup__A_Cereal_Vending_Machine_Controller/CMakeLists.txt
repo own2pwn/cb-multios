@@ -1,0 +1,5 @@
+set( SERVICE_ID "00075" )
+set( AUTHOR_ID "NRFIN" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -g " )
+set( VULN_COUNT "1" )
+buildCB(${CFLAGS})

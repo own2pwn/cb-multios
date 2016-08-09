@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,16 +23,16 @@
 #include "libc.h"
 #include "service.h"
 
-void newReport(Report *report) {
+void cgc_newReport(cgc_Report *report) {
 	char character = 0;
 	char* string = NULL;
 	short pos = 0, prev_pos=0;
 	short num_fields = 0;
-	Field* new_field = NULL;
+	cgc_Field* new_field = NULL;
 
 	while(END_CHAR != character) {
 		if(SPLIT_CHAR == character) {
-			new_field = malloc(sizeof(Field));
+			new_field = cgc_malloc(sizeof(cgc_Field));
 #ifdef PATCHED
 			if(new_field == NULL)
 				_terminate(ALLOCATE_ERROR);
@@ -48,14 +48,14 @@ void newReport(Report *report) {
 			prev_pos = pos;
 			num_fields++;
 		}
-		recv(STDIN, &character, sizeof(character));
+		cgc_recv(STDIN, &character, sizeof(character));
 		pos++;
 #ifdef PATCHED
         if(pos < 0)
             _terminate(FIELD_SIZE_ERROR);
 #endif
 	}
-	new_field = malloc(sizeof(Field));
+	new_field = cgc_malloc(sizeof(cgc_Field));
 #ifdef PATCHED
 	if(new_field == NULL)
 		_terminate(ALLOCATE_ERROR);
@@ -78,19 +78,19 @@ void newReport(Report *report) {
 #endif
 }
 
-void sendReport(Report *report) {
-	Record* nextRecord = NULL;
+void cgc_sendReport(cgc_Report *report) {
+	cgc_Record* nextRecord = NULL;
 	int ret=0;
 
 	for(nextRecord=report->head; nextRecord != NULL; nextRecord = nextRecord->next) {
-		if(transmit_all(STDOUT, nextRecord->data, report->record_size)) 
+		if(cgc_transmit_all(STDOUT, nextRecord->data, report->record_size)) 
 			_terminate(TRANSMIT_ERROR);
 	}
 }
 
-void splitReport(Record *source, Record **front, Record **back) {
-	Record *fast;
-	Record *slow;
+void cgc_splitReport(cgc_Record *source, cgc_Record **front, cgc_Record **back) {
+	cgc_Record *fast;
+	cgc_Record *slow;
 
 	if(!source || !source->next) {
 		*front = source;
@@ -114,8 +114,8 @@ void splitReport(Record *source, Record **front, Record **back) {
 
 }
 
-Record* mergeReport(Record* a, Record* b, Field* field) {
-	Record* result = NULL;
+cgc_Record* cgc_mergeReport(cgc_Record* a, cgc_Record* b, cgc_Field* field) {
+	cgc_Record* result = NULL;
 	int compare;
 
 	if(!a)
@@ -124,45 +124,45 @@ Record* mergeReport(Record* a, Record* b, Field* field) {
 	if(!b)
 		return a;
 
-	compare = strncmp(&a->data[field->start], &b->data[field->start], field->size);
+	compare = cgc_strncmp(&a->data[field->start], &b->data[field->start], field->size);
 
 	if(compare <= 0) {
 		result = a;
-		result->next = mergeReport(a->next, b, field);
+		result->next = cgc_mergeReport(a->next, b, field);
 	} else {
 		result = b;
-		result->next = mergeReport(a, b->next, field);
+		result->next = cgc_mergeReport(a, b->next, field);
 	}
 
 	return result;
 }
 
-void sortReport(Record **headRef, Field* field) {
-	Record *head = *headRef;
-	Record *a=NULL, *b=NULL;
+void cgc_sortReport(cgc_Record **headRef, cgc_Field* field) {
+	cgc_Record *head = *headRef;
+	cgc_Record *a=NULL, *b=NULL;
 
 	if(!head || !head->next)
 		return;
 
-	splitReport(head, &a, &b);
-	sortReport(&a, field);
-	sortReport(&b, field);
+	cgc_splitReport(head, &a, &b);
+	cgc_sortReport(&a, field);
+	cgc_sortReport(&b, field);
 
-	*headRef = mergeReport(a, b, field);
+	*headRef = cgc_mergeReport(a, b, field);
 
 }
 
-void filterReport(Report *report, Report* filteredReport, char* filterString) {
-	Record* nextRecord = NULL;
-	Field* nextField = NULL;
+void cgc_filterReport(cgc_Report *report, cgc_Report* filteredReport, char* filterString) {
+	cgc_Record* nextRecord = NULL;
+	cgc_Field* nextField = NULL;
 	int compare = 0;
 
 	for(nextRecord = report->head; nextRecord != NULL; nextRecord = nextRecord->next) {
 		for(nextField = report->fields; nextField->next != NULL; nextField = nextField->next) {
-			compare = strncmp(&nextRecord->data[nextField->start], &filterString[nextField->start], nextField->size);
+			compare = cgc_strncmp(&nextRecord->data[nextField->start], &filterString[nextField->start], nextField->size);
 			if(!compare) {
-				Record* record;
-				record = malloc(sizeof(Record));
+				cgc_Record* record;
+				record = cgc_malloc(sizeof(cgc_Record));
 #ifdef PATCHED
 				if(record == NULL)
 					_terminate(ALLOCATE_ERROR);
@@ -178,54 +178,54 @@ void filterReport(Report *report, Report* filteredReport, char* filterString) {
 }
 
 
-int newRecord(Report *report) {
-	Record* record = NULL;
+int cgc_newRecord(cgc_Report *report) {
+	cgc_Record* record = NULL;
 	short second_field_size = 0;
 	char* receive_buf = NULL;
-	Field* nextField = NULL;
+	cgc_Field* nextField = NULL;
 	short field_index = 0;
 
-	record = malloc(sizeof(Record));
+	record = cgc_malloc(sizeof(cgc_Record));
 #ifdef PATCHED
 	if(record == NULL)
 		_terminate(ALLOCATE_ERROR);
 #endif
 	record->next = NULL;
-	record->data = malloc(report->record_size*2); 
+	record->data = cgc_malloc(report->record_size*2); 
 #ifdef PATCHED
 	if(record->data == NULL)
 		_terminate(ALLOCATE_ERROR);
 #endif
-	receive_buf = malloc(report->record_size*2);
+	receive_buf = cgc_malloc(report->record_size*2);
 #ifdef PATCHED
 	if(receive_buf == NULL)
 		_terminate(ALLOCATE_ERROR);
 #endif
 
-	memset(record->data, 0, report->record_size);
+	cgc_memset(record->data, 0, report->record_size);
     
     for(nextField = report->fields; nextField != NULL; nextField = nextField->next) {
-    	memset(receive_buf, 0, report->record_size);
-    	recv(STDIN, receive_buf, nextField->size);
+    	cgc_memset(receive_buf, 0, report->record_size);
+    	cgc_recv(STDIN, receive_buf, nextField->size);
 
-    	strcpy(&record->data[field_index], receive_buf);
+    	cgc_strcpy(&record->data[field_index], receive_buf);
     	field_index += nextField->size;
     }
 
-	free(receive_buf);
+	cgc_free(receive_buf);
 
-	if(startswith(record->data, "END")) {
-		free(record->data);
-		free(record);
+	if(cgc_startswith(record->data, "END")) {
+		cgc_free(record->data);
+		cgc_free(record);
 		return 0;
-	} else if(startswith(record->data, "REPORT")) {
-		sendReport(report);
-		free(record->data);
-		free(record);
+	} else if(cgc_startswith(record->data, "REPORT")) {
+		cgc_sendReport(report);
+		cgc_free(record->data);
+		cgc_free(record);
 		return 1;
-	} else if(startswith(record->data, "SORT")) {
+	} else if(cgc_startswith(record->data, "SORT")) {
 		unsigned short field_index;
-		Field* key;
+		cgc_Field* key;
 
 		field_index = record->data[sizeof("SORT")-1];
 		for(key = report->fields; key != NULL; key=key->next) {
@@ -236,32 +236,32 @@ int newRecord(Report *report) {
 		}
 
 		if(key)
-			sortReport(&report->head, key);
+			cgc_sortReport(&report->head, key);
 
-		free(record->data);
-		free(record);
+		cgc_free(record->data);
+		cgc_free(record);
 
 		return 1;
-	} else if(startswith(record->data, "FREPORT")) {
-		Report filteredReport = {NULL, 0, 0};
+	} else if(cgc_startswith(record->data, "FREPORT")) {
+		cgc_Report filteredReport = {NULL, 0, 0};
 		filteredReport.record_size = report->record_size;
-		filterReport(report, &filteredReport, record->data);
-		sendReport(&filteredReport);
-		free(record->data);
-		free(record);
+		cgc_filterReport(report, &filteredReport, record->data);
+		cgc_sendReport(&filteredReport);
+		cgc_free(record->data);
+		cgc_free(record);
 
 		return 1;
 	} else {
 		char* command;
 		command = &record->data[report->fields->start];
 
-		if(startswith(command, "ERROR")) {
+		if(cgc_startswith(command, "ERROR")) {
 #ifdef PATCHED
-			free(record->data);
+			cgc_free(record->data);
 #else
-			free(command);
+			cgc_free(command);
 #endif
-			free(record);
+			cgc_free(record);
 			return 1;
 		}
 	}
@@ -274,11 +274,11 @@ int newRecord(Report *report) {
 }
 
 int main(void) {
-	Report report = {NULL, 0, 0};
+	cgc_Report report = {NULL, 0, 0};
 	char* field = NULL;
 
-	newReport(&report);
- 	while(newRecord(&report));
+	cgc_newReport(&report);
+ 	while(cgc_newRecord(&report));
 
 	return 0;
 }

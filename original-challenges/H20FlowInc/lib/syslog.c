@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,15 +25,15 @@
 #include "syslog.h"
 #include "sendall.h"
 
-// syslog
-#define MAX_SYSLOG_LEN 1024 // max len of a syslog log entry
+// cgc_syslog
+#define MAX_SYSLOG_LEN 1024 // max len of a cgc_syslog log entry
 
 typedef struct _syslog_codes {
         char    *code_name;
         int     code_val;
-} CODES;
+} cgc_CODES;
 
-CODES priorities_array[] =
+cgc_CODES priorities_array[] =
   {
     { "EMERGENCY", LOG_EMERGENCY },
     { "ALERT", LOG_ALERT },
@@ -46,25 +46,25 @@ CODES priorities_array[] =
     { NULL, -1 }
   };
 
-int syslog(int priority, const char *format, ...) {
+int cgc_syslog(int priority, const char *format, ...) {
     char log_entry[MAX_SYSLOG_LEN] = { 0 };
     char *log_entry_idx = log_entry;
     int ret;
     char *pri_str = priorities_array[priority].code_name;
     int log_entry_len;
-    va_list args;
+    cgc_va_list args;
 
     // write priority to log_entry buffer
-    log_entry_len = snprintf(log_entry_idx, MAX_SYSLOG_LEN, "~c: ", pri_str);
+    log_entry_len = cgc_snprintf(log_entry_idx, MAX_SYSLOG_LEN, "~c: ", pri_str);
     log_entry_idx += log_entry_len;
 
     // process format string and write it to log_entry buffer
     va_start(args, format);
-    log_entry_len += vsnprintf(log_entry_idx, MAX_SYSLOG_LEN - log_entry_len, format, args);
+    log_entry_len += cgc_vsnprintf(log_entry_idx, MAX_SYSLOG_LEN - log_entry_len, format, args);
     va_end(args);
 
-    // send log_entry to stdout
-    ret = sendall(STDOUT, log_entry, (log_entry_len < MAX_SYSLOG_LEN ? log_entry_len : MAX_SYSLOG_LEN));
+    // cgc_send log_entry to stdout
+    ret = cgc_sendall(STDOUT, log_entry, (log_entry_len < MAX_SYSLOG_LEN ? log_entry_len : MAX_SYSLOG_LEN));
     if (ret != 0)
         _terminate(ERRNO_SEND);
 

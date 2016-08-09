@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,15 +27,15 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include "service.h"
 
-void print_main_menu(void) {
+void cgc_print_main_menu(void) {
 
 
-	printf("\n");
-	printf("1 - Enter a Recipe\n");
-	printf("2 - Find a Recipe\n");
-	printf("3 - Print Tagged Recipes\n");
-	printf("4 - Print Shopping List\n");
-	printf("5 - Exit\n");
+	cgc_printf("\n");
+	cgc_printf("1 - Enter a Recipe\n");
+	cgc_printf("2 - Find a Recipe\n");
+	cgc_printf("3 - Print Tagged Recipes\n");
+	cgc_printf("4 - Print Shopping List\n");
+	cgc_printf("5 - Exit\n");
 
 
 }

@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,10 +30,10 @@
 #include "gb.h"
 #include "util.h"
 
-static void copy_title(char *dst, const hdr_t *hdr);
-static void update_joypad(gb_t *gb);
+static void cgc_copy_title(char *dst, const cgc_hdr_t *hdr);
+static void cgc_update_joypad(cgc_gb_t *gb);
 
-static int gb_init(gb_t *gb)
+static int cgc_gb_init(cgc_gb_t *gb)
 {
     // XXX one-byte buffer in case of 2-byte store/load to 0xFFFF
     if (allocate(MEM_SIZE + 1, 0, (void**)&gb->mem) != 0)
@@ -49,7 +49,7 @@ static int gb_init(gb_t *gb)
     return 1;
 }
 
-void gb_reset(gb_t *gb)
+void cgc_gb_reset(cgc_gb_t *gb)
 {
     // Registers
     gb->R_AF = 0x01B0;
@@ -108,22 +108,22 @@ void gb_reset(gb_t *gb)
     gb->vblank = 0;
 }
 
-gb_t *gb_new()
+cgc_gb_t *cgc_gb_new()
 {
-    gb_t *gb;
-    if (allocate(sizeof(gb_t), 0, (void **)&gb) != 0)
+    cgc_gb_t *gb;
+    if (allocate(sizeof(cgc_gb_t), 0, (void **)&gb) != 0)
         return NULL;
-    if (!gb_init(gb))
+    if (!cgc_gb_init(gb))
         return NULL;
     return gb;
 }
 
-int gb_load(gb_t *gb, uint8_t *cartridge)
+int cgc_gb_load(cgc_gb_t *gb, cgc_uint8_t *cartridge)
 {
-    memcpy(gb->rom, cartridge, ROM_SIZE);
+    cgc_memcpy(gb->rom, cartridge, ROM_SIZE);
 
-    hdr_t *hdr = (hdr_t *)&gb->rom[0x100];
-    copy_title(gb->title, hdr);
+    cgc_hdr_t *hdr = (cgc_hdr_t *)&gb->rom[0x100];
+    cgc_copy_title(gb->title, hdr);
     ERR("Loading %s", gb->title);
 
     if (hdr->rom_size != ROM_32KB || hdr->ram_size != RAM_NONE)
@@ -135,14 +135,14 @@ int gb_load(gb_t *gb, uint8_t *cartridge)
     return 1;
 }
 
-int gb_tick(gb_t *gb)
+int cgc_gb_tick(cgc_gb_t *gb)
 {
-    update_joypad(gb);
+    cgc_update_joypad(gb);
 
-    if (!cpu_tick(gb))
+    if (!cgc_cpu_tick(gb))
         return 0;
 
-    if (!lcd_tick(gb))
+    if (!cgc_lcd_tick(gb))
         return 0;
 
     if (++gb->ticks == TICKS_MAX)
@@ -155,7 +155,7 @@ int gb_tick(gb_t *gb)
     if (gb->mem[IO_DMA] != 0xFF)
     {
         // XXX instant DMA?
-        memcpy(&gb->mem[0xFE00], &gb->mem[gb->mem[IO_DMA] << 8], 0xA0);
+        cgc_memcpy(&gb->mem[0xFE00], &gb->mem[gb->mem[IO_DMA] << 8], 0xA0);
         gb->mem[IO_DMA] = 0xFF;
     }
 
@@ -191,19 +191,19 @@ int gb_tick(gb_t *gb)
             {
                 //overflow
                 gb->mem[IO_TIMA] = gb->mem[IO_TMA];
-                cpu_interrupt(gb, 2);
+                cgc_cpu_interrupt(gb, 2);
             }
         }
     }
     return 1;
 }
 
-static void copy_title(char *dst, const hdr_t *hdr)
+static void cgc_copy_title(char *dst, const cgc_hdr_t *hdr)
 {
     // should be strictly UPPERCASE ASCII
     // some new cartridges put flags in title
-    size_t i;
-    for (i = 0; isupper(hdr->title[i]); i++)
+    cgc_size_t i;
+    for (i = 0; cgc_isupper(hdr->title[i]); i++)
         if (i < TITLE_SIZE)
             dst[i] = hdr->title[i];
 #ifdef PATCHED
@@ -213,7 +213,7 @@ static void copy_title(char *dst, const hdr_t *hdr)
     dst[i] = 0;
 }
 
-static void update_joypad(gb_t *gb)
+static void cgc_update_joypad(cgc_gb_t *gb)
 {
     gb->mem[IO_JOYP] |= 0xF;
     if (!(gb->mem[IO_JOYP] & (1 << 4)))

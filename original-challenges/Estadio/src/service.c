@@ -35,58 +35,58 @@ THE SOFTWARE.
 
 const int gauntlet_count = 32;
 
-void seed();
-void gauntlet();
-void operate();
+void cgc_seed();
+void cgc_gauntlet();
+void cgc_operate();
 
 int main(void) {
-  send_empty_frame(HELLO_ID);
-  expect_empty_frame(HELLO_ID);
+  cgc_send_empty_frame(HELLO_ID);
+  cgc_expect_empty_frame(HELLO_ID);
 
-  seed();
-  gauntlet();
+  cgc_seed();
+  cgc_gauntlet();
 
   while(1) {
-    operate();
+    cgc_operate();
   }
 
   return 0;
 }
 
-void seed() {
-  protocol_frame* seed_data = expect_frame(SEED_REQ_ID);
-  handle_seed(seed_data);
-  free_frame(seed_data);
+void cgc_seed() {
+  cgc_protocol_frame* seed_data = cgc_expect_frame(SEED_REQ_ID);
+  cgc_handle_seed(seed_data);
+  cgc_free_frame(seed_data);
 }
 
-void gauntlet() {
+void cgc_gauntlet() {
   for (int i = 0; i < gauntlet_count; i++) {
-    protocol_frame* guess_data = expect_frame(GUESS_REQ_ID);
-    handle_guess(guess_data);
-    free_frame(guess_data);
+    cgc_protocol_frame* guess_data = cgc_expect_frame(GUESS_REQ_ID);
+    cgc_handle_guess(guess_data);
+    cgc_free_frame(guess_data);
   }
 }
 
-void operate() {
+void cgc_operate() {
   transmit(STDERR, ".", 1, NULL);
-  protocol_frame* frame = receive_frame();
+  cgc_protocol_frame* frame = cgc_receive_frame();
 
   switch(frame->type) {
   case SEED_REQ_ID:
-    handle_seed(frame);
+    cgc_handle_seed(frame);
     break;
   case RAND_REQ_ID:
-    handle_rand(frame);
+    cgc_handle_rand(frame);
     break;
   case GUESS_REQ_ID:
-    handle_guess(frame);
+    cgc_handle_guess(frame);
     break;
   case ECHO_REQ_ID:
-    handle_echo(frame);
+    cgc_handle_echo(frame);
     break;
   default:
     _terminate(-1);
   }
 
-  free_frame(frame);
+  cgc_free_frame(frame);
 }

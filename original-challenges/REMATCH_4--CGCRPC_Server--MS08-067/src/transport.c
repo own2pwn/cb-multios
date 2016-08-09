@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,11 +30,11 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "transport.h"
 
-int ReceiveBytes(uint8_t *buffer, int length)
+int cgc_ReceiveBytes(cgc_uint8_t *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue;
-  size_t bytesReceived;
+  cgc_size_t bytesReceived;
 
   if (buffer == NULL) 
   {
@@ -59,11 +59,11 @@ int ReceiveBytes(uint8_t *buffer, int length)
 
 
 
-int TransmitBytes(uint8_t *buffer, int length)
+int cgc_TransmitBytes(cgc_uint8_t *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue = 0;
-  size_t bytesSent;
+  cgc_size_t bytesSent;
 
   while (totalBytes < length)
   {
@@ -82,7 +82,7 @@ int TransmitBytes(uint8_t *buffer, int length)
 }
 
 
-void ResetTransportMessage(TransportMessage *tpMessage)
+void cgc_ResetTransportMessage(cgc_TransportMessage *tpMessage)
 {
   if (tpMessage == NULL) 
   {
@@ -91,60 +91,60 @@ void ResetTransportMessage(TransportMessage *tpMessage)
   tpMessage->currentOffset = 0;
 }
 
-int ReceiveTransportMessage(TransportMessage **ptpMessage)
+int cgc_ReceiveTransportMessage(cgc_TransportMessage **ptpMessage)
 {
-  TransportMessage *tpMessage= calloc(sizeof(TransportMessage));
-  ReceiveBytes((uint8_t *)&tpMessage->reserved, sizeof(tpMessage->reserved));
+  cgc_TransportMessage *tpMessage= cgc_calloc(sizeof(cgc_TransportMessage));
+  cgc_ReceiveBytes((cgc_uint8_t *)&tpMessage->reserved, sizeof(tpMessage->reserved));
   if (tpMessage->reserved != 0)
   {
     goto FAIL;
   }
-  ReceiveBytes((uint8_t *)&tpMessage->size, sizeof(tpMessage->size));
+  cgc_ReceiveBytes((cgc_uint8_t *)&tpMessage->size, sizeof(tpMessage->size));
   if (tpMessage->size > MAX_TRANSPORT_SIZE)
   {
     goto FAIL;
   }
-  tpMessage->data = calloc(tpMessage->size);
-  ReceiveBytes((uint8_t *)tpMessage->data, tpMessage->size);
+  tpMessage->data = cgc_calloc(tpMessage->size);
+  cgc_ReceiveBytes((cgc_uint8_t *)tpMessage->data, tpMessage->size);
   
   *ptpMessage = tpMessage;
   return 0;
 
 FAIL:
-  DestroyTransportMessage(&tpMessage);
+  cgc_DestroyTransportMessage(&tpMessage);
   *ptpMessage = NULL;
   return -1;
 }
 
-void DestroyTransportMessage(TransportMessage **ptpMessage)
+void cgc_DestroyTransportMessage(cgc_TransportMessage **ptpMessage)
 {
   if (ptpMessage == NULL)
   {
     _terminate(-1);
   }
-  TransportMessage *tpMessage = *ptpMessage;
+  cgc_TransportMessage *tpMessage = *ptpMessage;
   if (tpMessage == NULL)
   {
     return;
   }
   if (tpMessage->data != NULL) 
   {
-    free(tpMessage->data);
+    cgc_free(tpMessage->data);
     tpMessage->data = NULL;
   }
-  free(tpMessage);
+  cgc_free(tpMessage);
   *ptpMessage = NULL;
 
 }
 
-void SendTransportMessage(TransportMessage *tpMessage) 
+void cgc_SendTransportMessage(cgc_TransportMessage *tpMessage) 
 {
-  TransmitBytes((uint8_t *)&tpMessage->reserved, sizeof(tpMessage->reserved));
-  TransmitBytes((uint8_t *)&tpMessage->size, sizeof(tpMessage->size));
-  TransmitBytes((uint8_t *)tpMessage->data, tpMessage->size);
+  cgc_TransmitBytes((cgc_uint8_t *)&tpMessage->reserved, sizeof(tpMessage->reserved));
+  cgc_TransmitBytes((cgc_uint8_t *)&tpMessage->size, sizeof(tpMessage->size));
+  cgc_TransmitBytes((cgc_uint8_t *)tpMessage->data, tpMessage->size);
 }
 
-int ReadFromTransportMessage(TransportMessage *tpMessage, uint8_t *buffer, int size)
+int cgc_ReadFromTransportMessage(cgc_TransportMessage *tpMessage, cgc_uint8_t *buffer, int size)
 {
   if ((tpMessage == NULL) || (buffer == NULL))
   {
@@ -158,7 +158,7 @@ int ReadFromTransportMessage(TransportMessage *tpMessage, uint8_t *buffer, int s
   {
     return -1;
   }
-  memcpy(buffer, (uint8_t *)tpMessage->data + tpMessage->currentOffset, size);
+  cgc_memcpy(buffer, (cgc_uint8_t *)tpMessage->data + tpMessage->currentOffset, size);
   tpMessage->currentOffset += size;
 
   return 0;

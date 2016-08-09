@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "paint.h"
 
 // Allocates memory for each layer and creates new canvas object
-int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers) {
+int cgc_CreateCanvas(cgc_Canvas **can, cgc_uint16_t y_size, cgc_uint16_t x_size, cgc_uint8_t layers) {
   
   if (layers > CANVAS_MAX_LAYERS) {
     return -1;
@@ -40,11 +40,11 @@ int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers)
     return -1;
   }
   #endif 
-  Canvas *c;
-  if (allocate(sizeof(Canvas), 0, (void **)&c) != 0) {
+  cgc_Canvas *c;
+  if (allocate(sizeof(cgc_Canvas), 0, (void **)&c) != 0) {
     _terminate(-1);
   }
-  memset(c, 0, sizeof(Canvas));
+  cgc_memset(c, 0, sizeof(cgc_Canvas));
   c->y_size = y_size;
   c->x_size = x_size;
 
@@ -54,15 +54,15 @@ int CreateCanvas(Canvas **can, uint16_t y_size, uint16_t x_size, uint8_t layers)
       _terminate(-1);
     }
     // Initialize with default color
-    memset(c->layers[i], CANVAS_DEFAULT_COLOR, y_size * x_size);
+    cgc_memset(c->layers[i], CANVAS_DEFAULT_COLOR, y_size * x_size);
   }
   c->num_layers = layers;
   *can = c;
   return 0;
 }
 
-// Deallocate the memory used by the Canvas structure
-void DestroyCanvas(Canvas **c) {
+// Deallocate the memory used by the cgc_Canvas structure
+void cgc_DestroyCanvas(cgc_Canvas **c) {
   if (*c == NULL) {
     return;
   }
@@ -72,19 +72,19 @@ void DestroyCanvas(Canvas **c) {
       (*c)->layers[l] = NULL;
     }
   }
-  deallocate(*c, sizeof(Canvas));
+  deallocate(*c, sizeof(cgc_Canvas));
   *c = NULL;
 }
 
 // Flattens the canvas 
 // Starting from layer 1 and moving up, any non-default colors are overlayed onto layer 0
-void FlattenCanvas(Canvas *c) {
+void cgc_FlattenCanvas(cgc_Canvas *c) {
   for (int l = 1; l < c->num_layers; l++) {
     for (int y = 0; y < c->y_size; y++) {
       for (int x = 0; x < c->x_size; x++) {
-        int color = GetColorIndex(c, y, x, l);
+        int color = cgc_GetColorIndex(c, y, x, l);
         if (color != CANVAS_DEFAULT_COLOR) {
-          SetColor(c, y, x, 0, color);
+          cgc_SetColor(c, y, x, 0, color);
         }
       }
     }

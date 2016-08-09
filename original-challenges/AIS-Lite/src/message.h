@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,7 +35,7 @@
  * @return SUCCESS if fully translated, PARTIAL if only have partial message,
  *	or ERR_INVALID_MESSAGE on error.
  */
-int to_english(char *english, struct sentence_struct *ss);
+int cgc_to_english(char *english, struct sentence_struct *ss);
 
 /**
  * Parser for AIS message type 1.
@@ -44,7 +44,7 @@ int to_english(char *english, struct sentence_struct *ss);
  * @param ais_msg ASCII 6-bit armored AIS payload.
  * @return SUCCESS if successful, or ERR_INVALID_MESSAGE on error.
  */
-int parse_msg_type_1(char *english, const char *ais_msg);
+int cgc_parse_msg_type_1(char *english, const char *ais_msg);
 
 /**
  * Parser for AIS message type 4.
@@ -53,7 +53,7 @@ int parse_msg_type_1(char *english, const char *ais_msg);
  * @param ais_msg ASCII 6-bit armored AIS payload.
  * @return SUCCESS if successful, or ERR_INVALID_MESSAGE on error.
  */
-int parse_msg_type_4(char *english, const char *ais_msg);
+int cgc_parse_msg_type_4(char *english, const char *ais_msg);
 
 /**
  * Parser for AIS message type 5.
@@ -62,7 +62,7 @@ int parse_msg_type_4(char *english, const char *ais_msg);
  * @param ais_msg ASCII 6-bit armored AIS payload.
  * @return SUCCESS if successful, or ERR_INVALID_MESSAGE on error.
  */
-int parse_msg_type_5(char *english, const char *ais_msg);
+int cgc_parse_msg_type_5(char *english, const char *ais_msg);
 
 
 

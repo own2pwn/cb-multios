@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -85,7 +85,7 @@ typedef struct
 	char length; // length of used content area
 	char content[MAX_CONTENT]; // fixed-length content area
 	char checksum; // 1 byte checksum of rest of packet (5-byte header + 10-byte content)
-} Packet;
+} cgc_Packet;
 
 
 typedef struct
@@ -93,13 +93,13 @@ typedef struct
 	int pending;
 	char answer[5];
 	int enc_type;
-} Enc_Chal;
+} cgc_Enc_Chal;
 
 int seed_crypt;
 
 int seed_length;
 
-Enc_Chal enc_chal;
+cgc_Enc_Chal enc_chal;
 
 // these count for DATA packets only
 int current_packet_count_recvd; // last incoming packet number
@@ -115,31 +115,31 @@ int current_connection_number;
 int current_encryption;
 int encryption_confirmed; // set to TRUE after AUTHCHALRESP is correctly received
 
-int validate_packet(Packet *pkt);
-int populate_packet(Packet *pkt, char* data, int len);
-void print_packet(Packet *pkt);
-int packet_handler(Packet* pkt);//, Game* game);
-void print_status();
+int cgc_validate_packet(cgc_Packet *pkt);
+int cgc_populate_packet(cgc_Packet *pkt, char* data, int len);
+void cgc_print_packet(cgc_Packet *pkt);
+int cgc_packet_handler(cgc_Packet* pkt);//, Game* game);
+void cgc_print_status();
 
-void send_ack(char pkt_num);
-void send_nack(char pktnum, int reason);
-void send_assoc_response(char req_conn);
-void send_auth_response(char* req_enc);
+void cgc_send_ack(char pkt_num);
+void cgc_send_nack(char pktnum, int reason);
+void cgc_send_assoc_response(char req_conn);
+void cgc_send_auth_response(char* req_enc);
 
-void send_auth_challenge(int enc);
-int handle_auth_challenge_resp(char* answer);
+void cgc_send_auth_challenge(int enc);
+int cgc_handle_auth_challenge_resp(char* answer);
 
-int handle_disass_req(char reason);
-int handle_deauth_req(char reason);
+int cgc_handle_disass_req(char reason);
+int cgc_handle_deauth_req(char reason);
 
-void set_checksum(Packet *pkt); // pointer to packet and the number of bytes to include in the checksum calculation
-char get_checksum(Packet *pkt);
+void cgc_set_checksum(cgc_Packet *pkt); // pointer to packet and the number of bytes to include in the checksum calculation
+char cgc_get_checksum(cgc_Packet *pkt);
 
-void send_packet(Packet *pkt);
-void send_packet_new(Packet *pkt, int data_len);
-int decrypt_packet(char *packet, int len, int type);
-int encrypt_data(char *packet, int len, int type);
+void cgc_send_packet(cgc_Packet *pkt);
+void cgc_send_packet_new(cgc_Packet *pkt, int data_len);
+int cgc_decrypt_packet(char *packet, int len, int type);
+int cgc_encrypt_data(char *packet, int len, int type);
 
-int check_win(int);
+int cgc_check_win(int);
 
 #endif

@@ -32,7 +32,7 @@ static void free_huge(struct blk_t *blk)
     deallocate(blk, blk->size);
 }
 
-void free(void *ptr)
+void cgc_free(void *ptr)
 {
   if (ptr == NULL)
     return;

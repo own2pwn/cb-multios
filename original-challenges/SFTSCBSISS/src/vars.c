@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,12 +28,12 @@ THE SOFTWARE.
 #include "stdint.h"
 #include "vars.h"
 
-vars_t *pVARS = NULL;
+cgc_vars_t *pVARS = NULL;
 
 // Init VARS
-int32_t InitVARS(void) {
+cgc_int32_t cgc_InitVARS(void) {
 
-	if ((pVARS = CreateVARSObject("system.name", STRING, "CGC CB")) == NULL) {
+	if ((pVARS = cgc_CreateVARSObject("system.name", STRING, "CGC CB")) == NULL) {
 		return(0);
 	}
 
@@ -41,20 +41,20 @@ int32_t InitVARS(void) {
 }
 
 // Destroy VARS
-int32_t DestroyVARS(void) {
-	vars_t *pm;
-	vars_t *pm_next;
+cgc_int32_t cgc_DestroyVARS(void) {
+	cgc_vars_t *pm;
+	cgc_vars_t *pm_next;
 
 	// make sure we have a VARS
 	if (!pVARS) {
 		return(0);
 	}
 
-	// walk the vars and free everything
+	// walk the vars and cgc_free everything
 	pm = pVARS;
 	while (pm) {
 		pm_next = pm->next;
-		free(pm);
+		cgc_free(pm);
 		pm = pm_next;
 	}
 	
@@ -63,8 +63,8 @@ int32_t DestroyVARS(void) {
 }
 
 // Search VARS
-vars_t *SearchVARS(char *target_name) {
-	vars_t *pm;
+cgc_vars_t *cgc_SearchVARS(char *target_name) {
+	cgc_vars_t *pm;
 
 	// if we have no VARS
 	if (!pVARS || !target_name) 
@@ -73,7 +73,7 @@ vars_t *SearchVARS(char *target_name) {
 	// walk the VARS and find the target	
 	pm = pVARS;
 	while (pm) {
-		if (strcmp(pm->name, target_name) == 0) {
+		if (cgc_strcmp(pm->name, target_name) == 0) {
 			return(pm);
 		}	
 
@@ -85,8 +85,8 @@ vars_t *SearchVARS(char *target_name) {
 }
 
 // Create a new VARS object
-vars_t *CreateVARSObject(char *name, uint8_t type, void *value) {
-	vars_t *pm;
+cgc_vars_t *cgc_CreateVARSObject(char *name, cgc_uint8_t type, void *value) {
+	cgc_vars_t *pm;
 	char *c;
 
 	// check inputs
@@ -95,18 +95,18 @@ vars_t *CreateVARSObject(char *name, uint8_t type, void *value) {
 	}
 
 	// create the object
-	if ((pm = calloc(1, sizeof(vars_t))) == NULL) {
+	if ((pm = cgc_calloc(1, sizeof(cgc_vars_t))) == NULL) {
 		_terminate(-1);
 	}
 
 	// Copy the data into the object
-	strncpy(pm->name, name, MAX_NAME_LEN-1);
+	cgc_strncpy(pm->name, name, MAX_NAME_LEN-1);
 
 	pm->type = type;
 	if (type == STRING) {
-		strncpy((char *)pm->value, value, MAX_VALUE_LEN-1);
+		cgc_strncpy((char *)pm->value, value, MAX_VALUE_LEN-1);
 	} else if (type == INT32) {
-		memcpy(pm->value, value, 4);
+		cgc_memcpy(pm->value, value, 4);
 	}
 
 	return(pm);
@@ -114,7 +114,7 @@ vars_t *CreateVARSObject(char *name, uint8_t type, void *value) {
 }
 
 // Insert new VARS object
-int32_t InsertVARSObject(vars_t *pm) {
+cgc_int32_t cgc_InsertVARSObject(cgc_vars_t *pm) {
 
 	if (!pVARS || !pm) {
 		return(0);
@@ -129,8 +129,8 @@ int32_t InsertVARSObject(vars_t *pm) {
 }
 
 // Delete VARS object
-int32_t DeleteVARSObject(vars_t *target) {
-	vars_t *pm;
+cgc_int32_t cgc_DeleteVARSObject(cgc_vars_t *target) {
+	cgc_vars_t *pm;
 
 	if (!pVARS || !target) {
 		return(0);
@@ -138,14 +138,14 @@ int32_t DeleteVARSObject(vars_t *target) {
 
 	pm = pVARS;
 	while (pm) {
-		if (strcmp(pm->name, target->name) != 0) {
+		if (cgc_strcmp(pm->name, target->name) != 0) {
 			continue;
 		}
 
 		// handle case where target is head object
 		if (pm == pVARS) {
 			pVARS = pm->next;
-			free(pm);
+			cgc_free(pm);
 			return(1);
 		}
 
@@ -154,7 +154,7 @@ int32_t DeleteVARSObject(vars_t *target) {
 		if (pm->next) {
 			pm->next->prev = pm->prev;
 		}
-		free(pm);
+		cgc_free(pm);
 
 		return(1);
 	}
@@ -164,20 +164,20 @@ int32_t DeleteVARSObject(vars_t *target) {
 }
 
 // Update VARS object
-vars_t *UpdateVARSObject(char *name, uint8_t type, void *value) {
-	vars_t *pm;
+cgc_vars_t *cgc_UpdateVARSObject(char *name, cgc_uint8_t type, void *value) {
+	cgc_vars_t *pm;
 
 	if (!name || !value || !(type == STRING || type == INT32)) {
 		return(NULL);
 	}
 
 	// find the object we're updating
-	if ((pm = SearchVARS(name)) == NULL) {
+	if ((pm = cgc_SearchVARS(name)) == NULL) {
 		// not found, create it
-		if ((pm = CreateVARSObject(name, type, value)) == NULL) {
+		if ((pm = cgc_CreateVARSObject(name, type, value)) == NULL) {
 			return(NULL);
 		} else {
-			if (!InsertVARSObject(pm)) {
+			if (!cgc_InsertVARSObject(pm)) {
 				return(NULL);
 			}
 		}
@@ -190,10 +190,10 @@ vars_t *UpdateVARSObject(char *name, uint8_t type, void *value) {
 	}
 
 	if (type == STRING) {
-		strncpy((char *)pm->value, value, MAX_VALUE_LEN-1);
+		cgc_strncpy((char *)pm->value, value, MAX_VALUE_LEN-1);
 
 	} else if (type == INT32) {
-		memcpy(pm->value, value, 4);
+		cgc_memcpy(pm->value, value, 4);
 	}
 
 	return(pm);

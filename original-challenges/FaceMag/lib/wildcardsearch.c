@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include "stdlib.h"
 
 // search for a string in a target string, including the * and ? wildcards
-int wildcard_search(char *search, char *target) {
+int cgc_wildcard_search(char *search, char *target) {
 	
 char *after_wildcard=0;
 
@@ -138,7 +138,7 @@ char *after_wildcard=0;
 
 
 // a simple scan for wildcard chars
-int contains_wildcards(char *str) {
+int cgc_contains_wildcards(char *str) {
 
 	while (*str != 0) {
 
@@ -151,4 +151,4 @@ int contains_wildcards(char *str) {
 
 	return 0;
 
-} // contains_wildcards()
+} // cgc_contains_wildcards()

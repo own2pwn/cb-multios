@@ -23,16 +23,16 @@
 #include <libcgc.h>
 #include "libc.h"
 
-void promptc(char *buf, uint16_t  size, char *prompt) {
+void cgc_promptc(char *buf, uint16_t  size, char *prompt) {
 
-    SSEND(strlen(prompt), prompt);
+    SSEND(cgc_strlen(prompt), prompt);
 
     SRECV((uint32_t)size, buf);
  }
 
-int sendall(int fd, const char *buf, size_t size) {
-    size_t sent = 0;
-    size_t total = 0;
+int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t total = 0;
 
     if (!buf)
         return -1;
@@ -54,9 +54,9 @@ int sendall(int fd, const char *buf, size_t size) {
 }
 
 
-int sendline(int fd, const char *buf, size_t size) {
+int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
     int ret;
-    ret = sendall(fd, buf, size);
+    ret = cgc_sendall(fd, buf, size);
     if(ret < 0){
         return ret;
     } else {
@@ -67,9 +67,9 @@ int sendline(int fd, const char *buf, size_t size) {
     }
 }
 
-int recv(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recv(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -88,9 +88,9 @@ int recv(int fd, char *buf, size_t size) {
     return total_read;
 
 }
-int recvline(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -118,7 +118,7 @@ int recvline(int fd, char *buf, size_t size) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-size_t strcpy(char *s1, char *s2) {
+cgc_size_t cgc_strcpy(char *s1, char *s2) {
     char *tmp = s1;
     while(*s2){
         *tmp = *s2;
@@ -130,7 +130,7 @@ size_t strcpy(char *s1, char *s2) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-size_t strncpy(char *s1, char *s2, size_t n) {
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
     char *tmp = s1;
     while((tmp-s1 < n) && *s2){
         *tmp = *s2;
@@ -141,20 +141,20 @@ size_t strncpy(char *s1, char *s2, size_t n) {
     return tmp-s1-1;
 }
 
-char * strcat(char *s1, char *s2) {
+char * cgc_strcat(char *s1, char *s2) {
     char *tmp = s1;
     while(*tmp) tmp++;
-    strcpy(tmp,s2);
+    cgc_strcpy(tmp,s2);
     return s1;
 }
 
-size_t strlen(char *s){
+cgc_size_t cgc_strlen(char *s){
     char *tmp = s;
     while(*tmp) tmp++;
-    return (size_t)(tmp-s);
+    return (cgc_size_t)(tmp-s);
 }
 
-int streq(char *s1, char *s2){
+int cgc_streq(char *s1, char *s2){
     while(*s1 && *s2){
         if(*s1 != *s2)
             return 0;
@@ -164,7 +164,7 @@ int streq(char *s1, char *s2){
     return (*s1 == '\0') && (*s2 == '\0');
 }
 
-int startswith(char *s1, char *s2){
+int cgc_startswith(char *s1, char *s2){
     while(*s1 && *s2){
         if(*s1 != *s2)
             return 0;
@@ -177,7 +177,7 @@ int startswith(char *s1, char *s2){
 // takes an int32 and converts it to a string saved in str_buf
 // str_buf must be large enough to fit the sign, number(s), and '\0'
 // returns 0 on success, -1 if error due to buf_size
-int int2str(char* str_buf, int buf_size, int i) {
+int cgc_int2str(char* str_buf, int buf_size, int i) {
 
     int idx = 0;
     int tmp;
@@ -230,7 +230,7 @@ int int2str(char* str_buf, int buf_size, int i) {
 // takes a string and converts it to an int32
 // MAX int32 is +/- 2^31-1 (2,147,483,647) which is 10 digits
 // returns 0 if str_buf is "0" or has no digits.
-uint32_t str2uint(const char* str_buf) {
+uint32_t cgc_str2uint(const char* str_buf) {
     int result = 0;
     int temp = 0;
     int max_chars = 10; // max number of chars read from str_buf
@@ -262,23 +262,23 @@ uint32_t str2uint(const char* str_buf) {
     return result;
 }
 
-void * memset(void *dst, char c, size_t n) {
-    size_t i;
+void * cgc_memset(void *dst, char c, cgc_size_t n) {
+    cgc_size_t i;
     for(i=0; i<n; i++){
         *((uint8_t*)dst+i) = c;
     }
     return dst;
 }
 
-void * memcpy(void *dst, void *src, size_t n) {
-    size_t i;
+void * cgc_memcpy(void *dst, void *src, cgc_size_t n) {
+    cgc_size_t i;
     for(i=0; i<n; i++){
         *((uint8_t*)dst+i) = *((uint8_t*)src+i);
     }
     return dst;
 }
 
-char * b2hex(uint8_t b, char *h) {
+char * cgc_b2hex(uint8_t b, char *h) {
     if (b>>4 < 10)
         h[0] = (b>>4)+0x30;
     else
@@ -292,7 +292,7 @@ char * b2hex(uint8_t b, char *h) {
     return h;
 }
 
-char * strchr(char *str, char c) {
+char * cgc_strchr(char *str, char c) {
     char *tmp = str;
     while(*tmp){
         if(*tmp == c)
@@ -303,13 +303,13 @@ char * strchr(char *str, char c) {
 }
 
 //modulus
-int __umoddi3(int a, int b) {
+int cgc___umoddi3(int a, int b) {
     return a-(a/b*b);
 }
 
-void sleep(int s) {
-    struct timeval tv;
+void cgc_sleep(int s) {
+    struct cgc_timeval tv;
     tv.tv_sec = s;
     tv.tv_usec = 0;
-    fdwait(0, NULL, NULL, &tv, NULL);
+    cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }

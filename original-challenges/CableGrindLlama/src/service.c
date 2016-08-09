@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,42 +30,42 @@ int main(void) {
     uint32_t filesize;
     uint8_t *data;
     uint8_t *warmup;
-    dupefile_t *f;
+    cgc_dupefile_t *f;
 
     //we want to warmup the heap for performance or something
     //actually just to ensure heap corruption is a bit easier
     for(i = 1024; i > 0; i--) {
-        warmup = malloc((i+1)*2);
-        free(warmup);
+        warmup = cgc_malloc((i+1)*2);
+        cgc_free(warmup);
     }
 
 
-    __stack_cookie_init();
+    cgc___stack_cookie_init();
 
     RECV(sizeof(uint32_t),(char *)&filesize);
 
     if (filesize > MAX_DUPE_SIZE)
         return 1;
 
-    setheap(0);
-    data = malloc(filesize);
+    cgc_setheap(0);
+    data = cgc_malloc(filesize);
 
     if (!data)
         return 2;
 
     RECV(filesize,(char *)data);
 
-    f = dupe_open(data);
+    f = cgc_dupe_open(data);
 
-    if (!f || f->caplen != filesize-sizeof(dupefile_t)) {
+    if (!f || f->caplen != filesize-sizeof(cgc_dupefile_t)) {
         LOG("Bad file.")
         return 3;
     }
 
-    process_dupe(f);
+    cgc_process_dupe(f);
 
-    setheap(0);
-    dupe_close(f);
+    cgc_setheap(0);
+    cgc_dupe_close(f);
 
     return 0;
 }

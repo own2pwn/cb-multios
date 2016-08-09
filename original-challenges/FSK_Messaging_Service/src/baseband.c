@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include <string.h>
 #include <math.h>
 
-void init_baseband( tBasebandState *pState )
+void cgc_init_baseband( cgc_tBasebandState *pState )
 {
 	pState->cdrState.cdrState = CDR_STATE_NODATA;
 	pState->cdrState.lastBitValue = 0;
@@ -50,12 +50,12 @@ void init_baseband( tBasebandState *pState )
 	pState->packetState.packetCRC = 0;
 }
 
-void process_sample( tBasebandState *pState, uint8_t in_sample )
+void cgc_process_sample( cgc_tBasebandState *pState, cgc_uint8_t in_sample )
 {
-	run_cdr( pState, in_sample );
+	cgc_run_cdr( pState, in_sample );
 }
 
-void free_run_lock( tBasebandState *pState, uint8_t in_sample )
+void cgc_free_run_lock( cgc_tBasebandState *pState, cgc_uint8_t in_sample )
 {
 	// Calculate delta
 	double delta = (double)pState->cdrState.sampleCounter / (pState->cdrState.samplesPerClock * (double)pState->cdrState.symbolsSinceLastTransition);
@@ -67,7 +67,7 @@ void free_run_lock( tBasebandState *pState, uint8_t in_sample )
 		pState->cdrState.samplesPerClock += 0.1;
 
 #if DEBUG_BASEBAND
-	printf( "DRIFT[$f,$f]\n", pState->cdrState.samplesPerClock, delta );
+	cgc_printf( "DRIFT[$f,$f]\n", pState->cdrState.samplesPerClock, delta );
 #endif
 	// Reset transition counter	
 	pState->cdrState.symbolsSinceLastTransition = 0;
@@ -76,7 +76,7 @@ void free_run_lock( tBasebandState *pState, uint8_t in_sample )
 	pState->cdrState.clocksForNextSymbol = (pState->cdrState.samplesPerClock / 2.0);
 }
 
-void run_cdr( tBasebandState *pState, uint8_t in_sample )
+void cgc_run_cdr( cgc_tBasebandState *pState, cgc_uint8_t in_sample )
 {
 	// Keep counting
 	pState->cdrState.sampleCounter++;
@@ -95,11 +95,11 @@ void run_cdr( tBasebandState *pState, uint8_t in_sample )
 		else if ( pState->cdrState.cdrState == CDR_STATE_PREAMBLE )
 		{
 #if DEBUG_BASEBAND
-			printf( "PA[$d,$d,$d,$f]\n", pState->cdrState.preambleCounter, pState->cdrState.sampleCounter, SAMPLES_PER_DATA, pState->cdrState.samplesPerClock );
+			cgc_printf( "PA[$d,$d,$d,$f]\n", pState->cdrState.preambleCounter, pState->cdrState.sampleCounter, SAMPLES_PER_DATA, pState->cdrState.samplesPerClock );
 #endif	
 			
 			// Check transition counter within 10% of data rate
-			uint16_t sample_counter = pState->cdrState.sampleCounter;
+			cgc_uint16_t sample_counter = pState->cdrState.sampleCounter;
 
 			if ( sample_counter > (SAMPLES_PER_DATA + ((double)SAMPLES_PER_DATA * 0.12)) ||
 			     sample_counter < (SAMPLES_PER_DATA - ((double)SAMPLES_PER_DATA * 0.12)) )
@@ -108,12 +108,12 @@ void run_cdr( tBasebandState *pState, uint8_t in_sample )
 				pState->cdrState.cdrState = CDR_STATE_NODATA;
 
 #if DEBUG_BASEBAND
-				printf( "RESET[PR->NO]\n" );
+				cgc_printf( "RESET[PR->NO]\n" );
 #endif
 			}
 			else
 			{
-				uint16_t current_samples_per_clock = floor( pState->cdrState.samplesPerClock + 0.5 );
+				cgc_uint16_t current_samples_per_clock = cgc_floor( pState->cdrState.samplesPerClock + 0.5 );
 
 				if ( sample_counter < current_samples_per_clock )
 					pState->cdrState.samplesPerClock -= 0.2;
@@ -139,7 +139,7 @@ void run_cdr( tBasebandState *pState, uint8_t in_sample )
 		else if ( pState->cdrState.cdrState == CDR_STATE_LOCK )
 		{
 			// Reading data -- free run clock
-			free_run_lock( pState, in_sample );
+			cgc_free_run_lock( pState, in_sample );
 		}
 		else
 		{
@@ -156,22 +156,22 @@ void run_cdr( tBasebandState *pState, uint8_t in_sample )
 	else if ( pState->cdrState.cdrState == CDR_STATE_LOCK )
 	{
 		// Check for a sampling event...
-		if ( pState->cdrState.sampleCounter == (uint32_t)round( pState->cdrState.clocksForNextSymbol ) )
+		if ( pState->cdrState.sampleCounter == (cgc_uint32_t)cgc_round( pState->cdrState.clocksForNextSymbol ) )
 		{
 			pState->cdrState.clocksForNextSymbol += pState->cdrState.samplesPerClock;
 
 			pState->cdrState.symbolsSinceLastTransition++;
 
 			// Take a sample and process it
-			do_sample( pState, in_sample );
+			cgc_do_sample( pState, in_sample );
 		}	
 	}
 }
 
-void reset_baseband_state( tBasebandState *pState )
+void cgc_reset_baseband_state( cgc_tBasebandState *pState )
 {
 #if DEBUG_BASEBAND
-	printf( "[ERR]Resetting baseband state\n" );
+	cgc_printf( "[ERR]Resetting baseband state\n" );
 #endif
 
 	// Reset state machines
@@ -191,13 +191,13 @@ void reset_baseband_state( tBasebandState *pState )
 	pState->packetState.packetCRC = 0;
 }
 
-void do_sample( tBasebandState *pState, uint8_t sample_in )
+void cgc_do_sample( cgc_tBasebandState *pState, cgc_uint8_t sample_in )
 {
 #if DEBUG_BASEBAND
-	printf( "SAMPLE[$d]\n", sample_in );
+	cgc_printf( "SAMPLE[$d]\n", sample_in );
 #endif
 
-	uint8_t packet_state = pState->packetState.packetState;
+	cgc_uint8_t packet_state = pState->packetState.packetState;
 
 	if ( packet_state == PACKET_STATE_NODATA )
 	{
@@ -213,7 +213,7 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 			else if ( sample_in == pState->packetState.lastPreambleBit )
 			{
 				// Error! two 0's likely in a row -- not preamble or sync word
-				reset_baseband_state( pState );
+				cgc_reset_baseband_state( pState );
 			}
 			else
 			{
@@ -233,7 +233,7 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 		}
 		else
 		{
-			uint8_t syncBitPos = pState->packetState.syncBitPos;
+			cgc_uint8_t syncBitPos = pState->packetState.syncBitPos;
 
 			if ( pState->packetState.lastPreambleBit == 0 && pState->packetState.syncBitPos == 2 && sample_in == 1 )
 			{
@@ -243,14 +243,14 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 			else
 			{
 				if ( sample_in != ((BIT_SYNC_WORD & (1<<(15-syncBitPos))) >> (15-syncBitPos)) )
-					reset_baseband_state( pState );
+					cgc_reset_baseband_state( pState );
 				else
 					pState->packetState.syncBitPos++;
 
 				if ( pState->packetState.syncBitPos == 16 )
 				{
 #if DEBUG_BASEBAND
-					printf( "\nSYNC WORD LOCK\n" );
+					cgc_printf( "\nSYNC WORD LOCK\n" );
 #endif
 					// Advance to reading header
 					pState->packetState.packetState = PACKET_STATE_HEADER;
@@ -272,11 +272,11 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 		if ( pState->packetState.packetDataBitPos == 8 )
 		{
 			if ( pState->packetState.packetDataLen == 0 )
-				reset_baseband_state( pState );
+				cgc_reset_baseband_state( pState );
 			else
 			{
 #if DEBUG_BASEBAND
-				printf( "PACKET DATA LEN[$d]\n", pState->packetState.packetDataLen );
+				cgc_printf( "PACKET DATA LEN[$d]\n", pState->packetState.packetDataLen );
 #endif
 
 				// Advance to data state
@@ -284,7 +284,7 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 				pState->packetState.packetDataBitPos = 0;
 
 				// Zero packet data
-				memset( pState->packetState.packetData, 0, 255 );
+				cgc_memset( pState->packetState.packetData, 0, 255 );
 			}
 		}	
 	}
@@ -298,7 +298,7 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 		if ( pState->packetState.packetDataBitPos == 8 )
 		{
 #if DEBUG_BASEBAND
-			printf( "PACKET BYTE [$x][$d]\n", pState->packetState.packetData[pState->packetState.packetDataBytePos], pState->packetState.packetDataBytePos );
+			cgc_printf( "PACKET BYTE [$x][$d]\n", pState->packetState.packetData[pState->packetState.packetDataBytePos], pState->packetState.packetDataBytePos );
 #endif
 
 			pState->packetState.packetDataBitPos = 0;
@@ -323,14 +323,14 @@ void do_sample( tBasebandState *pState, uint8_t sample_in )
 		if ( pState->packetState.packetDataBitPos == 16 )
 		{
 #if DEBUG_BASEBAND
-			printf( "Packet RX[$d][$X]\n", pState->packetState.packetDataLen, pState->packetState.packetCRC );
+			cgc_printf( "Packet RX[$d][$X]\n", pState->packetState.packetDataLen, pState->packetState.packetCRC );
 #endif
 
 			// Packet received! -- send to packet processing
-			receive_packet( pState->packetState.packetData, pState->packetState.packetDataLen, pState->packetState.packetCRC );
+			cgc_receive_packet( pState->packetState.packetData, pState->packetState.packetDataLen, pState->packetState.packetCRC );
 
 			// Reset
-			reset_baseband_state( pState );
+			cgc_reset_baseband_state( pState );
 		}
 	}
 }

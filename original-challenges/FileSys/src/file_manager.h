@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,33 +34,33 @@ extern "C" {
 #define MAX_NUM_FILES 512
 #define MAX_NUM_OPENED_FILES 20
 
-class FileManager
+class cgc_FileManager
 {
   protected:
     unsigned int numFiles;
     unsigned int numOpenedFiles;
-    File *rootDir;
-    File* openedFiles[MAX_NUM_OPENED_FILES];
-    File *cwd;
+    cgc_File *rootDir;
+    cgc_File* openedFiles[MAX_NUM_OPENED_FILES];
+    cgc_File *cwd;
     
-    void DeleteDirectoryHelper(File* dir);
+    void cgc_DeleteDirectoryHelper(cgc_File* dir);
 
   public:
-    FileManager();
-    ~FileManager();
+    cgc_FileManager();
+    ~cgc_FileManager();
 
-    File* GetFile(const char* name);
-    void PrintFile(const char* name);
-    int CreateFile(const char* name);
-    int CreateDirectory(const char* name);
-    int OpenFile(const char* name);
-    int CloseFile(unsigned int fileno);
-    int CloseAll();
-    int ReadFile(unsigned int fileno, size_t pos, size_t len, char** outBuf);
-    int ModifyFile(unsigned int fileno, size_t pos, char* inBuf, size_t len);
-    int DeleteFile(const char* name);
-    int DeleteDirectory(const char* name);
-    int ChangeDirectory(const char* name);
+    cgc_File* cgc_GetFile(const char* name);
+    void cgc_PrintFile(const char* name);
+    int cgc_CreateFile(const char* name);
+    int cgc_CreateDirectory(const char* name);
+    int cgc_OpenFile(const char* name);
+    int cgc_CloseFile(unsigned int fileno);
+    int cgc_CloseAll();
+    int cgc_ReadFile(unsigned int fileno, cgc_size_t pos, cgc_size_t len, char** outBuf);
+    int cgc_ModifyFile(unsigned int fileno, cgc_size_t pos, char* inBuf, cgc_size_t len);
+    int cgc_DeleteFile(const char* name);
+    int cgc_DeleteDirectory(const char* name);
+    int cgc_ChangeDirectory(const char* name);
 };
 
 #endif

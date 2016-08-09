@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,18 +23,18 @@
 #include <string.h>
 #include "malloc_private.h"
 
-void *calloc(size_t count, size_t size)
+void *cgc_calloc(cgc_size_t count, cgc_size_t size)
 {
-    size_t n = count * size;
+    cgc_size_t n = count * size;
     void *ptr;
 
-    if ((uintmax_t)count * size > (uintmax_t)SIZE_MAX)
+    if ((cgc_uintmax_t)count * size > (cgc_uintmax_t)SIZE_MAX)
         return NULL;
 
-    ptr = malloc_alloc(&g_heap, n);
+    ptr = cgc_malloc_alloc(&g_heap, n);
     if (ptr == NULL)
         return NULL;
 
-    memset(ptr, 0, n);
+    cgc_memset(ptr, 0, n);
     return ptr;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,12 +23,12 @@
 #include "libc.h"
 #include "map.h"
 
-Map* initMap(Map* map) {
+cgc_Map* cgc_initMap(cgc_Map* map) {
 	int ret;
-	Map* map_ptr;
+	cgc_Map* map_ptr;
 
 	if(!map) {
-		ret = allocate(sizeof(Map)*128, 0, (void **) &map_ptr);
+		ret = allocate(sizeof(cgc_Map)*128, 0, (void **) &map_ptr);
 		if(ret != 0)
 			_terminate(ALLOCATE_ERROR);
 		map_ptr += 127;
@@ -41,13 +41,13 @@ Map* initMap(Map* map) {
 	return map_ptr;
 }
 
-int setMap(Map **map, char* key, int value)
+int cgc_setMap(cgc_Map **map, char* key, int value)
 {
 	int ret;
-	Map *map_ptr=NULL, *prev_map_ptr=NULL;
+	cgc_Map *map_ptr=NULL, *prev_map_ptr=NULL;
 
 	for(map_ptr=*map;map_ptr!=NULL;map_ptr=map_ptr->next) {
-		if(!strcmp(key, map_ptr->key)) {
+		if(!cgc_strcmp(key, map_ptr->key)) {
 			break;
 		}
 		prev_map_ptr = map_ptr;
@@ -56,19 +56,19 @@ int setMap(Map **map, char* key, int value)
 	if(map_ptr == NULL) {
 		// Key not found
 #ifdef PATCHED
-		if(getSize(*map) == 128) {
+		if(cgc_getSize(*map) == 128) {
 #else
-		if(getSize(*map) == 129) {
+		if(cgc_getSize(*map) == 129) {
 #endif
 			return 0;
 		}
-		map_ptr = initMap(prev_map_ptr);
+		map_ptr = cgc_initMap(prev_map_ptr);
 		map_ptr->next = *map;
 		*map = map_ptr;
 	}
 
 	if(*map_ptr->key == 0) {
-		strcpy(map_ptr->key, key); // Possible Vuln: key not null terminated
+		cgc_strcpy(map_ptr->key, key); // Possible Vuln: key not null terminated
 	}
 
 	map_ptr->value = value;
@@ -76,10 +76,10 @@ int setMap(Map **map, char* key, int value)
 	return 1;
 }
 
-int getValue(Map* map, char* key) {
-	Map* map_ptr;
+int cgc_getValue(cgc_Map* map, char* key) {
+	cgc_Map* map_ptr;
 	for(map_ptr=map; map_ptr!=NULL; map_ptr=map_ptr->next) {
-		if(map_ptr->key && !strcmp(key, map_ptr->key)) { // Possible vuln: remove map->key check
+		if(map_ptr->key && !cgc_strcmp(key, map_ptr->key)) { // Possible vuln: remove map->key check
 			return map_ptr->value;
 		} 
 	}
@@ -88,8 +88,8 @@ int getValue(Map* map, char* key) {
 }
 
 
-uint32_t getSize(Map* map) {
-	Map* last;
+uint32_t cgc_getSize(cgc_Map* map) {
+	cgc_Map* last;
 	if(map == NULL)
 		return 0;
 
@@ -101,16 +101,16 @@ uint32_t getSize(Map* map) {
 #else
 	for(last=map; last->next!=NULL; last=last->next);
 
-	return ((void *) last - (void *)map) / sizeof(Map) + 1;
+	return ((void *) last - (void *)map) / sizeof(cgc_Map) + 1;
 #endif
 }
 
-void removeMap(Map **map, char* key) {
+void cgc_removeMap(cgc_Map **map, char* key) {
 	int ret;
-	Map *map_ptr=NULL, *prev_map_ptr=NULL;
+	cgc_Map *map_ptr=NULL, *prev_map_ptr=NULL;
 
 	for(map_ptr=*map;map_ptr!=NULL && *map_ptr->key != 0;map_ptr=map_ptr->next) {
-		if(!strcmp(key, map_ptr->key)) {
+		if(!cgc_strcmp(key, map_ptr->key)) {
 			break;
 		}
 		prev_map_ptr = map_ptr;
@@ -124,11 +124,11 @@ void removeMap(Map **map, char* key) {
 	else
 		prev_map_ptr->next = map_ptr->next;
 
-	memset(map_ptr->key, 0, MAX_KEY_SIZE+1);
+	cgc_memset(map_ptr->key, 0, MAX_KEY_SIZE+1);
 	map_ptr->value = 0;
 	map_ptr->next = 0;
 
-/*	ret = deallocate(map_ptr, sizeof(Map));
+/*	ret = deallocate(map_ptr, sizeof(cgc_Map));
 	if(ret != 0)
 		_terminate(DEALLOCATE_ERROR);*/
 

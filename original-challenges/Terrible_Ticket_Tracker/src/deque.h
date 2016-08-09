@@ -3,24 +3,24 @@
 #include <cstdint.h>
 #include "ticket.h"
 
-class Deque
+class cgc_Deque
 {
   public:
-    Deque();
-    ~Deque();
-    void Append(Ticket *ticket);
-    void AppendLeft(Ticket *ticket);
-    Ticket *Find(uint32_t ID);
-    bool Remove(Ticket* ticket);
-    Ticket *Pop();
-    Ticket *PopLeft();
-    uint32_t Count();
+    cgc_Deque();
+    ~cgc_Deque();
+    void cgc_Append(cgc_Ticket *ticket);
+    void cgc_AppendLeft(cgc_Ticket *ticket);
+    cgc_Ticket *cgc_Find(cgc_uint32_t ID);
+    bool cgc_Remove(cgc_Ticket* ticket);
+    cgc_Ticket *cgc_Pop();
+    cgc_Ticket *cgc_PopLeft();
+    cgc_uint32_t cgc_Count();
   private:
-    void Expand();
-    void TryShrink();
+    void cgc_Expand();
+    void cgc_TryShrink();
 
-    Ticket **tickets_;
-    uint32_t idx_0_;
-    uint32_t size_;
-    uint32_t cap_;
+    cgc_Ticket **tickets_;
+    cgc_uint32_t idx_0_;
+    cgc_uint32_t size_;
+    cgc_uint32_t cap_;
 };

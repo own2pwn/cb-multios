@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "io.h"
 
 int main(void) {
-	while (RecvCommand()) {
+	while (cgc_RecvCommand()) {
 	}
 	return(0);
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,90 +23,90 @@
 #include "orderiomanager.h"
 #include "pizzaiomanager.h"
 
-OrderIoManager::OrderIoManager()
+cgc_OrderIoManager::cgc_OrderIoManager()
 {
 }
 
-OrderIoManager::~OrderIoManager()
+cgc_OrderIoManager::~cgc_OrderIoManager()
 {
 }
 
-void OrderIoManager::list_orders()
+void cgc_OrderIoManager::cgc_list_orders()
 {
     int i = 0;
-    for (i = 0; i < orders.length(); i++) {
-        printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].get_name(), orders[i].get_num_pizzas());
+    for (i = 0; i < orders.cgc_length(); i++) {
+        printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].cgc_get_name(), orders[i].cgc_get_num_pizzas());
     }
 }
 
-bool OrderIoManager::input_order(size_t idx)
+bool cgc_OrderIoManager::cgc_input_order(cgc_size_t idx)
 {
-    if (orders.is_full()) {
+    if (orders.cgc_is_full()) {
         printf("Maxed out orders\n");
         return false;
     }
 
-    Order order;
-    PizzaIoManager pim;
-    Pizza *pizza;
+    cgc_Order order;
+    cgc_PizzaIoManager pim;
+    cgc_Pizza *pizza;
     int choice;
     bool done_adding_pizzas = false;
     bool is_new_order = true;
 
     if (idx == -1) {
         printf("Enter Pickup Name: ");
-        while (!readline(Order::NAME_SIZE)) {
+        while (!cgc_readline(cgc_Order::NAME_SIZE)) {
             printf("Bad Pickup Name\n");
             printf("Enter Pickup Name: ");
         }
 
-        if (!order.set_name(get_last_input()))
+        if (!order.cgc_set_name(cgc_get_last_input()))
             return false;
 
-        pim.new_pizza();
-        pizza = pim.get_pizza();
+        pim.cgc_new_pizza();
+        pizza = pim.cgc_get_pizza();
         if (pizza)
-            order.add_pizza(pizza);
+            order.cgc_add_pizza(pizza);
     } else {
         is_new_order = false;
         order = orders[idx];
-        printf("Editing order for %s\n", order.get_name());
+        printf("Editing order for %s\n", order.cgc_get_name());
     }
 
     while (!done_adding_pizzas) {
-        printf("1. Add another Pizza\n");
+        printf("1. Add another cgc_Pizza\n");
         printf("2. Quit\n");
-        if (order.get_num_pizzas() > 1)
-            printf("3. Remove Pizza from order\n");
+        if (order.cgc_get_num_pizzas() > 1)
+            printf("3. Remove cgc_Pizza from order\n");
 
         while (true) {
             printf("Choice: ");
-            choice = readnum();
+            choice = cgc_readnum();
             if (choice == 1) {
-                pim.new_pizza();
-                pizza = pim.get_pizza();
+                pim.cgc_new_pizza();
+                pizza = pim.cgc_get_pizza();
                 if (pizza)
-                    order.add_pizza(pizza);
+                    order.cgc_add_pizza(pizza);
                 break;
             } else if (choice == 2) {
                 done_adding_pizzas = true;
                 break;
 #ifdef PATCHED
-            } else if (choice == 3 && order.get_num_pizzas() > 1) {
+            } else if (choice == 3 && order.cgc_get_num_pizzas() > 1) {
 #else
             } else if (choice == 3) {
 #endif
                 printf("0. Cancel\n");
-                order.print_order();
+                order.cgc_print_order();
                 printf("Choice: ");
-                choice = readnum();
+                choice = cgc_readnum();
                 if (choice == 0) {
                     printf("Canceled\n");
                     break;
-                } else if (choice > order.get_num_pizzas()) {
+                } else if (choice > order.cgc_get_num_pizzas()) {
                     printf("Bad Selection\n");
                 } else {
-                    order.remove_pizza(--choice);
+                    order.cgc_remove_pizza(--choice);
                     printf("Removed Item #%d\n", choice+1);
                 }
                 break;
@@ -117,71 +117,71 @@ bool OrderIoManager::input_order(size_t idx)
     }
 
     if (is_new_order) {
-        orders.add(order);
-        printf("Order successfully added!\n");
+        orders.cgc_add(order);
+        printf("cgc_Order successfully added!\n");
     } else {
         orders[idx] = order;
-        printf("Order successfully updated!\n");
+        printf("cgc_Order successfully updated!\n");
     }
     return true;
 }
 
-bool OrderIoManager::update_order()
+bool cgc_OrderIoManager::cgc_update_order()
 {
-    Order my_order;
+    cgc_Order my_order;
     int choice;
 
-    if (orders.is_empty()) {
+    if (orders.cgc_is_empty()) {
         printf("No orders have been inputted\n");
         return false;
     }
 
-    printf("Update an Order\n");
+    printf("Update an cgc_Order\n");
     printf("0. Cancel\n");
-    list_orders();
+    cgc_list_orders();
     printf("Choice: ");
-    choice = readnum();
+    choice = cgc_readnum();
     if (choice == 0) {
         printf("Canceled\n");
         return false;
-    } else if (choice > orders.length()) {
+    } else if (choice > orders.cgc_length()) {
         printf("Bad Selection\n");
         return false;
     }
 
-    return input_order(--choice);
+    return cgc_input_order(--choice);
 }
 
-bool OrderIoManager::delete_order()
+bool cgc_OrderIoManager::cgc_delete_order()
 {
-    Order my_order;
+    cgc_Order my_order;
     int choice;
 
-    if (orders.is_empty()) {
+    if (orders.cgc_is_empty()) {
         printf("No orders have been inputted\n");
         return false;
     }
 
-    printf("Delete an Order\n");
+    printf("Delete an cgc_Order\n");
     printf("0. Cancel\n");
-    list_orders();
+    cgc_list_orders();
     printf("Choice: ");
-    choice = readnum();
+    choice = cgc_readnum();
     if (choice == 0) {
         printf("Canceled\n");
         return false;
-    } else if (choice < 1 || choice > orders.length()) {
+    } else if (choice < 1 || choice > orders.cgc_length()) {
         printf("Bad Selection\n");
         return false;
     }
 
-    orders[--choice].remove_all_pizzas();
-    return orders.remove(choice);
+    orders[--choice].cgc_remove_all_pizzas();
+    return orders.cgc_remove(choice);
 }
 
-void OrderIoManager::clear_all_orders(bool force)
+void cgc_OrderIoManager::cgc_clear_all_orders(bool force)
 {
-    Order order;
+    cgc_Order order;
     int choice;
 
     if (!force) {
@@ -189,7 +189,7 @@ void OrderIoManager::clear_all_orders(bool force)
         printf("0. Cancel\n");
         printf("1. Confirm\n");
         printf("Choice: ");
-        choice = readnum();
+        choice = cgc_readnum();
         if (choice == 0) {
             printf("Canceled\n");
             return;
@@ -200,55 +200,55 @@ void OrderIoManager::clear_all_orders(bool force)
         printf("Removing all orders\n");
     }
 
-    while(orders.pop(order)) {
-        order.remove_all_pizzas();
+    while(orders.cgc_pop(order)) {
+        order.cgc_remove_all_pizzas();
     }
 }
 
 
-bool OrderIoManager::view_single_order()
+bool cgc_OrderIoManager::cgc_view_single_order()
 {
-    Order my_order;
+    cgc_Order my_order;
     int choice, i;
 
-    if (orders.is_empty()) {
+    if (orders.cgc_is_empty()) {
         printf("No orders have been inputted\n");
         return false;
     }
 
-    printf("View single Order\n");
+    printf("View single cgc_Order\n");
     printf("0. Cancel\n");
-    list_orders();
+    cgc_list_orders();
     printf("Choice: ");
-    choice = readnum();
+    choice = cgc_readnum();
     if (choice == 0) {
         printf("Canceled\n");
         return false;
-    } else if (choice > orders.length()) {
+    } else if (choice > orders.cgc_length()) {
         printf("Bad Selection\n");
         return false;
     }
 
     i = --choice;
-    printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].get_name(), orders[i].get_num_pizzas());
-    orders[i].print_order();
+    printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].cgc_get_name(), orders[i].cgc_get_num_pizzas());
+    orders[i].cgc_print_order();
     printf("*  = Contains Meat\n");
     printf("** = Contains Pork\n");
     return true;
 }
 
-void OrderIoManager::print_orders()
+void cgc_OrderIoManager::cgc_print_orders()
 {
     int i = 0;
 
-    if (orders.is_empty()) {
+    if (orders.cgc_is_empty()) {
         printf("No orders have been inputted\n");
         return;
     }
 
-    for (i = 0; i < orders.length(); i++) {
-        printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].get_name(), orders[i].get_num_pizzas());
-        orders[i].print_order();
+    for (i = 0; i < orders.cgc_length(); i++) {
+        printf("%d - %s: Ordered %d pizza(s)\n", i+1, orders[i].cgc_get_name(), orders[i].cgc_get_num_pizzas());
+        orders[i].cgc_print_order();
     }
     printf("*  = Contains Meat\n");
     printf("** = Contains Pork\n");

@@ -42,14 +42,14 @@ struct pt_ctx {
  * @param ctx The context to initialize
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int pt_init(struct pt_ctx *ctx);
+int cgc_pt_init(struct pt_ctx *ctx);
 
 /**
  * Destroy a path tracing context
  *
  * @param ctx The context to destroy
  */
-void pt_destroy(struct pt_ctx *ctx);
+void cgc_pt_destroy(struct pt_ctx *ctx);
 
 /**
  * Setup the camera parameters for a scene
@@ -58,7 +58,7 @@ void pt_destroy(struct pt_ctx *ctx);
  * @param camera The new camera ray
  * @param fov The new camera fov
  */
-void pt_setup_camera(struct pt_ctx *ctx, struct ray camera, double fov);
+void cgc_pt_setup_camera(struct pt_ctx *ctx, struct ray camera, double fov);
 
 /**
  * Add a sphere to the scene
@@ -71,7 +71,7 @@ void pt_setup_camera(struct pt_ctx *ctx, struct ray camera, double fov);
  * @param radius The radius of the new sphere
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int pt_add_sphere(struct pt_ctx *ctx, enum surface_type material,
+int cgc_pt_add_sphere(struct pt_ctx *ctx, enum surface_type material,
         struct vector position, struct vector color, struct vector emission,
         double radius);
 
@@ -86,7 +86,7 @@ int pt_add_sphere(struct pt_ctx *ctx, enum surface_type material,
  * @param normal The normal vector of the new plane
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int pt_add_plane(struct pt_ctx *ctx, enum surface_type material,
+int cgc_pt_add_plane(struct pt_ctx *ctx, enum surface_type material,
         struct vector position, struct vector color, struct vector emission,
         struct vector normal);
 
@@ -96,14 +96,14 @@ int pt_add_plane(struct pt_ctx *ctx, enum surface_type material,
  * @param ctx The context to render
  * @param img The destination image
  */
-void pt_render(struct pt_ctx *ctx, struct image *img);
+void cgc_pt_render(struct pt_ctx *ctx, struct image *img);
 
 /**
  * Clear all the shapes out of a context and reset the camera.
  *
  * @param ctx The context to clear
  */
-void pt_clear_ctx(struct pt_ctx *ctx);
+void cgc_pt_clear_ctx(struct pt_ctx *ctx);
 
 #endif /* PATHTRACE_H_ */
 

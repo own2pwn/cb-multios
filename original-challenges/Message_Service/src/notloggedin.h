@@ -23,5 +23,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-void CreateUser(void);
-void Login(void);
+void cgc_CreateUser(void);
+void cgc_Login(void);

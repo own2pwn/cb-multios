@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 #define MAX_DATA_SIZE (32 * 1024)
 
 #ifdef DEBUG
-  #define dbg(M, ...) fprintf(stderr, "DEBUG: " M "\n", ##__VA_ARGS__);
+  #define dbg(M, ...) cgc_fprintf(stderr, "DEBUG: " M "\n", ##__VA_ARGS__);
 #else
   #define dbg(M, ...)
 #endif
@@ -41,11 +41,11 @@ static unsigned char rxbuf[CHUNK_SIZE];
 static int rxcnt;
 static int rxidx;
 
-void send_flush() {
-  size_t sent = 0;
+void cgc_send_flush() {
+  cgc_size_t sent = 0;
   while (txcnt != sent)
   {
-      size_t tx;
+      cgc_size_t tx;
       if (transmit(STDOUT, txbuf + sent, txcnt - sent, &tx) != 0)
           break;
       sent += tx;
@@ -53,10 +53,10 @@ void send_flush() {
   txcnt = 0;
 }
 
-int get_byte() {
+int cgc_get_byte() {
   if (rxcnt == rxidx)
   {
-      size_t rxd;
+      cgc_size_t rxd;
       if (receive(STDIN, rxbuf, CHUNK_SIZE, &rxd) != 0 || rxd == 0)
           return -1;
       rxcnt = rxd;
@@ -65,9 +65,9 @@ int get_byte() {
   return (int)rxbuf[rxidx++];
 }
 
-int send_n_bytes(int fd, char* buf, size_t n) {
-  size_t nsent = 0;
-  size_t tx_amt = 0;
+int cgc_send_n_bytes(int fd, char* buf, cgc_size_t n) {
+  cgc_size_t nsent = 0;
+  cgc_size_t tx_amt = 0;
   while (n > 0)
   {
     if (transmit(fd, buf + nsent, n - nsent < CHUNK_SIZE ? n - nsent : CHUNK_SIZE, &tx_amt) != 0)
@@ -79,18 +79,18 @@ int send_n_bytes(int fd, char* buf, size_t n) {
   return 0;
 }
 
-size_t read_until_or_timeout(int fd, char* buf, size_t max, char term, struct timeval t, int* err) {
-  size_t nread = 0;
-  size_t rx_amt = 0;
+cgc_size_t cgc_read_until_or_timeout(int fd, char* buf, cgc_size_t max, char term, struct cgc_timeval t, int* err) {
+  cgc_size_t nread = 0;
+  cgc_size_t rx_amt = 0;
   *err = 0;
 
   int rdy;
-  fd_set fs;
+  cgc_fd_set fs;
 
   while (nread < max)
   {
     FD_SET(STDIN, &fs);
-    if (fdwait(STDIN + 1, &fs, NULL, &t, &rdy) != 0)
+    if (cgc_fdwait(STDIN + 1, &fs, NULL, &t, &rdy) != 0)
     {
       *err = 1;
       return 0;
@@ -101,18 +101,18 @@ size_t read_until_or_timeout(int fd, char* buf, size_t max, char term, struct ti
 
     do
     {
-        int chr = get_byte();
+        int chr = cgc_get_byte();
         if (chr == -1)
             return 0;
         buf[nread] = chr;
         buf[nread+1] = 0;
         rx_amt = 1;
 
-        if (strchr(buf + nread, term) != NULL)
+        if (cgc_strchr(buf + nread, term) != NULL)
         {
-          size_t until_term = strchr(buf + nread, term) - (buf + nread);
+          cgc_size_t until_term = cgc_strchr(buf + nread, term) - (buf + nread);
           nread += until_term;
-          send_n_bytes(STDOUT, buf + nread + 1, rx_amt - until_term - 1);
+          cgc_send_n_bytes(STDOUT, buf + nread + 1, rx_amt - until_term - 1);
           return nread;
         }
         else
@@ -126,14 +126,14 @@ size_t read_until_or_timeout(int fd, char* buf, size_t max, char term, struct ti
   return nread;
 }
 
-size_t strip_program(char* buf, size_t max)
+cgc_size_t cgc_strip_program(char* buf, cgc_size_t max)
 {
-  char* cpy = calloc(sizeof(char), max);
-  memcpy(cpy, buf, max);
-  memset(buf, '\0', max);
+  char* cpy = cgc_calloc(sizeof(char), max);
+  cgc_memcpy(cpy, buf, max);
+  cgc_memset(buf, '\0', max);
 
   char* p = buf;
-  size_t i;
+  cgc_size_t i;
 
   for (i = 0; i < max; i++)
     if (
@@ -151,14 +151,14 @@ size_t strip_program(char* buf, size_t max)
   return p - buf;
 }
 
-int execute_program(char* program, size_t max) {
+int cgc_execute_program(char* program, cgc_size_t max) {
   char data[MAX_DATA_SIZE];
   char *ip = program;
   char *dp = data;
   int depth = 0;
   int direction = 1;
 
-  memset(data, '\0', MAX_DATA_SIZE);
+  cgc_memset(data, '\0', MAX_DATA_SIZE);
 
   while (ip >= program && ip < program + max)
   {
@@ -224,18 +224,18 @@ int execute_program(char* program, size_t max) {
       txbuf[txcnt++] = *dp;
       if (txcnt == CHUNK_SIZE)
       {
-          send_flush();
+          cgc_send_flush();
       }
     }
 
     else if (*ip == ',')
     {
       dbg("reading 1 in interp");
-      send_flush();
-      int ch = get_byte();
+      cgc_send_flush();
+      int ch = cgc_get_byte();
       if (ch == -1)
       {
-          fprintf(stderr, "Read failed: %d\n", dp - data);
+          cgc_fprintf(stderr, "Read failed: %d\n", dp - data);
           return -1;
       }
       *dp = ch;
@@ -283,27 +283,27 @@ int main(void) {
   char buf[MAX_PROGRAM_SIZE];
   int err;
 
-  printf(
+  cgc_printf(
       "Welcome to the headscratch interpreter.\n"
       "Enter your program to have it executed!\n"
       "%u\n", secrets[0] ^ secrets[1]);
 
-  read_until_or_timeout(STDIN, buf, MAX_PROGRAM_SIZE, '\n', (struct timeval){.tv_sec = 3, .tv_usec = 0}, &err);
+  cgc_read_until_or_timeout(STDIN, buf, MAX_PROGRAM_SIZE, '\n', (struct cgc_timeval){.tv_sec = 3, .tv_usec = 0}, &err);
   if (err)
     return -1;
 
-  size_t actual_size = strip_program(buf, MAX_PROGRAM_SIZE);
+  cgc_size_t actual_size = cgc_strip_program(buf, MAX_PROGRAM_SIZE);
   if (actual_size < 1)
     return -1;
 
-  if (execute_program(buf, actual_size) < 0)
+  if (cgc_execute_program(buf, actual_size) < 0)
     return -1;
 
-  send_flush();
+  cgc_send_flush();
   txbuf[txcnt++] = '\x43';
   txbuf[txcnt++] = '\x47';
   txbuf[txcnt++] = '\xc0';
   txbuf[txcnt++] = '\x00';
-  send_flush();
+  cgc_send_flush();
   return 0;
 }

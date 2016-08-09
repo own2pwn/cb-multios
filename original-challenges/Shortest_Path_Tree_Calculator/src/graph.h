@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,24 +30,24 @@ THE SOFTWARE.
 
 #define MAX_NODES (255)
 typedef struct _node {
-	uint32_t InSPT;
+	cgc_uint32_t InSPT;
 	struct _node *PrevSPT;
 	struct _node *Next;
-	uint32_t Name;
-	uint32_t Distance;
-} Node, *pNode;
+	cgc_uint32_t Name;
+	cgc_uint32_t Distance;
+} cgc_Node, *cgc_pNode;
 
 #define MAX_EDGES (2000)
 typedef struct _edge {
 	struct _edge *Next;
 	struct _edge *Prev;
-	pNode NodeA;
-	pNode NodeZ;
-	uint32_t Weight;
-} Edge, *pEdge;
+	cgc_pNode NodeA;
+	cgc_pNode NodeZ;
+	cgc_uint32_t Weight;
+} cgc_Edge, *cgc_pEdge;
 
-//uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint32_t *NodeCount);
-uint32_t *FindSpt(uint32_t StartingNodeName, uint32_t EndingNodeName, uint8_t *NodeCount);
+//cgc_uint32_t *cgc_FindSpt(cgc_uint32_t StartingNodeName, cgc_uint32_t EndingNodeName, cgc_uint32_t *NodeCount);
+cgc_uint32_t *cgc_FindSpt(cgc_uint32_t StartingNodeName, cgc_uint32_t EndingNodeName, cgc_uint8_t *NodeCount);
 
 
 #endif // #ifndef GRAPH_H

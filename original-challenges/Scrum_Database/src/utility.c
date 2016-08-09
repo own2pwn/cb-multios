@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "string.h"
 
 
-unsigned int calc_version() {
+unsigned int cgc_calc_version() {
 
 int i;
 unsigned int total;

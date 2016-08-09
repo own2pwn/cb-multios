@@ -1,0 +1,5 @@
+set( SERVICE_ID "00056" )
+set( AUTHOR_ID "KPRCA" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O2 -g  -Wall" )
+set( VULN_COUNT "1" )
+buildCB(${CFLAGS})

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,28 +25,28 @@
 #include "linkedlist.h"
 #include "rng.h"
 
-class Mixer
+class cgc_Mixer
 {
 public:
-    Mixer();
-    ~Mixer();
+    cgc_Mixer();
+    ~cgc_Mixer();
 
-    unsigned int getLength() const;
+    unsigned int cgc_getLength() const;
 
-    void addTrack(AudioTrack *track);
-    AudioTrack *getTrack(unsigned int id) const;
-    inline LinkedList<AudioTrack *>::Iterator getTracks() const
+    void cgc_addTrack(cgc_AudioTrack *track);
+    cgc_AudioTrack *cgc_getTrack(unsigned int id) const;
+    inline cgc_LinkedList<cgc_AudioTrack *>::cgc_Iterator cgc_getTracks() const
     {
-        return tracks.begin();
+        return tracks.cgc_begin();
     }
-    void removeTrack(unsigned int id);
-    bool splitTrack(unsigned int id);
-    bool combineTracks(unsigned int leftId, unsigned int rightId);
+    void cgc_removeTrack(unsigned int id);
+    bool cgc_splitTrack(unsigned int id);
+    bool cgc_combineTracks(unsigned int leftId, unsigned int rightId);
 
-    AudioTrack *exportMix();
-    AudioStream *generateWhiteNoise(unsigned int length);
+    cgc_AudioTrack *cgc_exportMix();
+    cgc_AudioStream *cgc_generateWhiteNoise(unsigned int length);
 private:
     unsigned int nextTrackId;
-    LinkedList<AudioTrack *> tracks;
-    Random rng;
+    cgc_LinkedList<cgc_AudioTrack *> tracks;
+    cgc_Random rng;
 };

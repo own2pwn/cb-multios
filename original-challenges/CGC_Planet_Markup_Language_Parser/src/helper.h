@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "string.h"
 #include "service.h"
 
-char *pullNextElementName( pstring str );
-element elementNameToEnum( char *elementId );
+char *cgc_pullNextElementName( cgc_pstring str );
+cgc_element cgc_elementNameToEnum( char *elementId );
 
 #endif

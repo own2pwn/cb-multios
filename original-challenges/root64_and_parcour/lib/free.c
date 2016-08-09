@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,12 +28,12 @@
 
 #include "malloc_internal.h"
 
-void free(void *mem)
+void cgc_free(void *mem)
 {
-    //printf("free(%08X)\n", mem);
+    //printf("cgc_free(%08X)\n", mem);
     if (mem == NULL)
         return;
-    free_block_t *block = (free_block_t *)((intptr_t)mem - OVERHEAD_BYTES);
+    cgc_free_block_t *block = (cgc_free_block_t *)((cgc_intptr_t)mem - OVERHEAD_BYTES);
     if (block->hdr.free != 0)
         _terminate(1);
     if (block->hdr.mmap)
@@ -49,12 +49,12 @@ void free(void *mem)
 
     for (; order < NUM_BUCKETS-1; order++)
     {
-        free_block_t *buddy = (free_block_t *)((intptr_t)block ^ block->hdr.size);
+        cgc_free_block_t *buddy = (cgc_free_block_t *)((cgc_intptr_t)block ^ block->hdr.size);
         //printf("\tbuddy = %08X, size = %d,%d\n", buddy, block->hdr.size, buddy->hdr.size);
         if (buddy->hdr.free == 0 || buddy->hdr.size != block->hdr.size)
             break;
 
-        /* remove buddy from free list */
+        /* remove buddy from cgc_free list */
         if (buddy->prev == NULL)
             g_malloc.free_list[order] = buddy->next;
         else
@@ -62,7 +62,7 @@ void free(void *mem)
         if (buddy->next)
             buddy->next->prev = buddy->prev;
 
-        if ((uintptr_t)buddy < (uintptr_t)block)
+        if ((cgc_uintptr_t)buddy < (cgc_uintptr_t)block)
             block = buddy;
         block->hdr.size <<= 1;
     }

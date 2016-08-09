@@ -36,7 +36,7 @@ struct ray {
  * @param direction The direction vector of the ray
  * @return A new ray with the given origin and direction
  */
-struct ray make_ray(struct vector origin, struct vector direction);
+struct ray cgc_make_ray(struct vector origin, struct vector direction);
 
 #endif /* RAY_H_ */
 

@@ -26,7 +26,7 @@
 #include "namespace.h"
 
 int
-namespace_init(struct namespace *ns, size_t size)
+cgc_namespace_init(struct namespace *ns, cgc_size_t size)
 {
     ns->size = size;
     if ((size * sizeof(struct variable)) / sizeof(struct variable) != size)
@@ -35,14 +35,14 @@ namespace_init(struct namespace *ns, size_t size)
 }
 
 void
-namespace_destroy(struct namespace *ns)
+cgc_namespace_destroy(struct namespace *ns)
 {
     deallocate(ns->variables, ns->size * sizeof(struct variable));
     ns->size = 0;
 }
 
 static unsigned int
-hash(const char *str)
+cgc_hash(const char *str)
 {
     unsigned int i, result = 0;
 
@@ -53,13 +53,13 @@ hash(const char *str)
 }
 
 struct variable *
-lookup_variable(struct namespace *ns, const char *name)
+cgc_lookup_variable(struct namespace *ns, const char *name)
 {
-    size_t i, b;
+    cgc_size_t i, b;
     unsigned int h;
     struct variable *var;
 
-    h = hash(name);
+    h = cgc_hash(name);
 
     for (i = 0; i < ns->size; i++) {
         b = (h + i * i) % ns->size;
@@ -68,7 +68,7 @@ lookup_variable(struct namespace *ns, const char *name)
         if (var->type == VAR_EMPTY)
             return NULL;
 
-        if (strncmp(var->name, name, 4) == 0)
+        if (cgc_strncmp(var->name, name, 4) == 0)
             return var;
     }
 
@@ -76,13 +76,13 @@ lookup_variable(struct namespace *ns, const char *name)
 }
 
 struct variable *
-insert_variable(struct namespace *ns, const char *name, enum variable_type type)
+cgc_insert_variable(struct namespace *ns, const char *name, enum variable_type type)
 {
-    size_t i, b;
+    cgc_size_t i, b;
     unsigned int h;
     struct variable *var, *last_var = NULL;
 
-    h = hash(name);
+    h = cgc_hash(name);
 
     for (i = 0; i < ns->size; i++) {
         b = (h + i * i) % ns->size;
@@ -92,16 +92,16 @@ insert_variable(struct namespace *ns, const char *name, enum variable_type type)
             if (last_var)
                 return last_var;
 
-            memset(var->name, '\0', 4);
-            strncpy(var->name, name, 4);
+            cgc_memset(var->name, '\0', 4);
+            cgc_strncpy(var->name, name, 4);
             var->type = type;
             return var;
         }
 
 #ifdef PATCHED_1
-        if (var->type != VAR_EMPTY && strncmp(var->name, name, 4) == 0) {
+        if (var->type != VAR_EMPTY && cgc_strncmp(var->name, name, 4) == 0) {
 #else
-        if (var->type == type && strncmp(var->name, name, 4) == 0) {
+        if (var->type == type && cgc_strncmp(var->name, name, 4) == 0) {
 #endif 
             last_var = var;
         }

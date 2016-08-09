@@ -26,7 +26,7 @@
 #include "bitset.h"
 
 struct pool {
-    size_t size;
+    cgc_size_t size;
     struct chunk *head;
 };
 
@@ -37,14 +37,14 @@ struct pool {
  * @param size The size of the pool
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int pool_init(struct pool *pool, size_t size);
+int cgc_pool_init(struct pool *pool, cgc_size_t size);
 
 /**
  * Destroy a fixed-size pool allocator and free all chunks
  *
  * @param pool The pool to destroy
  */
-void pool_destroy(struct pool *pool);
+void cgc_pool_destroy(struct pool *pool);
 
 /**
  * Allocate a chunk from a pool
@@ -52,7 +52,7 @@ void pool_destroy(struct pool *pool);
  * @param pool The pool to allocate from
  * @return A pointer to a new chunk
  */
-void *pool_alloc(struct pool *pool);
+void *cgc_pool_alloc(struct pool *pool);
 
 /**
  * Free a chunk back into a pool
@@ -60,14 +60,14 @@ void *pool_alloc(struct pool *pool);
  * @param pool The pool to return the memory to
  * @param ptr The chunk to free
  */
-void pool_free(struct pool *pool, void *ptr);
+void cgc_pool_free(struct pool *pool, void *ptr);
 
 /**
  * Return all memory to a pool
  *
  * @param pool The pool to free
  */
-void pool_free_all(struct pool *pool);
+void cgc_pool_free_all(struct pool *pool);
 
 #endif /* POOL_H_ */
 

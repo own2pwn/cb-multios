@@ -29,20 +29,20 @@
 #define SYM_SIZE 8
 #include "option.h"
 typedef struct option_holding {
-	uint32_t qty;
+	cgc_uint32_t qty;
 	char symbol[SYM_SIZE];
 
-} option_holding_t; 
+} cgc_option_holding_t; 
 
 typedef struct account_record {
 	float balance;
 	char key[KEY_LEN];
-	option_holding_t holdings[MAX_HOLDINGS];
-} account_record_t;
+	cgc_option_holding_t holdings[MAX_HOLDINGS];
+} cgc_account_record_t;
 
 
-extern account_record_t ACCOUNTS[];
-void init_account(uint32_t idx, float balance, char *key);
-void init_accounts();
-option_holding_t * next_holding(uint32_t acct_id);
+extern cgc_account_record_t ACCOUNTS[];
+void cgc_init_account(cgc_uint32_t idx, float balance, char *key);
+void cgc_init_accounts();
+cgc_option_holding_t * cgc_next_holding(cgc_uint32_t acct_id);
 #endif

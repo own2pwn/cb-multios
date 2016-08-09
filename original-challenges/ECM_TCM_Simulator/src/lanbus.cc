@@ -31,15 +31,15 @@ extern "C"
 
 #include "lanbus.h"
 
-CLANMessage::CLANMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen )
+cgc_CLANMessage::cgc_CLANMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen )
 	: m_srcID( srcID ), m_destID( destID ), m_messageLen( messageLen )
 {
-	m_pMessageData = new uint8_t[m_messageLen];
+	m_pMessageData = new cgc_uint8_t[m_messageLen];
 
-	memcpy( m_pMessageData, pMessageData, messageLen );
+	cgc_memcpy( m_pMessageData, pMessageData, messageLen );
 }
 
-CLANMessage::~CLANMessage( )
+cgc_CLANMessage::~cgc_CLANMessage( )
 {
 	if ( m_pMessageData )
 		delete [] m_pMessageData;
@@ -47,50 +47,50 @@ CLANMessage::~CLANMessage( )
 	m_pMessageData = NULL;
 }
 
-CLANBus::CLANBus( )
+cgc_CLANBus::cgc_CLANBus( )
 {
 
 }
 
-CLANBus::~CLANBus( )
+cgc_CLANBus::~cgc_CLANBus( )
 {
 
 }
 
-bool CLANBus::SendMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen )
+bool cgc_CLANBus::cgc_SendMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen )
 {
-	CLANMessage *pNewMessage = new CLANMessage( srcID, destID, pMessageData, messageLen );
+	cgc_CLANMessage *pNewMessage = new cgc_CLANMessage( srcID, destID, pMessageData, messageLen );
 
-	m_oSentList.AddLast( pNewMessage );
+	m_oSentList.cgc_AddLast( pNewMessage );
 
 	return (true);
 }
 
-bool CLANBus::InjectSimulationMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen )
+bool cgc_CLANBus::cgc_InjectSimulationMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen )
 {
-	CLANMessage *pNewMessage = new CLANMessage( srcID, destID, pMessageData, messageLen );
+	cgc_CLANMessage *pNewMessage = new cgc_CLANMessage( srcID, destID, pMessageData, messageLen );
 
-	m_oReceiveList.AddLast( pNewMessage );
+	m_oReceiveList.cgc_AddLast( pNewMessage );
 
 	return (true);
 }
 
-CLANMessage *CLANBus::RecvMessage( uint8_t *pDestIDList, uint8_t idCount, CLANMessage *pLastMessage )
+cgc_CLANMessage *cgc_CLANBus::cgc_RecvMessage( cgc_uint8_t *pDestIDList, cgc_uint8_t idCount, cgc_CLANMessage *pLastMessage )
 {
-	CLANMessage *pCur;
+	cgc_CLANMessage *pCur;
 	bool bFound = false;
 
 	// Check for message
 	if ( pLastMessage == NULL )
-		pCur = m_oReceiveList.GetFirst();
+		pCur = m_oReceiveList.cgc_GetFirst();
 	else
-		pCur = m_oReceiveList.GetNext( pLastMessage );
+		pCur = m_oReceiveList.cgc_GetNext( pLastMessage );
 
-	for ( ; pCur; pCur = m_oReceiveList.GetNext( pCur ) )
+	for ( ; pCur; pCur = m_oReceiveList.cgc_GetNext( pCur ) )
 	{
-		for ( uint8_t i = 0; i < idCount; i++ )
+		for ( cgc_uint8_t i = 0; i < idCount; i++ )
 		{
-			if ( pCur->GetDestID() == pDestIDList[i] )
+			if ( pCur->cgc_GetDestID() == pDestIDList[i] )
 			{
 				bFound = true;
 				break;
@@ -107,19 +107,19 @@ CLANMessage *CLANBus::RecvMessage( uint8_t *pDestIDList, uint8_t idCount, CLANMe
 		return (NULL);
 }
 
-void CLANBus::NextTick( void )
+void cgc_CLANBus::cgc_NextTick( void )
 {
 	// Clear out old messages that are already parsed
-	m_oReceiveList.DeleteAll();
+	m_oReceiveList.cgc_DeleteAll();
 
 	// Move sent messages to messages to be received
-	CLANMessage *pMessage;
+	cgc_CLANMessage *pMessage;
 
 	// Move them preserving order
-	while ( (pMessage = m_oSentList.GetFirst()) )
+	while ( (pMessage = m_oSentList.cgc_GetFirst()) )
 	{
-		pMessage->m_lanbusLink.Unlink();
+		pMessage->m_lanbusLink.cgc_Unlink();
 
-		m_oReceiveList.AddLast( pMessage );
+		m_oReceiveList.cgc_AddLast( pMessage );
 	}
 }

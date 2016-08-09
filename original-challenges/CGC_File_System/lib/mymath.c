@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <mymath.h>
 #include <stdint.h>
 
-int expi( int base, int exponent)
+int cgc_expi( int base, int exponent)
 {
 	int result = 1;
 
@@ -39,7 +39,7 @@ int expi( int base, int exponent)
 	return result;
 }
 
-double floor( double val )
+double cgc_floor( double val )
 {
     if ( val > 0.0 )
         return rint( val + 0.5 ) - 1.0;
@@ -49,7 +49,7 @@ double floor( double val )
         return 0.0;
 }
 
-double round_away_from_zero( double val )
+double cgc_round_away_from_zero( double val )
 {
     if ( val > 0.0 )
         return rint( val + 0.5 );
@@ -59,7 +59,7 @@ double round_away_from_zero( double val )
         return 0.0;
 }
 
-double round( double val, double n )
+double cgc_round( double val, double n )
 {
     // Round to n digits
     n = rint( n );
@@ -67,5 +67,5 @@ double round( double val, double n )
     double high_pow10 = pow( 10, n );
     double low_pow10 = pow( 10, -n );
 
-    return (round_away_from_zero( val * high_pow10 ) * low_pow10);
+    return (cgc_round_away_from_zero( val * high_pow10 ) * low_pow10);
 }

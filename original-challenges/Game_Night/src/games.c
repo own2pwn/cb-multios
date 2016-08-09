@@ -28,30 +28,30 @@
 struct game_state game_state;
 
 void
-init_cookie(void)
+cgc_init_cookie(void)
 {
     unsigned char flag_byte;
     unsigned int gold = 0;
     int i;
 
     for (i = 0; i < sizeof(unsigned int); i++) {
-        flag_byte = get_flag_byte(1021 + i);
-        gold |= (memchr("\n\0", flag_byte, 2) == NULL ? flag_byte : 1) << ((3 - i) * 8);
+        flag_byte = cgc_get_flag_byte(1021 + i);
+        gold |= (cgc_memchr("\n\0", flag_byte, 2) == NULL ? flag_byte : 1) << ((3 - i) * 8);
     }
 
     game_state.games.hugman.cookie = gold;
 }
 
 int
-check_cookie(unsigned int cookie)
+cgc_check_cookie(unsigned int cookie)
 {
     unsigned char flag_byte;
     unsigned int gold = 0;
     int i;
 
     for (i = 0; i < sizeof(unsigned int); i++) {
-        flag_byte = get_flag_byte(1021 + i);
-        gold |= (memchr("\n\0", flag_byte, 2) == NULL ? flag_byte : 1) << ((3 - i) * 8);
+        flag_byte = cgc_get_flag_byte(1021 + i);
+        gold |= (cgc_memchr("\n\0", flag_byte, 2) == NULL ? flag_byte : 1) << ((3 - i) * 8);
     }
 
     return cookie == gold;

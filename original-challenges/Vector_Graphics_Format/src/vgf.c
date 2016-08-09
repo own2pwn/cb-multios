@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,9 +32,9 @@ THE SOFTWARE.
 
 #define GET_XY( x, y, width ) ( (x) + ((y) * width) )
 
-#define SWAP( a, b ) { uint16_t temp = a; a = b; b = temp; }
+#define SWAP( a, b ) { cgc_uint16_t temp = a; a = b; b = temp; }
 
-uint16_t vgf_get_width( tVGFParsedFile *pFile )
+cgc_uint16_t cgc_vgf_get_width( cgc_tVGFParsedFile *pFile )
 {
     if ( pFile == NULL )
         return 0;
@@ -42,7 +42,7 @@ uint16_t vgf_get_width( tVGFParsedFile *pFile )
     return (pFile->file_header.vgfWidth);
 }
 
-uint16_t vgf_get_height( tVGFParsedFile *pFile )
+cgc_uint16_t cgc_vgf_get_height( cgc_tVGFParsedFile *pFile )
 {
     if ( pFile == NULL )
         return 0;
@@ -51,13 +51,13 @@ uint16_t vgf_get_height( tVGFParsedFile *pFile )
 }
 
 // Read in a vgf file
-int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pParsedFile )
+cgc_int32_t cgc_vgf_parse_data( cgc_uint8_t *pData, cgc_uint32_t dataLen, cgc_tVGFParsedFile **pParsedFile )
 {
-    uint32_t idx;
-    uint32_t readPos;
-    int32_t exitResults = VGF_ERROR_INVALID_FILE;
-    tVGFHeader *pFileHeader;
-    tVGFParsedFile *pParsedData = NULL;
+    cgc_uint32_t idx;
+    cgc_uint32_t readPos;
+    cgc_int32_t exitResults = VGF_ERROR_INVALID_FILE;
+    cgc_tVGFHeader *pFileHeader;
+    cgc_tVGFParsedFile *pParsedData = NULL;
 
     // Clear parsed file... set when parsing complete
     (*pParsedFile) = NULL;
@@ -65,9 +65,9 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
     // Reset read position
     readPos = 0;
 
-    pFileHeader = (tVGFHeader *)pData;
+    pFileHeader = (cgc_tVGFHeader *)pData;
 
-    if ( (readPos+sizeof(tVGFHeader)) > dataLen )
+    if ( (readPos+sizeof(cgc_tVGFHeader)) > dataLen )
         return (VGF_ERROR_INVALID_FILE);
 
     if ( pFileHeader->vgfMagic != VGF_MAGIC )
@@ -86,41 +86,41 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
         return (VGF_ERROR_INVALID_FILE);
 
     // Advance read position
-    readPos += sizeof(tVGFHeader);
+    readPos += sizeof(cgc_tVGFHeader);
 
     // Allocated data for parsed file
-    pParsedData = (tVGFParsedFile *)malloc( sizeof(tVGFParsedFile) );
+    pParsedData = (cgc_tVGFParsedFile *)cgc_malloc( sizeof(cgc_tVGFParsedFile) );
     pParsedData->pObjectList = NULL;
     pParsedData->color_count = 0;
     pParsedData->pColorTable = NULL;
 
     // Load file header
-    memcpy( &(pParsedData->file_header), pFileHeader, sizeof(tVGFHeader) );
+    cgc_memcpy( &(pParsedData->file_header), pFileHeader, sizeof(cgc_tVGFHeader) );
 
     // Remember last object to order list
-    tVGFObjectTable *pLastObjEntry = NULL;
+    cgc_tVGFObjectTable *pLastObjEntry = NULL;
 
     // Now read in objects
     for ( ;; )
     {
-        uint8_t do_end = 0;
-        tVGFObjectHeader *pObjectHeader;
+        cgc_uint8_t do_end = 0;
+        cgc_tVGFObjectHeader *pObjectHeader;
 
         // Get Header
-        pObjectHeader = (tVGFObjectHeader *)(pData+readPos);
+        pObjectHeader = (cgc_tVGFObjectHeader *)(pData+readPos);
 
         // Check length
-        if ( (readPos+sizeof(tVGFObjectHeader)) > dataLen )
+        if ( (readPos+sizeof(cgc_tVGFObjectHeader)) > dataLen )
         {
             exitResults = VGF_ERROR_INVALID_FILE;
             goto exit_cleanup;
         }
 
         // Advance position
-        readPos += sizeof(tVGFObjectHeader);
+        readPos += sizeof(cgc_tVGFObjectHeader);
 
         // Add object and insert
-        tVGFObjectTable *pNewObjEntry = (tVGFObjectTable *)malloc( sizeof( tVGFObjectTable) );
+        cgc_tVGFObjectTable *pNewObjEntry = (cgc_tVGFObjectTable *)cgc_malloc( sizeof( cgc_tVGFObjectTable) );
         pNewObjEntry->pNext = NULL;
 
         if ( pLastObjEntry == NULL )
@@ -141,51 +141,51 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
         switch( pObjectHeader->object_type )
         {
         case VGF_OBJECT_RECT:
-            if ( (readPos+sizeof(tVGFDrawRect)) > dataLen )
+            if ( (readPos+sizeof(cgc_tVGFDrawRect)) > dataLen )
             {
                 exitResults = VGF_ERROR_INVALID_FILE;
                 goto exit_cleanup;
             }
 
-            pNewObjEntry->obj_data.obj_rect = *((tVGFDrawRect *)(pData+readPos));
+            pNewObjEntry->obj_data.obj_rect = *((cgc_tVGFDrawRect *)(pData+readPos));
 
-            readPos += sizeof(tVGFDrawRect);
+            readPos += sizeof(cgc_tVGFDrawRect);
             break;
 
         case VGF_OBJECT_TRIANGLE:
-            if ( (readPos+sizeof(tVGFDrawTriangle)) > dataLen )
+            if ( (readPos+sizeof(cgc_tVGFDrawTriangle)) > dataLen )
             {
                 exitResults = VGF_ERROR_INVALID_FILE;
                 goto exit_cleanup;
             }
 
-            pNewObjEntry->obj_data.obj_triangle = *((tVGFDrawTriangle *)(pData+readPos));
+            pNewObjEntry->obj_data.obj_triangle = *((cgc_tVGFDrawTriangle *)(pData+readPos));
 
-            readPos += sizeof(tVGFDrawTriangle);
+            readPos += sizeof(cgc_tVGFDrawTriangle);
             break;
 
         case VGF_OBJECT_LINE:
-            if ( (readPos+sizeof(tVGFDrawLine)) > dataLen )
+            if ( (readPos+sizeof(cgc_tVGFDrawLine)) > dataLen )
             {
                 exitResults = VGF_ERROR_INVALID_FILE;
                 goto exit_cleanup;
             }
 
-            pNewObjEntry->obj_data.obj_line = *((tVGFDrawLine *)(pData+readPos));
+            pNewObjEntry->obj_data.obj_line = *((cgc_tVGFDrawLine *)(pData+readPos));
 
-            readPos += sizeof(tVGFDrawLine);
+            readPos += sizeof(cgc_tVGFDrawLine);
             break;
 
         case VGF_OBJECT_CIRCLE:
-            if ( (readPos+sizeof(tVGFDrawCircle)) > dataLen )
+            if ( (readPos+sizeof(cgc_tVGFDrawCircle)) > dataLen )
             {
                 exitResults = VGF_ERROR_INVALID_FILE;
                 goto exit_cleanup;
             }
 
-            pNewObjEntry->obj_data.obj_circle = *((tVGFDrawCircle *)(pData+readPos));
+            pNewObjEntry->obj_data.obj_circle = *((cgc_tVGFDrawCircle *)(pData+readPos));
 
-            readPos += sizeof(tVGFDrawCircle);
+            readPos += sizeof(cgc_tVGFDrawCircle);
             break;
 
         case VGF_OBJECT_END:
@@ -204,32 +204,32 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
     }
 
     // Load color index
-    if ( (readPos+sizeof(tVGFColorTable)) > dataLen )
+    if ( (readPos+sizeof(cgc_tVGFColorTable)) > dataLen )
     {
         exitResults = VGF_ERROR_INVALID_FILE;
         goto exit_cleanup;
     }
 
-    pParsedData->color_count = ((tVGFColorTable *)(pData+readPos))->color_count;
-    readPos += sizeof(tVGFColorTable);
+    pParsedData->color_count = ((cgc_tVGFColorTable *)(pData+readPos))->color_count;
+    readPos += sizeof(cgc_tVGFColorTable);
 
     // Allocate array
     if ( pParsedData->color_count > 0 )
     {
-        pParsedData->pColorTable = (tVGFColorHeader *)malloc( sizeof(tVGFColorHeader) * pParsedData->color_count );
+        pParsedData->pColorTable = (cgc_tVGFColorHeader *)cgc_malloc( sizeof(cgc_tVGFColorHeader) * pParsedData->color_count );
 
         // Read in color data
         for ( idx = 0; idx < pParsedData->color_count; idx++ )
         {
-            if ( (readPos+sizeof(tVGFColorHeader)) > dataLen )
+            if ( (readPos+sizeof(cgc_tVGFColorHeader)) > dataLen )
             {
                 exitResults = VGF_ERROR_INVALID_FILE;
                 goto exit_cleanup;
             }
 
-            memcpy( &(pParsedData->pColorTable[idx]), (pData+readPos), sizeof(tVGFColorHeader) );
+            cgc_memcpy( &(pParsedData->pColorTable[idx]), (pData+readPos), sizeof(cgc_tVGFColorHeader) );
 
-            readPos += sizeof(tVGFColorHeader);
+            readPos += sizeof(cgc_tVGFColorHeader);
         }
     }
 
@@ -239,7 +239,7 @@ int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pPars
 exit_cleanup:
     // Check if parsing fail and need to cleanup
     if ( pParsedData && exitResults != VGF_PARSE_SUCCESS )
-        vgf_destroy_file( pParsedData );
+        cgc_vgf_destroy_file( pParsedData );
 
     // Check success
     if ( exitResults == VGF_PARSE_SUCCESS )
@@ -248,15 +248,15 @@ exit_cleanup:
     return (exitResults);
 }
 
-void vgf_destroy_file( tVGFParsedFile *pFile )
+void cgc_vgf_destroy_file( cgc_tVGFParsedFile *pFile )
 {
     if ( !pFile )
         return;
 
     if ( pFile->pObjectList )
     {
-        tVGFObjectTable *pCur;
-        tVGFObjectTable *pNext;
+        cgc_tVGFObjectTable *pCur;
+        cgc_tVGFObjectTable *pNext;
 
         // Free objects
         pCur = pFile->pObjectList;
@@ -268,7 +268,7 @@ void vgf_destroy_file( tVGFParsedFile *pFile )
             pNext = pCur->pNext;
 
             // Free memory
-            free( pCur );
+            cgc_free( pCur );
 
             // Advance
             pCur = pNext;
@@ -277,18 +277,18 @@ void vgf_destroy_file( tVGFParsedFile *pFile )
 
     // Free color table
     if ( pFile->pColorTable )
-        free( pFile->pColorTable );
+        cgc_free( pFile->pColorTable );
 
     // Free data
-    free( pFile );
+    cgc_free( pFile );
 }
 
 // Get the output size of the VGF file converted to BMP
-int32_t vgf_get_render_size( tVGFParsedFile *pFile )
+cgc_int32_t cgc_vgf_get_render_size( cgc_tVGFParsedFile *pFile )
 {
-    uint32_t pixel_count;
-    uint32_t raw_image_size;
-    uint32_t bmp_size;
+    cgc_uint32_t pixel_count;
+    cgc_uint32_t raw_image_size;
+    cgc_uint32_t bmp_size;
 
     if ( pFile == NULL )
         return (-1);
@@ -301,15 +301,15 @@ int32_t vgf_get_render_size( tVGFParsedFile *pFile )
 }
 
 // Write out the VGF file to a render buffer
-int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestLen )
+cgc_int32_t cgc_vgf_render_file( cgc_tVGFParsedFile *pFile, cgc_uint8_t *pDest, cgc_uint32_t *pDestLen )
 {
-    uint32_t pixel_count;
-    uint32_t pixel_idx;
-    uint16_t pixel_width, pixel_height;
-    uint8_t layer_count, layer_idx;
-    uint16_t *layer_data[VGF_MAX_LAYER];
-    uint16_t *final_data = NULL;
-    int8_t exitResults = 0;
+    cgc_uint32_t pixel_count;
+    cgc_uint32_t pixel_idx;
+    cgc_uint16_t pixel_width, pixel_height;
+    cgc_uint8_t layer_count, layer_idx;
+    cgc_uint16_t *layer_data[VGF_MAX_LAYER];
+    cgc_uint16_t *final_data = NULL;
+    cgc_int8_t exitResults = 0;
 
     if ( pFile == NULL || pDest == NULL || pDestLen == NULL )
         return (-1);
@@ -326,22 +326,22 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
     for ( layer_idx = 0; layer_idx < layer_count; layer_idx++ )
     {
 
-        layer_data[layer_idx] = (uint16_t *)malloc( pixel_count*sizeof(uint16_t) );
+        layer_data[layer_idx] = (cgc_uint16_t *)cgc_malloc( pixel_count*sizeof(cgc_uint16_t) );
 
         for ( pixel_idx = 0; pixel_idx < pixel_count; pixel_idx++ )
             layer_data[layer_idx][pixel_idx] = PIXEL_DEFAULT_COLOR_INDEX;
     }
 
     // Render each object to the appropriate layer
-    tVGFObjectTable *pCur;
+    cgc_tVGFObjectTable *pCur;
 
     // Iterate
     for ( pCur = pFile->pObjectList; pCur != NULL; pCur = pCur->pNext )
     {
         // Parse object information
-        uint8_t obj_layer;
-        uint8_t obj_color_index;
-        uint16_t obj_settings;
+        cgc_uint8_t obj_layer;
+        cgc_uint8_t obj_color_index;
+        cgc_uint16_t obj_settings;
 
         obj_layer = pCur->obj_header.object_layer;
         obj_color_index = pCur->obj_header.object_color_index;
@@ -364,19 +364,19 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
         switch( pCur->obj_header.object_type )
         {
         case VGF_OBJECT_RECT:
-            vgf_render_rect( &(pCur->obj_data.obj_rect), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
+            cgc_vgf_render_rect( &(pCur->obj_data.obj_rect), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
             break;
 
         case VGF_OBJECT_TRIANGLE:
-            vgf_render_triangle( &(pCur->obj_data.obj_triangle), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
+            cgc_vgf_render_triangle( &(pCur->obj_data.obj_triangle), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
             break;
 
         case VGF_OBJECT_LINE:
-            vgf_render_line( &(pCur->obj_data.obj_line), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
+            cgc_vgf_render_line( &(pCur->obj_data.obj_line), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
             break;
 
         case VGF_OBJECT_CIRCLE:
-            vgf_render_circle( &(pCur->obj_data.obj_circle), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
+            cgc_vgf_render_circle( &(pCur->obj_data.obj_circle), layer_data[obj_layer], obj_settings, obj_color_index, pixel_width, pixel_height );
             break;
 
         case VGF_OBJECT_END:
@@ -392,7 +392,7 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
     }
 
     // Allocate data for final layer
-    final_data = (uint16_t *)malloc( pixel_count*sizeof(uint16_t) );
+    final_data = (cgc_uint16_t *)cgc_malloc( pixel_count*sizeof(cgc_uint16_t) );
 
     // Setup final layer
     for ( pixel_idx = 0; pixel_idx < pixel_count; pixel_idx++ )
@@ -418,7 +418,7 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
     }
 
     // Render
-    uint32_t destPixel = 0;
+    cgc_uint32_t destPixel = 0;
     for ( pixel_idx = 0; pixel_idx < pixel_count; pixel_idx++ )
     {
         if ( final_data[pixel_idx] == PIXEL_DEFAULT_COLOR_INDEX )
@@ -448,18 +448,18 @@ int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestL
 
 exit_cleanup:
     if ( final_data )
-        free( final_data );
+        cgc_free( final_data );
 
     for ( layer_idx = 0; layer_idx < layer_count; layer_idx++ )
     {
         if ( layer_data[layer_idx] )
-            free( layer_data[layer_idx] );
+            cgc_free( layer_data[layer_idx] );
     }
 
     return (exitResults);
 }
 
-void vgf_hline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_data, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_hline_helper( cgc_uint16_t x0, cgc_uint16_t y0, cgc_uint16_t len, cgc_uint16_t *layer_data, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
     if ( x0 >= width )
         return;
@@ -467,7 +467,7 @@ void vgf_hline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_d
     if ( y0 >= height )
         return;
 
-    uint16_t cur = 0;
+    cgc_uint16_t cur = 0;
 
     // Draw line to the right
     for ( cur = 0; cur < len; cur++ )
@@ -479,7 +479,7 @@ void vgf_hline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_d
     }
 }
 
-void vgf_vline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_data, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_vline_helper( cgc_uint16_t x0, cgc_uint16_t y0, cgc_uint16_t len, cgc_uint16_t *layer_data, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
     if ( x0 >= width )
         return;
@@ -487,7 +487,7 @@ void vgf_vline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_d
     if ( y0 >= height )
         return;
 
-    uint16_t cur = 0;
+    cgc_uint16_t cur = 0;
 
     // Draw line straight up
     for ( cur = 0; cur < len; cur++ )
@@ -499,19 +499,19 @@ void vgf_vline_helper( uint16_t x0, uint16_t y0, uint16_t len, uint16_t *layer_d
     }
 }
 
-void vgf_line_helper( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t *layer_data, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_line_helper( cgc_uint16_t x0, cgc_uint16_t y0, cgc_uint16_t x1, cgc_uint16_t y1, cgc_uint16_t *layer_data, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
     // Use Bresenham's algorithm
-    int16_t dx, dy;
-    int16_t sx, sy;
-    int16_t errx, erry;
-    int16_t dist;
-    int16_t x_pos = x0;
-    int16_t y_pos = y0;
-    int16_t count;
+    cgc_int16_t dx, dy;
+    cgc_int16_t sx, sy;
+    cgc_int16_t errx, erry;
+    cgc_int16_t dist;
+    cgc_int16_t x_pos = x0;
+    cgc_int16_t y_pos = y0;
+    cgc_int16_t count;
 
-    dx = abs( x1 - x0 );
-    dy = abs( y1 - y0 );
+    dx = cgc_abs( x1 - x0 );
+    dy = cgc_abs( y1 - y0 );
 
     if ( dx > dy )
         dist = dx;
@@ -552,11 +552,11 @@ void vgf_line_helper( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16
     }
 }
 
-void vgf_render_rect( tVGFDrawRect *pRectData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_render_rect( cgc_tVGFDrawRect *pRectData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
-    uint16_t x_pos, y_pos;
-    uint16_t x_start, y_start;
-    uint16_t x_end, y_end;
+    cgc_uint16_t x_pos, y_pos;
+    cgc_uint16_t x_start, y_start;
+    cgc_uint16_t x_end, y_end;
 
     if ( pRectData == NULL )
         return;
@@ -609,7 +609,7 @@ void vgf_render_rect( tVGFDrawRect *pRectData, uint16_t *layer_data, uint8_t set
 }
 
 
-void vgf_render_circle( tVGFDrawCircle *pCircleData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_render_circle( cgc_tVGFDrawCircle *pCircleData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
     if ( pCircleData == NULL )
         return;
@@ -633,15 +633,15 @@ void vgf_render_circle( tVGFDrawCircle *pCircleData, uint16_t *layer_data, uint8
     if ( settings & VGF_OBJECT_SETTINGS_FILL )
     {
         // Render circle -- same algorithm below just drawing lines across the points
-        int16_t x_pos = pCircleData->x_pos;
-        int16_t y_pos = pCircleData->y_pos;
-        int16_t x = 0;
-        int16_t y = pCircleData->radius;
-        int16_t radius_error = 1 - pCircleData->radius;
-        int16_t ddF_x = 1;
-        int16_t ddF_y = -2 * pCircleData->radius;
+        cgc_int16_t x_pos = pCircleData->x_pos;
+        cgc_int16_t y_pos = pCircleData->y_pos;
+        cgc_int16_t x = 0;
+        cgc_int16_t y = pCircleData->radius;
+        cgc_int16_t radius_error = 1 - pCircleData->radius;
+        cgc_int16_t ddF_x = 1;
+        cgc_int16_t ddF_y = -2 * pCircleData->radius;
 
-        vgf_vline_helper( x_pos, y_pos-y, 2*y, layer_data, color_index, width, height );
+        cgc_vgf_vline_helper( x_pos, y_pos-y, 2*y, layer_data, color_index, width, height );
 
         while ( x < y )
         {
@@ -657,23 +657,23 @@ void vgf_render_circle( tVGFDrawCircle *pCircleData, uint16_t *layer_data, uint8
             radius_error += ddF_x;
 
             // Draw lines vertically ||| across the circle points using Bresenham's algorithm, use the fast vline helper
-            vgf_vline_helper( x_pos+x, y_pos-y, 2*y, layer_data, color_index, width, height );
-            vgf_vline_helper( x_pos+y, y_pos-x, 2*x, layer_data, color_index, width, height );
-            vgf_vline_helper( x_pos-x, y_pos-y, 2*y, layer_data, color_index, width, height );
-            vgf_vline_helper( x_pos-y, y_pos-x, 2*x, layer_data, color_index, width, height );
+            cgc_vgf_vline_helper( x_pos+x, y_pos-y, 2*y, layer_data, color_index, width, height );
+            cgc_vgf_vline_helper( x_pos+y, y_pos-x, 2*x, layer_data, color_index, width, height );
+            cgc_vgf_vline_helper( x_pos-x, y_pos-y, 2*y, layer_data, color_index, width, height );
+            cgc_vgf_vline_helper( x_pos-y, y_pos-x, 2*x, layer_data, color_index, width, height );
         }
     }
     else
     {
         // Render circle
-        int16_t x_pos = pCircleData->x_pos;
-        int16_t y_pos = pCircleData->y_pos;
-        int16_t x = 0;
-        int16_t y = pCircleData->radius;
-        int16_t radius_error = 1 - pCircleData->radius;
-        int16_t ddF_x = 1;
-        int16_t ddF_y = -2 * pCircleData->radius;
-        uint16_t radius = pCircleData->radius;
+        cgc_int16_t x_pos = pCircleData->x_pos;
+        cgc_int16_t y_pos = pCircleData->y_pos;
+        cgc_int16_t x = 0;
+        cgc_int16_t y = pCircleData->radius;
+        cgc_int16_t radius_error = 1 - pCircleData->radius;
+        cgc_int16_t ddF_x = 1;
+        cgc_int16_t ddF_y = -2 * pCircleData->radius;
+        cgc_uint16_t radius = pCircleData->radius;
 
         // Draw points
         layer_data[ GET_XY( x_pos, y_pos+radius, width ) ] = color_index;
@@ -708,11 +708,11 @@ void vgf_render_circle( tVGFDrawCircle *pCircleData, uint16_t *layer_data, uint8
 
 }
 
-void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_render_triangle( cgc_tVGFDrawTriangle *pTriangleData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
-    uint16_t x_pos1, y_pos1;
-    uint16_t x_pos2, y_pos2;
-    uint16_t x_pos3, y_pos3;
+    cgc_uint16_t x_pos1, y_pos1;
+    cgc_uint16_t x_pos2, y_pos2;
+    cgc_uint16_t x_pos3, y_pos3;
 
     if ( pTriangleData == NULL )
         return;
@@ -762,7 +762,7 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
         {
             // Y coordinates are all equal -- draw a line
             // Find lowest X and highest X
-            uint16_t xl, xh;
+            cgc_uint16_t xl, xh;
 
             xh = x_pos1;
             xl = x_pos1;
@@ -778,23 +778,23 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
                 xh = x_pos3;
 
             // DRAW horizontal line -- use a specific horizontal line helper here to improve performance.
-            vgf_hline_helper( xl, y_pos1, (xh-xl), layer_data, color_index, width, height );
+            cgc_vgf_hline_helper( xl, y_pos1, (xh-xl), layer_data, color_index, width, height );
         }
         else
         {
-            int16_t dx31 = (x_pos3 - x_pos1);
-            int16_t dy31 = (y_pos3 - y_pos1);
-            int16_t dx32 = (x_pos3 - x_pos2);
-            int16_t dy32 = (y_pos3 - y_pos2);
-            int16_t dy21 = (y_pos2 - y_pos1);
-            int16_t dx21 = (x_pos2 - x_pos1);
+            cgc_int16_t dx31 = (x_pos3 - x_pos1);
+            cgc_int16_t dy31 = (y_pos3 - y_pos1);
+            cgc_int16_t dx32 = (x_pos3 - x_pos2);
+            cgc_int16_t dy32 = (y_pos3 - y_pos2);
+            cgc_int16_t dy21 = (y_pos2 - y_pos1);
+            cgc_int16_t dx21 = (x_pos2 - x_pos1);
 
 
             // 32-bit values as these can OVERFLOW with a 512x512 width/height
             // since they are increments of delta X
-            int32_t sl, sh;     // High and low scanlines -- arbitrarily chosen
+            cgc_int32_t sl, sh;     // High and low scanlines -- arbitrarily chosen
 
-            uint16_t last_y, y;
+            cgc_uint16_t last_y, y;
             // Bresenham's algorithm for two halves of triangle
             sl = 0;
             sh = 0;
@@ -808,7 +808,7 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
             // CHECK for flat top triangle
             if ( y_pos1 == y_pos2 )
             {
-                uint16_t xl,xh;
+                cgc_uint16_t xl,xh;
 
                 xl = x_pos1;
                 xh = x_pos2;
@@ -816,7 +816,7 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
                 if ( xl > xh )
                     SWAP( xl, xh );
 
-                vgf_hline_helper( xl, y_pos1, (xh-xl), layer_data, color_index, width, height );
+                cgc_vgf_hline_helper( xl, y_pos1, (xh-xl), layer_data, color_index, width, height );
 
                 y = y_pos2;
             }
@@ -824,8 +824,8 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
             {
                 for ( y = y_pos1; y <= last_y; y++ )
                 {
-                    uint16_t xh = x_pos1 + sh / dy31;
-                    uint16_t xl = x_pos1 + sl / dy21;
+                    cgc_uint16_t xh = x_pos1 + sh / dy31;
+                    cgc_uint16_t xl = x_pos1 + sl / dy21;
 
                     sh += dx31;
                     sl += dx21;
@@ -834,7 +834,7 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
                         SWAP( xl, xh );
 
                     // DRAW scan line between bresenham lines
-                    vgf_hline_helper( xl, y, (xh-xl), layer_data, color_index, width, height );
+                    cgc_vgf_hline_helper( xl, y, (xh-xl), layer_data, color_index, width, height );
                 }
             }
 
@@ -843,8 +843,8 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
 
             for ( ; y <= y_pos3; y++ )
             {
-                uint16_t xh = x_pos1 + sh / dy31;
-                uint16_t xl = x_pos2 + sl / dy32;
+                cgc_uint16_t xh = x_pos1 + sh / dy31;
+                cgc_uint16_t xl = x_pos2 + sl / dy32;
 
                 sh += dx31;
                 sl += dx32;
@@ -853,23 +853,23 @@ void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data,
                     SWAP( xl, xh );
 
                 // DRAW scan line between bresenham lines
-                vgf_hline_helper( xl, y, (xh-xl), layer_data, color_index, width, height );
+                cgc_vgf_hline_helper( xl, y, (xh-xl), layer_data, color_index, width, height );
             }
         }
     }
     else
     {
-        vgf_line_helper( x_pos1, y_pos1, x_pos2, y_pos2, layer_data, color_index, width, height );
-        vgf_line_helper( x_pos2, y_pos2, x_pos3, y_pos3, layer_data, color_index, width, height );
-        vgf_line_helper( x_pos3, y_pos3, x_pos1, y_pos1, layer_data, color_index, width, height );
+        cgc_vgf_line_helper( x_pos1, y_pos1, x_pos2, y_pos2, layer_data, color_index, width, height );
+        cgc_vgf_line_helper( x_pos2, y_pos2, x_pos3, y_pos3, layer_data, color_index, width, height );
+        cgc_vgf_line_helper( x_pos3, y_pos3, x_pos1, y_pos1, layer_data, color_index, width, height );
     }
 }
 
 
-void vgf_render_line( tVGFDrawLine *pLineData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t width, uint16_t height )
+void cgc_vgf_render_line( cgc_tVGFDrawLine *pLineData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t width, cgc_uint16_t height )
 {
-    uint16_t x_start, y_start;
-    uint16_t x_end, y_end;
+    cgc_uint16_t x_start, y_start;
+    cgc_uint16_t x_end, y_end;
 
     if ( pLineData == NULL )
         return;
@@ -891,7 +891,7 @@ void vgf_render_line( tVGFDrawLine *pLineData, uint16_t *layer_data, uint8_t set
     if ( y_start > y_end )
         return;
 
-    vgf_line_helper( x_start, y_start, x_end, y_end, layer_data, color_index, width, height );
+    cgc_vgf_line_helper( x_start, y_start, x_end, y_end, layer_data, color_index, width, height );
 
     if ( settings & VGF_OBJECT_SETTINGS_FILL )
     {

@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,13 +30,13 @@ typedef struct sPageVar{
   char name[64];
   char *value;
   struct sPageVar *next;
-} PageVar;
+} cgc_PageVar;
 
-int AddPageVar(PageVar *varlist, char *cmd);
-PageVar *GetPageVar(PageVar *varlist, char *name, char *end);
-void DestroyVarList(PageVar *varlist);
-int InteractWithPage(char *page, int page_size, char *override_data);
-int ServePage(char *page, int page_size);
-int ServePageWithOverride(char *page, int page_size, PageVar *override_list);
+int cgc_AddPageVar(cgc_PageVar *varlist, char *cmd);
+cgc_PageVar *cgc_GetPageVar(cgc_PageVar *varlist, char *name, char *end);
+void cgc_DestroyVarList(cgc_PageVar *varlist);
+int cgc_InteractWithPage(char *page, int page_size, char *override_data);
+int cgc_ServePage(char *page, int page_size);
+int cgc_ServePageWithOverride(char *page, int page_size, cgc_PageVar *override_list);
 
 #endif // PAGE_H

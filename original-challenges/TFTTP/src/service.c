@@ -33,8 +33,8 @@ int main(void) {
     ALLOC(0,(void **)&curpkt,TFTTP_STRUCT_SIZE);
 
     while(1) {
-        if((res=process_next_dgram()) < 0) {
-            create_resp_pkt(curpkt,ERRQUIT);
+        if((res=cgc_process_next_dgram()) < 0) {
+            cgc_create_resp_pkt(curpkt,ERRQUIT);
             SENDD(curpkt,curpkt->hdr.size);
             _terminate(res);
         }

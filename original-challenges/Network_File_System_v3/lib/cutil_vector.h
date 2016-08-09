@@ -48,31 +48,31 @@ namespace CUtil
 	class Vector
 	{
 	public:
-		static const uint32_t VECTOR_BASE_ALLOC_SIZE = 10;
-		static const uint32_t VECTOR_ADD_ALLOC_SIZE = 10;
+		static const cgc_uint32_t VECTOR_BASE_ALLOC_SIZE = 10;
+		static const cgc_uint32_t VECTOR_ADD_ALLOC_SIZE = 10;
 
 	public:
 		Vector();
-		Vector( uint32_t allocSize );
-		Vector( uint32_t allocSize, uint32_t growSize );
+		Vector( cgc_uint32_t allocSize );
+		Vector( cgc_uint32_t allocSize, cgc_uint32_t growSize );
 		~Vector();
 
-		uint32_t GetSize( void ) const { return m_vectorSize; };
-		uint32_t GetAllocSize( void ) const { return m_allocSize; };
+		cgc_uint32_t cgc_GetSize( void ) const { return m_vectorSize; };
+		cgc_uint32_t cgc_GetAllocSize( void ) const { return m_allocSize; };
 
-		T GetAt( uint32_t pos );
-		void AppendLast( T );
+		T cgc_GetAt( cgc_uint32_t pos );
+		void cgc_AppendLast( T );
 
-		bool IsEmpty( void );
+		bool cgc_IsEmpty( void );
 
 	private:
-		void GrowVector( void );
+		void cgc_GrowVector( void );
 
 		T *m_pContainer;
 
-		uint32_t m_vectorSize;
-		uint32_t m_allocSize;
-		uint32_t m_growSize;
+		cgc_uint32_t m_vectorSize;
+		cgc_uint32_t m_allocSize;
+		cgc_uint32_t m_growSize;
 	};
 
 	template<class T>
@@ -83,14 +83,14 @@ namespace CUtil
 	}
 
 	template<class T>
-	Vector<T>::Vector( uint32_t allocSize )
+	Vector<T>::Vector( cgc_uint32_t allocSize )
 		: m_allocSize( allocSize ), m_growSize( VECTOR_ADD_ALLOC_SIZE ), m_vectorSize( 0 )
 	{
 		m_pContainer = new T[ allocSize ];
 	}
 
 	template<class T>
-	Vector<T>::Vector( uint32_t allocSize, uint32_t growSize )
+	Vector<T>::Vector( cgc_uint32_t allocSize, cgc_uint32_t growSize )
 		: m_allocSize( allocSize ), m_growSize( growSize ), m_vectorSize( 0 )
 	{
 		m_pContainer = new T[ allocSize ];
@@ -107,7 +107,7 @@ namespace CUtil
 	}	
 
 	template<class T>
-	T Vector<T>::GetAt( uint32_t pos )
+	T Vector<T>::cgc_GetAt( cgc_uint32_t pos )
 	{
 		if ( pos < m_vectorSize )
 			return (m_pContainer[ pos ]);
@@ -116,12 +116,12 @@ namespace CUtil
 	}
 
 	template<class T>
-	void Vector<T>::AppendLast( T item )
+	void Vector<T>::cgc_AppendLast( T item )
 	{
 		if ( m_vectorSize >= m_allocSize )
 		{
 			// Grow vector
-			GrowVector();
+			cgc_GrowVector();
 		}
 
 		m_pContainer[ m_vectorSize ] = item;
@@ -130,11 +130,11 @@ namespace CUtil
 	}
 
 	template<class T>
-	void Vector<T>::GrowVector( void )
+	void Vector<T>::cgc_GrowVector( void )
 	{
 		T *pTemp = new T[ m_vectorSize ];
 
-		memcpy( pTemp, m_pContainer, (m_vectorSize * sizeof(T)) );
+		cgc_memcpy( pTemp, m_pContainer, (m_vectorSize * sizeof(T)) );
 
 		delete [] m_pContainer;
 
@@ -142,13 +142,13 @@ namespace CUtil
 
 		m_allocSize += m_growSize;
 
-		memcpy( m_pContainer, pTemp, (m_vectorSize * sizeof(T)) );
+		cgc_memcpy( m_pContainer, pTemp, (m_vectorSize * sizeof(T)) );
 
 		delete [] pTemp;
 	}
 
 	template<class T>
-	bool Vector<T>::IsEmpty( void )
+	bool Vector<T>::cgc_IsEmpty( void )
 	{
 		return (m_vectorSize == 0);
 	}

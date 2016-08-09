@@ -28,25 +28,25 @@ THE SOFTWARE.
 #include "protocol.h"
 #include "messages.h"
 
-void* extract_scramble_req(protocol_frame* frame) {
+void* cgc_extract_scramble_req(cgc_protocol_frame* frame) {
   if (frame->type != 1) _terminate(-1);
   if (frame->length != 2) _terminate(-1);
   return frame->value;
 }
 
-void* extract_check_req(protocol_frame* frame) {
+void* cgc_extract_check_req(cgc_protocol_frame* frame) {
   if (frame->type != 16) _terminate(-1);
   if (frame->length != 2) _terminate(-1);
   return frame->value;
 }
 
-void* extract_add_req(protocol_frame* frame) {
+void* cgc_extract_add_req(cgc_protocol_frame* frame) {
   if (frame->type != 32) _terminate(-1);
   if (frame->length != 2) _terminate(-1);
   return frame->value;
 }
 
-void* extract_subtract_req(protocol_frame* frame) {
+void* cgc_extract_subtract_req(cgc_protocol_frame* frame) {
   if (frame->type != 48) _terminate(-1);
   if (frame->length != 2) _terminate(-1);
   return frame->value;

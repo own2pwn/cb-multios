@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,17 +25,17 @@
 /**
  * Initialize the state of the machine
  */
-void init_dispenser(void);
+void cgc_init_dispenser(void);
 
 /**
  * Set a new bowl onto the platform
  */
-void dispense_bowl(void);
+void cgc_dispense_bowl(void);
 
 /**
  * Sound buzzer to user knows the machines is finished
  */
-void completion_buzzer(void);
+void cgc_completion_buzzer(void);
 
 /**
  * The following functions operate all of the internal actuators that 
@@ -43,25 +43,25 @@ void completion_buzzer(void);
  */
 
 // liquids
-void dispense_dairy_milk(void);
-void dispense_dairy_cream(void);
-void dispense_water(void);
-void dispense_soy_milk(void);
-void dispense_almond_milk(void);
+void cgc_dispense_dairy_milk(void);
+void cgc_dispense_dairy_cream(void);
+void cgc_dispense_water(void);
+void cgc_dispense_soy_milk(void);
+void cgc_dispense_almond_milk(void);
 // cereals
-void dispense_sugar_loops(void);
-void dispense_maize_flakes(void);
-void dispense_marshmallow_figuringes(void);
-void dispense_chocolate_rice_pellets(void);
-void dispense_oohs_of_oats(void);
-void dispense_crunchy_puffs(void);
-void dispense_frutiz_n_nuts(void);
+void cgc_dispense_sugar_loops(void);
+void cgc_dispense_maize_flakes(void);
+void cgc_dispense_marshmallow_figuringes(void);
+void cgc_dispense_chocolate_rice_pellets(void);
+void cgc_dispense_oohs_of_oats(void);
+void cgc_dispense_crunchy_puffs(void);
+void cgc_dispense_frutiz_n_nuts(void);
 // toppings
-void dispense_chocolate_drops(void);
-void dispense_blueberries(void);
-void dispense_berry_medley(void);
-void dispense_sugar_cube(void);
-void dispense_strawberries(void);
+void cgc_dispense_chocolate_drops(void);
+void cgc_dispense_blueberries(void);
+void cgc_dispense_berry_medley(void);
+void cgc_dispense_sugar_cube(void);
+void cgc_dispense_strawberries(void);
 
 
 #endif

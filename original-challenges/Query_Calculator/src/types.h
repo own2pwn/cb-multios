@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Bryce Kerley <bk@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,22 +27,22 @@ THE SOFTWARE.
 #pragma once
 
 #define UINT8_MAX 0xff
-typedef unsigned char uint8;
-typedef   signed char sint8;
+typedef unsigned char cgc_uint8;
+typedef   signed char cgc_sint8;
 
 #define UINT16_MAX 0xffff
-typedef unsigned short int uint16;
-typedef   signed short int sint16;
+typedef unsigned short int cgc_uint16;
+typedef   signed short int cgc_sint16;
 
 #define UINT32_MAX 0xffffffff
-typedef unsigned int uint32;
-typedef   signed int sint32;
+typedef unsigned int cgc_uint32;
+typedef   signed int cgc_sint32;
 
 #define UINT64_MAX 0xffffffffffffffff
-typedef unsigned long long uint64;
-typedef   signed long long sint64;
+typedef unsigned long long cgc_uint64;
+typedef   signed long long cgc_sint64;
 
-typedef float  float32;
-typedef double float64;
+typedef float  cgc_float32;
+typedef double cgc_float64;
 
-void types_check();
+void cgc_types_check();

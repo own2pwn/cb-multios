@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,137 +31,137 @@
 #define TRUE 1
 
 
-typedef int (*verify_input_t) (char *str, size_t size);
+typedef int (*cgc_verify_input_t) (char *str, cgc_size_t size);
 typedef struct app_input
 {
     char *text_field;
     char *input_specification;
     char is_required;
-    size_t max_input_length;
+    cgc_size_t max_input_length;
     char *input;
-    verify_input_t verify_input;
-} app_input_t;
+    cgc_verify_input_t verify_input;
+} cgc_app_input_t;
 
 
-typedef enum {NOOP, INPUT, PREV, NEXT, UPDATE, HELP, EXIT } page_option;
-typedef enum {CAND, CONT, ADDR, EDUC, EMPL, SCRN, FIN} page_alias;
-typedef int (*application_page_t) ();
+typedef enum {NOOP, INPUT, PREV, NEXT, UPDATE, HELP, EXIT } cgc_page_option;
+typedef enum {CAND, CONT, ADDR, EDUC, EMPL, SCRN, FIN} cgc_page_alias;
+typedef int (*cgc_application_page_t) ();
 
-int candidate_info();
-int contact();
-int address();
-int education();
-int employment_history();
-int final_screening();
-int finished();
+int cgc_candidate_info();
+int cgc_contact();
+int cgc_address();
+int cgc_education();
+int cgc_employment_history();
+int cgc_final_screening();
+int cgc_finished();
 
 //GLOBAL VARIABLES
-application_page_t job_application_page[] = { candidate_info, contact, address, education,
-                                              employment_history, final_screening, finished };
+cgc_application_page_t job_application_page[] = { cgc_candidate_info, cgc_contact, cgc_address, cgc_education,
+                                              cgc_employment_history, cgc_final_screening, cgc_finished };
 
 char g_page_idx = CAND;
 char g_last_page_completed = -1;
 char g_user_resp[RESP_SIZE];
 
-app_input_t applicant_id[] = {
-    {"Last Name", "", TRUE, 32, NULL, verify_name},
-    {"First Name", "", TRUE, 32, NULL, verify_name},
-    {"Middle Name", " [MI or Middle Name]", FALSE, 32, NULL, verify_name},
-    {"Suffix", " [Jr, Sr, II, etc]", FALSE, 8, NULL, verify_suffix},
-    {"DOB Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"DOB Day", " [DD]", TRUE, 3, NULL, verify_day},
-    {"DOB Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"Height-Feet", " [1-9]", TRUE, 2, NULL, verify_height_feet},
-    {"Height-Inches", " [0-11]", TRUE, 3, NULL, verify_height_inches},
-    {"Weight", "", TRUE, 4, NULL, verify_weight},
-    {"Sex", "", TRUE, 2, NULL, verify_sex},
-    {"Hair Color", "", TRUE, 32, NULL, verify_hair},
-    {"Eye Color", "", TRUE, 16, NULL, verify_eye}
+cgc_app_input_t applicant_id[] = {
+    {"Last Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"First Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"Middle Name", " [MI or Middle Name]", FALSE, 32, NULL, cgc_verify_name},
+    {"Suffix", " [Jr, Sr, II, etc]", FALSE, 8, NULL, cgc_verify_suffix},
+    {"DOB Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"DOB Day", " [DD]", TRUE, 3, NULL, cgc_verify_day},
+    {"DOB Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"Height-Feet", " [1-9]", TRUE, 2, NULL, cgc_verify_height_feet},
+    {"Height-Inches", " [0-11]", TRUE, 3, NULL, cgc_verify_height_inches},
+    {"Weight", "", TRUE, 4, NULL, cgc_verify_weight},
+    {"Sex", "", TRUE, 2, NULL, cgc_verify_sex},
+    {"Hair Color", "", TRUE, 32, NULL, cgc_verify_hair},
+    {"Eye Color", "", TRUE, 16, NULL, cgc_verify_eye}
 };
 
-app_input_t check_other_name[] = {
-    {"Ever Changed Name", "? [Y/N]", TRUE, 2, NULL, verify_yes_no}
+cgc_app_input_t check_other_name[] = {
+    {"Ever Changed Name", "? [Y/N]", TRUE, 2, NULL, cgc_verify_yes_no}
 };
 
-app_input_t other_name_used[] = {
-    {"Last Name", "", TRUE, 32, NULL, verify_name},
-    {"First Name", "", TRUE, 32, NULL, verify_name},
-    {"Middle Name", " [MI or Middle Name]", FALSE, 32, NULL, verify_name},
-    {"Suffix", " [Jr, Sr, II, etc]", FALSE, 8, NULL, verify_suffix},
-    {"Begin Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"Begin Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"End Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"End Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"Maiden Name", "? [Y/N]", TRUE, 2, NULL, verify_yes_no},
-    {"Reason for name change", "", TRUE, 64, NULL, verify_text}
-};
-
-
-app_input_t contact_info[] = {
-    {"Personal e-mail", "", TRUE, 64, NULL, verify_email},
-    {"Work e-mail", "", FALSE, 64, NULL, verify_email},
-    {"Home telephone number", " [XXX-XXX-XXXX]", TRUE, 13, NULL, verify_phone},
-    {"Work telephone number", " [XXX-XXX-XXXX]", FALSE, 13, NULL, verify_phone}
+cgc_app_input_t other_name_used[] = {
+    {"Last Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"First Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"Middle Name", " [MI or Middle Name]", FALSE, 32, NULL, cgc_verify_name},
+    {"Suffix", " [Jr, Sr, II, etc]", FALSE, 8, NULL, cgc_verify_suffix},
+    {"Begin Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"Begin Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"End Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"End Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"Maiden Name", "? [Y/N]", TRUE, 2, NULL, cgc_verify_yes_no},
+    {"Reason for name change", "", TRUE, 64, NULL, cgc_verify_text}
 };
 
 
-app_input_t current_address[] = {
-    {"Move-In Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"Move-In Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"Street", "", TRUE, 64, NULL, verify_street},
-    {"City", "", TRUE, 32, NULL, verify_city},
-    {"State", "", TRUE, 3, NULL, verify_state},
-    {"Zip Code", "", TRUE, 6, NULL, verify_zip_code},
-    {"Owned by you", "? [Y/N]", TRUE, 2, NULL, verify_yes_no}
+cgc_app_input_t contact_info[] = {
+    {"Personal e-mail", "", TRUE, 64, NULL, cgc_verify_email},
+    {"Work e-mail", "", FALSE, 64, NULL, cgc_verify_email},
+    {"Home telephone number", " [XXX-XXX-XXXX]", TRUE, 13, NULL, cgc_verify_phone},
+    {"Work telephone number", " [XXX-XXX-XXXX]", FALSE, 13, NULL, cgc_verify_phone}
 };
 
 
-app_input_t highest_education[] = {
-    {"Highest Education", " [HS/COLLEGE/ADV]", TRUE, 10, NULL, verify_education},
-    {"Start Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"Start Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"End Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"End Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"School Name", "", TRUE, 64, NULL, verify_text},
-    {"Street", "", TRUE, 64, NULL, verify_street},
-    {"City", "", TRUE, 32, NULL, verify_city},
-    {"State", "", TRUE, 3, NULL, verify_state},
-    {"Zip Code", "", TRUE, 6, NULL, verify_zip_code},
-    {"GPA", " [X.XX]", TRUE, 5, NULL, verify_gpa},
-    {"Major", " [NA for HS]", TRUE, 64, NULL, verify_text}
+cgc_app_input_t current_address[] = {
+    {"Move-In Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"Move-In Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"Street", "", TRUE, 64, NULL, cgc_verify_street},
+    {"City", "", TRUE, 32, NULL, cgc_verify_city},
+    {"State", "", TRUE, 3, NULL, cgc_verify_state},
+    {"Zip Code", "", TRUE, 6, NULL, cgc_verify_zip_code},
+    {"Owned by you", "? [Y/N]", TRUE, 2, NULL, cgc_verify_yes_no}
 };
 
 
-app_input_t last_employer[] = {
-    {"Most Recent Employer", "", TRUE, 64, NULL, verify_text},
-    {"Start Month", " [MM]", TRUE, 3, NULL, verify_month},
-    {"Start Year", " [YYYY]", TRUE, 5, NULL, verify_year},
-    {"End Month", " [MM]", FALSE, 3, NULL, verify_month},
-    {"End Year", " [YYYY]", FALSE, 5, NULL, verify_year},
-    {"Street", "", TRUE, 64, NULL, verify_street},
-    {"City", "", TRUE, 32, NULL, verify_city},
-    {"State", "", TRUE, 3, NULL, verify_state},
-    {"Zip Code", "", TRUE, 6, NULL, verify_zip_code},
-    {"Supervisor Last Name", "", TRUE, 32, NULL, verify_name},
-    {"Supervisor First Name", "", TRUE, 32, NULL, verify_name},
-    {"Supervisor Title", "", TRUE, 64, NULL, verify_text},
-    {"Supervisor Telephone Number", " [XXX-XXX-XXXX]", TRUE, 13, NULL, verify_phone},
-    {"Supervisor e-mail", "", FALSE, 64, NULL, verify_email},
+cgc_app_input_t highest_education[] = {
+    {"Highest Education", " [HS/COLLEGE/ADV]", TRUE, 10, NULL, cgc_verify_education},
+    {"Start Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"Start Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"End Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"End Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"School Name", "", TRUE, 64, NULL, cgc_verify_text},
+    {"Street", "", TRUE, 64, NULL, cgc_verify_street},
+    {"City", "", TRUE, 32, NULL, cgc_verify_city},
+    {"State", "", TRUE, 3, NULL, cgc_verify_state},
+    {"Zip Code", "", TRUE, 6, NULL, cgc_verify_zip_code},
+    {"GPA", " [X.XX]", TRUE, 5, NULL, cgc_verify_gpa},
+    {"Major", " [NA for HS]", TRUE, 64, NULL, cgc_verify_text}
 };
 
 
-app_input_t screening_questions[] = {
-    {"Drug Test", "? [Y/N]", TRUE, 2, NULL, verify_yes_no},
-    {"Background Investigation", "? [Y/N]", TRUE, 2, NULL, verify_yes_no}
+cgc_app_input_t last_employer[] = {
+    {"Most Recent Employer", "", TRUE, 64, NULL, cgc_verify_text},
+    {"Start Month", " [MM]", TRUE, 3, NULL, cgc_verify_month},
+    {"Start Year", " [YYYY]", TRUE, 5, NULL, cgc_verify_year},
+    {"End Month", " [MM]", FALSE, 3, NULL, cgc_verify_month},
+    {"End Year", " [YYYY]", FALSE, 5, NULL, cgc_verify_year},
+    {"Street", "", TRUE, 64, NULL, cgc_verify_street},
+    {"City", "", TRUE, 32, NULL, cgc_verify_city},
+    {"State", "", TRUE, 3, NULL, cgc_verify_state},
+    {"Zip Code", "", TRUE, 6, NULL, cgc_verify_zip_code},
+    {"Supervisor Last Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"Supervisor First Name", "", TRUE, 32, NULL, cgc_verify_name},
+    {"Supervisor Title", "", TRUE, 64, NULL, cgc_verify_text},
+    {"Supervisor Telephone Number", " [XXX-XXX-XXXX]", TRUE, 13, NULL, cgc_verify_phone},
+    {"Supervisor e-mail", "", FALSE, 64, NULL, cgc_verify_email},
 };
 
 
-static page_option get_response()
+cgc_app_input_t screening_questions[] = {
+    {"Drug Test", "? [Y/N]", TRUE, 2, NULL, cgc_verify_yes_no},
+    {"Background Investigation", "? [Y/N]", TRUE, 2, NULL, cgc_verify_yes_no}
+};
+
+
+static cgc_page_option cgc_get_response()
 {
-    size_t i;
-    size_t rx;
+    cgc_size_t i;
+    cgc_size_t rx;
     int fd = STDIN;
-    size_t size = RESP_SIZE;
+    cgc_size_t size = RESP_SIZE;
     char *buf = g_user_resp;
     char *response = g_user_resp;
 
@@ -182,34 +182,34 @@ static page_option get_response()
 
     if (i > 2 && response[0] == '*' && response[1] == '*') {
         //parse command
-        if( memcmp(&response[2], "prev", strlen("prev")) == 0 )
+        if( cgc_memcmp(&response[2], "prev", cgc_strlen("prev")) == 0 )
             return PREV;
-        if( memcmp(&response[2], "next", strlen("next")) == 0 )
+        if( cgc_memcmp(&response[2], "next", cgc_strlen("next")) == 0 )
             return NEXT;
-        if( memcmp(&response[2], "update ", strlen("update ")) == 0 )
+        if( cgc_memcmp(&response[2], "update ", cgc_strlen("update ")) == 0 )
             return UPDATE;
-        if( memcmp(&response[2], "help", strlen("help")) == 0 )
+        if( cgc_memcmp(&response[2], "help", cgc_strlen("help")) == 0 )
             return HELP;
-        if( memcmp(&response[2], "exit", strlen("exit")) == 0 )
+        if( cgc_memcmp(&response[2], "cgc_exit", cgc_strlen("cgc_exit")) == 0 )
             return EXIT;
     }
 
     return INPUT;
 }
 
-void print_menu()
+void cgc_print_menu()
 {
     printf("All commands begin with '**' and may be entered at any time\n");
     printf("**prev <Return to the previous page>\n");
     printf("**next <Move to the next page>\n");
     printf("**update [id] <Update field, ex: \"Update First Name\">\n");
     printf("**help <Print this dialogue>\n");
-    printf("**exit <Exit application>\n");
+    printf("**cgc_exit <Exit application>\n");
 }
 
 int main(void)
 {
-    page_option pg_opt = NOOP;
+    cgc_page_option pg_opt = NOOP;
     printf("\n\n");
     printf("Thanks for your interest in the Sea Eye Association.\n");
     printf("In order to be considered for the job complete the preliminary online background check\n");
@@ -229,7 +229,7 @@ int main(void)
             g_page_idx = g_page_idx == FIN ? g_page_idx : g_page_idx + 1;
             break;
         case HELP:
-            print_menu();
+            cgc_print_menu();
             break;
         case UPDATE:
         case INPUT:
@@ -245,28 +245,28 @@ int main(void)
     return 0;
 }
 
-int fill_out_form(app_input_t form_questions[], int num_fields)
+int cgc_fill_out_form(cgc_app_input_t form_questions[], int num_fields)
 {
     int i;
-    page_option pg_opt;
+    cgc_page_option pg_opt;
     for (i = 0; i < num_fields; i++) {
-        app_input_t *form_question = &form_questions[i];
+        cgc_app_input_t *form_question = &form_questions[i];
         while (form_question->input == NULL) {
             printf("%s%s: ", form_question->text_field, form_question->input_specification);
-            pg_opt = get_response();
+            pg_opt = cgc_get_response();
             if (pg_opt < 0) {
                 continue;
             } else if (pg_opt != INPUT) {
                 goto page_option_selected;
-            } else if (!form_question->is_required && memcmp(g_user_resp, "", 1) == 0) {
-                form_question->input = calloc(1, form_question->max_input_length);
+            } else if (!form_question->is_required && cgc_memcmp(g_user_resp, "", 1) == 0) {
+                form_question->input = cgc_calloc(1, form_question->max_input_length);
                 break;
             } else if (form_question->verify_input(g_user_resp, form_question->max_input_length) != 0) {
                 continue;
             }
 
-            form_question->input = calloc(1, form_question->max_input_length);
-            strcpy(form_question->input, g_user_resp);
+            form_question->input = cgc_calloc(1, form_question->max_input_length);
+            cgc_strcpy(form_question->input, g_user_resp);
         }
     }
 
@@ -276,36 +276,36 @@ page_option_selected:
     return pg_opt;
 }
 
-int update_field(char *field, app_input_t form_questions[], int num_fields)
+int cgc_update_field(char *field, cgc_app_input_t form_questions[], int num_fields)
 {
-    if (field == NULL || strlen(field) < 1) {
+    if (field == NULL || cgc_strlen(field) < 1) {
         printf("Bad field\n");
         return -1;
     }
 
     int i;
-    page_option pg_opt;
+    cgc_page_option pg_opt;
     for (i = 0; i < num_fields; i++) {
-        app_input_t *form_question = &form_questions[i];
-        if (strlen(field) != strlen(form_question->text_field) ||
-            memcmp(field, form_question->text_field, strlen(form_question->text_field)) != 0)
+        cgc_app_input_t *form_question = &form_questions[i];
+        if (cgc_strlen(field) != cgc_strlen(form_question->text_field) ||
+            cgc_memcmp(field, form_question->text_field, cgc_strlen(form_question->text_field)) != 0)
             continue;
 
         printf("%s%s: ", form_question->text_field, form_question->input_specification);
-        pg_opt = get_response();
+        pg_opt = cgc_get_response();
         if (pg_opt != INPUT) {
             printf("Bad command\n");
             return -2;
-        } else if (!form_question->is_required && memcmp(g_user_resp, "", 1) == 0) {
-            memset(form_question->input, 0, form_question->max_input_length);
+        } else if (!form_question->is_required && cgc_memcmp(g_user_resp, "", 1) == 0) {
+            cgc_memset(form_question->input, 0, form_question->max_input_length);
             return 0;
         } else if (form_question->verify_input(g_user_resp, form_question->max_input_length) != 0) {
             printf("Bad input.\n");
             return -4;
         }
 
-        memset(form_question->input, 0, form_question->max_input_length);
-        strcpy(form_question->input, g_user_resp);
+        cgc_memset(form_question->input, 0, form_question->max_input_length);
+        cgc_strcpy(form_question->input, g_user_resp);
         return 0;
     }
 
@@ -313,23 +313,23 @@ int update_field(char *field, app_input_t form_questions[], int num_fields)
     return -1;
 }
 
-void print_page(char *banner, app_input_t form_questions[], int num_fields)
+void cgc_print_page(char *banner, cgc_app_input_t form_questions[], int num_fields)
 {
     int i;
     if (banner != NULL)
         printf("%s", banner);
 
     for (i = 0; i < num_fields; i++) {
-        app_input_t *form_question = &form_questions[i];
+        cgc_app_input_t *form_question = &form_questions[i];
         printf("%s=%s\n", form_question->text_field, form_question->input);
     }
 }
 
 
-int form(char *banner, app_input_t form_questions[], size_t num_fields)
+int cgc_form(char *banner, cgc_app_input_t form_questions[], cgc_size_t num_fields)
 {
     char *update_tok;
-    page_option pg_opt;
+    cgc_page_option pg_opt;
 
     if (g_page_idx > g_last_page_completed + 1) {
         printf("You must complete the previous page before proceeding to this page\n");
@@ -348,7 +348,7 @@ int form(char *banner, app_input_t form_questions[], size_t num_fields)
     }
 
     if ( g_page_idx == g_last_page_completed + 1 || unfinished) {
-        pg_opt = fill_out_form(form_questions, num_fields);
+        pg_opt = cgc_fill_out_form(form_questions, num_fields);
         if (pg_opt == NOOP) {
             g_last_page_completed++;
         } else if (pg_opt == UPDATE) {
@@ -359,61 +359,61 @@ int form(char *banner, app_input_t form_questions[], size_t num_fields)
         }
     }
 
-    print_page(banner, form_questions, num_fields);
+    cgc_print_page(banner, form_questions, num_fields);
     printf("\nType **next to continue\n");
 
-    pg_opt = get_response();
+    pg_opt = cgc_get_response();
     if (pg_opt == UPDATE) {
         update_tok = g_user_resp;
-        strsep(&update_tok, " ");
-        if (update_field(update_tok, form_questions, num_fields) != 0)
+        cgc_strsep(&update_tok, " ");
+        if (cgc_update_field(update_tok, form_questions, num_fields) != 0)
             printf("Update Unsuccessful\n");
     }
 
     return pg_opt;
 }
 
-int candidate_info()
+int cgc_candidate_info()
 {
     printf("\nCandidate Info Form\n");
-    return form("\n*********Candidate Info:*********\n", applicant_id, sizeof(applicant_id)/sizeof(app_input_t));
+    return cgc_form("\n*********Candidate Info:*********\n", applicant_id, sizeof(applicant_id)/sizeof(cgc_app_input_t));
 }
 
-int contact()
+int cgc_contact()
 {
     printf("\nContact Info Form\n");
-    return form("\n*********Contact Info:*********\n",  contact_info, sizeof(contact_info)/sizeof(app_input_t));
+    return cgc_form("\n*********Contact Info:*********\n",  contact_info, sizeof(contact_info)/sizeof(cgc_app_input_t));
 }
 
-int address()
+int cgc_address()
 {
     printf("\nAddress Form\n");
-    return form("\n*********Address:*********\n", current_address, sizeof(current_address)/sizeof(app_input_t));
+    return cgc_form("\n*********Address:*********\n", current_address, sizeof(current_address)/sizeof(cgc_app_input_t));
 }
 
-int education()
+int cgc_education()
 {
     printf("\nEducation Form\n");
-    return form("\n*********Highest Education:*********\n", highest_education, sizeof(highest_education)/sizeof(app_input_t));
+    return cgc_form("\n*********Highest Education:*********\n", highest_education, sizeof(highest_education)/sizeof(cgc_app_input_t));
 }
 
-int employment_history()
+int cgc_employment_history()
 {
     printf("\nEmployment Form\n");
-    return form("\n*********Most Recent Employer:*********\n", last_employer, sizeof(last_employer)/sizeof(app_input_t));
+    return cgc_form("\n*********Most Recent Employer:*********\n", last_employer, sizeof(last_employer)/sizeof(cgc_app_input_t));
 }
 
-int final_screening()
+int cgc_final_screening()
 {
 
     printf("\nFinal Questions\n");
-    return form("\n*********Final Screening:*********\n", screening_questions, sizeof(screening_questions)/sizeof(app_input_t));
+    return cgc_form("\n*********Final Screening:*********\n", screening_questions, sizeof(screening_questions)/sizeof(cgc_app_input_t));
 }
 
-int finished() {
+int cgc_finished() {
     printf("\n\nYou have completed your application with the Sea Eye Association.\n");
-    printf("You may review the form. Navigate through the application with **prev and **next.\n");
-    printf("Once your are satisfied type **exit to exit and submit the form\n");
+    printf("You may review the cgc_form. Navigate through the application with **prev and **next.\n");
+    printf("Once your are satisfied type **cgc_exit to cgc_exit and submit the cgc_form\n");
     printf("If you wish to discard your application, please use Control-C\n");
 
     if (g_page_idx > g_last_page_completed + 1) {
@@ -422,6 +422,6 @@ int finished() {
         return -1;
     }
 
-    return get_response();
+    return cgc_get_response();
 }
 

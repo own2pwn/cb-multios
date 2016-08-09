@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -39,11 +39,11 @@ typedef struct _user {
 	char LastName[32];
 	char Pin[PIN_LEN+1];
 	char AccessCode[ACCESS_CODE_LEN+1];
-} User, *pUser;
+} cgc_User, *cgc_pUser;
 
-uint8_t FindUsername(char *Username);
-int8_t FindAvailableUser(void);
-uint8_t AddUser(void);
-uint8_t DelUser(void);
+cgc_uint8_t cgc_FindUsername(char *Username);
+cgc_int8_t cgc_FindAvailableUser(void);
+cgc_uint8_t cgc_AddUser(void);
+cgc_uint8_t cgc_DelUser(void);
 
 #endif

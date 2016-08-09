@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -46,7 +46,7 @@
  * @param b Buffer
  * @return Number of bytes sent
  */
-#define SSEND(s,b) if(sendall(STDOUT,b,s)<0)  _terminate(3);
+#define SSEND(s,b) if(cgc_sendall(STDOUT,b,s)<0)  _terminate(3);
 
 /**
  * Sends a buffer+newline and terminates on failure.
@@ -55,7 +55,7 @@
  * @param b Buffer
  * @return Number of bytes sent
  */
-#define SSENDL(s,b) if(sendline(STDOUT,b,s)<0) _terminate(6);
+#define SSENDL(s,b) if(cgc_sendline(STDOUT,b,s)<0) _terminate(6);
 
 /**
  * Sends a buffer+newline and terminates on failure.
@@ -81,7 +81,7 @@
  * @param b Buffer
  * @return Data in buffer
  */
-#define SRECV(s,b) if(recvline(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(2);}
+#define SRECV(s,b) if(cgc_recvline(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(2);}
 
 /**
  * Receives bytes into buffer
@@ -91,7 +91,7 @@
  * @param b Buffer
  * @return Data in buffer
  */
-#define RECV(s,b) if(recv(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(4);}
+#define RECV(s,b) if(cgc_recv(STDIN,b,s)<0){SSENDL(sizeof(MAGICWORD)-1,MAGICWORD); _terminate(4);}
 
 /**
  * Thin wrapper to allocate
@@ -122,27 +122,27 @@
  * @param r Location to store number of bytes read
  * @return Random data in b
  */
-#define RAND(b,s,r) if (random(b,s,r)){ SSENDL(sizeof(RNDERR)-1,RNDERR); _terminate(19);}
+#define RAND(b,s,r) if (cgc_random(b,s,r)){ SSENDL(sizeof(RNDERR)-1,RNDERR); _terminate(19);}
 
 #define STACKPROTECTINIT extern uint32_t __cookie;
 #define STACKPROTECTADD  uint32_t __wat = __cookie;
-#define STACKPROTECTCHK  if ( (__wat = __wat ^ __cookie) != 0 ) __stack_cookie_fail();
+#define STACKPROTECTCHK  if ( (__wat = __wat ^ __cookie) != 0 ) cgc___stack_cookie_fail();
 
 typedef enum {
     YOLO,
     SHEAP,
     SSHEAP
-} heaptype;
+} cgc_heaptype;
 
 extern uint32_t __hcookie[3];
 
 #define PAGE_SIZE 4096
-typedef struct heap_chunk heap_chunk_t;
+typedef struct heap_chunk cgc_heap_chunk_t;
 
 struct heap_chunk {
     uint32_t cookie;
-    heap_chunk_t *prev;
-    heap_chunk_t *next;
+    cgc_heap_chunk_t *prev;
+    cgc_heap_chunk_t *next;
     uint32_t size;
 };
 
@@ -154,7 +154,7 @@ struct heap_chunk {
  * @param prompt Prompt to send 
  * @return Response data in buf
  */
-void promptc(char *buf, uint16_t  size, char *prompt);
+void cgc_promptc(char *buf, uint16_t  size, char *prompt);
 
 /**
  * Convert unsigned integer to string
@@ -164,7 +164,7 @@ void promptc(char *buf, uint16_t  size, char *prompt);
  * @param i Integer to convert
  * @return Ascii-representation of i in str_buf
  */
-int uint2str(char* str_buf, int buf_size, uint32_t i);
+int cgc_uint2str(char* str_buf, int buf_size, uint32_t i);
 
 /**
  * Convert signed integer to string
@@ -174,7 +174,7 @@ int uint2str(char* str_buf, int buf_size, uint32_t i);
  * @param i Integer to convert
  * @return Ascii-representation of i in str_buf
  */
-int int2str(char* str_buf, int buf_size, int i);
+int cgc_int2str(char* str_buf, int buf_size, int i);
 
 /**
  * Convert string to unsigned integer
@@ -182,7 +182,7 @@ int int2str(char* str_buf, int buf_size, int i);
  * @param str_buf Source buffer
  * @return integer
  */
-uint32_t str2uint(const char* str_buf);
+uint32_t cgc_str2uint(const char* str_buf);
 
 /**
  * Convert string to signed integer
@@ -190,7 +190,7 @@ uint32_t str2uint(const char* str_buf);
  * @param str_buf Source buffer
  * @return integer
  */
-int str2int(const char* str_buf);
+int cgc_str2int(const char* str_buf);
 
 /**
  * Send bytes from buffer to file descriptor
@@ -200,7 +200,7 @@ int str2int(const char* str_buf);
  * @param size Number of bytes to send
  * @return Number of bytes sent, -1 on error
  */
-int sendall(int fd, const char *buf, size_t size);
+int cgc_sendall(int fd, const char *buf, cgc_size_t size);
 
 /**
  * Send bytes from buffer to file descriptor with newline
@@ -210,7 +210,7 @@ int sendall(int fd, const char *buf, size_t size);
  * @param size Number of bytes to send
  * @return Number of bytes sent, -1 on error
  */
-int sendline(int fd, const char *buf, size_t size);
+int cgc_sendline(int fd, const char *buf, cgc_size_t size);
 
 /**
  * Receive line from file descriptor
@@ -220,7 +220,7 @@ int sendline(int fd, const char *buf, size_t size);
  * @param size Size of destination buffer
  * @return Number of bytes received, -1 on error
  */
-int recvline(int fd, char *buf, size_t size);
+int cgc_recvline(int fd, char *buf, cgc_size_t size);
 
 /**
  * Receive buffer until term character is reached
@@ -231,7 +231,7 @@ int recvline(int fd, char *buf, size_t size);
  * @param term Terminating character
  * @return Number of bytes received, -1 on error
  */
-int recvuntil(int fd, char *buf, size_t size, char term);
+int cgc_recvuntil(int fd, char *buf, cgc_size_t size, char term);
 
 /**
  * Receive bytes from file descriptor
@@ -241,7 +241,7 @@ int recvuntil(int fd, char *buf, size_t size, char term);
  * @param size Number of bytes to receive
  * @return Number of bytes received, -1 on error
  */
-int recv(int fd, char *buf, size_t size); 
+int cgc_recv(int fd, char *buf, cgc_size_t size); 
 
 /**
  * Copy a string
@@ -250,7 +250,7 @@ int recv(int fd, char *buf, size_t size);
  * @param s2 Source buffer
  * @return Number of bytes copied
  */
-size_t strcpy(char *s1, char *s2);
+cgc_size_t cgc_strcpy(char *s1, char *s2);
 
 /**
  * Copy a string with bounds checking
@@ -260,7 +260,7 @@ size_t strcpy(char *s1, char *s2);
  * @param n Size of destination buffer
  * @return Number of bytes copied
  */
-size_t strncpy(char *s1, char *s2, size_t n);
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
 
 /**
  * Concatenate two strings
@@ -269,7 +269,7 @@ size_t strncpy(char *s1, char *s2, size_t n);
  * @param s2 String to be concatenated
  * @return s1
  */
-char * strcat(char *s1, char *s2);
+char * cgc_strcat(char *s1, char *s2);
 
 /**
  * Find length of string
@@ -277,7 +277,7 @@ char * strcat(char *s1, char *s2);
  * @param s String
  * @return length of s
  */
-size_t strlen(char *s);
+cgc_size_t cgc_strlen(char *s);
 
 /**
  * Check if two strings are identical
@@ -286,7 +286,7 @@ size_t strlen(char *s);
  * @param s2 String 2
  * @return 1 if identical, 0 if different
  */
-int streq(char *s1, char *s2);
+int cgc_streq(char *s1, char *s2);
 
 /**
  * Compare two strings
@@ -295,7 +295,7 @@ int streq(char *s1, char *s2);
  * @param s2 String 2
  * @return 0 if identical, 1 if different
  */
-int strncmp(char *s1, char *s2, size_t n);
+int cgc_strncmp(char *s1, char *s2, cgc_size_t n);
 
 /**
  * Check if a string starts with another string
@@ -304,7 +304,7 @@ int strncmp(char *s1, char *s2, size_t n);
  * @param s2 String that s1 might start with
  * @return 1 if s1 starts with s2, 0 if not
  */
-int startswith(char *s1, char *s2);
+int cgc_startswith(char *s1, char *s2);
 
 /**
  * Set a buffer to provided character
@@ -314,7 +314,7 @@ int startswith(char *s1, char *s2);
  * @param n Number of times to copy character
  * @return dst
  */
-void * memset(void *dst, char c, size_t n); 
+void * cgc_memset(void *dst, char c, cgc_size_t n); 
 
 /**
  * Copy bytes from one buffer to another
@@ -324,7 +324,7 @@ void * memset(void *dst, char c, size_t n);
  * @param n Number of bytes to copy
  * @return dst
  */
-void * memcpy(void *dst, void *src, size_t n); 
+void * cgc_memcpy(void *dst, void *src, cgc_size_t n); 
 
 /**
  * Convert byte to hex character string
@@ -333,7 +333,7 @@ void * memcpy(void *dst, void *src, size_t n);
  * @param h Destination hex string
  * @return h
  */
-char * b2hex(uint8_t b, char *h);
+char * cgc_b2hex(uint8_t b, char *h);
 
 /**
  * Locate character in string
@@ -342,23 +342,23 @@ char * b2hex(uint8_t b, char *h);
  * @param h Character to find
  * @return Pointer to character in string, or NULL
  */
-char * strchr(char *str, char c); 
+char * cgc_strchr(char *str, char c); 
 
 /**
- * Tokenize string. Loosely based on strtok.
+ * Tokenize string. Loosely based on cgc_strtok.
  *
  * @param s String to tokenize, or NULL to continue with previous one
  * @param sep Character to sep on
  * @return Pointer to next string, or NULL
  */
-char * strtok(char *s, char sep); 
+char * cgc_strtok(char *s, char sep); 
 
 /**
  * Sleep process
  *
- * @param s Amount of time to sleep
+ * @param s Amount of time to cgc_sleep
  */
-void sleep(int s);
+void cgc_sleep(int s);
 
 /**
  * Compare two buffers
@@ -368,7 +368,7 @@ void sleep(int s);
  * @param n Number of bytes to compare
  * @return -1 if not equal, 0 if equal
  */
-int memcmp(void *a, void *b, size_t n); 
+int cgc_memcmp(void *a, void *b, cgc_size_t n); 
 
 /**
  * Allocate a buffer on simple heap
@@ -376,7 +376,7 @@ int memcmp(void *a, void *b, size_t n);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *nmalloc(size_t size);
+void *cgc_nmalloc(cgc_size_t size);
 
 /**
  * Allocate a buffer on secure heap
@@ -384,7 +384,7 @@ void *nmalloc(size_t size);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *smalloc(size_t size);
+void *cgc_smalloc(cgc_size_t size);
 
 /**
  * Allocate a buffer on super secure heap
@@ -392,35 +392,35 @@ void *smalloc(size_t size);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *ssmalloc(size_t size);
+void *cgc_ssmalloc(cgc_size_t size);
 
 /**
  * Free an allocated buffer on simple heap
  *
  * @param p Pointer to buffer
  */
-void nfree(void *p);
+void cgc_nfree(void *p);
 
 /**
  * Free an allocated buffer on secure heap
  *
  * @param p Pointer to buffer
  */
-void sfree(void *p);
+void cgc_sfree(void *p);
 
 /**
  * Free an allocated buffer on super secure heap
  *
  * @param p Pointer to buffer
  */
-void ssfree(void *p);
+void cgc_ssfree(void *p);
 
 /**
  * Free an allocated buffer
  *
  * @param p Pointer to buffer
  */
-void free(void *p);
+void cgc_free(void *p);
 
 /**
  * Allocate a buffer on heap
@@ -428,7 +428,7 @@ void free(void *p);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *malloc(size_t size);
+void *cgc_malloc(cgc_size_t size);
 
 /**
  * Allocate a zeroed buffer on heap
@@ -436,44 +436,44 @@ void *malloc(size_t size);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *calloc(size_t size); 
+void *cgc_calloc(cgc_size_t size); 
 
 /**
  * Configure the heap type to use
  *
  * @param type Type of heap
  */
-void setheap(uint32_t type);
+void cgc_setheap(uint32_t type);
 
 /**
  * Initialize stack cookie
  *
  */
-void __stack_cookie_init(); 
+void cgc___stack_cookie_init(); 
 
 /**
  * Check stack cookie
  *
  */
-void __stack_cookie_fail(); 
+void cgc___stack_cookie_fail(); 
 
 /**
  * Check heap cookie
  *
  */
-void __heap_cookie_fail(); 
+void cgc___heap_cookie_fail(); 
 
 /**
  * Check heap cookie if enabled, return next chunk.
  * Terminates on error
  *
- * @param a current heap_chunk_t 
+ * @param a current cgc_heap_chunk_t 
  * @param type heap type
  * @return a->next if safe, terminate if not
  */
-inline heap_chunk_t* __attribute__((always_inline)) HNEXT(heap_chunk_t *a, 
-        heaptype type) {
-    if (type && a->cookie != __hcookie[type])  __heap_cookie_fail();
+inline cgc_heap_chunk_t* __attribute__((always_inline)) cgc_HNEXT(cgc_heap_chunk_t *a, 
+        cgc_heaptype type) {
+    if (type && a->cookie != __hcookie[type])  cgc___heap_cookie_fail();
     return a->next;
 }
 
@@ -481,13 +481,13 @@ inline heap_chunk_t* __attribute__((always_inline)) HNEXT(heap_chunk_t *a,
  * Check heap cookie if enabled, return next chunk.
  * Terminates on error
  *
- * @param a current heap_chunk_t 
+ * @param a current cgc_heap_chunk_t 
  * @param type heap type
  * @return a->next if safe, terminate if not
  */
-inline heap_chunk_t* __attribute__((always_inline)) HPREV(heap_chunk_t *a, 
-        heaptype type) {
-    if (type && a->cookie != __hcookie[type])  __heap_cookie_fail();
+inline cgc_heap_chunk_t* __attribute__((always_inline)) cgc_HPREV(cgc_heap_chunk_t *a, 
+        cgc_heaptype type) {
+    if (type && a->cookie != __hcookie[type])  cgc___heap_cookie_fail();
     return a->prev;
 }
 
@@ -496,6 +496,6 @@ inline heap_chunk_t* __attribute__((always_inline)) HPREV(heap_chunk_t *a,
  * Terminates on error
  * 
  */ 
-void checkheap();
+void cgc_checkheap();
 #endif
 

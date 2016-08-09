@@ -31,15 +31,15 @@ in sample CB's and scored events.
 
 // libc libs for public release and scored events
 
-typedef signed char int8_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-typedef unsigned char uint8_t;
+typedef signed char cgc_int8_t;
+typedef signed int cgc_int32_t;
+typedef unsigned int cgc_uint32_t;
+typedef unsigned char cgc_uint8_t;
 
 typedef enum {
   FALSE = 0,
   TRUE = 1,
-} bool_t;
+} cgc_bool_t;
 
 #define SUCCESS 0
 #define ERRNO_ALLOC 5
@@ -48,39 +48,39 @@ typedef struct node {
 	void * data;
 	struct node *next;
 	struct node *prev;
-} node_t;
+} cgc_node_t;
 
 
 // doubly-linked list
 typedef struct list {
-	node_t *head;
-	node_t *tail;
-	uint32_t count;
-} list_t;
+	cgc_node_t *head;
+	cgc_node_t *tail;
+	cgc_uint32_t count;
+} cgc_list_t;
 
 // List related
-list_t * list_create_dup();
-int list_append(list_t *lst, node_t *nd);
+cgc_list_t * cgc_list_create_dup();
+int cgc_list_append(cgc_list_t *lst, cgc_node_t *nd);
 
 // Node related
-node_t * node_create(void * data);
-node_t * get_list_head(list_t * lst);
-node_t * get_list_tail(list_t * lst);
-node_t * get_first_node(list_t * lst);
-node_t * get_last_node(list_t * lst);
+cgc_node_t * cgc_node_create(void * data);
+cgc_node_t * cgc_get_list_head(cgc_list_t * lst);
+cgc_node_t * cgc_get_list_tail(cgc_list_t * lst);
+cgc_node_t * cgc_get_first_node(cgc_list_t * lst);
+cgc_node_t * cgc_get_last_node(cgc_list_t * lst);
 
-int rand(char *buf, size_t sz);
+int cgc_rand(char *buf, cgc_size_t sz);
 
 // libc libs borrowed from EAGLE_00004
 
 // I/O
-int send(const char *buf, const size_t size);
-int transmit_all(int fd, const char *buf, const size_t size);
-unsigned int recv_all(char *res_buf, size_t res_buf_size);
-unsigned int read_all(int fd, char *buf, unsigned int size);
+int cgc_send(const char *buf, const cgc_size_t size);
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
+unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
 // stdlib
-void *memset(void *dst, int c, unsigned int n);
+void *cgc_memset(void *dst, int c, unsigned int n);
 
 
 #endif

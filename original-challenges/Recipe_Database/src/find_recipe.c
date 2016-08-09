@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,35 +29,35 @@ THE SOFTWARE.
 #include "service.h"
 
 
-void find_recipe(Recipe_Type *book) {
+void cgc_find_recipe(cgc_Recipe_Type *book) {
 
 char **temp;
-Ingredient_Type *ingredient;
+cgc_Ingredient_Type *ingredient;
 char buffer[1024];
 char answer[5];
-size_t size;
+cgc_size_t size;
 
 
-	printf("Enter search term: ");
+	cgc_printf("Enter search term: ");
 
-	size=getline(buffer, sizeof(buffer));
+	size=cgc_getline(buffer, sizeof(buffer));
 
 	if (size <=1 ) 
 		return;
 
 
-	printf("\n");
+	cgc_printf("\n");
 
 	while(book) {
 
 
-		if (match_str(buffer, book->Title)) {
+		if (cgc_match_str(buffer, book->Title)) {
 
-			print_recipe(book);
+			cgc_print_recipe(book);
 
-			printf("Would you like to tag this recipe? ");
+			cgc_printf("Would you like to tag this recipe? ");
 
-			size=getline(answer, sizeof(answer));
+			size=cgc_getline(answer, sizeof(answer));
 
 			if (size <1 )  {
 				book=book->next;
@@ -78,9 +78,9 @@ size_t size;
 
 		while (ingredient) {
 
-			if (match_str(buffer, ingredient->item)) {
+			if (cgc_match_str(buffer, ingredient->item)) {
 
-				print_recipe(book);
+				cgc_print_recipe(book);
 
 #ifdef PATCHED
 			if ( book == NULL ) {
@@ -88,9 +88,9 @@ size_t size;
 			}
 #endif
 
-				printf("Would you like to tag this recipe? ");
+				cgc_printf("Would you like to tag this recipe? ");
 
-				size=getline(answer, sizeof(answer));
+				size=cgc_getline(answer, sizeof(answer));
 
 				if (size <1 )  {
 					book=book->next;

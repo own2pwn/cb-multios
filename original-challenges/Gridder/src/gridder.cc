@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,31 +29,31 @@
 #define SET(_num) ((_num)%(SET_SIZE)+1)
 
 
-Gridder::Gridder()
+cgc_Gridder::cgc_Gridder()
 {
-    ResetBoard();
+    cgc_ResetBoard();
 }
 
-Gridder::Gridder(const Gridder &copy)
+cgc_Gridder::cgc_Gridder(const cgc_Gridder &copy)
 {
-    memcpy(board_, copy.board_, sizeof(board_));
+    cgc_memcpy(board_, copy.board_, sizeof(board_));
 }
 
-bool Gridder::CopyGridder(unsigned int *pboard, int size)
+bool cgc_Gridder::cgc_CopyGridder(unsigned int *pboard, int size)
 {
     if (size < sizeof(board_))
         return false;
 
-    memcpy(board_, pboard, sizeof(board_));
+    cgc_memcpy(board_, pboard, sizeof(board_));
     return true;
 }
 
-bool Gridder::GenerateNewGridder(int cell_idx, NumGen *pngen)
+bool cgc_Gridder::cgc_GenerateNewGridder(int cell_idx, cgc_NumGen *pngen)
 {
     if (cell_idx == 0)
     {
-        ResetBoard();
-        pngen->Reset();
+        cgc_ResetBoard();
+        pngen->cgc_Reset();
     }
 
     if (cell_idx == NUM_CELLS)
@@ -62,53 +62,53 @@ bool Gridder::GenerateNewGridder(int cell_idx, NumGen *pngen)
     int next_num = 0;
     int num_cached = 0;
     int valid_nums[SET_SIZE];
-    memset(valid_nums, UNUSED, sizeof(valid_nums));
+    cgc_memset(valid_nums, UNUSED, sizeof(valid_nums));
 
-    while(pngen->AvailableNumbers())
+    while(pngen->cgc_AvailableNumbers())
     {
         int row = ROW(cell_idx);
         int col = COL(cell_idx);
-        next_num = pngen->GetRandomNumber();
+        next_num = pngen->cgc_GetRandomNumber();
         if (!next_num)
             continue;
 
-        if (valid_nums[SET(next_num) - 1] != UNUSED || !ValidAddNumber(SET(next_num), row, col))
+        if (valid_nums[SET(next_num) - 1] != UNUSED || !cgc_ValidAddNumber(SET(next_num), row, col))
         {
             valid_nums[SET(next_num) - 1] = USED;
-            pngen->CacheNumber(next_num);
+            pngen->cgc_CacheNumber(next_num);
             ++num_cached;
         }
         else
         {
-            pngen->FlushCache(num_cached);
+            pngen->cgc_FlushCache(num_cached);
             valid_nums[SET(next_num) - 1] = USED;
-            pngen->CacheNumber(next_num);
+            pngen->cgc_CacheNumber(next_num);
             num_cached = 1;
 
-            if (GenerateNewGridder(cell_idx + 1, pngen))
+            if (cgc_GenerateNewGridder(cell_idx + 1, pngen))
                 return true;
             board_[row][col] = UNUSED;
         }
 
     }
-    pngen->FlushCache(num_cached);
+    pngen->cgc_FlushCache(num_cached);
     return false;
 }
 
-void Gridder::MakeGridderSolveable(int difficulty, NumGen *pngen)
+void cgc_Gridder::cgc_MakeGridderSolveable(int difficulty, cgc_NumGen *pngen)
 {
-    Gridder *solution = (Gridder *)NULL;
-    pngen->Reset();
+    cgc_Gridder *solution = (cgc_Gridder *)NULL;
+    pngen->cgc_Reset();
 
     difficulty = difficulty < DIFFICULTY ? DIFFICULTY : difficulty;
-    while(difficulty < pngen->AvailableNumbers())
+    while(difficulty < pngen->cgc_AvailableNumbers())
     {
         if (solution)
         {
             delete solution;
-            solution = (Gridder *)NULL;
+            solution = (cgc_Gridder *)NULL;
         }
-        int cell_idx  = pngen->GetRandomNumber();
+        int cell_idx  = pngen->cgc_GetRandomNumber();
         if (!cell_idx)
             return;
 
@@ -118,13 +118,13 @@ void Gridder::MakeGridderSolveable(int difficulty, NumGen *pngen)
         int prev_val = board_[row][col];
         board_[row][col] = UNUSED;
 
-        Gridder orig = *this;
-        solution = orig.FindSolution(0);
+        cgc_Gridder orig = *this;
+        solution = orig.cgc_FindSolution(0);
         if (solution)
         {
-            bool exit = false;
+            bool cgc_exit = false;
             orig = *this;
-            if (!orig.HasUniqueSolution(0, solution, &exit))
+            if (!orig.cgc_HasUniqueSolution(0, solution, &cgc_exit))
                 board_[row][col] = prev_val;
         }
         else
@@ -138,7 +138,7 @@ void Gridder::MakeGridderSolveable(int difficulty, NumGen *pngen)
         delete solution;
 }
 
-bool Gridder::ValidateGridder(const Gridder &master)
+bool cgc_Gridder::cgc_ValidateGridder(const cgc_Gridder &master)
 {
     for (int r = 0; r < SET_SIZE; r++)
     {
@@ -146,7 +146,7 @@ bool Gridder::ValidateGridder(const Gridder &master)
         {
             if (master.board_[r][c] != 0 && master.board_[r][c] != board_[r][c])
                 return false;
-            if (!ValidCell(r, c))
+            if (!cgc_ValidCell(r, c))
                 return false;
         }
     }
@@ -154,14 +154,14 @@ bool Gridder::ValidateGridder(const Gridder &master)
     return true;
 }
 
-void Gridder::Serialize(FILE *out)
+void cgc_Gridder::cgc_Serialize(cgc_FILE *out)
 {
     unsigned int board_size = sizeof(board_);
-    fwrite(&board_size, sizeof(board_size), out);
-    fwrite(board_, sizeof(board_), out);
+    cgc_fwrite(&board_size, sizeof(board_size), out);
+    cgc_fwrite(board_, sizeof(board_), out);
 }
 
-unsigned int *Gridder::GetRawGridder(int *size)
+unsigned int *cgc_Gridder::cgc_GetRawGridder(int *size)
 {
     *size = sizeof(board_);
     return &board_[0][0];
@@ -169,37 +169,37 @@ unsigned int *Gridder::GetRawGridder(int *size)
     return (unsigned int *)NULL;
 }
 
-Gridder *Gridder::FindSolution(int cell_idx)
+cgc_Gridder *cgc_Gridder::cgc_FindSolution(int cell_idx)
 {
     if (cell_idx == NUM_CELLS)
-        return new Gridder(*this);
+        return new cgc_Gridder(*this);
 
     int row = ROW(cell_idx);
     int col = COL(cell_idx);
     if (board_[row][col])
-        return FindSolution(cell_idx+1);
+        return cgc_FindSolution(cell_idx+1);
 
     for (int i = 1; i <= SET_SIZE; i++)
     {
         board_[row][col] = i;
-        if (ValidCell(row,col))
+        if (cgc_ValidCell(row,col))
         {
-            Gridder *solution = FindSolution(cell_idx+1);
+            cgc_Gridder *solution = cgc_FindSolution(cell_idx+1);
             if (solution)
                 return solution;
         }
     }
 
     board_[row][col] = UNUSED;
-    return (Gridder *)NULL;
+    return (cgc_Gridder *)NULL;
 }
 
-bool Gridder::HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit)
+bool cgc_Gridder::cgc_HasUniqueSolution(int cell_idx, const cgc_Gridder *s1, bool *cgc_exit)
 {
     if (cell_idx == NUM_CELLS)
     {
-        *exit = true;
-        if (memcmp(board_, s1->board_, sizeof(board_)) != 0)
+        *cgc_exit = true;
+        if (cgc_memcmp(board_, s1->board_, sizeof(board_)) != 0)
             return false;
         else
             return true;
@@ -208,14 +208,14 @@ bool Gridder::HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit)
     int row = ROW(cell_idx);
     int col = COL(cell_idx);
     if (board_[row][col])
-        return HasUniqueSolution(cell_idx+1, s1, exit);
+        return cgc_HasUniqueSolution(cell_idx+1, s1, cgc_exit);
 
     for (int i = SET_SIZE; i > 0; i--)
     {
-        if (*exit)
+        if (*cgc_exit)
             return false;
         board_[row][col] = i;
-        if (ValidCell(row,col) && HasUniqueSolution(cell_idx+1, s1, exit))
+        if (cgc_ValidCell(row,col) && cgc_HasUniqueSolution(cell_idx+1, s1, cgc_exit))
             return true;
     }
 
@@ -223,25 +223,25 @@ bool Gridder::HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit)
     return false;
 }
 
-void Gridder::ResetBoard()
+void cgc_Gridder::cgc_ResetBoard()
 {
-    memset(board_, UNUSED, sizeof(board_));
+    cgc_memset(board_, UNUSED, sizeof(board_));
 }
 
-bool Gridder::ValidAddNumber(int val, int row, int col)
+bool cgc_Gridder::cgc_ValidAddNumber(int val, int row, int col)
 {
     if (board_[row][col] != UNUSED)
         return false;
 
     board_[row][col] = val;
-    if (ValidCell(row, col))
+    if (cgc_ValidCell(row, col))
         return true;
 
     board_[row][col] = UNUSED;
     return false;
 }
 
-bool Gridder::ValidCell(int row, int col)
+bool cgc_Gridder::cgc_ValidCell(int row, int col)
 {
     int cell = board_[row][col];
     for (int i = 0; i < SET_SIZE; i++)
@@ -263,24 +263,24 @@ bool Gridder::ValidCell(int row, int col)
 }
 
 
-void Gridder::Debug()
+void cgc_Gridder::cgc_Debug()
 {
     for (int r = 0; r < SET_SIZE; r++)
     {
         if (r)
         {
             if (r % SET_SUBSIZE == 0)
-                fprintf(stderr, "\n------+-------+------\n");
+                cgc_fprintf(stderr, "\n------+-------+------\n");
             else
-                fprintf(stderr, "\n");
+                cgc_fprintf(stderr, "\n");
         }
 
         for (int c = 0; c < SET_SIZE; c++)
         {
             if (c && c % SET_SUBSIZE == 0)
-                fprintf(stderr, "| ");
-            fprintf(stderr, "%d ", board_[r][c]);
+                cgc_fprintf(stderr, "| ");
+            cgc_fprintf(stderr, "%d ", board_[r][c]);
         }
     }
-    fprintf(stderr, "\n\n");
+    cgc_fprintf(stderr, "\n\n");
 }

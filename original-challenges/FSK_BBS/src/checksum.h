@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,6 +27,6 @@
 
 #include "buffer.h"
 
-uint8_t checksum8(buffer_t *input, size_t n, uint8_t seed);
+cgc_uint8_t cgc_checksum8(cgc_buffer_t *input, cgc_size_t n, cgc_uint8_t seed);
 
 #endif /* !CHECKSUM_H_ */

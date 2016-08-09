@@ -8,7 +8,7 @@ typedef enum {
   IN_PROGRESS = 2,
   REJECTED = 3,
   RESOLVED = 4,
-} STATUS;
+} cgc_STATUS;
 
 typedef enum {
   LOW = 1,
@@ -16,36 +16,36 @@ typedef enum {
   HIGH = 3,
   SEVERE = 4,
   CRITICAL = 5,
-} PRIORITY;
+} cgc_PRIORITY;
 
 
-class Ticket
+class cgc_Ticket
 {
   public:
-    static Ticket *GetTicket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority = LOW);
-    static void DeleteTicket(Ticket *ticket);
-    void UpdateStatus(STATUS status);
-    void WorkOn();
-    bool CheckDone();
-    void Display();
+    static cgc_Ticket *cgc_GetTicket(char *cgc_email, char *desc, cgc_uint32_t cgc_entry_time, cgc_uint32_t cgc_duration, cgc_PRIORITY cgc_priority = LOW);
+    static void cgc_DeleteTicket(cgc_Ticket *ticket);
+    void cgc_UpdateStatus(cgc_STATUS cgc_status);
+    void cgc_WorkOn();
+    bool cgc_CheckDone();
+    void cgc_Display();
 
-    uint32_t id();
-    char *email();
-    char *description();
-    uint32_t entry_time();
-    PRIORITY priority();
-    STATUS status();
-    uint32_t duration();
+    cgc_uint32_t cgc_id();
+    char *cgc_email();
+    char *cgc_description();
+    cgc_uint32_t cgc_entry_time();
+    cgc_PRIORITY cgc_priority();
+    cgc_STATUS cgc_status();
+    cgc_uint32_t cgc_duration();
     void* prev;
   private:
-    Ticket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority);
-    ~Ticket();
+    cgc_Ticket(char *cgc_email, char *desc, cgc_uint32_t cgc_entry_time, cgc_uint32_t cgc_duration, cgc_PRIORITY cgc_priority);
+    ~cgc_Ticket();
 
-    uint32_t id_;
+    cgc_uint32_t id_;
     char email_[MAX_EMAIL];
     char desc_[MAX_DESC];
-    uint32_t entry_time_;
-    PRIORITY priority_; //1-5
-    STATUS status_;
-    uint32_t duration_;
+    cgc_uint32_t entry_time_;
+    cgc_PRIORITY priority_; //1-5
+    cgc_STATUS status_;
+    cgc_uint32_t duration_;
 };

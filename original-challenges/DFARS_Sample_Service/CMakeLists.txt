@@ -1,0 +1,6 @@
+set( SERVICE_ID "00002" )
+set( AUTHOR_ID "LUNGE" )
+set( POLLS_TESTING_COUNT "0" )
+set( POLLS_RELEASE_SEED "0" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O0 -g -Wall" )
+buildCB(${CFLAGS})

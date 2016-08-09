@@ -24,10 +24,10 @@
 #include <libcgc.h>
 #include "input.h"
 
-static int splitat(int fd, char *buf, size_t max, char delim)
+static int cgc_splitat(int fd, char *buf, cgc_size_t max, char delim)
 {
   int ret;
-  size_t rx, i = 0;
+  cgc_size_t rx, i = 0;
   while (i < max - 1) {
     ret = receive(STDIN, buf + i, 1, &rx);
     if (ret != 0 && rx == 0)
@@ -43,11 +43,11 @@ static int splitat(int fd, char *buf, size_t max, char delim)
   return i;
 };
 
-int read_line(char *buf)
+int cgc_read_line(char *buf)
 {
   int ret;
   while (1) {
-    ret = splitat(STDIN, buf, LINE_SIZE, '\n');
+    ret = cgc_splitat(STDIN, buf, LINE_SIZE, '\n');
     if (ret < 0)
       return -1;
     else

@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,18 +29,18 @@
 #include "endian.h"
 #include "usb.h"
 
-typedef int (*cmd_handler_t) (usb_t *self, void *data);
+typedef int (*cgc_cmd_handler_t) (cgc_usb_t *self, void *data);
 
 typedef struct {
-    uint32_t code;
-    cmd_handler_t handler;
-} command_t;
+    cgc_uint32_t code;
+    cgc_cmd_handler_t handler;
+} cgc_command_t;
 
 /*
  * hard-code information for one device with one interface
  */
-static const device_desc_t device_desc = {
-    .bLength = sizeof(device_desc_t),
+static const cgc_device_desc_t device_desc = {
+    .bLength = sizeof(cgc_device_desc_t),
     .bDescriptorType = 1,
     .bcdUSB = 0x0200,
     .bDeviceClass = 0x00,
@@ -56,10 +56,10 @@ static const device_desc_t device_desc = {
     .bNumConfigurations = 1
 };
 
-static const config_desc_t config_desc = {
-    .bLength = sizeof(config_desc_t),
+static const cgc_config_desc_t config_desc = {
+    .bLength = sizeof(cgc_config_desc_t),
     .bDescriptorType = 2,
-    .wTotalLength = sizeof(config_desc_t) + sizeof(intf_desc_t) + 2 * sizeof(ep_desc_t),
+    .wTotalLength = sizeof(cgc_config_desc_t) + sizeof(cgc_intf_desc_t) + 2 * sizeof(cgc_ep_desc_t),
     .bNumInterfaces = 1,
     .bConfigurationValue = 1,
     .iConfiguration = 0,
@@ -67,8 +67,8 @@ static const config_desc_t config_desc = {
     .bMaxPower = 50
 };
 
-static const intf_desc_t intf_desc = {
-    .bLength = sizeof(intf_desc_t),
+static const cgc_intf_desc_t intf_desc = {
+    .bLength = sizeof(cgc_intf_desc_t),
     .bDescriptorType = 4,
     .bInterfaceNumber = 0,
     .bAlternateSetting = 0,
@@ -79,9 +79,9 @@ static const intf_desc_t intf_desc = {
     .iInterface = 0
 };
 
-static const ep_desc_t ep_desc[2] = {
+static const cgc_ep_desc_t ep_desc[2] = {
     {
-        .bLength = sizeof(ep_desc_t),
+        .bLength = sizeof(cgc_ep_desc_t),
         .bDescriptorType = 5,
         .bEndpointAddress = 0x81,
         .bmAttributes = 0x02,
@@ -89,7 +89,7 @@ static const ep_desc_t ep_desc[2] = {
         .bInterval = 0
     },
     {
-        .bLength = sizeof(ep_desc_t),
+        .bLength = sizeof(cgc_ep_desc_t),
         .bDescriptorType = 5,
         .bEndpointAddress = 0x02,
         .bmAttributes = 0x02,
@@ -98,7 +98,7 @@ static const ep_desc_t ep_desc[2] = {
     }
 };
 
-static devinfo_t device_info = {
+static cgc_devinfo_t device_info = {
     .path = "/sys/devices/pci0000:00/0000:00:1d.1/usb1/1-1",
     .busid = "1-1",
     .busnum = htobe32(1),
@@ -115,13 +115,13 @@ static devinfo_t device_info = {
     .num_intf = 1
 };
 
-static const intf_t device_intf = {
+static const cgc_intf_t device_intf = {
     .intf_class = 0x08, /* Mass Storage Class */
     .intf_subclass = 0x06, /* SCSI transparent command set */
     .intf_proto = 0x50 /* Bulk Only Transport Protocol */
 };
 
-static void fill_submit_reply(submit_rep_t *rep, urb_t *urb, uint32_t status, uint32_t length)
+static void cgc_fill_submit_reply(cgc_submit_rep_t *rep, cgc_urb_t *urb, cgc_uint32_t status, cgc_uint32_t length)
 {
     rep->hdr.command = htobe32(SUBMIT_REP);
     rep->hdr.seqnum = htobe32(urb->seqnum);
@@ -133,24 +133,24 @@ static void fill_submit_reply(submit_rep_t *rep, urb_t *urb, uint32_t status, ui
     rep->start_frame = htobe32(0);
     rep->number_of_packets = htobe32(0);
     rep->error_length = htobe32(0);
-    memset(rep->setup, 0, sizeof(rep->setup));
+    cgc_memset(rep->setup, 0, sizeof(rep->setup));
 }
 
-static void send_config_rep(usb_t *self, urb_t *urb)
+static void cgc_send_config_rep(cgc_usb_t *self, cgc_urb_t *urb)
 {
-    uint8_t data[config_desc.wTotalLength];
-    memcpy(&data[0], &config_desc, sizeof(config_desc));
-    memcpy(&data[sizeof(config_desc)], &intf_desc, sizeof(intf_desc));
-    memcpy(&data[sizeof(config_desc)+sizeof(intf_desc)], &ep_desc, sizeof(ep_desc));
+    cgc_uint8_t data[config_desc.wTotalLength];
+    cgc_memcpy(&data[0], &config_desc, sizeof(config_desc));
+    cgc_memcpy(&data[sizeof(config_desc)], &intf_desc, sizeof(intf_desc));
+    cgc_memcpy(&data[sizeof(config_desc)+sizeof(intf_desc)], &ep_desc, sizeof(ep_desc));
 
-    uint32_t length = urb->length;
+    cgc_uint32_t length = urb->length;
     if (config_desc.wTotalLength < length)
         length = config_desc.wTotalLength;
-    usb_send_reply(self, urb, 0, length);
+    cgc_usb_send_reply(self, urb, 0, length);
     self->send(data, length);
 }
 
-static int handle_ep0(usb_t *self, urb_t *urb)
+static int cgc_handle_ep0(cgc_usb_t *self, cgc_urb_t *urb)
 {
 #ifdef DEBUG
     fprintf(stderr, "setup %02x %02x %02x %02x %02x %02x %02x %02x\n",
@@ -164,16 +164,16 @@ static int handle_ep0(usb_t *self, urb_t *urb)
         {
             if (urb->setup[3] == 0x01) /* Device descriptor */
             {
-                uint32_t length = urb->length;
+                cgc_uint32_t length = urb->length;
                 if (device_desc.bLength < length)
                     length = device_desc.bLength;
-                usb_send_reply(self, urb, 0, length);
+                cgc_usb_send_reply(self, urb, 0, length);
                 self->send(&device_desc, length);
                 return 1;
             }
             if (urb->setup[3] == 0x02) /* Config descriptor */
             {
-                send_config_rep(self, urb);
+                cgc_send_config_rep(self, urb);
                 return 1;
             }
         }
@@ -184,22 +184,22 @@ static int handle_ep0(usb_t *self, urb_t *urb)
         {
             if (urb->setup[2] == config_desc.bConfigurationValue)
             {
-                usb_send_reply(self, urb, 0, 0);
+                cgc_usb_send_reply(self, urb, 0, 0);
                 return 1;
             }
         }
     }
     else if ((urb->setup[0] & 0x60) == 0x20)
     {
-        return msc_handle_ep0(self, urb);
+        return cgc_msc_handle_ep0(self, urb);
     }
     return 0;
 }
 
-static int handle_devlist(usb_t *self, metadata_hdr_t *hdr)
+static int cgc_handle_devlist(cgc_usb_t *self, cgc_metadata_hdr_t *hdr)
 {
-    devlist_rep_t rep;
-    memset(&rep, 0, sizeof(rep));
+    cgc_devlist_rep_t rep;
+    cgc_memset(&rep, 0, sizeof(rep));
 
     rep.hdr.version = htobe16(VERSION_CODE);
     rep.hdr.command = htobe16(DEVLIST_REP);
@@ -215,22 +215,22 @@ static int handle_devlist(usb_t *self, metadata_hdr_t *hdr)
     return 1;
 }
 
-static int handle_import(usb_t *self, metadata_hdr_t *hdr)
+static int cgc_handle_import(cgc_usb_t *self, cgc_metadata_hdr_t *hdr)
 {
-    import_req_t req;
-    import_rep_t rep;
+    cgc_import_req_t req;
+    cgc_import_rep_t rep;
 
     if (self->recv(&req, sizeof(req)) != sizeof(req))
         return 0;
 
-    if (memcmp(req.busid, device_info.busid, sizeof(req.busid)) == 0)
+    if (cgc_memcmp(req.busid, device_info.busid, sizeof(req.busid)) == 0)
     {
         rep.hdr.version = htobe16(VERSION_CODE);
         rep.hdr.command = htobe16(IMPORT_REP);
         rep.hdr.status = htobe16(0);
         rep.device = device_info;
 
-        if (msc_init(&self->msc))
+        if (cgc_msc_init(&self->msc))
             self->attached = 1;
 
         self->send(&rep, sizeof(rep));
@@ -247,11 +247,11 @@ static int handle_import(usb_t *self, metadata_hdr_t *hdr)
     return 1;
 }
 
-static int handle_submit(usb_t *self, data_hdr_t *hdr)
+static int cgc_handle_submit(cgc_usb_t *self, cgc_data_hdr_t *hdr)
 {
-    submit_req_t req;
-    urb_t *urb;
-    urb_t small_urb;
+    cgc_submit_req_t req;
+    cgc_urb_t *urb;
+    cgc_urb_t small_urb;
 
     if (self->recv(&req, sizeof(req)) != sizeof(req))
         return 0;
@@ -260,7 +260,7 @@ static int handle_submit(usb_t *self, data_hdr_t *hdr)
         return 0;
 
     if (be32toh(hdr->direction) == DIR_OUT)
-        urb = malloc(sizeof(urb_t) + be32toh(req.length));
+        urb = cgc_malloc(sizeof(cgc_urb_t) + be32toh(req.length));
     else
         urb = &small_urb;
     if (urb == NULL)
@@ -273,58 +273,58 @@ static int handle_submit(usb_t *self, data_hdr_t *hdr)
     urb->flags = be32toh(req.flags);
     urb->length = be32toh(req.length);
     urb->interval = be32toh(req.interval);
-    memcpy(urb->setup, req.setup, sizeof(urb->setup));
+    cgc_memcpy(urb->setup, req.setup, sizeof(urb->setup));
     if (urb->direction == DIR_OUT && self->recv(urb->data, urb->length) != urb->length)
     {
-        free(urb);
+        cgc_free(urb);
         return 0;
     }
 
     if (urb->endpoint == 0)
-        return handle_ep0(self, urb);
+        return cgc_handle_ep0(self, urb);
     else
-        return msc_handle_urb(self, urb);
+        return cgc_msc_handle_urb(self, urb);
 }
 
-static int handle_unlink(usb_t *self, data_hdr_t *hdr)
+static int cgc_handle_unlink(cgc_usb_t *self, cgc_data_hdr_t *hdr)
 {
-    unlink_req_t req;
+    cgc_unlink_req_t req;
 
     if (self->recv(&req, sizeof(req)) != sizeof(req))
         return 0;
     return 1;
 }
 
-static const command_t commands[] = {
-#define COMMAND(data_or_metadata,code,handler) {(!!(data_or_metadata) << 31)|code, (cmd_handler_t)handler}
-    COMMAND(1, DEVLIST_REQ, handle_devlist),
-    COMMAND(1, IMPORT_REQ, handle_import),
-    COMMAND(0, SUBMIT_REQ, handle_submit),
-    COMMAND(0, UNLINK_REQ, handle_unlink),
+static const cgc_command_t commands[] = {
+#define COMMAND(data_or_metadata,code,handler) {(!!(data_or_metadata) << 31)|code, (cgc_cmd_handler_t)handler}
+    COMMAND(1, DEVLIST_REQ, cgc_handle_devlist),
+    COMMAND(1, IMPORT_REQ, cgc_handle_import),
+    COMMAND(0, SUBMIT_REQ, cgc_handle_submit),
+    COMMAND(0, UNLINK_REQ, cgc_handle_unlink),
     {0, NULL}
 };
 
-static const command_t *lookup_command(uint32_t cmd)
+static const cgc_command_t *cgc_lookup_command(cgc_uint32_t cmd)
 {
-    const command_t *command;
+    const cgc_command_t *command;
     for (command = &commands[0]; command->handler != NULL; command++)
         if (command->code == cmd)
             return command;
     return NULL;
 }
 
-int usb_handle_packet(usb_t *self)
+int cgc_usb_handle_packet(cgc_usb_t *self)
 {
-    uint32_t cmd;
+    cgc_uint32_t cmd;
     if (self->attached == 0)
     {
         /* only support metadata commands */
-        metadata_hdr_t hdr;
+        cgc_metadata_hdr_t hdr;
         if (self->recv(&hdr, sizeof(hdr)) != sizeof(hdr))
             return 0;
         if (be16toh(hdr.version) != VERSION_CODE)
             return 0;
-        const command_t *command = lookup_command((1<<31) | be16toh(hdr.command));
+        const cgc_command_t *command = cgc_lookup_command((1<<31) | be16toh(hdr.command));
         if (command == NULL)
             return 0;
         return command->handler(self, &hdr);
@@ -332,39 +332,39 @@ int usb_handle_packet(usb_t *self)
     else
     {
         /* only support data commands */
-        data_hdr_t hdr;
+        cgc_data_hdr_t hdr;
         if (self->recv(&hdr, sizeof(hdr)) != sizeof(hdr))
             return 0;
-        const command_t *command = lookup_command(be32toh(hdr.command));
+        const cgc_command_t *command = cgc_lookup_command(be32toh(hdr.command));
         if (command == NULL)
             return 0;
         return command->handler(self, &hdr);
     }
 }
 
-int usb_send_reply(usb_t *self, urb_t *urb, uint32_t status, uint32_t length)
+int cgc_usb_send_reply(cgc_usb_t *self, cgc_urb_t *urb, cgc_uint32_t status, cgc_uint32_t length)
 {
-    submit_rep_t rep;
+    cgc_submit_rep_t rep;
     if (length < urb->length && (urb->flags & 1))
         status = -121; /* -EREMOTEIO */
-    fill_submit_reply(&rep, urb, status, length);
+    cgc_fill_submit_reply(&rep, urb, status, length);
     self->send(&rep, sizeof(rep));
     return 1;
 }
 
-int usb_init(usb_t *self)
+int cgc_usb_init(cgc_usb_t *self)
 {
     /* randomly generate a busid for the device */
-    uint8_t id;
-    size_t bytes;
-    random(&id, 1, &bytes);
+    cgc_uint8_t id;
+    cgc_size_t bytes;
+    cgc_random(&id, 1, &bytes);
     id = id % 100;
 
     int busnum = id / 10;
     int devnum = id % 10;
     device_info.busnum = htobe32(busnum);
     device_info.devnum = htobe32(devnum);
-    memset(device_info.busid, 0, sizeof(device_info.busid));
+    cgc_memset(device_info.busid, 0, sizeof(device_info.busid));
     device_info.busid[0] = busnum + '0';
     device_info.busid[1] = '-';
     device_info.busid[2] = devnum + '0';

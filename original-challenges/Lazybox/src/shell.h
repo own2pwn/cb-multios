@@ -33,24 +33,24 @@ THE SOFTWARE.
 #define MAX_ARGS (8)
 #define MAX_ARGLEN (63)
 typedef struct _command {
-	uint32_t argc;
+	cgc_uint32_t argc;
 	char argv[8][64];
-} Command, *pCommand;
+} cgc_Command, *cgc_pCommand;
 
 typedef struct _env {
-        uint8_t NumCommandHistory;
+        cgc_uint8_t NumCommandHistory;
         char CommandHistory[MAX_CMD_HISTORY][MAX_CMD_LEN];
         char User[32];
         char Group[32];
-} environment;
+} cgc_environment;
 
-void PrintPrompt(void);
-int ParseCli(char *buf, Command *pCmd);
-int32_t HandleListFiles(Command *pCmd);
-int32_t HandleExit(Command *pCmd);
-int32_t HandleHelp(Command *pCmd);
-uint8_t HandleDump(Command *pCmd);
-uint8_t HandlePrint(Command *pCmd);
-void PrependCommandHistory(char *buf);
+void cgc_PrintPrompt(void);
+int cgc_ParseCli(char *buf, cgc_Command *pCmd);
+cgc_int32_t cgc_HandleListFiles(cgc_Command *pCmd);
+cgc_int32_t cgc_HandleExit(cgc_Command *pCmd);
+cgc_int32_t cgc_HandleHelp(cgc_Command *pCmd);
+cgc_uint8_t cgc_HandleDump(cgc_Command *pCmd);
+cgc_uint8_t cgc_HandlePrint(cgc_Command *pCmd);
+void cgc_PrependCommandHistory(char *buf);
 
 #endif

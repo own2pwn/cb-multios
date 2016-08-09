@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,19 +33,19 @@ THE SOFTWARE.
 #include "output_strings.h"
 #include "malloc.h"
 
-char *obf_strings(char *input_string);
+char *cgc_obf_strings(char *input_string);
 
-int create_product( productDefType **database, void *command_data ) {
+int cgc_create_product( cgc_productDefType **database, void *command_data ) {
 
-newProductMessageType *msg;
-productDefType *newProduct;
+cgc_newProductMessageType *msg;
+cgc_productDefType *newProduct;
 
-	msg = (newProductMessageType *)command_data;
+	msg = (cgc_newProductMessageType *)command_data;
 
 	// special case if this is the first product
 	if (*database == 0) {
 
-		*database = calloc(sizeof(productDefType));
+		*database = cgc_calloc(sizeof(cgc_productDefType));
 
 		if (*database == 0)
 			_terminate(-1);
@@ -66,7 +66,7 @@ productDefType *newProduct;
 			return(-1);
 
 		// otherwise add this new product to the end of the list
-		newProduct->next = (productDefType *)calloc(sizeof(productDefType));
+		newProduct->next = (cgc_productDefType *)cgc_calloc(sizeof(cgc_productDefType));
 
 		if (newProduct->next == 0)
 			_terminate(-1);
@@ -81,25 +81,25 @@ productDefType *newProduct;
 	newProduct->sprintList = 0;
 
 	// allocate memory for the title
-	newProduct->title = calloc(strlen((char *)&msg->title)+1);
+	newProduct->title = cgc_calloc(cgc_strlen((char *)&msg->title)+1);
 
 	if (newProduct->title == 0)
 		_terminate(-1);
 
 
-	strncpy(newProduct->title, (char *)&msg->title, strlen(&msg->title));
+	cgc_strncpy(newProduct->title, (char *)&msg->title, cgc_strlen(&msg->title));
 
 	return 0;
 }
 
 
 
-int delete_product( productDefType **database, messageIDType *message ) {
+int cgc_delete_product( cgc_productDefType **database, cgc_messageIDType *message ) {
 
 
-productDefType *lastProduct, *tmpProduct;
-sprintEntryType *sprintPtr, *tmpSprintPtr;
-backlogItemType *PBIPtr, *tmpPBIPtr;
+cgc_productDefType *lastProduct, *tmpProduct;
+cgc_sprintEntryType *sprintPtr, *tmpSprintPtr;
+cgc_backlogItemType *PBIPtr, *tmpPBIPtr;
 
 
 	// nothing to delete here, move along
@@ -114,61 +114,61 @@ backlogItemType *PBIPtr, *tmpPBIPtr;
 		tmpProduct = *database;
 		*database = (*database)->next;
 
-		// if there's a title, free that memory
+		// if there's a title, cgc_free that memory
 		if (tmpProduct->title)
-			free(tmpProduct->title);
+			cgc_free(tmpProduct->title);
 
-		// now free the Sprint list
+		// now cgc_free the Sprint list
 		sprintPtr = tmpProduct->sprintList;
 
 		while (sprintPtr!= 0) {
 
 			PBIPtr = sprintPtr->sprintBacklogList;
 
-			// first free the backlog items tied to this Sprint
+			// first cgc_free the backlog items tied to this Sprint
 			while (PBIPtr != 0) {
 
 				if (PBIPtr->description != 0)
-					free(PBIPtr->description);
+					cgc_free(PBIPtr->description);
 
 				tmpPBIPtr = PBIPtr;
 				PBIPtr = PBIPtr->next;
 
-				free(tmpPBIPtr);
+				cgc_free(tmpPBIPtr);
 			}
 
-			// free the memory for the sprint title
+			// cgc_free the memory for the sprint title
 			if (sprintPtr->title != 0)
-				free(sprintPtr->title);
+				cgc_free(sprintPtr->title);
 
 
-			// now free the sprint memory itself
+			// now cgc_free the sprint memory itself
 			tmpSprintPtr = sprintPtr;
 
 			sprintPtr = sprintPtr->next;
 
-			free(tmpSprintPtr);
+			cgc_free(tmpSprintPtr);
 
 		}
 
-		// now free the PBI list
+		// now cgc_free the PBI list
 		PBIPtr = tmpProduct->productBacklog;
 
 		while (PBIPtr != 0) {
 
 
 			if (PBIPtr->description != 0)
-				free(PBIPtr->description);
+				cgc_free(PBIPtr->description);
 
 			tmpPBIPtr = PBIPtr;
 			PBIPtr = PBIPtr->next;
 
-			free(tmpPBIPtr);
+			cgc_free(tmpPBIPtr);
 
 		}
 
-		// now free the final object
-		free(tmpProduct);
+		// now cgc_free the final object
+		cgc_free(tmpProduct);
 
 		return(0);
 
@@ -194,12 +194,12 @@ backlogItemType *PBIPtr, *tmpPBIPtr;
 	// link around the entry to be deleted
 	lastProduct->next = tmpProduct->next;
 
-	// free the title memory
+	// cgc_free the title memory
 	if (tmpProduct->title)
-		free(tmpProduct->title);
+		cgc_free(tmpProduct->title);
 
 
-	// now free the PBI
+	// now cgc_free the PBI
 	PBIPtr = tmpProduct->productBacklog;
 
 	while (PBIPtr != 0) {
@@ -207,53 +207,53 @@ backlogItemType *PBIPtr, *tmpPBIPtr;
 		tmpPBIPtr = PBIPtr;
 
 		if (PBIPtr->description != 0)
-			free(PBIPtr->description);
+			cgc_free(PBIPtr->description);
 
 		PBIPtr = PBIPtr->next;
 
-		free(tmpPBIPtr);
+		cgc_free(tmpPBIPtr);
 
 	}
 
-	// now free the Sprints
+	// now cgc_free the Sprints
 	sprintPtr = tmpProduct->sprintList;
 
 	while (sprintPtr!= 0) {
 
 		PBIPtr = sprintPtr->sprintBacklogList;
 
-		// first free the backlog items tied to this Sprint
+		// first cgc_free the backlog items tied to this Sprint
 		while (PBIPtr != 0) {
 
 			if (PBIPtr->description != 0)
-				free(PBIPtr->description);
+				cgc_free(PBIPtr->description);
 
 			tmpPBIPtr = PBIPtr;
 			PBIPtr = PBIPtr->next;
 
-			free(tmpPBIPtr);
+			cgc_free(tmpPBIPtr);
 		}
 
-		// free the memory for the sprint title
+		// cgc_free the memory for the sprint title
 		if (sprintPtr->title != 0)
-			free(sprintPtr->title);
+			cgc_free(sprintPtr->title);
 
 
-		// now free the sprint memory itself
+		// now cgc_free the sprint memory itself
 		tmpSprintPtr = sprintPtr;
 
 		sprintPtr = sprintPtr->next;
 
-		free(tmpSprintPtr);
+		cgc_free(tmpSprintPtr);
 
 	}
 
-	free(tmpProduct);
+	cgc_free(tmpProduct);
 
 	return 0;
 }
 
-int list_all_products( productDefType *database) {
+int cgc_list_all_products( cgc_productDefType *database) {
 
 
 	if (database == 0)
@@ -262,27 +262,27 @@ int list_all_products( productDefType *database) {
 	while (database != 0 ) {
 
 
-		printf(obf_strings(List_Products), database->title);
+		cgc_printf(cgc_obf_strings(List_Products), database->title);
 
 		database = database->next;
 
 	}
-	printf("\n");
+	cgc_printf("\n");
 
 	return 0;
 
 }
 
 
-int list_product( productDefType *database, messageIDType *message) {
+int cgc_list_product( cgc_productDefType *database, cgc_messageIDType *message) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *PBIPtr;
 
 
 	if (message->ID == 0) {
 
-		list_all_products(database);
+		cgc_list_all_products(database);
 		return 0;
 
 	}
@@ -295,47 +295,47 @@ backlogItemType *PBIPtr;
 		return(-1);
 	}
 
-	printf("\n");
-	printf(obf_strings(Prod_Title), database->title);
-	printf(obf_strings(Prod_ID), database->ID);
-	printf("\n");
+	cgc_printf("\n");
+	cgc_printf(cgc_obf_strings(Prod_Title), database->title);
+	cgc_printf(cgc_obf_strings(Prod_ID), database->ID);
+	cgc_printf("\n");
 
 	PBIPtr = database->productBacklog;
 
-	printf(obf_strings(Prod_Backlog));
-	printf(obf_strings(Prod_Backlog2));
+	cgc_printf(cgc_obf_strings(Prod_Backlog));
+	cgc_printf(cgc_obf_strings(Prod_Backlog2));
 	
 	while (PBIPtr != 0) {
 
-		// printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points, PBIPtr->description);
-		printf(obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points);
+		// cgc_printf(cgc_obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points, PBIPtr->description);
+		cgc_printf(cgc_obf_strings(Prod_Backlog3), PBIPtr->ID, PBIPtr->story_points);
 		PBIPtr = PBIPtr->next;
 	}
 
-	printf("\n");
+	cgc_printf("\n");
 
 	sprintPtr = database->sprintList;
-	printf(obf_strings(Sprints_Title));
+	cgc_printf(cgc_obf_strings(Sprints_Title));
 
 	while (sprintPtr != 0) {
 
-		printf(obf_strings(Sprint_Entry), sprintPtr->ID, sprintPtr->title);
+		cgc_printf(cgc_obf_strings(Sprint_Entry), sprintPtr->ID, sprintPtr->title);
 
 		PBIPtr = sprintPtr->sprintBacklogList;
 
 		while (PBIPtr != 0) {
-			// printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status, PBIPtr->description);
-			printf(obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status);
+			// cgc_printf(cgc_obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status, PBIPtr->description);
+			cgc_printf(cgc_obf_strings(SBI_Entry), PBIPtr->ID, PBIPtr->story_points, PBIPtr->status);
 
 			PBIPtr = PBIPtr->next;
 		}
 
-		printf("\n");
+		cgc_printf("\n");
 		sprintPtr = sprintPtr->next;
 
 	}
 
-	printf("\n");
+	cgc_printf("\n");
 	return(0);
 
 }

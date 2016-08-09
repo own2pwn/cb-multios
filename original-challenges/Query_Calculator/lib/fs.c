@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <fs.h>
 
-/* fs.c libc-cfe Filesystem library
+/* fs.c libc-cfe cgc_Filesystem library
 This library implements a single-directory filesystem with basic
 user permissions. Users are stored in a root-owned 'passwd' file
 in the file systems.  Groups are not implemented, so file permissions
@@ -39,95 +39,95 @@ are owner read-write and other read-write only.
 Example usage:
 
 int main(void) {
-	uint32_t MaxFiles = 10;
-	FILE *fp;
+	cgc_uint32_t MaxFiles = 10;
+	cgc_FILE *fp;
 	char buf[64];
 
-	if (!InitFilesystem(MaxFiles, "rootpasswd")) {
-		puts(FsError());
+	if (!cgc_InitFilesystem(MaxFiles, "rootpasswd")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	if (!AddUser("testuser", "testpasswd")) {
-		puts(FsError());
+	if (!cgc_AddUser("testuser", "testpasswd")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
 	// it's up to the CB to validate passwords using 
-	// CheckPasswd() before calling Login
-	if (!Login("testuser")) {
-		puts(FsError());
+	// cgc_CheckPasswd() before calling cgc_Login
+	if (!cgc_Login("testuser")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	if ((fp = fopen("testfile", "w")) == NULL) {
-		puts(FsError());
+	if ((fp = cgc_fopen("testfile", "w")) == NULL) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	if ((fwrite("asdf\n", strlen("asdf\n"), 1, fp)) != strlen("asdf\n")) {
-		puts(FsError());
+	if ((cgc_fwrite("asdf\n", cgc_strlen("asdf\n"), 1, fp)) != cgc_strlen("asdf\n")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	fclose(fp);
+	cgc_fclose(fp);
 
-	ListFiles(NULL);
+	cgc_ListFiles(NULL);
 
-	if ((fp = fopen("testfile", "r")) == NULL) {
-		puts(FsError());
+	if ((fp = cgc_fopen("testfile", "r")) == NULL) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	// could also use fgets() here
-	if ((fread(buf, 10, 1, fp)) == 0) {
-		puts(FsError());
+	// could also use cgc_fgets() here
+	if ((cgc_fread(buf, 10, 1, fp)) == 0) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	printf("$s", buf);
+	cgc_printf("$s", buf);
 
-	fclose(fp);
+	cgc_fclose(fp);
 
-	if (!RenameFile("testfile", "testfile2")) {
-		puts(FsError());
+	if (!cgc_RenameFile("testfile", "testfile2")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	ListFiles(NULL);
+	cgc_ListFiles(NULL);
 
-	if (!DeleteFile("testfile2")) {
-		puts(FsError());
+	if (!cgc_DeleteFile("testfile2")) {
+		cgc_puts(cgc_FsError());
 		_terminate(0);
 	}
 
-	ListFiles(NULL);
+	cgc_ListFiles(NULL);
 
-	DestroyFilesystem();
+	cgc_DestroyFilesystem();
 
 }
 
 */
 
-pFilesystem FS = NULL;
+cgc_pFilesystem FS = NULL;
 char *CurrentUser = NULL;
-FILE *FD[MAX_OPEN_FILES];
+cgc_FILE *FD[MAX_OPEN_FILES];
 char FS_ERROR[MAX_ERROR_LEN+1];
 
-// SetFsError: Sets the error buf if no other error has been logged yet
-void SetFsError(char *error) {
+// cgc_SetFsError: Sets the error buf if no other error has been logged yet
+void cgc_SetFsError(char *error) {
 	if (FS_ERROR[0] == '\0') {
-		strncpy(FS_ERROR, error, MAX_ERROR_LEN);
+		cgc_strncpy(FS_ERROR, error, MAX_ERROR_LEN);
 	}
 }
 
 // Clears any previously logged errors
-void ClearFsError(void) {
+void cgc_ClearFsError(void) {
 	FS_ERROR[0] = '\0';
 }
 		
-// FsError: Returns a pointer to the error buf
-char *FsError(void) {
+// cgc_FsError: Returns a pointer to the error buf
+char *cgc_FsError(void) {
 	return(FS_ERROR);
 }
 
@@ -136,43 +136,43 @@ char *FsError(void) {
 //
 
 // Destroy the fileysystem
-uint8_t DestroyFilesystem(void) {
-	uint32_t i;
+cgc_uint8_t cgc_DestroyFilesystem(void) {
+	cgc_uint32_t i;
 
 	if (!FS) {
-		SetFsError("Filesystem does not exist");
+		cgc_SetFsError("cgc_Filesystem does not exist");
 		return(0);
 	}
 
 	// Remove each inode
 	for (i = 0; i < FS->MaxFiles; i++) {
 		if (FS->Inodes[i]) {
-			// free the filename
+			// cgc_free the filename
 			if (FS->Inodes[i]->Filename) {
-				free(FS->Inodes[i]->Filename);
+				cgc_free(FS->Inodes[i]->Filename);
 				FS->Inodes[i]->Filename = NULL;
 			}
-			// free the owner
+			// cgc_free the owner
 			if (FS->Inodes[i]->Owner) {
-				free(FS->Inodes[i]->Owner);
+				cgc_free(FS->Inodes[i]->Owner);
 				FS->Inodes[i]->Owner = NULL;
 			}
-			// free the data
+			// cgc_free the data
 			if (FS->Inodes[i]->Data) {
-				free(FS->Inodes[i]->Data);
+				cgc_free(FS->Inodes[i]->Data);
 				FS->Inodes[i]->Data = NULL;
 			}
 
-			// free the inode itself
-			free(FS->Inodes[i]);
+			// cgc_free the inode itself
+			cgc_free(FS->Inodes[i]);
 			FS->Inodes[i] = NULL;
 		}
 	}
 
-	free(FS);
+	cgc_free(FS);
 	FS = NULL;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 
 }
@@ -180,32 +180,32 @@ uint8_t DestroyFilesystem(void) {
 // Initialize the filesystem
 //   MaxFiles: Max number of files the FS should support
 //   RootPassword: Initial root user password
-uint8_t InitFilesystem(uint32_t MaxFiles, char *RootPassword) {
+cgc_uint8_t cgc_InitFilesystem(cgc_uint32_t MaxFiles, char *RootPassword) {
 
 	// zero the error string buffer
-	bzero(FS_ERROR, sizeof(FS_ERROR));
+	cgc_bzero(FS_ERROR, sizeof(FS_ERROR));
 
 	// 0 for MaxFiles would just be silly
 	if (MaxFiles == 0) {
-		SetFsError("MaxFiles should be > 0");
+		cgc_SetFsError("MaxFiles should be > 0");
 		return(0);
 	}
 
 	// destroy the FS if one already exists
 	if (FS) {
-		DestroyFilesystem();
+		cgc_DestroyFilesystem();
 	}
 
-	// malloc space for the filesystem
-	if ((FS = calloc(sizeof(Filesystem))) == NULL) {
-		SetFsError("calloc failed");
+	// cgc_malloc space for the filesystem
+	if ((FS = cgc_calloc(sizeof(cgc_Filesystem))) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(0);
 	}
 
-	// malloc space for the inode array
-	if ((FS->Inodes = calloc(sizeof(Inode)*MaxFiles)) == NULL) {
-		SetFsError("calloc failed");
-		free(FS);
+	// cgc_malloc space for the inode array
+	if ((FS->Inodes = cgc_calloc(sizeof(cgc_Inode)*MaxFiles)) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
+		cgc_free(FS);
 		return(0);
 	}
 
@@ -213,36 +213,36 @@ uint8_t InitFilesystem(uint32_t MaxFiles, char *RootPassword) {
 	FS->MaxFiles = MaxFiles;
 	
 	// log in as root
-	if (!Login("root")) {
-		SetFsError("Login failed");
-		free(FS->Inodes);
-		free(FS);
+	if (!cgc_Login("root")) {
+		cgc_SetFsError("cgc_Login failed");
+		cgc_free(FS->Inodes);
+		cgc_free(FS);
 		return(0);
 	}
 
 	// init the passwd file
-	if (!InitPasswd(RootPassword)) {
-		Logout();
-		SetFsError("Failed to init the passwd file");
-		free(FS->Inodes);
-		free(FS);
+	if (!cgc_InitPasswd(RootPassword)) {
+		cgc_Logout();
+		cgc_SetFsError("Failed to init the passwd file");
+		cgc_free(FS->Inodes);
+		cgc_free(FS);
 		return(0);
 	}
 
 	// clear the file descriptor array
-	bzero(FD, sizeof(FD));
+	cgc_bzero(FD, sizeof(FD));
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
-// Searches the filesystem for a given Filename and returns its Inode or NULL
-pInode FindFile(char *Filename) {
-	uint32_t i;
+// Searches the filesystem for a given Filename and returns its cgc_Inode or NULL
+cgc_pInode cgc_FindFile(char *Filename) {
+	cgc_uint32_t i;
 
 	for (i = 0; i < FS->MaxFiles; i++) {
 		if (FS->Inodes[i] && FS->Inodes[i]->Filename) {
-			if (!strcmp(FS->Inodes[i]->Filename, Filename)) {
+			if (!cgc_strcmp(FS->Inodes[i]->Filename, Filename)) {
 				// found it
 				return(FS->Inodes[i]);
 			}
@@ -253,59 +253,59 @@ pInode FindFile(char *Filename) {
 }
 
 // Create an empty file (sort of like "touch")
-pInode CreateEmptyFile(char *Filename, uint8_t Mode) {
-	uint32_t i;
+cgc_pInode cgc_CreateEmptyFile(char *Filename, cgc_uint8_t Mode) {
+	cgc_uint32_t i;
 
 	if (!Filename) {
-		SetFsError("Invalid filename");
+		cgc_SetFsError("Invalid filename");
 		return(NULL);
 	}
 	if (!CurrentUser) {
-		SetFsError("Must login first");
+		cgc_SetFsError("Must login first");
 		return(NULL);
 	}
 	if (Mode & ((FS_OWNER_READ|FS_OWNER_WRITE|FS_OTHER_READ|FS_OTHER_WRITE) ^ 0xFF))  {
-		SetFsError("Invalid mode");
+		cgc_SetFsError("Invalid mode");
 		return(0);
 	}
 
 	// make sure the file doesn't already exist
-	if (FindFile(Filename)) {
-		SetFsError("File already exists");
+	if (cgc_FindFile(Filename)) {
+		cgc_SetFsError("File already exists");
 		return(NULL);
 	}
 
-	// look for a free inode
+	// look for a cgc_free inode
 	for (i = 0; i < FS->MaxFiles; i++) {
 		if (FS->Inodes[i]) {
 			continue;
 		}
 
 		// create the inode
-		if ((FS->Inodes[i] = calloc(sizeof(Inode))) == NULL) {
-			SetFsError("calloc failed");
+		if ((FS->Inodes[i] = cgc_calloc(sizeof(cgc_Inode))) == NULL) {
+			cgc_SetFsError("cgc_calloc failed");
 			return(NULL);
 		}
 
 		// set the filename
-		if ((FS->Inodes[i]->Filename = calloc(strlen(Filename)+1)) == NULL) {
-			SetFsError("calloc failed");
-			free(FS->Inodes[i]);
+		if ((FS->Inodes[i]->Filename = cgc_calloc(cgc_strlen(Filename)+1)) == NULL) {
+			cgc_SetFsError("cgc_calloc failed");
+			cgc_free(FS->Inodes[i]);
 			FS->Inodes[i] = NULL;
 			return(NULL);
 		}
-		strcpy(FS->Inodes[i]->Filename, Filename);
+		cgc_strcpy(FS->Inodes[i]->Filename, Filename);
 
 		// set the owner
-		if ((FS->Inodes[i]->Owner = calloc(sizeof(CurrentUser)+1)) == NULL) {
-			SetFsError("calloc failed");
-			free(FS->Inodes[i]->Filename);
+		if ((FS->Inodes[i]->Owner = cgc_calloc(sizeof(CurrentUser)+1)) == NULL) {
+			cgc_SetFsError("cgc_calloc failed");
+			cgc_free(FS->Inodes[i]->Filename);
 			FS->Inodes[i]->Filename = NULL;
-			free(FS->Inodes[i]);
+			cgc_free(FS->Inodes[i]);
 			FS->Inodes[i] = NULL;
 			return(NULL);
 		}
-		strcpy(FS->Inodes[i]->Owner, CurrentUser);
+		cgc_strcpy(FS->Inodes[i]->Owner, CurrentUser);
 
 		// set the Mode
 		FS->Inodes[i]->Mode = Mode;
@@ -317,48 +317,48 @@ pInode CreateEmptyFile(char *Filename, uint8_t Mode) {
 		break;
 	}
 	if (i == FS->MaxFiles) {
-		SetFsError("No free inodes");
+		cgc_SetFsError("No cgc_free inodes");
 		return(NULL);
 	}
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(FS->Inodes[i]);
 }
 
 // Open a file for reading or writing
 //  Mode: must be either 'r' or 'w'
-//  Returns a file handle suitable for calls to fread, fwrite, fgets, fclose
-FILE *fopen(char *Filename, char *Mode) {
-	uint32_t i;
-	pInode TargetInode = NULL;
-	FILE *fp;
+//  Returns a file handle suitable for calls to cgc_fread, cgc_fwrite, cgc_fgets, cgc_fclose
+cgc_FILE *cgc_fopen(char *Filename, char *Mode) {
+	cgc_uint32_t i;
+	cgc_pInode TargetInode = NULL;
+	cgc_FILE *fp;
 
 	// sanity checks
 	if (!FS) {
-		SetFsError("Filesystem does not exist");
+		cgc_SetFsError("cgc_Filesystem does not exist");
 		return(NULL);
 	}
 	if (!Filename || !Mode) {
-		SetFsError("Invalid filename or mode");
+		cgc_SetFsError("Invalid filename or mode");
 		return(NULL);
 	}
-	if (strlen(Mode) > 1) {
-		SetFsError("Invalid mode");
+	if (cgc_strlen(Mode) > 1) {
+		cgc_SetFsError("Invalid mode");
 		return(NULL);
 	}
 	if (Mode[0] != 'r' && Mode[0] != 'w') {
-		SetFsError("Invalid mode");
+		cgc_SetFsError("Invalid mode");
 		return(NULL);
 	}
 	if (!CurrentUser) {
-		SetFsError("Must login first");
+		cgc_SetFsError("Must login first");
 		return(NULL);
 	}
 
 	// search the filesystem for the filename
-	TargetInode = FindFile(Filename);
+	TargetInode = cgc_FindFile(Filename);
 	if (!TargetInode && Mode[0] == 'r') {
-		SetFsError("Unable to locate file");
+		cgc_SetFsError("Unable to locate file");
 		return(NULL);
 	}
 
@@ -366,9 +366,9 @@ FILE *fopen(char *Filename, char *Mode) {
 	if (TargetInode) {
 		for (i = 0; i < MAX_OPEN_FILES; i++) {
 			if (FD[i]) {
-				if (FD[i]->Inode == TargetInode) {
+				if (FD[i]->cgc_Inode == TargetInode) {
 					// file already open
-					SetFsError("File is already open");
+					cgc_SetFsError("File is already open");
 					return(NULL);
 				}
 			}
@@ -377,38 +377,38 @@ FILE *fopen(char *Filename, char *Mode) {
 
 	// check permissions
 	// only check if we're not root and we're trying to create a new file
-	if (TargetInode && strcmp(CurrentUser, "root") != 0) {
+	if (TargetInode && cgc_strcmp(CurrentUser, "root") != 0) {
 		// are we the owner of the file?
-		if (!strcmp(TargetInode->Owner, CurrentUser)) {
+		if (!cgc_strcmp(TargetInode->Owner, CurrentUser)) {
 			// check owner permissions
 			if (Mode[0] == 'r' && ((TargetInode->Mode & FS_OWNER_READ) == 0)) {
-				SetFsError("Permission denied");
+				cgc_SetFsError("Permission denied");
 				return(NULL);
 			}
 			if (Mode[0] == 'w' && ((TargetInode->Mode & FS_OWNER_WRITE) == 0)) {
-				SetFsError("Permission denied");
+				cgc_SetFsError("Permission denied");
 				return(NULL);
 			}
 		} else {
 			// check other permissions
 			if (Mode[0] == 'r' && ((TargetInode->Mode & FS_OTHER_READ) == 0)) {
-				SetFsError("Permission denied");
+				cgc_SetFsError("Permission denied");
 				return(NULL);
 			}
 			if (Mode[0] == 'w' && ((TargetInode->Mode & FS_OTHER_WRITE) == 0)) {
-				SetFsError("Permission denied");
+				cgc_SetFsError("Permission denied");
 				return(NULL);
 			}
 		}
 	}
 
-	// allocate a FILE record
-	if ((fp = calloc(sizeof(FILE))) == NULL) {
-		SetFsError("calloc failed");
+	// allocate a cgc_FILE record
+	if ((fp = cgc_calloc(sizeof(cgc_FILE))) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(NULL);
 	}
 
-	// find a file descriptor slot to hold the new FILE record
+	// find a file descriptor slot to hold the new cgc_FILE record
 	for (i = 0; i < MAX_OPEN_FILES; i++) {
 		if (FD[i]) {
 			continue;
@@ -418,8 +418,8 @@ FILE *fopen(char *Filename, char *Mode) {
 	}
 	if (i == MAX_OPEN_FILES) {
 		// unable to find available file descriptor
-		SetFsError("No free file descriptors");
-		free(fp);
+		cgc_SetFsError("No cgc_free file descriptors");
+		cgc_free(fp);
 		return(NULL);
 	}
 
@@ -427,150 +427,150 @@ FILE *fopen(char *Filename, char *Mode) {
 		// open for writing
 		if (!TargetInode) {
 			// create a new file
-			if ((TargetInode = CreateEmptyFile(Filename, FS_OWNER_READ|FS_OWNER_WRITE)) == NULL) {
-				SetFsError("Failed to create file");
+			if ((TargetInode = cgc_CreateEmptyFile(Filename, FS_OWNER_READ|FS_OWNER_WRITE)) == NULL) {
+				cgc_SetFsError("Failed to create file");
 				FD[i] = NULL;
-				free(fp);
+				cgc_free(fp);
 				return(NULL);
 			}
-			fp->Inode = TargetInode;
+			fp->cgc_Inode = TargetInode;
 			fp->Mode = FS_WRITE;
 			fp->CurrPosition = 0;
 		} else {
 			// truncate an existing file
-			fp->Inode = TargetInode;
+			fp->cgc_Inode = TargetInode;
 			fp->Mode = FS_WRITE;
 			fp->CurrPosition = 0;
 
-			fp->Inode->FileSize = 0;
-			if (fp->Inode->Data) {
-				free(fp->Inode->Data);
-				fp->Inode->Data = NULL;
+			fp->cgc_Inode->FileSize = 0;
+			if (fp->cgc_Inode->Data) {
+				cgc_free(fp->cgc_Inode->Data);
+				fp->cgc_Inode->Data = NULL;
 			}
 		}
 	} else {
 		// open for reading
-		fp->Inode = TargetInode;
+		fp->cgc_Inode = TargetInode;
 		fp->Mode = FS_READ;
 		fp->CurrPosition = 0;
 
 	}
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(fp);
 
 }
 
 // closes an open file
-uint8_t fclose(FILE *fp) {
-	uint8_t i;
+cgc_uint8_t cgc_fclose(cgc_FILE *fp) {
+	cgc_uint8_t i;
 
 	if (!fp) {
-		SetFsError("Invalid file pointer");
+		cgc_SetFsError("Invalid file pointer");
 		return(0);
 	}
 
-	// find the FD holding this FILE pointer
+	// find the FD holding this cgc_FILE pointer
 	for (i = 0; i < MAX_OPEN_FILES; i++) {
 		if (FD[i] == fp) {
 			FD[i] = NULL;
 		}
 	}
 
-	ClearFsError();
-	free(fp);
+	cgc_ClearFsError();
+	cgc_free(fp);
 	return(1);
 
 }
 	
 // reads the specified number of items of a particular size from the specified file
 //   returns the number of bytes read
-uint32_t fread(char *buf, uint32_t size, uint32_t nitems, FILE *fp) {
+cgc_uint32_t cgc_fread(char *buf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_FILE *fp) {
 
 	if (!buf || !fp) {
-		SetFsError("Invalid buffer or file pointer");
+		cgc_SetFsError("Invalid buffer or file pointer");
 		return(0);
 	}
-	if (!fp->Inode->Data) {
-		SetFsError("End of file");
+	if (!fp->cgc_Inode->Data) {
+		cgc_SetFsError("End of file");
 		return(0);
 	}
 
-	if (size*nitems > (fp->Inode->FileSize - fp->CurrPosition)) {
-		memcpy(buf, fp->Inode->Data + fp->CurrPosition, fp->Inode->FileSize - fp->CurrPosition);
-		fp->CurrPosition += (fp->Inode->FileSize - fp->CurrPosition);
-		ClearFsError();
-		return(fp->Inode->FileSize - fp->CurrPosition);
+	if (size*nitems > (fp->cgc_Inode->FileSize - fp->CurrPosition)) {
+		cgc_memcpy(buf, fp->cgc_Inode->Data + fp->CurrPosition, fp->cgc_Inode->FileSize - fp->CurrPosition);
+		fp->CurrPosition += (fp->cgc_Inode->FileSize - fp->CurrPosition);
+		cgc_ClearFsError();
+		return(fp->cgc_Inode->FileSize - fp->CurrPosition);
 	} else {
-		memcpy(buf, fp->Inode->Data + fp->CurrPosition, size*nitems);
+		cgc_memcpy(buf, fp->cgc_Inode->Data + fp->CurrPosition, size*nitems);
 		fp->CurrPosition += size*nitems;
-		ClearFsError();
+		cgc_ClearFsError();
 		return(size*nitems);
 	}
 }
 
 // writes the specified number of items of a particular size to the specified file
 //   returns the number of bytes written
-uint32_t fwrite(char *buf, uint32_t size, uint32_t nitems, FILE *fp) {
+cgc_uint32_t cgc_fwrite(char *buf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_FILE *fp) {
 	unsigned char *NewData;
 
 	if (!buf || !fp) {
-		SetFsError("Invalid buffer or file pointer");
+		cgc_SetFsError("Invalid buffer or file pointer");
 		return(0);
 	}
 
 	// allocate space to hold the current data and the new data
-	if ((NewData = calloc(fp->Inode->FileSize + size*nitems)) == NULL) {
-		SetFsError("calloc failed");
+	if ((NewData = cgc_calloc(fp->cgc_Inode->FileSize + size*nitems)) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(0);
 	}
 
 	// write the current data to the new buffer
-	if (fp->Inode->Data) {
-		memcpy(NewData, fp->Inode->Data, fp->Inode->FileSize);
+	if (fp->cgc_Inode->Data) {
+		cgc_memcpy(NewData, fp->cgc_Inode->Data, fp->cgc_Inode->FileSize);
 	}
 
 	// write the new data to the new buffer
-	memcpy(NewData+fp->Inode->FileSize, buf, size*nitems);
+	cgc_memcpy(NewData+fp->cgc_Inode->FileSize, buf, size*nitems);
 	
-	fp->Inode->FileSize += size*nitems;
+	fp->cgc_Inode->FileSize += size*nitems;
 
-	if (fp->Inode->Data) {
-		free(fp->Inode->Data);
+	if (fp->cgc_Inode->Data) {
+		cgc_free(fp->cgc_Inode->Data);
 	}
-	fp->Inode->Data = NewData;
+	fp->cgc_Inode->Data = NewData;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(size*nitems);
 }
 
 // reads a line delimited by '\n' from the file
 //   returns a pointer to the line or NULL on EoF or error
-char *fgets(char *buf, uint32_t size, FILE *fp) {
-	uint32_t TotalBytes = 0;
+char *cgc_fgets(char *buf, cgc_uint32_t size, cgc_FILE *fp) {
+	cgc_uint32_t TotalBytes = 0;
 
 	if (!buf) {
-		SetFsError("Invalid buffer");
+		cgc_SetFsError("Invalid buffer");
 		return(NULL);
 	}
 	if (!fp) {
-		SetFsError("Invalid file");
+		cgc_SetFsError("Invalid file");
 		return(NULL);
 	}
-	if (fp->CurrPosition == fp->Inode->FileSize) {
-		SetFsError("End of file");
+	if (fp->CurrPosition == fp->cgc_Inode->FileSize) {
+		cgc_SetFsError("End of file");
 		return(NULL);
 	}
-	if (!fp->Inode->Data) {
-		SetFsError("End of file");
+	if (!fp->cgc_Inode->Data) {
+		cgc_SetFsError("End of file");
 		return(NULL);
 	}
 
 	// read in one character at a time
-	while ((fp->CurrPosition < fp->Inode->FileSize) && (TotalBytes < size-1)) {
-		buf[TotalBytes++] = fp->Inode->Data[fp->CurrPosition++];
+	while ((fp->CurrPosition < fp->cgc_Inode->FileSize) && (TotalBytes < size-1)) {
+		buf[TotalBytes++] = fp->cgc_Inode->Data[fp->CurrPosition++];
 		// if the character is a newline, we're done
-		if (fp->Inode->Data[fp->CurrPosition-1] == '\n') {
+		if (fp->cgc_Inode->Data[fp->CurrPosition-1] == '\n') {
 			break;
 		}
 	}
@@ -581,14 +581,14 @@ char *fgets(char *buf, uint32_t size, FILE *fp) {
 
 // List the files in the filesystem
 //   like an 'ls'
-uint8_t ListFiles(char **Buf) {
-	uint32_t i;
+cgc_uint8_t cgc_ListFiles(char **Buf) {
+	cgc_uint32_t i;
 	char Mode[5];
-	uint32_t TotalLen;
-	uint32_t NewLen;
+	cgc_uint32_t TotalLen;
+	cgc_uint32_t NewLen;
 
 	if (!FS) {
-		SetFsError("Filesystem does not exist");
+		cgc_SetFsError("cgc_Filesystem does not exist");
 		return(0);
 	}
 
@@ -605,13 +605,13 @@ uint8_t ListFiles(char **Buf) {
 				continue;
 			}
 
-			if ((NewLen = strlen(FS->Inodes[i]->Filename)) < 32) {
+			if ((NewLen = cgc_strlen(FS->Inodes[i]->Filename)) < 32) {
 				TotalLen += 32;
 			} else {
 				TotalLen += NewLen;
 			}
 			TotalLen++;
-			if ((NewLen = strlen(FS->Inodes[i]->Owner)) < 32) {
+			if ((NewLen = cgc_strlen(FS->Inodes[i]->Owner)) < 32) {
 				TotalLen += 32;
 			} else {
 				TotalLen += NewLen;
@@ -627,35 +627,35 @@ uint8_t ListFiles(char **Buf) {
 		}
 
 		// allocate the buffer
-		if ((*Buf = calloc(TotalLen)) == NULL) {
-			SetFsError("calloc failed");
+		if ((*Buf = cgc_calloc(TotalLen)) == NULL) {
+			cgc_SetFsError("cgc_calloc failed");
 			return(0);
 		}
 	}
 
 	if (Buf) {
-		sprintf(*Buf, "$-32s $-32s $-8s $-4s\n", "Filename", "Owner", "Size", "Mode");
+		cgc_sprintf(*Buf, "$-32s $-32s $-8s $-4s\n", "Filename", "Owner", "Size", "Mode");
 	} else {
-		printf("$-32s $-32s $-8s $-4s\n", "Filename", "Owner", "Size", "Mode");
+		cgc_printf("$-32s $-32s $-8s $-4s\n", "Filename", "Owner", "Size", "Mode");
 	}
 	for (i = 0; i < FS->MaxFiles; i++) {
 		if (FS->Inodes[i] == NULL) {
 			continue;
 		}
 		if (Buf) {
-			sprintf(*Buf, "$s$-32s $-32s $-8d ", 
+			cgc_sprintf(*Buf, "$s$-32s $-32s $-8d ", 
 				*Buf,
 				FS->Inodes[i]->Filename,
 				FS->Inodes[i]->Owner,
 				FS->Inodes[i]->FileSize);
 		} else {
-			printf("$-32s $-32s $-8d ", 
+			cgc_printf("$-32s $-32s $-8d ", 
 				FS->Inodes[i]->Filename,
 				FS->Inodes[i]->Owner,
 				FS->Inodes[i]->FileSize);
 		}
 		// print the mode
-		memset(Mode, '-', 5);	
+		cgc_memset(Mode, '-', 5);	
 		Mode[4] = '\0';
 		if (FS->Inodes[i]->Mode & FS_OWNER_READ)
 			Mode[0] = 'r';
@@ -666,33 +666,33 @@ uint8_t ListFiles(char **Buf) {
 		if (FS->Inodes[i]->Mode & FS_OTHER_WRITE)
 			Mode[3] = 'w';
 		if (Buf) {
-			sprintf(*Buf,"$s$-4s\n", *Buf, Mode);
+			cgc_sprintf(*Buf,"$s$-4s\n", *Buf, Mode);
 		} else {
-			printf("$-4s\n", Mode);
+			cgc_printf("$-4s\n", Mode);
 		}
 	}
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 
 }
 
 // Delete a file on the filesystem
-uint8_t DeleteFile(char *Filename) {
-	uint32_t i;
-	uint32_t InodeIndex;
-	pInode TargetInode;
+cgc_uint8_t cgc_DeleteFile(char *Filename) {
+	cgc_uint32_t i;
+	cgc_uint32_t InodeIndex;
+	cgc_pInode TargetInode;
 
 	if (!FS) {
-		SetFsError("Filesystem does not exist");
+		cgc_SetFsError("cgc_Filesystem does not exist");
 		return(0);
 	}
 	if (!Filename) {
-		SetFsError("Invalid filename");
+		cgc_SetFsError("Invalid filename");
 		return(0);
 	}
 	if (!CurrentUser) {
-		SetFsError("Must login first");
+		cgc_SetFsError("Must login first");
 		return(0);
 	}
 
@@ -700,7 +700,7 @@ uint8_t DeleteFile(char *Filename) {
 		if (FS->Inodes[i] == NULL) {
 			continue;
 		}
-		if (!strcmp(FS->Inodes[i]->Filename, Filename)) {
+		if (!cgc_strcmp(FS->Inodes[i]->Filename, Filename)) {
 			// found it
 			TargetInode = FS->Inodes[i];
 			InodeIndex = i;
@@ -708,14 +708,14 @@ uint8_t DeleteFile(char *Filename) {
 		}
 	}
 	if (i == FS->MaxFiles) {
-		SetFsError("Unable to locate file");
+		cgc_SetFsError("Unable to locate file");
 		return(0);
 	}
 
 	// make sure there are no file descriptors open to it
 	for (i = 0; i < MAX_OPEN_FILES; i++) {
 		if (FD[i]) {
-			if (FD[i]->Inode == TargetInode) {
+			if (FD[i]->cgc_Inode == TargetInode) {
 				// file is still open
 				return(0);
 			}
@@ -723,158 +723,158 @@ uint8_t DeleteFile(char *Filename) {
 	}
 
 	// do we have permission to remove it?
-	if (strcmp(CurrentUser, "root") != 0 && (strcmp(CurrentUser, TargetInode->Owner) != 0)) {
+	if (cgc_strcmp(CurrentUser, "root") != 0 && (cgc_strcmp(CurrentUser, TargetInode->Owner) != 0)) {
 		// we're not root or the owner of the file, so no
-		SetFsError("Permission denied");
+		cgc_SetFsError("Permission denied");
 		return(0);
 	}
 	
 	// remove the inode vars
-	free(TargetInode->Filename);
+	cgc_free(TargetInode->Filename);
 	if (TargetInode->Owner) {
-		free(TargetInode->Owner);
+		cgc_free(TargetInode->Owner);
 	}
 	if (TargetInode->Data) {
-		free(TargetInode->Data);
+		cgc_free(TargetInode->Data);
 	}
 
 	// remove the inode
-	free(TargetInode);
+	cgc_free(TargetInode);
 	FS->Inodes[InodeIndex] = NULL;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
 // Rename a file 
-uint8_t RenameFile(char *OldFilename, char *NewFilename) {
-	uint32_t i;
-	pInode SourceInode = NULL;
+cgc_uint8_t cgc_RenameFile(char *OldFilename, char *NewFilename) {
+	cgc_uint32_t i;
+	cgc_pInode SourceInode = NULL;
 	char *TempFilename;
 
 	if (!OldFilename || !NewFilename) {
-		SetFsError("Invalid filename");
+		cgc_SetFsError("Invalid filename");
 		return(0);
 	}
 
 	// find the old filename
 	for (i = 0; i < FS->MaxFiles; i++) {
 		if (FS->Inodes[i] && FS->Inodes[i]->Filename) {
-			if (!strcmp(FS->Inodes[i]->Filename, OldFilename)) {
+			if (!cgc_strcmp(FS->Inodes[i]->Filename, OldFilename)) {
 				// found it
 				SourceInode = FS->Inodes[i];
 			}
-			if (!strcmp(FS->Inodes[i]->Filename, NewFilename)) {
+			if (!cgc_strcmp(FS->Inodes[i]->Filename, NewFilename)) {
 				// the new filename already exists
-				SetFsError("Destination file already exists");
+				cgc_SetFsError("Destination file already exists");
 				return(0);
 			}
 		}
 	}
 	if (!SourceInode) {
-		SetFsError("Source file not found");
+		cgc_SetFsError("Source file not found");
 		return(0);
 	}
 
 	// Do we have permissions to rename the old file
-	if (strcmp(CurrentUser, "root") != 0 && (strcmp(CurrentUser, SourceInode->Owner) != 0)) {
+	if (cgc_strcmp(CurrentUser, "root") != 0 && (cgc_strcmp(CurrentUser, SourceInode->Owner) != 0)) {
 		// we're not root or the owner of the file, so no
-		SetFsError("Permission denied");
+		cgc_SetFsError("Permission denied");
 		return(0);
 	}
 
 	// rename the file
-	if ((TempFilename = calloc(strlen(NewFilename)+1)) == NULL) {
-		SetFsError("calloc failed");
+	if ((TempFilename = cgc_calloc(cgc_strlen(NewFilename)+1)) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(0);
 	}	
-	strcpy(TempFilename, NewFilename);
-	free(SourceInode->Filename);
+	cgc_strcpy(TempFilename, NewFilename);
+	cgc_free(SourceInode->Filename);
 	SourceInode->Filename = TempFilename;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
-// ChangeMode
-uint8_t ChangeMode(char *Filename, uint8_t NewMode) {
-	pInode TargetInode;
+// cgc_ChangeMode
+cgc_uint8_t cgc_ChangeMode(char *Filename, cgc_uint8_t NewMode) {
+	cgc_pInode TargetInode;
 
 	if (!Filename) {
-		SetFsError("Invalid user");
+		cgc_SetFsError("Invalid user");
 		return(0);
 	}
 
 	// check that the mode is valid
 	if (NewMode & ((FS_OWNER_READ|FS_OWNER_WRITE|FS_OTHER_READ|FS_OTHER_WRITE) ^ 0xFF))  {
-		SetFsError("Invalid mode");
+		cgc_SetFsError("Invalid mode");
 		return(0);
 	}
 
 	// find the file
-	if ((TargetInode = FindFile(Filename)) == NULL) {
-		SetFsError("Unable to find file");
+	if ((TargetInode = cgc_FindFile(Filename)) == NULL) {
+		cgc_SetFsError("Unable to find file");
 		return(0);
 	}
 
 	// make sure we're root or we're the owner
-	if ((strcmp(CurrentUser, "root") != 0) && (strcmp(CurrentUser, TargetInode->Owner) != 0)) {
-		SetFsError("Permission denied");
+	if ((cgc_strcmp(CurrentUser, "root") != 0) && (cgc_strcmp(CurrentUser, TargetInode->Owner) != 0)) {
+		cgc_SetFsError("Permission denied");
 		return(0);
 	}
 
 	// change the mode
 	TargetInode->Mode = NewMode;
 
-	ClearFsError();	
+	cgc_ClearFsError();	
 	return(1);
 }
 
 // Change the owner of a file
 //   Can only be done by 'root' user (root must be the currently logged in user)
-uint8_t ChangeOwner(char *Filename, char *NewOwner) {
-	pInode TargetInode;
+cgc_uint8_t cgc_ChangeOwner(char *Filename, char *NewOwner) {
+	cgc_pInode TargetInode;
 	char *TempOwner;
 
 	if (!Filename) {
-		SetFsError("Invalid filename");
+		cgc_SetFsError("Invalid filename");
 		return(0);
 	}
 	if (!NewOwner) {
-		SetFsError("Invalid owner");
+		cgc_SetFsError("Invalid owner");
 		return(0);
 	}
 	
-	if (strcmp(CurrentUser, "root") != 0) {
-		SetFsError("Must be root");
+	if (cgc_strcmp(CurrentUser, "root") != 0) {
+		cgc_SetFsError("Must be root");
 		return(0);
 	}
 
-	if ((TargetInode = FindFile(Filename)) == NULL) {
-		SetFsError("Unable to find file");
+	if ((TargetInode = cgc_FindFile(Filename)) == NULL) {
+		cgc_SetFsError("Unable to find file");
 		return(0);
 	}
 
 	// make sure the NewOwner exists in the passwd file
-	if (!UserExists(NewOwner)) {
-		SetFsError("Invalid user");
+	if (!cgc_UserExists(NewOwner)) {
+		cgc_SetFsError("Invalid user");
 		return(0);
 	}
 
-	// calloc some space for the new owner name
-	if ((TempOwner = calloc(strlen(NewOwner)+1)) == NULL) {
-		SetFsError("calloc failed");
+	// cgc_calloc some space for the new owner name
+	if ((TempOwner = cgc_calloc(cgc_strlen(NewOwner)+1)) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(0);
 	}
-	strcpy(TempOwner, NewOwner);
+	cgc_strcpy(TempOwner, NewOwner);
 
 	// update the owner on the inode
 	if (TargetInode->Owner) {
-		free(TargetInode->Owner);
+		cgc_free(TargetInode->Owner);
 	}
 	TargetInode->Owner = TempOwner;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
@@ -882,511 +882,511 @@ uint8_t ChangeOwner(char *Filename, char *NewOwner) {
 // user functions
 //
 
-// Login
-uint8_t Login(char *Username) {
+// cgc_Login
+cgc_uint8_t cgc_Login(char *Username) {
 	char *NewUsername;
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
 
 	// copy the requested username 
-	if ((NewUsername = calloc(strlen(Username)+1)) == NULL) {
-		SetFsError("calloc failed");
+	if ((NewUsername = cgc_calloc(cgc_strlen(Username)+1)) == NULL) {
+		cgc_SetFsError("cgc_calloc failed");
 		return(0);
 	}
-	strcpy(NewUsername, Username);
+	cgc_strcpy(NewUsername, Username);
 
 	// is anyone currently logged in
 	if (CurrentUser) {
-		free(CurrentUser);
+		cgc_free(CurrentUser);
 		CurrentUser = NULL;
 	}
 
 	// log in as the requested user
 	CurrentUser = NewUsername;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 	
 }
 
-void Uid(void) {
+void cgc_Uid(void) {
 	if (CurrentUser) {
-		puts(CurrentUser);
+		cgc_puts(CurrentUser);
 	}
 }
 
 // log the current user out (leaving no user logged in)
-uint8_t Logout(void) {
+cgc_uint8_t cgc_Logout(void) {
 
 	if (CurrentUser) {
-		free(CurrentUser);
+		cgc_free(CurrentUser);
 	}
 
 	CurrentUser = NULL;
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
 // init passwd file creating the 'root' user and setting its password
-uint8_t InitPasswd(char *RootPassword) {
-	FILE *fp;
+cgc_uint8_t cgc_InitPasswd(char *RootPassword) {
+	cgc_FILE *fp;
 
 	if (!RootPassword) {
-		SetFsError("Invalid root password");
+		cgc_SetFsError("Invalid root password");
 		return(0);
 	}
 
-	// fopen the passwd file
-	if ((fp = fopen("passwd", "w")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	// cgc_fopen the passwd file
+	if ((fp = cgc_fopen("passwd", "w")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		return(0);
 	}
 
 	// write the root user
-	fwrite("root:", 5, 1, fp);
-	fwrite(RootPassword, strlen(RootPassword), 1, fp);
+	cgc_fwrite("root:", 5, 1, fp);
+	cgc_fwrite(RootPassword, cgc_strlen(RootPassword), 1, fp);
 
 	// close the file
-	fclose(fp);
+	cgc_fclose(fp);
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 
 }
 
 // checks if the specified Username exists in the passwd file
-uint8_t UserExists(char *Username) {
-	FILE *in;
+cgc_uint8_t cgc_UserExists(char *Username) {
+	cgc_FILE *in;
 	char line[128];
 	char *User;
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
 
 	// open the passwd file
-	if ((in = fopen("passwd", "r")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	if ((in = cgc_fopen("passwd", "r")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		return(0);
 	}
 
 	// read in each line
-	while (fgets(line, 127, in)) {
+	while (cgc_fgets(line, 127, in)) {
 		// see if it's the target username
-		if ((User = strtok(line, ":")) == NULL) {
-			SetFsError("Failed to parse passwd file");
+		if ((User = cgc_strtok(line, ":")) == NULL) {
+			cgc_SetFsError("Failed to parse passwd file");
 			return(0);
 		}
-		if (!strcmp(User, Username)) {
+		if (!cgc_strcmp(User, Username)) {
 			// found it
-			fclose(in);
+			cgc_fclose(in);
 			return(1);
 		}
 	}
 
 	// close the passwd file
-	fclose(in);
+	cgc_fclose(in);
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(0);
 
 }
 
 // add a user to the passwd file
-uint8_t AddUser(char *Username, char *Password) {
-	FILE *passwd;
-	FILE *newpasswd;
+cgc_uint8_t cgc_AddUser(char *Username, char *Password) {
+	cgc_FILE *passwd;
+	cgc_FILE *newpasswd;
 	char line[128];
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
 	if (!Password) {
-		SetFsError("Invalid password");
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
-	if (strcmp(CurrentUser, "root") != 0) {
-		SetFsError("Must be root");
+	if (cgc_strcmp(CurrentUser, "root") != 0) {
+		cgc_SetFsError("Must be root");
 		return(0);
 	}
-	if (strlen(Username) > MAX_USER_LEN) {
-		SetFsError("Invalid username");
+	if (cgc_strlen(Username) > MAX_USER_LEN) {
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
-	if (strlen(Password) > MAX_PASSWD_LEN) {
-		SetFsError("Invalid password");
+	if (cgc_strlen(Password) > MAX_PASSWD_LEN) {
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
 
 	// make sure the username doesn't already exist
-	if (UserExists(Username)) {
-		SetFsError("User already exists");
+	if (cgc_UserExists(Username)) {
+		cgc_SetFsError("User already exists");
 		return(0);
 	}
 
 	// open the passwd file
-	if ((passwd = fopen("passwd", "r")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	if ((passwd = cgc_fopen("passwd", "r")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		return(0);
 	}
 
 	// open the temp passwd file
-	if ((newpasswd = fopen("~passwd", "w")) == NULL) {
-		SetFsError("Unable to open tmp passwd file");
-		fclose(passwd);
+	if ((newpasswd = cgc_fopen("~passwd", "w")) == NULL) {
+		cgc_SetFsError("Unable to open tmp passwd file");
+		cgc_fclose(passwd);
 		return(0);
 	}
 
 	// read in each line of the passwd file
-	while (fgets(line, 127, passwd) != NULL) {
+	while (cgc_fgets(line, 127, passwd) != NULL) {
 		// write it out to the temp passwd file
-		if (fwrite(line, strlen(line), 1, newpasswd) != strlen(line)) {
-			fclose(passwd);
-			fclose(newpasswd);
-			SetFsError("Unable to write tmp passwd file");
-			DeleteFile("~passwd");
+		if (cgc_fwrite(line, cgc_strlen(line), 1, newpasswd) != cgc_strlen(line)) {
+			cgc_fclose(passwd);
+			cgc_fclose(newpasswd);
+			cgc_SetFsError("Unable to write tmp passwd file");
+			cgc_DeleteFile("~passwd");
 			return(0);
 		}
-		if (line[strlen(line)-1] != '\n') {
-			if (fwrite("\n", 1, 1, newpasswd) != 1) {
-				fclose(passwd);
-				fclose(newpasswd);
-				SetFsError("Unable to write tmp passwd file");
-				DeleteFile("~passwd");
+		if (line[cgc_strlen(line)-1] != '\n') {
+			if (cgc_fwrite("\n", 1, 1, newpasswd) != 1) {
+				cgc_fclose(passwd);
+				cgc_fclose(newpasswd);
+				cgc_SetFsError("Unable to write tmp passwd file");
+				cgc_DeleteFile("~passwd");
 				return(0);
 			}
 		}
 	}
 
 	// write the new passwd entry
-	sprintf(line, "$s:$s", Username, Password);
-	fwrite(line, strlen(line), 1, newpasswd);
+	cgc_sprintf(line, "$s:$s", Username, Password);
+	cgc_fwrite(line, cgc_strlen(line), 1, newpasswd);
 
 	// close the passwd file
-	fclose(passwd);
+	cgc_fclose(passwd);
 
 	// close the temp passwd file
-	fclose(newpasswd);
+	cgc_fclose(newpasswd);
 
 	// remove the passwd file
-	DeleteFile("passwd");
+	cgc_DeleteFile("passwd");
 	
 	// move the temp passwd file to passwd
-	RenameFile("~passwd", "passwd");
+	cgc_RenameFile("~passwd", "passwd");
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 }
 
 // delete user
-uint8_t DeleteUser(char *Username) {
+cgc_uint8_t cgc_DeleteUser(char *Username) {
 	char line[128];
 	char *User;
-	uint8_t Found = 0;
-	FILE *passwd;
-	FILE *newpasswd;
+	cgc_uint8_t Found = 0;
+	cgc_FILE *passwd;
+	cgc_FILE *newpasswd;
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
-	if (strcmp(CurrentUser, "root") != 0) {
-		SetFsError("Must be root");
+	if (cgc_strcmp(CurrentUser, "root") != 0) {
+		cgc_SetFsError("Must be root");
 		return(0);
 	}
-	if (!strcmp(Username, "root")) {
-		SetFsError("Can't delete root user");
+	if (!cgc_strcmp(Username, "root")) {
+		cgc_SetFsError("Can't delete root user");
 		return(0);
 	}
 
 	// open the passwd file
-	if ((passwd = fopen("passwd", "r")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	if ((passwd = cgc_fopen("passwd", "r")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		return(0);
 	}
 
 	// open the temp passwd file
-	if ((newpasswd = fopen("~passwd", "w")) == NULL) {
-		SetFsError("Unable to open tmp passwd file");
-		fclose(passwd);
+	if ((newpasswd = cgc_fopen("~passwd", "w")) == NULL) {
+		cgc_SetFsError("Unable to open tmp passwd file");
+		cgc_fclose(passwd);
 		return(0);
 	}
 
 	// read in each line of the passwd file
-	while (fgets(line, 127, passwd) != NULL) {
+	while (cgc_fgets(line, 127, passwd) != NULL) {
 		// skip blank lines
-		if (strlen(line) == 0) {
+		if (cgc_strlen(line) == 0) {
 			continue;
 		}
 		// write it out to the temp passwd file
 		// if it's not the user we're deleting
-		if ((User = strtok(line, ":")) == NULL) {
-			SetFsError("Failed to parse passwd file");
-			fclose(passwd);
-			fclose(newpasswd);
-			DeleteFile("~passwd");
+		if ((User = cgc_strtok(line, ":")) == NULL) {
+			cgc_SetFsError("Failed to parse passwd file");
+			cgc_fclose(passwd);
+			cgc_fclose(newpasswd);
+			cgc_DeleteFile("~passwd");
 			return(0);
 		}
-		if (!strcmp(User, Username)) {
+		if (!cgc_strcmp(User, Username)) {
 			// found it, so don't write the user
 			Found = 1;
 			continue;
 		}
 
-		// restore the delimiter strtok would have removed
-		line[strlen(User)] = ':';
+		// restore the delimiter cgc_strtok would have removed
+		line[cgc_strlen(User)] = ':';
 
 		// write the line to the temp passwd file
-		if (fwrite(line, strlen(line), 1, newpasswd) != strlen(line)) {
-			fclose(passwd);
-			fclose(newpasswd);
-			SetFsError("Unable to write tmp passwd file");
-			DeleteFile("~passwd");
+		if (cgc_fwrite(line, cgc_strlen(line), 1, newpasswd) != cgc_strlen(line)) {
+			cgc_fclose(passwd);
+			cgc_fclose(newpasswd);
+			cgc_SetFsError("Unable to write tmp passwd file");
+			cgc_DeleteFile("~passwd");
 			return(0);
 		}
 	}
 
 	// close the passwd file
-	fclose(passwd);
+	cgc_fclose(passwd);
 
 	// close the temp passwd file
-	fclose(newpasswd);
+	cgc_fclose(newpasswd);
 
 	if (!Found) {
-		SetFsError("User not found");
-		fclose(passwd);
-		fclose(newpasswd);
-		DeleteFile("~passwd");
+		cgc_SetFsError("User not found");
+		cgc_fclose(passwd);
+		cgc_fclose(newpasswd);
+		cgc_DeleteFile("~passwd");
 		return(0);
 	}
 
 	// remove the passwd file
-	DeleteFile("passwd");
+	cgc_DeleteFile("passwd");
 	
 	// move the temp passwd file to passwd
-	RenameFile("~passwd", "passwd");
+	cgc_RenameFile("~passwd", "passwd");
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 
 }
 
 // change user password
-uint8_t ChangePasswd(char *Username, char *NewPasswd) {
+cgc_uint8_t cgc_ChangePasswd(char *Username, char *NewPasswd) {
 	char line[128];
 	char *User;
-	uint8_t Found = 0;
-	FILE *passwd;
-	FILE *newpasswd;
+	cgc_uint8_t Found = 0;
+	cgc_FILE *passwd;
+	cgc_FILE *newpasswd;
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
 	if (!NewPasswd) {
-		SetFsError("Invalid password");
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
-	if (strlen(NewPasswd) > MAX_PASSWD_LEN) {
-		SetFsError("Invalid password");
+	if (cgc_strlen(NewPasswd) > MAX_PASSWD_LEN) {
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
 
-	if (strcmp(CurrentUser, Username) != 0 && strcmp(CurrentUser, "root") != 0) {
-		SetFsError("Must be root or the user being changed");
+	if (cgc_strcmp(CurrentUser, Username) != 0 && cgc_strcmp(CurrentUser, "root") != 0) {
+		cgc_SetFsError("Must be root or the user being changed");
 		return(0);
 	}
 
 	// open the passwd file
-	if ((passwd = fopen("passwd", "r")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	if ((passwd = cgc_fopen("passwd", "r")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		return(0);
 	}
 
 	// open the temp passwd file
-	if ((newpasswd = fopen("~passwd", "w")) == NULL) {
-		SetFsError("Unable to open tmp passwd file");
-		fclose(passwd);
+	if ((newpasswd = cgc_fopen("~passwd", "w")) == NULL) {
+		cgc_SetFsError("Unable to open tmp passwd file");
+		cgc_fclose(passwd);
 		return(0);
 	}
 
 	// read in each line of the passwd file
-	while (fgets(line, 127, passwd) != NULL) {
+	while (cgc_fgets(line, 127, passwd) != NULL) {
 		// skip blank lines
-		if (strlen(line) == 0) {
+		if (cgc_strlen(line) == 0) {
 			continue;
 		}
 		// write it out to the temp passwd file
 		// if it's not the user we're deleting
-		if ((User = strtok(line, ":")) == NULL) {
-			SetFsError("Failed to parse passwd file");
-			fclose(passwd);
-			fclose(newpasswd);
-			DeleteFile("~passwd");
+		if ((User = cgc_strtok(line, ":")) == NULL) {
+			cgc_SetFsError("Failed to parse passwd file");
+			cgc_fclose(passwd);
+			cgc_fclose(newpasswd);
+			cgc_DeleteFile("~passwd");
 			return(0);
 		}
-		if (!strcmp(User, Username)) {
+		if (!cgc_strcmp(User, Username)) {
 			// found it, write the new passwd
-			sprintf(line, "$s:$s\n", Username, NewPasswd);
-			if (fwrite(line, strlen(line), 1, newpasswd) != strlen(line)) {
-				fclose(passwd);
-				fclose(newpasswd);
-				SetFsError("Unable to write tmp passwd file");
-				DeleteFile("~passwd");
+			cgc_sprintf(line, "$s:$s\n", Username, NewPasswd);
+			if (cgc_fwrite(line, cgc_strlen(line), 1, newpasswd) != cgc_strlen(line)) {
+				cgc_fclose(passwd);
+				cgc_fclose(newpasswd);
+				cgc_SetFsError("Unable to write tmp passwd file");
+				cgc_DeleteFile("~passwd");
 				return(0);
 			}
 			continue;
 		}
 
-		// restore the delimiter strtok would have removed
-		line[strlen(User)] = ':';
+		// restore the delimiter cgc_strtok would have removed
+		line[cgc_strlen(User)] = ':';
 
-		// restore the delimiter strtok would have removed
-		if (fwrite(line, strlen(line), 1, newpasswd) != strlen(line)) {
-			SetFsError("Unable to write tmp passwd file");
-			fclose(passwd);
-			fclose(newpasswd);
-			DeleteFile("~passwd");
+		// restore the delimiter cgc_strtok would have removed
+		if (cgc_fwrite(line, cgc_strlen(line), 1, newpasswd) != cgc_strlen(line)) {
+			cgc_SetFsError("Unable to write tmp passwd file");
+			cgc_fclose(passwd);
+			cgc_fclose(newpasswd);
+			cgc_DeleteFile("~passwd");
 			return(0);
 		}
 	}
 
 	// close the passwd file
-	fclose(passwd);
+	cgc_fclose(passwd);
 
 	// close the temp passwd file
-	fclose(newpasswd);
+	cgc_fclose(newpasswd);
 
 	if (!Found) {
-		SetFsError("User not found");
-		fclose(passwd);
-		fclose(newpasswd);
-		DeleteFile("~passwd");
+		cgc_SetFsError("User not found");
+		cgc_fclose(passwd);
+		cgc_fclose(newpasswd);
+		cgc_DeleteFile("~passwd");
 		return(0);
 	}
 
 	// remove the passwd file
-	DeleteFile("passwd");
+	cgc_DeleteFile("passwd");
 	
 	// move the temp passwd file to passwd
-	RenameFile("~passwd", "passwd");
+	cgc_RenameFile("~passwd", "passwd");
 
-	ClearFsError();
+	cgc_ClearFsError();
 	return(1);
 
 }
 
 // check user password
-uint8_t CheckPasswd(char *Username, char *Password) {
+cgc_uint8_t cgc_CheckPasswd(char *Username, char *Password) {
 	char line[128];
 	char *User;
 	char *CurrPassword;
-	uint8_t Found = 0;
-	FILE *passwd;
+	cgc_uint8_t Found = 0;
+	cgc_FILE *passwd;
 	char *OldUser = NULL;
-	uint8_t NoLogin = 0;
+	cgc_uint8_t NoLogin = 0;
 
 	if (!Username) {
-		SetFsError("Invalid username");
+		cgc_SetFsError("Invalid username");
 		return(0);
 	}
 	if (!Password) {
-		SetFsError("Invalid password");
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
-	if (strlen(Password) > MAX_PASSWD_LEN) {
-		SetFsError("Invalid password");
+	if (cgc_strlen(Password) > MAX_PASSWD_LEN) {
+		cgc_SetFsError("Invalid password");
 		return(0);
 	}
 
 	// need to log in as root for the rest of this function
 	// save the current logged in user
 	if (CurrentUser) {
-		if (strcmp(CurrentUser, "root") != 0) {
-			if ((OldUser = calloc(strlen(CurrentUser)+1)) == NULL) {
-				SetFsError("calloc failed");
+		if (cgc_strcmp(CurrentUser, "root") != 0) {
+			if ((OldUser = cgc_calloc(cgc_strlen(CurrentUser)+1)) == NULL) {
+				cgc_SetFsError("cgc_calloc failed");
 				return(0);
 			}
-			strcpy(OldUser, CurrentUser);
-			Logout();
-			Login("root");
+			cgc_strcpy(OldUser, CurrentUser);
+			cgc_Logout();
+			cgc_Login("root");
 		}
 	} else {
-		Login("root");
+		cgc_Login("root");
 		NoLogin = 1;
 	}
 
 	// open the passwd file
-	if ((passwd = fopen("passwd", "r")) == NULL) {
-		SetFsError("Unable to open passwd file");
+	if ((passwd = cgc_fopen("passwd", "r")) == NULL) {
+		cgc_SetFsError("Unable to open passwd file");
 		if (OldUser) {
-			Logout();
-			Login(OldUser);
-			free(OldUser);
+			cgc_Logout();
+			cgc_Login(OldUser);
+			cgc_free(OldUser);
 		}
 		if (NoLogin) {
-			Logout();
+			cgc_Logout();
 		}
 		return(0);
 	}
 
 	// read in each line of the passwd file
-	while (fgets(line, 127, passwd) != NULL) {
+	while (cgc_fgets(line, 127, passwd) != NULL) {
 		// skip blank lines
-		if (strlen(line) == 0) {
+		if (cgc_strlen(line) == 0) {
 			continue;
 		}
 		// parse the password field
-		if ((User = strtok(line, ":")) == NULL) {
-			SetFsError("Failed to parse passwd file");
-			fclose(passwd);
+		if ((User = cgc_strtok(line, ":")) == NULL) {
+			cgc_SetFsError("Failed to parse passwd file");
+			cgc_fclose(passwd);
 			if (OldUser) {
-				Logout();
-				Login(OldUser);
-				free(OldUser);
+				cgc_Logout();
+				cgc_Login(OldUser);
+				cgc_free(OldUser);
 			}
 			if (NoLogin) {
-				Logout();
+				cgc_Logout();
 			}
 			return(0);
 		}
-		if (strcmp(User, Username) != 0) {
+		if (cgc_strcmp(User, Username) != 0) {
 			// not the target user, skip on
 			continue;
 		}
 
 		// found the target user, parse the password
-		if ((CurrPassword = strtok(NULL, ":")) == NULL) {
-			SetFsError("Failed to parse passwd file");
-			fclose(passwd);
+		if ((CurrPassword = cgc_strtok(NULL, ":")) == NULL) {
+			cgc_SetFsError("Failed to parse passwd file");
+			cgc_fclose(passwd);
 			if (OldUser) {
-				Logout();
-				Login(OldUser);
-				free(OldUser);
+				cgc_Logout();
+				cgc_Login(OldUser);
+				cgc_free(OldUser);
 			}
 			if (NoLogin) {
-				Logout();
+				cgc_Logout();
 			}
 			return(0);
 		}
 
-		if (!strcmp(CurrPassword, Password)) {
+		if (!cgc_strcmp(CurrPassword, Password)) {
 			// matches
-			ClearFsError();
-			fclose(passwd);
+			cgc_ClearFsError();
+			cgc_fclose(passwd);
 			if (OldUser) {
-				Logout();
-				Login(OldUser);
-				free(OldUser);
+				cgc_Logout();
+				cgc_Login(OldUser);
+				cgc_free(OldUser);
 			}
 			if (NoLogin) {
-				Logout();
+				cgc_Logout();
 			}
 			return(1);
 		}
@@ -1394,29 +1394,29 @@ uint8_t CheckPasswd(char *Username, char *Password) {
 	}
 
 	// close the passwd file
-	fclose(passwd);
+	cgc_fclose(passwd);
 
 	if (!Found) {
-		SetFsError("User not found");
+		cgc_SetFsError("User not found");
 		if (OldUser) {
-			Logout();
-			Login(OldUser);
-			free(OldUser);
+			cgc_Logout();
+			cgc_Login(OldUser);
+			cgc_free(OldUser);
 		}
 		if (NoLogin) {
-			Logout();
+			cgc_Logout();
 		}
 		return(0);
 	}
 
-	ClearFsError();
+	cgc_ClearFsError();
 	if (OldUser) {
-		Logout();
-		Login(OldUser);
-		free(OldUser);
+		cgc_Logout();
+		cgc_Login(OldUser);
+		cgc_free(OldUser);
 	}
 	if (NoLogin) {
-		Logout();
+		cgc_Logout();
 	}
 	return(0);
 

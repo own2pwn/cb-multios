@@ -21,7 +21,7 @@
 */
 /*F*************************/
 void
-bzero(buf, num)
+cgc_bzero(buf, num)
 
 char *buf;				/* buffer to zeroize */
 unsigned int num;		/* the length of the buffer */

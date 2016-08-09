@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef IO_H
 #define IO_H
 
-uint32_t ReadShellPrompt(int fd, char *buf, size_t len);
-uint32_t ReadUntilNewline(int fd, char *buf, size_t len);
+cgc_uint32_t cgc_ReadShellPrompt(int fd, char *buf, cgc_size_t len);
+cgc_uint32_t cgc_ReadUntilNewline(int fd, char *buf, cgc_size_t len);
 
 #endif

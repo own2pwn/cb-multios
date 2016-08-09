@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include "date.h"
 
-int32_t date_compare( tDateTime date1, tDateTime date2 )
+cgc_int32_t cgc_date_compare( cgc_tDateTime date1, cgc_tDateTime date2 )
 {
     // IF date1 is later than date2 return 1
     // IF date1 is earlier than date2 return -1
@@ -73,30 +73,30 @@ int32_t date_compare( tDateTime date1, tDateTime date2 )
     return 0;
 }
 
-int32_t parse_date( const char *str, tDateTime *pDate )
+cgc_int32_t cgc_parse_date( const char *str, cgc_tDateTime *pDate )
 {
     const char *start = str;
-    tDateTime tTempDate;
+    cgc_tDateTime tTempDate;
 
     if ( str == NULL )
         return 0;
 
     // Consume beginning whitespace
-    while ( isspace( *str ) )
+    while ( cgc_isspace( *str ) )
         str++;
 
     // Parse format (mm/dd/yy hh:mi:ss) (24 hour date time format)
 
     // --------------------
     // Parse month
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.month = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.month *= 10;
         tTempDate.month += (*str - '0');
@@ -116,14 +116,14 @@ int32_t parse_date( const char *str, tDateTime *pDate )
 
     // --------------------
     // Parse day
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.day = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.day *= 10;
         tTempDate.day += (*str - '0');
@@ -142,39 +142,39 @@ int32_t parse_date( const char *str, tDateTime *pDate )
 
     // --------------------
     // Parse year
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.year = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.year *= 10;
         tTempDate.year += (*str - '0');
         str++;
     }
-    else if ( !isspace( *str ) )
+    else if ( !cgc_isspace( *str ) )
         return 0;   // Parse error, expecting a space character
 
     // Normalize the year so that dates less than 28 are for the year 2000 and greater
     if ( tTempDate.year < 28 )
         tTempDate.year += 100;
 
-    while ( isspace( *str ) )
+    while ( cgc_isspace( *str ) )
         str++;
 
     // --------------------
     // Parse hour
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.hour = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.hour *= 10;
         tTempDate.hour += (*str - '0');
@@ -195,14 +195,14 @@ int32_t parse_date( const char *str, tDateTime *pDate )
 
     // --------------------
     // Parse minute
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.minute = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.minute *= 10;
         tTempDate.minute += (*str - '0');
@@ -223,14 +223,14 @@ int32_t parse_date( const char *str, tDateTime *pDate )
 
     // --------------------
     // Parse second
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
         tTempDate.second = (*str - '0');
     else
         return 0;
 
     str++;
 
-    if ( isdigit( *str ) )
+    if ( cgc_isdigit( *str ) )
     {
         tTempDate.second *= 10;
         tTempDate.second += (*str - '0');
@@ -241,7 +241,7 @@ int32_t parse_date( const char *str, tDateTime *pDate )
         return 0;
 
     // Copy the parsed temporary date into the passed in argument
-    memcpy( (void *)pDate, &tTempDate, sizeof(tDateTime) );
+    cgc_memcpy( (void *)pDate, &tTempDate, sizeof(cgc_tDateTime) );
 
     // Success
     return (str - start);

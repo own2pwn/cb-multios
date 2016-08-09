@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,32 +30,32 @@ THE SOFTWARE.
 #define MAX_COMMAND_LENGTH      (128)
 #define MAX_DESCRIPTION_LENGTH  (512)
 
-typedef void (*tCmdFunction)( char *pszArgString );
+typedef void (*cgc_tCmdFunction)( char *pszArgString );
 
-typedef struct COMMAND_TABLE_ENTRY
+typedef struct cgc_COMMAND_TABLE_ENTRY
 {
     char            szCommand[128];
     char            szDescription[512];
-    tCmdFunction    pCmdFunc;
-} tCommandTableEntry;
+    cgc_tCmdFunction    pCmdFunc;
+} cgc_tCommandTableEntry;
 
-class CCommandHandler
+class cgc_CCommandHandler
 {
 public:
-    CCommandHandler();
-    ~CCommandHandler();
+    cgc_CCommandHandler();
+    ~cgc_CCommandHandler();
 
-    bool RegisterCommand( const char *pszCommand, const char *pszDescription, tCmdFunction funcPtr );
+    bool cgc_RegisterCommand( const char *pszCommand, const char *pszDescription, cgc_tCmdFunction funcPtr );
 
-    tCmdFunction GetCommandFunction( const char *pszCommand );
+    cgc_tCmdFunction cgc_GetCommandFunction( const char *pszCommand );
 
-    void Run( void );
+    void cgc_Run( void );
 
-    void ListCommands( void );
+    void cgc_ListCommands( void );
 
 private:
-    tCommandTableEntry m_cmdTable[MAX_COMMAND_ENTRIES];
-    uint32_t m_cmdCount;
+    cgc_tCommandTableEntry m_cmdTable[MAX_COMMAND_ENTRIES];
+    cgc_uint32_t m_cmdCount;
 };
 
 #endif // __COMMANDHANDLER_H___

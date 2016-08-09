@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014-2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,14 +31,14 @@ THE SOFTWARE.
 extern char CURR_PLAYER[];
 
 // calculate absolute value
-int abs(int v) {
+int cgc_abs(int v) {
 	if (v < 0)
 		return(v*-1);
 	else
 		return(v);
 }
 
-int IsDiagClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
+int cgc_IsDiagClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
 	char x, y;
 
 	// make sure there are no obstructions
@@ -74,7 +74,7 @@ int IsDiagClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty
 	return(1);
 }
 
-int IsLateralClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
+int cgc_IsLateralClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
 	char x, y;
 
 	if (srcx < dstx) {
@@ -107,14 +107,14 @@ int IsLateralClear(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char d
 }
 
 // see if the piece is contained in PIECES
-int IsMemberPiece(char *PIECES, char piece) {
+int cgc_IsMemberPiece(char *PIECES, char piece) {
 	char *t;
 
-	t = strchr(PIECES, piece);
+	t = cgc_strchr(PIECES, piece);
 	if (t == NULL) {
 		return(0);
 	} else {
-		if (t == PIECES+strlen(PIECES)) {
+		if (t == PIECES+cgc_strlen(PIECES)) {
 			return(0);
 		} else {
 			return(1);
@@ -123,7 +123,7 @@ int IsMemberPiece(char *PIECES, char piece) {
 
 }
 
-int IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
+int cgc_IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
 	char x, y;
 
 	if (srcx == dstx && srcy == dsty) {
@@ -131,16 +131,16 @@ int IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty
 	}
 
 	// make sure the src coordinate is the current player's piece
-	if (!strcmp(CURR_PLAYER, "WHITE") && IsMemberPiece(W_PIECES, b[srcx][srcy]) == 0) {
+	if (!cgc_strcmp(CURR_PLAYER, "WHITE") && cgc_IsMemberPiece(W_PIECES, b[srcx][srcy]) == 0) {
 		return(0);
-	} else if (!strcmp(CURR_PLAYER, "BLACK") && IsMemberPiece(B_PIECES, b[srcx][srcy]) == 0) {
+	} else if (!cgc_strcmp(CURR_PLAYER, "BLACK") && cgc_IsMemberPiece(B_PIECES, b[srcx][srcy]) == 0) {
 		return(0);
 	}
 
 	// make sure the dest coordinate isn't the current player's piece
-	if (!strcmp(CURR_PLAYER, "WHITE") && IsMemberPiece(W_PIECES, b[dstx][dsty])) {
+	if (!cgc_strcmp(CURR_PLAYER, "WHITE") && cgc_IsMemberPiece(W_PIECES, b[dstx][dsty])) {
 		return(0);
-	} else if (!strcmp(CURR_PLAYER, "BLACK") && IsMemberPiece(B_PIECES, b[dstx][dsty])) {
+	} else if (!cgc_strcmp(CURR_PLAYER, "BLACK") && cgc_IsMemberPiece(B_PIECES, b[dstx][dsty])) {
 		return(0);
 	}
 
@@ -152,7 +152,7 @@ int IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty
 				return(0);
 
 			// make sure there are no obstructions
-			return(IsLateralClear(b,srcx,srcy,dstx,dsty));
+			return(cgc_IsLateralClear(b,srcx,srcy,dstx,dsty));
 
 		case W_KNIGHT:
 		case B_KNIGHT: 
@@ -180,29 +180,29 @@ int IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty
 		case W_BISHOP:
 		case B_BISHOP:
 			// make sure dst is on a diagonal
-			if (abs(dstx-srcx) != abs(dsty-srcy))
+			if (cgc_abs(dstx-srcx) != cgc_abs(dsty-srcy))
 				return(0);
 
-			return(IsDiagClear(b,srcx,srcy,dstx,dsty));
+			return(cgc_IsDiagClear(b,srcx,srcy,dstx,dsty));
 
 		case W_QUEEN:
 		case B_QUEEN:
 			// see if it's a straight line move
 			if (srcx == dstx || srcy == dsty) {
 				// make sure there are no obstructions
-				return(IsLateralClear(b,srcx,srcy,dstx,dsty));
+				return(cgc_IsLateralClear(b,srcx,srcy,dstx,dsty));
 			}
 
 			// see if it's a diagonal move
-			if (abs(dstx-srcx) == abs(dsty-srcy)) {
-				return(IsDiagClear(b,srcx,srcy,dstx,dsty));
+			if (cgc_abs(dstx-srcx) == cgc_abs(dsty-srcy)) {
+				return(cgc_IsDiagClear(b,srcx,srcy,dstx,dsty));
 			}
 
 			return(0);
 
 		case W_KING:
 		case B_KING:
-			if (abs(srcx-dstx) > 1 || abs(srcy-dsty) > 1)
+			if (cgc_abs(srcx-dstx) > 1 || cgc_abs(srcy-dsty) > 1)
 				return(0);
 
 			return(1);
@@ -227,52 +227,52 @@ int IsValidMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty
 	return(0);
 }
 
-int AcceptMove(char b[X_MAX][Y_MAX], char *srcx, char *srcy, char *dstx, char *dsty) {
+int cgc_AcceptMove(char b[X_MAX][Y_MAX], char *srcx, char *srcy, char *dstx, char *dsty) {
 	struct {
 		char input[15];
 		char allowed_chars[9];
 	} s = {"", "01234567"};
 	char *coord1, *coord2;
 	int i;
-	size_t rxcount;
+	cgc_size_t rxcount;
 
 	while (1) {
-		printf("@s: ", CURR_PLAYER);
-		bzero(s.input, 15);
+		cgc_printf("@s: ", CURR_PLAYER);
+		cgc_bzero(s.input, 15);
 #ifdef PATCHED
-		if ((rxcount = receive_until(s.input, '\n', 14)) == 0) {
+		if ((rxcount = cgc_receive_until(s.input, '\n', 14)) == 0) {
 #else
-		if ((rxcount = receive_until(s.input, '\n', 16)) == 0) {
+		if ((rxcount = cgc_receive_until(s.input, '\n', 16)) == 0) {
 #endif
 			if (rxcount == 0) {
 				_terminate(1);
 			}
 		}
 
-		if (s.input[strlen(s.input)-1] == '\n') {
-			s.input[strlen(s.input)-1] = '\0';
+		if (s.input[cgc_strlen(s.input)-1] == '\n') {
+			s.input[cgc_strlen(s.input)-1] = '\0';
 		}
 
 		// see if the player just wants to display the board
-		if (!strcmp("9", s.input)) {
-			PrintBoard(b);
+		if (!cgc_strcmp("9", s.input)) {
+			cgc_PrintBoard(b);
 			continue;
 		}
 
 		// see if the player wants to exit
-		if (!strcmp("666", s.input)) {
+		if (!cgc_strcmp("666", s.input)) {
 			return(0);
 		}	
 
-		if (strlen(s.input) > 7) {
-			puts("incorrect input");
-			puts("Not a legal move format");
+		if (cgc_strlen(s.input) > 7) {
+			cgc_puts("incorrect input");
+			cgc_puts("Not a legal move format");
 			continue;
 		}
 
 		// try to parse move 
 		coord1 = coord2 = NULL;
-		for (i = 0; i < strlen(s.input); i++) {
+		for (i = 0; i < cgc_strlen(s.input); i++) {
 			if (s.input[i] == ' ') {
 				s.input[i] = '\0';
 				coord2 = s.input+i+1;
@@ -280,28 +280,28 @@ int AcceptMove(char b[X_MAX][Y_MAX], char *srcx, char *srcy, char *dstx, char *d
 			}
 		}
 		if (coord1 == NULL) {
-			puts("incorrect input");
-			puts("Not a legal move format");
+			cgc_puts("incorrect input");
+			cgc_puts("Not a legal move format");
 			continue;
 		}
 	
 		// parse each coordinate
-		if (!strchr(s.allowed_chars, coord1[0]) || 
+		if (!cgc_strchr(s.allowed_chars, coord1[0]) || 
 		    (coord1[1] != ',') ||
-		    !strchr(s.allowed_chars, coord1[2]) ||
-		    strlen(coord1) != 3) {
-			puts("incorrect input");
-			puts("Not a legal move format");
+		    !cgc_strchr(s.allowed_chars, coord1[2]) ||
+		    cgc_strlen(coord1) != 3) {
+			cgc_puts("incorrect input");
+			cgc_puts("Not a legal move format");
 			continue;
 		}
 		*srcx = coord1[0] - '0';
 		*srcy = coord1[2] - '0';
-		if (!strchr(s.allowed_chars, coord2[0]) || 
+		if (!cgc_strchr(s.allowed_chars, coord2[0]) || 
 		    (coord2[1] != ',') ||
-		    !strchr(s.allowed_chars, coord2[2]) ||
-		    strlen(coord2) != 3) {
-			puts("incorrect input");
-			puts("Not a legal move format");
+		    !cgc_strchr(s.allowed_chars, coord2[2]) ||
+		    cgc_strlen(coord2) != 3) {
+			cgc_puts("incorrect input");
+			cgc_puts("Not a legal move format");
 			continue;
 		}
 		*dstx = coord2[0] - '0';
@@ -313,7 +313,7 @@ int AcceptMove(char b[X_MAX][Y_MAX], char *srcx, char *srcy, char *dstx, char *d
 	return(1);
 }
 
-void MakeMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
+void cgc_MakeMove(char b[X_MAX][Y_MAX], char srcx, char srcy, char dstx, char dsty) {
 	char t;
 
 	// if dst is occupied, swap

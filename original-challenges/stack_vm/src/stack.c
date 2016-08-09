@@ -23,7 +23,7 @@
 #include "libc.h"
 #include "stack.h"
 
-void initStack(Stack *stack, int numElements, int elementSize) {
+void cgc_initStack(cgc_Stack *stack, int numElements, int elementSize) {
 
 	int ret;
 
@@ -41,7 +41,7 @@ void initStack(Stack *stack, int numElements, int elementSize) {
 	stack->top = -1;
 }
 
-void destroyStack(Stack *stack) {
+void cgc_destroyStack(cgc_Stack *stack) {
 	
 	int ret;
 
@@ -55,7 +55,7 @@ void destroyStack(Stack *stack) {
 	stack->top = -1;
 }
 
-int isStackFull(Stack *stack) {
+int cgc_isStackFull(cgc_Stack *stack) {
 #ifdef PATCHED
 	return stack->top >= stack->numElements - 1;
 #else
@@ -63,28 +63,28 @@ int isStackFull(Stack *stack) {
 #endif
 }
 
-int isStackEmpty(Stack *stack) {
+int cgc_isStackEmpty(cgc_Stack *stack) {
 	return stack->top < 0;
 }
 
-void pushElement(Stack *stack, void* element) {
+void cgc_pushElement(cgc_Stack *stack, void* element) {
 	int ret;
 
-	if(isStackFull(stack)) {
-		ret = transmit_all(STDOUT, TOO_MANY_ELEM_STR, sizeof(TOO_MANY_ELEM_STR));
+	if(cgc_isStackFull(stack)) {
+		ret = cgc_transmit_all(STDOUT, TOO_MANY_ELEM_STR, sizeof(TOO_MANY_ELEM_STR));
     	if (ret != 0)
         	_terminate(18);
         _terminate(19);
 	}
 	stack->top++;
-	memcpy(&stack->elements[stack->elementSize*stack->top], element, stack->elementSize);
+	cgc_memcpy(&stack->elements[stack->elementSize*stack->top], element, stack->elementSize);
 }
 
-void* popElement(Stack *stack) {
+void* cgc_popElement(cgc_Stack *stack) {
 	int ret;
 
-	if(isStackEmpty(stack)) {
-		ret = transmit_all(STDOUT, NOT_ENOUGH_ELEM_STR, sizeof(NOT_ENOUGH_ELEM_STR));
+	if(cgc_isStackEmpty(stack)) {
+		ret = cgc_transmit_all(STDOUT, NOT_ENOUGH_ELEM_STR, sizeof(NOT_ENOUGH_ELEM_STR));
     	if (ret != 0)
         	_terminate(20);
         _terminate(21);

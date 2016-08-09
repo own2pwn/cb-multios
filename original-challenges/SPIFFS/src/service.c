@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,56 +34,56 @@ THE SOFTWARE.
 #include "ui.h"
 
 
-void die(char *message){
-	printf("\n******************\n@s\n*****************\n",message);
+void cgc_die(char *message){
+	cgc_printf("\n******************\n@s\n*****************\n",message);
 	_terminate( 1 );
 }
 
-void *mallocOrDie( int size, char *message ){
-	void *retval = malloc( size );
-	if ( retval == NULL ){die( message );}
-	bzero(retval, size);
+void *cgc_mallocOrDie( int size, char *message ){
+	void *retval = cgc_malloc( size );
+	if ( retval == NULL ){cgc_die( message );}
+	cgc_bzero(retval, size);
 	return retval;
 }
 
-pDataStruct init_data(){
-	pDataStruct workingData = NULL;
-	workingData = mallocOrDie( sizeof( sDataStruct ), "Failed to malloc workingData" );
-	workingData->root = mallocOrDie( sizeof( sNode ), "Failed to malloc root node" );
+cgc_pDataStruct cgc_init_data(){
+	cgc_pDataStruct workingData = NULL;
+	workingData = cgc_mallocOrDie( sizeof( cgc_sDataStruct ), "Failed to cgc_malloc workingData" );
+	workingData->root = cgc_mallocOrDie( sizeof( cgc_sNode ), "Failed to cgc_malloc root node" );
 	workingData->root->parent = NULL;
 	workingData->root->prev = NULL;
 	workingData->root->date = 0;
 	workingData->date = 0;
 	workingData->root->type = DIRECTORY;
 	workingData->workingDir = workingData->root;
-	workingData->user = _add_user( "root", NULL );
-	workingData->group = _add_group("root", NULL);
+	workingData->user = cgc__add_user( "root", NULL );
+	workingData->group = cgc__add_group("root", NULL);
 	workingData->currentUser = workingData->user;
 	workingData->currentGroup = workingData->group;
-	add_user_to_group(workingData->user, workingData->group);
-	workingData->root->perms = add_perm( workingData->user, NULL, workingData->root );
-	add_perm( NULL, workingData->group, workingData->root );
+	cgc_add_user_to_group(workingData->user, workingData->group);
+	workingData->root->perms = cgc_add_perm( workingData->user, NULL, workingData->root );
+	cgc_add_perm( NULL, workingData->group, workingData->root );
 	workingData->root->file = NULL;
 	workingData->root->parent = NULL;
 	workingData->root->directoryHeadNode = NULL;
-	char *name = mallocOrDie( 5, "Failed to malloc root name" );
+	char *name = cgc_mallocOrDie( 5, "Failed to cgc_malloc root name" );
 	workingData->root->name = name;	
-	strcpy(name, "");
+	cgc_strcpy(name, "");
 	return workingData;
 }
 
-pPerms find_perm_by_name(char *name, pNode node, pDataStruct workingData){
+cgc_pPerms cgc_find_perm_by_name(char *name, cgc_pNode node, cgc_pDataStruct workingData){
 	//if user and group have same name, user is returned
-	validate_current_perms(node, workingData);
-	pPerms tempPerm = node->perms;
+	cgc_validate_current_perms(node, workingData);
+	cgc_pPerms tempPerm = node->perms;
 	while( tempPerm != NULL ){
 		if ( tempPerm->user != NULL ){
-			if ( strcmp(tempPerm->user->name,name) == 0 ){
+			if ( cgc_strcmp(tempPerm->user->name,name) == 0 ){
 				return tempPerm;
 			}
 		} 
 		if ( tempPerm->group != NULL ){
-			if ( strcmp(tempPerm->group->name,name) == 0 ){
+			if ( cgc_strcmp(tempPerm->group->name,name) == 0 ){
 				return tempPerm;
 			}
 		}
@@ -92,9 +92,9 @@ pPerms find_perm_by_name(char *name, pNode node, pDataStruct workingData){
 	return NULL;
 }
 
-pPerms add_perm(pUser user, pGroup group, pNode node){
-	if (  (  ( user == NULL ) && (  group == NULL ) ) || (  ( user != NULL ) && (  group != NULL ) )  ) {die("Bad call to _add_perm");}
-	pPerms newPerms = mallocOrDie( sizeof( sPerms ), "Failed to malloc pPerms" );
+cgc_pPerms cgc_add_perm(cgc_pUser user, cgc_pGroup group, cgc_pNode node){
+	if (  (  ( user == NULL ) && (  group == NULL ) ) || (  ( user != NULL ) && (  group != NULL ) )  ) {cgc_die("Bad call to _add_perm");}
+	cgc_pPerms newPerms = cgc_mallocOrDie( sizeof( cgc_sPerms ), "Failed to cgc_malloc cgc_pPerms" );
 	if ( user != NULL ){
 		newPerms->user = user;
 	} 
@@ -104,8 +104,8 @@ pPerms add_perm(pUser user, pGroup group, pNode node){
 	if ( node->perms == NULL ){
 		node->perms = newPerms;
 	} else {
-		pPerms lastPerm = node->perms;
-		pPerms tempPerm = lastPerm;
+		cgc_pPerms lastPerm = node->perms;
+		cgc_pPerms tempPerm = lastPerm;
 		while ( tempPerm != NULL ){
 			if (  ( lastPerm->user  != NULL ) && ( lastPerm->user == user  )  ){//test if perm already exists
 				return NULL;
@@ -123,11 +123,11 @@ pPerms add_perm(pUser user, pGroup group, pNode node){
 	return newPerms;
 }
 
-pPerms delete_perms(pNode node,pPerms temp){//returns next perm or null if no next
+cgc_pPerms cgc_delete_perms(cgc_pNode node,cgc_pPerms temp){//returns next perm or null if no next
 	if (temp == NULL){
 		return NULL;
 	}
-	pPerms retval = temp->next;
+	cgc_pPerms retval = temp->next;
 	if (temp->prev != NULL){
 		temp->prev->next = temp->next;
 	} 
@@ -144,32 +144,32 @@ pPerms delete_perms(pNode node,pPerms temp){//returns next perm or null if no ne
 		}
 #endif
 	}	
-	free(temp);
+	cgc_free(temp);
 	return retval;
 
 }
-void validate_current_perms(pNode node, pDataStruct workingData){
-	pPerms temp = node->perms;
-	pPerms tempNxt = NULL;
+void cgc_validate_current_perms(cgc_pNode node, cgc_pDataStruct workingData){
+	cgc_pPerms temp = node->perms;
+	cgc_pPerms tempNxt = NULL;
 
 	if (temp == NULL){
 		return;
 	}
 	if (  (temp->user == NULL) && (temp->group == NULL)  ){
-		printf("Bad perm @s\n",node->name);
+		cgc_printf("Bad perm @s\n",node->name);
 		return;
 	}
 	while(temp != NULL){
 		if (temp->user != NULL){
-			if ( !is_user_valid(temp->user, workingData) ){
-				tempNxt = delete_perms(node, temp);
+			if ( !cgc_is_user_valid(temp->user, workingData) ){
+				tempNxt = cgc_delete_perms(node, temp);
 			} else {
 				tempNxt = temp->next;
 			}
 		}
 		if (temp->group != NULL){
-			if ( !is_group_valid(temp->group, workingData) ){
-				tempNxt = delete_perms(node, temp);
+			if ( !cgc_is_group_valid(temp->group, workingData) ){
+				tempNxt = cgc_delete_perms(node, temp);
 			} else {
 				tempNxt = temp->next;
 			}
@@ -179,21 +179,21 @@ void validate_current_perms(pNode node, pDataStruct workingData){
 	return;
 }
 
-pNode _add_node( char type, unsigned int date, char *name, pNode parent, pUser user ){
+cgc_pNode cgc__add_node( char type, unsigned int date, char *name, cgc_pNode parent, cgc_pUser user ){
 	//adding a node to either an exising node list or a new nodelist.
 	//if parent.directoryHeadNode is NULL this is a new nodelist
-	//_addNode does not add pFile or directoryHeadNode
-	//DOES NOT add file, directoryHeadNode.. that is handled by add_file and add_directory
-	pNode newNode = mallocOrDie( sizeof( sNode ), "Failed to mallod node");
+	//_addNode does not add cgc_pFile or directoryHeadNode
+	//DOES NOT add file, directoryHeadNode.. that is handled by cgc_add_file and cgc_add_directory
+	cgc_pNode newNode = cgc_mallocOrDie( sizeof( cgc_sNode ), "Failed to mallod node");
 	newNode->parent = parent;
 	newNode->next = NULL;
 	newNode->directoryTailNode = NULL;
 	newNode->directoryHeadNode = NULL;
 	newNode->type = type;
 	newNode->date = date;
-	newNode->perms = add_perm(user, NULL, newNode);
-	char *newName = mallocOrDie( strlen(name) + 1, "Failed to malloc name");
-	strcpy( newName, name );
+	newNode->perms = cgc_add_perm(user, NULL, newNode);
+	char *newName = cgc_mallocOrDie( cgc_strlen(name) + 1, "Failed to cgc_malloc name");
+	cgc_strcpy( newName, name );
 	newNode->name = newName;
 	newNode->file = NULL;
 	newNode->parent = parent;
@@ -210,8 +210,8 @@ pNode _add_node( char type, unsigned int date, char *name, pNode parent, pUser u
 	return newNode;
 }
 
-int get_file_size(pFile file){
-	pFileChunk temp = file->head;
+int cgc_get_file_size(cgc_pFile file){
+	cgc_pFileChunk temp = file->head;
 	unsigned int size = 0;
 	while ( temp != NULL ){
 		size += temp->chunkSize;
@@ -220,9 +220,9 @@ int get_file_size(pFile file){
 	return size;
 }
 
-void delete_file_bytes(pFile file, unsigned int newSize){
-	pFileChunk temp = file->head;
-	pFileChunk last = file->head;
+void cgc_delete_file_bytes(cgc_pFile file, unsigned int newSize){
+	cgc_pFileChunk temp = file->head;
+	cgc_pFileChunk last = file->head;
 	unsigned int remainderbytes = 0;
 	unsigned int size = 0;
 	int flag = 0;
@@ -230,7 +230,7 @@ void delete_file_bytes(pFile file, unsigned int newSize){
 		size += temp->chunkSize;
 		//all the remaining chunks are to be deleted
 		if (flag == 1){
-			temp = delete_chunk(file, temp);
+			temp = cgc_delete_chunk(file, temp);
 		}else{
 			//is this the last good chunk?
 			if (size >= newSize){
@@ -242,19 +242,19 @@ void delete_file_bytes(pFile file, unsigned int newSize){
 		}
 	}
 	size = last->chunkSize - remainderbytes;
-	char *newChunk = mallocOrDie( size , "Failed to malloc filechunk" );
-	memcpy(newChunk,last->chunk,size);
-	free(last->chunk);
+	char *newChunk = cgc_mallocOrDie( size , "Failed to cgc_malloc filechunk" );
+	cgc_memcpy(newChunk,last->chunk,size);
+	cgc_free(last->chunk);
 	last->chunkSize = size;
 	last->chunk = newChunk;
 }
 
-pFileChunk add_file_chunk(char *data, pFile file, unsigned int size ){
+cgc_pFileChunk cgc_add_file_chunk(char *data, cgc_pFile file, unsigned int size ){
 	//allocate a new fileChunk and insert into file chunk list
 	//update file node with new head/tail/count as necessary
-	pFileChunk newFileChunk =  mallocOrDie( sizeof( sFileChunk ), "Failed to malloc filechunk" );
-	newFileChunk->chunk = mallocOrDie( size, "Failed to malloc chunk" );
-	memcpy( newFileChunk->chunk, data, size );
+	cgc_pFileChunk newFileChunk =  cgc_mallocOrDie( sizeof( cgc_sFileChunk ), "Failed to cgc_malloc filechunk" );
+	newFileChunk->chunk = cgc_mallocOrDie( size, "Failed to cgc_malloc chunk" );
+	cgc_memcpy( newFileChunk->chunk, data, size );
 	newFileChunk->chunkSize = size;
 	if ( file->tail == NULL ){
 		file->head = newFileChunk;
@@ -271,22 +271,22 @@ pFileChunk add_file_chunk(char *data, pFile file, unsigned int size ){
 	return newFileChunk;
 }
 
-pNode add_file( pNode directory,unsigned int date, unsigned int size, char *name, char* data, pUser user ){
+cgc_pNode cgc_add_file( cgc_pNode directory,unsigned int date, unsigned int size, char *name, char* data, cgc_pUser user ){
 	//if size is 0, data is null, create new empty file
-	pFile newFile = mallocOrDie( sizeof( sFile ), "Failed to malloc file" );
+	cgc_pFile newFile = cgc_mallocOrDie( sizeof( cgc_sFile ), "Failed to cgc_malloc file" );
 	if ( size > 0) {
-		pFileChunk newFileChunk = add_file_chunk(data, newFile, size );
+		cgc_pFileChunk newFileChunk = cgc_add_file_chunk(data, newFile, size );
 	}
-	pNode newNode = _add_node( FILE, date, name, directory, user);
+	cgc_pNode newNode = cgc__add_node( FILE, date, name, directory, user);
 	newNode->file = newFile;
 	return newNode;
 }
 
-pFileChunk delete_chunk(pFile file, pFileChunk chunk){
+cgc_pFileChunk cgc_delete_chunk(cgc_pFile file, cgc_pFileChunk chunk){
 	//return next or NULL;
-	pFileChunk retval = chunk->next;
+	cgc_pFileChunk retval = chunk->next;
 	if (chunk == NULL){
-		puts("delete_chunk called with NULL");
+		cgc_puts("cgc_delete_chunk called with NULL");
 		return NULL;
 	}
 	if (chunk->prev == NULL){//first chunk
@@ -308,34 +308,34 @@ pFileChunk delete_chunk(pFile file, pFileChunk chunk){
 		file->chunkCount -= 1;
 	}
 
-	free(chunk->chunk);
-	free(chunk);
+	cgc_free(chunk->chunk);
+	cgc_free(chunk);
 	return retval;
 }
 
-void delete_file(pFile file){
-	pFileChunk tempChunk = file->head;
+void cgc_delete_file(cgc_pFile file){
+	cgc_pFileChunk tempChunk = file->head;
 	while(tempChunk != NULL){
-		tempChunk = delete_chunk(file, tempChunk);
+		tempChunk = cgc_delete_chunk(file, tempChunk);
 	}
-	free(file);
+	cgc_free(file);
 	return;
 }
 
-pNode delete_node(pNode node, pDataStruct workingData){
-	pNode retval = node->next;
+cgc_pNode cgc_delete_node(cgc_pNode node, cgc_pDataStruct workingData){
+	cgc_pNode retval = node->next;
 	//returns pointer to next node or NULL
 	if ( node == workingData->root ){//can not delete 'root' directory
-		puts("can not delete root directory");
+		cgc_puts("can not delete root directory");
 	}
 	if ( node->type == FILE ){
-		pFile tempFile = node->file;
-		delete_file( tempFile );
+		cgc_pFile tempFile = node->file;
+		cgc_delete_file( tempFile );
 	}
 	if ( node->type == DIRECTORY ){//delete all files and subdirs
-		pNode tempNode = node->directoryHeadNode;
+		cgc_pNode tempNode = node->directoryHeadNode;
 		while ( tempNode != NULL ){//daily dose of recursion
-			tempNode = delete_node( tempNode, workingData );
+			tempNode = cgc_delete_node( tempNode, workingData );
 		}
 	}
 	if (node->prev == NULL){//first
@@ -354,30 +354,30 @@ pNode delete_node(pNode node, pDataStruct workingData){
 			node->next->prev = node->prev;
 		}
 	}
-	pPerms perms = node->perms;
+	cgc_pPerms perms = node->perms;
 	while(perms != NULL){
-		perms = delete_perms(node, perms);
+		perms = cgc_delete_perms(node, perms);
 	}
-	free(node->name);
-	free(node);
+	cgc_free(node->name);
+	cgc_free(node);
 	return retval;
 }
 
-pNode add_directory( unsigned int date, char *name, pNode parent, pUser user ){
+cgc_pNode cgc_add_directory( unsigned int date, char *name, cgc_pNode parent, cgc_pUser user ){
 	//add a directory with current user as perm
-	pNode newDirectory = _add_node( DIRECTORY, date, name, parent, user );
+	cgc_pNode newDirectory = cgc__add_node( DIRECTORY, date, name, parent, user );
 	newDirectory->directoryHeadNode = NULL;
 	newDirectory->directoryTailNode = NULL;
 	return newDirectory;
 }
 
-pUser _add_user( char *name, pUser userList ){
+cgc_pUser cgc__add_user( char *name, cgc_pUser userList ){
 	//add user to userList, 
 	//if userList is NULL, create single element list
-	pUser newUser = mallocOrDie( sizeof( sUser ), "Failed to allocate user");
-	char *newName = mallocOrDie( strlen( name ) + 1, "Failed to allocate username");
-	//printf("_add_user strlen(name):@d",strlen( name ));
-	strcpy ( newName, name );
+	cgc_pUser newUser = cgc_mallocOrDie( sizeof( cgc_sUser ), "Failed to allocate user");
+	char *newName = cgc_mallocOrDie( cgc_strlen( name ) + 1, "Failed to allocate username");
+	//cgc_printf("cgc__add_user cgc_strlen(name):@d",cgc_strlen( name ));
+	cgc_strcpy ( newName, name );
 	newUser->name = newName;
 	if ( userList == NULL ){
 		//not necessary, but looks nice
@@ -385,8 +385,8 @@ pUser _add_user( char *name, pUser userList ){
 		newUser->next = NULL;
 		return newUser;
 	} else {
-		pUser lastUser = userList;
-		pUser tempUser = userList->next;
+		cgc_pUser lastUser = userList;
+		cgc_pUser tempUser = userList->next;
 		while ( tempUser != NULL ){
 			lastUser = tempUser;
 			tempUser = tempUser->next;
@@ -399,13 +399,13 @@ pUser _add_user( char *name, pUser userList ){
 	return newUser;
 }
 
-pUser add_user( char *name, pDataStruct workingData ){
-	return _add_user( name, workingData->user );
+cgc_pUser cgc_add_user( char *name, cgc_pDataStruct workingData ){
+	return cgc__add_user( name, workingData->user );
 }
 
-pGroupUserList is_user_in_group( pUser user, pGroup group ){
-	//returns pGroupUserList if found, or NULL if not found
-	pGroupUserList temp = group->userList;
+cgc_pGroupUserList cgc_is_user_in_group( cgc_pUser user, cgc_pGroup group ){
+	//returns cgc_pGroupUserList if found, or NULL if not found
+	cgc_pGroupUserList temp = group->userList;
 	while (temp != NULL ){
 		if ( temp->user == user ){return temp;}
 		temp = temp->next;
@@ -413,9 +413,9 @@ pGroupUserList is_user_in_group( pUser user, pGroup group ){
 	return NULL; 
 }
 
-int is_user_valid(pUser user, pDataStruct workingData){
+int cgc_is_user_valid(cgc_pUser user, cgc_pDataStruct workingData){
 	//returns 1 if user is valid (in users)
-	pUser temp = workingData->user;
+	cgc_pUser temp = workingData->user;
 	while( temp != NULL ){
 		if ( temp == user ){return 1;}
 		temp = temp->next;
@@ -423,8 +423,8 @@ int is_user_valid(pUser user, pDataStruct workingData){
 	return 0;
 }
 
-int is_group_valid(pGroup group, pDataStruct workingData){
-	pGroup temp = workingData->group;
+int cgc_is_group_valid(cgc_pGroup group, cgc_pDataStruct workingData){
+	cgc_pGroup temp = workingData->group;
 	while( temp != NULL ){
 		if ( temp == group ){return 1;}
 		temp = temp->next;
@@ -432,10 +432,10 @@ int is_group_valid(pGroup group, pDataStruct workingData){
 	return 0;
 }
 
-pGroupUserList remove_user_from_group(pUser user, pGroup group){
+cgc_pGroupUserList cgc_remove_user_from_group(cgc_pUser user, cgc_pGroup group){
 	//returns prev groupUserList or NULL
-	pGroupUserList temp = is_user_in_group(user, group);
-	pGroupUserList retval = NULL;
+	cgc_pGroupUserList temp = cgc_is_user_in_group(user, group);
+	cgc_pGroupUserList retval = NULL;
 	if ( temp == NULL){return NULL;}
 	if ( temp->prev == NULL){//first element
 		if ( temp->next ==NULL){//only element
@@ -457,23 +457,23 @@ pGroupUserList remove_user_from_group(pUser user, pGroup group){
 		}
 	}
 	retval = temp->prev; //if first, next is null
-	free(temp);
+	cgc_free(temp);
 	return retval;
 }
 
 
-pUser remove_user(pUser user, pDataStruct workingData){
+cgc_pUser cgc_remove_user(cgc_pUser user, cgc_pDataStruct workingData){
 	//returns prev or null 
-	pGroup groupList = workingData->group;
-	pUser retval = NULL;
-	pUser last = NULL;
-	if (user == NULL){puts("Bad call:remove_user");return NULL;}//bad call to remove user
-	if ( user->prev == NULL ){puts("Can not delete root");return NULL;}
+	cgc_pGroup groupList = workingData->group;
+	cgc_pUser retval = NULL;
+	cgc_pUser last = NULL;
+	if (user == NULL){cgc_puts("Bad call:cgc_remove_user");return NULL;}//bad call to remove user
+	if ( user->prev == NULL ){cgc_puts("Can not delete root");return NULL;}
 	if (user == workingData->user){//never delete root
 		return NULL;
 	}
 	while ( groupList != NULL ){//remove user from any groups
-		remove_user_from_group(user,groupList);
+		cgc_remove_user_from_group(user,groupList);
 		groupList = groupList->next;
 	}
 	user->prev->next = user->next;
@@ -481,21 +481,21 @@ pUser remove_user(pUser user, pDataStruct workingData){
 		user->next->prev = user->prev;
 	}
 	retval = user->prev;
-	free (user->name);
-	free (user);
+	cgc_free (user->name);
+	cgc_free (user);
 	return retval;
 }
 
-pGroup remove_group(pGroup group, pDataStruct workingData){
-	pGroup retval = NULL;
-	pGroupUserList temp = NULL;
-	pGroupUserList last = NULL;
+cgc_pGroup cgc_remove_group(cgc_pGroup group, cgc_pDataStruct workingData){
+	cgc_pGroup retval = NULL;
+	cgc_pGroupUserList temp = NULL;
+	cgc_pGroupUserList last = NULL;
 	if ( group == NULL){
-		puts("bad call to remove_group");
+		cgc_puts("bad call to cgc_remove_group");
 		return NULL;
 	}
 	if (group == workingData->group){
-		puts("Unable to delete group root");
+		cgc_puts("Unable to delete group root");
 		return NULL;
 	}
 	temp = group->userList;
@@ -505,7 +505,7 @@ pGroup remove_group(pGroup group, pDataStruct workingData){
 		temp = temp->next;
 	}
 	while (last != NULL ){//delete all users
-		last = remove_user_from_group(last->user, group);
+		last = cgc_remove_user_from_group(last->user, group);
 	}
 	if (group->prev != NULL){
 		group->prev->next = group->next;
@@ -514,17 +514,17 @@ pGroup remove_group(pGroup group, pDataStruct workingData){
 		group->next->prev = group->prev;
 	}
 	retval = group->prev;
-	free(group->name);
-	free(group);
+	cgc_free(group->name);
+	cgc_free(group);
 	return retval;
 }
 
-pUser find_user_by_name( char *name, pDataStruct workingData){
+cgc_pUser cgc_find_user_by_name( char *name, cgc_pDataStruct workingData){
 	//returns NULL or first user with name
-	pUser retval = NULL;
-	pUser last = workingData->user;
+	cgc_pUser retval = NULL;
+	cgc_pUser last = workingData->user;
 	while ( last != NULL ){
-		if ( strcmp(name, last->name ) == 0 ){
+		if ( cgc_strcmp(name, last->name ) == 0 ){
 			return last;
 		} else{
 			last = last->next;
@@ -533,9 +533,9 @@ pUser find_user_by_name( char *name, pDataStruct workingData){
 	return retval;
 }
 
-pUser find_user_by_number( int number, pDataStruct workingData){
-	pUser retval = NULL;
-	pUser last = workingData->user;
+cgc_pUser cgc_find_user_by_number( int number, cgc_pDataStruct workingData){
+	cgc_pUser retval = NULL;
+	cgc_pUser last = workingData->user;
 	int count = 0;
 	while ( last != NULL ){
 		if ( count == number ){
@@ -548,12 +548,12 @@ pUser find_user_by_number( int number, pDataStruct workingData){
 	return retval;
 }
 
-pGroup _add_group( char *name, pGroup group ){
+cgc_pGroup cgc__add_group( char *name, cgc_pGroup group ){
 	//add empty group of users, no users are added, empty group is returned
 	//group is dllist of groups to add group to, if null, create and return
-	pGroup newGroup = mallocOrDie( sizeof( sGroup ), "Failed to allocate group");
-	char *newName = mallocOrDie( strlen( name ) + 1, "Failed to allocate groupName");
-	strcpy( newName, name );
+	cgc_pGroup newGroup = cgc_mallocOrDie( sizeof( cgc_sGroup ), "Failed to allocate group");
+	char *newName = cgc_mallocOrDie( cgc_strlen( name ) + 1, "Failed to allocate groupName");
+	cgc_strcpy( newName, name );
 	newGroup->name = newName;
 	newGroup->userCount = 0;
 	newGroup->userList = NULL;
@@ -564,8 +564,8 @@ pGroup _add_group( char *name, pGroup group ){
 		return newGroup;
 	}
 	//walk to the end of grouplist
-	pGroup last = group;
-	pGroup temp = last;
+	cgc_pGroup last = group;
+	cgc_pGroup temp = last;
 	while( temp != NULL ){
 		last = temp;
 		temp = last->next;
@@ -575,12 +575,12 @@ pGroup _add_group( char *name, pGroup group ){
 	return newGroup;
 }
 
-pGroup add_group( char *name, pDataStruct workingData ){
-	return _add_group ( name, workingData->group );
+cgc_pGroup cgc_add_group( char *name, cgc_pDataStruct workingData ){
+	return cgc__add_group ( name, workingData->group );
 }
 
-pGroupUserList add_user_to_group( pUser user, pGroup group ){
-	pGroupUserList newGroupUserListNode = mallocOrDie( sizeof( sGroupUserList ), "Failed to allocate newUser");
+cgc_pGroupUserList cgc_add_user_to_group( cgc_pUser user, cgc_pGroup group ){
+	cgc_pGroupUserList newGroupUserListNode = cgc_mallocOrDie( sizeof( cgc_sGroupUserList ), "Failed to allocate newUser");
 	newGroupUserListNode->user = user;
 	newGroupUserListNode->next = NULL;
 	//if group has no users
@@ -589,8 +589,8 @@ pGroupUserList add_user_to_group( pUser user, pGroup group ){
 		newGroupUserListNode->prev = NULL;
 		group->userCount = 1;
 	} else {
-		pGroupUserList last = group->userList;
-		pGroupUserList temp = last;
+		cgc_pGroupUserList last = group->userList;
+		cgc_pGroupUserList temp = last;
 		while( temp != NULL){
 			last = temp;
 			temp = temp->next;
@@ -603,9 +603,9 @@ pGroupUserList add_user_to_group( pUser user, pGroup group ){
 }
 
 
-pGroup find_group_by_number( int number, pDataStruct workingData){
-	pGroup retval = NULL;
-	pGroup last = workingData->group;
+cgc_pGroup cgc_find_group_by_number( int number, cgc_pDataStruct workingData){
+	cgc_pGroup retval = NULL;
+	cgc_pGroup last = workingData->group;
 	int count = 0;
 	while ( last != NULL ){
 		if ( count == number ){
@@ -619,13 +619,13 @@ pGroup find_group_by_number( int number, pDataStruct workingData){
 	return retval;
 }
 
-pGroup find_group_by_name( char *name, pDataStruct workingData){
+cgc_pGroup cgc_find_group_by_name( char *name, cgc_pDataStruct workingData){
 	//returns NULL or first user with name
-	pGroup retval = NULL;
+	cgc_pGroup retval = NULL;
 	if ( workingData->group != NULL ){
-		pGroup last = workingData->group;
+		cgc_pGroup last = workingData->group;
 		while ( last != NULL ){
-			if ( strcmp(name, last->name) == 0 ){
+			if ( cgc_strcmp(name, last->name) == 0 ){
 				return last;
 			}
 			last = last->next;
@@ -634,49 +634,49 @@ pGroup find_group_by_name( char *name, pDataStruct workingData){
 	return retval;
 }
 
-char *recursive_path(pNode start, pNode end){
+char *cgc_recursive_path(cgc_pNode start, cgc_pNode end){
 	if (end == start){
-		char *path = mallocOrDie(strlen(end->name) + 2, "Failed to allocate endName");
-		strcpy(path, end->name);
+		char *path = cgc_mallocOrDie(cgc_strlen(end->name) + 2, "Failed to allocate endName");
+		cgc_strcpy(path, end->name);
 		return path; 
 	}
 	if ( end->parent == NULL ){
 		return NULL;
 	}
 
-	char *path = recursive_path(start, end->parent);
+	char *path = cgc_recursive_path(start, end->parent);
 	if (path == NULL){
 		return NULL;
 	}
-	char *retpath = mallocOrDie(  ( strlen(path) + strlen(end->name) + 2 ), "Failed to allocate retpath"); 	
-	strcpy(retpath, path);
-	strcat(retpath, "/");
-	strcat(retpath, end->name);
-	free(path);
+	char *retpath = cgc_mallocOrDie(  ( cgc_strlen(path) + cgc_strlen(end->name) + 2 ), "Failed to allocate retpath"); 	
+	cgc_strcpy(retpath, path);
+	cgc_strcat(retpath, "/");
+	cgc_strcat(retpath, end->name);
+	cgc_free(path);
 	return retpath;
 }
 
-void str_of_path(char *path, pDataStruct workingData, pNode end){
-	char *newPath = recursive_path(workingData->root, end);
+void cgc_str_of_path(char *path, cgc_pDataStruct workingData, cgc_pNode end){
+	char *newPath = cgc_recursive_path(workingData->root, end);
 #ifdef PATCHED
-	unsigned int size = strlen(newPath);
+	unsigned int size = cgc_strlen(newPath);
 	if (size >= MAXPATH){
 		size = MAXPATH-1;
-		puts("Path exceeds max path size and has been truncated");
+		cgc_puts("Path exceeds max path size and has been truncated");
 	}
-	strncpy(path, newPath, size );
+	cgc_strncpy(path, newPath, size );
 #endif
 #ifndef PATCHED
-	strcpy(path, newPath );	
+	cgc_strcpy(path, newPath );	
 #endif
-	free ( newPath );
+	cgc_free ( newPath );
 	return;
 }
 
-pNode find_node_by_name(char *name, pNode directoryNode){
-	pNode temp = directoryNode;
+cgc_pNode cgc_find_node_by_name(char *name, cgc_pNode directoryNode){
+	cgc_pNode temp = directoryNode;
 	while( temp != NULL ){
-		if (strcmp(name,temp->name) == 0){
+		if (cgc_strcmp(name,temp->name) == 0){
 			return temp;
 		}
 		temp = temp->next;
@@ -684,42 +684,42 @@ pNode find_node_by_name(char *name, pNode directoryNode){
 	return NULL;
 }
 
-pNode find_directory_by_name(char *name, pNode directory){
-	pNode temp = find_node_by_name(name, directory->directoryHeadNode);
+cgc_pNode cgc_find_directory_by_name(char *name, cgc_pNode directory){
+	cgc_pNode temp = cgc_find_node_by_name(name, directory->directoryHeadNode);
 	while( temp != NULL){
 		if ( temp->type == DIRECTORY ) {
 			return temp;
 		}
-		temp = find_node_by_name(name, temp->next);
+		temp = cgc_find_node_by_name(name, temp->next);
 	}
 	return NULL;
 }
 
-pFile find_file_by_name(char *name, pNode directory){
-	pNode temp = find_node_by_name(name,directory->directoryHeadNode);
+cgc_pFile cgc_find_file_by_name(char *name, cgc_pNode directory){
+	cgc_pNode temp = cgc_find_node_by_name(name,directory->directoryHeadNode);
 	while(temp!= NULL){
 		if ( temp->type == FILE ) {
 			return temp->file;
 		}
-		temp = find_node_by_name(name,temp->next);
+		temp = cgc_find_node_by_name(name,temp->next);
 	}
 	return NULL;
 }
 
-pNode find_file_node_by_name(char *name, pNode directory){
-	pNode temp = find_node_by_name(name,directory->directoryHeadNode);
+cgc_pNode cgc_find_file_node_by_name(char *name, cgc_pNode directory){
+	cgc_pNode temp = cgc_find_node_by_name(name,directory->directoryHeadNode);
 	while(temp != NULL){
 		if ( temp->type == FILE ) {
 			return temp;
 		}
-		temp = find_node_by_name(name,temp->next);
+		temp = cgc_find_node_by_name(name,temp->next);
 	}
 	return NULL;	
 }
 
 
 int main(){
-	pDataStruct workingData = init_data();
-	start_UI(workingData);
+	cgc_pDataStruct workingData = cgc_init_data();
+	cgc_start_UI(workingData);
 	return 0;
 }

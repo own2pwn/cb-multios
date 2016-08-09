@@ -34,7 +34,7 @@ DefineFunction(WildBattle, void, $destroy)
 DefineFunction(WildBattle, void, init, unsigned int level)
 {
     this->m_level = level;
-    this->m_monster = Monster_new_random(level);
+    this->m_monster = Monster_new_cgc_random(level);
     this->m_can_capture = 1;
     this->m_can_retreat = 1;
 }

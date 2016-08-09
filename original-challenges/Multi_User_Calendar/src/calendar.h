@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,16 +28,16 @@ struct event_list;
 typedef struct {
     int num_events;
     struct event_list *events;
-} calendar_t;
+} cgc_calendar_t;
 
 #include "event.h"
 #include "datetime.h"
 #define MAX_EVENTS 5000
 
-void view_day(calendar_t *cal, date_t date);
-void view_month(calendar_t *cal, date_t date);
-void view_agenda(calendar_t *cal, date_t date);
-bool add_calendar_event(calendar_t *cal, struct event *event);
-bool remove_calendar_event(calendar_t *cal, struct event *event);
+void cgc_view_day(cgc_calendar_t *cal, cgc_date_t date);
+void cgc_view_month(cgc_calendar_t *cal, cgc_date_t date);
+void cgc_view_agenda(cgc_calendar_t *cal, cgc_date_t date);
+cgc_bool cgc_add_calendar_event(cgc_calendar_t *cal, struct event *event);
+cgc_bool cgc_remove_calendar_event(cgc_calendar_t *cal, struct event *event);
 
 #endif

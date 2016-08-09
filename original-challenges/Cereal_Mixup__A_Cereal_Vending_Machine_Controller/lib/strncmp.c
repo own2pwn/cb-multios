@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -21,8 +21,8 @@
 */
 #include "strncmp.h"
 
-int strncmp(const char *str1, const char *str2, size_t n) {
-	size_t idx = 0;
+int cgc_strncmp(const char *str1, const char *str2, cgc_size_t n) {
+	cgc_size_t idx = 0;
 
 	if (0 == n) {
 		return 0;

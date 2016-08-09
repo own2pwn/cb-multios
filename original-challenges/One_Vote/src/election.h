@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,14 +35,14 @@ typedef enum {
 	E_MGR 	= 1,
 	VOTER 	= 2,
 	NO_AUTH = 4,
-} auth_t;
+} cgc_auth_t;
 
 typedef enum {
 	INIT 	= 1,
     NEW 	= 2,
     OPEN 	= 4,
     CLOSED 	= 8,
-} e_states;
+} cgc_e_states;
 
 struct e_conf {
 	void 		  *authd_user;		// pointer to currently logged in/authorized user
@@ -58,48 +58,48 @@ typedef struct {
     unsigned int id;
     char f_name[NAME_FIELD_SZ];
     char l_name[NAME_FIELD_SZ];
-} person_t;
+} cgc_person_t;
 
 typedef struct {
-	person_t person;
+	cgc_person_t person;
     unsigned char (*validate)(void *);
     unsigned int auth_key;
-} e_mgr_t;
+} cgc_e_mgr_t;
 
 typedef struct {
-	person_t person;
+	cgc_person_t person;
     unsigned char (*validate)(void *);
     unsigned int vote_id;
-} voter_t;
+} cgc_voter_t;
 
 typedef struct {
-	person_t person;
+	cgc_person_t person;
     unsigned char (*validate)(void *);
-} candidate_t;
+} cgc_candidate_t;
 
 typedef struct {
     unsigned int id;
-    voter_t v;  		// include full voter and candidate to create perm record
-    candidate_t c;
+    cgc_voter_t v;  		// include full voter and candidate to create perm record
+    cgc_candidate_t c;
     unsigned char (*validate)(void *);
-} vote_t;
+} cgc_vote_t;
 
 typedef struct {
-    e_states state;
+    cgc_e_states state;
     char e_name[NAME_FIELD_SZ];
     struct list *candidates;
-    ht_t *voters;
-    ht_t *votes;
+    cgc_ht_t *voters;
+    cgc_ht_t *votes;
     struct e_conf conf;
-    e_mgr_t *manager;
-} election_t;
+    cgc_e_mgr_t *manager;
+} cgc_election_t;
 
 /**
  * Print menu
  *
  * @param cred 	Authentication credential ID
  */
-void print_menu(auth_t cred);
+void cgc_print_menu(cgc_auth_t cred);
 
 /**
  * Process choice for main menu and dispatch as necessary.
@@ -107,12 +107,12 @@ void print_menu(auth_t cred);
  * @param cmd_id 	ID Number of choice
  * @return 			SUCCESS on success, int < 0 on failure.
  */
-int decider(unsigned char);
+int cgc_decider(unsigned char);
 
 /**
  * Initialize the election struct.
  */
-void init_election(void);
+void cgc_init_election(void);
 
 /**
  * Get users menu choice.
@@ -120,6 +120,6 @@ void init_election(void);
  * @param choice 	pointer to uint which will store value chosen by user
  * @return number of bytes stored into choice if success, ERRNO_CONV on failure.
  */
-int get_choice(unsigned int * choice);
+int cgc_get_choice(unsigned int * choice);
 
 #endif

@@ -1,9 +1,9 @@
 #include <libcgc.h>
 #include "libc.h"
 
-int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
     if (!buf) 

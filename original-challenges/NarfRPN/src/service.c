@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,20 +30,20 @@ main(void) {
     int cmd, ret;
     struct rpncalc_state state;
 
-    rpncalc_init(&state);
+    cgc_rpncalc_init(&state);
 
     while (1) {
-        if (read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
+        if (cgc_read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
             continue;
 
         if (cmd == -1)
             break;
 
-        ret = perform_rpncalc_op(&state, cmd);
-        write_all(STDOUT, &ret, sizeof(ret));
+        ret = cgc_perform_rpncalc_op(&state, cmd);
+        cgc_write_all(STDOUT, &ret, sizeof(ret));
     }
 
-    rpncalc_destroy(&state);
+    cgc_rpncalc_destroy(&state);
 
     return 0;
 }

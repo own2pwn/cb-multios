@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -33,11 +33,11 @@ typedef struct map_t {
 	struct map_t *next;
 	int value;
 	char key[MAX_KEY_SIZE+1];
-} Map;
+} cgc_Map;
 
-int setMap(Map **map, char* key, int value);
-int getValue(Map* map, char* key);
-uint32_t getSize(Map* map);
-void removeMap(Map **map, char* key);
+int cgc_setMap(cgc_Map **map, char* key, int value);
+int cgc_getValue(cgc_Map* map, char* key);
+uint32_t cgc_getSize(cgc_Map* map);
+void cgc_removeMap(cgc_Map **map, char* key);
 
 

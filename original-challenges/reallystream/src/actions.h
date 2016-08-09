@@ -28,9 +28,9 @@
 #define MAX_NAME_SIZE 127
 
 
-typedef struct video {
-    struct video *next;
-    struct video *prev;
+typedef struct cgc_video {
+    struct cgc_video *next;
+    struct cgc_video *prev;
     char name[MAX_NAME_SIZE+1];
     uint8_t *encbuf;
     uint32_t elen;
@@ -39,15 +39,15 @@ typedef struct video {
     uint32_t key : 8;
     uint32_t csum;
     bool can_delete;
-} video;
+} cgc_video;
 
-video *vhead;
+cgc_video *vhead;
 
-static video *get_video_by_name(char *);
-void list(char*);
-void play(char*);
-void add(char*);
-void remove(char*);
-void quit(char*);
+static cgc_video *cgc_get_video_by_name(char *);
+void cgc_list(char*);
+void cgc_play(char*);
+void cgc_add(char*);
+void cgc_remove(char*);
+void cgc_quit(char*);
 
 #endif

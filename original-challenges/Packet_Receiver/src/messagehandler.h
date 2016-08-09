@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,47 +26,47 @@ THE SOFTWARE.
 #ifndef __MESSAGE_HANDLER_H__
 #define __MESSAGE_HANDLER_H__
 
-class CFullMessage;
+class cgc_CFullMessage;
 
-class CMessageFragmentList
+class cgc_CMessageFragmentList
 {
 public:
-    CMessageFragmentList( void )
+    cgc_CMessageFragmentList( void )
     {
         m_fragmentCount = 0;
     }
 
-    ~CMessageFragmentList( )
+    ~cgc_CMessageFragmentList( )
     {
-        m_fragmentList.DeleteAll();
+        m_fragmentList.cgc_DeleteAll();
     }
 
-    bool AddFragment( CMessagePacket *pPacket, CFullMessage *&pNewFullMessage );
+    bool cgc_AddFragment( cgc_CMessagePacket *pPacket, cgc_CFullMessage *&pNewFullMessage );
 
 private:
-    class CFragmentData : public CDoubleListElement
+    class cgc_CFragmentData : public cgc_CDoubleListElement
     {
     public:
-        CFragmentData( uint16_t sequenceNumber ) : CDoubleListElement( ), m_sequenceNumber( sequenceNumber )
+        cgc_CFragmentData( cgc_uint16_t sequenceNumber ) : cgc_CDoubleListElement( ), m_sequenceNumber( sequenceNumber )
         {
             m_fragmentTotalCount = 0;
 
-            for ( uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
+            for ( cgc_uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
                 m_pMessageFragments[i] = NULL;
         }
 
-        ~CFragmentData( )
+        ~cgc_CFragmentData( )
         {
-            for ( uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
+            for ( cgc_uint16_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
             {
                 if ( m_pMessageFragments[i] )
                     delete m_pMessageFragments[i];
             }
         }
 
-        uint16_t GetSequenceNumber( void ) const { return m_sequenceNumber; };
+        cgc_uint16_t cgc_GetSequenceNumber( void ) const { return m_sequenceNumber; };
 
-        bool SetTotalFragmentCount( uint8_t fragmentTotalCount )
+        bool cgc_SetTotalFragmentCount( cgc_uint8_t fragmentTotalCount )
         {
             if ( fragmentTotalCount > MAX_MESSAGE_FRAGMENTS )
                 return (false);
@@ -76,7 +76,7 @@ private:
             return (true);
         }
 
-        bool AddFragmentData( CMessagePacket *pPacket, uint8_t fragmentIndex )
+        bool cgc_AddFragmentData( cgc_CMessagePacket *pPacket, cgc_uint8_t fragmentIndex )
         {
             if ( fragmentIndex >= MAX_MESSAGE_FRAGMENTS )
                 return (false);
@@ -89,14 +89,14 @@ private:
             return (true);
         }
 
-        bool HasAllFragments( void ) const
+        bool cgc_HasAllFragments( void ) const
         {
-            uint32_t fragmentCount = 0;
+            cgc_uint32_t fragmentCount = 0;
 
             if ( m_fragmentTotalCount == 0 )
                 return (false);
 
-            for ( uint32_t i = 0; i < m_fragmentTotalCount; i++ )
+            for ( cgc_uint32_t i = 0; i < m_fragmentTotalCount; i++ )
             {
                 if ( m_pMessageFragments[i] )
                     fragmentCount++;
@@ -105,53 +105,53 @@ private:
             return (fragmentCount == m_fragmentTotalCount);
         }
 
-        uint32_t GetAssembledMessageSize( void ) const;
-        CFullMessage *AssembleFragments( void ) const;
+        cgc_uint32_t cgc_GetAssembledMessageSize( void ) const;
+        cgc_CFullMessage *cgc_AssembleFragments( void ) const;
 
     private:
-        CMessagePacket *m_pMessageFragments[MAX_MESSAGE_FRAGMENTS];
-        uint8_t m_fragmentTotalCount;
-        uint16_t m_sequenceNumber;
+        cgc_CMessagePacket *m_pMessageFragments[MAX_MESSAGE_FRAGMENTS];
+        cgc_uint8_t m_fragmentTotalCount;
+        cgc_uint16_t m_sequenceNumber;
     };
 
-    CFragmentData *GetFragmentForSequenceNumber( uint16_t sequenceNumber );
+    cgc_CFragmentData *cgc_GetFragmentForSequenceNumber( cgc_uint16_t sequenceNumber );
 
 private:
-    uint32_t m_fragmentCount;
-    CDoubleList m_fragmentList;
+    cgc_uint32_t m_fragmentCount;
+    cgc_CDoubleList m_fragmentList;
 };
 
-class CFullMessage : public CDoubleListElement
+class cgc_CFullMessage : public cgc_CDoubleListElement
 {
 public:
-    CFullMessage( uint8_t *pMessageData, uint32_t messageLen, bool bCopyData = false );
-    ~CFullMessage( );
+    cgc_CFullMessage( cgc_uint8_t *pMessageData, cgc_uint32_t messageLen, bool bCopyData = false );
+    ~cgc_CFullMessage( );
 
-    uint8_t *GetData( void ) const { return m_pMessageData; };
-    uint32_t GetLength( void ) const { return m_messageLen; };
+    cgc_uint8_t *cgc_GetData( void ) const { return m_pMessageData; };
+    cgc_uint32_t cgc_GetLength( void ) const { return m_messageLen; };
 
 private:
-    uint8_t *m_pMessageData;
-    uint32_t m_messageLen;
+    cgc_uint8_t *m_pMessageData;
+    cgc_uint32_t m_messageLen;
 };
 
 // Receives message packets and assembles them into parsed messages
 // to send to the message renderer
-class CMessageHandler
+class cgc_CMessageHandler
 {
 public:
-    CMessageHandler();
-    ~CMessageHandler();
+    cgc_CMessageHandler();
+    ~cgc_CMessageHandler();
 
-    void ReceivePacket( CMessagePacket *pPacket );
+    void cgc_ReceivePacket( cgc_CMessagePacket *pPacket );
 
-    bool IsMsgAvailable( void );
+    bool cgc_IsMsgAvailable( void );
 
-    CFullMessage *PopFirstMessage( void );
+    cgc_CFullMessage *cgc_PopFirstMessage( void );
 
 private:
-    CMessageFragmentList m_messageFragmentList;
-    CDoubleList m_fullMessageList;
+    cgc_CMessageFragmentList m_messageFragmentList;
+    cgc_CDoubleList m_fullMessageList;
 };
 
 #endif // __MESSAGE_HANDLER_H__

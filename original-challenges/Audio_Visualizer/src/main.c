@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -40,12 +40,12 @@
 
 
 static int filter_type = 0;
-static char readopt(int fd) {
+static char cgc_readopt(int fd) {
     char c = 0;
     char d = 0;
     char delim = '\n';
 
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
         return -1;
 
@@ -63,69 +63,69 @@ static char readopt(int fd) {
     return c;
 }
 
-static void print_menu(uwfc_t *track) {
+static void cgc_print_menu(cgc_uwfc_t *track) {
     if (track == NULL) {
-        printf("1. Load File\n");
-        printf("2. Quit\n\n");
-        printf("--NO FILE LOADED--\n");
+        cgc_printf("1. Load File\n");
+        cgc_printf("2. Quit\n\n");
+        cgc_printf("--NO FILE LOADED--\n");
     } else {
-        printf("1. Load New File\n");
-        printf("2. Wave Visualizer\n");
-        printf("3. EQ Visualizer\n");
-        printf("4. Power Visualizer\n");
-        printf("5. Enable Low Pass Filter\n");
-        printf("6. Enable High Pass Filter\n");
-        printf("7. Disable Filters\n");
-        printf("8. Set visualization speed multiplier (0-9)\n");
-        printf("9. Quit\n\n");
+        cgc_printf("1. Load New File\n");
+        cgc_printf("2. Wave Visualizer\n");
+        cgc_printf("3. EQ Visualizer\n");
+        cgc_printf("4. Power Visualizer\n");
+        cgc_printf("5. Enable Low Pass Filter\n");
+        cgc_printf("6. Enable High Pass Filter\n");
+        cgc_printf("7. Disable Filters\n");
+        cgc_printf("8. Set visualization speed multiplier (0-9)\n");
+        cgc_printf("9. Quit\n\n");
 
-        printf("--Current Track: ");
-        printf("Sampled @%dHz %d bit, ", track->sample_rate, track->bits_per_sample);
+        cgc_printf("--Current Track: ");
+        cgc_printf("Sampled @%dHz %d bit, ", track->sample_rate, track->bits_per_sample);
         if (track->num_channels == 1)
-            printf("Mono - ");
+            cgc_printf("Mono - ");
         else
-            printf("Stereo - ");
-        printf("Data Size=%d\n", track->sub_chunk2_size);
-        printf("::Options: Filter Type=");
+            cgc_printf("Stereo - ");
+        cgc_printf("Data Size=%d\n", track->sub_chunk2_size);
+        cgc_printf("::Options: Filter Type=");
         if(filter_type == 0)
-            printf("None");
+            cgc_printf("None");
         else if(filter_type == 1)
-            printf("Low Pass");
+            cgc_printf("Low Pass");
         else if(filter_type == 2)
-            printf("High Pass");
-        printf(" | Visualization Slowdown Multiplier=%d::\n\n", get_vis_multiplier());
+            cgc_printf("High Pass");
+        cgc_printf(" | Visualization Slowdown Multiplier=%d::\n\n", cgc_get_vis_multiplier());
     }
 }
 
-static void print_error_code(int code){
+static void cgc_print_error_code(int code){
     if (code == INVALID_FILE)
-        printf("ERROR: Couldn't load file, malformed file data\n");
+        cgc_printf("ERROR: Couldn't load file, malformed file data\n");
     if (code == INVALID_NEW_FILE)
-        printf("ERROR: Couldn't load new file, contains malformed file data\n");
+        cgc_printf("ERROR: Couldn't load new file, contains malformed file data\n");
     if (code == BAD_CHOICE)
-        printf("ERROR: Bad Choice. Select another option\n");
+        cgc_printf("ERROR: Bad Choice. Select another option\n");
     if (code == BAD_INPUT)
-        printf("ERROR: Bad Input. Valid Options: 1, 2\n");
+        cgc_printf("ERROR: Bad Input. Valid Options: 1, 2\n");
     if (code == BAD_INPUT2)
-        printf("ERROR: Bad Input. Valid Options: 1, 2, 3, 4, 5, 6, 7, 8, 9\n");
+        cgc_printf("ERROR: Bad Input. Valid Options: 1, 2, 3, 4, 5, 6, 7, 8, 9\n");
 }
 
-void load_file(uwfc_t **track) {
+void cgc_load_file(cgc_uwfc_t **track) {
     if (*track != NULL) {
-        clear_track(track);
+        cgc_clear_track(track);
     }
 
-    *track = init_track();
+    *track = cgc_init_track();
 }
 
-void quit(uwfc_t **track) {
+void cgc_quit(cgc_uwfc_t **track) {
     if (*track != NULL)
-        clear_track(track);
+        cgc_clear_track(track);
 }
 
-int select_option(uwfc_t **track) {
-    uwfc_t *current_track = *track;
-    char choice = readopt(STDIN), m;
+int cgc_select_option(cgc_uwfc_t **track) {
+    cgc_uwfc_t *current_track = *track;
+    char choice = cgc_readopt(STDIN), m;
 
     if (choice == -1) {
         if (current_track == NULL)
@@ -138,13 +138,13 @@ int select_option(uwfc_t **track) {
     if (current_track == NULL) {
         switch(choice) {
             case '1':
-                load_file(track);
+                cgc_load_file(track);
                 if (*track == NULL) {
                     return INVALID_FILE;
                 }
                 break;
             case '2':
-                quit(track);
+                cgc_quit(track);
                 return 0;
             default:
                 return BAD_CHOICE;
@@ -152,18 +152,18 @@ int select_option(uwfc_t **track) {
     } else {
         switch(choice) {
             case '1':
-                load_file(track);
+                cgc_load_file(track);
                 if (*track == NULL)
                     return INVALID_NEW_FILE;
                 break;
             case '2':
-                wave_vis(current_track);
+                cgc_wave_vis(current_track);
                 break;
             case '3':
-                eq_vis(current_track, 1, filter_type);
+                cgc_eq_vis(current_track, 1, filter_type);
                 break;
             case '4':
-                eq_vis(current_track, 2, filter_type);
+                cgc_eq_vis(current_track, 2, filter_type);
                 break;
             case '5':
                 filter_type = 1;
@@ -175,11 +175,11 @@ int select_option(uwfc_t **track) {
                 filter_type = 0;
                 break;
             case '8':
-                m = readopt(STDIN);
-                set_vis_multiplier(m);
+                m = cgc_readopt(STDIN);
+                cgc_set_vis_multiplier(m);
                 break;
             case '9':
-                quit(track);
+                cgc_quit(track);
                 return 0;
             default:
                 return BAD_CHOICE;
@@ -190,15 +190,15 @@ int select_option(uwfc_t **track) {
 }
 
 int main() {
-    uwfc_t *current_track = NULL;
+    cgc_uwfc_t *current_track = NULL;
     int code = 1;
-    complex_t *dft_out;
+    cgc_complex_t *dft_out;
     do {
-        print_error_code(code);
-        print_menu(current_track);
-        code = select_option(&current_track);
+        cgc_print_error_code(code);
+        cgc_print_menu(current_track);
+        code = cgc_select_option(&current_track);
     } while (code);
 
-    printf("EXITING...\n");
+    cgc_printf("EXITING...\n");
     return 0;
 }

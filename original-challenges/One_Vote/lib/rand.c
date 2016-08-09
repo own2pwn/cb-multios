@@ -23,11 +23,11 @@
 #include <errno.h>
 #include "rand.h"
 
-void rand(void *buf, unsigned int n) {
-	size_t count = 0;
-	size_t rand_bytes = 0;
+void cgc_rand(void *buf, unsigned int n) {
+	cgc_size_t count = 0;
+	cgc_size_t rand_bytes = 0;
 	while (n > count) {
-		if (0 != random(buf + count, n - count, &rand_bytes)) {
+		if (0 != cgc_random(buf + count, n - count, &rand_bytes)) {
 			_terminate(ERRNO_RAND);
 		}
 		count += rand_bytes;

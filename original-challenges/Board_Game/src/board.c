@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014-2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,10 +27,10 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "board.h"
 
-void PrintBoard(char b[X_MAX][Y_MAX]) {
+void cgc_PrintBoard(char b[X_MAX][Y_MAX]) {
 	char x, y;
 	char buf[Y_MAX+1];
-	size_t txcount;
+	cgc_size_t txcount;
 
 	for (y = Y_MAX-1; y >= 0; y--) {
 		for (x = 0; x < X_MAX; x++) {
@@ -41,11 +41,11 @@ void PrintBoard(char b[X_MAX][Y_MAX]) {
 			}
 		}
 		buf[x] = '\0';
-		printf("@s\n", buf);
+		cgc_printf("@s\n", buf);
 	}
 }
 
-void InitBoard(char b[X_MAX][Y_MAX]) {
+void cgc_InitBoard(char b[X_MAX][Y_MAX]) {
 	char x, y;
 
 	// init white side

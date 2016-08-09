@@ -32,7 +32,7 @@
  * @param term String termination char
  * @return 0 if equal, -1 if not
  */
-int my_streq(const char* str1, const char* str2, const char term);
+int cgc_my_streq(const char* str1, const char* str2, const char term);
 
 
 #endif

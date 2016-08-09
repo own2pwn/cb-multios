@@ -37,10 +37,10 @@
 #define ERRNO_INVALID_OPERATION -12
 
 // Fragmentation related
-int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
-int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
+int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
+int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
 
-unsigned char * memset(unsigned char *b, unsigned char c, size_t len);
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len);
 
 ////
 // The following is verbatim from EAGLE_00004, but isn't included in the 

@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,19 +30,19 @@ THE SOFTWARE.
 #include "stdint.h"
 
 
-User *current_user;
+cgc_User *current_user;
 
-User *listOfUsers[MAX_USERS];
+cgc_User *listOfUsers[MAX_USERS];
 int user_count;
 
-// successful login: 1, currentUser is correct
-// bad login: 0
-int login(char *name, char *passwd)
+// successful cgc_login: 1, currentUser is correct
+// bad cgc_login: 0
+int cgc_login(char *name, char *passwd)
 {
 	// compare username and password with users
 	for (int i = 0; i < user_count; i++)
 	{
-		if ((strcmp(name, listOfUsers[i]->name) == 0) && (!strcmp(passwd, listOfUsers[i]->password)))
+		if ((cgc_strcmp(name, listOfUsers[i]->name) == 0) && (!cgc_strcmp(passwd, listOfUsers[i]->password)))
 		{
 			current_user = listOfUsers[i];
 			return 1;
@@ -51,17 +51,17 @@ int login(char *name, char *passwd)
 	return 0;
 }
 
-int logout()
+int cgc_logout()
 {
 	current_user->first_login = 0;
 	return 1;
 }
 
-int get_user_index(char *name)
+int cgc_get_user_index(char *name)
 {
 	for (int i = 0; i < user_count; i++)
 	{
-		if (strcmp(name, listOfUsers[i]->name) == 0)
+		if (cgc_strcmp(name, listOfUsers[i]->name) == 0)
 		{
 			return i;
 		}
@@ -69,23 +69,23 @@ int get_user_index(char *name)
 	return -1;
 }
 
-void create_user(int tries)
+void cgc_create_user(int tries)
 {	
 	char buf[MAX_NAME_LEN];
 	char buf2[MAX_PASS_LEN];
-	printf("Username: \n");
-	size_t len = receive_until( buf, '\n', MAX_NAME_LEN - 1);
+	cgc_printf("Username: \n");
+	cgc_size_t len = cgc_receive_until( buf, '\n', MAX_NAME_LEN - 1);
 	buf[len++] = 0;
 
 	int found = -1;
 	// does this user already exist?
-	if (strlen(buf) < 1) 
+	if (cgc_strlen(buf) < 1) 
 	{
 		return;
 	}
 	for (int j = 0; j < user_count; j++)
 	{
-		if (!strcmp(buf, listOfUsers[j]->name))
+		if (!cgc_strcmp(buf, listOfUsers[j]->name))
 		{
 			found = j;
 			break;
@@ -97,20 +97,20 @@ void create_user(int tries)
 	{
 		if (found == -1) 
 		{
-			// Failed login, but username not found. Do nothing
+			// Failed cgc_login, but username not found. Do nothing
 			return;
 		}
 		
 		// this user already found, put this user on top of the last one
 		// replace password
-		// first login
+		// first cgc_login
 
 		listOfUsers[found]->first_login = 1;
-		printf("Password: \n");
-		len = receive_until( buf2, '\n', MAX_PASS_LEN - 1);
+		cgc_printf("Password: \n");
+		len = cgc_receive_until( buf2, '\n', MAX_PASS_LEN - 1);
 		buf2[len++] = 0;
-		bzero(listOfUsers[found]->password, MAX_PASS_LEN);
-		strncpy(listOfUsers[found]->password, buf2, len);
+		cgc_bzero(listOfUsers[found]->password, MAX_PASS_LEN);
+		cgc_strncpy(listOfUsers[found]->password, buf2, len);
 		return;
 	}
 
@@ -119,30 +119,30 @@ void create_user(int tries)
 		// this user doesn't exist, are we full already?
 		if (user_count >= MAX_USERS)
 		{
-			printf("Maximum number of users reached.\n");
+			cgc_printf("Maximum number of users reached.\n");
 			return;
 		}
 		else
 		{
-			listOfUsers[user_count] = (User*)malloc(sizeof(User));
-			strncpy(listOfUsers[user_count]->name, buf, len);
+			listOfUsers[user_count] = (cgc_User*)cgc_malloc(sizeof(cgc_User));
+			cgc_strncpy(listOfUsers[user_count]->name, buf, len);
 
 			listOfUsers[user_count]->index = user_count;
 			listOfUsers[user_count]->first_login = 1;
 			listOfUsers[user_count]->msg_count = 0;
 			
-			printf("Password: \n");
-			len = receive_until( buf2, '\n', MAX_PASS_LEN - 1);
+			cgc_printf("Password: \n");
+			len = cgc_receive_until( buf2, '\n', MAX_PASS_LEN - 1);
 			buf2[len++] = 0;
-			strncpy(listOfUsers[user_count++]->password, buf2, len);
+			cgc_strncpy(listOfUsers[user_count++]->password, buf2, len);
 		}
 	}
 }
 
-void list_users()
+void cgc_list_users()
 {
 	for (int i = 0; i < user_count; i++)
 	{
-		printf("@s -- @s\n", listOfUsers[i]->name, listOfUsers[i]->password);
+		cgc_printf("@s -- @s\n", listOfUsers[i]->name, listOfUsers[i]->password);
 	}
 }

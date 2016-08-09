@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,21 +27,21 @@
 
 #include "assert.h"
 
-static inline void *safe_calloc(unsigned int count, unsigned int size)
+static inline void *cgc_safe_calloc(unsigned int count, unsigned int cgc_size)
 {
-    unsigned int result = count * size;
-    if ((result / count) != size)
-        die("detected overflow");
-    void *mem = calloc(count, size);
+    unsigned int result = count * cgc_size;
+    if ((result / count) != cgc_size)
+        cgc_die("detected overflow");
+    void *mem = cgc_calloc(count, cgc_size);
     if (mem == nullptr)
-        die("out of memory");
+        cgc_die("out of memory");
     return mem;
 }
 
-static inline void *safe_malloc(unsigned int size)
+static inline void *cgc_safe_malloc(unsigned int cgc_size)
 {
-    void *mem = malloc(size);
+    void *mem = cgc_malloc(cgc_size);
     if (mem == nullptr)
-        die("out of memory");
+        cgc_die("out of memory");
     return mem;
 }

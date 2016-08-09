@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,30 +25,30 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CDataStream::CDataStream()
+cgc_CDataStream::cgc_CDataStream()
     : m_bitpos( 0 ), m_bytesRxCount( 0 )
 {
 
 }
 
-CDataStream::~CDataStream()
+cgc_CDataStream::~cgc_CDataStream()
 {
 
 }
 
-void CDataStream::Setup( int32_t socketNumber )
+void cgc_CDataStream::cgc_Setup( cgc_int32_t socketNumber )
 {
     m_socketNumber = socketNumber;
     m_bitpos = 0;
     m_buffer = 0;
 }
 
-uint8_t CDataStream::ReadBit( void )
+cgc_uint8_t cgc_CDataStream::cgc_ReadBit( void )
 {
-    uint8_t value = 0;
+    cgc_uint8_t value = 0;
 
     if ( m_bitpos >= 8 )
-        RefillBuffer();
+        cgc_RefillBuffer();
 
     value = (m_buffer & (1<<(7-m_bitpos))) >> (7-m_bitpos);
 
@@ -57,22 +57,22 @@ uint8_t CDataStream::ReadBit( void )
     return (value);
 }
 
-uint8_t CDataStream::ReadByte( void )
+cgc_uint8_t cgc_CDataStream::cgc_ReadByte( void )
 {
-    uint8_t value = 0;
-    uint8_t idx;
+    cgc_uint8_t value = 0;
+    cgc_uint8_t idx;
 
     for ( idx = 0; idx < 8; idx++ )
-        value |= (ReadBit() << (7-idx));
+        value |= (cgc_ReadBit() << (7-idx));
 
     return (value);
 }
 
-void CDataStream::RefillBuffer( void )
+void cgc_CDataStream::cgc_RefillBuffer( void )
 {
-    int32_t retvalue;
-    uint8_t value;
-    size_t rx_count = 1;
+    cgc_int32_t retvalue;
+    cgc_uint8_t value;
+    cgc_size_t rx_count = 1;
 
     if ( m_bytesRxCount >= MAX_BYTES_RECEIVED )
         _terminate( 0 );

@@ -28,26 +28,26 @@
 #include "image.h"
 
 int
-image_init(struct image *img, unsigned width, unsigned height)
+cgc_image_init(struct image *img, unsigned width, unsigned height)
 {
     if (width > IMG_MAX_WIDTH || height > IMG_MAX_HEIGHT)
         return EXIT_FAILURE;
 
     img->width = width;
     img->height = height;
-    memset(img->data, '\0', sizeof(struct pixel) * width * height);
+    cgc_memset(img->data, '\0', sizeof(struct pixel) * width * height);
     return EXIT_SUCCESS;
 }
 
 void
-image_destroy(struct image *img)
+cgc_image_destroy(struct image *img)
 {
     img->width = 0;
     img->height = 0;
 }
 
 int
-image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel)
+cgc_image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel)
 {
     if (x > img->width || y > img->height)
         return EXIT_FAILURE;
@@ -57,7 +57,7 @@ image_write_pixel(struct image *img, unsigned x, unsigned y, struct pixel pixel)
 }
 
 int
-image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel)
+cgc_image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel)
 {
     if (x > img->width || y > img->height)
         return EXIT_FAILURE;
@@ -67,12 +67,12 @@ image_get_pixel(struct image *img, unsigned x, unsigned y, struct pixel *pixel)
 }
 
 struct pixel
-color_to_pixel(struct vector color, double gamma)
+cgc_color_to_pixel(struct vector color, double gamma)
 {
     struct pixel ret;
-    ret.r = pow(clamp(color.x), 1.0 / gamma) * 255.0;
-    ret.g = pow(clamp(color.y), 1.0 / gamma) * 255.0;
-    ret.b = pow(clamp(color.z), 1.0 / gamma) * 255.0;
+    ret.r = pow(cgc_clamp(color.x), 1.0 / gamma) * 255.0;
+    ret.g = pow(cgc_clamp(color.y), 1.0 / gamma) * 255.0;
+    ret.b = pow(cgc_clamp(color.z), 1.0 / gamma) * 255.0;
     return ret;
 }
 

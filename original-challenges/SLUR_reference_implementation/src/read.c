@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,10 +25,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-int read_balanced_expression(int fd, char *buf, size_t max)
+int cgc_read_balanced_expression(int fd, char *buf, cgc_size_t max)
 {
-  size_t rx = 0;
-  size_t depth = 0;
+  cgc_size_t rx = 0;
+  cgc_size_t depth = 0;
   char nl;
 
   while (receive(fd, buf, 1, &rx) == 0) {
@@ -64,7 +64,7 @@ int read_balanced_expression(int fd, char *buf, size_t max)
   while (receive(fd, &nl, 1, &rx) == 0) {
     if (rx == 0 || nl == '\n')
       break;
-    if (!isspace(nl))
+    if (!cgc_isspace(nl))
       return -1;
   }
 

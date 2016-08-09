@@ -46,17 +46,17 @@ struct results {
  * @param r Results struct
  * @return SUCCESS if success, else -1
  */
-int process(const char *input, const char term, struct results *r);
+int cgc_process(const char *input, const char term, struct results *r);
 
 
-int compute_char_type(const char *input, const char term, struct results *r);
+int cgc_compute_char_type(const char *input, const char term, struct results *r);
 
-void compute_grammar_components(const char *input, const char term, struct results *r);
+void cgc_compute_grammar_components(const char *input, const char term, struct results *r);
 
-void compute_hash(const char *input, const char term, struct results *r);
+void cgc_compute_hash(const char *input, const char term, struct results *r);
 
-char is_word_end_char(const char ch);
+char cgc_is_word_end_char(const char ch);
 
-char is_sentence_end_char(const char ch);
+char cgc_is_sentence_end_char(const char ch);
 
-char is_paragraph_end_char(const char ch);
+char cgc_is_paragraph_end_char(const char ch);

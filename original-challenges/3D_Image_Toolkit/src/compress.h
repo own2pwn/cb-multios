@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Dan Czarnecki <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,9 +37,9 @@ THE SOFTWARE.
 //    R  R  R  G  G  B  B  B
 //
 
-uint8_t ClosestMatch(uint8_t type, int16_t val);
-void Compress(t3DCPixel **px_list, uint8_t *compressed_data, uint16_t *data_len);
-void Decompress(uint8_t *in_data, uint8_t *out_data, uint16_t *data_len);
-void WriteOut(t3DCPixel **px_list, uint8_t *data, uint16_t data_len);
+cgc_uint8_t cgc_ClosestMatch(cgc_uint8_t type, cgc_int16_t val);
+void cgc_Compress(cgc_t3DCPixel **px_list, cgc_uint8_t *compressed_data, cgc_uint16_t *data_len);
+void cgc_Decompress(cgc_uint8_t *in_data, cgc_uint8_t *out_data, cgc_uint16_t *data_len);
+void cgc_WriteOut(cgc_t3DCPixel **px_list, cgc_uint8_t *data, cgc_uint16_t data_len);
 
 #endif

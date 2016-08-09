@@ -4,26 +4,26 @@
 #include "pizza.h"
 #include "iomanager.h"
 
-class PizzaIoManager : public IoManager
+class cgc_PizzaIoManager : public cgc_IoManager
 {
 private:
-    Pizza *pizza;
+    cgc_Pizza *pizza;
 
-    bool create_pizza_pie();
-    bool create_pizza_sub();
-    bool create_pizza_bowl();
+    bool cgc_create_pizza_pie();
+    bool cgc_create_pizza_sub();
+    bool cgc_create_pizza_bowl();
 
-    void add_toppings();
-    void remove_toppings();
-    void add_sauces();
-    void remove_sauces();
+    void cgc_add_toppings();
+    void cgc_remove_toppings();
+    void cgc_add_sauces();
+    void cgc_remove_sauces();
 public:
-    PizzaIoManager(Pizza *_pizza=NULL);
-    virtual ~PizzaIoManager();
+    cgc_PizzaIoManager(cgc_Pizza *_pizza=NULL);
+    virtual ~cgc_PizzaIoManager();
 
-    bool new_pizza();
-    bool edit_pizza(Pizza *_pizza=NULL);
-    Pizza *get_pizza();
+    bool cgc_new_pizza();
+    bool cgc_edit_pizza(cgc_Pizza *_pizza=NULL);
+    cgc_Pizza *cgc_get_pizza();
 };
 
 #endif

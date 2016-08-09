@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-size_t strlen( const char *str );
-void bzero(void *s, size_t n);
-void *memset( void *ptr, int value, size_t num );
+cgc_size_t cgc_strlen( const char *str );
+void cgc_bzero(void *s, cgc_size_t n);
+void *cgc_memset( void *ptr, int value, cgc_size_t num );
 
 #endif // __STRING_H__

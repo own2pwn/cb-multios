@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,16 +27,16 @@
 
 #define BIAS_VAL  1.0
 
-typedef vector<Neuron> Layer;
+typedef cgc_vector<cgc_Neuron> cgc_Layer;
 
-class NeuralNet
+class cgc_NeuralNet
 {
   public:
-    NeuralNet(vector<unsigned int> &t);
-    void feedForward(vector<double> &in);
-    void backProp(vector<double> &target);
-    void getOutput(vector<double> &out);
+    cgc_NeuralNet(cgc_vector<unsigned int> &t);
+    void cgc_feedForward(cgc_vector<double> &in);
+    void cgc_backProp(cgc_vector<double> &target);
+    void cgc_getOutput(cgc_vector<double> &out);
 
   private:
-    vector<Layer> m_layers;
+    cgc_vector<cgc_Layer> m_layers;
 };

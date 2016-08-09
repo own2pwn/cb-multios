@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -34,7 +34,7 @@
  * @param i An integer
  * @return 0, -1 on error
  */
-int int2str(char *str_buf, size_t buf_size, int32_t i);
+int cgc_int2str(char *str_buf, cgc_size_t buf_size, cgc_int32_t i);
 
 
 #endif

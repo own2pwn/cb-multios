@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include "list.h"
 
-static list_t *create_node(void *item)
+static cgc_list_t *cgc_create_node(void *item)
 {
-    list_t *node = malloc(sizeof(list_t));
+    cgc_list_t *node = cgc_malloc(sizeof(cgc_list_t));
     if (!node)
         return NULL;
 
@@ -34,12 +34,12 @@ static list_t *create_node(void *item)
     return node;
 }
 
-bool insert(list_t **list, void *item)
+cgc_bool cgc_insert(cgc_list_t **list, void *item)
 {
     if (!item)
         return false;
 
-    list_t *node = create_node(item);
+    cgc_list_t *node = cgc_create_node(item);
     if (!node)
         return false;
 
@@ -49,12 +49,12 @@ bool insert(list_t **list, void *item)
     return true;
 }
 
-bool insert_in_order(list_t **list, void *item, int (*compare)(void *a, void *b))
+cgc_bool cgc_insert_in_order(cgc_list_t **list, void *item, int (*compare)(void *a, void *b))
 {
     if (!item)
         return false;
 
-    list_t *node = create_node(item);
+    cgc_list_t *node = cgc_create_node(item);
     if (!node)
         return false;
     if (!*list) {
@@ -62,8 +62,8 @@ bool insert_in_order(list_t **list, void *item, int (*compare)(void *a, void *b)
         return true;
     }
 
-    list_t *iter = *list;
-    list_t *prev = *list;
+    cgc_list_t *iter = *list;
+    cgc_list_t *prev = *list;
     while (iter) {
         if (compare(item, iter->item) <= 0) {
             if (*list == iter) {
@@ -76,7 +76,7 @@ bool insert_in_order(list_t **list, void *item, int (*compare)(void *a, void *b)
                 return true;
             }
         } else if(iter->next == NULL) {
-            return append(&iter, item);
+            return cgc_append(&iter, item);
         }
 
         prev = iter;
@@ -85,12 +85,12 @@ bool insert_in_order(list_t **list, void *item, int (*compare)(void *a, void *b)
     return false;
 }
 
-bool append(list_t **list, void *item)
+cgc_bool cgc_append(cgc_list_t **list, void *item)
 {
     if (!item)
         return false;
 
-    list_t *node = create_node(item);
+    cgc_list_t *node = cgc_create_node(item);
     if (!node)
         return false;
 
@@ -99,34 +99,34 @@ bool append(list_t **list, void *item)
         return true;
     }
 
-    list_t *iter = *list;
+    cgc_list_t *iter = *list;
     while (iter->next)
         iter = iter->next;
     iter->next = node;
     return true;
 }
 
-void *popfront(list_t **list)
+void *cgc_popfront(cgc_list_t **list)
 {
     if (!(*list))
         return NULL;
 
     void *item = NULL;
-    list_t *iter = *list;
+    cgc_list_t *iter = *list;
     *list = iter->next;
     iter->next = NULL;
     item = iter->item;
-    free(iter);
+    cgc_free(iter);
     return item;
 }
 
-void *popback(list_t **list)
+void *cgc_popback(cgc_list_t **list)
 {
     if (!(*list))
         return NULL;
 
     void *item = NULL;
-    list_t *iter = *list, *prev = NULL;
+    cgc_list_t *iter = *list, *prev = NULL;
     while (iter->next) {
         prev = iter;
         iter = iter->next;
@@ -135,16 +135,16 @@ void *popback(list_t **list)
         *list = NULL;
     else
         prev->next = NULL;
-    free(iter);
+    cgc_free(iter);
     return item;
 }
 
-void *find(list_t *list, void *item, int (*compare)(void *a, void *b))
+void *cgc_find(cgc_list_t *list, void *item, int (*compare)(void *a, void *b))
 {
     if (!list || !item)
         return NULL;
 
-    list_t *iter = list;
+    cgc_list_t *iter = list;
     while (iter && iter->item) {
         if (compare(item, iter->item) == 0)
             return iter->item;
@@ -153,14 +153,14 @@ void *find(list_t *list, void *item, int (*compare)(void *a, void *b))
     return NULL;
 }
 
-void *pop(list_t **list, void *item, int (*compare)(void *a, void *b))
+void *cgc_pop(cgc_list_t **list, void *item, int (*compare)(void *a, void *b))
 {
     void *popval = NULL;
     if (!list || !item)
         return NULL;
 
-    list_t *iter = *list;
-    list_t *prev = *list;
+    cgc_list_t *iter = *list;
+    cgc_list_t *prev = *list;
     while (iter) {
         if (compare(item, iter->item) == 0) {
             if (iter != *list)
@@ -169,7 +169,7 @@ void *pop(list_t **list, void *item, int (*compare)(void *a, void *b))
                 *list = iter->next;
 
             popval = iter->item;
-            free(iter);
+            cgc_free(iter);
             return popval;
         }
         prev = iter;
@@ -178,12 +178,12 @@ void *pop(list_t **list, void *item, int (*compare)(void *a, void *b))
     return NULL;
 }
 
-void print(list_t *list, void (*print_item)(void *item))
+void cgc_print(cgc_list_t *list, void (*print_item)(void *item))
 {
     if (!list)
         return;
 
-    list_t *iter = list;
+    cgc_list_t *iter = list;
     while (iter) {
         print_item(iter->item);
         iter = iter->next;

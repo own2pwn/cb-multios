@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,25 +32,25 @@ typedef enum {
     CAT_NETWORK,
     CAT_REVERSING,
     CAT_MISC,
-} category_t;
+} cgc_category_t;
 
 typedef enum {
     CSTAT_LOCKED,
     CSTAT_SOLVED,
     CSTAT_SOLVED_U,
     CSTAT_OPEN,
-} chal_stat_t;
+} cgc_chal_stat_t;
 
 typedef struct {
     char name[128];
     char desc[256];
     unsigned int points;
-    chal_stat_t status;
-    category_t cat;
+    cgc_chal_stat_t status;
+    cgc_category_t cat;
     char *flag;
-} chal_t;
+} cgc_chal_t;
 
-const char* chal_cat_to_string(category_t cat);
-const char* chal_status_to_string(chal_stat_t stat);
+const char* cgc_chal_cat_to_string(cgc_category_t cat);
+const char* cgc_chal_status_to_string(cgc_chal_stat_t stat);
 
 #endif

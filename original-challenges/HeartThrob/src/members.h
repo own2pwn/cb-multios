@@ -25,9 +25,9 @@
 #ifndef MEMBERS_H
 #define MEMBERS_H
 
-void do_edgar(htreq* req);
-void do_will(htreq *req);
-void do_eliz(htreq *req);
-void do_john(htreq *req);
+void cgc_do_edgar(cgc_htreq* req);
+void cgc_do_will(cgc_htreq *req);
+void cgc_do_eliz(cgc_htreq *req);
+void cgc_do_john(cgc_htreq *req);
 
 #endif

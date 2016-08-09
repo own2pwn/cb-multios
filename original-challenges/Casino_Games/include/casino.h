@@ -39,7 +39,7 @@ typedef struct player_info_s{
 	int slots_score;
 	int wallet;
 	struct player_info_s *next;
-} player_info;
+} cgc_player_info;
 
 
 enum payout_names {

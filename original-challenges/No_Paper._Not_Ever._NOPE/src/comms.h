@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@
 
 #define PACKED __attribute__((packed))
 
-typedef struct session Session;
+typedef struct session cgc_Session;
 struct session {
 	struct {
 		char key[12];
@@ -36,21 +36,21 @@ struct session {
 	} PACKED login;
 	struct {
 		char cmd[8];
-		uint16_t bytes;
+		cgc_uint16_t bytes;
 		char *data;
 	} PACKED request;
-	Session *next;
+	cgc_Session *next;
 } PACKED;
 
-typedef struct response Response;
+typedef struct response cgc_Response;
 struct response {
 	char session_key[12];
 	char answer[128];		// answer to command, if there is one
 	char result[8];			// success/fail of request.
 } PACKED;
 
-Session *session_get_by_username(Session *s_list, Session *s);
-void session_append(Session **s_list, Session *s);
-Session *session_remove(Session **s_list, Session *s);
+cgc_Session *cgc_session_get_by_username(cgc_Session *s_list, cgc_Session *s);
+void cgc_session_append(cgc_Session **s_list, cgc_Session *s);
+cgc_Session *cgc_session_remove(cgc_Session **s_list, cgc_Session *s);
 
 #endif

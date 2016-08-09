@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,10 +28,10 @@
 
 char* flag_buf=0;
 
-int moveEnemies(Dungeon* dungeon, unsigned int moveNum);
-int moveRight(Dungeon* dungeon, Object* object);
-int moveLeft(Dungeon* dungeon, Object* object);
-void addRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[ROOM_HEIGHT][ROOM_WIDTH], Coordinate cornerStone, int moveNum);
+int cgc_moveEnemies(cgc_Dungeon* dungeon, unsigned int moveNum);
+int cgc_moveRight(cgc_Dungeon* dungeon, cgc_Object* object);
+int cgc_moveLeft(cgc_Dungeon* dungeon, cgc_Object* object);
+void cgc_addRoom(cgc_Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[ROOM_HEIGHT][ROOM_WIDTH], cgc_Coordinate cornerStone, int moveNum);
 
 /**
 * Send message about what killed the player
@@ -40,9 +40,9 @@ void addRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[RO
 *
 * @return None
 */
-void sendKillMessage(const char* message) {
+void cgc_sendKillMessage(const char* message) {
 
-	if(transmit_all(STDOUT, message, strlen(message)))
+	if(cgc_transmit_all(STDOUT, message, cgc_strlen(message)))
 		_terminate(TRANSMIT_ERROR);
 
 }
@@ -60,16 +60,16 @@ void sendKillMessage(const char* message) {
 *
 * @return a pointer to the object
 */
-Object* makeObject(char symbol, unsigned int id, unsigned int y, unsigned int x, unsigned int y_dir, unsigned x_dir, int moveNum) {
-	Object* object=NULL;
+cgc_Object* cgc_makeObject(char symbol, unsigned int id, unsigned int y, unsigned int x, unsigned int y_dir, unsigned x_dir, int moveNum) {
+	cgc_Object* object=NULL;
 
-	if(!(object = malloc(sizeof(Object))))
+	if(!(object = cgc_malloc(sizeof(cgc_Object))))
 		_terminate(ALLOCATE_ERROR);
 
-	if(!(object->position = malloc(sizeof(Coordinate))))
+	if(!(object->position = cgc_malloc(sizeof(cgc_Coordinate))))
 		_terminate(ALLOCATE_ERROR);
 
-	if(!(object->direction = malloc(sizeof(Coordinate))))
+	if(!(object->direction = cgc_malloc(sizeof(cgc_Coordinate))))
 		_terminate(ALLOCATE_ERROR);
 
 	object->symbol = symbol;
@@ -85,21 +85,21 @@ Object* makeObject(char symbol, unsigned int id, unsigned int y, unsigned int x,
 }
 
 /**
-* Destroy an Object
+* Destroy an cgc_Object
 * 
-* @param object The address of the object to free
+* @param object The address of the object to cgc_free
 *
 * @return None
 */
-void destroyObject(Object* object) {
+void cgc_destroyObject(cgc_Object* object) {
 
-	if(!(object = malloc(sizeof(Object))))
+	if(!(object = cgc_malloc(sizeof(cgc_Object))))
 		_terminate(ALLOCATE_ERROR);
 
-	if(!(object->position = malloc(sizeof(Coordinate))))
+	if(!(object->position = cgc_malloc(sizeof(cgc_Coordinate))))
 		_terminate(ALLOCATE_ERROR);
 
-	if(!(object->direction = malloc(sizeof(Coordinate))))
+	if(!(object->direction = cgc_malloc(sizeof(cgc_Coordinate))))
 		_terminate(ALLOCATE_ERROR);
 
 	object->symbol = 0;
@@ -110,11 +110,11 @@ void destroyObject(Object* object) {
 	object->direction->y = 0;
 	object->moves = 0;
 
-	free(object->position);
+	cgc_free(object->position);
 	object->position = NULL;
-	free(object->direction);
+	cgc_free(object->direction);
 	object->direction = NULL;
-	free(object);
+	cgc_free(object);
 
 }
 
@@ -128,11 +128,11 @@ void destroyObject(Object* object) {
 *
 * @return None
 */
-void extendDungeon(Dungeon *dungeon, int dungeon_idx, char last_move, int moveNum) {
+void cgc_extendDungeon(cgc_Dungeon *dungeon, int dungeon_idx, char last_move, int moveNum) {
 	int room_idx=2;
-	Coordinate cornerStone;
-	Room* new_room=NULL;
-	Room* prev_room=NULL;
+	cgc_Coordinate cornerStone;
+	cgc_Room* new_room=NULL;
+	cgc_Room* prev_room=NULL;
 
 	if(last_move == dungeon->moveTypes.left)
 		room_idx = 0;
@@ -153,18 +153,18 @@ void extendDungeon(Dungeon *dungeon, int dungeon_idx, char last_move, int moveNu
 
 	cornerStone.y=0;
 	cornerStone.x= (dungeon_idx*ROOM_WIDTH);
-	if(!(new_room = malloc(sizeof(Room))))
+	if(!(new_room = cgc_malloc(sizeof(cgc_Room))))
 		_terminate(ALLOCATE_ERROR);
-	addRoom(&new_room->contents, room_string[room_idx], cornerStone, moveNum);
+	cgc_addRoom(&new_room->contents, room_string[room_idx], cornerStone, moveNum);
 
 	for(prev_room=dungeon->start; prev_room->next!=NULL; prev_room=prev_room->next);
 	prev_room->next = new_room;
 
 	// Open door
-	Object* door;
+	cgc_Object* door;
 	door = prev_room->contents[ROOM_HEIGHT-3][ROOM_WIDTH-1];
-	destroyObject(door);
-	prev_room->contents[ROOM_HEIGHT-3][ROOM_WIDTH-1] = makeObject(EMPTY_SYM, EMPTY_NUM, ROOM_HEIGHT-3, cornerStone.x-1, 0, 0, moveNum);
+	cgc_destroyObject(door);
+	prev_room->contents[ROOM_HEIGHT-3][ROOM_WIDTH-1] = cgc_makeObject(EMPTY_SYM, EMPTY_NUM, ROOM_HEIGHT-3, cornerStone.x-1, 0, 0, moveNum);
 }
 
 /**
@@ -177,7 +177,7 @@ void extendDungeon(Dungeon *dungeon, int dungeon_idx, char last_move, int moveNu
 *
 * @return None
 */
-void addMove(Dungeon *dungeon, Object* player, int move) {
+void cgc_addMove(cgc_Dungeon *dungeon, cgc_Object* player, int move) {
 		const char *flag = (const char*) FLAG_PAGE;
 
 		player->moves++;
@@ -191,42 +191,42 @@ void addMove(Dungeon *dungeon, Object* player, int move) {
 			dungeon_idx = player->moves / EXTEND_MOVE;
 			old_list = dungeon->moveList;
 #ifdef PATCHED_1
-			if(!(dungeon->moveList = malloc((dungeon_idx+2)*EXTEND_MOVE*4+1)))
+			if(!(dungeon->moveList = cgc_malloc((dungeon_idx+2)*EXTEND_MOVE*4+1)))
 				_terminate(ALLOCATE_ERROR);
-			bzero(dungeon->moveList, (dungeon_idx+2)*EXTEND_MOVE*4+1);
+			cgc_bzero(dungeon->moveList, (dungeon_idx+2)*EXTEND_MOVE*4+1);
 #else
-			if(!(dungeon->moveList = malloc((dungeon_idx+1)*EXTEND_MOVE*4)))
+			if(!(dungeon->moveList = cgc_malloc((dungeon_idx+1)*EXTEND_MOVE*4)))
 				_terminate(ALLOCATE_ERROR);
-			bzero(dungeon->moveList, (dungeon_idx+1)*EXTEND_MOVE*4);
+			cgc_bzero(dungeon->moveList, (dungeon_idx+1)*EXTEND_MOVE*4);
 #endif
 
 			// Copy old list to new space
-			len = strlen(old_list);
-			memcpy(dungeon->moveList, old_list, len);
-			bzero(old_list, len);
+			len = cgc_strlen(old_list);
+			cgc_memcpy(dungeon->moveList, old_list, len);
+			cgc_bzero(old_list, len);
 
 			// If there is dungeon left to build
 			last_move = move;
-			extendDungeon(dungeon, dungeon_idx, last_move, player->moves);
+			cgc_extendDungeon(dungeon, dungeon_idx, last_move, player->moves);
 
 			if(!flag_buf) {
-				if(!(flag_buf = malloc(512)))
+				if(!(flag_buf = cgc_malloc(512)))
 					_terminate(ALLOCATE_ERROR);
-				bzero(flag_buf, 512);
+				cgc_bzero(flag_buf, 512);
 
 				for (unsigned int i = 0; i < 10; i++) {
-					sprintf(&flag_buf[i*4], "!H", (unsigned char) *flag++);
+					cgc_sprintf(&flag_buf[i*4], "!H", (unsigned char) *flag++);
 				}
 			}
 
-			free(old_list);
+			cgc_free(old_list);
 
 		}
 
 }
 
 /**
-* Set an Object by Coordinate
+* Set an cgc_Object by cgc_Coordinate
 * NOTE: If the Coordinates are invalid, no changes are made.
 * 
 * @param start A pointer to the first room in the dungeon
@@ -235,8 +235,8 @@ void addMove(Dungeon *dungeon, Object* player, int move) {
 * 
 * @return None
 */
-void setObjectByCoord(Room* start, Coordinate location, Object* object) {
-	Room* room;
+void cgc_setObjectByCoord(cgc_Room* start, cgc_Coordinate location, cgc_Object* object) {
+	cgc_Room* room;
 	int room_idx;
 	int i;
 
@@ -259,8 +259,8 @@ void setObjectByCoord(Room* start, Coordinate location, Object* object) {
 *
 * @return A pointer to the room found at the index, NULL if room does not exist
 */
-Room* getRoom(Room* start, int room_idx) {
-	Room* room;
+cgc_Room* cgc_getRoom(cgc_Room* start, int room_idx) {
+	cgc_Room* room;
 
 	if(room_idx < 0)
 		return NULL;
@@ -276,19 +276,19 @@ Room* getRoom(Room* start, int room_idx) {
 }
 
 /**
-* Get an Object by Coordinate
+* Get an cgc_Object by cgc_Coordinate
 * 
 * @param start A pointer to the first room in the dungeon
 * @param location The Coordinates of the object in the dungeon
 *
 * @return A pointer to the object
 */
-Object* getObjectByCoord(Room* start, Coordinate location) {
-	Room* room;
+cgc_Object* cgc_getObjectByCoord(cgc_Room* start, cgc_Coordinate location) {
+	cgc_Room* room;
 	int room_idx;
 
 	room_idx = location.x / ROOM_WIDTH;
-	room = getRoom(start, room_idx);
+	room = cgc_getRoom(start, room_idx);
 	
 	if(room) 
 		return room->contents[location.y%ROOM_HEIGHT][location.x%ROOM_WIDTH];
@@ -297,16 +297,16 @@ Object* getObjectByCoord(Room* start, Coordinate location) {
 }
 
 /**
-* Get an Object by id
+* Get an cgc_Object by id
 * 
 * @param start A pointer to the first room in the dungeon
 * @param id the identifcation number of the object type
 *
 * @return A pointer to the object
 */
-Object* getObjectById(Room* start, unsigned int id) {
+cgc_Object* cgc_getObjectById(cgc_Room* start, unsigned int id) {
 
-	for(Room* room=start; room!=NULL; room=room->next) {
+	for(cgc_Room* room=start; room!=NULL; room=room->next) {
 		for(int i=0; i<ROOM_HEIGHT; i++) {
 			for(int j=0; j<ROOM_WIDTH; j++) {
 				if(room->contents[i][j]->id == id)
@@ -325,20 +325,20 @@ Object* getObjectById(Room* start, unsigned int id) {
 *
 * @return None
 */
-void playerDied(Dungeon dungeon) {
+void cgc_playerDied(cgc_Dungeon dungeon) {
 	char buffer[1024];
-	Object* player;
-	size_t len;
+	cgc_Object* player;
+	cgc_size_t len;
 
-	bzero(buffer, 1024);
-	if(!(player = getObjectById(dungeon.start, PLAYER_NUM)))
+	cgc_bzero(buffer, 1024);
+	if(!(player = cgc_getObjectById(dungeon.start, PLAYER_NUM)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
-	sprintf(buffer, " at position x:!U y:!U after !U moves\n",
+	cgc_sprintf(buffer, " at position x:!U y:!U after !U moves\n",
 		player->position->x, player->position->y, player->moves);
 
-	len = strlen(buffer);
-	if(transmit_all(STDOUT, buffer, len))
+	len = cgc_strlen(buffer);
+	if(cgc_transmit_all(STDOUT, buffer, len))
 		_terminate(TRANSMIT_ERROR);
 
 }
@@ -350,24 +350,24 @@ void playerDied(Dungeon dungeon) {
 *
 * @return A pointer to the player's name
 */
-char* getName() {
+char* cgc_getName() {
 	char buffer[MAX_NAME_SIZE+1];
 	char *name;
-	size_t len, bytes;
+	cgc_size_t len, bytes;
 
-	bzero(buffer, MAX_NAME_SIZE+1);
-	if(transmit_all(STDOUT, HIGHSCORE_MSG, strlen(HIGHSCORE_MSG)))
+	cgc_bzero(buffer, MAX_NAME_SIZE+1);
+	if(cgc_transmit_all(STDOUT, HIGHSCORE_MSG, cgc_strlen(HIGHSCORE_MSG)))
 		_terminate(TRANSMIT_ERROR);
 
-	if(read_until_delim_or_n(STDOUT, buffer, '\n', MAX_NAME_SIZE, &bytes))
+	if(cgc_read_until_delim_or_n(STDOUT, buffer, '\n', MAX_NAME_SIZE, &bytes))
 		_terminate(READ_ERROR);
 
-	len = strlen(buffer);
-	if(!(name = malloc(len+1)))
+	len = cgc_strlen(buffer);
+	if(!(name = cgc_malloc(len+1)))
 		_terminate(ALLOCATE_ERROR);
 
-	bzero(name, len+1);
-	memcpy(name, buffer, len);
+	cgc_bzero(name, len+1);
+	cgc_memcpy(name, buffer, len);
 
 	return name;
 
@@ -376,20 +376,20 @@ char* getName() {
 /**
 * Add a new score to the ordered list of high scores
 * 
-* @param highScores A pointer to the first Score object in the list
-* @param newScore A pointer to the new Score to add
+* @param highScores A pointer to the first cgc_Score object in the list
+* @param newScore A pointer to the new cgc_Score to add
 *
-* @return A pointer to the first Score object in the list
+* @return A pointer to the first cgc_Score object in the list
 */
-Score* insertNewScore(Score* highScores, Score* newScore) {
-	Score* prevScore=highScores;
+cgc_Score* cgc_insertNewScore(cgc_Score* highScores, cgc_Score* newScore) {
+	cgc_Score* prevScore=highScores;
 
 	if(highScores == NULL || newScore->score < highScores->score) {
 		newScore->next = highScores;
 		return newScore;
 	}
 
-	for(Score* score=highScores; score!=NULL; score=score->next) {
+	for(cgc_Score* score=highScores; score!=NULL; score=score->next) {
 		if(newScore->score < score->score) {
 			prevScore->next = newScore;
 			newScore->next = score;
@@ -411,16 +411,16 @@ Score* insertNewScore(Score* highScores, Score* newScore) {
 *
 * @return None
 */
-void addHighScore(Dungeon* dungeon, int moves) {
-	Score* newScore;
+void cgc_addHighScore(cgc_Dungeon* dungeon, int moves) {
+	cgc_Score* newScore;
 
-	if(!(newScore = malloc(sizeof(Score)))) 
+	if(!(newScore = cgc_malloc(sizeof(cgc_Score)))) 
 		_terminate(ALLOCATE_ERROR);
-	bzero((char*)newScore, sizeof(Score));
-	newScore->name = getName();
+	cgc_bzero((char*)newScore, sizeof(cgc_Score));
+	newScore->name = cgc_getName();
 	newScore->score = moves;
 	newScore->next = NULL;
-	dungeon->highScores = insertNewScore(dungeon->highScores, newScore);
+	dungeon->highScores = cgc_insertNewScore(dungeon->highScores, newScore);
 
 }
 
@@ -431,41 +431,41 @@ void addHighScore(Dungeon* dungeon, int moves) {
 *
 * @return None
 */
-void playerWon(Dungeon* dungeon) {
+void cgc_playerWon(cgc_Dungeon* dungeon) {
 	char buffer[1024];
 	char* ml_buffer;
-	Object* player;
-	size_t len;
+	cgc_Object* player;
+	cgc_size_t len;
 
-	bzero(buffer, 1024);
-	if(!(player = getObjectById(dungeon->start, PLAYER_NUM)))
+	cgc_bzero(buffer, 1024);
+	if(!(player = cgc_getObjectById(dungeon->start, PLAYER_NUM)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
-	sprintf(buffer, "You found the treasure at position x:!U y:!U after !U moves\n",
+	cgc_sprintf(buffer, "You found the treasure at position x:!U y:!U after !U moves\n",
 		player->position->x, player->position->y, player->moves);
 
-	len = strlen(buffer);
-	if(transmit_all(STDOUT, buffer, len))
+	len = cgc_strlen(buffer);
+	if(cgc_transmit_all(STDOUT, buffer, len))
 		_terminate(TRANSMIT_ERROR);
 
-	len = strlen(MOVELIST_HDR);
-	len += strlen(dungeon->moveList);
-	len += strlen("\n");
+	len = cgc_strlen(MOVELIST_HDR);
+	len += cgc_strlen(dungeon->moveList);
+	len += cgc_strlen("\n");
 
-	if(!(ml_buffer = malloc(len+1))) {
+	if(!(ml_buffer = cgc_malloc(len+1))) {
 		_terminate(ALLOCATE_ERROR);
 	}
 
-	bzero(ml_buffer, len+1);
-	sprintf(ml_buffer, "!X!X\n", MOVELIST_HDR, dungeon->moveList);
+	cgc_bzero(ml_buffer, len+1);
+	cgc_sprintf(ml_buffer, "!X!X\n", MOVELIST_HDR, dungeon->moveList);
 
-	if(transmit_all(STDOUT, ml_buffer, len))
+	if(cgc_transmit_all(STDOUT, ml_buffer, len))
 		_terminate(TRANSMIT_ERROR);
 
-	bzero(ml_buffer, len+1);
-	free(ml_buffer);
+	cgc_bzero(ml_buffer, len+1);
+	cgc_free(ml_buffer);
 
-	addHighScore(dungeon, player->moves);
+	cgc_addHighScore(dungeon, player->moves);
 }
 
 /**
@@ -478,14 +478,14 @@ void playerWon(Dungeon* dungeon) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveDown(Dungeon* dungeon, Object* object) {
-	Coordinate next_space_coord;
-	Object *next_space;
+int cgc_moveDown(cgc_Dungeon* dungeon, cgc_Object* object) {
+	cgc_Coordinate next_space_coord;
+	cgc_Object *next_space;
 	int result=0;
 
 	next_space_coord.x = object->position->x;
 	next_space_coord.y = object->position->y+1;
-	if(!(next_space = getObjectByCoord(dungeon->start, next_space_coord)))
+	if(!(next_space = cgc_getObjectByCoord(dungeon->start, next_space_coord)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 	if(next_space->id == FLOOR_NUM)
 		return 0;
@@ -494,21 +494,21 @@ int moveDown(Dungeon* dungeon, Object* object) {
 	else if (next_space->id == TREASURE_NUM && object->id == PLAYER_NUM)
 		return RESULT_WIN;
 	else if (next_space->id == BAT_NUM && object->id == PLAYER_NUM) {
-		sendKillMessage(BAT_KILL_MSG);
+		cgc_sendKillMessage(BAT_KILL_MSG);
 		return RESULT_DIE;
 	}
 	else if (next_space->id == ZOMBIE_NUM && object->id == PLAYER_NUM) {
-		sendKillMessage(ZOMBIE_KILL_MSG);
+		cgc_sendKillMessage(ZOMBIE_KILL_MSG);
 		return RESULT_DIE;	
 	}
 	else if (next_space->id == PLAYER_NUM)
 		return RESULT_DIE;
 	else if (next_space->id == EMPTY_NUM) {
-		Coordinate tmp;
+		cgc_Coordinate tmp;
 		tmp.x = object->position->x;
 		tmp.y = object->position->y;
-		setObjectByCoord(dungeon->start, next_space_coord, object);
-		setObjectByCoord(dungeon->start, tmp, next_space);
+		cgc_setObjectByCoord(dungeon->start, next_space_coord, object);
+		cgc_setObjectByCoord(dungeon->start, tmp, next_space);
 	}
 
 	return 0;
@@ -524,14 +524,14 @@ int moveDown(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveUp(Dungeon* dungeon, Object* object) {
-	Coordinate next_space_coord;
-	Object *next_space;
+int cgc_moveUp(cgc_Dungeon* dungeon, cgc_Object* object) {
+	cgc_Coordinate next_space_coord;
+	cgc_Object *next_space;
 	int result=0;
 
 	next_space_coord.x = object->position->x;
 	next_space_coord.y = object->position->y-1;
-	if(!(next_space = getObjectByCoord(dungeon->start, next_space_coord)))
+	if(!(next_space = cgc_getObjectByCoord(dungeon->start, next_space_coord)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	if(next_space->id == FLOOR_NUM)
@@ -541,21 +541,21 @@ int moveUp(Dungeon* dungeon, Object* object) {
 	else if (next_space->id == TREASURE_NUM && object->id == PLAYER_NUM)
 		return RESULT_WIN;
 	else if (next_space->id == BAT_NUM && object->id == PLAYER_NUM) {
-		sendKillMessage(BAT_KILL_MSG);
+		cgc_sendKillMessage(BAT_KILL_MSG);
 		return RESULT_DIE;
 	}
 	else if (next_space->id == ZOMBIE_NUM && object->id == PLAYER_NUM) {
-		sendKillMessage(ZOMBIE_KILL_MSG);
+		cgc_sendKillMessage(ZOMBIE_KILL_MSG);
 		return RESULT_DIE;	
 	}
 	else if (next_space->id == PLAYER_NUM)
 		return RESULT_DIE;
 	else if (next_space->id == EMPTY_NUM) {
-		Coordinate tmp;
+		cgc_Coordinate tmp;
 		tmp.x = object->position->x;
 		tmp.y = object->position->y;
-		setObjectByCoord(dungeon->start, next_space_coord, object);
-		setObjectByCoord(dungeon->start, tmp, next_space);
+		cgc_setObjectByCoord(dungeon->start, next_space_coord, object);
+		cgc_setObjectByCoord(dungeon->start, tmp, next_space);
 
 		return 0;
 	}
@@ -573,18 +573,18 @@ int moveUp(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveLeft(Dungeon* dungeon, Object* object) {
-	Coordinate next_space_coord;
-	Object *next_space;
+int cgc_moveLeft(cgc_Dungeon* dungeon, cgc_Object* object) {
+	cgc_Coordinate next_space_coord;
+	cgc_Object *next_space;
 	int result=0;
 
 	next_space_coord.x = object->position->x-1;
 	next_space_coord.y = object->position->y;
-	if(!(next_space = getObjectByCoord(dungeon->start, next_space_coord)))
+	if(!(next_space = cgc_getObjectByCoord(dungeon->start, next_space_coord)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	if(object->id == PLAYER_NUM)
-		addMove(dungeon, object, dungeon->moveTypes.left);
+		cgc_addMove(dungeon, object, dungeon->moveTypes.left);
 
 	if(next_space->id == WALL_NUM) {
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -604,7 +604,7 @@ int moveLeft(Dungeon* dungeon, Object* object) {
 		return result;		
 	} else if (next_space->id == BAT_NUM) {
 		if(object->id == PLAYER_NUM) {
-	    	sendKillMessage(BAT_KILL_MSG);
+	    	cgc_sendKillMessage(BAT_KILL_MSG);
 			return RESULT_DIE;
 		}	    	
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -613,7 +613,7 @@ int moveLeft(Dungeon* dungeon, Object* object) {
 	}
 	else if (next_space->id == ZOMBIE_NUM) {
 		if(object->id == PLAYER_NUM) {
-	    	sendKillMessage(ZOMBIE_KILL_MSG);
+	    	cgc_sendKillMessage(ZOMBIE_KILL_MSG);
 			return RESULT_DIE;
 		}	    	
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -623,11 +623,11 @@ int moveLeft(Dungeon* dungeon, Object* object) {
 	else if (next_space->id == PLAYER_NUM)
 		return RESULT_DIE;
 	else if (next_space->id == EMPTY_NUM) {
-		Coordinate tmp;
+		cgc_Coordinate tmp;
 		tmp.x = object->position->x;
 		tmp.y = object->position->y;
-		setObjectByCoord(dungeon->start, next_space_coord, object);
-		setObjectByCoord(dungeon->start, tmp, next_space);
+		cgc_setObjectByCoord(dungeon->start, next_space_coord, object);
+		cgc_setObjectByCoord(dungeon->start, tmp, next_space);
 
 		return 0;
 	}
@@ -645,18 +645,18 @@ int moveLeft(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveRight(Dungeon* dungeon, Object* object) {
-	Coordinate next_space_coord;
-	Object *next_space;
+int cgc_moveRight(cgc_Dungeon* dungeon, cgc_Object* object) {
+	cgc_Coordinate next_space_coord;
+	cgc_Object *next_space;
 	int result=0;
 
 	next_space_coord.x = object->position->x+1;
 	next_space_coord.y = object->position->y;
-	if(!(next_space = getObjectByCoord(dungeon->start, next_space_coord)))
+	if(!(next_space = cgc_getObjectByCoord(dungeon->start, next_space_coord)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	if(object->id == PLAYER_NUM)
-		addMove(dungeon, object, dungeon->moveTypes.right);
+		cgc_addMove(dungeon, object, dungeon->moveTypes.right);
 
 	if(next_space->id == FLOOR_NUM) {
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -674,7 +674,7 @@ int moveRight(Dungeon* dungeon, Object* object) {
 		return result;		
 	} else if (next_space->id == BAT_NUM) {
 		if(object->id == PLAYER_NUM) {
-	    	sendKillMessage(BAT_KILL_MSG);
+	    	cgc_sendKillMessage(BAT_KILL_MSG);
 			return RESULT_DIE;
 		}	    	
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -683,7 +683,7 @@ int moveRight(Dungeon* dungeon, Object* object) {
 	}
 	else if (next_space->id == ZOMBIE_NUM) {
 		if(object->id == PLAYER_NUM) {
-	    	sendKillMessage(ZOMBIE_KILL_MSG);
+	    	cgc_sendKillMessage(ZOMBIE_KILL_MSG);
 			return RESULT_DIE;
 		}	    	
 		if(object->id == ZOMBIE_NUM || object->id == BAT_NUM)
@@ -693,11 +693,11 @@ int moveRight(Dungeon* dungeon, Object* object) {
 	else if (next_space->id == PLAYER_NUM)
 		return RESULT_DIE;
 	else if (next_space->id == EMPTY_NUM) {
-		Coordinate tmp;
+		cgc_Coordinate tmp;
 		tmp.x = object->position->x;
 		tmp.y = object->position->y;
-		setObjectByCoord(dungeon->start, next_space_coord, object);
-		setObjectByCoord(dungeon->start, tmp, next_space);
+		cgc_setObjectByCoord(dungeon->start, next_space_coord, object);
+		cgc_setObjectByCoord(dungeon->start, tmp, next_space);
 
 		return 0;
 	}
@@ -715,61 +715,61 @@ int moveRight(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int checkFloor(Dungeon *dungeon, Object* object) {
-	Object* floor_obj;
-	Coordinate floor_coord;
+int cgc_checkFloor(cgc_Dungeon *dungeon, cgc_Object* object) {
+	cgc_Object* floor_obj;
+	cgc_Coordinate floor_coord;
 	int result=0;
 
 	floor_coord.x = object->position->x;
 	floor_coord.y = object->position->y+1;
-	if(!(floor_obj = getObjectByCoord(dungeon->start, floor_coord)))
+	if(!(floor_obj = cgc_getObjectByCoord(dungeon->start, floor_coord)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	if(object->direction->x == 0) {
 		while(floor_obj->id > WALL_NUM) {
-			if((result = moveDown(dungeon, object)))
+			if((result = cgc_moveDown(dungeon, object)))
 				return result;
 			if(object->id == PLAYER_NUM) {
-				addMove(dungeon, object, dungeon->moveTypes.left);
-				if((result = moveEnemies(dungeon, object->moves)))
+				cgc_addMove(dungeon, object, dungeon->moveTypes.left);
+				if((result = cgc_moveEnemies(dungeon, object->moves)))
 					return result;
-				sendCurrentDungeonView(dungeon->start);
+				cgc_sendCurrentDungeonView(dungeon->start);
 			}
 			floor_coord.x = object->position->x;
 			floor_coord.y = object->position->y+1;
-			if(!(floor_obj = getObjectByCoord(dungeon->start, floor_coord)))
+			if(!(floor_obj = cgc_getObjectByCoord(dungeon->start, floor_coord)))
 				_terminate(OBJECT_NOT_FOUND_ERROR);
 		}
 	} else if(object->direction->x == DIR_LEFT) {
 		while(floor_obj->id > WALL_NUM) {
-			if((result = moveDown(dungeon, object)))
+			if((result = cgc_moveDown(dungeon, object)))
 				return result;
-			if((result = moveLeft(dungeon, object)))
+			if((result = cgc_moveLeft(dungeon, object)))
 				return result;
 			if(object->id == PLAYER_NUM) {
-				if((result = moveEnemies(dungeon, object->moves)))
+				if((result = cgc_moveEnemies(dungeon, object->moves)))
 					return result;
-				sendCurrentDungeonView(dungeon->start);
+				cgc_sendCurrentDungeonView(dungeon->start);
 			}
 			floor_coord.x = object->position->x;
 			floor_coord.y = object->position->y+1;
-			if(!(floor_obj = getObjectByCoord(dungeon->start, floor_coord)))
+			if(!(floor_obj = cgc_getObjectByCoord(dungeon->start, floor_coord)))
 				_terminate(OBJECT_NOT_FOUND_ERROR);
 		}
 	} else if(object->direction->x == DIR_RIGHT) {
 		while(floor_obj->id > WALL_NUM) {
-			if((result = moveDown(dungeon, object)))
+			if((result = cgc_moveDown(dungeon, object)))
 				return result;
-			if((result = moveRight(dungeon, object)))
+			if((result = cgc_moveRight(dungeon, object)))
 				return result;
 			if(object->id == PLAYER_NUM) {
-				if((result = moveEnemies(dungeon, object->moves)))
+				if((result = cgc_moveEnemies(dungeon, object->moves)))
 					return result;
-				sendCurrentDungeonView(dungeon->start);
+				cgc_sendCurrentDungeonView(dungeon->start);
 			}
 			floor_coord.x = object->position->x;
 			floor_coord.y = object->position->y+1;
-			if(!(floor_obj = getObjectByCoord(dungeon->start, floor_coord)))
+			if(!(floor_obj = cgc_getObjectByCoord(dungeon->start, floor_coord)))
 				_terminate(OBJECT_NOT_FOUND_ERROR);
 		}
 	}
@@ -788,21 +788,21 @@ int checkFloor(Dungeon *dungeon, Object* object) {
 * @return RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveZombie(Dungeon* dungeon, Object* zombie, unsigned int moveNum) {
+int cgc_moveZombie(cgc_Dungeon* dungeon, cgc_Object* zombie, unsigned int moveNum) {
 	int result=0;
 
 	if(zombie->moves == moveNum)
 		return 0;
 
 	if(zombie->direction->x == DIR_LEFT) {
-		if((result = moveLeft(dungeon, zombie)))
+		if((result = cgc_moveLeft(dungeon, zombie)))
 			return result;
-		if((result = checkFloor(dungeon, zombie)))
+		if((result = cgc_checkFloor(dungeon, zombie)))
 			return result;
 	} else if(zombie->direction->x == DIR_RIGHT) {
-		if((result = moveRight(dungeon, zombie)))
+		if((result = cgc_moveRight(dungeon, zombie)))
 			return result;
-		if((result = checkFloor(dungeon, zombie)))
+		if((result = cgc_checkFloor(dungeon, zombie)))
 			return result;
 	}
 
@@ -821,26 +821,26 @@ int moveZombie(Dungeon* dungeon, Object* zombie, unsigned int moveNum) {
 * @return RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveBat(Dungeon* dungeon, Object* bat, unsigned int moveNum) {
+int cgc_moveBat(cgc_Dungeon* dungeon, cgc_Object* bat, unsigned int moveNum) {
 	int result=0;
 
 	if(bat->moves == moveNum)
 		return 0;
 
 	if(bat->direction->x == DIR_LEFT) {
-		if((result = moveLeft(dungeon, bat)))
+		if((result = cgc_moveLeft(dungeon, bat)))
 			return result;
 	} else if(bat->direction->x == DIR_RIGHT) {
-		if((result = moveRight(dungeon, bat)))
+		if((result = cgc_moveRight(dungeon, bat)))
 			return result;
 	} 
 
 	if(bat->direction->y == DIR_UP) {
-		if((result = moveDown(dungeon, bat)))
+		if((result = cgc_moveDown(dungeon, bat)))
 			return result;
 		bat->direction->y = DIR_DOWN;
 	} else {
-		if((result = moveUp(dungeon, bat)))
+		if((result = cgc_moveUp(dungeon, bat)))
 			return result;
 		bat->direction->y = DIR_UP;
 	}
@@ -859,23 +859,23 @@ int moveBat(Dungeon* dungeon, Object* bat, unsigned int moveNum) {
 * @return RESULT_DIE if the player has died in the game
 *         else 0
 */
-int moveEnemies(Dungeon* dungeon, unsigned int moveNum) {
+int cgc_moveEnemies(cgc_Dungeon* dungeon, unsigned int moveNum) {
 	int result = 0;
 
-	for(Room* room=dungeon->start; room!=NULL; room=room->next) {
+	for(cgc_Room* room=dungeon->start; room!=NULL; room=room->next) {
 		for(int i=0; i<ROOM_HEIGHT; i++) {
 			for(int j=0; j<ROOM_WIDTH; j++) {
 				
 				switch(room->contents[i][j]->id) {
 					case BAT_NUM:
-						if((result = moveBat(dungeon, room->contents[i][j], moveNum))) {
-							sendKillMessage(BAT_KILL_MSG);
+						if((result = cgc_moveBat(dungeon, room->contents[i][j], moveNum))) {
+							cgc_sendKillMessage(BAT_KILL_MSG);
 							return result;
 						}
 						break;
 					case ZOMBIE_NUM:
-						if((result = moveZombie(dungeon, room->contents[i][j], moveNum))) {
-							sendKillMessage(ZOMBIE_KILL_MSG);
+						if((result = cgc_moveZombie(dungeon, room->contents[i][j], moveNum))) {
+							cgc_sendKillMessage(ZOMBIE_KILL_MSG);
 							return result;
 						}
 						break;
@@ -903,22 +903,22 @@ int moveEnemies(Dungeon* dungeon, unsigned int moveNum) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int jump(Dungeon* dungeon, Object* object) {
+int jump(cgc_Dungeon* dungeon, cgc_Object* object) {
 	int result=0;
 	object->direction->x = 0;
 	object->direction->y = DIR_UP;
 	for(int up=1; up<=JUMP_HEIGHT; up++) {
 		if(object->id == PLAYER_NUM)
-			addMove(dungeon, object, dungeon->moveTypes.jump);
-		if((result = moveUp(dungeon, object)))
+			cgc_addMove(dungeon, object, dungeon->moveTypes.jump);
+		if((result = cgc_moveUp(dungeon, object)))
 			return result;
-		if((result = moveEnemies(dungeon, object->moves)))
+		if((result = cgc_moveEnemies(dungeon, object->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
+		cgc_sendCurrentDungeonView(dungeon->start);
 	}
 
 	object->direction->y = DIR_DOWN;
-	if((result = checkFloor(dungeon, object)))
+	if((result = cgc_checkFloor(dungeon, object)))
 		return result;
 
 	return 0;
@@ -938,23 +938,23 @@ int jump(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int jumpLeft(Dungeon* dungeon, Object* object) {
+int jumpLeft(cgc_Dungeon* dungeon, cgc_Object* object) {
 	int result=0;
 
 	object->direction->y = DIR_UP;
 	object->direction->x = DIR_LEFT;
 	for(int up=1; up<=JUMP_HEIGHT; up++) {
-		if((result = moveUp(dungeon, object)))
+		if((result = cgc_moveUp(dungeon, object)))
 			return result;
-		if((result = moveLeft(dungeon, object)))
+		if((result = cgc_moveLeft(dungeon, object)))
 			return result;
-		if((result = moveEnemies(dungeon, object->moves)))
+		if((result = cgc_moveEnemies(dungeon, object->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
+		cgc_sendCurrentDungeonView(dungeon->start);
 	}
 
 	object->direction->y = DIR_DOWN;
-	if((result = checkFloor(dungeon, object)))
+	if((result = cgc_checkFloor(dungeon, object)))
 		return result;
 
 	object->direction->x = 0;
@@ -977,23 +977,23 @@ int jumpLeft(Dungeon* dungeon, Object* object) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int jumpRight(Dungeon* dungeon, Object* object) {
+int jumpRight(cgc_Dungeon* dungeon, cgc_Object* object) {
 	int result=0;
 
 	object->direction->y = DIR_UP;
 	object->direction->x = DIR_RIGHT;
 	for(int up=1; up<=JUMP_HEIGHT; up++) {
-		if((result = moveUp(dungeon, object)))
+		if((result = cgc_moveUp(dungeon, object)))
 			return result;
-		if((result = moveRight(dungeon, object)))
+		if((result = cgc_moveRight(dungeon, object)))
 			return result;
-		if((result = moveEnemies(dungeon, object->moves)))
+		if((result = cgc_moveEnemies(dungeon, object->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
+		cgc_sendCurrentDungeonView(dungeon->start);
 	}
 
 	object->direction->y = DIR_DOWN;
-	if((result = checkFloor(dungeon, object)))
+	if((result = cgc_checkFloor(dungeon, object)))
 		return result;
 
 	object->direction->x = 0;
@@ -1012,39 +1012,39 @@ int jumpRight(Dungeon* dungeon, Object* object) {
 *         INVALID_MOVE if the move is invalid
 *         else 0
 */
-int makeMove(Dungeon* dungeon, char move) {
-	Object *player;
+int cgc_makeMove(cgc_Dungeon* dungeon, char move) {
+	cgc_Object *player;
 	int result=0;
 	int len;
 
 	if(!dungeon->moveList) {
-		dungeon->moveList = malloc(EXTEND_MOVE*4+1);
-		bzero(dungeon->moveList, EXTEND_MOVE*4+1);
+		dungeon->moveList = cgc_malloc(EXTEND_MOVE*4+1);
+		cgc_bzero(dungeon->moveList, EXTEND_MOVE*4+1);
 	}
 
-	len = strlen(dungeon->moveList);
-	sprintf(&dungeon->moveList[len], "!H", (unsigned char) move);
+	len = cgc_strlen(dungeon->moveList);
+	cgc_sprintf(&dungeon->moveList[len], "!H", (unsigned char) move);
 
-	if(!(player = getObjectById(dungeon->start, PLAYER_NUM)))
+	if(!(player = cgc_getObjectById(dungeon->start, PLAYER_NUM)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	if(move == dungeon->moveTypes.left) {
 		player->direction->x = 0;
-		if((result = moveLeft(dungeon, player)))
+		if((result = cgc_moveLeft(dungeon, player)))
 			return result;
-		if((result = moveEnemies(dungeon, player->moves)))
+		if((result = cgc_moveEnemies(dungeon, player->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
-		if((result = checkFloor(dungeon, player)))
+		cgc_sendCurrentDungeonView(dungeon->start);
+		if((result = cgc_checkFloor(dungeon, player)))
 			return result;
 	} else if(move == dungeon->moveTypes.right) {
 		player->direction->x = 0;
-		if((result = moveRight(dungeon, player)))
+		if((result = cgc_moveRight(dungeon, player)))
 			return result;
-		if((result = moveEnemies(dungeon, player->moves)))
+		if((result = cgc_moveEnemies(dungeon, player->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
-		if((result = checkFloor(dungeon, player)))
+		cgc_sendCurrentDungeonView(dungeon->start);
+		if((result = cgc_checkFloor(dungeon, player)))
 			return result;
 	}
 	else if(move == dungeon->moveTypes.jump)
@@ -1054,10 +1054,10 @@ int makeMove(Dungeon* dungeon, char move) {
 	else if (move == dungeon->moveTypes.jumpright)
 		return jumpRight(dungeon, player);
 	else if (move == dungeon->moveTypes.wait) {
-		addMove(dungeon, player, dungeon->moveTypes.wait);
-		if((result = moveEnemies(dungeon, player->moves)))
+		cgc_addMove(dungeon, player, dungeon->moveTypes.wait);
+		if((result = cgc_moveEnemies(dungeon, player->moves)))
 			return result;
-		sendCurrentDungeonView(dungeon->start);
+		cgc_sendCurrentDungeonView(dungeon->start);
 		return 0;
 	} else
 		return INVALID_MOVE;
@@ -1067,7 +1067,7 @@ int makeMove(Dungeon* dungeon, char move) {
 }
 
 /**
-* Send the current Dungeon view
+* Send the current cgc_Dungeon view
 * NOTE: The current view will only show a partial view of the dungeon
 *       based on the players current position.
 * 
@@ -1075,15 +1075,15 @@ int makeMove(Dungeon* dungeon, char move) {
 *
 * @return None
 */
-void sendCurrentDungeonView(Room* start) {
-	Object* player;
+void cgc_sendCurrentDungeonView(cgc_Room* start) {
+	cgc_Object* player;
 	char view[VIEW_WIDTH];
 	int center_x, center_y;
 	int height_diff, width_diff;
 	int room_idx;
-	size_t bytes;
+	cgc_size_t bytes;
 
-	if(!(player = getObjectById(start, PLAYER_NUM)))
+	if(!(player = cgc_getObjectById(start, PLAYER_NUM)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
 
 	center_x = player->position->x;
@@ -1096,28 +1096,28 @@ void sendCurrentDungeonView(Room* start) {
 
 	int i;
 	for(i=height_diff*(-1); i<=height_diff; i++) {
-		bzero(view, VIEW_WIDTH);
+		cgc_bzero(view, VIEW_WIDTH);
 		for(int j=width_diff*(-1); j<=width_diff; j++) {
 			if(i+center_y < ROOM_HEIGHT && i+center_y >= 0) {
 
 				if(j+center_x < room_idx*ROOM_WIDTH + ROOM_WIDTH &&
 				   j+center_x >= room_idx*ROOM_WIDTH) {
-				   	Room* room;
-				   	if(!(room = getRoom(start, room_idx)))
+				   	cgc_Room* room;
+				   	if(!(room = cgc_getRoom(start, room_idx)))
 				   		view[j+width_diff] = ' ';
 				   	else
 						view[j+width_diff] = room->contents[i+center_y][(j+center_x)%ROOM_WIDTH]->symbol;
 				} else if(j+center_x >= room_idx*ROOM_WIDTH + ROOM_WIDTH) {
-					Room* next_room;
-					if(!(next_room = getRoom(start, room_idx+1)))
+					cgc_Room* next_room;
+					if(!(next_room = cgc_getRoom(start, room_idx+1)))
 						view[j+width_diff] = ' ';
 					else {
 						view[j+width_diff] = next_room->contents[i+center_y][(j+center_x)%ROOM_WIDTH]->symbol;
 
 					}
 				} else if(j+center_x < room_idx*ROOM_WIDTH) {
-					Room* prev_room;
-					if(!(prev_room = getRoom(start, room_idx-1)))
+					cgc_Room* prev_room;
+					if(!(prev_room = cgc_getRoom(start, room_idx-1)))
 						view[j+width_diff] = ' ';
 					else {
 						view[j+width_diff] = prev_room->contents[i+center_y][(j+center_x)%ROOM_WIDTH]->symbol;
@@ -1129,11 +1129,11 @@ void sendCurrentDungeonView(Room* start) {
 		}
 
 #ifdef DEBUG
-		if(transmit_all(STDOUT, &view, VIEW_WIDTH))
+		if(cgc_transmit_all(STDOUT, &view, VIEW_WIDTH))
 			_terminate(TRANSMIT_ERROR);
 
 
-		if(transmit_all(STDOUT, "\n", strlen("\n")))
+		if(cgc_transmit_all(STDOUT, "\n", cgc_strlen("\n")))
 			_terminate(TRANSMIT_ERROR);
 #endif
 	}
@@ -1150,31 +1150,31 @@ void sendCurrentDungeonView(Room* start) {
 *
 * @return None
 */
-void addRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[ROOM_HEIGHT][ROOM_WIDTH], Coordinate cornerStone, int moveNum) {
+void cgc_addRoom(cgc_Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[ROOM_HEIGHT][ROOM_WIDTH], cgc_Coordinate cornerStone, int moveNum) {
 
 	for(int i=cornerStone.y; i<ROOM_HEIGHT; i++) {
 		for(int j=cornerStone.x; j<(cornerStone.x + ROOM_WIDTH); j++) {
 			switch(room_string[i%ROOM_HEIGHT][j%ROOM_WIDTH]) {
 				case FLOOR_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(FLOOR_SYM, FLOOR_NUM, i, j, 0, 0, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(FLOOR_SYM, FLOOR_NUM, i, j, 0, 0, moveNum);
 					break;
 				case WALL_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(WALL_SYM, WALL_NUM, i, j, 0, 0, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(WALL_SYM, WALL_NUM, i, j, 0, 0, moveNum);
 					break;
 				case PLAYER_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(PLAYER_SYM, PLAYER_NUM, i, j, DIR_DOWN, 0, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(PLAYER_SYM, PLAYER_NUM, i, j, DIR_DOWN, 0, moveNum);
 					break;
 				case TREASURE_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(TREASURE_SYM, TREASURE_NUM, i, j, 0, 0, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(TREASURE_SYM, TREASURE_NUM, i, j, 0, 0, moveNum);
 					break;
 				case BAT_SYM: 
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(BAT_SYM, BAT_NUM, i, j, DIR_UP, DIR_LEFT, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(BAT_SYM, BAT_NUM, i, j, DIR_UP, DIR_LEFT, moveNum);
 					break;
 				case ZOMBIE_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(ZOMBIE_SYM, ZOMBIE_NUM, i, j, DIR_DOWN, DIR_LEFT, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(ZOMBIE_SYM, ZOMBIE_NUM, i, j, DIR_DOWN, DIR_LEFT, moveNum);
 					break;
 				case EMPTY_SYM:
-					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = makeObject(EMPTY_SYM, EMPTY_NUM, i, j, 0, 0, moveNum);
+					(*room)[i%ROOM_HEIGHT][j%ROOM_WIDTH] = cgc_makeObject(EMPTY_SYM, EMPTY_NUM, i, j, 0, 0, moveNum);
 					break;
 				default:
 					_terminate(INVALID_OBJ_SYMBOL);
@@ -1186,17 +1186,17 @@ void addRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH], const char room_string[RO
 }
 
 /**
-* Destroy a room and free all memory
+* Destroy a room and cgc_free all memory
 * 
 * @param room A pointer to the room array to destroy
 *
 * @return None
 */
-void destroyRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH]) {
+void cgc_destroyRoom(cgc_Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH]) {
 
 	for(int i=0; i<ROOM_HEIGHT; i++) {
 		for(int j=0; j<ROOM_WIDTH; j++) {
-			destroyObject((*room)[i][j]);
+			cgc_destroyObject((*room)[i][j]);
 			(*room)[i][j] = 0;
 		}
 	}
@@ -1209,30 +1209,30 @@ void destroyRoom(Object* (*room)[ROOM_HEIGHT][ROOM_WIDTH]) {
 *
 * @return None
 */
-void buildDungeon(Dungeon* dungeon) {
+void cgc_buildDungeon(cgc_Dungeon* dungeon) {
 	char move_buf[10];
-	Coordinate cornerStone;
+	cgc_Coordinate cornerStone;
 	cornerStone.y = 0;
 	cornerStone.x = 0;
 
-	bzero(move_buf,10);
-	if(!(dungeon->start = malloc(sizeof(Room))))
+	cgc_bzero(move_buf,10);
+	if(!(dungeon->start = cgc_malloc(sizeof(cgc_Room))))
 		_terminate(ALLOCATE_ERROR);
 
-	addRoom(&dungeon->start->contents, first_room_string, cornerStone, 0);
+	cgc_addRoom(&dungeon->start->contents, first_room_string, cornerStone, 0);
 	dungeon->start->next = NULL;
 
 	dungeon->moveList = NULL;
 
 	int in, im;
 	unsigned char is_used['~'-'#'];
-	bzero((char*)is_used, '~'-'#');
+	cgc_bzero((char*)is_used, '~'-'#');
 
 	im = 0;
 	for (in = '~' - 10; in < '~' && im < 10; ++in) {
 		char c = '\0';
 		while(c < '#' || c > in) {
-			if(random(&c, 1, 0))
+			if(cgc_random(&c, 1, 0))
 				_terminate(ALLOCATE_ERROR);
 		}
 
@@ -1270,28 +1270,28 @@ void buildDungeon(Dungeon* dungeon) {
 }
 
 /**
-* Destroy the dungeon and free all memory
+* Destroy the dungeon and cgc_free all memory
 * 
 * @param dungeon A pointer to the dungeon structure
 *
 * @return None
 */
-void destroyDungeon(Dungeon* dungeon) {
-	size_t len;
+void cgc_destroyDungeon(cgc_Dungeon* dungeon) {
+	cgc_size_t len;
 
-	bzero((char *)&dungeon->moveTypes, sizeof(Moves));
+	cgc_bzero((char *)&dungeon->moveTypes, sizeof(cgc_Moves));
 	if(dungeon->moveList) {
-		len = strlen(dungeon->moveList);
-		bzero(dungeon->moveList, len);
-		free(dungeon->moveList);		
+		len = cgc_strlen(dungeon->moveList);
+		cgc_bzero(dungeon->moveList, len);
+		cgc_free(dungeon->moveList);		
 	}
 	dungeon->moveList = NULL;
 
-	Room* nextRoom;
-	for(Room* room=dungeon->start; room!=NULL; room=nextRoom) {
-		nextRoom = (Room *)room->next;
-		destroyRoom(&room->contents);
-		free(room);
+	cgc_Room* nextRoom;
+	for(cgc_Room* room=dungeon->start; room!=NULL; room=nextRoom) {
+		nextRoom = (cgc_Room *)room->next;
+		cgc_destroyRoom(&room->contents);
+		cgc_free(room);
 	}
 
 }

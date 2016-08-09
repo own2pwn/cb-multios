@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,20 +25,20 @@
 #include "hashmap.h"
 #include "stringmanager.h"
 
-class String
+class cgc_String
 {
 private:
-    String(const char *str);
-    inline ~String() {}
+    cgc_String(const char *str);
+    inline ~cgc_String() {}
 public:
-    static String *create(const char *str);
-    static inline const String *intern(const char *str)
+    static cgc_String *cgc_create(const char *str);
+    static inline const cgc_String *cgc_intern(const char *str)
     {
-        return StringManager::get().intern(str);
+        return cgc_StringManager::cgc_get().cgc_intern(str);
     }
 
-    inline const char *cstr() const { return d_data; }
-    inline void destroy() { free(this); }
+    inline const char *cgc_cstr() const { return d_data; }
+    inline void cgc_destroy() { cgc_free(this); }
 private:
     char d_data[];
 };
@@ -46,25 +46,25 @@ private:
 class StringComparator
 {
 public:
-    static inline unsigned int hash(const String *s)
+    static inline unsigned int cgc_hash(const cgc_String *s)
     {
-        return CStringComparator::hash(s->cstr());
+        return CStringComparator::cgc_hash(s->cgc_cstr());
     }
-    static inline bool equals(const String *a, const String *b)
+    static inline bool cgc_equals(const cgc_String *a, const cgc_String *b)
     {
-        return CStringComparator::equals(a->cstr(), b->cstr());
+        return CStringComparator::cgc_equals(a->cgc_cstr(), b->cgc_cstr());
     }
 };
 
 class InternedComparator
 {
 public:
-    static inline unsigned int hash(const String *s)
+    static inline unsigned int cgc_hash(const cgc_String *s)
     {
-        intptr_t p = reinterpret_cast<intptr_t>(s);
+        cgc_intptr_t p = reinterpret_cast<cgc_intptr_t>(s);
         return (p * 761886451) ^ (p << 16);
     }
-    static inline bool equals(const String *a, const String *b)
+    static inline bool cgc_equals(const cgc_String *a, const cgc_String *b)
     {
         return a == b;
     }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,16 +26,16 @@
 #include "tank.h"
 #include "h2o.h"
 
-struct tank *create_tank(uint8_t id, uint8_t capacity) {
-	struct tank *t = calloc(sizeof(struct tank) + capacity * sizeof(struct h2o *));
+struct tank *cgc_create_tank(cgc_uint8_t id, cgc_uint8_t capacity) {
+	struct tank *t = cgc_calloc(sizeof(struct tank) + capacity * sizeof(struct h2o *));
 
 	t->id = id;
 	t->fill_rate = 0;
 	t->valve_position = CLOSED;
 	t->capacity = capacity;
 
-	for (uint8_t i = 0; i < INIT_LEVEL; i++) {
-		t->contents[i] = create_h2o();
+	for (cgc_uint8_t i = 0; i < INIT_LEVEL; i++) {
+		t->contents[i] = cgc_create_h2o();
 		t->level++;
 	}
 
@@ -45,12 +45,12 @@ struct tank *create_tank(uint8_t id, uint8_t capacity) {
 	return t;
 }
 
-int set_fill_rate(struct tank *t, uint8_t fr) {
+int cgc_set_fill_rate(struct tank *t, cgc_uint8_t fr) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
 		if (OUT_OF_SERVICE == t->status) {
 			t->fill_rate = 0;
@@ -63,12 +63,12 @@ int set_fill_rate(struct tank *t, uint8_t fr) {
 	return SUCCESS;
 }
 
-int set_drain_rate(struct tank *t, uint8_t dr) {
+int cgc_set_drain_rate(struct tank *t, cgc_uint8_t dr) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
 		if (OUT_OF_SERVICE == t->status) {
 			t->drain_rate = 0;
@@ -81,12 +81,12 @@ int set_drain_rate(struct tank *t, uint8_t dr) {
 	return SUCCESS;
 }
 
-int open_valve(struct tank *t) {
+int cgc_open_valve(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
 		t->valve_position = OPEN;
 	} else {
@@ -95,12 +95,12 @@ int open_valve(struct tank *t) {
 	return SUCCESS;
 }
 
-int close_valve(struct tank *t) {
+int cgc_close_valve(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
 		t->valve_position = CLOSED;
 	} else {
@@ -109,7 +109,7 @@ int close_valve(struct tank *t) {
 	return SUCCESS;
 }
 
-int set_status(struct tank *t, uint8_t s) {
+int cgc_set_status(struct tank *t, cgc_uint8_t s) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
@@ -117,15 +117,15 @@ int set_status(struct tank *t, uint8_t s) {
 	return SUCCESS;
 }
 
-int set_in_service(struct tank *t) {
+int cgc_set_in_service(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
-		FAILBAIL(set_status(t, IN_SERVICE));
-		FAILBAIL(set_fill_rate(t, FILL_RATE));
+		FAILBAIL(cgc_set_status(t, IN_SERVICE));
+		FAILBAIL(cgc_set_fill_rate(t, FILL_RATE));
 	} else {
 		return ERR_END_OF_LIFE;
 	}
@@ -133,17 +133,17 @@ int set_in_service(struct tank *t) {
 	return SUCCESS;
 }
 
-int set_out_of_service(struct tank *t) {
+int cgc_set_out_of_service(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 	if (FALSE == ret) {
-		FAILBAIL(set_status(t, OUT_OF_SERVICE));
-		FAILBAIL(set_fill_rate(t, 0));
-		FAILBAIL(set_drain_rate(t, 0));
-		FAILBAIL(close_valve(t));
+		FAILBAIL(cgc_set_status(t, OUT_OF_SERVICE));
+		FAILBAIL(cgc_set_fill_rate(t, 0));
+		FAILBAIL(cgc_set_drain_rate(t, 0));
+		FAILBAIL(cgc_close_valve(t));
 	} else {
 		return ERR_END_OF_LIFE;
 	}
@@ -151,7 +151,7 @@ int set_out_of_service(struct tank *t) {
 	return SUCCESS;
 }
 
-int is_in_service(struct tank *t) {
+int cgc_is_in_service(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
@@ -162,20 +162,20 @@ int is_in_service(struct tank *t) {
 	}
 }
 
-int set_end_of_life(struct tank *t) {
+int cgc_set_end_of_life(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	if (TRUE == t->eol) {
 		return ERR_END_OF_LIFE;
 	}
-	set_out_of_service(t);
+	cgc_set_out_of_service(t);
 	t->eol = TRUE;
 
 	return SUCCESS;
 }
 
-int is_end_of_life(struct tank *t) {
+int cgc_is_end_of_life(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
@@ -186,7 +186,7 @@ int is_end_of_life(struct tank *t) {
 	}
 }
 
-int add_water(struct tank *t, uint8_t qty) {
+int cgc_add_water(struct tank *t, cgc_uint8_t qty) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
@@ -201,43 +201,43 @@ int add_water(struct tank *t, uint8_t qty) {
 	// tank from overfilling and thus t->level
 	// int overflow.
 
-	for (uint8_t i = 0; i < qty; i++) {
-		t->contents[t->level++] = create_h2o();
+	for (cgc_uint8_t i = 0; i < qty; i++) {
+		t->contents[t->level++] = cgc_create_h2o();
 	}
 
 	return SUCCESS;
 }
 
-int rm_water(struct tank *t, uint8_t qty) {
+int cgc_rm_water(struct tank *t, cgc_uint8_t qty) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 
 	struct h2o *h = NULL;
 
-	for (uint8_t i = 0; i < qty; i++) {
+	for (cgc_uint8_t i = 0; i < qty; i++) {
 		if (0 == t->level) {
 			return ERR_TANK_EMPTY;
 		}
 		t->level--;
 		h = t->contents[t->level];
 		t->contents[t->level] = NULL;
-		destroy_h2o(h);
+		cgc_destroy_h2o(h);
 	}
 
 	return SUCCESS;
 }
 
-int do_fill(struct tank *t) {
+int cgc_do_fill(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 
 	if (FALSE == ret) {
 		if ((OPEN == t->valve_position) && (IN_SERVICE == t->status)) {
-			FAILBAIL(add_water(t, t->fill_rate));
+			FAILBAIL(cgc_add_water(t, t->fill_rate));
 		}		
 	} else {
 		return ERR_END_OF_LIFE;
@@ -245,16 +245,16 @@ int do_fill(struct tank *t) {
 	return SUCCESS;
 }
 
-int do_drain(struct tank *t) {
+int cgc_do_drain(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 
 	if (FALSE == ret) {
 		if (IN_SERVICE == t->status) {
-			FAILBAIL(rm_water(t, t->drain_rate));
+			FAILBAIL(cgc_rm_water(t, t->drain_rate));
 		}
 	} else {
 		return ERR_END_OF_LIFE;
@@ -262,12 +262,12 @@ int do_drain(struct tank *t) {
 	return SUCCESS;
 }
 
-int is_level_low(struct tank *t) {
+int cgc_is_level_low(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 
 	if (FALSE == ret) {
 		if (LOW_LEVEL >= t->level) {
@@ -280,12 +280,12 @@ int is_level_low(struct tank *t) {
 	}
 }
 
-int is_level_crit_low(struct tank *t) {
+int cgc_is_level_crit_low(struct tank *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
-	if (0 > (ret = is_end_of_life(t))) {return ret;}
+	if (0 > (ret = cgc_is_end_of_life(t))) {return ret;}
 
 	if (FALSE == ret) {
 		if (CRIT_LEVEL >= t->level) {

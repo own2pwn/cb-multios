@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,13 +37,13 @@
 
 const static unsigned int G = 0x1c9c26b9; // generator polynomial
 const static unsigned int prim = 0x89; // primitive polynomial
-static uint8_t field[N];
-static uint8_t gf_index[N+1];
+static cgc_uint8_t field[N];
+static cgc_uint8_t gf_index[N+1];
 
 #define FMUL(x, y) (field[(gf_index[x] + gf_index[y]) % N])
 #define FINV(x) (field[(N - gf_index[x]) % N])
 
-void ecc_init()
+void cgc_ecc_init()
 {
     int i;
 
@@ -65,7 +65,7 @@ void ecc_init()
         gf_index[field[i]] = i;
 }
 
-int ecc_encode(uint8_t *bits)
+int cgc_ecc_encode(cgc_uint8_t *bits)
 {
     int i, j;
     // clear the parity bits
@@ -78,7 +78,7 @@ int ecc_encode(uint8_t *bits)
     // afterwards, the parity bits will contain the remainder of the division
     for (i = N-1; i >= N-K; i--)
     {
-        uint8_t input = bits[N-K-1] ^ bits[i];
+        cgc_uint8_t input = bits[N-K-1] ^ bits[i];
 
         // shift the register
         for (j = N-K-1; j > 0; j--)
@@ -93,10 +93,10 @@ int ecc_encode(uint8_t *bits)
     return 0;
 }
 
-int ecc_decode(uint8_t *bits)
+int cgc_ecc_decode(cgc_uint8_t *bits)
 {
     int i, j, L, m, b, corrections;
-    uint8_t s[2*T], C[T+1], B[T+1];
+    cgc_uint8_t s[2*T], C[T+1], B[T+1];
 
     // calculate syndromes
     for (i = 0; i < 2*T; i++)
@@ -109,8 +109,8 @@ int ecc_decode(uint8_t *bits)
     }
 
     // Berlekamp-Massey algorithm
-    memset(B, 0, sizeof(B));
-    memset(C, 0, sizeof(C));
+    cgc_memset(B, 0, sizeof(B));
+    cgc_memset(C, 0, sizeof(C));
     B[0] = 1;
     C[0] = 1;
     L = 0;
@@ -118,13 +118,13 @@ int ecc_decode(uint8_t *bits)
     b = 1;
     for (i = 0; i < 2*T; i++, m++)
     {
-        uint8_t d = s[i];
+        cgc_uint8_t d = s[i];
         for (j = 1; j <= L; j++)
             d ^= FMUL(C[j], s[i - j]);
         if (d != 0)
         {
-            uint8_t tmp[T+1];
-            memcpy(tmp, C, sizeof(C));
+            cgc_uint8_t tmp[T+1];
+            cgc_memcpy(tmp, C, sizeof(C));
 
             for (j = 0; j < T; j++)
                 if (B[j])
@@ -135,7 +135,7 @@ int ecc_decode(uint8_t *bits)
                 L = i + 1 - L;
                 b = d;
                 m = 0;
-                memcpy(B, tmp, sizeof(B));
+                cgc_memcpy(B, tmp, sizeof(B));
             }
         }
     }
@@ -144,7 +144,7 @@ int ecc_decode(uint8_t *bits)
     corrections = 0;
     for (i = 0; i < N; i++)
     {
-        uint8_t sum = 0;
+        cgc_uint8_t sum = 0;
         for (j = 0; j <= L; j++)
             sum ^= FMUL(C[j], field[(i * j) % N]);
         if (sum == 0)
@@ -156,6 +156,6 @@ int ecc_decode(uint8_t *bits)
     }
 
     if (L > 2)
-        fdprintf(STDERR, "\nFOUND ERRORS: %d %d\n", corrections, L);
+        cgc_fdprintf(STDERR, "\nFOUND ERRORS: %d %d\n", corrections, L);
     return corrections == L;
 }

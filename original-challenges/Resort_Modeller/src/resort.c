@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,21 +31,21 @@
 #include "decider.h"
 #include "resort.h"
 
-typedef struct resort Resort;
+typedef struct resort cgc_Resort;
 struct resort {
-	uint32_t decider_count;
-	uint32_t lift_count;
-	uint32_t trail_count;
-	uint32_t rider_count;
-	Decider **deciders;
-	Lift **lifts;
-	Trail **trails;
-	Rider *riders;
+	cgc_uint32_t decider_count;
+	cgc_uint32_t lift_count;
+	cgc_uint32_t trail_count;
+	cgc_uint32_t rider_count;
+	cgc_Decider **deciders;
+	cgc_Lift **lifts;
+	cgc_Trail **trails;
+	cgc_Rider *riders;
 };
 
-#define RESORT_COUNTS_SZ 	(3 * sizeof(uint32_t))
+#define RESORT_COUNTS_SZ 	(3 * sizeof(cgc_uint32_t))
 
-Resort resort;
+cgc_Resort resort;
 
 /**
  * Find trail having the given id
@@ -53,8 +53,8 @@ Resort resort;
  * @param id 	ID number
  * @return pointer to trail or NULL if not found
  */
-Trail *get_trail_by_id(uint32_t id) {
-	for (uint32_t idx = 0; idx < resort.trail_count && NULL != resort.trails[idx]; idx++) {
+cgc_Trail *cgc_get_trail_by_id(cgc_uint32_t id) {
+	for (cgc_uint32_t idx = 0; idx < resort.trail_count && NULL != resort.trails[idx]; idx++) {
 		if (id == resort.trails[idx]->id) {
 			return resort.trails[idx];
 		}
@@ -68,8 +68,8 @@ Trail *get_trail_by_id(uint32_t id) {
  * @param id 	ID number
  * @return pointer to lift or NULL if not found
  */
-Lift *get_lift_by_id(uint32_t id) {
-	for (uint32_t idx = 0; idx < resort.lift_count && NULL != resort.lifts[idx]; idx++) {
+cgc_Lift *cgc_get_lift_by_id(cgc_uint32_t id) {
+	for (cgc_uint32_t idx = 0; idx < resort.lift_count && NULL != resort.lifts[idx]; idx++) {
 		if (id == resort.lifts[idx]->id) {
 			return resort.lifts[idx];
 		}
@@ -84,8 +84,8 @@ Lift *get_lift_by_id(uint32_t id) {
  * @param id 	ID number
  * @return pointer to decider or NULL if not found
  */
-Decider *get_decider_by_id(uint32_t id) {
-	for (uint32_t idx = 0; idx < resort.decider_count && NULL != resort.deciders[idx]; idx++) {
+cgc_Decider *cgc_get_decider_by_id(cgc_uint32_t id) {
+	for (cgc_uint32_t idx = 0; idx < resort.decider_count && NULL != resort.deciders[idx]; idx++) {
 		if (id == resort.deciders[idx]->id) {
 			return resort.deciders[idx];
 		}
@@ -99,12 +99,12 @@ Decider *get_decider_by_id(uint32_t id) {
  *
  * @return pointer to min decider or NULL of no deciders
  */
-Decider *get_decider_min(void) {
-	Decider *min = NULL;
+cgc_Decider *cgc_get_decider_min(void) {
+	cgc_Decider *min = NULL;
 
 	if (0 != resort.decider_count) {
 		min = resort.deciders[0];
-		for (uint32_t d_idx = 1; d_idx < resort.decider_count; d_idx++) {
+		for (cgc_uint32_t d_idx = 1; d_idx < resort.decider_count; d_idx++) {
 			if (resort.deciders[d_idx]->altitude < min->altitude) {
 				min = resort.deciders[d_idx];
 			}
@@ -117,10 +117,10 @@ Decider *get_decider_min(void) {
  * Validate newly created rider
  *	- Ensure energy_level > 0
  *
- * @param r 	Rider
+ * @param r 	cgc_Rider
  * @return SUCCESS on success, else -1
  */
-int32_t validate_rider(Rider *r) {
+cgc_int32_t cgc_validate_rider(cgc_Rider *r) {
 	if (0 == r->energy_level)
 		return -1;
 
@@ -134,20 +134,20 @@ int32_t validate_rider(Rider *r) {
  * @param count 	Number of riders to generate
  * @return SUCCESS on success, else -1
  */
-int32_t gen_riders(uint32_t **input, uint32_t count) {
-	Rider *r;
-	uint32_t *this = *input;
+cgc_int32_t cgc_gen_riders(cgc_uint32_t **input, cgc_uint32_t count) {
+	cgc_Rider *r;
+	cgc_uint32_t *this = *input;
 
 	while (count--) {
-		if (0 > rider_new(&r, this)) {
+		if (0 > cgc_rider_new(&r, this)) {
 			return -1;
 		}
-		if (0 > validate_rider(r)) {
-			rider_destroy(&r);
+		if (0 > cgc_validate_rider(r)) {
+			cgc_rider_destroy(&r);
 			return -1;
 		}
 
-		rider_append(&resort.riders, r);
+		cgc_rider_append(&resort.riders, r);
 		resort.rider_count++;
 
 		this += RIDER_IO_ELEMENTS;
@@ -161,11 +161,11 @@ int32_t gen_riders(uint32_t **input, uint32_t count) {
  * Validate newly created trail
  *	- Ensure no duplicate ID
  *
- * @param t 	Trail
+ * @param t 	cgc_Trail
  * @return SUCCESS on success, else -1
  */
-int32_t validate_trail(Trail *t) {
-	if (NULL != get_trail_by_id(t->id)) {
+cgc_int32_t cgc_validate_trail(cgc_Trail *t) {
+	if (NULL != cgc_get_trail_by_id(t->id)) {
 		return -1;
 	}
 
@@ -178,18 +178,18 @@ int32_t validate_trail(Trail *t) {
  * @param input 	Input buffer
  * @return SUCCESS on success, else -1
  */
-int32_t gen_trails(uint32_t **input) {
-	Decider *d;
-	Trail *t;
-	uint32_t counter;
-	uint32_t *this = *input;
+cgc_int32_t cgc_gen_trails(cgc_uint32_t **input) {
+	cgc_Decider *d;
+	cgc_Trail *t;
+	cgc_uint32_t counter;
+	cgc_uint32_t *this = *input;
 
 	for (counter = 0; counter < resort.trail_count; counter++) {
-		if (0 > trail_new(&t, this)) {
+		if (0 > cgc_trail_new(&t, this)) {
 			return -1;
 		}
-		if (0 > validate_trail(t)) {
-			trail_destroy(&t, &resort.riders);
+		if (0 > cgc_validate_trail(t)) {
+			cgc_trail_destroy(&t, &resort.riders);
 			return -1;
 		}
 
@@ -197,8 +197,8 @@ int32_t gen_trails(uint32_t **input) {
 		this += TRAIL_IO_ELEMENTS;
 
 		// add this trail as an option for its start decider
-		d = get_decider_by_id(t->start_decider);
-		decider_add_option(d, TRAIL, (void *)t);
+		d = cgc_get_decider_by_id(t->start_decider);
+		cgc_decider_add_option(d, TRAIL, (void *)t);
 	}
 
 	*input = this;
@@ -209,11 +209,11 @@ int32_t gen_trails(uint32_t **input) {
  * Validate newly created lift
  *	- Ensure no duplicate ID
  *
- * @param l 	Lift
+ * @param l 	cgc_Lift
  * @return SUCCESS on success, else -1
  */
-int32_t validate_lift(Lift *l) {
-	if (NULL != get_lift_by_id(l->id)) {
+cgc_int32_t cgc_validate_lift(cgc_Lift *l) {
+	if (NULL != cgc_get_lift_by_id(l->id)) {
 		return -1;
 	}
 
@@ -226,18 +226,18 @@ int32_t validate_lift(Lift *l) {
  * @param input 	Input buffer
  * @return SUCCESS on success, else -1
  */
-int32_t gen_lifts(uint32_t **input) {
-	Decider *d;
-	Lift *l;
-	uint32_t counter;
-	uint32_t *this = *input;
+cgc_int32_t cgc_gen_lifts(cgc_uint32_t **input) {
+	cgc_Decider *d;
+	cgc_Lift *l;
+	cgc_uint32_t counter;
+	cgc_uint32_t *this = *input;
 
 	for (counter = 0; counter < resort.lift_count; counter++) {
-		if (0 > lift_new(&l, this)) {
+		if (0 > cgc_lift_new(&l, this)) {
 			return -1;
 		}
-		if (0 > validate_lift(l)) {
-			lift_destroy(&l, &resort.riders);
+		if (0 > cgc_validate_lift(l)) {
+			cgc_lift_destroy(&l, &resort.riders);
 			return -1;
 		}
 
@@ -245,8 +245,8 @@ int32_t gen_lifts(uint32_t **input) {
 		this += LIFT_IO_ELEMENTS;
 
 		// add this list as an option for its start decider
-		d = get_decider_by_id(l->start_decider);
-		decider_add_option(d, LIFT, (void *)l);
+		d = cgc_get_decider_by_id(l->start_decider);
+		cgc_decider_add_option(d, LIFT, (void *)l);
 	}
 
 	*input = this;
@@ -257,11 +257,11 @@ int32_t gen_lifts(uint32_t **input) {
  * Validate newly created decider
  *	- Ensure no duplicate ID
  *
- * @param d 	Decider
+ * @param d 	cgc_Decider
  * @return SUCCESS on success, else -1
  */
-int32_t validate_decider(Decider *d) {
-	if (NULL != get_decider_by_id(d->id)) {
+cgc_int32_t cgc_validate_decider(cgc_Decider *d) {
+	if (NULL != cgc_get_decider_by_id(d->id)) {
 		return -1;
 	}
 
@@ -274,17 +274,17 @@ int32_t validate_decider(Decider *d) {
  * @param input 	Input buffer
  * @return SUCCESS on success, else -1
  */
-int32_t gen_deciders(uint32_t **input) {
-	Decider *d;
-	uint32_t counter;
-	uint32_t *this = *input;
+cgc_int32_t cgc_gen_deciders(cgc_uint32_t **input) {
+	cgc_Decider *d;
+	cgc_uint32_t counter;
+	cgc_uint32_t *this = *input;
 
 	for (counter = 0; counter < resort.decider_count; counter++) {
-		if (0 > decider_new(&d, this)) {
+		if (0 > cgc_decider_new(&d, this)) {
 			return -1;
 		} 
-		if (0 > validate_decider(d)) {
-			decider_destroy(&d, &resort.riders);
+		if (0 > cgc_validate_decider(d)) {
+			cgc_decider_destroy(&d, &resort.riders);
 			return -1;
 		}
 
@@ -299,38 +299,38 @@ int32_t gen_deciders(uint32_t **input) {
 /**
  * Destroy the lifts, trails, and deciders. Move all riders to the riders list.
  */
-void resort_destroy_digraph(void) {
-	Decider *d;
-	Lift *l;
-	Trail *t;
-	Rider *r;
+void cgc_resort_destroy_digraph(void) {
+	cgc_Decider *d;
+	cgc_Lift *l;
+	cgc_Trail *t;
+	cgc_Rider *r;
 
 	while (0 < resort.decider_count) {
 		d = resort.deciders[--resort.decider_count];
-		decider_destroy(&d, &resort.riders);
+		cgc_decider_destroy(&d, &resort.riders);
 	}
-	if (NULL != resort.deciders) free(resort.deciders);
+	if (NULL != resort.deciders) cgc_free(resort.deciders);
 	resort.deciders = NULL;
 
 	while (0 < resort.lift_count) {
 		l = resort.lifts[--resort.lift_count];
-		lift_destroy(&l, &resort.riders);
+		cgc_lift_destroy(&l, &resort.riders);
 	}
-	if (NULL != resort.lifts) free(resort.lifts);
+	if (NULL != resort.lifts) cgc_free(resort.lifts);
 	resort.lifts = NULL;
 
 	while (0 < resort.trail_count) {
 		t = resort.trails[--resort.trail_count];
-		trail_destroy(&t, &resort.riders);
+		cgc_trail_destroy(&t, &resort.riders);
 	}
-	if (NULL != resort.trails) free(resort.trails);
+	if (NULL != resort.trails) cgc_free(resort.trails);
 	resort.trails = NULL;
 
 	r = resort.riders;
 	// if not all riders have been returned to resort.riders
 	//  this will go OOB
-	for (uint32_t i = 0; i < resort.rider_count; i++) {
-		rider_reset(r);
+	for (cgc_uint32_t i = 0; i < resort.rider_count; i++) {
+		cgc_rider_reset(r);
 		r = r->next;
 	}
 }
@@ -338,39 +338,39 @@ void resort_destroy_digraph(void) {
 
 /**
  * Reset all stats, lifts, trails, and deciders to initial valies.
- *  Move all riders to the Resort riders list and reset their stats.
+ *  Move all riders to the cgc_Resort riders list and reset their stats.
  *
  * @return SUCCESS on success, else -1
  */
-int32_t reset_simulation_do(void) {
-	Decider *d;
-	Lift *l;
-	Trail *t;
-	Rider *r;
-	uint32_t counter;
+cgc_int32_t cgc_reset_simulation_do(void) {
+	cgc_Decider *d;
+	cgc_Lift *l;
+	cgc_Trail *t;
+	cgc_Rider *r;
+	cgc_uint32_t counter;
 
 	counter = 0;
 	while (counter < resort.decider_count) {
 		d = resort.deciders[counter++];
-		decider_reset(d, &resort.riders);
+		cgc_decider_reset(d, &resort.riders);
 	}
 
 	counter = 0;
 	while (counter < resort.lift_count) {
 		l = resort.lifts[counter++];
-		lift_reset(l, &resort.riders);
+		cgc_lift_reset(l, &resort.riders);
 	}
 
 	counter = 0;
 	while (counter < resort.trail_count) {
 		t = resort.trails[counter++];
-		trail_reset(t, &resort.riders);
+		cgc_trail_reset(t, &resort.riders);
 	}
 
 	r = resort.riders;
-	for (uint32_t i = 0; i < resort.rider_count; i++) {
+	for (cgc_uint32_t i = 0; i < resort.rider_count; i++) {
 		if (NULL == r) return -1;
-		rider_reset(r);
+		cgc_rider_reset(r);
 		r = r->next;
 	}
 	return SUCCESS;
@@ -382,13 +382,13 @@ int32_t reset_simulation_do(void) {
  * @param steps 	Number of iterations/steps to run simulation
  * @return SUCCESS on success, else -1 on err
  */
-int32_t go_simul8(uint32_t steps) {
-	Decider *d;
-	Lift *l;
-	Trail *t;
-	Rider *r;
-	int32_t ret = SUCCESS;
-	uint32_t counter = 0;
+cgc_int32_t cgc_go_simul8(cgc_uint32_t steps) {
+	cgc_Decider *d;
+	cgc_Lift *l;
+	cgc_Trail *t;
+	cgc_Rider *r;
+	cgc_int32_t ret = SUCCESS;
+	cgc_uint32_t counter = 0;
 
 	while (0 < steps--) {
 		// deciders
@@ -428,37 +428,37 @@ int32_t go_simul8(uint32_t steps) {
 /**
  * Process input to construct the resort layout; a directed graph of lifts and trails.
  *  If a resort layout already exists, it is replaced. Any existing riders will be returned
- *  to the riders list in the Resort.
+ *  to the riders list in the cgc_Resort.
  *
  * @return SUCCESS on success, else -1
  */
-int32_t load_resort_digraph(void) {
-	int32_t result;
-	uint32_t read_sz;
-	uint32_t *input;
-	uint32_t *input_s;
+cgc_int32_t cgc_load_resort_digraph(void) {
+	cgc_int32_t result;
+	cgc_uint32_t read_sz;
+	cgc_uint32_t *input;
+	cgc_uint32_t *input_s;
 
 	// if resort layout currently exists, delete it
-	resort_destroy_digraph();
+	cgc_resort_destroy_digraph();
 
 	// process input and create resort layout objects
 	RECV(&resort, RESORT_COUNTS_SZ);
 
 	// TODO: bounds checking on counts to prevent int overflow when * 4 (have fun :) )
-	resort.deciders = calloc(resort.decider_count * sizeof(Decider *));
+	resort.deciders = cgc_calloc(resort.decider_count * sizeof(cgc_Decider *));
 	MALLOC_OK(resort.deciders);
 
-	resort.lifts = calloc(resort.lift_count * sizeof(Lift *));
+	resort.lifts = cgc_calloc(resort.lift_count * sizeof(cgc_Lift *));
 	MALLOC_OK(resort.lifts);
 
-	resort.trails = calloc(resort.trail_count * sizeof(Trail *));
+	resort.trails = cgc_calloc(resort.trail_count * sizeof(cgc_Trail *));
 	MALLOC_OK(resort.trails);
 
 	read_sz =  resort.decider_count * DECIDER_IO_SZ;
 	read_sz += resort.lift_count * LIFT_IO_SZ;
 	read_sz += resort.trail_count * TRAIL_IO_SZ;
 
-	input = calloc(read_sz);
+	input = cgc_calloc(read_sz);
 	MALLOC_OK(input);
 	input_s = input;
 
@@ -466,18 +466,18 @@ int32_t load_resort_digraph(void) {
 
 	// do validation (no duplicate ID's, start/end decider id's differ, etc..)
 	// gen deciders
-	result = gen_deciders(&input);
+	result = cgc_gen_deciders(&input);
 	if (0 > result) return -1;
 
 	// gen lifts
-	result = gen_lifts(&input);
+	result = cgc_gen_lifts(&input);
 	if (0 > result) return -1;
 
 	// gen trails
-	result = gen_trails(&input);
+	result = cgc_gen_trails(&input);
 	if (0 > result) return -1;
 
-	free(input_s);
+	cgc_free(input_s);
 	return SUCCESS;
 }
 
@@ -491,27 +491,27 @@ int32_t load_resort_digraph(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t load_rider_group(void) {
-	int32_t result;
-	uint32_t read_sz;
-	uint32_t *input;
-	uint32_t *input_s;
-	uint32_t count;
+cgc_int32_t cgc_load_rider_group(void) {
+	cgc_int32_t result;
+	cgc_uint32_t read_sz;
+	cgc_uint32_t *input;
+	cgc_uint32_t *input_s;
+	cgc_uint32_t count;
 
 	// get count and then read in rider data
-	RECV(&count, sizeof(uint32_t));
+	RECV(&count, sizeof(cgc_uint32_t));
 
 	read_sz = count * RIDER_IO_SZ;
-	input = calloc(read_sz);
+	input = cgc_calloc(read_sz);
 	MALLOC_OK(input);
 	input_s = input;
 
 	RECV(input, read_sz);
 
-	result = gen_riders(&input, count);
+	result = cgc_gen_riders(&input, count);
 	if (0 > result) return -1;
 
-	free(input_s);
+	cgc_free(input_s);
 	return SUCCESS;
 }
 
@@ -525,45 +525,45 @@ int32_t load_rider_group(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t load_rider_single(void) {
-	int32_t result;
-	uint32_t read_sz;
-	uint32_t *input;
-	uint32_t *input_s;
-	uint32_t count;
+cgc_int32_t cgc_load_rider_single(void) {
+	cgc_int32_t result;
+	cgc_uint32_t read_sz;
+	cgc_uint32_t *input;
+	cgc_uint32_t *input_s;
+	cgc_uint32_t count;
 
 	// get count and then read in rider data
-	RECV(&count, sizeof(uint32_t));
+	RECV(&count, sizeof(cgc_uint32_t));
 	if (count != 1) return -1;
 
 	// count is 1, so read in rider data
 	read_sz = count * RIDER_IO_SZ;
-	input = calloc(read_sz);
+	input = cgc_calloc(read_sz);
 	MALLOC_OK(input);
 	input_s = input;
 
 	RECV(input, read_sz);
 
-	result = gen_riders(&input, count);
+	result = cgc_gen_riders(&input, count);
 	if (0 > result) return -1;
 
-	free(input_s);
+	cgc_free(input_s);
 	return SUCCESS;
 }
 
 /**
- * All riders are unloaded from the Resort riders list (i.e. deleted).
+ * All riders are unloaded from the cgc_Resort riders list (i.e. deleted).
  *  The simulation is reset.
  *
  * @return SUCCESS on success, else -1
  */
-int32_t unload_riders(void) {
-	int32_t ret;
-	// reset the simulation to move all riders to the Resort riders list
-	ret = reset_simulation_do();
+cgc_int32_t cgc_unload_riders(void) {
+	cgc_int32_t ret;
+	// reset the simulation to move all riders to the cgc_Resort riders list
+	ret = cgc_reset_simulation_do();
 
 	// delete all riders
-	rider_destroy_list(&resort.riders);
+	cgc_rider_destroy_list(&resort.riders);
 	resort.rider_count = 0;
 
 	return ret;
@@ -575,44 +575,44 @@ int32_t unload_riders(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t start_simulation(void) {
-	uint32_t steps;
-	Decider *min_decider;
-	int32_t ret;
-	Rider *r;
+cgc_int32_t cgc_start_simulation(void) {
+	cgc_uint32_t steps;
+	cgc_Decider *min_decider;
+	cgc_int32_t ret;
+	cgc_Rider *r;
 
 	// read # of steps
-	RECV(&steps, sizeof(uint32_t));
+	RECV(&steps, sizeof(cgc_uint32_t));
 	if (0 == steps) return -1;
 
 	// get min_decider
-	min_decider = get_decider_min();
+	min_decider = cgc_get_decider_min();
 	if (NULL == min_decider) return -1; // no deciders defined
 
 	if (0 == resort.rider_count) return -1; // no riders defined
 
 	// move riders from resort.riders to min_decider's queue
 	while (NULL != resort.riders) {
-		r = rider_pop(&resort.riders);
+		r = cgc_rider_pop(&resort.riders);
 		min_decider->embark(min_decider, r);
 	}
 
 	// run simulation that iterates through each decider, lift, trail to move riders along
-	ret = go_simul8(steps);
+	ret = cgc_go_simul8(steps);
 
 	return 0;
 
 }
 
 /**
- * Reset all stats. Move all Riders to the riders list in the Resort.
+ * Reset all stats. Move all Riders to the riders list in the cgc_Resort.
  * Then reset all lifts, trails, and deciders to initial values.
  *
  * @return SUCCESS on success, else -1
  */
-int32_t reset_simulation(void) {
-	// reset the simulation to move all riders to the Resort riders list
-	return reset_simulation_do();
+cgc_int32_t cgc_reset_simulation(void) {
+	// reset the simulation to move all riders to the cgc_Resort riders list
+	return cgc_reset_simulation_do();
 }
 
 /**
@@ -620,27 +620,27 @@ int32_t reset_simulation(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t lift_stats(void) {
-	uint32_t *stats;
-	size_t stats_sz;
-	Lift *l;
+cgc_int32_t cgc_lift_stats(void) {
+	cgc_uint32_t *stats;
+	cgc_size_t stats_sz;
+	cgc_Lift *l;
 
 	if (0 == resort.lift_count) return -1;
 
-	stats_sz = resort.lift_count * 2 * sizeof(uint32_t); // id and rider_total
-	stats = calloc(stats_sz);
+	stats_sz = resort.lift_count * 2 * sizeof(cgc_uint32_t); // id and rider_total
+	stats = cgc_calloc(stats_sz);
 	MALLOC_OK(stats);
 
 	// examine lifts and store stats
-	for (uint32_t s_idx = 0, l_idx = 0; l_idx < resort.lift_count; s_idx += 2, l_idx++) {
+	for (cgc_uint32_t s_idx = 0, l_idx = 0; l_idx < resort.lift_count; s_idx += 2, l_idx++) {
 		l = resort.lifts[l_idx];
 		stats[s_idx] 		= l->id;
 		stats[s_idx + 1]	= l->rider_total;
 	}
 
-	send((char *)stats, stats_sz);
+	cgc_send((char *)stats, stats_sz);
 
-	free(stats);
+	cgc_free(stats);
 
 	return SUCCESS;
 }
@@ -650,27 +650,27 @@ int32_t lift_stats(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t trail_stats(void) {
-	uint32_t *stats;
-	size_t stats_sz;
-	Trail *t;
+cgc_int32_t cgc_trail_stats(void) {
+	cgc_uint32_t *stats;
+	cgc_size_t stats_sz;
+	cgc_Trail *t;
 
 	if (0 == resort.trail_count) return -1;
 
-	stats_sz = resort.trail_count * 2 * sizeof(uint32_t); // id and rider_total
-	stats = calloc(stats_sz);
+	stats_sz = resort.trail_count * 2 * sizeof(cgc_uint32_t); // id and rider_total
+	stats = cgc_calloc(stats_sz);
 	MALLOC_OK(stats);
 
 	// examine trails and store stats
-	for (uint32_t s_idx = 0, t_idx = 0; t_idx < resort.trail_count; s_idx += 2, t_idx++) {
+	for (cgc_uint32_t s_idx = 0, t_idx = 0; t_idx < resort.trail_count; s_idx += 2, t_idx++) {
 		t = resort.trails[t_idx];
 		stats[s_idx] 		= t->id;
 		stats[s_idx + 1]	= t->rider_total;
 	}
 
-	send((char *)stats, stats_sz);
+	cgc_send((char *)stats, stats_sz);
 
-	free(stats);
+	cgc_free(stats);
 
 	return SUCCESS;
 }
@@ -680,21 +680,21 @@ int32_t trail_stats(void) {
  *
  * @return SUCCESS on success, else -1
  */
-int32_t rider_stats(void) {
-	Decider *d;
-	Lift *l;
-	Trail *t;
-	Chair *c;
-	Rider *r;
-	uint32_t *stats;
-	size_t stats_sz;
-	uint32_t s_idx = 0;
-	uint32_t counter = 0;
+cgc_int32_t cgc_rider_stats(void) {
+	cgc_Decider *d;
+	cgc_Lift *l;
+	cgc_Trail *t;
+	cgc_Chair *c;
+	cgc_Rider *r;
+	cgc_uint32_t *stats;
+	cgc_size_t stats_sz;
+	cgc_uint32_t s_idx = 0;
+	cgc_uint32_t counter = 0;
 
 	if (0 == resort.rider_count) return -1;
 
-	stats_sz = resort.rider_count * 2 * sizeof(uint32_t); // id, energy_level
-	stats = calloc(stats_sz);
+	stats_sz = resort.rider_count * 2 * sizeof(cgc_uint32_t); // id, energy_level
+	stats = cgc_calloc(stats_sz);
 	MALLOC_OK(stats);
 
 	// process deciders
@@ -767,9 +767,9 @@ int32_t rider_stats(void) {
 		r = r->next;
 	}
 
-	send((char *)stats, stats_sz);
+	cgc_send((char *)stats, stats_sz);
 
-	free(stats);
+	cgc_free(stats);
 
 	return SUCCESS;
 }

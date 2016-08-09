@@ -28,12 +28,12 @@
 
 #define BUF_RX_SZ 65535
 unsigned char rx_buf[BUF_RX_SZ];
-size_t rx_bytes = 0;
+cgc_size_t rx_bytes = 0;
 
 int main(void);
 
 #ifdef DEBUG
-size_t DEBUG_THIS_HAPPENED = 0;
+cgc_size_t DEBUG_THIS_HAPPENED = 0;
 #endif
 
 #endif

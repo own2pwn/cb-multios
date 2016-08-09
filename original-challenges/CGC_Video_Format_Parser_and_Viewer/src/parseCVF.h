@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,34 +30,34 @@ THE SOFTWARE.
 #include "bitstream.h"
 
 /**
- * Structure to store the rendering of a single frame
+ * Structure to store the rendering of a single cgc_frame
  **/
-typedef struct frame {
-	/// Height of the frame to be rendered
+typedef struct cgc_frame {
+	/// Height of the cgc_frame to be rendered
 	unsigned int height;
 
-	/// Width of the frame to be rendered
+	/// Width of the cgc_frame to be rendered
 	unsigned int width;
 
 	/// Pointer a character array of the rendered image. The length is equal to height*width
 	char *image;
-} frame, *pframe;
+} cgc_frame, *cgc_pframe;
 
 /**
  * Structure to store a single pixel dictionary. The length of the array is equal to the "charCount" field
  **/
-typedef struct pixelDict {
+typedef struct cgc_pixelDict {
 	/// Number of characters available in the pixel array
 	unsigned int charCount;
 
 	/// Pointer to the array to be used with this dictionary.
 	char *pixelArray;
-} pixelDict, *ppixelDict;
+} cgc_pixelDict, *cgc_ppixelDict;
 
 /**
  * Main structure to store a single CVF video
  **/
-typedef struct cvf {
+typedef struct cgc_cvf {
 	/// Height of the video in characters
 	unsigned int height;
 
@@ -74,39 +74,39 @@ typedef struct cvf {
 	char desc[256];
 
 	/// Array of pixel dictionary structures used to render frames using a custom dictionary
-	pixelDict pds[8];
+	cgc_pixelDict pds[8];
 
 	/// Count of frames rendered
 	unsigned int rCount;
 
 	/// Pointer to an array of rendered framed pointers. The length is determined by "frameCount"
-	pframe *renderedFrames;
-} cvf, *pcvf;
+	cgc_pframe *renderedFrames;
+} cgc_cvf, *cgc_pcvf;
 
 /// Calculates the number of bits needed for a given size.
-unsigned int bitsNeeded( unsigned int length );
+unsigned int cgc_bitsNeeded( unsigned int length );
 
-int parseCVFFrame( pBitStream pbs, pcvf pNewImage );
-void displayCVFFrame( pcvf pNewImage );
+int cgc_parseCVFFrame( cgc_pBitStream pbs, cgc_pcvf pNewImage );
+void cgc_displayCVFFrame( cgc_pcvf pNewImage );
 
-int parseCVFPixelDict( pBitStream pbs, pcvf pNewImage, int index );
+int cgc_parseCVFPixelDict( cgc_pBitStream pbs, cgc_pcvf pNewImage, int index );
 
 /// Parses the description section
-int parseCVFDescription( pBitStream pbs, pcvf pNewImage );
+int cgc_parseCVFDescription( cgc_pBitStream pbs, cgc_pcvf pNewImage );
 
 /// Parses the name section.
-int parseCVFName( pBitStream pbs, pcvf pNewImage );
+int cgc_parseCVFName( cgc_pBitStream pbs, cgc_pcvf pNewImage );
 
 /// Parses the header section
-int parseCVFHeader( pBitStream pbs, pcvf pNewImage );
+int cgc_parseCVFHeader( cgc_pBitStream pbs, cgc_pcvf pNewImage );
 
 /// renders the image
-void renderCVF( pBitStream pbs );
+void cgc_renderCVF( cgc_pBitStream pbs );
 
-/// Initializes a new cvf structure
-pcvf initCVF( void );
+/// Initializes a new cgc_cvf structure
+cgc_pcvf cgc_initCVF( void );
 
 /// Frees the video structure
-void freeCVF( pcvf cvf );
+void cgc_freeCVF( cgc_pcvf cgc_cvf );
 
 #endif

@@ -24,28 +24,28 @@
 #include "components.h"
 #include "assemble.h"
 
-static receptacle_t *search_receptacle_for_receptacle_id(receptacle_t *receptacle, uint32_t receptacle_id);
-static receptacle_t *search_light_string_for_receptacle_id(light_string_t *light_string, uint32_t receptacle_id);
-static receptacle_t *search_outlet_for_receptacle_id(outlet_t *outlet, uint32_t receptacle_id);
-static receptacle_t *search_splitter_for_receptacle_id(n_way_splitter_t *splitter, uint32_t receptacle_id);
-static n_way_splitter_t *search_receptacle_for_splitter_id(receptacle_t *r, uint32_t splitter_id);
-static n_way_splitter_t *search_light_string_for_splitter_id(light_string_t *ls, uint32_t splitter_id);
-static n_way_splitter_t *search_outlet_for_splitter_id(outlet_t *o, uint32_t splitter_id);
-static n_way_splitter_t *search_splitter_for_splitter_id(n_way_splitter_t *splitter, uint32_t splitter_id);
-static light_string_t *search_receptacle_for_light_string_id(receptacle_t *r, uint32_t light_string_id);
-static light_string_t *search_light_string_for_light_string_id(light_string_t *light_string, uint32_t light_string_id);
-static light_string_t *search_outlet_for_light_string_id(outlet_t *o, uint32_t light_string_id);
-static light_string_t *search_splitter_for_light_string_id(n_way_splitter_t *s, uint32_t light_string_id);
-static list_t * get_outlet_list_on_breaker(uint32_t breaker_id);
-static float get_total_amp_load_on_light_string_by_light_string_va(light_string_t *light_string);
-static float get_total_amp_load_on_splitter_by_splitter_va(n_way_splitter_t *splitter);
-static float get_total_amp_load_on_receptacle_by_receptacle_va(receptacle_t *receptacle);
-static float get_total_amp_load_on_outlet_by_outlet_va(outlet_t *outlet);
+static cgc_receptacle_t *cgc_search_receptacle_for_receptacle_id(cgc_receptacle_t *receptacle, cgc_uint32_t receptacle_id);
+static cgc_receptacle_t *cgc_search_light_string_for_receptacle_id(cgc_light_string_t *light_string, cgc_uint32_t receptacle_id);
+static cgc_receptacle_t *cgc_search_outlet_for_receptacle_id(cgc_outlet_t *outlet, cgc_uint32_t receptacle_id);
+static cgc_receptacle_t *cgc_search_splitter_for_receptacle_id(cgc_n_way_splitter_t *splitter, cgc_uint32_t receptacle_id);
+static cgc_n_way_splitter_t *cgc_search_receptacle_for_splitter_id(cgc_receptacle_t *r, cgc_uint32_t splitter_id);
+static cgc_n_way_splitter_t *cgc_search_light_string_for_splitter_id(cgc_light_string_t *ls, cgc_uint32_t splitter_id);
+static cgc_n_way_splitter_t *cgc_search_outlet_for_splitter_id(cgc_outlet_t *o, cgc_uint32_t splitter_id);
+static cgc_n_way_splitter_t *cgc_search_splitter_for_splitter_id(cgc_n_way_splitter_t *splitter, cgc_uint32_t splitter_id);
+static cgc_light_string_t *cgc_search_receptacle_for_light_string_id(cgc_receptacle_t *r, cgc_uint32_t light_string_id);
+static cgc_light_string_t *cgc_search_light_string_for_light_string_id(cgc_light_string_t *light_string, cgc_uint32_t light_string_id);
+static cgc_light_string_t *cgc_search_outlet_for_light_string_id(cgc_outlet_t *o, cgc_uint32_t light_string_id);
+static cgc_light_string_t *cgc_search_splitter_for_light_string_id(cgc_n_way_splitter_t *s, cgc_uint32_t light_string_id);
+static cgc_list_t * cgc_get_outlet_list_on_breaker(cgc_uint32_t breaker_id);
+static float cgc_get_total_amp_load_on_light_string_by_light_string_va(cgc_light_string_t *light_string);
+static float cgc_get_total_amp_load_on_splitter_by_splitter_va(cgc_n_way_splitter_t *splitter);
+static float cgc_get_total_amp_load_on_receptacle_by_receptacle_va(cgc_receptacle_t *receptacle);
+static float cgc_get_total_amp_load_on_outlet_by_outlet_va(cgc_outlet_t *outlet);
 
 
 
 // root of the electrical model is the load center
-static load_center_t *e_model = NULL;
+static cgc_load_center_t *e_model = NULL;
 
 /*
  * Calculate the number of amps, given volts and watts.
@@ -53,7 +53,7 @@ static load_center_t *e_model = NULL;
  * Returns:
  *  amps >= 0.0
  */
-static float convert_watts_to_amps(float watts) {
+static float cgc_convert_watts_to_amps(float watts) {
 	return (watts / 120.0);
 }
 
@@ -64,7 +64,7 @@ static float convert_watts_to_amps(float watts) {
  *  Yes: TRUE
  *  No : FALSE
  */
-static uint8_t load_center_is_created() {
+static cgc_uint8_t cgc_load_center_is_created() {
 	if (NULL == e_model) return FALSE;
 	else return TRUE;
 }
@@ -76,8 +76,8 @@ static uint8_t load_center_is_created() {
  *  Full: TRUE
  *  Not full: FALSE
  */
-static int8_t load_center_breaker_spaces_are_full() {
-	if ((TRUE == load_center_is_created()) && 
+static cgc_int8_t cgc_load_center_breaker_spaces_are_full() {
+	if ((TRUE == cgc_load_center_is_created()) && 
 		(e_model->breaker_spaces == e_model->breakers_installed_cnt)) {
 		return TRUE;
 	} else {
@@ -93,7 +93,7 @@ static int8_t load_center_breaker_spaces_are_full() {
  *  If has splitter: SPLITTER
  *  If has light string: LIGHT_STRING
  */
-static LOAD_TYPE_T get_receptacle_load_type(receptacle_t *receptacle) {
+static cgc_LOAD_TYPE_T cgc_get_receptacle_load_type(cgc_receptacle_t *receptacle) {
 	return receptacle->load_type;
 }
 
@@ -104,8 +104,8 @@ static LOAD_TYPE_T get_receptacle_load_type(receptacle_t *receptacle) {
  *  Loaded: TRUE
  *  No loaded: FALSE
  */
-static int8_t receptacle_is_loaded(receptacle_t *receptacle) {
-	if (NO_LOAD > get_receptacle_load_type(receptacle)) {
+static cgc_int8_t cgc_receptacle_is_loaded(cgc_receptacle_t *receptacle) {
+	if (NO_LOAD > cgc_get_receptacle_load_type(receptacle)) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -119,18 +119,18 @@ static int8_t receptacle_is_loaded(receptacle_t *receptacle) {
  * id of receptacle_id.
  *
  * Returns:
- *  Success: VA of receptacle_t
+ *  Success: VA of cgc_receptacle_t
  *  Failure: NULL
  */
-static receptacle_t *search_receptacle_for_receptacle_id(receptacle_t *receptacle, uint32_t receptacle_id) {
+static cgc_receptacle_t *cgc_search_receptacle_for_receptacle_id(cgc_receptacle_t *receptacle, cgc_uint32_t receptacle_id) {
 
-	receptacle_t *r = NULL;
+	cgc_receptacle_t *r = NULL;
 	if (receptacle_id == receptacle->id) {
 		r = receptacle;
-	} else if (SPLITTER == get_receptacle_load_type(receptacle)) {
-		r = search_splitter_for_receptacle_id((n_way_splitter_t *)receptacle->load, receptacle_id);
-	} else if (LIGHT_STRING == get_receptacle_load_type(receptacle)) {
-		r = search_light_string_for_receptacle_id((light_string_t *)receptacle->load, receptacle_id);
+	} else if (SPLITTER == cgc_get_receptacle_load_type(receptacle)) {
+		r = cgc_search_splitter_for_receptacle_id((cgc_n_way_splitter_t *)receptacle->load, receptacle_id);
+	} else if (LIGHT_STRING == cgc_get_receptacle_load_type(receptacle)) {
+		r = cgc_search_light_string_for_receptacle_id((cgc_light_string_t *)receptacle->load, receptacle_id);
 	}
 	return r;
 }
@@ -140,15 +140,15 @@ static receptacle_t *search_receptacle_for_receptacle_id(receptacle_t *receptacl
  * id of receptacle_id.
  *
  * Returns:
- *  Success: VA of receptacle_t
+ *  Success: VA of cgc_receptacle_t
  *  Failure: NULL
  */
-static receptacle_t *search_outlet_for_receptacle_id(outlet_t *outlet, uint32_t receptacle_id) {
+static cgc_receptacle_t *cgc_search_outlet_for_receptacle_id(cgc_outlet_t *outlet, cgc_uint32_t receptacle_id) {
 
-	receptacle_t *r = NULL;
-	r = search_receptacle_for_receptacle_id(&(outlet->r1), receptacle_id);
+	cgc_receptacle_t *r = NULL;
+	r = cgc_search_receptacle_for_receptacle_id(&(outlet->r1), receptacle_id);
 	if (NULL == r) {
-		r = search_receptacle_for_receptacle_id(&(outlet->r2), receptacle_id);
+		r = cgc_search_receptacle_for_receptacle_id(&(outlet->r2), receptacle_id);
 	}
 	return r;
 }
@@ -158,18 +158,18 @@ static receptacle_t *search_outlet_for_receptacle_id(outlet_t *outlet, uint32_t 
  * having id of receptacle_id.
  *
  * Returns:
- *  Success: VA of receptacle_t
+ *  Success: VA of cgc_receptacle_t
  *  Failure: NULL
  */
-static receptacle_t *search_splitter_for_receptacle_id(n_way_splitter_t *splitter, uint32_t receptacle_id) {
+static cgc_receptacle_t *cgc_search_splitter_for_receptacle_id(cgc_n_way_splitter_t *splitter, cgc_uint32_t receptacle_id) {
 
-	receptacle_t *r = NULL;
+	cgc_receptacle_t *r = NULL;
 #ifdef PATCHED
-	for (uint32_t idx = 0; idx < splitter->receptacle_count; idx++) {
+	for (cgc_uint32_t idx = 0; idx < splitter->receptacle_count; idx++) {
 #else
-	for (uint32_t idx = 0; idx <= splitter->receptacle_count; idx++) {
+	for (cgc_uint32_t idx = 0; idx <= splitter->receptacle_count; idx++) {
 #endif
-		r = search_receptacle_for_receptacle_id(&(splitter->receptacles[idx]), receptacle_id);
+		r = cgc_search_receptacle_for_receptacle_id(&(splitter->receptacles[idx]), receptacle_id);
 		if (NULL != r) break;
 	}
 	return r;
@@ -183,8 +183,8 @@ static receptacle_t *search_splitter_for_receptacle_id(n_way_splitter_t *splitte
  *  Success: VA of receptacle_id
  *  Failure: NULL
  */
-static receptacle_t *search_light_string_for_receptacle_id(light_string_t *light_string, uint32_t receptacle_id) {
-	return search_receptacle_for_receptacle_id(&(light_string->receptacle), receptacle_id);
+static cgc_receptacle_t *cgc_search_light_string_for_receptacle_id(cgc_light_string_t *light_string, cgc_uint32_t receptacle_id) {
+	return cgc_search_receptacle_for_receptacle_id(&(light_string->receptacle), receptacle_id);
 }
 
 
@@ -194,16 +194,16 @@ static receptacle_t *search_light_string_for_receptacle_id(light_string_t *light
  * having id of splitter_id.
  *
  * Returns:
- *  Success: VA of n_way_splitter_t
+ *  Success: VA of cgc_n_way_splitter_t
  *  Failure: NULL
  */
-static n_way_splitter_t *search_receptacle_for_splitter_id(receptacle_t *r, uint32_t splitter_id) {
-	n_way_splitter_t *s = NULL;
+static cgc_n_way_splitter_t *cgc_search_receptacle_for_splitter_id(cgc_receptacle_t *r, cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = NULL;
 
-	if (SPLITTER == get_receptacle_load_type(r)) {
-		s = search_splitter_for_splitter_id((n_way_splitter_t *)r->load, splitter_id);
-	} else if (LIGHT_STRING == get_receptacle_load_type(r)) {
-		s = search_light_string_for_splitter_id((light_string_t *)r->load, splitter_id);
+	if (SPLITTER == cgc_get_receptacle_load_type(r)) {
+		s = cgc_search_splitter_for_splitter_id((cgc_n_way_splitter_t *)r->load, splitter_id);
+	} else if (LIGHT_STRING == cgc_get_receptacle_load_type(r)) {
+		s = cgc_search_light_string_for_splitter_id((cgc_light_string_t *)r->load, splitter_id);
 	}
 
 	return s;
@@ -214,11 +214,11 @@ static n_way_splitter_t *search_receptacle_for_splitter_id(receptacle_t *r, uint
  * having id of splitter_id.
  *
  * Returns:
- *  Success: VA of n_way_splitter_t
+ *  Success: VA of cgc_n_way_splitter_t
  *  Failure: NULL
  */
-static n_way_splitter_t *search_light_string_for_splitter_id(light_string_t *ls, uint32_t splitter_id) {
-	return search_receptacle_for_splitter_id(&(ls->receptacle), splitter_id);
+static cgc_n_way_splitter_t *cgc_search_light_string_for_splitter_id(cgc_light_string_t *ls, cgc_uint32_t splitter_id) {
+	return cgc_search_receptacle_for_splitter_id(&(ls->receptacle), splitter_id);
 }
 
 /*
@@ -226,14 +226,14 @@ static n_way_splitter_t *search_light_string_for_splitter_id(light_string_t *ls,
  * having id of splitter_id.
  *
  * Returns:
- *  Success: VA of n_way_splitter_t
+ *  Success: VA of cgc_n_way_splitter_t
  *  Failure: NULL
  */
-static n_way_splitter_t *search_outlet_for_splitter_id(outlet_t *o, uint32_t splitter_id) {
-	n_way_splitter_t *s = NULL;
-	s = search_receptacle_for_splitter_id(&(o->r1), splitter_id);
+static cgc_n_way_splitter_t *cgc_search_outlet_for_splitter_id(cgc_outlet_t *o, cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = NULL;
+	s = cgc_search_receptacle_for_splitter_id(&(o->r1), splitter_id);
 	if (NULL == s) {
-		s = search_receptacle_for_splitter_id(&(o->r2), splitter_id);
+		s = cgc_search_receptacle_for_splitter_id(&(o->r2), splitter_id);
 	}
 
 	return s;
@@ -244,17 +244,17 @@ static n_way_splitter_t *search_outlet_for_splitter_id(outlet_t *o, uint32_t spl
  * having id of splitter_id.
  *
  * Returns:
- *  Success: VA of n_way_splitter_t
+ *  Success: VA of cgc_n_way_splitter_t
  *  Failure: NULL
  */
-static n_way_splitter_t *search_splitter_for_splitter_id(n_way_splitter_t *splitter, uint32_t splitter_id) {
-	n_way_splitter_t *s = NULL;
+static cgc_n_way_splitter_t *cgc_search_splitter_for_splitter_id(cgc_n_way_splitter_t *splitter, cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = NULL;
 
 	if (splitter_id == splitter->id) {
 		s = splitter;
 	} else {
-		for (uint8_t idx = 0; idx < splitter->receptacle_count; idx++) {
-			s = search_receptacle_for_splitter_id(&(splitter->receptacles[idx]), splitter_id);
+		for (cgc_uint8_t idx = 0; idx < splitter->receptacle_count; idx++) {
+			s = cgc_search_receptacle_for_splitter_id(&(splitter->receptacles[idx]), splitter_id);
 			if (NULL != s) break;
 		}
 	}
@@ -268,16 +268,16 @@ static n_way_splitter_t *search_splitter_for_splitter_id(n_way_splitter_t *split
  * having id of light_string_id.
  *
  * Returns:
- *  Success: VA of light_string_t
+ *  Success: VA of cgc_light_string_t
  *  Failure: NULL
  */
-static light_string_t *search_receptacle_for_light_string_id(receptacle_t *r, uint32_t light_string_id) {
-	light_string_t *ls = NULL;
+static cgc_light_string_t *cgc_search_receptacle_for_light_string_id(cgc_receptacle_t *r, cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = NULL;
 
-	if (SPLITTER == get_receptacle_load_type(r)) {
-		ls = search_splitter_for_light_string_id((n_way_splitter_t *)r->load, light_string_id);
-	} else if (LIGHT_STRING == get_receptacle_load_type(r)) {
-		ls = search_light_string_for_light_string_id((light_string_t *)r->load, light_string_id);
+	if (SPLITTER == cgc_get_receptacle_load_type(r)) {
+		ls = cgc_search_splitter_for_light_string_id((cgc_n_way_splitter_t *)r->load, light_string_id);
+	} else if (LIGHT_STRING == cgc_get_receptacle_load_type(r)) {
+		ls = cgc_search_light_string_for_light_string_id((cgc_light_string_t *)r->load, light_string_id);
 	}
 
 	return ls;
@@ -288,16 +288,16 @@ static light_string_t *search_receptacle_for_light_string_id(receptacle_t *r, ui
  * having id of light_string_id.
  *
  * Returns:
- *  Success: VA of light_string_t
+ *  Success: VA of cgc_light_string_t
  *  Failure: NULL
  */
-static light_string_t *search_light_string_for_light_string_id(light_string_t *light_string, uint32_t light_string_id) {
-	light_string_t *ls = NULL;
+static cgc_light_string_t *cgc_search_light_string_for_light_string_id(cgc_light_string_t *light_string, cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = NULL;
 
 	if (light_string_id == light_string->id) {
 		ls = light_string;
 	} else {
-		ls = search_receptacle_for_light_string_id(&(light_string->receptacle), light_string_id);
+		ls = cgc_search_receptacle_for_light_string_id(&(light_string->receptacle), light_string_id);
 	}
 	return ls;
 }
@@ -307,14 +307,14 @@ static light_string_t *search_light_string_for_light_string_id(light_string_t *l
  * having id of light_string_id.
  *
  * Returns:
- *  Success: VA of light_string_t
+ *  Success: VA of cgc_light_string_t
  *  Failure: NULL
  */
-static light_string_t *search_outlet_for_light_string_id(outlet_t *o, uint32_t light_string_id) {
-	light_string_t *ls = NULL;
-	ls = search_receptacle_for_light_string_id(&(o->r1), light_string_id);
+static cgc_light_string_t *cgc_search_outlet_for_light_string_id(cgc_outlet_t *o, cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = NULL;
+	ls = cgc_search_receptacle_for_light_string_id(&(o->r1), light_string_id);
 	if (NULL == ls) {
-		ls = search_receptacle_for_light_string_id(&(o->r2), light_string_id);
+		ls = cgc_search_receptacle_for_light_string_id(&(o->r2), light_string_id);
 	}
 
 	return ls;
@@ -325,13 +325,13 @@ static light_string_t *search_outlet_for_light_string_id(outlet_t *o, uint32_t l
  * having id of light_string_id.
  *
  * Returns:
- *  Success: VA of light_string_t
+ *  Success: VA of cgc_light_string_t
  *  Failure: NULL
  */
-static light_string_t *search_splitter_for_light_string_id(n_way_splitter_t *s, uint32_t light_string_id) {
-	light_string_t *ls = NULL;
-	for (uint8_t idx = 0; idx < s->receptacle_count; idx++) {
-		ls = search_receptacle_for_light_string_id(&(s->receptacles[idx]), light_string_id);
+static cgc_light_string_t *cgc_search_splitter_for_light_string_id(cgc_n_way_splitter_t *s, cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = NULL;
+	for (cgc_uint8_t idx = 0; idx < s->receptacle_count; idx++) {
+		ls = cgc_search_receptacle_for_light_string_id(&(s->receptacles[idx]), light_string_id);
 		if (NULL != ls) break;
 	}
 
@@ -345,14 +345,14 @@ static light_string_t *search_splitter_for_light_string_id(n_way_splitter_t *s, 
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA receptacle_t
+ *  Found: VA cgc_receptacle_t
  */
-static receptacle_t *get_receptacle_by_id_from_breaker_id(uint32_t breaker_id, uint32_t receptacle_id) {
-	receptacle_t *r = NULL;
-	list_t *outlet_list = get_outlet_list_on_breaker(breaker_id);
-	node_t *outlet_node_ptr = get_first_node(outlet_list);
-	while (get_list_tail(outlet_list) != outlet_node_ptr) {
-		r = search_outlet_for_receptacle_id((outlet_t *)outlet_node_ptr->data, receptacle_id);
+static cgc_receptacle_t *cgc_get_receptacle_by_id_from_breaker_id(cgc_uint32_t breaker_id, cgc_uint32_t receptacle_id) {
+	cgc_receptacle_t *r = NULL;
+	cgc_list_t *outlet_list = cgc_get_outlet_list_on_breaker(breaker_id);
+	cgc_node_t *outlet_node_ptr = cgc_get_first_node(outlet_list);
+	while (cgc_get_list_tail(outlet_list) != outlet_node_ptr) {
+		r = cgc_search_outlet_for_receptacle_id((cgc_outlet_t *)outlet_node_ptr->data, receptacle_id);
 		if (NULL != r) break;
 		outlet_node_ptr = outlet_node_ptr->next;
 	}	
@@ -365,15 +365,15 @@ static receptacle_t *get_receptacle_by_id_from_breaker_id(uint32_t breaker_id, u
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA receptacle_t
+ *  Found: VA cgc_receptacle_t
  */
-static receptacle_t *get_receptacle_by_id(uint32_t receptacle_id) {
-	receptacle_t *r = NULL;
+static cgc_receptacle_t *cgc_get_receptacle_by_id(cgc_uint32_t receptacle_id) {
+	cgc_receptacle_t *r = NULL;
 	// for each breaker, check each outlet
-	if (TRUE == load_center_is_created()) {
-		for (uint32_t breaker_idx = 0; breaker_idx < e_model->breakers_installed_cnt; breaker_idx++) {
+	if (TRUE == cgc_load_center_is_created()) {
+		for (cgc_uint32_t breaker_idx = 0; breaker_idx < e_model->breakers_installed_cnt; breaker_idx++) {
 			// for each outlet on the breaker's circuit, check its loads
-			r = get_receptacle_by_id_from_breaker_id(breaker_idx, receptacle_id);
+			r = cgc_get_receptacle_by_id_from_breaker_id(breaker_idx, receptacle_id);
 			if (NULL != r) break;
 		}
 	}
@@ -386,15 +386,15 @@ static receptacle_t *get_receptacle_by_id(uint32_t receptacle_id) {
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA breaker_t
+ *  Found: VA cgc_breaker_t
  */
-static breaker_t *get_breaker_by_id(uint32_t breaker_id) {
+static cgc_breaker_t *cgc_get_breaker_by_id(cgc_uint32_t breaker_id) {
 #ifdef PATCHED
-	if ((FALSE == load_center_is_created()) || 
+	if ((FALSE == cgc_load_center_is_created()) || 
 		(0 == e_model->breakers_installed_cnt) ||
 		(breaker_id >= e_model->breakers_installed_cnt)) {
 #else
-	if ((FALSE == load_center_is_created()) || (0 == e_model->breakers_installed_cnt)) {
+	if ((FALSE == cgc_load_center_is_created()) || (0 == e_model->breakers_installed_cnt)) {
 #endif
 		return NULL;
 	}
@@ -407,20 +407,20 @@ static breaker_t *get_breaker_by_id(uint32_t breaker_id) {
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA outlet_t
+ *  Found: VA cgc_outlet_t
  */
-static outlet_t *get_outlet_by_id(uint32_t outlet_id) {
-	outlet_t *o = NULL;
-	int8_t breakers_installed_cnt = get_number_of_breakers_installed_in_load_center();
+static cgc_outlet_t *cgc_get_outlet_by_id(cgc_uint32_t outlet_id) {
+	cgc_outlet_t *o = NULL;
+	cgc_int8_t breakers_installed_cnt = cgc_get_number_of_breakers_installed_in_load_center();
 	if (0 > breakers_installed_cnt) {
 		return NULL;
 	}
-	for (uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
+	for (cgc_uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
 
-		list_t *outlet_list = get_outlet_list_on_breaker(breaker_id);
-		node_t *outlet_node_ptr = get_first_node(outlet_list);
-		while (get_list_tail(outlet_list) != outlet_node_ptr) {
-			o = (outlet_t *)outlet_node_ptr->data;
+		cgc_list_t *outlet_list = cgc_get_outlet_list_on_breaker(breaker_id);
+		cgc_node_t *outlet_node_ptr = cgc_get_first_node(outlet_list);
+		while (cgc_get_list_tail(outlet_list) != outlet_node_ptr) {
+			o = (cgc_outlet_t *)outlet_node_ptr->data;
 			if (outlet_id == o->id) {
 				break;
 			} else {
@@ -437,22 +437,22 @@ static outlet_t *get_outlet_by_id(uint32_t outlet_id) {
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA n_way_splitter_t
+ *  Found: VA cgc_n_way_splitter_t
  */
-static n_way_splitter_t *get_splitter_by_id(uint32_t splitter_id) {
-	n_way_splitter_t *s = NULL;
+static cgc_n_way_splitter_t *cgc_get_splitter_by_id(cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = NULL;
 
-	int8_t breakers_installed_cnt = get_number_of_breakers_installed_in_load_center();
+	cgc_int8_t breakers_installed_cnt = cgc_get_number_of_breakers_installed_in_load_center();
 	if (0 > breakers_installed_cnt) {
 		return NULL;
 	}
-	for (uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
+	for (cgc_uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
 
-		list_t *outlet_list = get_outlet_list_on_breaker(breaker_id);
-		node_t *outlet_node_ptr = get_first_node(outlet_list);
-		while (get_list_tail(outlet_list) != outlet_node_ptr) {
-			outlet_t *o = (outlet_t *)outlet_node_ptr->data;
-			s = search_outlet_for_splitter_id(o, splitter_id);
+		cgc_list_t *outlet_list = cgc_get_outlet_list_on_breaker(breaker_id);
+		cgc_node_t *outlet_node_ptr = cgc_get_first_node(outlet_list);
+		while (cgc_get_list_tail(outlet_list) != outlet_node_ptr) {
+			cgc_outlet_t *o = (cgc_outlet_t *)outlet_node_ptr->data;
+			s = cgc_search_outlet_for_splitter_id(o, splitter_id);
 			if (NULL != s) {
 				break;
 			}
@@ -467,22 +467,22 @@ static n_way_splitter_t *get_splitter_by_id(uint32_t splitter_id) {
  *
  * Returns:
  *  Not Found: NULL
- *  Found: VA light_string_t
+ *  Found: VA cgc_light_string_t
  */
-static light_string_t *get_light_string_by_id(uint32_t light_string_id) {
-	light_string_t *ls = NULL;
+static cgc_light_string_t *cgc_get_light_string_by_id(cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = NULL;
 
-	int8_t breakers_installed_cnt = get_number_of_breakers_installed_in_load_center();
+	cgc_int8_t breakers_installed_cnt = cgc_get_number_of_breakers_installed_in_load_center();
 	if (0 > breakers_installed_cnt) {
 		return NULL;
 	}
-	for (uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
+	for (cgc_uint32_t breaker_id = 0; breaker_id < breakers_installed_cnt; breaker_id++) {
 
-		list_t *outlet_list = get_outlet_list_on_breaker(breaker_id);
-		node_t *outlet_node_ptr = get_first_node(outlet_list);
-		while (get_list_tail(outlet_list) != outlet_node_ptr) {
-			outlet_t *o = (outlet_t *)outlet_node_ptr->data;
-			ls = search_outlet_for_light_string_id(o, light_string_id);
+		cgc_list_t *outlet_list = cgc_get_outlet_list_on_breaker(breaker_id);
+		cgc_node_t *outlet_node_ptr = cgc_get_first_node(outlet_list);
+		while (cgc_get_list_tail(outlet_list) != outlet_node_ptr) {
+			cgc_outlet_t *o = (cgc_outlet_t *)outlet_node_ptr->data;
+			ls = cgc_search_outlet_for_light_string_id(o, light_string_id);
 			if (NULL != ls) {
 				break;
 			}
@@ -499,8 +499,8 @@ static light_string_t *get_light_string_by_id(uint32_t light_string_id) {
  *  Not installed: FALSE
  *  Is installed: TRUE
  */
-static uint8_t breaker_id_is_installed(uint32_t breaker_id) {
-	if (NULL == get_breaker_by_id(breaker_id)) {
+static cgc_uint8_t cgc_breaker_id_is_installed(cgc_uint32_t breaker_id) {
+	if (NULL == cgc_get_breaker_by_id(breaker_id)) {
 		return FALSE;
 	} else {
 		return TRUE;
@@ -514,12 +514,12 @@ static uint8_t breaker_id_is_installed(uint32_t breaker_id) {
  *  Success: VA of list
  *  Failure: NULL
  */
-static list_t * get_outlet_list_on_breaker(uint32_t breaker_id) {
-	if (FALSE == breaker_id_is_installed(breaker_id)) {
+static cgc_list_t * cgc_get_outlet_list_on_breaker(cgc_uint32_t breaker_id) {
+	if (FALSE == cgc_breaker_id_is_installed(breaker_id)) {
 		return NULL;
 	}
 
-	breaker_t * b = get_breaker_by_id(breaker_id);
+	cgc_breaker_t * b = cgc_get_breaker_by_id(breaker_id);
 	return b->outlets;
 }
 
@@ -530,12 +530,12 @@ static list_t * get_outlet_list_on_breaker(uint32_t breaker_id) {
  *  Success: outlets->count >= 0
  *  Failure: ERR_INVALID_BREAKER_ID
  */
-int32_t get_count_outlets_on_breaker(uint32_t breaker_id) {
-	if (FALSE == breaker_id_is_installed(breaker_id)) {
+cgc_int32_t cgc_get_count_outlets_on_breaker(cgc_uint32_t breaker_id) {
+	if (FALSE == cgc_breaker_id_is_installed(breaker_id)) {
 		return ERR_INVALID_BREAKER_ID;
 	}
 
-	breaker_t * b = get_breaker_by_id(breaker_id);
+	cgc_breaker_t * b = cgc_get_breaker_by_id(breaker_id);
 	return b->outlets->count;
 }
 
@@ -546,12 +546,12 @@ int32_t get_count_outlets_on_breaker(uint32_t breaker_id) {
  *  Success: amp rating 15 or 20
  *  Failure: ERR_INVALID_BREAKER_ID
  */
-int8_t get_amp_rating_of_breaker(uint32_t breaker_id) {
-	if (FALSE == breaker_id_is_installed(breaker_id)) {
+cgc_int8_t cgc_get_amp_rating_of_breaker(cgc_uint32_t breaker_id) {
+	if (FALSE == cgc_breaker_id_is_installed(breaker_id)) {
 		return ERR_INVALID_BREAKER_ID;
 	}
 
-	breaker_t * b = get_breaker_by_id(breaker_id);
+	cgc_breaker_t * b = cgc_get_breaker_by_id(breaker_id);
 	return b->amp_rating;
 }
 
@@ -562,8 +562,8 @@ int8_t get_amp_rating_of_breaker(uint32_t breaker_id) {
  *  Success: amp rating 15 or 20
  *  Failure: ERR_INVALID_OUTLET_ID
  */
-int8_t get_amp_rating_of_outlet(uint32_t outlet_id) {
-	outlet_t *o = get_outlet_by_id(outlet_id);
+cgc_int8_t cgc_get_amp_rating_of_outlet(cgc_uint32_t outlet_id) {
+	cgc_outlet_t *o = cgc_get_outlet_by_id(outlet_id);
 	if (NULL == o) {
 		return ERR_INVALID_OUTLET_ID;
 	} else {
@@ -578,8 +578,8 @@ int8_t get_amp_rating_of_outlet(uint32_t outlet_id) {
  *  Success: amp rating 15 or 20
  *  Failure: ERR_INVALID_SPLITTER_ID
  */
-int8_t get_amp_rating_of_splitter(uint32_t splitter_id) {
-	n_way_splitter_t *s = get_splitter_by_id(splitter_id);
+cgc_int8_t cgc_get_amp_rating_of_splitter(cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = cgc_get_splitter_by_id(splitter_id);
 	if (NULL == s) {
 		return ERR_INVALID_SPLITTER_ID;
 	} else {
@@ -594,12 +594,12 @@ int8_t get_amp_rating_of_splitter(uint32_t splitter_id) {
  *  Success: amp rating > 0.0
  *  Failure: ERR_INVALID_LIGHT_STRING_ID
  */
-float get_amp_rating_of_light_string(uint32_t light_string_id) {
-	light_string_t *s = get_light_string_by_id(light_string_id);
+float cgc_get_amp_rating_of_light_string(cgc_uint32_t light_string_id) {
+	cgc_light_string_t *s = cgc_get_light_string_by_id(light_string_id);
 	if (NULL == s) {
 		return (float)ERR_INVALID_LIGHT_STRING_ID;
 	} else {
-		return get_max_amps_of_light_string();
+		return cgc_get_max_amps_of_light_string();
 	}
 }
 
@@ -611,8 +611,8 @@ float get_amp_rating_of_light_string(uint32_t light_string_id) {
  *  Success: amp rating 15 or 20
  *  Failure: ERR_INVALID_RECEPTACLE_ID
  */
-int8_t get_amp_rating_of_receptacle(uint32_t receptacle_id) {
-	receptacle_t *r = get_receptacle_by_id(receptacle_id);
+cgc_int8_t cgc_get_amp_rating_of_receptacle(cgc_uint32_t receptacle_id) {
+	cgc_receptacle_t *r = cgc_get_receptacle_by_id(receptacle_id);
 	if (NULL == r) {
 		return ERR_INVALID_RECEPTACLE_ID;
 	} else {
@@ -627,8 +627,8 @@ int8_t get_amp_rating_of_receptacle(uint32_t receptacle_id) {
  *  Success: breaker count >= 0
  *  Failure: ERR_E_MODEL_NOT_EXISTS
  */
-int8_t get_number_of_breakers_installed_in_load_center() {
-	if (FALSE == load_center_is_created()) {
+cgc_int8_t cgc_get_number_of_breakers_installed_in_load_center() {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
@@ -642,8 +642,8 @@ int8_t get_number_of_breakers_installed_in_load_center() {
  *  Success: breaker_spaces > 0
  *  Failure: ERR_E_MODEL_NOT_EXISTS
  */
-int8_t get_total_breaker_space_count() {
-	if (FALSE == load_center_is_created()) {
+cgc_int8_t cgc_get_total_breaker_space_count() {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
@@ -657,8 +657,8 @@ int8_t get_total_breaker_space_count() {
  * 	Success: amp rating > 0
  *  Failure: ERR_E_MODEL_NOT_EXISTS
  */
-int32_t get_amp_rating_of_load_center() {
-	if (FALSE == load_center_is_created()) {
+cgc_int32_t cgc_get_amp_rating_of_load_center() {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
@@ -675,19 +675,19 @@ int32_t get_amp_rating_of_load_center() {
  *	Success: amp load >= 0.0
  *  Failure: ERR_E_MODEL_NOT_EXISTS
  */
-float get_total_amp_load_on_load_center() {
-	if (FALSE == load_center_is_created()) {
+float cgc_get_total_amp_load_on_load_center() {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
 	// sum amp loads of installed breakers
 	float total_amp_load = 0.0;
-	int32_t breakers_installed_cnt = get_number_of_breakers_installed_in_load_center();
+	cgc_int32_t breakers_installed_cnt = cgc_get_number_of_breakers_installed_in_load_center();
 	if (0 > breakers_installed_cnt) {
 		return breakers_installed_cnt;
 	}
-	for (uint8_t idx = 0; idx < breakers_installed_cnt; idx++) {
-		total_amp_load += get_total_amp_load_on_breaker_by_breaker_id(idx);
+	for (cgc_uint8_t idx = 0; idx < breakers_installed_cnt; idx++) {
+		total_amp_load += cgc_get_total_amp_load_on_breaker_by_breaker_id(idx);
 	}
 
 	return total_amp_load;
@@ -700,17 +700,17 @@ float get_total_amp_load_on_load_center() {
  *  Success: amp_load >= 0.0
  *  Failure: ERR_INVALID_BREAKER_ID
  */
-float get_total_amp_load_on_breaker_by_breaker_id(uint32_t breaker_id) {
-	if (FALSE == breaker_id_is_installed(breaker_id)) {
+float cgc_get_total_amp_load_on_breaker_by_breaker_id(cgc_uint32_t breaker_id) {
+	if (FALSE == cgc_breaker_id_is_installed(breaker_id)) {
 		return ERR_INVALID_BREAKER_ID;
 	}
 
 	// sum amp loads of installed breakers
 	float total_amp_load = 0.0;
-	list_t *outlet_list =  get_outlet_list_on_breaker(breaker_id);
-	node_t * outlet_node_ptr = get_first_node(outlet_list);
-	while (get_list_tail(outlet_list) != outlet_node_ptr) {
-		total_amp_load += get_total_amp_load_on_outlet_by_outlet_va((outlet_t *)outlet_node_ptr->data);
+	cgc_list_t *outlet_list =  cgc_get_outlet_list_on_breaker(breaker_id);
+	cgc_node_t * outlet_node_ptr = cgc_get_first_node(outlet_list);
+	while (cgc_get_list_tail(outlet_list) != outlet_node_ptr) {
+		total_amp_load += cgc_get_total_amp_load_on_outlet_by_outlet_va((cgc_outlet_t *)outlet_node_ptr->data);
 		outlet_node_ptr = outlet_node_ptr->next;
 	}
 
@@ -723,10 +723,10 @@ float get_total_amp_load_on_breaker_by_breaker_id(uint32_t breaker_id) {
  * Returns:
  *  Success: amp_load >= 0.0
  */
-static float get_total_amp_load_on_outlet_by_outlet_va(outlet_t *outlet) {
+static float cgc_get_total_amp_load_on_outlet_by_outlet_va(cgc_outlet_t *outlet) {
 	float total_amp_load = 0.0;
-	total_amp_load += get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r1));
-	total_amp_load += get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r2));
+	total_amp_load += cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r1));
+	total_amp_load += cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r2));
 	return total_amp_load;
 }
 
@@ -737,12 +737,12 @@ static float get_total_amp_load_on_outlet_by_outlet_va(outlet_t *outlet) {
  *  Success: amp_load >= 0.0;
  *  Failure: ERR_INVALID_OUTLET_ID
  */
-float get_total_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id) {
-	outlet_t *o = get_outlet_by_id(outlet_id);
+float cgc_get_total_amp_load_on_outlet_by_outlet_id(cgc_uint32_t outlet_id) {
+	cgc_outlet_t *o = cgc_get_outlet_by_id(outlet_id);
 	if (NULL == o) {
 		return ERR_INVALID_OUTLET_ID;
 	} else {
-		return get_total_amp_load_on_outlet_by_outlet_va(o);
+		return cgc_get_total_amp_load_on_outlet_by_outlet_va(o);
 	}
 }
 
@@ -752,12 +752,12 @@ float get_total_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id) {
  * Returns:
  *  Success: amp_load >= 0.0
  */
-static float get_total_amp_load_on_receptacle_by_receptacle_va(receptacle_t *receptacle) {
+static float cgc_get_total_amp_load_on_receptacle_by_receptacle_va(cgc_receptacle_t *receptacle) {
 	float total_amp_load = 0.0;
-	if (SPLITTER == get_receptacle_load_type(receptacle)) {
-		total_amp_load = get_total_amp_load_on_splitter_by_splitter_va((n_way_splitter_t *)receptacle->load);
-	} else if (LIGHT_STRING == get_receptacle_load_type(receptacle)) {
-		total_amp_load = get_total_amp_load_on_light_string_by_light_string_va((light_string_t *)receptacle->load);
+	if (SPLITTER == cgc_get_receptacle_load_type(receptacle)) {
+		total_amp_load = cgc_get_total_amp_load_on_splitter_by_splitter_va((cgc_n_way_splitter_t *)receptacle->load);
+	} else if (LIGHT_STRING == cgc_get_receptacle_load_type(receptacle)) {
+		total_amp_load = cgc_get_total_amp_load_on_light_string_by_light_string_va((cgc_light_string_t *)receptacle->load);
 	}
 	// NO_LOAD has no load, so go with default of 0.0
 
@@ -771,12 +771,12 @@ static float get_total_amp_load_on_receptacle_by_receptacle_va(receptacle_t *rec
  *  Success: amp_load >= 0.0
  *  Failure: ERR_INVALID_RECEPTACLE_ID
  */
-float get_total_amp_load_on_receptacle_by_receptacle_id(uint32_t receptacle_id) {
-	receptacle_t *r = get_receptacle_by_id(receptacle_id);
+float cgc_get_total_amp_load_on_receptacle_by_receptacle_id(cgc_uint32_t receptacle_id) {
+	cgc_receptacle_t *r = cgc_get_receptacle_by_id(receptacle_id);
 	if (NULL == r) {
 		return ERR_INVALID_RECEPTACLE_ID;
 	} else {
-		return get_total_amp_load_on_receptacle_by_receptacle_va(r);
+		return cgc_get_total_amp_load_on_receptacle_by_receptacle_va(r);
 	}
 }
 
@@ -786,10 +786,10 @@ float get_total_amp_load_on_receptacle_by_receptacle_id(uint32_t receptacle_id) 
  * Returns:
  *  Success: amp_load >= 0.0
  */
-static float get_total_amp_load_on_splitter_by_splitter_va(n_way_splitter_t *splitter) {
+static float cgc_get_total_amp_load_on_splitter_by_splitter_va(cgc_n_way_splitter_t *splitter) {
 	float total_amp_load = 0.0;
 	for (int idx = 0; idx < splitter->receptacle_count; idx++) {
-		total_amp_load += get_total_amp_load_on_receptacle_by_receptacle_va(&(splitter->receptacles[idx]));
+		total_amp_load += cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(splitter->receptacles[idx]));
 	}
 	return total_amp_load;
 }
@@ -801,12 +801,12 @@ static float get_total_amp_load_on_splitter_by_splitter_va(n_way_splitter_t *spl
  *  Success: amp_load >= 0.0
  *  Failure: ERR_INVALID_SPLITTER_ID
  */
-float get_total_amp_load_on_splitter_by_splitter_id(uint32_t splitter_id) {
-	n_way_splitter_t *s = get_splitter_by_id(splitter_id);
+float cgc_get_total_amp_load_on_splitter_by_splitter_id(cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = cgc_get_splitter_by_id(splitter_id);
 	if (NULL == s) {
 		return ERR_INVALID_SPLITTER_ID;
 	} else {
-		return get_total_amp_load_on_splitter_by_splitter_va(s);
+		return cgc_get_total_amp_load_on_splitter_by_splitter_va(s);
 	}
 }
 
@@ -816,10 +816,10 @@ float get_total_amp_load_on_splitter_by_splitter_id(uint32_t splitter_id) {
  * Returns:
  *  Success: amp_load >= 0.0
  */
-static float get_total_amp_load_on_light_string_by_light_string_va(light_string_t *light_string) {
+static float cgc_get_total_amp_load_on_light_string_by_light_string_va(cgc_light_string_t *light_string) {
 	float total_amp_load = 0.0;
-	total_amp_load += convert_watts_to_amps(light_string->total_wattage);
-	total_amp_load += get_total_amp_load_on_receptacle_by_receptacle_va(&(light_string->receptacle));
+	total_amp_load += cgc_convert_watts_to_amps(light_string->total_wattage);
+	total_amp_load += cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(light_string->receptacle));
 	return total_amp_load;
 }
 
@@ -830,12 +830,12 @@ static float get_total_amp_load_on_light_string_by_light_string_va(light_string_
  *  Success: amp_load >= 0.0
  *  Failure: ERR_INVALID_LIGHT_STRING_ID
  */
-float get_total_amp_load_on_light_string_by_light_string_id(uint32_t light_string_id) {
-	light_string_t *ls = get_light_string_by_id(light_string_id);
+float cgc_get_total_amp_load_on_light_string_by_light_string_id(cgc_uint32_t light_string_id) {
+	cgc_light_string_t *ls = cgc_get_light_string_by_id(light_string_id);
 	if (NULL == ls) {
 		return ERR_INVALID_LIGHT_STRING_ID;
 	} else {
-		return get_total_amp_load_on_light_string_by_light_string_va(ls);
+		return cgc_get_total_amp_load_on_light_string_by_light_string_va(ls);
 	}
 }
 
@@ -849,9 +849,9 @@ float get_total_amp_load_on_light_string_by_light_string_id(uint32_t light_strin
  * Returns:
  *  Success: max_amp_load >= 0.0
  */
-static float get_max_receptacle_amp_load_on_outlet_by_outlet_va(outlet_t *outlet) {
-	float r1_load = get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r1));
-	float r2_load = get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r2));
+static float cgc_get_max_receptacle_amp_load_on_outlet_by_outlet_va(cgc_outlet_t *outlet) {
+	float r1_load = cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r1));
+	float r2_load = cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(outlet->r2));
 
 	if (r1_load > r2_load) {
 		return r1_load;
@@ -867,12 +867,12 @@ static float get_max_receptacle_amp_load_on_outlet_by_outlet_va(outlet_t *outlet
  *  Success: amp_load >= 0.0;
  *  Failure: ERR_INVALID_OUTLET_ID
  */
-float get_max_receptacle_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id) {
-	outlet_t *o = get_outlet_by_id(outlet_id);
+float cgc_get_max_receptacle_amp_load_on_outlet_by_outlet_id(cgc_uint32_t outlet_id) {
+	cgc_outlet_t *o = cgc_get_outlet_by_id(outlet_id);
 	if (NULL == o) {
 		return ERR_INVALID_OUTLET_ID;
 	} else {
-		return get_max_receptacle_amp_load_on_outlet_by_outlet_va(o);
+		return cgc_get_max_receptacle_amp_load_on_outlet_by_outlet_va(o);
 	}
 }
 
@@ -884,11 +884,11 @@ float get_max_receptacle_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id) {
  * Returns:
  *  Success: amp_load >= 0.0
  */
-static float get_max_receptacle_amp_load_on_splitter_by_splitter_va(n_way_splitter_t *splitter) {
+static float cgc_get_max_receptacle_amp_load_on_splitter_by_splitter_va(cgc_n_way_splitter_t *splitter) {
 	float max_amp_load = 0.0;
 	float tmp_amp_load = 0.0;
 	for (int idx = 0; idx < splitter->receptacle_count; idx++) {
-		tmp_amp_load = get_total_amp_load_on_receptacle_by_receptacle_va(&(splitter->receptacles[idx]));
+		tmp_amp_load = cgc_get_total_amp_load_on_receptacle_by_receptacle_va(&(splitter->receptacles[idx]));
 		if (tmp_amp_load > max_amp_load) {
 			max_amp_load = tmp_amp_load;
 		}
@@ -903,12 +903,12 @@ static float get_max_receptacle_amp_load_on_splitter_by_splitter_va(n_way_splitt
  *  Success: amp_load >= 0.0
  *  Failure: ERR_INVALID_SPLITTER_ID
  */
-float get_max_receptacle_amp_load_on_splitter_by_splitter_id(uint32_t splitter_id) {
-	n_way_splitter_t *s = get_splitter_by_id(splitter_id);
+float cgc_get_max_receptacle_amp_load_on_splitter_by_splitter_id(cgc_uint32_t splitter_id) {
+	cgc_n_way_splitter_t *s = cgc_get_splitter_by_id(splitter_id);
 	if (NULL == s) {
 		return ERR_INVALID_SPLITTER_ID;
 	} else {
-		return get_max_receptacle_amp_load_on_splitter_by_splitter_va(s);
+		return cgc_get_max_receptacle_amp_load_on_splitter_by_splitter_va(s);
 	}
 }
 
@@ -923,12 +923,12 @@ float get_max_receptacle_amp_load_on_splitter_by_splitter_id(uint32_t splitter_i
  *  Success: SUCCESS
  *  Failure: ERR_E_MODEL_EXISTS, ERR_INVALID_MODEL_ID
  */
-int8_t init_electric_model(LOAD_CENTER_MODELS_T model_id) {
-	if (TRUE == load_center_is_created()) {
+cgc_int8_t cgc_init_electric_model(cgc_LOAD_CENTER_MODELS_T model_id) {
+	if (TRUE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_EXISTS;
 	}
 
-	e_model = get_new_load_center_by_model_id(model_id);
+	e_model = cgc_get_new_load_center_by_model_id(model_id);
 	if (NULL == e_model) {
 		return ERR_INVALID_MODEL_ID;
 	} else {
@@ -945,18 +945,18 @@ int8_t init_electric_model(LOAD_CENTER_MODELS_T model_id) {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_MODEL_ID, ERR_BREAKER_SPACES_FULL, ERR_E_MODEL_NOT_EXISTS
  */
-int8_t add_breaker_to_load_center(CIRCUIT_MODELS_T model_id, assemble_result_t *result) {
+cgc_int8_t cgc_add_breaker_to_load_center(cgc_CIRCUIT_MODELS_T model_id, cgc_assemble_result_t *result) {
 
-	if (FALSE == load_center_is_created()) {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
-	if (TRUE == load_center_breaker_spaces_are_full()) {
+	if (TRUE == cgc_load_center_breaker_spaces_are_full()) {
 		return ERR_BREAKER_SPACES_FULL;
 	}
 
-	breaker_t *breaker_space = &(e_model->breakers[e_model->breakers_installed_cnt]);
-	if (-1 == get_new_breaker_by_model_id(model_id, breaker_space, e_model->breakers_installed_cnt)) {
+	cgc_breaker_t *breaker_space = &(e_model->breakers[e_model->breakers_installed_cnt]);
+	if (-1 == cgc_get_new_breaker_by_model_id(model_id, breaker_space, e_model->breakers_installed_cnt)) {
 		return ERR_INVALID_MODEL_ID;
 	}
 
@@ -974,24 +974,24 @@ int8_t add_breaker_to_load_center(CIRCUIT_MODELS_T model_id, assemble_result_t *
  *  Success: SUCCESS
  *  Failure: ERR_E_MODEL_NOT_EXISTS, ERR_INVALID_BREAKER_ID, ERR_INVALID_MODEL_ID, ERR_OUTLET_AMPS_EXCEED_BREAKER_AMPS
  */
-int8_t add_outlet_to_breaker(CIRCUIT_MODELS_T outlet_model_id, uint32_t breaker_id, assemble_result_t *result) {
+cgc_int8_t cgc_add_outlet_to_breaker(cgc_CIRCUIT_MODELS_T outlet_model_id, cgc_uint32_t breaker_id, cgc_assemble_result_t *result) {
 
-	if (FALSE == load_center_is_created()) {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
-	breaker_t *breaker = get_breaker_by_id(breaker_id);
+	cgc_breaker_t *breaker = cgc_get_breaker_by_id(breaker_id);
 	if (NULL == breaker) {
 		return ERR_INVALID_BREAKER_ID;
 	}
-	outlet_t *o = get_new_outlet_by_model_id(outlet_model_id);
+	cgc_outlet_t *o = cgc_get_new_outlet_by_model_id(outlet_model_id);
 	if (NULL == o) {
 		return ERR_INVALID_MODEL_ID;
 	}
 
 	// don't want a 20amp outlet on a 15amp breaker
 	if (o->amp_rating > breaker->amp_rating) {
-		deallocate((void *)o, sizeof(outlet_t));
+		deallocate((void *)o, sizeof(cgc_outlet_t));
 		return ERR_OUTLET_AMPS_EXCEED_BREAKER_AMPS;
 	}
 
@@ -999,7 +999,7 @@ int8_t add_outlet_to_breaker(CIRCUIT_MODELS_T outlet_model_id, uint32_t breaker_
 	result->receptacle_id[0] = o->r1.id;
 	result->receptacle_id[1] = o->r2.id;
 	result->receptacle_ids_assigned_cnt = 2;
-	return list_append(breaker->outlets, node_create((void *)o));
+	return cgc_list_append(breaker->outlets, cgc_node_create((void *)o));
 }
 
 /*
@@ -1011,22 +1011,22 @@ int8_t add_outlet_to_breaker(CIRCUIT_MODELS_T outlet_model_id, uint32_t breaker_
  *  Success: SUCCESS
  *  Failure: ERR_E_MODEL_NOT_EXISTS, ERR_INVALID_RECEPTACLE_ID, ERR_INVALID_MODEL_ID
  */
-int8_t add_n_way_splitter_to_receptacle(SPLITTER_MODELS_T splitter_model_id, uint32_t receptacle_id, assemble_result_t *result) {
+cgc_int8_t cgc_add_n_way_splitter_to_receptacle(cgc_SPLITTER_MODELS_T splitter_model_id, cgc_uint32_t receptacle_id, cgc_assemble_result_t *result) {
 
-	if (FALSE == load_center_is_created()) {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
-	receptacle_t *r = get_receptacle_by_id(receptacle_id);
+	cgc_receptacle_t *r = cgc_get_receptacle_by_id(receptacle_id);
 	if (NULL == r) {
 		return ERR_INVALID_RECEPTACLE_ID;
 	}
 
-	if (TRUE == receptacle_is_loaded(r)) {
+	if (TRUE == cgc_receptacle_is_loaded(r)) {
 		return ERR_RECEPTACLE_FULL;
 	}
 
-	n_way_splitter_t *s = get_new_n_way_splitter_by_model_id(splitter_model_id);
+	cgc_n_way_splitter_t *s = cgc_get_new_n_way_splitter_by_model_id(splitter_model_id);
 	if (NULL == s) {
 		return ERR_INVALID_MODEL_ID;
 	}
@@ -1055,22 +1055,22 @@ int8_t add_n_way_splitter_to_receptacle(SPLITTER_MODELS_T splitter_model_id, uin
  *  Success: SUCCESS
  *  Failure: ERR_E_MODEL_NOT_EXISTS, ERR_INVALID_RECEPTACLE_ID, ERR_INVALID_MODEL_ID
  */
-int8_t add_light_string_to_receptacle(LIGHT_STRING_MODELS_T light_string_model_id, uint32_t receptacle_id, assemble_result_t *result) {
+cgc_int8_t cgc_add_light_string_to_receptacle(cgc_LIGHT_STRING_MODELS_T light_string_model_id, cgc_uint32_t receptacle_id, cgc_assemble_result_t *result) {
 
-	if (FALSE == load_center_is_created()) {
+	if (FALSE == cgc_load_center_is_created()) {
 		return ERR_E_MODEL_NOT_EXISTS;
 	}
 
-	receptacle_t *r = get_receptacle_by_id(receptacle_id);
+	cgc_receptacle_t *r = cgc_get_receptacle_by_id(receptacle_id);
 	if (NULL == r) {
 		return ERR_INVALID_RECEPTACLE_ID;
 	}
 
-	if (TRUE == receptacle_is_loaded(r)) {
+	if (TRUE == cgc_receptacle_is_loaded(r)) {
 		return ERR_RECEPTACLE_FULL;
 	}
 
-	light_string_t *ls = get_new_light_string_by_model_id(light_string_model_id);
+	cgc_light_string_t *ls = cgc_get_new_light_string_by_model_id(light_string_model_id);
 	if (NULL == ls) {
 		return ERR_INVALID_MODEL_ID;
 	}

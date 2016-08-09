@@ -33,6 +33,6 @@
  * @param size The amount of bytes to send.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int send_bytes(int fd, const char *buf, unsigned int size);
+int cgc_send_bytes(int fd, const char *buf, unsigned int size);
 
 #endif

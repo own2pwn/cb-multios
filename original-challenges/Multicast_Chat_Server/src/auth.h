@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,20 +35,20 @@ typedef struct {
 	char* name;
 	char* password;
 	unsigned char* signingKey;
-	Subscription* subscriptions;
+	cgc_Subscription* subscriptions;
 	void* next;
-} User;
+} cgc_User;
 
 typedef struct {
 	char* name;
 	unsigned char* signature;
-	Subscription* subscriptions;
-} AuthResponse;
+	cgc_Subscription* subscriptions;
+} cgc_AuthResponse;
 
-unsigned int authenticateToken(User* users, char* token);
-User* getUserByName(User* users, char* name);
-User* getUserByToken(User* users, char* token);
-User* newToken(User* user);
-User* newUser(User** usersPtr, char* name, char* password);
-unsigned int verifySignature(AuthResponse* response, unsigned char* signingKey);
-char* computeSignature(User* user);
+unsigned int cgc_authenticateToken(cgc_User* users, char* token);
+cgc_User* cgc_getUserByName(cgc_User* users, char* name);
+cgc_User* cgc_getUserByToken(cgc_User* users, char* token);
+cgc_User* cgc_newToken(cgc_User* user);
+cgc_User* cgc_newUser(cgc_User** usersPtr, char* name, char* password);
+unsigned int cgc_verifySignature(cgc_AuthResponse* response, unsigned char* signingKey);
+char* cgc_computeSignature(cgc_User* user);

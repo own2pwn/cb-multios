@@ -28,15 +28,15 @@ THE SOFTWARE.
 #include "vgf.h"
 #include "canvas.h"
 
-RGB_Color *GetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer);
-int GetColorIndex(Canvas *c, uint16_t y, uint16_t x, uint8_t layer);
-void SetColor(Canvas *c, uint16_t y, uint16_t x, uint8_t layer, uint8_t color);
-void PaintTriangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Triangle *triangle);
-void ConnectPoints(Canvas *c, uint8_t layer, uint8_t color, uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end);
-void PaintRectangle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Rectangle *rectangle);
-void PaintSquare(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Square *square);
-void PaintSpray(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Spray *spray);
-void PaintLine(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Line *line);
-void PaintCircle(Canvas *c, uint8_t layer, uint8_t color, uint8_t fill, VGF_Circle *circle);
+cgc_RGB_Color *cgc_GetColor(cgc_Canvas *c, cgc_uint16_t y, cgc_uint16_t x, cgc_uint8_t layer);
+int cgc_GetColorIndex(cgc_Canvas *c, cgc_uint16_t y, cgc_uint16_t x, cgc_uint8_t layer);
+void cgc_SetColor(cgc_Canvas *c, cgc_uint16_t y, cgc_uint16_t x, cgc_uint8_t layer, cgc_uint8_t color);
+void cgc_PaintTriangle(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Triangle *triangle);
+void cgc_ConnectPoints(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint16_t x_start, cgc_uint16_t y_start, cgc_uint16_t x_end, cgc_uint16_t y_end);
+void cgc_PaintRectangle(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Rectangle *rectangle);
+void cgc_PaintSquare(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Square *square);
+void cgc_PaintSpray(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Spray *spray);
+void cgc_PaintLine(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Line *line);
+void cgc_PaintCircle(cgc_Canvas *c, cgc_uint8_t layer, cgc_uint8_t color, cgc_uint8_t fill, cgc_VGF_Circle *circle);
 
 #endif

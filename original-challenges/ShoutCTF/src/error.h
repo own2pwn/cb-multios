@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,8 +41,8 @@ typedef enum {
     ERR_CHAL_EXISTS,
     ERR_WRONG_PASS,
     ERR_INVALID_VALUE,
-} error_t;
+} cgc_error_t;
 
-const char* error_to_string(error_t err);
+const char* cgc_error_to_string(cgc_error_t err);
 
 #endif

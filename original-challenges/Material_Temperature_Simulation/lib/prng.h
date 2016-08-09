@@ -29,9 +29,9 @@ THE SOFTWARE.
 
 #include "stdint.h"
 
-void sprng(uint64_t seed);
-uint64_t prng();
-uint32_t random_in_range(uint32_t min, uint32_t max);
+void cgc_sprng(cgc_uint64_t seed);
+cgc_uint64_t cgc_prng();
+cgc_uint32_t cgc_random_in_range(cgc_uint32_t min, cgc_uint32_t max);
 
 // Coefficients chosen from "An Experimental Exploration of 
 // Marsaglia's Xorshift Generators, Scrambled" by Sebastiano Vigna. 

@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,16 +34,16 @@ typedef struct
 	int index; // index into the listOfMessages
 	int first_login;
 	int msg_count;
-} User;
+} cgc_User;
 
-extern User *current_user;
+extern cgc_User *current_user;
 
-extern User *listOfUsers[MAX_USERS];
+extern cgc_User *listOfUsers[MAX_USERS];
 extern int user_count;
 
 
-int login();
-int logout();
-void create_user();
-void list_users();
-int get_user_index(char *);
+int cgc_login();
+int cgc_logout();
+void cgc_create_user();
+void cgc_list_users();
+int cgc_get_user_index(char *);

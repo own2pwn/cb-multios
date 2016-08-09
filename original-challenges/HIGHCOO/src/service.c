@@ -34,28 +34,28 @@ enum {
 
 int main(void) {
 
-    uint32_t command[1] = {0};
+    cgc_uint32_t command[1] = {0};
     int ret = 0;
 
 
     while (1) {
-        RECV(command, sizeof(uint32_t));
+        RECV(command, sizeof(cgc_uint32_t));
 
         switch (command[0]) {
             case CMD_ADD_HAIKU:
-                ret = add_haiku();
+                ret = cgc_add_haiku();
                 break;
             case CMD_GET_HAIKU_BY_ID:
-                ret = get_haiku_by_id();
+                ret = cgc_get_haiku_by_id();
                 break;
             case CMD_GET_HAIKU_RANDOM:
-                ret = get_haiku_random();
+                ret = cgc_get_haiku_cgc_random();
                 break;
             case CMD_GET_COUNT:
-                ret = get_haiku_count();
+                ret = cgc_get_haiku_count();
                 break;
             case CMD_GET_IDS:
-                ret = get_haiku_ids();
+                ret = cgc_get_haiku_ids();
                 break;
             default:
                 ret = ERR_INVALID_CMD;

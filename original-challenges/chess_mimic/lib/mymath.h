@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef __MYMATH_H__
 #define __MYMATH_H__
 
-double floor( double );
-double round( double, double n );
-int abs(int);
+double cgc_floor( double );
+double cgc_round( double, double n );
+int cgc_abs(int);
 
 #endif // __MYMATH_H__

@@ -13,7 +13,7 @@ enum {
 };
 
 typedef struct {
-    struct _record_t _record;
+    struct cgc__record_t _record;
 
     unsigned int type;
     union {
@@ -25,11 +25,11 @@ typedef struct {
             char *strvalue;
         } v_number;
         struct {
-            dict_t *value;
+            cgc_dict_t *value;
         } v_array;
     };
-} var_t;
+} cgc_var_t;
 
-int program_run(program_t *prog, io_t *io);
+int cgc_program_run(cgc_program_t *prog, cgc_io_t *io);
 
 #endif

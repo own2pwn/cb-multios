@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -38,7 +38,7 @@ unsigned int flag_index = 0;
 *
 * @return a request ID
 */
-unsigned int getToken() {
+unsigned int cgc_getToken() {
 	unsigned int requestBits[10] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
 	const unsigned char *flag = (const unsigned char*) FLAG_PAGE;
 	unsigned int token = 1;
@@ -63,51 +63,51 @@ unsigned int getToken() {
 }
 
 /**
-* Is the command a valud Token command
+* Is the command a valud cgc_Token command
 * 
 * @param command the command string
 *
 * @return 1 if true, 0 if false
 */
-int isTokenCommand(char* command) {
+int cgc_isTokenCommand(char* command) {
 
-	if(!strncmp(command, TOKEN_CMD, strlen(TOKEN_CMD)))
+	if(!cgc_strncmp(command, TOKEN_CMD, cgc_strlen(TOKEN_CMD)))
 		return 1;
 
-	if(!strncmp(command, REFRESH_CMD, strlen(REFRESH_CMD)))
+	if(!cgc_strncmp(command, REFRESH_CMD, cgc_strlen(REFRESH_CMD)))
 		return 1;
 
-	if(!strncmp(command, REVOKE_TOKEN_CMD, strlen(REVOKE_TOKEN_CMD)))
+	if(!cgc_strncmp(command, REVOKE_TOKEN_CMD, cgc_strlen(REVOKE_TOKEN_CMD)))
 		return 1;
 
 	return 0;
 }
 
 /**
-* Calculate how many bytes are needed to store the Token as a string
+* Calculate how many bytes are needed to store the cgc_Token as a string
 * 
-* @param token The address of the Token
+* @param token The address of the cgc_Token
 *
-* @return The number of bytes to store the Token as a string
+* @return The number of bytes to store the cgc_Token as a string
 */
-size_t calculateTokenSize(Token *token) {
-	size_t size, token_val_sz, token_exp_sz;
+cgc_size_t cgc_calculateTokenSize(cgc_Token *token) {
+	cgc_size_t size, token_val_sz, token_exp_sz;
 	char buffer[20];
 
-	bzero(buffer, 20);
-	sprintf(buffer, "!U", token->value);
-	token_val_sz = strlen(buffer);
+	cgc_bzero(buffer, 20);
+	cgc_sprintf(buffer, "!U", token->value);
+	token_val_sz = cgc_strlen(buffer);
 
-	bzero(buffer, 20);
-	sprintf(buffer, "!U", token->expiration);
-	token_exp_sz = strlen(buffer);
+	cgc_bzero(buffer, 20);
+	cgc_sprintf(buffer, "!U", token->expiration);
+	token_exp_sz = cgc_strlen(buffer);
 
-	size = strlen(TOKEN_HDR)+ 1;
+	size = cgc_strlen(TOKEN_HDR)+ 1;
 	size += token_val_sz + 1;
-	size += strlen(TOKEN_EXP_HDR)+ 1;
+	size += cgc_strlen(TOKEN_EXP_HDR)+ 1;
 	size += token_exp_sz + 1;
 	size += sizeof(TOKEN_USE_HDR) + 1;
-	size += strlen(token->use);
+	size += cgc_strlen(token->use);
 
 	return size;
 }
@@ -120,41 +120,41 @@ size_t calculateTokenSize(Token *token) {
 *
 * @return None
 */
-void sendToken(unsigned int id, Token *token) {
+void cgc_sendToken(unsigned int id, cgc_Token *token) {
 	const char *flag = (const char*) FLAG_PAGE;
 	char* flag_buf=0;
-	size_t bytes, tokenSize;
+	cgc_size_t bytes, tokenSize;
 	char* buffer;
 	int ret;
 
-	tokenSize = calculateTokenSize(token);
+	tokenSize = cgc_calculateTokenSize(token);
 #ifdef PATCHED_2
-	if(!(buffer = malloc(tokenSize+1)))
+	if(!(buffer = cgc_malloc(tokenSize+1)))
 		_terminate(1);
 #else
-	if(!(buffer = malloc(tokenSize)))
+	if(!(buffer = cgc_malloc(tokenSize)))
 		_terminate(1);
 #endif
-	bzero(buffer, tokenSize+1);
+	cgc_bzero(buffer, tokenSize+1);
 
-	if(!(flag_buf = malloc(64)))
+	if(!(flag_buf = cgc_malloc(64)))
 		_terminate(ALLOCATE_ERROR);
-	bzero(flag_buf, 64);
+	cgc_bzero(flag_buf, 64);
 
 	for (unsigned int i = 0; i < 10; i++) {
-		sprintf(&flag_buf[i*4], "!H", (unsigned char) *flag++);
+		cgc_sprintf(&flag_buf[i*4], "!H", (unsigned char) *flag++);
 	}
 
-	sprintf(buffer, "!X=!U;!X=!U;!X=!X?",
+	cgc_sprintf(buffer, "!X=!U;!X=!U;!X=!X?",
 		TOKEN_HDR, token->value,
 		TOKEN_EXP_HDR, token->expiration,
 		TOKEN_USE_HDR, token->use);
 
-	tokenSize = strlen(buffer);
-	if((ret = transmit_all(STDOUT, buffer, tokenSize))) 
+	tokenSize = cgc_strlen(buffer);
+	if((ret = cgc_transmit_all(STDOUT, buffer, tokenSize))) 
 		_terminate(1);
-	free(buffer);
-	free(flag_buf);
+	cgc_free(buffer);
+	cgc_free(flag_buf);
 
 }
 
@@ -165,8 +165,8 @@ void sendToken(unsigned int id, Token *token) {
 *
 * @return The address of the found token, or NULL if not found
 */
-Token* findToken(Token *token) {
-	Token *found;
+cgc_Token* cgc_findToken(cgc_Token *token) {
+	cgc_Token *found;
 
 	for(found=tokenStore; found != NULL; found=found->next) {
 		if(found->value == token->value)
@@ -183,14 +183,14 @@ Token* findToken(Token *token) {
 *
 * @return 1 if removed, 0 if not
 */
-int removeToken(Token* token) {
-	Token *prev=NULL, *tok_ptr;
+int cgc_removeToken(cgc_Token* token) {
+	cgc_Token *prev=NULL, *tok_ptr;
 
 	for(tok_ptr=tokenStore, prev=tokenStore; tok_ptr != NULL; tok_ptr=tok_ptr->next) {
 		if(token->value == tok_ptr->value) {
 			if(prev != NULL)
 				prev->next = tok_ptr->next;
-			free(token);
+			cgc_free(token);
 			return 1;
 		}
 		prev = tok_ptr;
@@ -207,17 +207,17 @@ int removeToken(Token* token) {
 *
 * @return 1 if certificate is valid, 0 if it is not
 */
-int validateToken(Token* token, unsigned int* expiration_date) {
-	Token *found;
+int cgc_validateToken(cgc_Token* token, unsigned int* expiration_date) {
+	cgc_Token *found;
 
 	if(!token->value || !token->use || !token->expiration) {
-		sendErrorResponse(RESPONSE_ERR_NO_TOK);
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_TOK);
 
 		return 0;
 	}
 
-	if(!(found = findToken(token))) {
-		sendErrorResponse(RESPONSE_ERR_NO_TOK);
+	if(!(found = cgc_findToken(token))) {
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_TOK);
 
 		return 0;
 	}
@@ -225,34 +225,34 @@ int validateToken(Token* token, unsigned int* expiration_date) {
 	if(found->expiration > *expiration_date)
 		return 1;
 
-	removeToken(found);
-	sendErrorResponse(RESPONSE_ERR_EXP_TOK);
+	cgc_removeToken(found);
+	cgc_sendErrorResponse(RESPONSE_ERR_EXP_TOK);
 	
 	return 0;
 }
 
 /**
-* Parse the buffer as a Token
+* Parse the buffer as a cgc_Token
 * 
 * @param buffer The buffer that contains the token
 *
-* @return The address of the new Token
+* @return The address of the new cgc_Token
 */
-Token* parseToken(char* body) {
-	Token* token;
+cgc_Token* cgc_parseToken(char* body) {
+	cgc_Token* token;
 	char *command, *val_str;
-	size_t size;
+	cgc_size_t size;
 
-	if(!(token = malloc(sizeof(Token))))
+	if(!(token = cgc_malloc(sizeof(cgc_Token))))
 		_terminate(1);
-	bzero((char *)token, sizeof(Token));
+	cgc_bzero((char *)token, sizeof(cgc_Token));
 	if(!token)
 		_terminate(1);
 
-	initializeAttributes(body);
-	getStringAttribute(&token->use, TOKEN_USE_HDR);
-	getIntegerAttribute(&token->value, TOKEN_HDR);
-	getIntegerAttribute(&token->expiration, TOKEN_EXP_HDR);
+	cgc_initializeAttributes(body);
+	cgc_getStringAttribute(&token->use, TOKEN_USE_HDR);
+	cgc_getIntegerAttribute(&token->value, TOKEN_HDR);
+	cgc_getIntegerAttribute(&token->expiration, TOKEN_EXP_HDR);
 
 	return token;
 }
@@ -266,22 +266,22 @@ Token* parseToken(char* body) {
 *
 * @return None
 */
-void refreshToken(int id, char* body, unsigned int* expiration_date) {
-	Token *token, *found;
+void cgc_refreshToken(int id, char* body, unsigned int* expiration_date) {
+	cgc_Token *token, *found;
 
-	if(!(token = parseToken(body)))
+	if(!(token = cgc_parseToken(body)))
 		return;
 
-	if(!(found = findToken(token)))
+	if(!(found = cgc_findToken(token)))
 		return;
 
 	if(found->expiration > *expiration_date) {
 		*expiration_date += 1;
 		found->expiration = *expiration_date+100;
-		sendToken(id, token);
+		cgc_sendToken(id, token);
 	} else {
-		removeToken(token);
-		sendErrorResponse(RESPONSE_ERR_EXP_TOK);
+		cgc_removeToken(token);
+		cgc_sendErrorResponse(RESPONSE_ERR_EXP_TOK);
 	}
 
 }
@@ -295,27 +295,27 @@ void refreshToken(int id, char* body, unsigned int* expiration_date) {
 *
 * @return None
 */
-void requestToken(int id, char* body, unsigned int* expiration_date) {
-	Token* token;
-	size_t bytes;
+void cgc_requestToken(int id, char* body, unsigned int* expiration_date) {
+	cgc_Token* token;
+	cgc_size_t bytes;
 	int ret;
 
-	if(!(token = parseToken(body)))
+	if(!(token = cgc_parseToken(body)))
 		return;
 
 	/*
-	if((ret = random(&token->value, sizeof(token->value), &bytes)))
+	if((ret = cgc_random(&token->value, sizeof(token->value), &bytes)))
 		_terminate(1);
 
 	if(bytes != sizeof(token->value))
 		_terminate(1);
 	*/
 
-	token->value = getToken();
+	token->value = cgc_getToken();
 	*expiration_date += 1;
 	token->expiration = *expiration_date + 100;
 
-	sendToken(id, token);
+	cgc_sendToken(id, token);
 
 	token->next = tokenStore;
 	tokenStore = token;
@@ -330,23 +330,23 @@ void requestToken(int id, char* body, unsigned int* expiration_date) {
 *
 * @return 1 if use is valid, 0 if it is not
 */
-int checkTokenUse(char* command, char* useList) {
+int cgc_checkTokenUse(char* command, char* useList) {
 	char* use;
-	size_t size, size1, size2;
+	cgc_size_t size, size1, size2;
 
 	if(!useList)
 		return 0;
 
-	use = strtok(useList,":");
+	use = cgc_strtok(useList,":");
 	do {
-		size1 = strlen(command);
-		size2 = strlen(use);
+		size1 = cgc_strlen(command);
+		size2 = cgc_strlen(use);
 		size = size1 > size2 ? size1 : size2;
-		if(!strncmp(command, use, strlen(command)) ||
-			!strncmp(REVOKE_TOKEN_CMD, command, strlen(REVOKE_TOKEN_CMD)))
+		if(!cgc_strncmp(command, use, cgc_strlen(command)) ||
+			!cgc_strncmp(REVOKE_TOKEN_CMD, command, cgc_strlen(REVOKE_TOKEN_CMD)))
 			return 1;
 
-		use = strtok(0, ":");
+		use = cgc_strtok(0, ":");
 	} while(use);
 
 	return 0;
@@ -362,18 +362,18 @@ int checkTokenUse(char* command, char* useList) {
 *
 * @return None
 */
-void revokeToken(int id, char* body, unsigned int* expiration_date) {
-	Token *token, *found;
+void cgc_revokeToken(int id, char* body, unsigned int* expiration_date) {
+	cgc_Token *token, *found;
 	int ret;
-	size_t size;
+	cgc_size_t size;
 
-	if(!(token = parseToken(body)))
+	if(!(token = cgc_parseToken(body)))
 		return;
 
-	if(removeToken(token)) {
-		sendErrorResponse(RESPONSE_TOKEN_REVOKED);
+	if(cgc_removeToken(token)) {
+		cgc_sendErrorResponse(RESPONSE_TOKEN_REVOKED);
 	} else
-		sendErrorResponse(RESPONSE_ERR_NO_TOK);
+		cgc_sendErrorResponse(RESPONSE_ERR_NO_TOK);
 
 	return;
 

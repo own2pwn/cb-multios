@@ -34,72 +34,72 @@ THE SOFTWARE.
 #include "io.h"
 #include "prng.h"
 
-extern environment ENV;
+extern cgc_environment ENV;
 
 int main(void) {
-	Command Cmd;
+	cgc_Command Cmd;
 	char buf[MAX_CMD_LEN];
-	int32_t i;
-	uint8_t ParseResult;
+	cgc_int32_t i;
+	cgc_uint8_t ParseResult;
 	const char *rand_page = (const char *)0x4347C000;
 
-	// init the prng
-        seed_prng(*(unsigned int *)rand_page);
+	// init the cgc_prng
+        cgc_seed_prng(*(unsigned int *)rand_page);
 	
 	// init the file system
-	InitFilesystem();
+	cgc_InitFilesystem();
 
 	// zero out the command history
-	bzero(ENV.CommandHistory, sizeof(ENV.CommandHistory));
+	cgc_bzero(ENV.CommandHistory, sizeof(ENV.CommandHistory));
 	ENV.NumCommandHistory = 0;
 
 	// log in the default 'crs' user
-	Login();
+	cgc_Login();
 
 	while (1) {
-		PrintPrompt();
+		cgc_PrintPrompt();
 
-		if (ReadShellPrompt(STDIN, buf, MAX_CMD_LEN-1) == 0) {
-			printf("\b\b  \b\b\n\r");
+		if (cgc_ReadShellPrompt(STDIN, buf, MAX_CMD_LEN-1) == 0) {
+			cgc_printf("\b\b  \b\b\n\r");
 			continue;
 		}
-		printf("\b\b  \b\b\n\r");
+		cgc_printf("\b\b  \b\b\n\r");
 
-		PrependCommandHistory(buf);
+		cgc_PrependCommandHistory(buf);
 
-		ParseResult = ParseCli(buf, &Cmd);
+		ParseResult = cgc_ParseCli(buf, &Cmd);
 		if (ParseResult == 0) {
 			break;
 		} else if (ParseResult == 1) {
-			puts("Invalid input");
+			cgc_puts("Invalid input");
 			continue;
 		}
 
-		// Command handler
-		if (!strcmp(Cmd.argv[0], "list")) {
-			HandleListFiles(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "chuser")) {
-			ChUser(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "chpw")) {
-			ChPw(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "exit")) {
-			HandleExit(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "id")) {
-			ID(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "?")) {
-			HandleHelp(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "help")) {
-			HandleHelp(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "newuser")) {
-			NewUser(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "deluser")) {
-			DelUser(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "dump")) {
-			HandleDump(&Cmd);
-		} else if (!strcmp(Cmd.argv[0], "print")) {
-			HandlePrint(&Cmd);
+		// cgc_Command handler
+		if (!cgc_strcmp(Cmd.argv[0], "list")) {
+			cgc_HandleListFiles(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "chuser")) {
+			cgc_ChUser(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "chpw")) {
+			cgc_ChPw(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "exit")) {
+			cgc_HandleExit(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "id")) {
+			cgc_ID(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "?")) {
+			cgc_HandleHelp(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "help")) {
+			cgc_HandleHelp(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "newuser")) {
+			cgc_NewUser(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "deluser")) {
+			cgc_DelUser(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "dump")) {
+			cgc_HandleDump(&Cmd);
+		} else if (!cgc_strcmp(Cmd.argv[0], "print")) {
+			cgc_HandlePrint(&Cmd);
 		} else {
-			printf("Invalid command: $s\n\r", buf);
+			cgc_printf("Invalid command: $s\n\r", buf);
 		}
 
 	}

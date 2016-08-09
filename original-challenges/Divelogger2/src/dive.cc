@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,17 +25,17 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-uint32_t Dive::AddDiveBin( uint32_t timeval, uint32_t depth )
+cgc_uint32_t cgc_Dive::cgc_AddDiveBin( cgc_uint32_t cgc_timeval, cgc_uint32_t depth )
 {
-    uint32_t index = m_diveBinCount;
+    cgc_uint32_t index = m_diveBinCount;
 
 #ifdef PATCHED
     if ( index >= DIVE_BIN_COUNT )
         return (-1);
 #endif
 
-    m_diveBins[index].SetTimeVal( timeval );
-    m_diveBins[index].SetDepth( depth );
+    m_diveBins[index].cgc_SetTimeVal( cgc_timeval );
+    m_diveBins[index].cgc_SetDepth( depth );
 
     m_diveBinCount++;
 

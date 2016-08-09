@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,59 +29,59 @@
 typedef struct {
     unsigned char *base;
     unsigned int length;
-} vm_mem_t;
+} cgc_vm_mem_t;
 
 typedef struct {
     union {
         unsigned int number;
         unsigned char *ptr;
     };
-    vm_mem_t *mem;
-} vm_reg_t;
+    cgc_vm_mem_t *mem;
+} cgc_vm_reg_t;
 
 typedef struct {
-    filter_t *filter;
-    vm_mem_t ctx_mem;
-    vm_mem_t stack_mem;
+    cgc_filter_t *filter;
+    cgc_vm_mem_t ctx_mem;
+    cgc_vm_mem_t stack_mem;
     unsigned int pc;
-    vm_reg_t registers[16];
-} vm_t;
+    cgc_vm_reg_t registers[16];
+} cgc_vm_t;
 
-int syscall_receive(vm_t *state);
-int syscall_transmit(vm_t *state);
-int syscall_random(vm_t *state);
+int cgc_syscall_receive(cgc_vm_t *state);
+int cgc_syscall_transmit(cgc_vm_t *state);
+int cgc_syscall_cgc_random(cgc_vm_t *state);
 
-typedef int (*syscall_handler_t) (vm_t *state);
+typedef int (*cgc_syscall_handler_t) (cgc_vm_t *state);
 
-syscall_handler_t handlers[] = {
-    syscall_receive,
-    syscall_transmit,
-    syscall_random,
+cgc_syscall_handler_t handlers[] = {
+    cgc_syscall_receive,
+    cgc_syscall_transmit,
+    cgc_syscall_cgc_random,
     NULL
 };
 
-static unsigned int swap32(unsigned int x)
+static unsigned int cgc_swap32(unsigned int x)
 {
     return (((x >> 24) & 0xff) << 0) | (((x >> 16) & 0xff) << 8) | (((x >> 8) & 0xff) << 16) | (((x >> 0) & 0xff) << 24);
 }
 
-static int valid_mem(vm_reg_t *reg, unsigned int offset, unsigned int length)
+static int cgc_valid_mem(cgc_vm_reg_t *reg, unsigned int offset, unsigned int length)
 {
     if (length > INT_MAX)
         return 0;
     return (reg->ptr + offset >= reg->mem->base) && (reg->ptr + offset + length <= reg->mem->base + reg->mem->length);
 }
 
-static vm_mem_t *new_mem(vm_mem_t *mem, unsigned char *base, unsigned int length)
+static cgc_vm_mem_t *cgc_new_mem(cgc_vm_mem_t *mem, unsigned char *base, unsigned int length)
 {
     if (mem == NULL)
-        mem = malloc(sizeof(vm_mem_t));
+        mem = cgc_malloc(sizeof(cgc_vm_mem_t));
     mem->base = base;
     mem->length = length;
     return mem;
 }
 
-unsigned int filter_execute(filter_t *filter, unsigned char *ctx, unsigned int ctx_len)
+unsigned int cgc_filter_execute(cgc_filter_t *filter, unsigned char *ctx, unsigned int ctx_len)
 {
     static void* type_table[] = {
         &&do_ldx, &&do_st, &&do_stx, &&do_alu, &&do_jmp
@@ -94,33 +94,33 @@ unsigned int filter_execute(filter_t *filter, unsigned char *ctx, unsigned int c
         &&do_jeq, &&do_jne, &&do_jgt, &&do_jge, &&do_call, &&do_ret
     };
     unsigned int src, retval;
-    vm_mem_t *smem;
-    unsigned char *stack = malloc(STACK_SIZE);
-    vm_reg_t *dst;
-    vm_t *vm;
+    cgc_vm_mem_t *smem;
+    unsigned char *stack = cgc_malloc(STACK_SIZE);
+    cgc_vm_reg_t *dst;
+    cgc_vm_t *vm;
 
-    vm = malloc(sizeof(vm_t));
+    vm = cgc_malloc(sizeof(cgc_vm_t));
     vm->filter = filter;
     vm->pc = 0;
-    memset(vm->registers, 0, sizeof(vm->registers));
+    cgc_memset(vm->registers, 0, sizeof(vm->registers));
 
     /* setup ctx and frame pointers */
     vm->registers[0].ptr = ctx;
-    vm->registers[0].mem = new_mem(&vm->ctx_mem, ctx, ctx_len);
+    vm->registers[0].mem = cgc_new_mem(&vm->ctx_mem, ctx, ctx_len);
     vm->registers[15].ptr = stack;
-    vm->registers[15].mem = new_mem(&vm->stack_mem, stack, STACK_SIZE);
+    vm->registers[15].mem = cgc_new_mem(&vm->stack_mem, stack, STACK_SIZE);
 
-    memset(stack, 0, STACK_SIZE);
+    cgc_memset(stack, 0, STACK_SIZE);
 
     while (1)
     {
-        insn_t *insn = &filter->insn[vm->pc];
+        cgc_insn_t *insn = &filter->insn[vm->pc];
         vm->pc++;
 
         goto *type_table[insn->op.alu.type];
 
 do_ldx:
-        if (!valid_mem(&vm->registers[insn->src], insn->offset, 1 << insn->op.mem.size))
+        if (!cgc_valid_mem(&vm->registers[insn->src], insn->offset, 1 << insn->op.mem.size))
             break;
         if (insn->op.mem.size == S_B)
             src = *(unsigned char *)(vm->registers[insn->src].ptr + insn->offset);
@@ -137,7 +137,7 @@ do_ldx:
         continue;
 do_st:
 do_stx:
-        if (!valid_mem(&vm->registers[insn->dst], insn->offset, 1 << insn->op.mem.size))
+        if (!cgc_valid_mem(&vm->registers[insn->dst], insn->offset, 1 << insn->op.mem.size))
             break;
         if (insn->op.alu.type == TYPE_ST)
             src = insn->extra;
@@ -168,11 +168,11 @@ do_alu:
         goto *alu_table[insn->op.alu.code];
 do_add:
         dst->number += src;
-        dst->mem = (vm_mem_t *)((uintptr_t)dst->mem | (uintptr_t)smem);
+        dst->mem = (cgc_vm_mem_t *)((cgc_uintptr_t)dst->mem | (cgc_uintptr_t)smem);
         continue;
 do_sub:
         dst->number -= src;
-        dst->mem = (vm_mem_t *)((uintptr_t)dst->mem | (uintptr_t)smem);
+        dst->mem = (cgc_vm_mem_t *)((cgc_uintptr_t)dst->mem | (cgc_uintptr_t)smem);
         continue;
 do_mul:
         dst->number *= src;
@@ -210,7 +210,7 @@ do_mov:
         dst->mem = smem;
         continue;
 do_end:
-        dst->number = swap32(dst->number);
+        dst->number = cgc_swap32(dst->number);
         continue;
 
 do_jmp:
@@ -248,19 +248,19 @@ do_ret:
     retval = 0xFFFFFFFF;
 
 cleanup:
-    free(stack);
-    free(vm);
+    cgc_free(stack);
+    cgc_free(vm);
     return retval;
 }
 
-int syscall_receive(vm_t *vm)
+int cgc_syscall_receive(cgc_vm_t *vm)
 {
     int ret;
     unsigned int length = vm->registers[1].number;
-    if (!valid_mem(&vm->registers[0], 0, length))
+    if (!cgc_valid_mem(&vm->registers[0], 0, length))
         return 0;
-    fflush(stdout);
-    ret = fread(vm->registers[0].ptr, length, stdin);
+    cgc_fflush(stdout);
+    ret = cgc_fread(vm->registers[0].ptr, length, stdin);
     vm->registers[0].number = ret;
 #ifdef PATCHED_1
     vm->registers[0].mem = NULL;
@@ -268,13 +268,13 @@ int syscall_receive(vm_t *vm)
     return ret >= 0;
 }
 
-int syscall_transmit(vm_t *vm)
+int cgc_syscall_transmit(cgc_vm_t *vm)
 {
     int ret;
     unsigned int length = vm->registers[1].number;
-    if (!valid_mem(&vm->registers[0], 0, length))
+    if (!cgc_valid_mem(&vm->registers[0], 0, length))
         return 0;
-    ret = fwrite(vm->registers[0].ptr, length, stdout);
+    ret = cgc_fwrite(vm->registers[0].ptr, length, stdout);
     vm->registers[0].number = ret;
 #ifdef PATCHED_1
     vm->registers[0].mem = NULL;
@@ -282,13 +282,13 @@ int syscall_transmit(vm_t *vm)
     return ret >= 0;
 }
 
-int syscall_random(vm_t *vm)
+int cgc_syscall_cgc_random(cgc_vm_t *vm)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     unsigned int length = vm->registers[1].number;
-    if (!valid_mem(&vm->registers[0], 0, length))
+    if (!cgc_valid_mem(&vm->registers[0], 0, length))
         return 0;
-    random(vm->registers[0].ptr, length, &bytes);
+    cgc_random(vm->registers[0].ptr, length, &bytes);
     return 1;
 }
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,19 +29,19 @@
 #define REG_FLAG (1 << 31)
 #define MEM_FLAG 0x0000FFFF
 
-typedef uint8_t reg;
+typedef cgc_uint8_t cgc_reg;
 
-typedef struct state state;
-struct state {
-  uint32_t registers[N_REGISTERS];
-  reg memory[MEMORY_SIZE];
+typedef struct cgc_state cgc_state;
+struct cgc_state {
+  cgc_uint32_t registers[N_REGISTERS];
+  cgc_reg memory[MEMORY_SIZE];
 };
 
-typedef struct inst inst;
-struct inst {
-  uint16_t val;
-  uint8_t dstsrc;
-  uint8_t op;
+typedef struct cgc_inst cgc_inst;
+struct cgc_inst {
+  cgc_uint16_t val;
+  cgc_uint8_t dstsrc;
+  cgc_uint8_t op;
 } __attribute__((packed));
 
 #define UNK 0

@@ -26,50 +26,50 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-size_t strlen( const char *str )
+cgc_size_t cgc_strlen( const char *str )
 {
-	size_t len = 0;
+	cgc_size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
 	return len;
 }
 
-void bzero(void *s, size_t n) {
+void cgc_bzero(void *s, cgc_size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *memset( void *ptr, int value, size_t num )
+void *cgc_memset( void *ptr, int value, cgc_size_t num )
 {
 	void *ptr_temp = ptr;
-	uint8_t set_value_byte = (uint8_t)value;
-	uint32_t set_value_dword = (set_value_byte << 24) | (set_value_byte << 16) | (set_value_byte << 8) | set_value_byte;
+	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
+	cgc_uint32_t set_value_dword = (set_value_byte << 24) | (set_value_byte << 16) | (set_value_byte << 8) | set_value_byte;
 
 	while ( num >= 4 )
 	{
-		*((uint32_t*)ptr++) = set_value_dword;	
+		*((cgc_uint32_t*)ptr++) = set_value_dword;	
 		num-=4;	
 	}
 
 	while ( num > 0 )
 	{
-		*((uint8_t*)ptr++) = set_value_byte;	
+		*((cgc_uint8_t*)ptr++) = set_value_byte;	
 		num--;
 	}
 
 	return (ptr_temp);
 }
 
-char *strchr(char *s, int c) {
-	uint32_t i;
+char *cgc_strchr(char *s, int c) {
+	cgc_uint32_t i;
 
 	if (!s) {
 		return(NULL);
 	}
-	for (i = 0; i < strlen(s); i++) {
+	for (i = 0; i < cgc_strlen(s); i++) {
 		if (s[i] == c) {
 			return(s+i);
 		}
@@ -80,9 +80,9 @@ char *strchr(char *s, int c) {
 }
 
 char *StrtokNext = NULL;
-char *strtok(char *str, char *sep) {
-	uint32_t i, j;
-	uint32_t str_len;
+char *cgc_strtok(char *str, char *sep) {
+	cgc_uint32_t i, j;
+	cgc_uint32_t str_len;
 	char *tok;
 
 	if (!sep) {
@@ -98,7 +98,7 @@ char *strtok(char *str, char *sep) {
 	}
 
 	// deal with any leading sep chars
-	while (strchr(sep, *str) && *str != '\0') {
+	while (cgc_strchr(sep, *str) && *str != '\0') {
 		str++;
 	}
 	if (*str == '\0') {
@@ -106,14 +106,14 @@ char *strtok(char *str, char *sep) {
 		return(NULL);
 	}
 
-	str_len = strlen(str);
+	str_len = cgc_strlen(str);
 	for (i = 0; i < str_len; i++) {
-		if (strchr(sep, str[i])) {
+		if (cgc_strchr(sep, str[i])) {
 			// found a sep character
 			str[i] = '\0';
 			// see if there are any subsequent tokens
 			for (j = i+1; j < str_len; j++) {
-				if (strchr(sep, str[j])) {
+				if (cgc_strchr(sep, str[j])) {
 					// found one
 					str[j] = '\0';
 				} else {

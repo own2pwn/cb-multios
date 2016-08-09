@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -27,10 +27,10 @@
 
 namespace std
 {
-    typedef unsigned int size_t;
+    typedef unsigned int cgc_size_t;
 };
 
-class Node;
+class cgc_Node;
 
 enum class TokenType
 {
@@ -64,80 +64,80 @@ enum class TokenType
     Return
 };
 
-class Token
+class cgc_Token
 {
 public:
-    Token();
-    Token(TokenType type);
-    Token(const char *str);
-    Token(const char *str, TokenType type);
-    Token(const char *str, size_t len, TokenType type);
-    Token(const Token &child, TokenType type);
+    cgc_Token();
+    cgc_Token(TokenType type);
+    cgc_Token(const char *str);
+    cgc_Token(const char *str, TokenType type);
+    cgc_Token(const char *str, cgc_size_t len, TokenType type);
+    cgc_Token(const cgc_Token &child, TokenType type);
 
-    bool parse(const char *input, size_t length, Node **pNode, size_t *pLength) const;
-    void set(const Token &child);
-    void setAfter(Token &after);
+    bool cgc_parse(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const;
+    void cgc_set(const cgc_Token &child);
+    void cgc_setAfter(cgc_Token &after);
 
-    Token operator++(int ignored);
-    Token operator+(Token rhs);
-    Token operator|(Token rhs);
-    Token operator&();
+    cgc_Token operator++(int ignored);
+    cgc_Token operator+(cgc_Token rhs);
+    cgc_Token operator|(cgc_Token rhs);
+    cgc_Token operator&();
 protected:
-    bool parse_(const char *input, size_t length, Node **pNode, size_t *pLength) const;
-    void after_(const char *input, size_t length, Node **pNode, size_t *pLength) const;
+    bool cgc_parse_(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const;
+    void cgc_after_(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const;
 protected:
     TokenType type;
 
-    vector<Token> children;
-    Token *indirect, *after;
+    cgc_vector<cgc_Token> children;
+    cgc_Token *indirect, *after;
     const char *literal;
-    size_t length;
+    cgc_size_t cgc_length;
 };
 
-class Node
+class cgc_Node
 {
-    friend class Token;
+    friend class cgc_Token;
 public:
-    Node(TokenType type);
-    ~Node();
+    cgc_Node(TokenType type);
+    ~cgc_Node();
 
-    static void deleteTree(Node *root);
-    void dump(unsigned int level);
-    void setLiteral(const char *start, size_t length);
+    static void cgc_deleteTree(cgc_Node *root);
+    void cgc_dump(unsigned int level);
+    void cgc_setLiteral(const char *start, cgc_size_t cgc_length);
 
-    TokenType getType() { return type; }
-    Node *getChild() { return child; }
-    Node *getNext() { return next; }
-    unsigned int getLength() { return length; }
-    const char *getLiteral() { return literal; }
+    TokenType cgc_getType() { return type; }
+    cgc_Node *cgc_getChild() { return child; }
+    cgc_Node *cgc_getNext() { return next; }
+    unsigned int cgc_getLength() { return cgc_length; }
+    const char *cgc_getLiteral() { return literal; }
 protected:
     char *literal;
-    unsigned int length;
+    unsigned int cgc_length;
     TokenType type;
-    Node *child;
+    cgc_Node *child;
 
-    Node *next;
+    cgc_Node *next;
 };
 
-class Parser
+class cgc_Parser
 {
 public:
-    Parser(const char *input);
-    ~Parser();
+    cgc_Parser(const char *input);
+    ~cgc_Parser();
 
-    bool parse();
-    Node *releaseRoot()
+    bool cgc_parse();
+    cgc_Node *cgc_releaseRoot()
     {
-        Node *result = root;
+        cgc_Node *result = root;
         root = nullptr;
         return result;
     }
 private:
     const char *input;
-    size_t length;
-    size_t parsedLength;
+    cgc_size_t cgc_length;
+    cgc_size_t parsedLength;
 
-    Node *root;
+    cgc_Node *root;
 };
 
-Token operator "" _T(const char *, std::size_t);
+cgc_Token operator "" _T(const char *, STD_SIZE_T);

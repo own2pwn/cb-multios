@@ -3,7 +3,7 @@
 
 char *strdup(const char *str)
 {
-    size_t n = strlen(str) + 1;
+    cgc_size_t n = strlen(str) + 1;
     char *dup = malloc(n);
     if (dup == NULL)
         return NULL;

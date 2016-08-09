@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,27 +29,27 @@
 #include "challenge.h"
 
 typedef struct {
-    team_t *team;
-    chal_t *chal;
+    cgc_team_t *team;
+    cgc_chal_t *chal;
     char *flag;
     int valid;
     int idx;
     char *shout;
-} flag_t;
+} cgc_flag_t;
 
 typedef struct {
-    size_t num_submit;
-    size_t num_valid;
-    size_t sz_submit;
-    flag_t **submits;
-    chal_t **chals;
-    size_t *num_chals;
-} flgmgr_t;
+    cgc_size_t num_submit;
+    cgc_size_t num_valid;
+    cgc_size_t sz_submit;
+    cgc_flag_t **submits;
+    cgc_chal_t **chals;
+    cgc_size_t *num_chals;
+} cgc_flgmgr_t;
 
-error_t flg_init(flgmgr_t *flg, chal_t **chals, size_t *num_chals);
-error_t flg_add_submit(flgmgr_t *flg, team_t *team, const char* flag);
-error_t flg_get_solves(flgmgr_t *flg, flag_t ***flags, chal_t *chal, size_t *n);
-error_t flg_find_chal(flgmgr_t *flg, chal_t **chal, const char* flag);
-int flg_team_did_solve(flgmgr_t *flg, team_t *team, chal_t *chal);
+cgc_error_t cgc_flg_init(cgc_flgmgr_t *flg, cgc_chal_t **chals, cgc_size_t *num_chals);
+cgc_error_t cgc_flg_add_submit(cgc_flgmgr_t *flg, cgc_team_t *team, const char* flag);
+cgc_error_t cgc_flg_get_solves(cgc_flgmgr_t *flg, cgc_flag_t ***flags, cgc_chal_t *chal, cgc_size_t *n);
+cgc_error_t cgc_flg_find_chal(cgc_flgmgr_t *flg, cgc_chal_t **chal, const char* flag);
+int cgc_flg_team_did_solve(cgc_flgmgr_t *flg, cgc_team_t *team, cgc_chal_t *chal);
 
 #endif

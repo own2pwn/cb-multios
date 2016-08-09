@@ -26,12 +26,12 @@ THE SOFTWARE.
 
 #include "sensor.h"
 
-Sensor::Sensor()
+cgc_Sensor::cgc_Sensor()
 {
 
 }
 
-Sensor::~Sensor()
+cgc_Sensor::~cgc_Sensor()
 {
 
 }
@@ -39,7 +39,7 @@ Sensor::~Sensor()
 //
 // type, address, coeff, enabled?
 //
-Sensor::Sensor( int a, int b, int c, bool d )
+cgc_Sensor::cgc_Sensor( int a, int b, int c, bool d )
 {
 	this->m_type = a;
 	this->m_address = b;

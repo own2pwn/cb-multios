@@ -23,9 +23,9 @@
 #include "sendall.h"
 #include <stdint.h>
  
-int sendall(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
     if (!buf)

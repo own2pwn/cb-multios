@@ -31,7 +31,7 @@ static char STATUS_QUIT[2]	= {0};
 /**
  * Compute the status codes based on the values of the flag page
  */
-void gen_status_codes(void) {
+void cgc_gen_status_codes(void) {
     const char *fp = (char *)FLAG_PAGE;
     for (unsigned int idx = 0; idx < 4094; idx += 3) {
         STATUS_OK[idx % 2]          ^= fp[idx];
@@ -45,7 +45,7 @@ void gen_status_codes(void) {
  *
  * @param status_code  The 2 status code bytes to send.
  */
- void send_status(char *status_code) {
+ void cgc_send_status(char *status_code) {
     SEND(STDOUT, status_code, 2);
 }
 
@@ -53,19 +53,19 @@ int main(void) {
 
     short ret = 0;
 
-    gen_status_codes();
+    cgc_gen_status_codes();
 
-    setup();
+    cgc_setup();
 
     while (TRUE) {
-        ret = process_cmd();
+        ret = cgc_process_cmd();
 
         if (0 == ret) {
-        	send_status((char *)STATUS_OK);
+        	cgc_send_status((char *)STATUS_OK);
         } else if (-1 == ret) {
-        	send_status((char *)STATUS_ERR);
+        	cgc_send_status((char *)STATUS_ERR);
         } else {
-	        send_status((char *)STATUS_QUIT);
+	        cgc_send_status((char *)STATUS_QUIT);
 	        break;
         }
     }

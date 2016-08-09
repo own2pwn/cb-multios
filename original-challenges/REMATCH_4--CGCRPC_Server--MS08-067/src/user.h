@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,14 +35,14 @@ THE SOFTWARE.
 #define USER_NONE     0x0000
 
 typedef struct user_s {
-  uint32_t userID;
-  uint8_t  *username;
-  uint8_t *password;
-} user;
+  cgc_uint32_t userID;
+  cgc_uint8_t  *username;
+  cgc_uint8_t *password;
+} cgc_user;
 
-extern user allUsers[MAX_USERS];
+extern cgc_user allUsers[MAX_USERS];
 
-void GenerateUsers();
-uint32_t LookupUser(uint8_t *username, uint8_t *password);
+void cgc_GenerateUsers();
+cgc_uint32_t cgc_LookupUser(cgc_uint8_t *username, cgc_uint8_t *password);
 
 #endif

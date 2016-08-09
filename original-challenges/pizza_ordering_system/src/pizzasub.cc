@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,11 +29,11 @@ extern "C" {
 
 namespace {
     unsigned char _sub_size;
-    size_t _sub_calories, _sub_carbs;
+    cgc_size_t _sub_calories, _sub_carbs;
     enum {SUB_REG_CALORIES = 900, SUB_LG_CALORIES = 1800};
     enum {SUB_REG_CARBS = 222, SUB_LG_CARBS = 356};
 
-    inline void set_sub_size_helper(unsigned int _sub_sz)
+    inline void cgc_set_sub_size_helper(unsigned int _sub_sz)
     {
         switch(_sub_sz) {
         case TWELVEINCH:
@@ -51,9 +51,9 @@ namespace {
     }
 }
 
-PizzaSub::PizzaSub(unsigned char _sub_size, unsigned char _bread_type)
+cgc_PizzaSub::cgc_PizzaSub(unsigned char _sub_size, unsigned char _bread_type)
 {
-    set_sub_size_helper(_sub_size);
+    cgc_set_sub_size_helper(_sub_size);
     sub_size = _sub_size;
     sub_calories = _sub_calories;
     sub_carbs = _sub_carbs;
@@ -67,40 +67,40 @@ PizzaSub::PizzaSub(unsigned char _sub_size, unsigned char _bread_type)
     }
 }
 
-PizzaSub::~PizzaSub()
+cgc_PizzaSub::~cgc_PizzaSub()
 {
 }
 
-int PizzaSub::get_calories()
+int cgc_PizzaSub::cgc_get_calories()
 {
-    return Pizza::get_calories() + sub_calories;
+    return cgc_Pizza::cgc_get_calories() + sub_calories;
 }
 
 
-int PizzaSub::get_carbs()
+int cgc_PizzaSub::cgc_get_carbs()
 {
-    return Pizza::get_carbs() + sub_carbs;
+    return cgc_Pizza::cgc_get_carbs() + sub_carbs;
 }
 
-unsigned char PizzaSub::get_sub_size()
+unsigned char cgc_PizzaSub::cgc_get_sub_size()
 {
     return sub_size;
 }
 
-void PizzaSub::set_sub_size(unsigned char _sub_size)
+void cgc_PizzaSub::cgc_set_sub_size(unsigned char _sub_size)
 {
-    set_sub_size_helper(_sub_size);
+    cgc_set_sub_size_helper(_sub_size);
     sub_size = _sub_size;
     sub_calories = _sub_calories;
     sub_carbs = _sub_carbs;
 }
 
-int PizzaSub::get_prep_time()
+int cgc_PizzaSub::cgc_get_prep_time()
 {
-    return Pizza::get_prep_time() + SUB_PREP_TIME;
+    return cgc_Pizza::cgc_get_prep_time() + SUB_PREP_TIME;
 }
 
-void PizzaSub::print_pizza()
+void cgc_PizzaSub::cgc_print_pizza()
 {
     const char *pizza_size = "WHOOPS";
     const char *pizza_bread = "WHOOPS";
@@ -114,6 +114,6 @@ void PizzaSub::print_pizza()
     else if (bread_type == WHEAT)
         pizza_bread = "Wheat";
 
-    printf("Pizza Sub, Size: %s %s\n", pizza_size, pizza_bread);
-    Pizza::print_pizza();
+    printf("cgc_Pizza Sub, Size: %s %s\n", pizza_size, pizza_bread);
+    cgc_Pizza::cgc_print_pizza();
 }

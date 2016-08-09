@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,8 +23,8 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H 1
 
-typedef struct list Inventory;
+typedef struct list cgc_Inventory;
 
-void load_inventory(Inventory *inv);
+void cgc_load_inventory(cgc_Inventory *inv);
 
 #endif

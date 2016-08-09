@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -43,7 +43,7 @@
 
 #define PAGE_SIZE (1 << 12)
 
-#define RECV(buf, sz) do {if (sz != recv_all((char *)buf, sz)) {_terminate(ERRNO_RECV);}} while(0);
+#define RECV(buf, sz) do {if (sz != cgc_recv_all((char *)buf, sz)) {_terminate(ERRNO_RECV);}} while(0);
 
 
 
@@ -80,7 +80,7 @@
  * @param member The member to calculate the offset of
  * @return The offset of member in type
  */
-#define OFFSETOF(type, member) ((size_t)(&((type *)NULL)->member))
+#define OFFSETOF(type, member) ((cgc_size_t)(&((type *)NULL)->member))
 
 /**
  * Find the container structure from a pointer to a member.
@@ -102,34 +102,34 @@
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *malloc(size_t size);
+void *cgc_malloc(cgc_size_t size);
 
 /**
- * Free a chunk of memory allocated with malloc().
+ * Free a chunk of memory allocated with cgc_malloc().
  *
- * @param ptr The chunk to free
+ * @param ptr The chunk to cgc_free
  */
-void free(void *ptr);
+void cgc_free(void *ptr);
 
 /**
  * Allocate a zeroed chunk of memory on the heap.
  *
- * Note: This differs from standard libc malloc by taking the full size of the
+ * Note: This differs from standard libc cgc_malloc by taking the full size of the
  *      chunk to allocate as its only parameter.
  *
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *calloc(size_t size);
+void *cgc_calloc(cgc_size_t size);
 
 /**
- * Resize a chunk of memory allocated with malloc().
+ * Resize a chunk of memory allocated with cgc_malloc().
  *
  * @param ptr The chunk to resize
  * @param size The new size of the chunk
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *realloc(void *ptr, size_t size);
+void *cgc_realloc(void *ptr, cgc_size_t size);
 
 
 

@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,32 +26,32 @@ THE SOFTWARE.
 #ifndef __MALLOC_H__
 #define __MALLOC_H__
 
-// In our case the lower 2-bits of the alloc_size are flags
+// In our case the cgc_lower 2-bits of the alloc_size are flags
 // we enforce minimum allocation sizes of 4-bytes which frees
-// up these lower 2-bits as flags
+// up these cgc_lower 2-bits as flags
 #define MALLOC_INUSE_FLAG_BIT       (1)
 #define MALLOC_NEXT_FLAG_BIT        (2)
 #define MALLOC_BUCKET_COUNT         (16)
 
 typedef struct MALLOC_ALLOC_HDR
 {
-    size_t  alloc_size;
-} tMallocAllocHdr;
+    cgc_size_t  alloc_size;
+} cgc_tMallocAllocHdr;
 
-// Only free blocks have these headers (minimum allocation size is therefore 8-bytes)
+// Only cgc_free blocks have these headers (minimum allocation size is therefore 8-bytes)
 typedef struct MALLOC_ALLOC_FTR
 {
     struct MALLOC_ALLOC_HDR *pNext;
     struct MALLOC_ALLOC_HDR *pPrev;
-} tMallocAllocFtr;
+} cgc_tMallocAllocFtr;
 
 typedef struct MALLOC_MANAGER
 {
     void *pFreeList;
-} tMallocManager;
+} cgc_tMallocManager;
 
-void* calloc( size_t count, size_t obj_size );
-void* malloc( size_t alloc_size );
-void free( void *pMem );
+void* cgc_calloc( cgc_size_t count, cgc_size_t obj_size );
+void* cgc_malloc( cgc_size_t alloc_size );
+void cgc_free( void *pMem );
 
 #endif // __MALLOC_H__

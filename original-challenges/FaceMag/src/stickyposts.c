@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,9 +34,9 @@ THE SOFTWARE.
 #include "malloc.h"
 
 
-int sendStickPost( unsigned int postID ) {
+int cgc_sendStickPost( unsigned int postID ) {
 
-fileHandleType fh;
+cgc_fileHandleType fh;
 int retcode;
 unsigned char posterName[REALNAME_LEN+1];
 unsigned char thePost[MAXPOST_LEN+1];
@@ -50,44 +50,44 @@ int i;
 	}
 
 	// this is a memory mapped file to the magic page of data
-	fh = openFile( "sticky.posts", ROOT_ID );
+	fh = cgc_openFile( "sticky.posts", ROOT_ID );
 
 	if ( fh < 0 ) {
 
-		printf("unable to open sticky posts\n");
+		cgc_printf("unable to open sticky posts\n");
 		return -1;
 
 	}
 
 	// each post is 160 bytes in size, jump to the offset of the post we want
-	fileReadPosition( fh, postID * 160 );
+	cgc_fileReadPosition( fh, postID * 160 );
 
-	if (readFile( fh, (void *)posterName, REALNAME_LEN, 0, &count, ROOT_ID ) != 0) {
+	if (cgc_readFile( fh, (void *)posterName, REALNAME_LEN, 0, &count, ROOT_ID ) != 0) {
 
-		printf("error reading sticky post\n");
+		cgc_printf("error reading sticky post\n");
 		return -1;
 
 	}
 
 	if (count != REALNAME_LEN) {
 
-		printf("Error reading data for sticky post\n");
+		cgc_printf("Error reading data for sticky post\n");
 		return -1;
 
 	}
 
 	posterName[REALNAME_LEN] = 0;
 
-	if ( readFile( fh, (void *)thePost, MAXPOST_LEN, 0, &count, ROOT_ID ) != 0 ) {
+	if ( cgc_readFile( fh, (void *)thePost, MAXPOST_LEN, 0, &count, ROOT_ID ) != 0 ) {
 
-		printf("error reading sticky post\n");
+		cgc_printf("error reading sticky post\n");
 		return -1;
 
 	}
 
 	if (count != MAXPOST_LEN) {
 
-		printf("Error reading data for sticky post\n");
+		cgc_printf("Error reading data for sticky post\n");
 		return -1;
 
 	}
@@ -101,14 +101,14 @@ int i;
 		thePost[i] = (thePost[i] % 26) + 'A';	
 
 	count = REALNAME_LEN;
-	sendResponse( (void *)&count, sizeof(int) );
-	sendResponse( posterName, count );
+	cgc_sendResponse( (void *)&count, sizeof(int) );
+	cgc_sendResponse( posterName, count );
 
 	count = MAXPOST_LEN;
-	sendResponse( (void *)&count, sizeof(int) );
-	sendResponse( thePost, count );
+	cgc_sendResponse( (void *)&count, sizeof(int) );
+	cgc_sendResponse( thePost, count );
 
-	closeFile( fh );
+	cgc_closeFile( fh );
 
 	return 0;
 	

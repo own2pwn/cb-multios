@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,10 +22,10 @@
  */
 #include "ccstring.h"
 
-size_t CString::hash() const
+cgc_size_t cgc_CString::cgc_hash() const
 {
     unsigned int h = 0x4347c000;
-    size_t len = length();
+    cgc_size_t len = cgc_length();
     for (unsigned int i = 0; i < len; i++)
     {
         h ^= (h * 17) + ptr[i];

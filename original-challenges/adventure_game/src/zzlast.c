@@ -21,4 +21,4 @@
  *
  */
 #include "oo.h"
-const __init_array_t __init_array_end __attribute__((section(".rodata.init")));
+const __init_array_t __init_array_end __attribute__((section("DATA,.rodata.init")));

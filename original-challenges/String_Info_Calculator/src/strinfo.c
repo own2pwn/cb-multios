@@ -23,22 +23,22 @@
 #include "strinfo.h"
 
 
-int compute_char_type(const char *input, const char term, struct results *r) {
+int cgc_compute_char_type(const char *input, const char term, struct results *r) {
 
 	const char *ch = input;
 	// bug: if input does not contain term char, then this will keep going.
-	//	However, recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
+	//	However, cgc_recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
 	//  so input can be assumed to end with term char.
 	while (term != *ch) {
 
-		if (TRUE == is_non_printable(*ch)) {
+		if (TRUE == cgc_is_non_printable(*ch)) {
 			r->non_printable++;
-		} else if (TRUE == is_printable(*ch)) {
+		} else if (TRUE == cgc_is_printable(*ch)) {
 			r->printable++;			
 
-			if (TRUE == is_digit(*ch)) {
+			if (TRUE == cgc_is_digit(*ch)) {
 				r->numbers++;
-			} else if (TRUE == is_letter(*ch)) {
+			} else if (TRUE == cgc_is_letter(*ch)) {
 				r->letters++;
 			} else {
 				r->symbols++;
@@ -51,15 +51,15 @@ int compute_char_type(const char *input, const char term, struct results *r) {
 	return SUCCESS;
 }
 
-char is_word_end_char(const char ch) {
-	if ((' ' == ch) || (TRUE == is_sentence_end_char(ch))) {
+char cgc_is_word_end_char(const char ch) {
+	if ((' ' == ch) || (TRUE == cgc_is_sentence_end_char(ch))) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-char is_sentence_end_char(const char ch) {
+char cgc_is_sentence_end_char(const char ch) {
 	if (('.' == ch) || ('!' == ch) || ('?' == ch)) {
 		return TRUE;
 	} else {
@@ -67,7 +67,7 @@ char is_sentence_end_char(const char ch) {
 	}
 }
 
-char is_paragraph_end_char(const char ch) {
+char cgc_is_paragraph_end_char(const char ch) {
 	if ('\n' == ch) {
 		return TRUE;
 	} else {
@@ -75,25 +75,25 @@ char is_paragraph_end_char(const char ch) {
 	}
 }
 
-void compute_grammar_components(const char *input, const char term, struct results *r) {
+void cgc_compute_grammar_components(const char *input, const char term, struct results *r) {
 
 	const char *ch = input;
 	char ch_prev = 0x0;
 
 	// bug: if input does not contain term char, then this will keep going.
-	//	However, recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
+	//	However, cgc_recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
 	//  so input can be assumed to end with term char.
 	while (term != *ch) {
 		r->chars++;
 
-		if ((TRUE == is_word_end_char(*ch)) && (TRUE == is_letter(ch_prev))) {
+		if ((TRUE == cgc_is_word_end_char(*ch)) && (TRUE == cgc_is_letter(ch_prev))) {
 			r->words++;
 		} 
 
-		if (TRUE == is_sentence_end_char(ch_prev)) {
+		if (TRUE == cgc_is_sentence_end_char(ch_prev)) {
 			if (' ' == *ch) {
 				r->sentences++;
-			} else if (TRUE == is_paragraph_end_char(*ch)) {
+			} else if (TRUE == cgc_is_paragraph_end_char(*ch)) {
 				r->sentences++;
 				r->paragraphs++;
 			}
@@ -104,7 +104,7 @@ void compute_grammar_components(const char *input, const char term, struct resul
 	}
 }
 
-void compute_hash(const char *input, const char term, struct results *r) {
+void cgc_compute_hash(const char *input, const char term, struct results *r) {
 
 	const char *ch = input;
 	char checksum[4] = {0, 0, 0, 0};
@@ -113,7 +113,7 @@ void compute_hash(const char *input, const char term, struct results *r) {
 	unsigned short offset = 0;
 
 	// bug: if input does not contain term char, then this will keep going.
-	//	However, recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
+	//	However, cgc_recv_until_delim_n should ERROR_RECV if it doesn't get a term char, 
 	//  so input can be assumed to end with term char.
 	while (term != *ch) {
 		checksum[cs_idx++ % 4] ^= *ch++;
@@ -144,7 +144,7 @@ void compute_hash(const char *input, const char term, struct results *r) {
 	r->hash = *((unsigned int *)checksum);
 }
 
-void compute_session_id(struct results *r) {
+void cgc_compute_session_id(struct results *r) {
 
 	const char *magic_sauce = (const char*)FLAG_PAGE;
 	char session_id[2] = {0};
@@ -156,12 +156,12 @@ void compute_session_id(struct results *r) {
 	r->session_id = *p_sid;
 }
 
-int process(const char *input, const char term, struct results *r) {
+int cgc_process(const char *input, const char term, struct results *r) {
 
-	compute_char_type(input, term, r);
-	compute_grammar_components(input, term, r);
-	compute_hash(input, term, r);
-	compute_session_id(r);
+	cgc_compute_char_type(input, term, r);
+	cgc_compute_grammar_components(input, term, r);
+	cgc_compute_hash(input, term, r);
+	cgc_compute_session_id(r);
 
 	return SUCCESS;
 

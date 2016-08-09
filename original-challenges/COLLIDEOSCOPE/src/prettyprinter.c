@@ -29,59 +29,59 @@
 #include "prettyprinter.h"
 
 void
-pretty_print_tokens(struct token *tokens, size_t n)
+cgc_pretty_print_tokens(struct token *tokens, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     char name[5] = {};
 
     for (i = 0; i < n; i++) {
         switch (tokens[i].type) {
         case TOK_CONSTANT:
-            printf("%d", tokens[i].val.i);
+            cgc_printf("%d", tokens[i].val.i);
             break;
         case TOK_VARIABLE:
-            memset(name, '\0', sizeof(name));
-            strncpy(name, tokens[i].val.s, 4);
-            printf("%s", name);
+            cgc_memset(name, '\0', sizeof(name));
+            cgc_strncpy(name, tokens[i].val.s, 4);
+            cgc_printf("%s", name);
             break;
         case TOK_ASSIGNMENT:
-            printf("=");
+            cgc_printf("=");
             break;
         case TOK_ADD:
-            printf("+");
+            cgc_printf("+");
             break;
         case TOK_SUBTRACT:
-            printf("-");
+            cgc_printf("-");
             break;
         case TOK_MULTIPLY:
-            printf("*");
+            cgc_printf("*");
             break;
         case TOK_DIVIDE:
-            printf("/");
+            cgc_printf("/");
             break;
         case TOK_NEGATE:
-            printf("~");
+            cgc_printf("~");
             break;
         case TOK_ADDRESS_OF:
-            printf("&");
+            cgc_printf("&");
             break;
         case TOK_DEREFERENCE:
-            printf("$");
+            cgc_printf("$");
             break;
         case TOK_LEFT_PARENTHESIS:
-            printf("(");
+            cgc_printf("(");
             break;
         case TOK_RIGHT_PARENTHESIS:
-            printf(")");
+            cgc_printf(")");
             break;
         }
     }
 
-    printf("\n");
+    cgc_printf("\n");
 }
 
 static void
-pretty_print_ast_node(struct ast_node *node)
+cgc_pretty_print_ast_node(struct ast_node *node)
 {
     char name[5] = {};
     static const char unary_operators[] = { '~', '&', '$' };
@@ -89,23 +89,23 @@ pretty_print_ast_node(struct ast_node *node)
 
     switch (node->type) {
     case AST_CONSTANT:
-        printf("%d", node->expr.constant);
+        cgc_printf("%d", node->expr.constant);
         break;
     case AST_VARIABLE:
-        memset(name, '\0', sizeof(name));
-        strncpy(name, node->expr.variable, 4);
-        printf("%s", name);
+        cgc_memset(name, '\0', sizeof(name));
+        cgc_strncpy(name, node->expr.variable, 4);
+        cgc_printf("%s", name);
         break;
     case AST_UNARY_OPERATOR:
-        printf("%c", unary_operators[node->expr.un_op.type]);
-        pretty_print_ast_node(node->expr.un_op.n);
+        cgc_printf("%c", unary_operators[node->expr.un_op.type]);
+        cgc_pretty_print_ast_node(node->expr.un_op.n);
         break;
     case AST_BINARY_OPERATOR:
-        printf("(");
-        pretty_print_ast_node(node->expr.bin_op.lhs);
-        printf("%c", binary_operators[node->expr.bin_op.type]);
-        pretty_print_ast_node(node->expr.bin_op.rhs);
-        printf(")");
+        cgc_printf("(");
+        cgc_pretty_print_ast_node(node->expr.bin_op.lhs);
+        cgc_printf("%c", binary_operators[node->expr.bin_op.type]);
+        cgc_pretty_print_ast_node(node->expr.bin_op.rhs);
+        cgc_printf(")");
         break;
     default:
         return;
@@ -113,10 +113,10 @@ pretty_print_ast_node(struct ast_node *node)
 }
 
 void
-pretty_print_ast(struct ast *ast)
+cgc_pretty_print_ast(struct ast *ast)
 {
-    pretty_print_ast_node(ast->expr);
-    printf("\n");
+    cgc_pretty_print_ast_node(ast->expr);
+    cgc_printf("\n");
 }
 
 

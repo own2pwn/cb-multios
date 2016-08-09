@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,21 +28,21 @@ THE SOFTWARE.
 #include "math_lib.h"
 #include "game.h"
 
-// reads user-sent string and saves it into a Packet struct
-int populate_packet(Packet *pkt, char* data, int len)
+// reads user-sent string and saves it into a cgc_Packet struct
+int cgc_populate_packet(cgc_Packet *pkt, char* data, int len)
 {
-	if (len != sizeof(Packet))
+	if (len != sizeof(cgc_Packet))
 	{
-		printf("not proper packet length: got @d, should be @d\n", len, sizeof(Packet));
+		cgc_printf("not proper packet length: got @d, should be @d\n", len, sizeof(cgc_Packet));
 		return FAIL;
 	}
 
-	memcpy(pkt, data, len);
+	cgc_memcpy(pkt, data, len);
 
 	int content_len = pkt->length - '0';
 	if (content_len > MAX_CONTENT || content_len < 0)
 	{
-		printf("length field outside valid range\n");
+		cgc_printf("length field outside valid range\n");
 		return FAIL;
 	}
 
@@ -50,14 +50,14 @@ int populate_packet(Packet *pkt, char* data, int len)
 }
 
 // determine if this is a valid packet
-int validate_packet(Packet *pkt)
+int cgc_validate_packet(cgc_Packet *pkt)
 {
 	int ret = SUCCESS;
 
 	// check TYPE
 	if (pkt->type < CONTROL && pkt->type > DATA)
 	{
-		printf("type is out of range (@c)\n", pkt->type);
+		cgc_printf("type is out of range (@c)\n", pkt->type);
 		ret = FAIL;
 	}
 
@@ -66,7 +66,7 @@ int validate_packet(Packet *pkt)
 	{
 		if (pkt->subtype > NACK || pkt->subtype < ASSREQ)
 		{
-			printf("subtype is out of range (@c)\n", pkt->subtype);
+			cgc_printf("subtype is out of range (@c)\n", pkt->subtype);
 			ret = FAIL;
 		}
 	}
@@ -74,7 +74,7 @@ int validate_packet(Packet *pkt)
 	{
 		if (pkt->subtype > PLCPCE || pkt->subtype < DCDPCE)
 		{
-			printf("data subtype is out of range (@c)\n", pkt->subtype);
+			cgc_printf("data subtype is out of range (@c)\n", pkt->subtype);
 			ret = FAIL;
 		}
 	}
@@ -82,7 +82,7 @@ int validate_packet(Packet *pkt)
 	// validate length
 	if (len > MAX_CONTENT || len < 0)
 	{
-		printf("length is out of range (@c)\n", pkt->length);
+		cgc_printf("length is out of range (@c)\n", pkt->length);
 		ret = FAIL;
 	}
 
@@ -91,16 +91,16 @@ int validate_packet(Packet *pkt)
 		// verify connection number
 		if ((pkt->conn_number - '0') != current_connection_number)
 		{
-			printf("connection number not valid: @c vs @c\n", pkt->conn_number, current_connection_number+'0');
+			cgc_printf("connection number not valid: @c vs @c\n", pkt->conn_number, current_connection_number+'0');
 			ret = FAIL;
 		}
 	}
 
-	char checksum = get_checksum(pkt);
+	char checksum = cgc_get_checksum(pkt);
 	if (pkt->checksum != checksum)
 	{
-		printf("checksum does not match @c vs @d", checksum, pkt->checksum);
-		printf("@s\n", (char*)pkt);
+		cgc_printf("checksum does not match @c vs @d", checksum, pkt->checksum);
+		cgc_printf("@s\n", (char*)pkt);
 		ret = FAIL;
 	}
 
@@ -113,7 +113,7 @@ int validate_packet(Packet *pkt)
 // if data, it will decrypt the packet and call game functions to handle user commands
 // retuns TRUE if
 // returns FALSE if 
-int packet_handler(Packet* pkt)//, Game *game)
+int cgc_packet_handler(cgc_Packet* pkt)//, Game *game)
 {
 	if (pkt->type == MGMT)
 	{
@@ -122,7 +122,7 @@ int packet_handler(Packet* pkt)//, Game *game)
 			// verify requested connection number is next number
 			// if so, send response: association accepted
 			// if not, send response: no
-			send_assoc_response(pkt->content[0] - '0');
+			cgc_send_assoc_response(pkt->content[0] - '0');
 
 			return SUCCESS;
 		}
@@ -133,7 +133,7 @@ int packet_handler(Packet* pkt)//, Game *game)
 		}
 		else if (pkt->subtype == AUTHREQ)
 		{
-			send_auth_response(pkt->content);
+			cgc_send_auth_response(pkt->content);
 			return SUCCESS;
 		}
 		else if (pkt->subtype == AUTHRESP)
@@ -143,14 +143,14 @@ int packet_handler(Packet* pkt)//, Game *game)
 		}
 		else if (pkt->subtype == AUTHCHALRESP)
 		{
-			handle_auth_challenge_resp(pkt->content);
+			cgc_handle_auth_challenge_resp(pkt->content);
 			return SUCCESS;
 		}
 		else if (pkt->subtype == DISREQ)
 		{
-			if (handle_disass_req(pkt->content[0]) == FAIL) // disass reason
+			if (cgc_handle_disass_req(pkt->content[0]) == FAIL) // disass reason
 			{
-				printf("Failed disass\n");
+				cgc_printf("Failed disass\n");
 				return 2; // quit the program
 			}
 			return SUCCESS;
@@ -158,14 +158,14 @@ int packet_handler(Packet* pkt)//, Game *game)
 		else if (pkt->subtype == DISRESP)
 		{
 			// we should not receive this type of packet
-			printf("Dissasociation response received\n");
+			cgc_printf("Dissasociation response received\n");
 			return FAIL;
 		}
 		else if (pkt->subtype == DEAUTHREQ)
 		{
-			if (handle_deauth_req(pkt->content[0]) == FAIL) // deauth reason
+			if (cgc_handle_deauth_req(pkt->content[0]) == FAIL) // deauth reason
 			{
-				printf("failed deauth...leaving\n");
+				cgc_printf("failed deauth...leaving\n");
 				return 2; // quit the program
 			}
 			return SUCCESS;
@@ -173,31 +173,31 @@ int packet_handler(Packet* pkt)//, Game *game)
 		else if (pkt->subtype == DEAUTHRESP)
 		{
 			// we should not receive this type of packet
-			printf("Dissasociation response received\n");
+			cgc_printf("Dissasociation response received\n");
 			return FAIL;
 		}
 	}
 	else if (pkt->type == DATA)
 	{
-		Packet tmp_pkt;
+		cgc_Packet tmp_pkt;
 
 		if (pkt->packet_number - '0' != current_packet_count_recvd+1)
 		{
-			printf("packet number incorrect: @c vs @c\n", pkt->packet_number, current_packet_count_recvd+1+'0');
-			send_nack(pkt->packet_number, ERR_OUT_OF_SEQUENCE);
+			cgc_printf("packet number incorrect: @c vs @c\n", pkt->packet_number, current_packet_count_recvd+1+'0');
+			cgc_send_nack(pkt->packet_number, ERR_OUT_OF_SEQUENCE);
 			return FAIL;
 		}
 		else
 		{
-			send_ack(pkt->packet_number);
+			cgc_send_ack(pkt->packet_number);
 
 			// handle game mechanics here
 			if (pkt->subtype == NXTPCE)
 			{
-				Piece piece;
+				cgc_Piece piece;
 
 				// try to create a new piece
-				int rtn = create_random_piece(&piece);
+				int rtn = cgc_create_random_piece(&piece);
 				if (rtn != SUCCESS)
 				{
 					// nope, can't create a new piece
@@ -207,32 +207,32 @@ int packet_handler(Packet* pkt)//, Game *game)
 						// stack is full. game over
 						tmp_pkt.type = DATA;
 						tmp_pkt.subtype = NXTPCE;
-						strncpy(tmp_pkt.content, t, strlen(t));
+						cgc_strncpy(tmp_pkt.content, t, cgc_strlen(t));
 
-						send_packet_new(&tmp_pkt, strlen(t));
+						cgc_send_packet_new(&tmp_pkt, cgc_strlen(t));
 						return SUCCESS;
 					}
 					else if (rtn == 22)
 					{
 						// top piece already there. tell user there is already a piece to be used
-						Packet tmp;
+						cgc_Packet tmp;
 						tmp.type = DATA;
 						tmp.subtype = NXTPCE;
-						strncpy(tmp.content, "nusetop", 7);
+						cgc_strncpy(tmp.content, "nusetop", 7);
 
-						send_packet_new(&tmp, 7);
+						cgc_send_packet_new(&tmp, 7);
 						return SUCCESS;
 					}
 					else
 					{
 						// not sure why it failed
 						// print failure
-						Packet tmp;
+						cgc_Packet tmp;
 						tmp.type = DATA;
 						tmp.subtype = NXTPCE;
-						strncpy(tmp.content, "nconfused", 9);
+						cgc_strncpy(tmp.content, "nconfused", 9);
 
-						send_packet_new(&tmp, 9);
+						cgc_send_packet_new(&tmp, 9);
 						return SUCCESS;
 					}
 				}
@@ -240,16 +240,16 @@ int packet_handler(Packet* pkt)//, Game *game)
 				{
 					// we just create a new piece. send it to the user
 					char ss[9];
-					piece_to_pkt(&piece, ss); // put piece info into packet format
+					cgc_piece_to_pkt(&piece, ss); // put piece info into packet format
 
 					tmp_pkt.type = DATA;
 					tmp_pkt.subtype = NXTPCE;
-					memcpy(tmp_pkt.content, ss, 9);
+					cgc_memcpy(tmp_pkt.content, ss, 9);
 					tmp_pkt.content[9] = '0';
 
-					encrypt_data(tmp_pkt.content, 10, current_encryption);
+					cgc_encrypt_data(tmp_pkt.content, 10, current_encryption);
 
-					send_packet_new(&tmp_pkt, 9);
+					cgc_send_packet_new(&tmp_pkt, 9);
 					return SUCCESS;
 				}
 			}
@@ -259,12 +259,12 @@ int packet_handler(Packet* pkt)//, Game *game)
 				if (current_encryption == ENC_ONE)
 				{
 					// verify that data is properly encrypted
-					decrypt_packet(pkt->content, pkt->length - '0', ENC_ONE);
+					cgc_decrypt_packet(pkt->content, pkt->length - '0', ENC_ONE);
 				}
 				else if (current_encryption == ENC_TWO)
 				{
 					// saves the decrypted content overtop the pkt->content pointer (same length)
-					decrypt_packet(pkt->content, pkt->length - '0', ENC_TWO);
+					cgc_decrypt_packet(pkt->content, pkt->length - '0', ENC_TWO);
 				}
 				else
 				{
@@ -285,38 +285,38 @@ int packet_handler(Packet* pkt)//, Game *game)
 					// error, must get another piece first
 					tmp_pkt.type = DATA;
 					tmp_pkt.subtype = PLCPCE;
-					memcpy(tmp_pkt.content, ss, 6);
+					cgc_memcpy(tmp_pkt.content, ss, 6);
 
-					send_packet_new(&tmp_pkt, 6);
+					cgc_send_packet_new(&tmp_pkt, 6);
 					return SUCCESS;
 				}
 
 				char sideA = pkt->content[1];
 				// pkt->content[2] is a colon
 				char sideB = pkt->content[4];
-				int indexA = get_piece(pkt->content[0] - '0');
+				int indexA = cgc_get_piece(pkt->content[0] - '0');
 				if (indexA == -1)
 				{
-					printf("Out of bounds piece requested A: @d vs @d...\n", pkt->content[0] - '0', game_stack.top_element);
+					cgc_printf("Out of bounds piece requested A: @d vs @d...\n", pkt->content[0] - '0', game_stack.top_element);
 					return FAIL;
 				}
-				int indexB = get_piece(pkt->content[3] - '0');
+				int indexB = cgc_get_piece(pkt->content[3] - '0');
 				if (indexB == -1)
 				{
-					printf("Out of bounds piece requested B: @d vs @d...\n", pkt->content[3] - '0', game_stack.top_element);
+					cgc_printf("Out of bounds piece requested B: @d vs @d...\n", pkt->content[3] - '0', game_stack.top_element);
 					return FAIL;
 				}
-				if (connect_pieces(&game_stack.stack[indexA], sideA - '0', &game_stack.stack[indexB], sideB - '0') == FAIL)
+				if (cgc_connect_pieces(&game_stack.stack[indexA], sideA - '0', &game_stack.stack[indexB], sideB - '0') == FAIL)
 				{
 					// failed to connect pieces
 					char *ss = "NO,ERROR";
 					// user may have asked to connect two sides that don't both have roads
-					Packet tmp;
+					cgc_Packet tmp;
 					tmp.type = DATA;
 					tmp.subtype = PLCPCE;
-					memcpy(tmp.content, ss, 8);
+					cgc_memcpy(tmp.content, ss, 8);
 
-					send_packet_new(&tmp, 8);
+					cgc_send_packet_new(&tmp, 8);
 					return SUCCESS;
 				}
 				else
@@ -326,9 +326,9 @@ int packet_handler(Packet* pkt)//, Game *game)
 					tmp_pkt.subtype = PLCPCE;
 					tmp_pkt.content[0] = '0' + current_max_road_len;
 
-					encrypt_data(tmp_pkt.content, 10, current_encryption);
+					cgc_encrypt_data(tmp_pkt.content, 10, current_encryption);
 
-					send_packet_new(&tmp_pkt, 1);
+					cgc_send_packet_new(&tmp_pkt, 1);
 					return SUCCESS;
 				}
 			}
@@ -338,30 +338,30 @@ int packet_handler(Packet* pkt)//, Game *game)
 				tmp_pkt.subtype = GETLEN;
 				tmp_pkt.content[0] = '0' + current_max_road_len;
 
-				encrypt_data(tmp_pkt.content, 10, current_encryption); 
+				cgc_encrypt_data(tmp_pkt.content, 10, current_encryption); 
 
-				send_packet_new(&tmp_pkt, 1);
+				cgc_send_packet_new(&tmp_pkt, 1);
 				return SUCCESS;
 			}
 			else if (pkt->subtype == DCDPCE)
 			{
 				// discard the top piece
-				if (discard_piece() == SUCCESS)
+				if (cgc_discard_piece() == SUCCESS)
 				{
 					tmp_pkt.type = DATA;
 					tmp_pkt.subtype = DCDPCE;
 					tmp_pkt.content[0] = 'y';
 
-					send_packet_new(&tmp_pkt, 1);
+					cgc_send_packet_new(&tmp_pkt, 1);
 					return SUCCESS;
 				}
 				else
 				{
 					tmp_pkt.type = DATA;
 					tmp_pkt.subtype = DCDPCE;
-					strncpy(tmp_pkt.content, "nplaced", 7);
+					cgc_strncpy(tmp_pkt.content, "nplaced", 7);
 
-					send_packet_new(&tmp_pkt, 7);
+					cgc_send_packet_new(&tmp_pkt, 7);
 					return SUCCESS;
 				}
 			}
@@ -373,23 +373,23 @@ int packet_handler(Packet* pkt)//, Game *game)
 
 // send an ack for the pkt_num
 // these are only for DATA packets
-void send_ack(char pkt_num)
+void cgc_send_ack(char pkt_num)
 {	
-	Packet tmp;
+	cgc_Packet tmp;
 	tmp.type = CONTROL;
 	tmp.subtype = ACK;
 	tmp.content[0] = pkt_num;
 	
 	current_packet_count_recvd++;
 
-	send_packet_new(&tmp,1);
+	cgc_send_packet_new(&tmp,1);
 }
 
 // send NACK for pkt_num packet
 // attach reason to content
-void send_nack(char pktnum, int reason)
+void cgc_send_nack(char pktnum, int reason)
 {
-	Packet tmp;
+	cgc_Packet tmp;
 	tmp.type = CONTROL;
 	tmp.subtype = NACK;
 	tmp.content[0] = pktnum;
@@ -397,11 +397,11 @@ void send_nack(char pktnum, int reason)
 	
 	current_packet_count_recvd++;
 
-	send_packet_new(&tmp, 2);
+	cgc_send_packet_new(&tmp, 2);
 }
 
 // requested connection passed in as number
-void send_assoc_response(char req_conn)
+void cgc_send_assoc_response(char req_conn)
 {
 	if (req_conn == last_connection_number+1)
 	{
@@ -411,49 +411,49 @@ void send_assoc_response(char req_conn)
 		current_connection_number = req_conn;
 
 		// successful association
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = ASSRESP;
 		tmp.content[0] = '1';
 		
-		send_packet_new(&tmp, 1);
-		printf("SUCCESSFUL association\n");
+		cgc_send_packet_new(&tmp, 1);
+		cgc_printf("SUCCESSFUL association\n");
 	}
 	else 
 	{
 		// unsuccessful association
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = ASSRESP;
 		tmp.content[0] = '0';
 		
-		send_packet_new(&tmp, 1);
+		cgc_send_packet_new(&tmp, 1);
 	}
 }
 
 // send an authentication response
 // pass in the authentication type requested
-void send_auth_response(char* req_enc)
+void cgc_send_auth_response(char* req_enc)
 {
 	// pick from valid authentication types
 	if (req_enc[0] == 'a')
 	{
-		send_auth_challenge(ENC_ONE);
+		cgc_send_auth_challenge(ENC_ONE);
 	}
 	else if (req_enc[0] == 'x')
 	{	
-		send_auth_challenge(ENC_TWO);
+		cgc_send_auth_challenge(ENC_TWO);
 	}
 	else
 	{
 		// unsuccessful association
-		printf("AUTH RESP sent: fail\n");
-		printf("requested: @s, next: @c\n", req_enc);
+		cgc_printf("AUTH RESP sent: fail\n");
+		cgc_printf("requested: @s, next: @c\n", req_enc);
 	}
 }
 
 int offset = 3;
-void send_auth_challenge(int enc)
+void cgc_send_auth_challenge(int enc)
 {
 	enc_chal.pending = TRUE;
 
@@ -461,23 +461,23 @@ void send_auth_challenge(int enc)
 	char chall_val[5];
 	for (int i = 0; i < 5; i++) 
 	{
-		chall_val[i] = random_in_range('a', 'p'); 
+		chall_val[i] = cgc_random_in_range('a', 'p'); 
 	}
 
 	enc_chal.enc_type = enc;
 
-	Packet tmp;
+	cgc_Packet tmp;
 	tmp.type = MGMT;
 	tmp.subtype = AUTHCHALREQ;
-	memcpy(tmp.content, chall_val, 5);
+	cgc_memcpy(tmp.content, chall_val, 5);
 	
-	send_packet_new(&tmp, 5);
+	cgc_send_packet_new(&tmp, 5);
 
-	encrypt_data(chall_val, 5, enc);
-	memcpy(enc_chal.answer, chall_val, 5);
+	cgc_encrypt_data(chall_val, 5, enc);
+	cgc_memcpy(enc_chal.answer, chall_val, 5);
 }
 
-int handle_auth_challenge_resp(char *answer)
+int cgc_handle_auth_challenge_resp(char *answer)
 {
 	switch (enc_chal.enc_type)
 	{
@@ -495,23 +495,23 @@ int handle_auth_challenge_resp(char *answer)
 				// user successfully answered the encryption challenge
 				enc_chal.pending = FALSE;
 
-				Packet tmp;
+				cgc_Packet tmp;
 				tmp.type = MGMT;
 				tmp.subtype = AUTHRESP;
 				tmp.content[0] = '1'; // good auth
-				send_packet_new(&tmp, 1);
+				cgc_send_packet_new(&tmp, 1);
 
 				current_encryption = ENC_TWO;
 				return TRUE;
 			}
 			else
 			{
-				printf("failed to match (@s)", enc_chal.answer);
-				Packet tmp;
+				cgc_printf("failed to match (@s)", enc_chal.answer);
+				cgc_Packet tmp;
 				tmp.type = MGMT;
 				tmp.subtype = AUTHRESP;
 				tmp.content[0] = '0'; // Failed authentication
-				send_packet_new(&tmp, 1);
+				cgc_send_packet_new(&tmp, 1);
 
 			}
 			break;
@@ -530,23 +530,23 @@ int handle_auth_challenge_resp(char *answer)
 				// user successfully answered the encryption challenge
 				enc_chal.pending = FALSE;
 
-				Packet tmp;
+				cgc_Packet tmp;
 				tmp.type = MGMT;
 				tmp.subtype = AUTHRESP;
 				tmp.content[0] = '1'; // good auth
-				send_packet_new(&tmp, 1);
+				cgc_send_packet_new(&tmp, 1);
 
 				current_encryption = ENC_ONE;
 				return TRUE;
 			}
 			else
 			{
-				printf("failed to match (@s)", enc_chal.answer);
-				Packet tmp;
+				cgc_printf("failed to match (@s)", enc_chal.answer);
+				cgc_Packet tmp;
 				tmp.type = MGMT;
 				tmp.subtype = AUTHRESP;
 				tmp.content[0] = '0'; // Failed authentication
-				send_packet_new(&tmp, 1);
+				cgc_send_packet_new(&tmp, 1);
 
 			}
 			break;
@@ -557,13 +557,13 @@ int handle_auth_challenge_resp(char *answer)
 	return FALSE;
 }
 
-int handle_disass_req(char reason)
+int cgc_handle_disass_req(char reason)
 {
-	//printf("@c @c", current_encryption, encryption_confirmed);
+	//cgc_printf("@c @c", current_encryption, encryption_confirmed);
 	// if the user hasn't deauthenticated, then this is out of order, stop everything
 	if (current_encryption != UNINITIALIZED || encryption_confirmed != FALSE)
 	{
-		printf("FAILED1\n");
+		cgc_printf("FAILED1\n");
 		return FAIL;
 	}
 
@@ -571,21 +571,21 @@ int handle_disass_req(char reason)
 	// if reason is anything else, stop program
 	if (reason != GOOD_DISRESP)
 	{
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = DISRESP;
 		tmp.content[0] = '0'; // Failed disassociation 
-		send_packet_new(&tmp, 1);
+		cgc_send_packet_new(&tmp, 1);
 		return FAIL; // quit program
 	}
 	else
 	{
 		// just disassociate
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = DISRESP;
 		tmp.content[0] = '1'; // Successful disassociation 
-		send_packet_new(&tmp, 1);
+		cgc_send_packet_new(&tmp, 1);
 
 		current_packet_count_recvd = UNINITIALIZED;
 		current_packet_count_sent = UNINITIALIZED;
@@ -596,29 +596,29 @@ int handle_disass_req(char reason)
 }
 
 // User requested deauthentication 
-int handle_deauth_req(char reason)
+int cgc_handle_deauth_req(char reason)
 {
 	// if reason is 'normal', just disass
 	// if reason is anything else, stop program
 	if (reason != GOOD_DEAUTHRESP)
 	{
 		// quit the program 
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = DEAUTHRESP;
 		tmp.content[0] = '0'; // Failed deauthentication
 
-		send_packet_new(&tmp, 1);
+		cgc_send_packet_new(&tmp, 1);
 		return FAIL; // exit
 	}
 	else
 	{
 		// just deauth
-		Packet tmp;
+		cgc_Packet tmp;
 		tmp.type = MGMT;
 		tmp.subtype = DEAUTHRESP;
 		tmp.content[0] = '1'; // Successful deauthentication
-		send_packet_new(&tmp, 1);
+		cgc_send_packet_new(&tmp, 1);
 
 		current_encryption = UNINITIALIZED;
 		encryption_confirmed = FALSE;
@@ -626,17 +626,17 @@ int handle_deauth_req(char reason)
 	return SUCCESS;
 }
 
-// pkt is a pointer to a Packet struct containing the type/subtype for this packet
+// pkt is a pointer to a cgc_Packet struct containing the type/subtype for this packet
 // len is the number of characters being used in the content field
-void send_packet(Packet *pkt)
+void cgc_send_packet(cgc_Packet *pkt)
 {
-	write((char*)pkt, sizeof(Packet));
-	printf("\n");
+	cgc_write((char*)pkt, sizeof(cgc_Packet));
+	cgc_printf("\n");
 }
 
-// pkt is a pointer to a Packet struct containing the type/subtype for this packet
+// pkt is a pointer to a cgc_Packet struct containing the type/subtype for this packet
 // len is the number of characters being used in the content field
-void send_packet_new(Packet *pkt, int len)
+void cgc_send_packet_new(cgc_Packet *pkt, int len)
 {
 	if (pkt->type == DATA) // data 
 	{
@@ -653,12 +653,12 @@ void send_packet_new(Packet *pkt, int len)
 	}
 	pkt->length = len + '0';
 
-	set_checksum(pkt);
-	write((char*)pkt, sizeof(Packet));
-	printf("\n");
+	cgc_set_checksum(pkt);
+	cgc_write((char*)pkt, sizeof(cgc_Packet));
+	cgc_printf("\n");
 }
 
-char calculateCS(char *bytes, int len)
+char cgc_calculateCS(char *bytes, int len)
 {
 	char ret = 0;
 	for (int i = 0; i < len; i++)
@@ -668,14 +668,14 @@ char calculateCS(char *bytes, int len)
 	return ret;
 }
 
-void set_checksum(Packet *pkt)
+void cgc_set_checksum(cgc_Packet *pkt)
 {
-	pkt->checksum = calculateCS((char*)pkt, sizeof(Packet) - 1); // don't count the checksum byte
+	pkt->checksum = cgc_calculateCS((char*)pkt, sizeof(cgc_Packet) - 1); // don't count the checksum byte
 }
 
-char get_checksum(Packet *pkt)
+char cgc_get_checksum(cgc_Packet *pkt)
 {
-	return calculateCS((char*)pkt, sizeof(Packet) - 1); // don't count the checksum byte
+	return cgc_calculateCS((char*)pkt, sizeof(cgc_Packet) - 1); // don't count the checksum byte
 }
 
 char *VALID_CHARS = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz";
@@ -683,7 +683,7 @@ int LAST_CHAR_POS = 74; // zero-based last char index
 
 // return offset into VALID_CHARS for character C
 // return -1 if not found
-int locate_char(char c)
+int cgc_locate_char(char c)
 {
 	for (int i = 0; i < LAST_CHAR_POS; i++)
 	{
@@ -697,14 +697,14 @@ int locate_char(char c)
 // encrypt given characters
 // return 0 if failure
 // return 1 if success
-int encrypt_data(char *data, int len, int type)
+int cgc_encrypt_data(char *data, int len, int type)
 {
 	if (type == ENC_TWO)
 	{
 		int i = 0;
 		for (int i = 0; i < len; i++)
 		{
-			int char_index = locate_char(data[i]);
+			int char_index = cgc_locate_char(data[i]);
 			if (char_index == -1)
 			{
 				// out of bounds character found
@@ -734,7 +734,7 @@ int encrypt_data(char *data, int len, int type)
 		int i = 0;
 		for (int i = 0; i < len; i++)
 		{
-			int char_index = locate_char(data[i]);
+			int char_index = cgc_locate_char(data[i]);
 			if (char_index == -1)
 			{
 				// out of bounds character found
@@ -764,14 +764,14 @@ int encrypt_data(char *data, int len, int type)
 }
 
 // this will decrypt the chars sent to it using XOR and save the result in the given packet
-int decrypt_packet(char *data, int len, int type)
+int cgc_decrypt_packet(char *data, int len, int type)
 {
 	if (type == ENC_TWO)
 	{
 		int i = 0;
 		for (int i = 0; i < len; i++)
 		{
-			int char_index = locate_char(data[i]);
+			int char_index = cgc_locate_char(data[i]);
 			if (char_index == -1)
 			{
 				// out of bounds character found
@@ -802,7 +802,7 @@ int decrypt_packet(char *data, int len, int type)
 		int i = 0;
 		for (int i = 0; i < len; i++)
 		{
-			int char_index = locate_char(data[i]);
+			int char_index = cgc_locate_char(data[i]);
 			if (char_index == -1)
 			{
 				// out of bounds character found
@@ -832,19 +832,19 @@ int decrypt_packet(char *data, int len, int type)
 
 // return 1 if we won
 // return 0 if we have not won yet
-int check_win(int goal)
+int cgc_check_win(int goal)
 {
 	char buff[5];
-	if (get_max_road_len() >= goal)
+	if (cgc_get_max_road_len() >= goal)
 	{
-		printf("YOU WIN, what is your name?\n");
+		cgc_printf("YOU WIN, what is your name?\n");
 		#ifndef PATCHED
-		int len = receive_until(buff, '\n', 25);
+		int len = cgc_receive_until(buff, '\n', 25);
 		#else
-		int len = receive_until(buff, '\n', 5);
+		int len = cgc_receive_until(buff, '\n', 5);
 		#endif
 		buff[len] = 0x00;
-		printf("Well done, @s\n", buff);
+		cgc_printf("Well done, @s\n", buff);
 		return 1;
 	}
 	return 0;

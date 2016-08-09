@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,23 +23,23 @@
 #include "stringmanager.h"
 #include "string.h"
 
-template<> StringManager *Singleton<StringManager>::d_instance = nullptr;
-template<> void Singleton<StringManager>::_create()
+template<> cgc_StringManager *cgc_Singleton<cgc_StringManager>::d_instance = nullptr;
+template<> void cgc_Singleton<cgc_StringManager>::cgc__create()
 {
-    d_instance = new StringManager();
+    d_instance = new cgc_StringManager();
 }
 
-StringManager::StringManager()
+cgc_StringManager::cgc_StringManager()
 {
 }
 
-const String *StringManager::intern(const char *str)
+const cgc_String *cgc_StringManager::cgc_intern(const char *str)
 {
-    String **result, *s;
-    result = d_intern_map.lookup(str);
+    cgc_String **result, *s;
+    result = d_intern_map.cgc_lookup(str);
     if (result != nullptr)
         return *result;
-    s = String::create(str);
-    d_intern_map.insert(s->cstr(), s);
+    s = cgc_String::cgc_create(str);
+    d_intern_map.cgc_insert(s->cgc_cstr(), s);
     return s;
 }

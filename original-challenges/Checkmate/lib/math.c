@@ -27,46 +27,46 @@
 #define MANTMASK (~(1ull << 52))
 
 unsigned long long
-sign(double d)
+cgc_sign(double d)
 {
     return *(unsigned long long *)(&d) & SIGNMASK;
 }
 
 unsigned long long
-exponent(double d)
+cgc_exponent(double d)
 {
     return *(unsigned long long *)(&d) & EXPMASK;
 }
 
 unsigned long long
-mantissa(double d)
+cgc_mantissa(double d)
 {
     return *(unsigned long long *)(&d) & MANTMASK;
 }
 
 int
-isnan(double d)
+cgc_isnan(double d)
 {
-    return exponent(d) == EXPMASK && mantissa(d) != 0;
+    return cgc_exponent(d) == EXPMASK && cgc_mantissa(d) != 0;
 }
 
 int
-isinf(double d)
+cgc_isinf(double d)
 {
-    if (exponent(d) == EXPMASK && mantissa(d) == 0)
-        return sign(d) ? -1 : 1;
+    if (cgc_exponent(d) == EXPMASK && cgc_mantissa(d) == 0)
+        return cgc_sign(d) ? -1 : 1;
     return 0;
 }
 
 double
-abs(double d)
+cgc_abs(double d)
 {
     unsigned long long ret = *(unsigned long long *)(&d) & ~SIGNMASK;
     return *(double *)(&ret);
 }
 
 double
-clamp(double d)
+cgc_clamp(double d)
 {
     if (d < 0.0)
         return 0.0;

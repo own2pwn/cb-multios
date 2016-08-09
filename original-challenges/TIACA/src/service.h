@@ -83,9 +83,9 @@ typedef struct _carstate {
 	char alarm_state;
 	int trunk_load;
 	char bt_metadata[32];
-} carstate;
+} cgc_carstate;
 #pragma pack(pop)
 
-void serviceLoop();
+void cgc_serviceLoop();
 
 #endif //_SERVICE_H

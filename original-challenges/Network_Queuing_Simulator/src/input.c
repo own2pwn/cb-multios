@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "stdlib.h"
 
-int readUntil(char *buf, int max, char delim) {
+int cgc_readUntil(char *buf, int max, char delim) {
 	unsigned char c;
-	size_t size;
+	cgc_size_t size;
 	unsigned int i;
 
 	i = 0;

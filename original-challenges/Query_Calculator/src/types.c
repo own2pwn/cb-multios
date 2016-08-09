@@ -27,25 +27,25 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "types.h"
 
-#define c(NAME, SIZE) chk(SIZE, sizeof(NAME))
+#define c(NAME, SIZE) cgc_chk(SIZE, sizeof(NAME))
 
-void chk(size_t expected, size_t got);
+void cgc_chk(cgc_size_t expected, cgc_size_t got);
 
 // check assumptions about type sizes
-void types_check() {
-  c(uint8, 1);
-  c(sint8, 1);
-  c(uint16, 2);
-  c(sint16, 2);
-  c(uint32, 4);
-  c(sint32, 4);
-  c(uint64, 8);
-  c(sint64, 8);
-  c(float32, 4);
-  c(float64, 8); 
+void cgc_types_check() {
+  c(cgc_uint8, 1);
+  c(cgc_sint8, 1);
+  c(cgc_uint16, 2);
+  c(cgc_sint16, 2);
+  c(cgc_uint32, 4);
+  c(cgc_sint32, 4);
+  c(cgc_uint64, 8);
+  c(cgc_sint64, 8);
+  c(cgc_float32, 4);
+  c(cgc_float64, 8); 
 }
 
-void chk(size_t expected, size_t got) {
+void cgc_chk(cgc_size_t expected, cgc_size_t got) {
   if (expected == got) return;
 
   _terminate(-1);

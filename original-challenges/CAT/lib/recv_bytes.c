@@ -25,18 +25,18 @@
 #include "libc.h"
 
 
-int recv_bytes(int fd, char *buf, unsigned int size) {
+int cgc_recv_bytes(int fd, char *buf, unsigned int size) {
 
   int ret = SUCCESS;
-  size_t bytes_left = size;
-  size_t rx_bytes_local = 0;
+  cgc_size_t bytes_left = size;
+  cgc_size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 
     rx_bytes_local = 0;
 
     if (SUCCESS != (ret = receive(STDIN, buf+(size-bytes_left), bytes_left, &rx_bytes_local))) {
-      err("receive() call within recv_bytes() failed\n");
+      err("receive() call within cgc_recv_bytes() failed\n");
     }
 
     bytes_left -= rx_bytes_local;

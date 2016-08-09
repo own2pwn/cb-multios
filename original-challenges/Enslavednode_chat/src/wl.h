@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,11 +27,11 @@
 #include "common.h"
 #include "list.h"
 
-list *upto_last(const list *l);
-HASH key_from_wordlist(const list *l);
-list *str_to_wordlists(const char *s);
-int insert_wordlist(const list *word_list, tree **t);
-int insert_wordlists(const list *word_lists, tree **t);
-list *split_words(const char *line, int add_term);
-HASH hash_str(char *s);
+cgc_list *cgc_upto_last(const cgc_list *l);
+HASH cgc_key_from_wordlist(const cgc_list *l);
+cgc_list *cgc_str_to_wordlists(const char *s);
+int cgc_insert_wordlist(const cgc_list *word_list, cgc_tree **t);
+int cgc_insert_wordlists(const cgc_list *word_lists, cgc_tree **t);
+cgc_list *cgc_split_words(const char *line, int add_term);
+HASH cgc_hash_str(char *s);
 #endif /* __WL__H */

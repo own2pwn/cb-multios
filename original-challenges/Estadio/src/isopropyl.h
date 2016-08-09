@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 /* from limits.h, but it doesn't include right */
 #define UINT32_MAX 4294967295U
-typedef unsigned char uint8;
-typedef unsigned int uint32;
-typedef unsigned long long uint64;
-typedef double float64;
+typedef unsigned char cgc_uint8;
+typedef unsigned int cgc_uint32;
+typedef unsigned long long cgc_uint64;
+typedef double cgc_float64;

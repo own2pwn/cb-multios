@@ -31,6 +31,6 @@
  * @param size Number of bytes to receive.
  * @returns Number of bytes received.
  */
-unsigned int read_all(int fd, char *buf, unsigned int size);
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
 #endif

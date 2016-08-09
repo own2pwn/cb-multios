@@ -4,7 +4,7 @@ Author: John Berry <hj@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,22 +29,22 @@ THE SOFTWARE.
 #include <stdio.h>
 #include <string.h>
 
-typedef struct meta {
-	size_t length;
-	struct meta *next;
-	struct meta *prev;
-} meta, *pmeta;
+typedef struct cgc_meta {
+	cgc_size_t length;
+	struct cgc_meta *next;
+	struct cgc_meta *prev;
+} cgc_meta, *cgc_pmeta;
 
 #define BUCKET( size )	(size > 1016 ? 0 : size / 8 )
 
 /// Each bucket is the head of a singly linked list
 ///  The size for the bucket can be calculated via index*8
 ///  However, the freelist bucket 0 also uses the prev pointer
-pmeta lookaside[128] = {NULL};
+cgc_pmeta lookaside[128] = {NULL};
 
-void link( pmeta linkme )
+void cgc_link( cgc_pmeta linkme )
 {
-	pmeta walker = lookaside[0];
+	cgc_pmeta walker = lookaside[0];
 
 	if ( linkme == NULL ) {
 		return;
@@ -77,10 +77,10 @@ void link( pmeta linkme )
 	return;
 }
 
-void add_freelist_block( size_t length )
+void cgc_add_freelist_block( cgc_size_t length )
 {
-	pmeta block = NULL;
-	pmeta walker = NULL;
+	cgc_pmeta block = NULL;
+	cgc_pmeta walker = NULL;
 
 	/// Round to the nearest page
 
@@ -94,7 +94,7 @@ void add_freelist_block( size_t length )
 		_terminate(-1);
 	}
 
-	bzero( block, length );
+	cgc_bzero( block, length );
 
 	block->length = length-4;
 	
@@ -103,34 +103,34 @@ void add_freelist_block( size_t length )
 		return;
 	}
 
-	link( block );
+	cgc_link( block );
 
 	return;
 }
 
-void free( void *block )
+void cgc_free( void *block )
 {
-	pmeta nb = NULL;
+	cgc_pmeta nb = NULL;
 
 	if ( block ) {
-		nb = (pmeta) (( (char*)block) - 4);
-		link(nb);
+		nb = (cgc_pmeta) (( (char*)block) - 4);
+		cgc_link(nb);
 	}
 
 	return;
 }
 
-void init_freelist( void )
+void cgc_init_freelist( void )
 {
-	pmeta zero_block = NULL;
-	pmeta base_block = NULL;
+	cgc_pmeta zero_block = NULL;
+	cgc_pmeta base_block = NULL;
 
 	if ( allocate(4096, 0, (void**)&lookaside) != 0 ) {
 
 		_terminate(-1);
 	}
 
-	bzero( lookaside[0], 4096);
+	cgc_bzero( lookaside[0], 4096);
 
 	zero_block = lookaside[0];
 	base_block = zero_block + 1;
@@ -141,16 +141,16 @@ void init_freelist( void )
 	zero_block->next = base_block;
 	zero_block->prev = NULL;
 
-	base_block->length = 4096 - sizeof(meta) - 4;
+	base_block->length = 4096 - sizeof(cgc_meta) - 4;
 	base_block->prev = zero_block;
 	base_block->next = NULL;
 
-	//printf("Set up head: $x with walker: $d: $x\n", zero_block, base_block->length, base_block);
+	//cgc_printf("Set up head: $x with walker: $d: $x\n", zero_block, base_block->length, base_block);
 
 	return;
 }
 
-void unlink( pmeta block )
+void cgc_unlink( cgc_pmeta block )
 {
 	if ( block == NULL ) {
 		return;
@@ -167,18 +167,18 @@ void unlink( pmeta block )
 	return;
 }
 
-void *freelist_alloc( size_t length )
+void *cgc_freelist_alloc( cgc_size_t length )
 {
-	pmeta walker = NULL;
-	pmeta newone = NULL;
+	cgc_pmeta walker = NULL;
+	cgc_pmeta newone = NULL;
 
-	/// If there isn't a block on the free list then initialize one
+	/// If there isn't a block on the cgc_free list then initialize one
 	/// This should only be the case on the first allocation request
 	if ( lookaside[0] == NULL ) {
-		init_freelist();
+		cgc_init_freelist();
 	}
 
-	walker = (pmeta)lookaside[0];
+	walker = (cgc_pmeta)lookaside[0];
 
 	// Walk while looking for the smallest useable
 	while ( walker ) {
@@ -190,33 +190,33 @@ void *freelist_alloc( size_t length )
 	}
 
 	if ( walker == NULL ) {
-		//printf("no blocks found\n");
-		add_freelist_block( length );
-		return freelist_alloc(length);
+		//cgc_printf("no blocks found\n");
+		cgc_add_freelist_block( length );
+		return cgc_freelist_alloc(length);
 	} else {
-		//printf("foudn block size: $d\n", walker->length );
+		//cgc_printf("foudn block size: $d\n", walker->length );
 
-		unlink(walker);
+		cgc_unlink(walker);
 
 		/// If the block is less than the size needed for at
 		///	least an 8 byte block then return the whole thing
-		///	That means sizeof(meta) prev and next total 8 bytes
+		///	That means sizeof(cgc_meta) prev and next total 8 bytes
 		///	bytes on the lookaside list
-		if ( walker->length - length < sizeof(meta) ) {
+		if ( walker->length - length < sizeof(cgc_meta) ) {
 			/// Skip the 4 byte length
 			return ((char*)walker) + 4;
 		}
 
 		/// Break the chunk off
-		newone = (pmeta) ( ((char*)walker) + 4 + length );
+		newone = (cgc_pmeta) ( ((char*)walker) + 4 + length );
 		newone->length = walker->length - (length+4);
 
-		//printf("Broke $d into $d and $d\n", walker->length, length, newone->length);
+		//cgc_printf("Broke $d into $d and $d\n", walker->length, length, newone->length);
 		walker->length = length;
 
-		link(newone);
+		cgc_link(newone);
 
-		//printf("Returning size: $d\n", walker->length);
+		//cgc_printf("Returning size: $d\n", walker->length);
 		return ((char*)walker) + 4;
 	}
 
@@ -224,9 +224,9 @@ void *freelist_alloc( size_t length )
 }
 
 
-void *calloc( size_t length )
+void *cgc_calloc( cgc_size_t length )
 {
-	void *out = malloc( length );
+	void *out = cgc_malloc( length );
 
 	if ( !out ) {
 		return out;
@@ -234,17 +234,17 @@ void *calloc( size_t length )
 
 	length = (length+7) & 0xfffffff8;
 
-	bzero( out, length);
+	cgc_bzero( out, length);
 
 	return out;
 }
 
-void *malloc( size_t length )
+void *cgc_malloc( cgc_size_t length )
 {
 	int bucket = 0;
-	pmeta outb = NULL;
+	cgc_pmeta outb = NULL;
 	
-	// The minimum size for a valid request is 8 bytes
+	// The cgc_minimum size for a valid request is 8 bytes
 	if ( length < 8 ) {
 		length = 8;
 	}
@@ -255,7 +255,7 @@ void *malloc( size_t length )
 	bucket = BUCKET(length);
 
 	if ( bucket == 0 ) {
-		return freelist_alloc( length );
+		return cgc_freelist_alloc( length );
 	} else {
 		while ( bucket < 128 ) {
 			if ( lookaside[ bucket] != NULL ) {
@@ -267,10 +267,10 @@ void *malloc( size_t length )
 	}
 
 	if ( bucket == 128 ) {
-		//printf("No available buckets freelist alloc\n");
-		return freelist_alloc( length );
+		//cgc_printf("No available buckets freelist alloc\n");
+		return cgc_freelist_alloc( length );
 	} else {
-		//printf("Found bucket: $d\n", bucket);
+		//cgc_printf("Found bucket: $d\n", bucket);
 		outb = lookaside[ bucket ];
 		lookaside[bucket] = outb->next;
 

@@ -12,9 +12,9 @@ typedef struct sfile {
 
     //char *data;
     char data[];
-} SFILE;
+} cgc_SFILE;
 
-SFILE *open_sfile();
-void close_sfile(SFILE **psfp);
+cgc_SFILE *cgc_open_sfile();
+void cgc_close_sfile(cgc_SFILE **psfp);
 
 #endif

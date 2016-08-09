@@ -24,14 +24,14 @@
 
 // Copy the URI from the recv buffer into a verb-specific buffer.
 // Vulnerability resides here.
-int copy_uri(char *buf_verb) {
+int cgc_copy_uri(char *buf_verb) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
-    size_t pos_uri = -1;
+    cgc_size_t pos_uri = -1;
 
     // Find our delimeter
-    pos_uri = findchar(buf_recv, DELIM_URI);
+    pos_uri = cgc_findchar(buf_recv, DELIM_URI);
     if (-1 == pos_uri || pos_uri > RECV_BUF_SZ-URI_BUF_SZ) { 
         SENDNULLTRUNC(ERR_INVALID_REQ, sizeof(ERR_INVALID_REQ), bytes_sent);
         return ERRNO_INVALID_REQ; 
@@ -39,12 +39,12 @@ int copy_uri(char *buf_verb) {
 
     // Pull out the URI
 #ifndef PATCHED
-    memcpy(
+    cgc_memcpy(
         (unsigned char *)buf_verb, 
         (unsigned char *)buf_recv+pos_uri+1, 
         URI_BUF_SZ+1); // VULN: off-by-one
 #else
-    memcpy(
+    cgc_memcpy(
         (unsigned char *)buf_verb, 
         (unsigned char *)(buf_recv+pos_uri+1), 
         URI_BUF_SZ);
@@ -54,7 +54,7 @@ int copy_uri(char *buf_verb) {
 }
 
 // Check whether the user has any remaining credits.
-int check_plebian(void) {
+int cgc_check_plebian(void) {
 
     if (*ptr_credits) { 
         *ptr_credits = *ptr_credits - 1;
@@ -64,14 +64,14 @@ int check_plebian(void) {
 }
 
 // Provided a filename, return a pointer to the file's contents.
-char * get_file_contents(char *name) {
+char * cgc_get_file_contents(char *name) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
-    size_t i = 0;
+    cgc_size_t i = 0;
 
     for (i=0; i<num_files; i++) {
-        if (!memcmp(name, files[i].name, FILE_BUF_SZ)) {
+        if (!cgc_memcmp(name, files[i].name, FILE_BUF_SZ)) {
             return files[i].contents;
         }
     }
@@ -82,13 +82,13 @@ char * get_file_contents(char *name) {
 }
 
 // Provided a filename, send the file contents to the user.
-int dump_file(char *name) {
+int cgc_dump_file(char *name) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
     char *file_contents = NULL;
 
-    if (NULL == (file_contents = get_file_contents(name))) {
+    if (NULL == (file_contents = cgc_get_file_contents(name))) {
         return ERRNO_FILE_NOT_FOUND;
     }
 
@@ -98,13 +98,13 @@ int dump_file(char *name) {
 
 // Provided a filename, send the first HEAD_SZ bytes of contents to the user.
 #define HEAD_SZ 4
-int head_file(char *name) {
+int cgc_head_file(char *name) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
     char *file_contents = NULL;
 
-    if (NULL == (file_contents = get_file_contents(name))) {
+    if (NULL == (file_contents = cgc_get_file_contents(name))) {
         return ERRNO_FILE_NOT_FOUND;
     }
 
@@ -112,10 +112,10 @@ int head_file(char *name) {
     return ret;
 }
 
-int list_files(void) {
+int cgc_list_files(void) {
 
     int ret = SUCCESS;
-    size_t i = 0;
+    cgc_size_t i = 0;
     int bytes_sent = -1;
 
     for (i=0; i<num_files; i++) {
@@ -126,57 +126,57 @@ int list_files(void) {
     return ret;
 }
 
-int dispatch_verb(void) {
+int cgc_dispatch_verb(void) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
 
-    if (!memcmp(buf_recv, "TIP", sizeof("TIP"))) {
+    if (!cgc_memcmp(buf_recv, "TIP", sizeof("TIP"))) {
 
-        if (SUCCESS != (ret = check_plebian())) { return ret; }
-        if (SUCCESS != (ret = copy_uri(ptr_uri_tip))) { return ret; }
-        if (SUCCESS != (ret = do_tip(ptr_uri_tip))) { return ret; }
+        if (SUCCESS != (ret = cgc_check_plebian())) { return ret; }
+        if (SUCCESS != (ret = cgc_copy_uri(ptr_uri_tip))) { return ret; }
+        if (SUCCESS != (ret = cgc_do_tip(ptr_uri_tip))) { return ret; }
 
-    } else if (!memcmp(buf_recv, "STATUS", sizeof("STATUS"))) {
+    } else if (!cgc_memcmp(buf_recv, "STATUS", sizeof("STATUS"))) {
 
-        if (SUCCESS != (ret = check_plebian())) { return ret; }
-        if (SUCCESS != (ret = do_status())) { return ret; }
+        if (SUCCESS != (ret = cgc_check_plebian())) { return ret; }
+        if (SUCCESS != (ret = cgc_do_status())) { return ret; }
 
-    } else if (!memcmp(buf_recv, "GIMME", sizeof("GIMME"))) {
+    } else if (!cgc_memcmp(buf_recv, "GIMME", sizeof("GIMME"))) {
 
-        if (SUCCESS != (ret = check_plebian())) { return ret; }
-        if (SUCCESS != (ret = copy_uri(ptr_uri_gimme))) { return ret; }
-        if (SUCCESS != (ret = do_gimme(ptr_uri_gimme))) { return ret; }
+        if (SUCCESS != (ret = cgc_check_plebian())) { return ret; }
+        if (SUCCESS != (ret = cgc_copy_uri(ptr_uri_gimme))) { return ret; }
+        if (SUCCESS != (ret = cgc_do_gimme(ptr_uri_gimme))) { return ret; }
 
-    } else if (!memcmp(buf_recv, "LIST", sizeof("LIST"))) {
+    } else if (!cgc_memcmp(buf_recv, "LIST", sizeof("LIST"))) {
 
-        if (SUCCESS != (ret = check_plebian())) { return ret; }
-        if (SUCCESS != (ret = do_list())) { return ret; }
+        if (SUCCESS != (ret = cgc_check_plebian())) { return ret; }
+        if (SUCCESS != (ret = cgc_do_list())) { return ret; }
 
-    } else if (!memcmp(buf_recv, "SMORE", sizeof("SMORE"))) {
+    } else if (!cgc_memcmp(buf_recv, "SMORE", sizeof("SMORE"))) {
 
-        if (SUCCESS != (ret = copy_uri(ptr_uri_smore))) { return ret; }
-        if (SUCCESS != (ret = do_smore(ptr_uri_smore))) { return ret; }
+        if (SUCCESS != (ret = cgc_copy_uri(ptr_uri_smore))) { return ret; }
+        if (SUCCESS != (ret = cgc_do_smore(ptr_uri_smore))) { return ret; }
 
-    } else if (!memcmp(buf_recv, "YOUUP", sizeof("YOUUP"))) {
+    } else if (!cgc_memcmp(buf_recv, "YOUUP", sizeof("YOUUP"))) {
 
-        if (SUCCESS != (ret = do_youup())) { return ret; }
+        if (SUCCESS != (ret = cgc_do_youup())) { return ret; }
 
-    } else if (!memcmp(buf_recv, "MOOCH", sizeof("MOOCH"))) {
+    } else if (!cgc_memcmp(buf_recv, "MOOCH", sizeof("MOOCH"))) {
 
-        if (SUCCESS != (ret = copy_uri(ptr_uri_mooch))) { return ret; }
-        if (SUCCESS != (ret = do_mooch(ptr_uri_mooch))) { return ret; }
+        if (SUCCESS != (ret = cgc_copy_uri(ptr_uri_mooch))) { return ret; }
+        if (SUCCESS != (ret = cgc_do_mooch(ptr_uri_mooch))) { return ret; }
 
-    } else if (!memcmp(buf_recv, "SUP", sizeof("SUP"))) {
+    } else if (!cgc_memcmp(buf_recv, "SUP", sizeof("SUP"))) {
 
-        if (SUCCESS != (ret = do_sup())) { return ret; }
+        if (SUCCESS != (ret = cgc_do_sup())) { return ret; }
 
-    } else if (!memcmp(buf_recv, "AUTH", sizeof("AUTH"))) {
+    } else if (!cgc_memcmp(buf_recv, "AUTH", sizeof("AUTH"))) {
 
-        if (SUCCESS != (ret = copy_uri(ptr_uri_auth))) { return ret; }
-        if (SUCCESS != (ret = do_auth(ptr_uri_auth))) { return ret; }
+        if (SUCCESS != (ret = cgc_copy_uri(ptr_uri_auth))) { return ret; }
+        if (SUCCESS != (ret = cgc_do_auth(ptr_uri_auth))) { return ret; }
 
-    } else if (!memcmp(buf_recv, "QUIT", sizeof("QUIT"))) {
+    } else if (!cgc_memcmp(buf_recv, "QUIT", sizeof("QUIT"))) {
 
         QUIT();
 
@@ -193,26 +193,26 @@ int dispatch_verb(void) {
 // make fake files (names, contents) for querying
 #define NUM_CHARS_ALPHA 26
 #define NUM_CHARS_NUMERIC 10
-int init_content() {
+int cgc_init_content() {
 
     int ret = SUCCESS;
-    UINT8 rnd[RND_BUF_SZ];
-    size_t rnd_bytes = 0;
-    size_t i = 0;
-    size_t j = 0;
+    cgc_UINT8 rnd[RND_BUF_SZ];
+    cgc_size_t rnd_bytes = 0;
+    cgc_size_t i = 0;
+    cgc_size_t j = 0;
 
     // determine number of files in the directory; range: [1, 255]
-    while ((0 != random(rnd, 1, &rnd_bytes)) && (1 != rnd_bytes)) {}
+    while ((0 != cgc_random(rnd, 1, &rnd_bytes)) && (1 != rnd_bytes)) {}
     num_files = rnd[0];
     if (0 == num_files) { num_files = 1; } // yeah, this biases
 
     // allocate NX space for the fileentries
-    ALLOC(sizeof(fileentry) * num_files, 0, (void **)&files, ret);
+    ALLOC(sizeof(cgc_fileentry) * num_files, 0, (void **)&files, ret);
     if (SUCCESS != ret) { return ret; }
 
     // for each file, determine a 16-character (no NULL) ASCII name & contents
     for (i=0; i<num_files; i++) {
-        while ((0 != random(rnd, FILE_BUF_SZ*2, &rnd_bytes)) && (FILE_BUF_SZ*2 != rnd_bytes)) {}
+        while ((0 != cgc_random(rnd, FILE_BUF_SZ*2, &rnd_bytes)) && (FILE_BUF_SZ*2 != rnd_bytes)) {}
 
         // filename, limited to lowercase ASCII characters
         for (j=0; j < FILE_BUF_SZ; j++) {
@@ -234,12 +234,12 @@ int main(void) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
-    UINT32 crash;
+    cgc_UINT32 crash;
 
     // We emulate an end-of-stack / SIGSEGV by putting a pointer directly above
     // the TIP buffer.  Overflowing the TIP buffer with the correct value
     // should cause SIGSEGV.
-    UINT32 *ptr_crash = &crash;
+    cgc_UINT32 *ptr_crash = &crash;
 
     // These are the (stack) buffers we intend to overflow
     // high addrs  /-----------------------------------\   end of stack
@@ -254,8 +254,8 @@ int main(void) {
     // low addrs   \-----------------------------------/
     char uri_tip[URI_BUF_SZ] = {0};
     char uri_gimme[URI_BUF_SZ] = {0};
-    UINT8 dummy[3] = {0};
-    UINT8 credits = 0;
+    cgc_UINT8 dummy[3] = {0};
+    cgc_UINT8 credits = 0;
     char uri_smore[URI_BUF_SZ] = {0};
     char uri_mooch[URI_BUF_SZ] = {0};
     char uri_auth[URI_BUF_SZ] = {0};
@@ -269,8 +269,8 @@ int main(void) {
     ptr_uri_auth = uri_auth;
 
     // set up the files
-    if ((ret = init_content()) != SUCCESS) { 
-        FATAL("fatal error during init_content()\n", ERRNO_UNK);
+    if ((ret = cgc_init_content()) != SUCCESS) { 
+        FATAL("fatal error during cgc_init_content()\n", ERRNO_UNK);
         return ret; 
     }
 
@@ -278,7 +278,7 @@ int main(void) {
 
         RECV(buf_recv, RECV_BUF_SZ, ret);
 
-        if (ERRNO_INSUFFICIENT_FUNDS == (ret = dispatch_verb())) {
+        if (ERRNO_INSUFFICIENT_FUNDS == (ret = cgc_dispatch_verb())) {
             SENDNULLTRUNC(
                 ERR_INSUFFICIENT_FUNDS, 
                 sizeof(ERR_INSUFFICIENT_FUNDS), 

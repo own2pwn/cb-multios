@@ -26,7 +26,7 @@
 #include <libcgc.h>
 
 struct bitset {
-    size_t size;
+    cgc_size_t size;
     unsigned char data[0];
 };
 
@@ -36,14 +36,14 @@ struct bitset {
  * @param bitset The bitset to initialize
  * @param size The size of the bitset
  */
-void bitset_init(struct bitset *bitset, size_t size);
+void cgc_bitset_init(struct bitset *bitset, cgc_size_t size);
 
 /**
  * Clear a bitset.
  *
  * @param bitset The bitset to clear
  */
-void bitset_clear(struct bitset *bitset);
+void cgc_bitset_clear(struct bitset *bitset);
 
 /**
  * Set a bit in a bitset
@@ -52,7 +52,7 @@ void bitset_clear(struct bitset *bitset);
  * @param bit The bit to set
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int bitset_set_bit(struct bitset *bitset, unsigned int bit);
+int cgc_bitset_set_bit(struct bitset *bitset, unsigned int bit);
 
 /**
  * Clear a bit in a bitset
@@ -61,7 +61,7 @@ int bitset_set_bit(struct bitset *bitset, unsigned int bit);
  * @param bit The bit to set
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int bitset_clear_bit(struct bitset *bitset, unsigned int bit);
+int cgc_bitset_clear_bit(struct bitset *bitset, unsigned int bit);
 
 /**
  * Get a bit from a bitset
@@ -70,7 +70,7 @@ int bitset_clear_bit(struct bitset *bitset, unsigned int bit);
  * @param bit The bit to get
  * @return value of bit on success, EXIT_FAILURE on failure
  */
-int bitset_get_bit(struct bitset *bitset, unsigned int bit);
+int cgc_bitset_get_bit(struct bitset *bitset, unsigned int bit);
 
 /**
  * Find the first bit in a bitset matching set
@@ -79,7 +79,7 @@ int bitset_get_bit(struct bitset *bitset, unsigned int bit);
  * @param set Look for a set or unset bit
  * @return The index of the first matching bit, or EXIT_FAILURE if none found
  */
-int bitset_find_first(struct bitset *bitset, int set);
+int cgc_bitset_find_first(struct bitset *bitset, int set);
 
 #endif /* BITSET_H_ */
 

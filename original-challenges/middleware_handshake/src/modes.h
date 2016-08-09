@@ -4,13 +4,13 @@
 #include "codes.h"
 
 typedef struct {
-    code_t *code;
+    cgc_code_t *code;
     unsigned int mode;
     union {
         unsigned char xm[MAX_BSIZE / 8];
-        uint64_t cm;
+        cgc_uint64_t cm;
     } state;
-} mode_t;
+} cgc_mode_t;
 
 enum {
     MODE_NULL,
@@ -20,12 +20,12 @@ enum {
     MODE_END
 };
 
-int modes_init(mode_t *mode, unsigned int mode_id, code_t *code);
-int modes_encode(mode_t *mode, const unsigned char *inb, unsigned int inlen, 
+int cgc_modes_init(cgc_mode_t *mode, unsigned int mode_id, cgc_code_t *code);
+int cgc_modes_encode(cgc_mode_t *mode, const unsigned char *inb, unsigned int inlen, 
     unsigned char **outb, unsigned int *outlen);
-int modes_decode(mode_t *mode, const unsigned char *inb, unsigned int inlen, 
+int cgc_modes_decode(cgc_mode_t *mode, const unsigned char *inb, unsigned int inlen, 
     unsigned char **outb, unsigned int *outlen);
 
-int modes_self_test();
+int cgc_modes_self_test();
 
 #endif

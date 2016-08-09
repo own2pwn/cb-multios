@@ -28,7 +28,7 @@
 #include "interpreter.h"
 
 static int
-eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *result)
+cgc_eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *result)
 {
     const char *name;
     struct variable *var;
@@ -42,7 +42,7 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
         result->val.i = node->expr.constant;
         return EXIT_SUCCESS;
     case AST_VARIABLE:
-        if ((var = lookup_variable(ns, node->expr.variable)) == NULL)
+        if ((var = cgc_lookup_variable(ns, node->expr.variable)) == NULL)
             return EXIT_FAILURE;
 
         *result = *var;
@@ -50,7 +50,7 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
     case AST_UNARY_OPERATOR:
         switch (node->expr.un_op.type) {
         case UN_NEGATE:
-            if (eval_ast_node(node->expr.un_op.n, ns, &n) < 0)
+            if (cgc_eval_ast_node(node->expr.un_op.n, ns, &n) < 0)
                 return EXIT_FAILURE;
 
             if (n.type != VAR_INTEGER)
@@ -63,14 +63,14 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
             return EXIT_SUCCESS;
         case UN_ADDRESS_OF:
             // Our parser ensures that the subexpr is a variable
-            if ((var = lookup_variable(ns, node->expr.un_op.n->expr.variable)) == NULL)
+            if ((var = cgc_lookup_variable(ns, node->expr.un_op.n->expr.variable)) == NULL)
                 return EXIT_FAILURE;
 
             result->type = VAR_POINTER;
             result->val.p = var;
             return EXIT_SUCCESS;
         case UN_DEREFERENCE:
-            if (eval_ast_node(node->expr.un_op.n, ns, &n) < 0)
+            if (cgc_eval_ast_node(node->expr.un_op.n, ns, &n) < 0)
                 return EXIT_FAILURE;
 
             if (n.type != VAR_POINTER)
@@ -81,10 +81,10 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
         }
     case AST_BINARY_OPERATOR:
         if (node->expr.bin_op.type != BIN_ASSIGNMENT &&
-                eval_ast_node(node->expr.bin_op.lhs, ns, &lhs) < 0)
+                cgc_eval_ast_node(node->expr.bin_op.lhs, ns, &lhs) < 0)
             return EXIT_FAILURE;
 
-        if (eval_ast_node(node->expr.bin_op.rhs, ns, &rhs) < 0)
+        if (cgc_eval_ast_node(node->expr.bin_op.rhs, ns, &rhs) < 0)
             return EXIT_FAILURE;
 
         if (node->expr.bin_op.type != BIN_ASSIGNMENT &&
@@ -97,15 +97,15 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
             if (node->expr.bin_op.lhs->type == AST_VARIABLE) {
                 name = node->expr.bin_op.lhs->expr.variable;
             } else {
-                if (eval_ast_node(node->expr.bin_op.lhs, ns, &lhs) < 0)
+                if (cgc_eval_ast_node(node->expr.bin_op.lhs, ns, &lhs) < 0)
                     return EXIT_FAILURE;
                 name = lhs.name;
             }
 
-            var = insert_variable(ns, name, rhs.type);
+            var = cgc_insert_variable(ns, name, rhs.type);
             var->val = rhs.val;
 
-            if ((var = lookup_variable(ns, name)) != NULL)
+            if ((var = cgc_lookup_variable(ns, name)) != NULL)
                 var->type = rhs.type;
 
             *result = rhs;
@@ -136,9 +136,9 @@ eval_ast_node(struct ast_node *node, struct namespace *ns, struct variable *resu
 }
 
 int
-eval(struct ast *ast, struct namespace *ns, struct variable *result)
+cgc_eval(struct ast *ast, struct namespace *ns, struct variable *result)
 {
-    return eval_ast_node(ast->expr, ns, result);
+    return cgc_eval_ast_node(ast->expr, ns, result);
 }
 
 

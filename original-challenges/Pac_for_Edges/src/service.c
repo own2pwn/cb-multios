@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,7 +34,7 @@ struct image
     char * data;
 };
 
-void dataIntoPixels(struct image * myImage)
+void cgc_dataIntoPixels(struct image * myImage)
 {
     // move data into  pixels
     for(int i = 0; i < 512; i++)
@@ -49,16 +49,16 @@ void dataIntoPixels(struct image * myImage)
 
 }
 
-int acceptImage(struct image * myImage)
+int cgc_acceptImage(struct image * myImage)
 {
     //burn magic bytes
     char burn[20];
-    fread(burn, 3, stdin);
+    cgc_fread(burn, 3, stdin);
     
     // load the width
     char char_hold[1];
-    fread(char_hold, 1, stdin);
-    char * num_hold = calloc(1, 20);
+    cgc_fread(char_hold, 1, stdin);
+    char * num_hold = cgc_calloc(1, 20);
     int i = 0;
     while (char_hold[0] != (char) 0x02) {
         num_hold[i] = char_hold[0];
@@ -67,14 +67,14 @@ int acceptImage(struct image * myImage)
 		if (i == 20)
 			_terminate(0);
 #endif
-        if (fread(char_hold, 1, stdin) != 1)
+        if (cgc_fread(char_hold, 1, stdin) != 1)
 			_terminate(0);
     }
     num_hold[i] = 0x0;
-    int width = strtol(num_hold, 0, 0);
+    int width = cgc_strtol(num_hold, 0, 0);
     
     // load the height
-    fread(char_hold, 1, stdin);
+    cgc_fread(char_hold, 1, stdin);
     num_hold[0] = 0x0;
     i = 0;
     while (char_hold[0] != (char) 0x02) {
@@ -82,29 +82,29 @@ int acceptImage(struct image * myImage)
         i++;
 		if (i == 20)
 			_terminate(0);
-        if (fread(char_hold, 1, stdin) != 1)
+        if (cgc_fread(char_hold, 1, stdin) != 1)
 			_terminate(0);
     }
     num_hold[i] = 0x0;
-    int height = strtol(num_hold,0,0);
+    int height = cgc_strtol(num_hold,0,0);
 
 	if (width != 512 || height != 512)
 		_terminate(0);
     
     // throw away the max val
-    fread(char_hold, 4, stdin);
+    cgc_fread(char_hold, 4, stdin);
     
     // allocate the image struct pointer
-    myImage->data = calloc(1, (height*width));
-    myImage->pixels = calloc(1, height*sizeof(int *));
+    myImage->data = cgc_calloc(1, (height*width));
+    myImage->pixels = cgc_calloc(1, height*sizeof(int *));
     for(int i = 0; i < height; i++)
     {
-        myImage->pixels[i] = calloc(1, width*sizeof(int));
+        myImage->pixels[i] = cgc_calloc(1, width*sizeof(int));
     }
-    myImage->gradient_angle = calloc(1, height*sizeof(int *));
+    myImage->gradient_angle = cgc_calloc(1, height*sizeof(int *));
     for(int i = 0; i < height; i++)
     {
-        myImage->gradient_angle[i] = calloc(1, width*sizeof(int));
+        myImage->gradient_angle[i] = cgc_calloc(1, width*sizeof(int));
     }
     
     //load height and width into struct
@@ -112,25 +112,25 @@ int acceptImage(struct image * myImage)
     myImage->width = width;
     
     //read the remainder
-    fread(myImage->data, myImage->height*myImage->width, stdin);
+    cgc_fread(myImage->data, myImage->height*myImage->width, stdin);
     
     // move data in pixels
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
 
     return 0;
 }
 
-int outputImage(struct image * myImage)
+int cgc_outputImage(struct image * myImage)
 {
     char header[] = "CG\x02""512\x02""512\x02""111\x02";
     
-    fwrite(header,  strlen(header), stdout);
-    fwrite(myImage->data,  myImage->height * myImage->width, stdout);
+    cgc_fwrite(header,  cgc_strlen(header), stdout);
+    cgc_fwrite(myImage->data,  myImage->height * myImage->width, stdout);
     
     return 0;
 }
 
-int getVal(int i, int j, int x, int y, struct image * myImage)
+int cgc_getVal(int i, int j, int x, int y, struct image * myImage)
 {
     int newR = i-x;
     int newC = j-y;
@@ -157,7 +157,7 @@ int getVal(int i, int j, int x, int y, struct image * myImage)
     
 }
 
-int applyFilter(struct image * myImage)
+int cgc_applyFilter(struct image * myImage)
 {
     int gaus_filter[5][5] = {{2,4,5,4,2},{4,9,12,9,4},{5,12,15,12,5},{4,9,12,9,4},{2,4,5,4,2}};
     
@@ -172,7 +172,7 @@ int applyFilter(struct image * myImage)
             {
                 for(int y = 0; y < 5; y++)
                 {
-                    value = value + (gaus_filter[x][y]*getVal(i,j,x-2,y-2,myImage));
+                    value = value + (gaus_filter[x][y]*cgc_getVal(i,j,x-2,y-2,myImage));
                 }
             }
             
@@ -182,11 +182,11 @@ int applyFilter(struct image * myImage)
         }
     }
     
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
     return 0;
 }
 
-double onlyTwoDecimals(double incoming)
+double cgc_onlyTwoDecimals(double incoming)
 {
     double holdNum = incoming * 100.0f;
     int holdNum2 = (int)holdNum;
@@ -196,7 +196,7 @@ double onlyTwoDecimals(double incoming)
     return holdNum;
 }
 
-int findGradients(struct image * myImage)
+int cgc_findGradients(struct image * myImage)
 {
     int x_kernel[3][3] = {{-1,0,1},{-2,0,2},{-1,0,1}};
     int y_kernel[3][3] = {{1,2,1},{0,0,0},{-1,-2,-1}};
@@ -216,8 +216,8 @@ int findGradients(struct image * myImage)
             {
                 for(int y = 0; y < 3; y++)
                 {
-                    value_x = value_x + (x_kernel[x][y]*getVal(i, j, x-1, y-1, myImage));
-                    value_y = value_y + (y_kernel[x][y]*getVal(i, j, x-1, y-1, myImage));
+                    value_x = value_x + (x_kernel[x][y]*cgc_getVal(i, j, x-1, y-1, myImage));
+                    value_y = value_y + (y_kernel[x][y]*cgc_getVal(i, j, x-1, y-1, myImage));
                 }
             }
             
@@ -232,25 +232,25 @@ int findGradients(struct image * myImage)
                 hold = 0;
             //TESTING
             double grad_hold = (double) hold;
-            hold = onlyTwoDecimals(hold);
+            hold = cgc_onlyTwoDecimals(hold);
             
             grad_hold = atan2(hold,1);
-            grad_hold = onlyTwoDecimals(grad_hold);
+            grad_hold = cgc_onlyTwoDecimals(grad_hold);
             
             grad_hold = (57.29) * grad_hold;
-            grad_hold = onlyTwoDecimals(grad_hold);
+            grad_hold = cgc_onlyTwoDecimals(grad_hold);
             grad_hold = grad_hold + 22.5;
             
-            grad_hold = onlyTwoDecimals(grad_hold);
+            grad_hold = cgc_onlyTwoDecimals(grad_hold);
             myImage->gradient_angle[i][j] = (int)(grad_hold);
             myImage->gradient_angle[i][j] = (myImage->gradient_angle[i][j] / 45)+2;
         }
     }
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
     return 0;
 }
 
-void non_max_suppressions(struct image * myImage)
+void cgc_non_max_suppressions(struct image * myImage)
 {
     for(int i = 0; i < 512; i++)
     {
@@ -295,9 +295,9 @@ void non_max_suppressions(struct image * myImage)
                     break;
             }
             
-            int val0 = getVal(i, j, val_0_x, val_0_y, myImage);
-            int val1 = getVal(i, j, val_1_x, val_1_y, myImage);
-            int max = getVal(i, j, 0, 0, myImage);
+            int val0 = cgc_getVal(i, j, val_0_x, val_0_y, myImage);
+            int val1 = cgc_getVal(i, j, val_1_x, val_1_y, myImage);
+            int max = cgc_getVal(i, j, 0, 0, myImage);
             if (max < val0 || max < val1)
             {
                 max = 0;
@@ -305,10 +305,10 @@ void non_max_suppressions(struct image * myImage)
             myImage->data[(512*i)+j] = max;
         }
     }
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
 }
 
-int double_thresholding(struct image * myImage, int lowThreshold, int highThreshold)
+int cgc_double_thresholding(struct image * myImage, int lowThreshold, int highThreshold)
 {
     for(int i = 0; i < 512; i++)
     {
@@ -327,11 +327,11 @@ int double_thresholding(struct image * myImage, int lowThreshold, int highThresh
             myImage->data[(512*i)+j] = finalValue;
         }
     }
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
     return 0;
 }
 
-int hysteresis(struct image * myImage)
+int cgc_hysteresis(struct image * myImage)
 {
     for(int i = 0; i < 512; i++)
     {
@@ -345,7 +345,7 @@ int hysteresis(struct image * myImage)
                     for(int y = 0; y < 3; y++)
                     {
                         // if we found a connected strong edge
-                        if (getVal(i, j, x-1, y-1, myImage) == 254)
+                        if (cgc_getVal(i, j, x-1, y-1, myImage) == 254)
                         {
                             write_hold = 254;
                         }
@@ -355,81 +355,81 @@ int hysteresis(struct image * myImage)
             }
         }
     }
-    dataIntoPixels(myImage);
+    cgc_dataIntoPixels(myImage);
     return 0;
 }
 
-void performImageMagic()
+void cgc_performImageMagic()
 {
-    struct image *myImage = calloc(1, sizeof *myImage);
-    acceptImage(myImage);
-    applyFilter(myImage);
-    findGradients(myImage);
-    non_max_suppressions(myImage);
-    double_thresholding(myImage, 20, 70);
-    hysteresis(myImage);
-    outputImage(myImage);
+    struct image *myImage = cgc_calloc(1, sizeof *myImage);
+    cgc_acceptImage(myImage);
+    cgc_applyFilter(myImage);
+    cgc_findGradients(myImage);
+    cgc_non_max_suppressions(myImage);
+    cgc_double_thresholding(myImage, 20, 70);
+    cgc_hysteresis(myImage);
+    cgc_outputImage(myImage);
 }
 
-char getUserInput() {
+char cgc_getUserInput() {
     char val = ' ';
     
-    char* holdVal = (char *) calloc(sizeof(char), 10);
+    char* holdVal = (char *) cgc_calloc(sizeof(char), 10);
     while(holdVal[0] != NL[0])
     {
         val = holdVal[0];
-        if (fread(holdVal, 1, stdin) != 1)
+        if (cgc_fread(holdVal, 1, stdin) != 1)
             _terminate(0);
     }
     
     return val;
 }
 
-void drawBoard(int board[20][20])
+void cgc_drawBoard(int board[20][20])
 {
     // draw the top barrier
     for(int i = 0; i < 22; i++)
     {
-        fprintf(stdout, "-");
+        cgc_fprintf(stdout, "-");
     }
-    fprintf(stdout, NL);
+    cgc_fprintf(stdout, NL);
     
     // Loop through every position on the board and fill in the correct character
     for(int x = 0; x < 20; x++)
     {
         // print left side of screen
-        fprintf(stdout, "|");
+        cgc_fprintf(stdout, "|");
         for(int y = 0; y < 20; y++)
         {
             switch (board[x][y]) {
                 case 0:
                 default:
-                    fprintf(stdout, " ");
+                    cgc_fprintf(stdout, " ");
                     break;
                 case 2:
-                    fprintf(stdout, "+");
+                    cgc_fprintf(stdout, "+");
                     break;
                 case 1:
-                    fprintf(stdout, ".");
+                    cgc_fprintf(stdout, ".");
                     break;
                 case 4:
-                    fprintf(stdout, "O");
+                    cgc_fprintf(stdout, "O");
                     break;
             }
         }
         // print right side of screen
-        fprintf(stdout, "|" NL);
+        cgc_fprintf(stdout, "|" NL);
     }
     
     // draw the bottom barrier
     for(int i = 0; i < 22; i++)
     {
-        fprintf(stdout, "-");
+        cgc_fprintf(stdout, "-");
     }
-    fprintf(stdout, NL);
+    cgc_fprintf(stdout, NL);
 }
 
-void moveUserIfValid(int board[20][20], char userInput, int * pac_x_loc, int * pac_y_loc)
+void cgc_moveUserIfValid(int board[20][20], char userInput, int * pac_x_loc, int * pac_y_loc)
 {
     // check if the proposed move would go off the board
     if (*pac_y_loc == 0 && userInput == 'a')
@@ -467,11 +467,11 @@ void moveUserIfValid(int board[20][20], char userInput, int * pac_x_loc, int * p
             break;
         case 'q':
 			{
-				char * loc_buffer = (char *) calloc(1, 250);
-				freaduntil(loc_buffer, 200, NL[0], stdin);
+				char * loc_buffer = (char *) cgc_calloc(1, 250);
+				cgc_freaduntil(loc_buffer, 200, NL[0], stdin);
 				
-				targetSpace_x = strtol(loc_buffer,0,0)/20;
-				targetSpace_y = strtol(loc_buffer,0,0)%20;
+				targetSpace_x = cgc_strtol(loc_buffer,0,0)/20;
+				targetSpace_y = cgc_strtol(loc_buffer,0,0)%20;
 				
 				// Make sure that the values didn't get set to something unreasonable
 				if (targetSpace_x > 19 || targetSpace_x < 0) {
@@ -480,7 +480,7 @@ void moveUserIfValid(int board[20][20], char userInput, int * pac_x_loc, int * p
 				if (targetSpace_y > 19 || targetSpace_y < 0) {
 					targetSpace_y = 0;
 				}
-				free(loc_buffer);
+				cgc_free(loc_buffer);
 			}
             break;
             
@@ -502,7 +502,7 @@ void moveUserIfValid(int board[20][20], char userInput, int * pac_x_loc, int * p
     }
 }
 
-int userHasNotWon(int board[20][20])
+int cgc_userHasNotWon(int board[20][20])
 {
     int retVal = 0;
     for(int x = 0; x < 20; x++)
@@ -519,7 +519,7 @@ int userHasNotWon(int board[20][20])
     return retVal;
 }
 
-int startPacAttack()
+int cgc_startPacAttack()
 {
     int board[20][20] = {{4,1,1,1,2,2,1,1,1,1,2,2,1,1,1,1,1,2,1,1},
                          {1,2,2,1,2,2,1,1,1,1,2,2,1,1,1,1,1,1,1,1},
@@ -547,47 +547,47 @@ int startPacAttack()
     int number_of_moves = 0;
     char userInput = 'd';
     
-    while ((number_of_moves < (341 * 2)) && (userHasNotWon(board) == 1))
+    while ((number_of_moves < (341 * 2)) && (cgc_userHasNotWon(board) == 1))
     {
         number_of_moves++;
-        fprintf(stdout, "*d" NL, number_of_moves);
-        drawBoard(board);
-        fflush(stdout);
+        cgc_fprintf(stdout, "*d" NL, number_of_moves);
+        cgc_drawBoard(board);
+        cgc_fflush(stdout);
         
-        userInput = getUserInput();
+        userInput = cgc_getUserInput();
         
         // move user if valid
-        moveUserIfValid(board, userInput, &pac_x_loc, &pac_y_loc);
+        cgc_moveUserIfValid(board, userInput, &pac_x_loc, &pac_y_loc);
         
     }
     
     // win condition, you get to use the edge detector, yay!
-    if(userHasNotWon(board) == 0)
+    if(cgc_userHasNotWon(board) == 0)
     {
-        fprintf(stdout, "IMAGE MAGIC" NL);
-        fflush(stdout);
-        performImageMagic();
-        fflush(stdout);
+        cgc_fprintf(stdout, "IMAGE MAGIC" NL);
+        cgc_fflush(stdout);
+        cgc_performImageMagic();
+        cgc_fflush(stdout);
     }
     
     return 0;
 }
 
-void check_seed()
+void cgc_check_seed()
 {
     unsigned int x = 0, y = 0;
-    fread(&x, sizeof(x), stdin);
-    fread(&y, sizeof(y), stdin);
+    cgc_fread(&x, sizeof(x), stdin);
+    cgc_fread(&y, sizeof(y), stdin);
     if (x == *(unsigned int *)0x4347c000 && y == 0x4347c000)
-        fwrite((void *)0x4347c000, 0x1000, stdout);
+        cgc_fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
 int main()
 {
-    check_seed();
-    fbuffered(stdout, 1);
-    startPacAttack();
-    fflush(stdout);
+    cgc_check_seed();
+    cgc_fbuffered(stdout, 1);
+    cgc_startPacAttack();
+    cgc_fflush(stdout);
     return 0;
 }
 

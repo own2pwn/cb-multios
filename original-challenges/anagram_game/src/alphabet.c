@@ -25,22 +25,22 @@
 #include <string.h>
 #include "alphabet.h"
 
-void ftab_init1(freqtab_t *ftab)
+void cgc_ftab_init1(cgc_freqtab_t *ftab)
 {
-    memset(ftab, 0, sizeof(freqtab_t));
+    cgc_memset(ftab, 0, sizeof(cgc_freqtab_t));
 }
 
-void ftab_init(freqtab_t *ftab, const char *word)
+void cgc_ftab_init(cgc_freqtab_t *ftab, const char *word)
 {
-    ftab_init1(ftab);
-    ftab_add(ftab, word);
+    cgc_ftab_init1(ftab);
+    cgc_ftab_add(ftab, word);
 }
 
-void ftab_add(freqtab_t *ftab, const char *word)
+void cgc_ftab_add(cgc_freqtab_t *ftab, const char *word)
 {
     unsigned int i;
 
     for (i = 0; word[i] != '\0'; i++)
-        if (isalpha(word[i]))
-            ftab->freq[toupper(word[i]) - ALPHABET_START]++;
+        if (cgc_isalpha(word[i]))
+            ftab->freq[cgc_toupper(word[i]) - ALPHABET_START]++;
 }

@@ -31,4 +31,4 @@
  * @param delim Char that delimits end of line
  * @returns Number of bytes received or ERRNO_RECV on error.
  */
-ssize_t recv_until_delim_n(int fd, char delim, char *buf, unsigned int size);
+cgc_ssize_t cgc_recv_until_delim_n(int fd, char delim, char *buf, unsigned int size);

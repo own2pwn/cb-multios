@@ -65,14 +65,14 @@
 
 
 
-int prompt_user(char* prompt_str, char* res_buf, size_t res_buf_size);
-int send_random_joke(jokedb_struct *jokedb);
-int send_joke(joke_struct *joke);
-int send_all_jokes(jokedb_struct *jokedb);
-int do_list(jokedb_struct *jokedb);
-int do_add(jokedb_struct *jokedb);
-int do_show(jokedb_struct *jokedb);
-int do_menu();
-int do_help();
+int cgc_prompt_user(char* prompt_str, char* res_buf, cgc_size_t res_buf_size);
+int cgc_send_random_joke(cgc_jokedb_struct *jokedb);
+int cgc_send_joke(cgc_joke_struct *joke);
+int cgc_send_all_jokes(cgc_jokedb_struct *jokedb);
+int cgc_do_list(cgc_jokedb_struct *jokedb);
+int cgc_do_add(cgc_jokedb_struct *jokedb);
+int cgc_do_show(cgc_jokedb_struct *jokedb);
+int cgc_do_menu();
+int cgc_do_help();
 
 #endif

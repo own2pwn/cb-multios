@@ -45,23 +45,23 @@
         }                                        \
     } while (0)
 
-typedef struct _bucket bucket_t;
-typedef struct chunk_header chunk_header_t;
+typedef struct _bucket cgc_bucket_t;
+typedef struct chunk_header cgc_chunk_header_t;
 
 struct chunk_header {
-    size_t pages;
-    size_t size;
+    cgc_size_t pages;
+    cgc_size_t size;
     unsigned short elements_used;
     unsigned short elements_avail;
     unsigned int used_mask;
-    bucket_t *bucket;
-    chunk_header_t *next;
-    chunk_header_t *prev;
+    cgc_bucket_t *bucket;
+    cgc_chunk_header_t *next;
+    cgc_chunk_header_t *prev;
 };
 
 struct _bucket {
-    chunk_header_t *avail_list;
-    chunk_header_t *full_list;
+    cgc_chunk_header_t *avail_list;
+    cgc_chunk_header_t *full_list;
     unsigned short alloc_limit;
     unsigned short elements_per_page;
 };
@@ -69,22 +69,22 @@ struct _bucket {
 struct alloc_state {
     unsigned int pages;
     unsigned short largest_bucket;
-    bucket_t buckets[MAX_BUCKETS];
+    cgc_bucket_t buckets[MAX_BUCKETS];
     char initialised;
 } __attribute__((__packed__));
 
 static struct alloc_state state;
 
-unsigned int ffs_u(unsigned int i);
+unsigned int cgc_ffs_u(unsigned int i);
 
-static void malloc_init(void) {
-    bucket_t *bucket = NULL;
+static void cgc_malloc_init(void) {
+    cgc_bucket_t *bucket = NULL;
     unsigned short alloc_limit = 128;
     unsigned short available;
     unsigned short i;
     state.pages = 0;
-    memset(&state, 0, sizeof(state));
-    available = PAGE_SIZE - sizeof(chunk_header_t);
+    cgc_memset(&state, 0, sizeof(state));
+    available = PAGE_SIZE - sizeof(cgc_chunk_header_t);
 
     for (i = 0; i < MAX_BUCKETS; i++) {
         bucket = &state.buckets[i];
@@ -102,7 +102,7 @@ static void malloc_init(void) {
     state.initialised = 1;
 }
 
-static void malloc_release_chunk(chunk_header_t *chunk) {
+static void cgc_malloc_release_chunk(cgc_chunk_header_t *chunk) {
     int result;
     assert(chunk != NULL);
     assert(chunk->pages > 0);
@@ -111,9 +111,9 @@ static void malloc_release_chunk(chunk_header_t *chunk) {
     assert(result == 0);
 }
 
-static chunk_header_t *malloc_request_chunk(size_t pages) {
-    chunk_header_t *result;
-    size_t size;
+static cgc_chunk_header_t *cgc_malloc_request_chunk(cgc_size_t pages) {
+    cgc_chunk_header_t *result;
+    cgc_size_t size;
     int ret;
 
     size = pages * PAGE_SIZE;
@@ -128,18 +128,18 @@ static chunk_header_t *malloc_request_chunk(size_t pages) {
     return result;
 }
 
-static void *malloc_large(size_t size) {
+static void *cgc_malloc_large(cgc_size_t size) {
     unsigned int pages;
     void *result;
-    chunk_header_t *lh;
-    pages = (sizeof(chunk_header_t) + size + (PAGE_SIZE - 1)) / PAGE_SIZE;
-    lh = (chunk_header_t *) malloc_request_chunk(pages);
+    cgc_chunk_header_t *lh;
+    pages = (sizeof(cgc_chunk_header_t) + size + (PAGE_SIZE - 1)) / PAGE_SIZE;
+    lh = (cgc_chunk_header_t *) cgc_malloc_request_chunk(pages);
     lh->size = size;
-    result = ((char *)lh) + sizeof(chunk_header_t);
+    result = ((char *)lh) + sizeof(cgc_chunk_header_t);
     return result;
 }
 
-unsigned int ffs_u(unsigned int i) {
+unsigned int cgc_ffs_u(unsigned int i) {
     unsigned int count = 0;
 
     if (i == 0) return 0;
@@ -152,18 +152,18 @@ unsigned int ffs_u(unsigned int i) {
     return count;
 }
 
-void *malloc(size_t size) {
+void *cgc_malloc(cgc_size_t size) {
     unsigned int i;
     void *ptr;
-    bucket_t *bucket;
-    chunk_header_t *chunk;
+    cgc_bucket_t *bucket;
+    cgc_chunk_header_t *chunk;
     assert(size > 0);
 
     if (state.initialised == 0)
-        malloc_init();
+        cgc_malloc_init();
 
     if (size > state.largest_bucket)
-        return malloc_large(size);
+        return cgc_malloc_large(size);
 
     for (i = 0; i < MAX_BUCKETS; i++) {
         if (size <= state.buckets[i].alloc_limit)
@@ -175,7 +175,7 @@ void *malloc(size_t size) {
     // assert(size <= bucket->alloc_limit);
 
     if (bucket->avail_list == NULL) {
-        chunk = malloc_request_chunk(1);
+        chunk = cgc_malloc_request_chunk(1);
         chunk->bucket = bucket;
         chunk->size   = bucket->alloc_limit;
         chunk->elements_avail = bucket->elements_per_page;
@@ -184,7 +184,7 @@ void *malloc(size_t size) {
 
     chunk = bucket->avail_list;
     // assert(chunk->used_mask != 0xFFFFFFFF);
-    i = ffs_u(chunk->used_mask);
+    i = cgc_ffs_u(chunk->used_mask);
     // assert(BIT_IS_SET(chunk->used_mask, i) == 0);
     chunk->elements_used++;
     BIT_SET(chunk->used_mask, i);
@@ -195,24 +195,24 @@ void *malloc(size_t size) {
         assert(bucket->full_list != NULL);
     }
 
-    ptr = (void *)(((char *) chunk) + sizeof(chunk_header_t) + (bucket->alloc_limit * i));
+    ptr = (void *)(((char *) chunk) + sizeof(cgc_chunk_header_t) + (bucket->alloc_limit * i));
     return ptr;
 }
 
-void free(void *ptr) {
-    chunk_header_t *chunk;
-    bucket_t *bucket;
+void cgc_free(void *ptr) {
+    cgc_chunk_header_t *chunk;
+    cgc_bucket_t *bucket;
     unsigned int i;
     assert(ptr != NULL);
-    chunk = (chunk_header_t *) PAGE_ALIGN(ptr);
+    chunk = (cgc_chunk_header_t *) PAGE_ALIGN(ptr);
 
     if (chunk->bucket == NULL) {
-        malloc_release_chunk(chunk);
+        cgc_malloc_release_chunk(chunk);
         return;
     }
 
     bucket = chunk->bucket;
-    i = (ptr - ((void *) chunk) - sizeof(chunk_header_t)) / bucket->alloc_limit;
+    i = (ptr - ((void *) chunk) - sizeof(cgc_chunk_header_t)) / bucket->alloc_limit;
     assert(BIT_IS_SET(chunk->used_mask, i));
     BIT_UNSET(chunk->used_mask, i);
 
@@ -225,13 +225,13 @@ void free(void *ptr) {
 
     if (chunk->elements_used == 0) {
         LIST_REMOVE(bucket->avail_list, chunk);
-        malloc_release_chunk(chunk);
+        cgc_malloc_release_chunk(chunk);
     }
 }
 
-#define MUL_NO_OVERFLOW (1UL << (sizeof(size_t) * 4))
+#define MUL_NO_OVERFLOW (1UL << (sizeof(cgc_size_t) * 4))
 
-void * calloc(size_t nmemb, size_t size) {
+void * cgc_calloc(cgc_size_t nmemb, cgc_size_t size) {
     void *ptr;
 
     assert(nmemb > 0);
@@ -239,6 +239,6 @@ void * calloc(size_t nmemb, size_t size) {
     assert(size < ( (unsigned int) SIZE_MAX / nmemb));
 
     size *= nmemb;
-    ptr = malloc(size);
-    return memset(ptr, 0, size);
+    ptr = cgc_malloc(size);
+    return cgc_memset(ptr, 0, size);
 }

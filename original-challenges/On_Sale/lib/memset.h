@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,6 +32,6 @@
  * @param n Number of times to write ch into buf
  * @return Number of times ch was written into buf
  */
-unsigned int memset(void *buf, unsigned char ch, unsigned int n);
+unsigned int cgc_memset(void *buf, unsigned char ch, unsigned int n);
 
 #endif

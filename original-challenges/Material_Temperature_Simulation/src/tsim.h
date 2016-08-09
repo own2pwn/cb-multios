@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,13 +27,13 @@ THE SOFTWARE.
 #define VOLUMETRIC_HEAT_CAP_AIR (1200)
 
 
-int32_t GetSimLength(void);
-double L(uint32_t, uint32_t, uint32_t);
-double C(uint32_t, uint32_t, uint32_t);
-double K(uint32_t, uint32_t, uint32_t, int32_t, int32_t, int32_t);
-double H(uint32_t, uint32_t, uint32_t);
-double Tnew(uint32_t, uint32_t, uint32_t);
-void CalcTimeStep(void);
-int32_t SimStep(void);
-void IncrementTimestep(double *);
-int32_t RunSim(void);
+cgc_int32_t cgc_GetSimLength(void);
+double cgc_L(cgc_uint32_t, cgc_uint32_t, cgc_uint32_t);
+double cgc_C(cgc_uint32_t, cgc_uint32_t, cgc_uint32_t);
+double cgc_K(cgc_uint32_t, cgc_uint32_t, cgc_uint32_t, cgc_int32_t, cgc_int32_t, cgc_int32_t);
+double cgc_H(cgc_uint32_t, cgc_uint32_t, cgc_uint32_t);
+double cgc_Tnew(cgc_uint32_t, cgc_uint32_t, cgc_uint32_t);
+void cgc_CalcTimeStep(void);
+cgc_int32_t cgc_SimStep(void);
+void cgc_IncrementTimestep(double *);
+cgc_int32_t cgc_RunSim(void);

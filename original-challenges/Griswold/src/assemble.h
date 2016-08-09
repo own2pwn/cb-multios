@@ -29,11 +29,11 @@
  * A light string has 1 receptacle, an outlet has 2, and a n-way splitter
  * can have 3, 6, or 8 receptacles.
  */
-typedef struct assemble_result_t {
-	uint32_t object_id;
-	uint32_t receptacle_id[8];
-	uint8_t  receptacle_ids_assigned_cnt;
-} assemble_result_t;
+typedef struct cgc_assemble_result_t {
+	cgc_uint32_t object_id;
+	cgc_uint32_t receptacle_id[8];
+	cgc_uint8_t  receptacle_ids_assigned_cnt;
+} cgc_assemble_result_t;
 
 enum {
 	ERR_E_MODEL_EXISTS = -41,
@@ -50,35 +50,35 @@ enum {
 };
 
 // Examine
-int32_t get_count_outlets_on_breaker(uint32_t breaker_id);
-int8_t get_amp_rating_of_breaker(uint32_t breaker_id);
-float get_total_amp_load_on_breaker_by_breaker_id(uint32_t breaker_id);
+cgc_int32_t cgc_get_count_outlets_on_breaker(cgc_uint32_t breaker_id);
+cgc_int8_t cgc_get_amp_rating_of_breaker(cgc_uint32_t breaker_id);
+float cgc_get_total_amp_load_on_breaker_by_breaker_id(cgc_uint32_t breaker_id);
 
-int8_t get_amp_rating_of_outlet(uint32_t outlet_id);
-float get_total_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id);
-float get_max_receptacle_amp_load_on_outlet_by_outlet_id(uint32_t outlet_id);
+cgc_int8_t cgc_get_amp_rating_of_outlet(cgc_uint32_t outlet_id);
+float cgc_get_total_amp_load_on_outlet_by_outlet_id(cgc_uint32_t outlet_id);
+float cgc_get_max_receptacle_amp_load_on_outlet_by_outlet_id(cgc_uint32_t outlet_id);
 
-int8_t get_amp_rating_of_splitter(uint32_t splitter_id);
-float get_total_amp_load_on_splitter_by_splitter_id(uint32_t splitter_id);
-float get_max_receptacle_amp_load_on_splitter_by_splitter_id(uint32_t splitter_id);
+cgc_int8_t cgc_get_amp_rating_of_splitter(cgc_uint32_t splitter_id);
+float cgc_get_total_amp_load_on_splitter_by_splitter_id(cgc_uint32_t splitter_id);
+float cgc_get_max_receptacle_amp_load_on_splitter_by_splitter_id(cgc_uint32_t splitter_id);
 
-float get_amp_rating_of_light_string(uint32_t light_string_id);
-float get_total_amp_load_on_light_string_by_light_string_id(uint32_t light_string_id);
+float cgc_get_amp_rating_of_light_string(cgc_uint32_t light_string_id);
+float cgc_get_total_amp_load_on_light_string_by_light_string_id(cgc_uint32_t light_string_id);
 
-int8_t get_amp_rating_of_receptacle(uint32_t receptacle_id);
-float get_total_amp_load_on_receptacle_by_receptacle_id(uint32_t receptacle_id);
+cgc_int8_t cgc_get_amp_rating_of_receptacle(cgc_uint32_t receptacle_id);
+float cgc_get_total_amp_load_on_receptacle_by_receptacle_id(cgc_uint32_t receptacle_id);
 
-int8_t get_number_of_breakers_installed_in_load_center();
-int8_t get_total_breaker_space_count();
-int32_t get_amp_rating_of_load_center();
-float get_total_amp_load_on_load_center();
+cgc_int8_t cgc_get_number_of_breakers_installed_in_load_center();
+cgc_int8_t cgc_get_total_breaker_space_count();
+cgc_int32_t cgc_get_amp_rating_of_load_center();
+float cgc_get_total_amp_load_on_load_center();
 
 
 // Assembly
-int8_t init_electric_model(LOAD_CENTER_MODELS_T model_id);
-int8_t add_breaker_to_load_center(CIRCUIT_MODELS_T model_id, assemble_result_t *result);
-int8_t add_outlet_to_breaker(CIRCUIT_MODELS_T outlet_model_id, uint32_t breaker_id, assemble_result_t *result);
-int8_t add_n_way_splitter_to_receptacle(SPLITTER_MODELS_T splitter_model_id, uint32_t receptacle_id, assemble_result_t *result);
-int8_t add_light_string_to_receptacle(LIGHT_STRING_MODELS_T light_string_model_id, uint32_t receptacle_id, assemble_result_t *result);
+cgc_int8_t cgc_init_electric_model(cgc_LOAD_CENTER_MODELS_T model_id);
+cgc_int8_t cgc_add_breaker_to_load_center(cgc_CIRCUIT_MODELS_T model_id, cgc_assemble_result_t *result);
+cgc_int8_t cgc_add_outlet_to_breaker(cgc_CIRCUIT_MODELS_T outlet_model_id, cgc_uint32_t breaker_id, cgc_assemble_result_t *result);
+cgc_int8_t cgc_add_n_way_splitter_to_receptacle(cgc_SPLITTER_MODELS_T splitter_model_id, cgc_uint32_t receptacle_id, cgc_assemble_result_t *result);
+cgc_int8_t cgc_add_light_string_to_receptacle(cgc_LIGHT_STRING_MODELS_T light_string_model_id, cgc_uint32_t receptacle_id, cgc_assemble_result_t *result);
 
 #endif

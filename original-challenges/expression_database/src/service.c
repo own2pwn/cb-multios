@@ -34,67 +34,67 @@ THE SOFTWARE.
 #define COMMAND_BUFFER_MAX      (512)
 
 
-void run_parser( void )
+void cgc_run_parser( void )
 {
-    uint8_t done = 0;
-    uint8_t commandBuffer[COMMAND_BUFFER_MAX+1];
-    int32_t iRetVal;
-    tUserState userState;
+    cgc_uint8_t done = 0;
+    cgc_uint8_t commandBuffer[COMMAND_BUFFER_MAX+1];
+    cgc_int32_t iRetVal;
+    cgc_tUserState userState;
 
-    init_user( &userState );
+    cgc_init_user( &userState );
 
     do
     {
-        printf( "> " );
+        cgc_printf( "> " );
 
-        iRetVal = readLine( STDIN, (char *)commandBuffer, COMMAND_BUFFER_MAX );
+        iRetVal = cgc_readLine( STDIN, (char *)commandBuffer, COMMAND_BUFFER_MAX );
 
         if ( iRetVal == -1 )
         {
-            printf( "Connection failed. Exiting.\n" );
+            cgc_printf( "Connection failed. Exiting.\n" );
             done = 1;
         }
         else
         {
             // Pares command, NULL terminated
-            parse_command( commandBuffer, &userState );
+            cgc_parse_command( commandBuffer, &userState );
         }
 
     } while ( !done );
 }
 
-void test( void )
+void cgc_test( void )
 {
     // Tests exception handler subroutines
     //
-    printf( "Enter test function\n" );
+    cgc_printf( "Enter cgc_test function\n" );
     TRY
     {
         THROW(1);
     }
     CATCH( 1 )
     {
-        printf( "Got 1\n" );
+        cgc_printf( "Got 1\n" );
         THROW( 1 );
     }
     FINALLY
     {
-        printf( "Blah\n" );
+        cgc_printf( "Blah\n" );
     }
     ETRY
-    printf( "Exit test function\n" );
+    cgc_printf( "Exit cgc_test function\n" );
 }
 
 int main(void)
 {
     // Initialize exception handler
-    init_exception_handler();
+    cgc_init_exception_handler();
 
     // Initialize the database
-    init_database();
+    cgc_init_database();
 
     // Run the main command line parser
-    run_parser();
+    cgc_run_parser();
 
     return 0;
 }

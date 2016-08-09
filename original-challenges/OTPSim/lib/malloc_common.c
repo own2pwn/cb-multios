@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,7 +33,7 @@
 #if 0
 /* XXX replace with cgc allocate */
 #include <sys/mman.h>
-int allocate(size_t length, int is_X, void **addr)
+int allocate(cgc_size_t length, int is_X, void **addr)
 {
     void *result;
     result = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -46,23 +46,23 @@ int allocate(size_t length, int is_X, void **addr)
 }
 
 /* XXX replace with cgc deallocate */
-int deallocate(void *addr, size_t length)
+int deallocate(void *addr, cgc_size_t length)
 {
     return munmap(addr, length);
 }
 
 void _terminate(int ec)
 {
-    exit(ec);
+    cgc_exit(ec);
 }
 #endif
 
 #ifndef DISABLE_HEAP_GUARD
-static void heap_error(const char *fmt, ...)
+static void cgc_heap_error(const char *fmt, ...)
 {
-    va_list ap;
+    cgc_va_list ap;
     va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
+    cgc_vfprintf(stderr, fmt, ap);
     va_end(ap);
 
     _terminate(1);
@@ -70,19 +70,19 @@ static void heap_error(const char *fmt, ...)
 #endif
 
 /* allocates a RUN_SIZE-aligned memory block and adds it to mem_map */ 
-static void *run_alloc(malloc_t *heap, int type)
+static void *cgc_run_alloc(cgc_malloc_t *heap, int type)
 {
-    uintptr_t addri, alignedi;
+    cgc_uintptr_t addri, alignedi;
     void *addr;
 
     /* allocate twice the size so we can align ourselves */
     if (allocate(RUN_SIZE * 2, 0, &addr) != 0)
         return NULL;
 
-    addri = (uintptr_t) addr;
+    addri = (cgc_uintptr_t) addr;
     alignedi = ALIGNED(addri, RUN_SIZE);
 
-    /* free the memory that is extra */
+    /* cgc_free the memory that is extra */
     if (addri < alignedi)
         deallocate((void *)addri, alignedi - addri);
     if (alignedi + RUN_SIZE < addri + RUN_SIZE * 2)
@@ -96,12 +96,12 @@ static void *run_alloc(malloc_t *heap, int type)
     return (void *)alignedi;
 }
 
-static void *tiny_alloc(malloc_t *heap, size_t n)
+static void *cgc_tiny_alloc(cgc_malloc_t *heap, cgc_size_t n)
 {
     int bin;
-    malloc_tiny_free_t *hdr;
+    cgc_malloc_tiny_free_t *hdr;
 
-    bin = size_to_bin(n);
+    bin = cgc_size_to_bin(n);
     hdr = &heap->free_list[bin]->tiny;
 
     if (hdr == NULL)
@@ -113,14 +113,14 @@ static void *tiny_alloc(malloc_t *heap, size_t n)
         {
             if (heap->tiny_run == NULL)
             {
-                heap->tiny_run = run_alloc(heap, MM_TINY);
+                heap->tiny_run = cgc_run_alloc(heap, MM_TINY);
                 if (heap->tiny_run == NULL)
                     return NULL;
 
                 heap->tiny_offset = 0;
             }
 
-            page = heap->tiny_pages[bin] = (tiny_page_t *)((uintptr_t)heap->tiny_run + heap->tiny_offset);
+            page = heap->tiny_pages[bin] = (cgc_tiny_page_t *)((cgc_uintptr_t)heap->tiny_run + heap->tiny_offset);
             page->size = n;
             page->offset = n;
             
@@ -129,7 +129,7 @@ static void *tiny_alloc(malloc_t *heap, size_t n)
                 heap->tiny_run = NULL;
         }
 
-        ptr = (void *)((uintptr_t)page + page->offset);
+        ptr = (void *)((cgc_uintptr_t)page + page->offset);
         page->offset += n;
         if (page->offset + page->size > PAGE_SIZE)
             heap->tiny_pages[bin] = NULL;
@@ -137,27 +137,27 @@ static void *tiny_alloc(malloc_t *heap, size_t n)
     }
     else
     {
-        heap->free_list[bin] = (malloc_free_t *)hdr->next;
+        heap->free_list[bin] = (cgc_malloc_free_t *)hdr->next;
         return hdr;
     }
 }
 
-static void tiny_free(malloc_t *heap, void *ptr)
+static void cgc_tiny_free(cgc_malloc_t *heap, void *ptr)
 {
     int bin;
-    tiny_page_t *page = (tiny_page_t *)((uintptr_t)ptr & ~(PAGE_SIZE - 1));
-    malloc_tiny_free_t *hdr = ptr;
+    cgc_tiny_page_t *page = (cgc_tiny_page_t *)((cgc_uintptr_t)ptr & ~(PAGE_SIZE - 1));
+    cgc_malloc_tiny_free_t *hdr = ptr;
 
-    bin = size_to_bin(page->size);
+    bin = cgc_size_to_bin(page->size);
     hdr->next = &heap->free_list[bin]->tiny;
-    heap->free_list[bin] = (malloc_free_t *)hdr;
+    heap->free_list[bin] = (cgc_malloc_free_t *)hdr;
 }
 
-static void small_insert_free(malloc_t *heap, int bin, malloc_small_free_t *hdr)
+static void cgc_small_insert_free(cgc_malloc_t *heap, int bin, cgc_malloc_small_free_t *hdr)
 {
 #ifndef DISABLE_HEAP_GUARD
     if ((hdr->hdr.size_flags & 1) == 1)
-        heap_error("BAD SMALL UNLINK: block is already free hdr=%08X\n", (uintptr_t) hdr);
+        cgc_heap_error("BAD SMALL UNLINK: block is already cgc_free hdr=%08X\n", (cgc_uintptr_t) hdr);
 #endif
 
     hdr->hdr.size_flags |= 1;
@@ -165,16 +165,16 @@ static void small_insert_free(malloc_t *heap, int bin, malloc_small_free_t *hdr)
     /* if we insert in-order, then allocations become best-fit */
     hdr->prev = NULL;
     hdr->next = &heap->free_list[bin]->small;
-    heap->free_list[bin] = (malloc_free_t *) hdr;
+    heap->free_list[bin] = (cgc_malloc_free_t *) hdr;
     if (hdr->next != NULL)
         hdr->next->prev = hdr;
 }
 
-static void small_unlink_free(malloc_t *heap, int bin, malloc_small_free_t *hdr)
+static void cgc_small_unlink_free(cgc_malloc_t *heap, int bin, cgc_malloc_small_free_t *hdr)
 {
 #ifndef DISABLE_HEAP_GUARD
     if ((hdr->hdr.size_flags & 1) == 0)
-        heap_error("BAD SMALL UNLINK: block is not free hdr=%08X\n", (uintptr_t) hdr);
+        cgc_heap_error("BAD SMALL UNLINK: block is not cgc_free hdr=%08X\n", (cgc_uintptr_t) hdr);
 #endif
 
     hdr->hdr.size_flags &= ~1;
@@ -185,7 +185,7 @@ static void small_unlink_free(malloc_t *heap, int bin, malloc_small_free_t *hdr)
         hdr->next->prev = hdr->prev;
 
     if (&heap->free_list[bin]->small == hdr)
-        heap->free_list[bin] = (malloc_free_t *) hdr->next;
+        heap->free_list[bin] = (cgc_malloc_free_t *) hdr->next;
 
 #ifndef DISABLE_HEAP_GUARD
     hdr->prev = NULL;
@@ -193,12 +193,12 @@ static void small_unlink_free(malloc_t *heap, int bin, malloc_small_free_t *hdr)
 #endif
 }
 
-static void small_split(malloc_t *heap, malloc_small_free_t *hdr, size_t len)
+static void cgc_small_split(cgc_malloc_t *heap, cgc_malloc_small_free_t *hdr, cgc_size_t len)
 {
-    size_t new_len = hdr->hdr.size_flags - len;
-    malloc_small_free_t *new_hdr = (malloc_small_free_t *)((uintptr_t)hdr + len), *next;
+    cgc_size_t new_len = hdr->hdr.size_flags - len;
+    cgc_malloc_small_free_t *new_hdr = (cgc_malloc_small_free_t *)((cgc_uintptr_t)hdr + len), *next;
 
-    next = (malloc_small_free_t *)((uintptr_t)hdr + hdr->hdr.size_flags);
+    next = (cgc_malloc_small_free_t *)((cgc_uintptr_t)hdr + hdr->hdr.size_flags);
 
     hdr->hdr.size_flags = len;
 
@@ -206,41 +206,41 @@ static void small_split(malloc_t *heap, malloc_small_free_t *hdr, size_t len)
     new_hdr->hdr.size_flags = new_len;
     next->hdr.prev_size = new_len;
 
-    small_insert_free(heap, size_to_bin(new_len), new_hdr);
+    cgc_small_insert_free(heap, cgc_size_to_bin(new_len), new_hdr);
 }
 
-static int small_alloc_run(malloc_t *heap)
+static int cgc_small_alloc_run(cgc_malloc_t *heap)
 {
-    malloc_small_free_t *hdr, *footer;
-    small_run_t *block;
+    cgc_malloc_small_free_t *hdr, *footer;
+    cgc_small_run_t *block;
 
-    block = run_alloc(heap, MM_SMALL);
+    block = cgc_run_alloc(heap, MM_SMALL);
     if (block == NULL)
         return 1;
 
     /* TODO initialize block */
 
-    hdr = (malloc_small_free_t *) ALIGNED((uintptr_t)block + sizeof(small_run_t), SMALL_SIZE);
+    hdr = (cgc_malloc_small_free_t *) ALIGNED((cgc_uintptr_t)block + sizeof(cgc_small_run_t), SMALL_SIZE);
     hdr->hdr.prev_size = 0;
-    hdr->hdr.size_flags = RUN_SIZE - ((uintptr_t)hdr - (uintptr_t)block) - sizeof(malloc_small_free_t);
+    hdr->hdr.size_flags = RUN_SIZE - ((cgc_uintptr_t)hdr - (cgc_uintptr_t)block) - sizeof(cgc_malloc_small_free_t);
 
-    footer = (malloc_small_free_t *)((uintptr_t)hdr + hdr->hdr.size_flags);
+    footer = (cgc_malloc_small_free_t *)((cgc_uintptr_t)hdr + hdr->hdr.size_flags);
     footer->hdr.prev_size = hdr->hdr.size_flags;
     footer->hdr.size_flags = 0;
     
-    small_insert_free(heap, NUM_BINS - 1, hdr);
+    cgc_small_insert_free(heap, NUM_BINS - 1, hdr);
     return 0;
 }
 
-static void *small_alloc(malloc_t *heap, size_t n)
+static void *cgc_small_alloc(cgc_malloc_t *heap, cgc_size_t n)
 {
     int i;
-    size_t len;
-    malloc_small_free_t *hdr;
+    cgc_size_t len;
+    cgc_malloc_small_free_t *hdr;
 
-    len = ALIGNED(n + sizeof(malloc_hdr_t), SMALL_SIZE);
+    len = ALIGNED(n + sizeof(cgc_malloc_hdr_t), SMALL_SIZE);
 
-    for (i = size_to_bin(len); i < NUM_BINS; i++)
+    for (i = cgc_size_to_bin(len); i < NUM_BINS; i++)
     {
         for (hdr = &heap->free_list[i]->small; hdr != NULL; hdr = hdr->next)
         {
@@ -255,36 +255,36 @@ static void *small_alloc(malloc_t *heap, size_t n)
     
     if (i == NUM_BINS)
     {
-        if (small_alloc_run(heap) != 0)
+        if (cgc_small_alloc_run(heap) != 0)
             return NULL;
 
         i = NUM_BINS - 1;
         hdr = &heap->free_list[i]->small;
     }
 
-    small_unlink_free(heap, i, hdr);
-    if (hdr->hdr.size_flags - len > ALIGNED(SMALL_SIZE + sizeof(malloc_hdr_t), SMALL_SIZE))
-        small_split(heap, hdr, len);
+    cgc_small_unlink_free(heap, i, hdr);
+    if (hdr->hdr.size_flags - len > ALIGNED(SMALL_SIZE + sizeof(cgc_malloc_hdr_t), SMALL_SIZE))
+        cgc_small_split(heap, hdr, len);
 
     return hdr->hdr.data;
 }
 
-static void small_free(malloc_t *heap, void *ptr)
+static void cgc_small_free(cgc_malloc_t *heap, void *ptr)
 {
-    uintptr_t addri = (uintptr_t) ptr;
-    malloc_small_free_t *hdr = (malloc_small_free_t *) (addri - sizeof(malloc_hdr_t));
-    malloc_small_free_t *prev, *next;
-    small_run_t *block = (small_run_t *)(addri & ~(RUN_SIZE - 1));
+    cgc_uintptr_t addri = (cgc_uintptr_t) ptr;
+    cgc_malloc_small_free_t *hdr = (cgc_malloc_small_free_t *) (addri - sizeof(cgc_malloc_hdr_t));
+    cgc_malloc_small_free_t *prev, *next;
+    cgc_small_run_t *block = (cgc_small_run_t *)(addri & ~(RUN_SIZE - 1));
 
     (void) block;
 
 #ifndef DISABLE_HEAP_GUARD
     if (addri & 7)
-        heap_error("BAD SMALL FREE: address is not aligned ptr=%08X\n", addri);
+        cgc_heap_error("BAD SMALL FREE: address is not aligned ptr=%08X\n", addri);
     if (hdr->hdr.size_flags & 1)
-        heap_error("BAD SMALL FREE: double free ptr=%08x\n", addri);
+        cgc_heap_error("BAD SMALL FREE: double cgc_free ptr=%08x\n", addri);
     if (hdr->hdr.size_flags > LARGE_SIZE || hdr->hdr.size_flags < SMALL_SIZE)
-        heap_error("BAD SMALL FREE: corrupted size ptr=%08x\n", addri);
+        cgc_heap_error("BAD SMALL FREE: corrupted size ptr=%08x\n", addri);
 
     /* TODO: verify block */
 #endif
@@ -292,19 +292,19 @@ static void small_free(malloc_t *heap, void *ptr)
     if (hdr->hdr.prev_size == 0)
         prev = NULL;
     else
-        prev = (malloc_small_free_t *) ((uintptr_t)hdr - hdr->hdr.prev_size);
-    next = (malloc_small_free_t *) ((uintptr_t)hdr + hdr->hdr.size_flags);
+        prev = (cgc_malloc_small_free_t *) ((cgc_uintptr_t)hdr - hdr->hdr.prev_size);
+    next = (cgc_malloc_small_free_t *) ((cgc_uintptr_t)hdr + hdr->hdr.size_flags);
 
 #ifndef DISABLE_HEAP_GUARD
     if (prev != NULL && (prev->hdr.size_flags & ~1) != hdr->hdr.prev_size)
-        heap_error("BAD SMALL FREE: heap corruption prev=%08X ptr=%08X\n", (uintptr_t) prev, addri);
+        cgc_heap_error("BAD SMALL FREE: heap corruption prev=%08X ptr=%08X\n", (cgc_uintptr_t) prev, addri);
     if (next->hdr.prev_size != hdr->hdr.size_flags)
-        heap_error("BAD SMALL FREE: heap corruption next=%08X ptr=%08X\n", (uintptr_t) next, addri);
+        cgc_heap_error("BAD SMALL FREE: heap corruption next=%08X ptr=%08X\n", (cgc_uintptr_t) next, addri);
 #endif
 
     if (prev != NULL && (prev->hdr.size_flags & 1))
     {
-        small_unlink_free(heap, size_to_bin(prev->hdr.size_flags & ~1), prev);
+        cgc_small_unlink_free(heap, cgc_size_to_bin(prev->hdr.size_flags & ~1), prev);
 
         /* combine blocks */
         prev->hdr.size_flags += hdr->hdr.size_flags;
@@ -315,26 +315,26 @@ static void small_free(malloc_t *heap, void *ptr)
     
     if (next->hdr.size_flags & 1)
     {
-        small_unlink_free(heap, size_to_bin(next->hdr.size_flags & ~1), next);
+        cgc_small_unlink_free(heap, cgc_size_to_bin(next->hdr.size_flags & ~1), next);
 
         /* combine blocks */
         hdr->hdr.size_flags += next->hdr.size_flags;
 
-        next = (malloc_small_free_t *) ((uintptr_t)hdr + hdr->hdr.size_flags);
+        next = (cgc_malloc_small_free_t *) ((cgc_uintptr_t)hdr + hdr->hdr.size_flags);
         next->hdr.prev_size = hdr->hdr.size_flags;
     }
 
-    small_insert_free(heap, size_to_bin(hdr->hdr.size_flags), hdr);
+    cgc_small_insert_free(heap, cgc_size_to_bin(hdr->hdr.size_flags), hdr);
 }
 
-static void *large_alloc(malloc_t *heap, size_t n)
+static void *cgc_large_alloc(cgc_malloc_t *heap, cgc_size_t n)
 {
-    size_t len;
+    cgc_size_t len;
     void *addr;
-    malloc_hdr_t *hdr;
+    cgc_malloc_hdr_t *hdr;
 
     /* allocate memory block with space for header */
-    len = ALIGNED(n + sizeof(malloc_hdr_t), PAGE_SIZE);
+    len = ALIGNED(n + sizeof(cgc_malloc_hdr_t), PAGE_SIZE);
     if (allocate(len, 0, &addr) != 0)
         return NULL;
 
@@ -345,33 +345,33 @@ static void *large_alloc(malloc_t *heap, size_t n)
     return hdr->data;
 }
 
-static void large_free(malloc_t *heap, void *ptr)
+static void cgc_large_free(cgc_malloc_t *heap, void *ptr)
 {
-    uintptr_t addri = (uintptr_t) ptr;
-    malloc_hdr_t *hdr;
+    cgc_uintptr_t addri = (cgc_uintptr_t) ptr;
+    cgc_malloc_hdr_t *hdr;
 
     (void) addri;
 
 #ifndef DISABLE_HEAP_GUARD
-    if ((addri & (PAGE_SIZE - 1)) != sizeof(malloc_hdr_t))
-        heap_error("BAD FREE: large address is not aligned ptr=%08X\n", addri);
+    if ((addri & (PAGE_SIZE - 1)) != sizeof(cgc_malloc_hdr_t))
+        cgc_heap_error("BAD FREE: large address is not aligned ptr=%08X\n", addri);
 #endif
 
-    hdr = (malloc_hdr_t *)(ptr - sizeof(malloc_hdr_t));
+    hdr = (cgc_malloc_hdr_t *)(ptr - sizeof(cgc_malloc_hdr_t));
 
 #ifndef DISABLE_HEAP_GUARD
     if (hdr->heap != heap)
-        heap_error("BAD FREE: wrong heap address ptr=%08X (%08X != %08X)\n", addri, hdr->heap, heap);
+        cgc_heap_error("BAD FREE: wrong heap address ptr=%08X (%08X != %08X)\n", addri, hdr->heap, heap);
     if (hdr->size_flags < LARGE_SIZE ||
           hdr->size_flags > (MAX_SIZE + PAGE_SIZE) ||
           hdr->size_flags & (PAGE_SIZE - 1))
-        heap_error("BAD FREE: wrong block size ptr=%08X (%08X)\n", addri, hdr->size_flags);
+        cgc_heap_error("BAD FREE: wrong block size ptr=%08X (%08X)\n", addri, hdr->size_flags);
 #endif
 
     deallocate(hdr, hdr->size_flags);
 }
 
-void *malloc_alloc(malloc_t *heap, size_t n)
+void *cgc_malloc_alloc(cgc_malloc_t *heap, cgc_size_t n)
 {
     void *ptr;
 
@@ -381,20 +381,20 @@ void *malloc_alloc(malloc_t *heap, size_t n)
     n = ALIGNED(n, 4);
 
     if (n < TINY_SIZE)
-        ptr = tiny_alloc(heap, TINY_SIZE);
+        ptr = cgc_tiny_alloc(heap, TINY_SIZE);
     else if (n < SMALL_SIZE)
-        ptr = tiny_alloc(heap, n);
+        ptr = cgc_tiny_alloc(heap, n);
     else if (n < LARGE_SIZE)
-        ptr = small_alloc(heap, n);
+        ptr = cgc_small_alloc(heap, n);
     else
-        ptr = large_alloc(heap, n);
+        ptr = cgc_large_alloc(heap, n);
 
     return ptr;
 }
 
-void malloc_free(malloc_t *heap, void *ptr)
+void cgc_malloc_free(cgc_malloc_t *heap, void *ptr)
 {
-    int type = heap->mem_map[(uintptr_t)ptr / RUN_SIZE];
+    int type = heap->mem_map[(cgc_uintptr_t)ptr / RUN_SIZE];
 
     if (ptr == NULL)
         return;
@@ -402,15 +402,15 @@ void malloc_free(malloc_t *heap, void *ptr)
     if (type == MM_UNALLOCATED)
     {
         /* either large or bad address */
-        large_free(heap, ptr);
+        cgc_large_free(heap, ptr);
     }
     else if (type == MM_SMALL)
     {
-        small_free(heap, ptr);
+        cgc_small_free(heap, ptr);
     }
     else if (type == MM_TINY)
     {
-        tiny_free(heap, ptr);
+        cgc_tiny_free(heap, ptr);
     }
     else
     {
@@ -419,18 +419,18 @@ void malloc_free(malloc_t *heap, void *ptr)
 }
 
 /* returns size available to user */
-size_t malloc_size(malloc_t *heap, void *ptr)
+cgc_size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr)
 {
-    int type = heap->mem_map[(uintptr_t)ptr / RUN_SIZE];
+    int type = heap->mem_map[(cgc_uintptr_t)ptr / RUN_SIZE];
 
     if (type == MM_SMALL || type == MM_UNALLOCATED)
     {
-        malloc_hdr_t *hdr = (malloc_hdr_t *)((uintptr_t)ptr - sizeof(malloc_hdr_t));
-        return hdr->size_flags - sizeof(malloc_hdr_t);
+        cgc_malloc_hdr_t *hdr = (cgc_malloc_hdr_t *)((cgc_uintptr_t)ptr - sizeof(cgc_malloc_hdr_t));
+        return hdr->size_flags - sizeof(cgc_malloc_hdr_t);
     }
     else if (type == MM_TINY)
     {
-        tiny_page_t *page = (tiny_page_t *)((uintptr_t)ptr & ~(PAGE_SIZE - 1));
+        cgc_tiny_page_t *page = (cgc_tiny_page_t *)((cgc_uintptr_t)ptr & ~(PAGE_SIZE - 1));
         return page->size;
     }
     else
@@ -440,7 +440,7 @@ size_t malloc_size(malloc_t *heap, void *ptr)
     }
 }
 
-void *malloc_realloc(malloc_t *heap, void *ptr, size_t n)
+void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, cgc_size_t n)
 {
     void *new_ptr;
 
@@ -449,22 +449,22 @@ void *malloc_realloc(malloc_t *heap, void *ptr, size_t n)
 
     if (n == 0)
     {
-        malloc_free(heap, ptr);
+        cgc_malloc_free(heap, ptr);
         return NULL;
     }
 
     if (ptr == NULL)
-        return malloc_alloc(heap, n);
+        return cgc_malloc_alloc(heap, n);
 
-    if (malloc_size(heap, ptr) >= n)
+    if (cgc_malloc_size(heap, ptr) >= n)
         return ptr;
 
-    new_ptr = malloc_alloc(heap, n);
+    new_ptr = cgc_malloc_alloc(heap, n);
     if (new_ptr == NULL)
         return NULL;
 
-    memcpy(new_ptr, ptr, malloc_size(heap, ptr));
+    cgc_memcpy(new_ptr, ptr, cgc_malloc_size(heap, ptr));
 
-    malloc_free(heap, ptr);
+    cgc_malloc_free(heap, ptr);
     return new_ptr;
 }

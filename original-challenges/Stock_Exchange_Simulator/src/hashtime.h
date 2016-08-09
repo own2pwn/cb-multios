@@ -23,6 +23,6 @@
 #ifndef HASHTIME_H
 #define HASHTIME_H
 #include "libc.h"
-void checksum(uint32_t acct_id, uint32_t qty, char * symbol, float price, char *dst);
+void cgc_checksum(cgc_uint32_t acct_id, cgc_uint32_t qty, char * symbol, float price, char *dst);
 
 #endif

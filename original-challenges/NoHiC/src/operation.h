@@ -24,27 +24,27 @@
 #define OPERATION_H
 #include "libc.h"
 
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(-10);}
-#define SENDSI(v) send((char *)&v, sizeof(int32_t));
-#define SENDUI(v) send((char *)&v, sizeof(uint32_t));
-#define SENDD(v) send((char *)&v, sizeof(double));
-#define SENDLL(v) send((char *)&v, sizeof(long long));
+#define RECV(v,s) if(s != cgc_recv_all((char *)v, s)) {_terminate(-10);}
+#define SENDSI(v) cgc_send((char *)&v, sizeof(cgc_int32_t));
+#define SENDUI(v) cgc_send((char *)&v, sizeof(cgc_uint32_t));
+#define SENDD(v) cgc_send((char *)&v, sizeof(double));
+#define SENDLL(v) cgc_send((char *)&v, sizeof(long long));
 #define ALLOC(sz,ptr) if(SUCCESS != allocate(sz, 0, (void **)ptr)) {_terminate(ERRNO_ALLOC);}
 
 #define MAX_LIST_LEN 1000
  
 typedef struct int32_data {
-	int32_t val;
-} int32_data_t;
+	cgc_int32_t val;
+} cgc_int32_data_t;
 
 typedef struct dbl64_data {
 	double val;
-} dbl64_data_t;
+} cgc_dbl64_data_t;
 
-int int32_node_compare(node_t * nd1, node_t * nd2);
-int dbl64_node_compare(node_t * nd1, node_t * nd2);
-int do_create();
-int do_eval();
-int do_nonce();
+int cgc_int32_node_compare(cgc_node_t * nd1, cgc_node_t * nd2);
+int cgc_dbl64_node_compare(cgc_node_t * nd1, cgc_node_t * nd2);
+int cgc_do_create();
+int cgc_do_eval();
+int cgc_do_nonce();
 
 #endif

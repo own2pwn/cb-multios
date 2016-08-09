@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,13 +28,13 @@
 #define FILE_BUF_SZ 			1024
 
 typedef struct {
-	size_t 	fd;
-	size_t 	idx;					// current idx in buf
-	size_t 	count;					// number of usable bytes in buf
+	cgc_size_t 	fd;
+	cgc_size_t 	idx;					// current idx in buf
+	cgc_size_t 	count;					// number of usable bytes in buf
 	unsigned char buf[FILE_BUF_SZ]; // buffer of received bytes
-} FILE;
+} cgc_FILE;
 
-// list of FILE's in use by this CB for RECEIVING data (not used for sending)
+// list of cgc_FILE's in use by this CB for RECEIVING data (not used for sending)
 // In an IPC CB, will need to modify this with the correct FDs
 // By default READ_FD is defined in libc.h
 #define RECV_FILE_COUNT 		1	// number of FILEs in recv_files
@@ -46,18 +46,18 @@ typedef struct {
  		default: return ERRNO_RECV;	\
  	}
 
-static FILE recv_files[RECV_FILE_COUNT] = { {.fd = READ_FD} };
+static cgc_FILE recv_files[RECV_FILE_COUNT] = { {.fd = READ_FD} };
 
 /**
- *	Receive one char from the FILE
+ *	Receive one char from the cgc_FILE
  *
  * @param f 	file descriptor to process
  * @param error Value to store error condition.
  * @return next available char if found, EOF if no more chars or an error
  */
-static ssize_t recv_char(int fd, int *error) {
+static cgc_ssize_t cgc_recv_char(int fd, int *error) {
 	char ch = 0;
-	FILE *f = NULL;
+	cgc_FILE *f = NULL;
 	RECV_FILE_FROM_FD(fd);
 
 	*error = 0;
@@ -86,17 +86,17 @@ havechar:
 	return ch;
 }
 
-ssize_t recv_until_delim_n(int fd, char delim, char *buf, unsigned int size) {
+cgc_ssize_t cgc_recv_until_delim_n(int fd, char delim, char *buf, unsigned int size) {
 	if ((NULL == buf) || (0 == size)) {
 		return ERRNO_RECV;
 	}
 
-	size_t bytes_read_total = 0;
+	cgc_size_t bytes_read_total = 0;
 	char ch = 0;
 	int error = 0;
 
-	for (size_t i = 0; i < size; i++) {
-		ch = recv_char(fd, &error);
+	for (cgc_size_t i = 0; i < size; i++) {
+		ch = cgc_recv_char(fd, &error);
 
 		if (EOF == ch) {
 			if (ERRNO_RECV == error) {

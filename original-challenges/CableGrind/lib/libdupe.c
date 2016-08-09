@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,8 +23,8 @@
 #include "libc.h"
 #include "libdupe.h"
 
-dupefile_t * dupe_open(uint8_t *data) {
-    dupefile_t *f = (dupefile_t *)data;
+cgc_dupefile_t * cgc_dupe_open(uint8_t *data) {
+    cgc_dupefile_t *f = (cgc_dupefile_t *)data;
     
     if (f->version > 3 || f->idx >= f->caplen)
         return NULL;
@@ -35,8 +35,8 @@ dupefile_t * dupe_open(uint8_t *data) {
     return f;
 }
 
-dupepkt_t *dupe_next(dupefile_t *f) {
-    dupepkt_t *pkt = NULL;
+cgc_dupepkt_t *cgc_dupe_next(cgc_dupefile_t *f) {
+    cgc_dupepkt_t *pkt = NULL;
 
     if (f->framelen > 65536 || f->framelen < 0)
         return NULL;
@@ -44,35 +44,35 @@ dupepkt_t *dupe_next(dupefile_t *f) {
     if (f->caplen > MAX_DUPE_SIZE || f->caplen < 0)
         return NULL;
 
-    pkt = malloc(sizeof(dupepkt_hdr_t)+f->framelen);
+    pkt = cgc_malloc(sizeof(cgc_dupepkt_hdr_t)+f->framelen);
     if (!pkt)
         return NULL;
 
-    if (f->idx+sizeof(dupepkt_hdr_t) > f->caplen) {
-        free(pkt);
+    if (f->idx+sizeof(cgc_dupepkt_hdr_t) > f->caplen) {
+        cgc_free(pkt);
         return NULL;
     }
 
     pkt->parent = f;
-    memcpy(&pkt->hdr, f->data+f->idx, sizeof(dupepkt_hdr_t));
-    f->idx += sizeof(dupepkt_hdr_t);
+    cgc_memcpy(&pkt->hdr, f->data+f->idx, sizeof(cgc_dupepkt_hdr_t));
+    f->idx += sizeof(cgc_dupepkt_hdr_t);
 
     if (pkt->hdr.size <= 0 || f->idx+pkt->hdr.size > f->caplen || pkt->hdr.size > f->framelen) {
-        free(pkt);
+        cgc_free(pkt);
         return NULL;
     }
 
-    memcpy(pkt->payload, f->data+f->idx, pkt->hdr.size);
+    cgc_memcpy(pkt->payload, f->data+f->idx, pkt->hdr.size);
 
     f->idx += pkt->hdr.size;
 
     return pkt;
 }
 
-void dupe_free(dupepkt_t *pkt) {
-    free(pkt);
+void cgc_dupe_free(cgc_dupepkt_t *pkt) {
+    cgc_free(pkt);
 }
 
-void dupe_close(dupefile_t *f) {
-    free(f);
+void cgc_dupe_close(cgc_dupefile_t *f) {
+    cgc_free(f);
 }

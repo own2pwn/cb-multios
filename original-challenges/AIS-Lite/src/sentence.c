@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,7 +28,7 @@
 
 
 
-int parse_sentence(const char *buf, struct sentence_struct *ss) {
+int cgc_parse_sentence(const char *buf, struct sentence_struct *ss) {
 
 	const char *p_buf = NULL;
 	const char *start = "!AAAAA";
@@ -39,34 +39,34 @@ int parse_sentence(const char *buf, struct sentence_struct *ss) {
 	unsigned char msg_type = 0;
 	int ret = 0;
 
-	FAILBAIL(get_sentence_start(buf, &p_buf));
-	if (SUCCESS != strncmp(start, p_buf, 6)) {
+	FAILBAIL(cgc_get_sentence_start(buf, &p_buf));
+	if (SUCCESS != cgc_strncmp(start, p_buf, 6)) {
 		return ERR_INVALID_SENTENCE;
 	}
 
-	if (TRUE != is_checksum_correct(p_buf)) {
+	if (TRUE != cgc_is_checksum_correct(p_buf)) {
 		return ERR_INVALID_SENTENCE;
 	}
 
-	p_buf = get_next_field(p_buf);
+	p_buf = cgc_get_next_field(p_buf);
 	if (NULL == p_buf) {
 		return ERR_INVALID_SENTENCE;
 	} else {
-		FAILBAIL(field_to_uint(p_buf, &frag_num));
+		FAILBAIL(cgc_field_to_uint(p_buf, &frag_num));
 	}
 
-	p_buf = get_next_field(p_buf);
+	p_buf = cgc_get_next_field(p_buf);
 	if (NULL == p_buf) {
 		return ERR_INVALID_SENTENCE;
 	} else {
-		FAILBAIL(field_to_uint(p_buf, &frag_total));
+		FAILBAIL(cgc_field_to_uint(p_buf, &frag_total));
 	}
 
-	p_buf = get_next_field(p_buf);
+	p_buf = cgc_get_next_field(p_buf);
 	if (NULL == p_buf) {
 		return ERR_INVALID_SENTENCE;
 	} else {
-		FAILBAIL(field_to_uint(p_buf, &session_id));
+		FAILBAIL(cgc_field_to_uint(p_buf, &session_id));
 	}
 
 	if (EMPTY == ss->msg_status) {
@@ -90,17 +90,17 @@ int parse_sentence(const char *buf, struct sentence_struct *ss) {
 		return ERR_INVALID_SENTENCE;
 	}
 
-	p_buf = get_next_field(p_buf); // start of ascii encoded AIS msg payload
-	end = get_next_field(p_buf) - 1;
+	p_buf = cgc_get_next_field(p_buf); // start of ascii encoded AIS msg payload
+	end = cgc_get_next_field(p_buf) - 1;
 
 #if PATCHED
-	if (MAX_SENTENCE_LEN < (end-p_buf+strlen(ss->ais_msg))) {
+	if (MAX_SENTENCE_LEN < (end-p_buf+cgc_strlen(ss->ais_msg))) {
 		return ERR_INVALID_SENTENCE;
 	}
 #endif
-	ss->p_ais_msg_idx = fieldncpy(p_buf, ss->p_ais_msg_idx, end-p_buf);
+	ss->p_ais_msg_idx = cgc_fieldncpy(p_buf, ss->p_ais_msg_idx, end-p_buf);
 	if (EMPTY == ss->msg_status) {
-		ss->msg_type = get_msg_type(p_buf);
+		ss->msg_type = cgc_get_msg_type(p_buf);
 		if ((1 != ss->msg_type) && (4 != ss->msg_type) && (5 != ss->msg_type)) {
 			return ERR_INVALID_SENTENCE;
 		}
@@ -115,17 +115,17 @@ int parse_sentence(const char *buf, struct sentence_struct *ss) {
 	return SUCCESS;
 }
 
-void reset_sentence_struct(struct sentence_struct *ss) {
+void cgc_reset_sentence_struct(struct sentence_struct *ss) {
  	ss->frag_num = 0;
  	ss->frag_total = 0;
  	ss->session_id = 0;
 	ss->msg_status = EMPTY;
 	ss->msg_type = 0;
-	memset((void *)ss->ais_msg, 0, MAX_SENTENCE_LEN);
+	cgc_memset((void *)ss->ais_msg, 0, MAX_SENTENCE_LEN);
  	ss->p_ais_msg_idx = ss->ais_msg;
  }
 
-int get_sentence_start(const char *str, const char **start) {
+int cgc_get_sentence_start(const char *str, const char **start) {
 
 	if (NULL == str) {
 		return ERR_NULL_PARAM;
@@ -148,14 +148,14 @@ int get_sentence_start(const char *str, const char **start) {
 }
 
 
-int is_checksum_correct(const char *str) {
+int cgc_is_checksum_correct(const char *str) {
 
 	const char *ptr = NULL;
 	int ret = 0;
 	unsigned char calcsum = 0;
 
 	// calculate checksum
-	if (SUCCESS != get_sentence_start(str, &ptr)) {
+	if (SUCCESS != cgc_get_sentence_start(str, &ptr)) {
 		return ERR_INVALID_SENTENCE;
 	}
 	ptr++; // advance past the '!'
@@ -169,18 +169,18 @@ int is_checksum_correct(const char *str) {
 		return ERR_INVALID_SENTENCE;
 	}
 
-	if ((FALSE == is_hex_digit(*(ptr+1))) || (FALSE == is_hex_digit(*(ptr+2)))) {
+	if ((FALSE == cgc_is_hex_digit(*(ptr+1))) || (FALSE == cgc_is_hex_digit(*(ptr+2)))) {
 		return ERR_INVALID_SENTENCE;
 	}
 
-	if (calcsum == ((ascii_hex_to_bin(*(ptr+1)) << 4) + ascii_hex_to_bin(*(ptr+2)))) {
+	if (calcsum == ((cgc_ascii_hex_to_bin(*(ptr+1)) << 4) + cgc_ascii_hex_to_bin(*(ptr+2)))) {
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-int field_to_uint(const char *str, unsigned int *int_val) {
+int cgc_field_to_uint(const char *str, unsigned int *int_val) {
 
 	int tmp = 0;
 	*int_val = 0;
@@ -188,7 +188,7 @@ int field_to_uint(const char *str, unsigned int *int_val) {
 	while ( (NULL != str) && (0 != *str) && ('*' != *str) && (',' != *str)) {
 		*int_val *= 10;
 
-		if (0 > (tmp = ascii_hex_to_bin(*str))) {
+		if (0 > (tmp = cgc_ascii_hex_to_bin(*str))) {
 			return tmp;
 		}
 		*int_val += tmp;
@@ -198,7 +198,7 @@ int field_to_uint(const char *str, unsigned int *int_val) {
 	return SUCCESS;
 }
 
-const char *get_next_field(const char *str) {
+const char *cgc_get_next_field(const char *str) {
 
 	while ( (NULL != str) && (0 != *str) && ('*' != *str) && (',' != *str)) {
 		str++;
@@ -211,7 +211,7 @@ const char *get_next_field(const char *str) {
 	return NULL;
 }
 
-char *fieldncpy(const char *str, char *buf, int n) {
+char *cgc_fieldncpy(const char *str, char *buf, int n) {
 
 	while ( (0 != n) 
 			&& (NULL != str) && (NULL != buf) && (0 != *str) 

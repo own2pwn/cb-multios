@@ -33,12 +33,12 @@ extern "C"
 #include "common.h"
 
 #if 0
-CUtil::String ReadLine( void )
+CUtil::cgc_String cgc_ReadLine( void )
 {
 	char pszLine[512];
 	char c;
-	size_t num_bytes;
-	size_t pos;
+	cgc_size_t num_bytes;
+	cgc_size_t pos;
 
 	for ( pos = 0; pos < 511; pos++ )
 	{
@@ -56,23 +56,23 @@ CUtil::String ReadLine( void )
 
 	pszLine[pos] = '\0';
 
-	return CUtil::String(pszLine);
+	return CUtil::cgc_String(pszLine);
 }
 #else
 char g_szLineBuffer[4096+1];
-uint32_t g_lineLength = 0;
+cgc_uint32_t g_lineLength = 0;
 
-CUtil::String ReadLine( void )
+CUtil::cgc_String cgc_ReadLine( void )
 {
-        uint32_t maxLen = 4096;
+        cgc_uint32_t maxLen = 4096;
 
         char *pszLine = new char[maxLen+1];
 
         bool bLineFound = false;
-        uint32_t lastScanPos = 0;
+        cgc_uint32_t lastScanPos = 0;
         while ( 1 )
         {
-                uint32_t pos;
+                cgc_uint32_t pos;
                 for ( pos = lastScanPos; pos < g_lineLength; pos++ )
                 {
                         if ( g_szLineBuffer[pos] == '\n' )
@@ -98,8 +98,8 @@ CUtil::String ReadLine( void )
 
                 lastScanPos = pos;
 
-                size_t num_bytes;
-                uint32_t readRemaining = (maxLen - pos);
+                cgc_size_t num_bytes;
+                cgc_uint32_t readRemaining = (maxLen - pos);
 
                 if ( receive( STDIN, g_szLineBuffer+pos, readRemaining, &num_bytes ) != 0 )
                         _terminate( -1 );
@@ -110,26 +110,26 @@ CUtil::String ReadLine( void )
                 g_lineLength += num_bytes;
         }
 
-        memcpy( pszLine, g_szLineBuffer, lastScanPos );
+        cgc_memcpy( pszLine, g_szLineBuffer, lastScanPos );
         pszLine[lastScanPos] = '\0';
 
-        CUtil::String sLine = pszLine;
+        CUtil::cgc_String sLine = pszLine;
 
         delete pszLine;
 
-        uint32_t copyToPos = 0;
-        uint32_t copyFromPos = lastScanPos+1;
+        cgc_uint32_t copyToPos = 0;
+        cgc_uint32_t copyFromPos = lastScanPos+1;
 
         if ( bLineFound )
         {
-                for ( uint32_t copyAmount = 0; copyAmount < (g_lineLength-(lastScanPos+1)); copyAmount++ )
+                for ( cgc_uint32_t copyAmount = 0; copyAmount < (g_lineLength-(lastScanPos+1)); copyAmount++ )
                         g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
 
                 g_lineLength -= (lastScanPos+1);
         }
         else
         {
-                for ( uint32_t copyAmount = 0; copyAmount < (g_lineLength-lastScanPos); copyAmount++ )
+                for ( cgc_uint32_t copyAmount = 0; copyAmount < (g_lineLength-lastScanPos); copyAmount++ )
                         g_szLineBuffer[copyToPos++] = g_szLineBuffer[copyFromPos++];
 
                 g_lineLength -= (lastScanPos);
@@ -139,7 +139,7 @@ CUtil::String ReadLine( void )
 }
 #endif
 
-bool HexCharToInt( char c, uint8_t &outValue )
+bool cgc_HexCharToInt( char c, cgc_uint8_t &outValue )
 {
 	if ( c >= 'A' && c <= 'F' )
 		outValue = (10 + (c - 'A'));
@@ -153,10 +153,10 @@ bool HexCharToInt( char c, uint8_t &outValue )
 	return (true);
 }
 
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen )
+void cgc_PrintHexBytes( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
-	for ( uint32_t i = 0; i < dataLen; i++ )
-		printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
+	for ( cgc_uint32_t i = 0; i < dataLen; i++ )
+		cgc_printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
 	
-	printf( "\n" );
+	cgc_printf( "\n" );
 }

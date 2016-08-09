@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Dan Czarnecki <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -52,188 +52,188 @@ enum {
   Z               // 0x02
 } coords;
 
-void menu() {
+void cgc_menu() {
   char choice;
   char coord;
-  uint16_t val;
+  cgc_uint16_t val;
 
   char new_init[4096];
-  t3DCPixel *last_shown = NULL;
+  cgc_t3DCPixel *last_shown = NULL;
 
 #ifdef PATCHED_1
-  uint8_t *out_data = malloc(MAX_FILE_SIZE);
-  uint8_t *in_data = malloc(MAX_FILE_SIZE);
+  cgc_uint8_t *out_data = cgc_malloc(MAX_FILE_SIZE);
+  cgc_uint8_t *in_data = cgc_malloc(MAX_FILE_SIZE);
 #else
-  uint8_t out_data[3072];
-  uint8_t in_data[3072];
+  cgc_uint8_t out_data[3072];
+  cgc_uint8_t in_data[3072];
 #endif
 
-  uint16_t compress_len = 0;
-  uint8_t decompress_flag = 0;
+  cgc_uint16_t compress_len = 0;
+  cgc_uint8_t decompress_flag = 0;
 
-  uint16_t pixelCount = MAGIC_PAGE_SIZE / sizeof(t3DCPixel);
+  cgc_uint16_t pixelCount = MAGIC_PAGE_SIZE / sizeof(cgc_t3DCPixel);
 
-  t3DCPixel **px_list = malloc(pixelCount * sizeof(t3DCPixel*));
-  memset(px_list, 0, pixelCount * sizeof(t3DCPixel*));
+  cgc_t3DCPixel **px_list = cgc_malloc(pixelCount * sizeof(cgc_t3DCPixel*));
+  cgc_memset(px_list, 0, pixelCount * sizeof(cgc_t3DCPixel*));
 
-  ReadFile(px_list);
+  cgc_ReadFile(px_list);
 
   while(choice) {
-    receive_bytes(&choice, 1);
+    cgc_receive_bytes(&choice, 1);
 
     switch(choice) {
       case NEW_FILE:
       {
-        printf("NEW_FILE selected\n");
-        memset(new_init, 0, 4096);
-        NewFile(px_list, new_init);
+        cgc_printf("NEW_FILE selected\n");
+        cgc_memset(new_init, 0, 4096);
+        cgc_NewFile(px_list, new_init);
         break;
       }
       case CHECK_FILE:
       {
-        printf("CHECK_FILE selected\n");
-        CheckFile(px_list, MAX_PIXELS);
+        cgc_printf("CHECK_FILE selected\n");
+        cgc_CheckFile(px_list, MAX_PIXELS);
         break;
       }
       case SKEW_IMAGE:
       {
-        printf("SKEW_IMAGE selected\n");
-        receive_bytes(&coord, 1);
-        receive_bytes((char*)&val, 2);
+        cgc_printf("SKEW_IMAGE selected\n");
+        cgc_receive_bytes(&coord, 1);
+        cgc_receive_bytes((char*)&val, 2);
 
         switch(coord) {
           case X:
-            RunTask(px_list, SkewX, val);
+            cgc_RunTask(px_list, cgc_SkewX, val);
             break;
           case Y:
-            RunTask(px_list, SkewY, val);
+            cgc_RunTask(px_list, cgc_SkewY, val);
             break;
           case Z:
-            RunTask(px_list, SkewZ, val);
+            cgc_RunTask(px_list, cgc_SkewZ, val);
             break;
           default:
-            printf("Incorrect coordinate provided.\n");
+            cgc_printf("Incorrect coordinate provided.\n");
             break;
         }
         break;
       }
       case ROTATE_IMAGE:
       {
-        printf("ROTATE_IMAGE selected\n");
-        receive_bytes(&coord, 1);
-        receive_bytes((char*)&val, 2);
+        cgc_printf("ROTATE_IMAGE selected\n");
+        cgc_receive_bytes(&coord, 1);
+        cgc_receive_bytes((char*)&val, 2);
         switch(coord) {
           case X:
-            RunTask(px_list, RotateX, val);
+            cgc_RunTask(px_list, cgc_RotateX, val);
             break;
           case Y:
-            RunTask(px_list, RotateY, val);
+            cgc_RunTask(px_list, cgc_RotateY, val);
             break;
           case Z:
-            RunTask(px_list, RotateZ, val);
+            cgc_RunTask(px_list, cgc_RotateZ, val);
             break;
           default:
-            printf("Incorrect coordinate provided.\n");
+            cgc_printf("Incorrect coordinate provided.\n");
             break;
         }
         break;
       }
       case SCALE_IMAGE:
       {
-        printf("SCALE_IMAGE selected\n");
-        receive_bytes((char*)&val, 2);
-        RunTask(px_list, Scale, (int16_t)val);
+        cgc_printf("SCALE_IMAGE selected\n");
+        cgc_receive_bytes((char*)&val, 2);
+        cgc_RunTask(px_list, cgc_Scale, (cgc_int16_t)val);
         break;
       }
       case BRIGHTNESS:
       {
-        printf("BRIGHTNESS selected\n");
-        receive_bytes((char*)&val, 2);
-        RunTask(px_list, Brightness, (int16_t)val);
+        cgc_printf("BRIGHTNESS selected\n");
+        cgc_receive_bytes((char*)&val, 2);
+        cgc_RunTask(px_list, cgc_Brightness, (cgc_int16_t)val);
         break;
       }
       case OPACITY:
       {
-        printf("OPACITY selected\n");
-        receive_bytes((char*)&val, 1);
-        RunTask(px_list, Opacity, val);
+        cgc_printf("OPACITY selected\n");
+        cgc_receive_bytes((char*)&val, 1);
+        cgc_RunTask(px_list, cgc_Opacity, val);
         break;
       }
       case COMPRESS:
       {
-        printf("COMPRESS selected\n");
-        Compress(px_list, in_data, &compress_len);
+        cgc_printf("COMPRESS selected\n");
+        cgc_Compress(px_list, in_data, &compress_len);
         decompress_flag = 0;
         break;
       }
       case DECOMPRESS:
       {
-        printf("DECOMPRESS selected\n");
+        cgc_printf("DECOMPRESS selected\n");
         if(compress_len == 0) {
-          printf("No compressed data.\n");
+          cgc_printf("No compressed data.\n");
           break;
         } else if (decompress_flag) {
-          printf("You have already decompressed the latest data.\n");
+          cgc_printf("You have already decompressed the latest data.\n");
           break;
         }
-        uint8_t *decompressed = malloc(MAX_FILE_SIZE);
-        Decompress(in_data, decompressed, &compress_len);
-        WriteOut(px_list, decompressed, compress_len);
-        memcpy(out_data, decompressed, compress_len);
+        cgc_uint8_t *decompressed = cgc_malloc(MAX_FILE_SIZE);
+        cgc_Decompress(in_data, decompressed, &compress_len);
+        cgc_WriteOut(px_list, decompressed, compress_len);
+        cgc_memcpy(out_data, decompressed, compress_len);
 
-        free(decompressed);
+        cgc_free(decompressed);
         decompress_flag = 1;
         break;
       }
       case SHOW_PIXEL:
       {
-        printf("SHOW_PIXEL selected\n");
-        printf("Select the pixel to view:\n");
-        receive_bytes((char*)&val, 2);
+        cgc_printf("SHOW_PIXEL selected\n");
+        cgc_printf("Select the pixel to view:\n");
+        cgc_receive_bytes((char*)&val, 2);
 
         if (val < pixelCount && val >= 0) {
 
-          t3DCPixel *tmp = malloc(sizeof(t3DCPixel));
-          memcpy(tmp, px_list[val], sizeof(t3DCPixel));
-          ShowPixel(tmp);
+          cgc_t3DCPixel *tmp = cgc_malloc(sizeof(cgc_t3DCPixel));
+          cgc_memcpy(tmp, px_list[val], sizeof(cgc_t3DCPixel));
+          cgc_ShowPixel(tmp);
           last_shown = px_list[val];
-          free(tmp);
+          cgc_free(tmp);
 
         } else if (last_shown != NULL) {
 
-          printf("Out of range. Showing last displayed pixel.\n");
-          ShowPixel(last_shown);
+          cgc_printf("Out of range. Showing last displayed pixel.\n");
+          cgc_ShowPixel(last_shown);
 
         } else {
-          printf("No pixel to show.\n\n\n\n");
+          cgc_printf("No pixel to show.\n\n\n\n");
         }
 
         break;
       }
       case EXIT:
       {
-        printf("EXIT selected\n");
+        cgc_printf("EXIT selected\n");
         choice = 0;
-        free(px_list);
+        cgc_free(px_list);
         return;
       }
       default:
       {
-        printf("UNKNOWN command\n");
+        cgc_printf("UNKNOWN command\n");
         choice = 0;
-        free(px_list);
+        cgc_free(px_list);
         return;
       }
     }
   }
-  free(px_list);
+  cgc_free(px_list);
 }
 
 int main(void) {
 
-    printf("3D Coordinates (3DC) Image File Format Tools\n");
+    cgc_printf("3D Coordinates (3DC) Image File Format Tools\n");
 
-    menu();
+    cgc_menu();
 
     return 0;
 }

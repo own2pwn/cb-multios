@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -39,7 +39,7 @@ namespace CgFsFile
 {
 
 
-bool FreeEntry(const fs_file *file_metadata)
+bool cgc_FreeEntry(const cgc_fs_file *file_metadata)
 {
     if (file_metadata->name[0] == 0x00 || file_metadata->name[0] == 0xE5)
         return true;
@@ -47,7 +47,7 @@ bool FreeEntry(const fs_file *file_metadata)
     return false;
 }
 
-bool SkipEntry(const fs_file *file_metadata)
+bool cgc_SkipEntry(const cgc_fs_file *file_metadata)
 {
     if (file_metadata->attrib == 0x0F || file_metadata->name[0] == 0x00 || file_metadata->name[0] == 0xE5)
         return true;
@@ -55,48 +55,48 @@ bool SkipEntry(const fs_file *file_metadata)
     return false;
 }
 
-bool IsDotEntry(const fs_file *file_metadata)
+bool cgc_IsDotEntry(const cgc_fs_file *file_metadata)
 {
     return (file_metadata->name[0] == 0x2E);
 }
 
-bool IsDirectory(const fs_file *file_metadata)
+bool cgc_IsDirectory(const cgc_fs_file *file_metadata)
 {
     return (file_metadata->attrib & SUBDIRECTORY_FLAG);
 }
 
-bool IsFile(const fs_file *file_metadata)
+bool cgc_IsFile(const cgc_fs_file *file_metadata)
 {
     return !(file_metadata->attrib & SUBDIRECTORY_FLAG);
 }
 
-bool IsSystemFile(const fs_file *file_metadata)
+bool cgc_IsSystemFile(const cgc_fs_file *file_metadata)
 {
     return (file_metadata->attrib & SYSTEM_FLAG);
 }
 
-bool IsHiddenFile(const fs_file *file_metadata)
+bool cgc_IsHiddenFile(const cgc_fs_file *file_metadata)
 {
     return (file_metadata->attrib & HIDDEN_FLAG);
 }
 
-bool IsArchive(const fs_file *file_metadata)
+bool cgc_IsArchive(const cgc_fs_file *file_metadata)
 {
     return (file_metadata->attrib & ARCHIVE_FLAG);
 }
 
-void DeleteMetadataEntry(fs_file *file_metadata)
+void cgc_DeleteMetadataEntry(cgc_fs_file *file_metadata)
 {
     file_metadata->name[0] = 0xE5;
 }
 
-bool NameEquals(const fs_file *file_metadata, const char *filename, unsigned int name_len)
+bool cgc_NameEquals(const cgc_fs_file *file_metadata, const char *filename, unsigned int name_len)
 {
-    if (name_len > sizeof(((fs_file *)0)->name))
+    if (name_len > sizeof(((cgc_fs_file *)0)->name))
         return false;
-    if (memcmp(file_metadata->name, filename, name_len) != 0)
+    if (cgc_memcmp(file_metadata->name, filename, name_len) != 0)
         return false;
-    for (int i = name_len; i < sizeof(((fs_file *)0)->name); i++)
+    for (int i = name_len; i < sizeof(((cgc_fs_file *)0)->name); i++)
     {
         if (file_metadata->name[i] != 0x20)
             return false;

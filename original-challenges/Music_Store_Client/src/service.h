@@ -38,26 +38,26 @@ const unsigned int MIN_REQ_LEN = sizeof(TERM_STR)
 								+ sizeof(PARAM_DELIM)*2
 								+ sizeof(EOL_STR);
 
-typedef struct Request {
+typedef struct cgc_Request {
 	char term[RESULT_VALUE_SIZE];
 	char attribute[RESULT_VALUE_SIZE];
 	char limit[MAX_LIMIT];
-} Request;
+} cgc_Request;
 
-typedef struct Song {
+typedef struct cgc_Song {
 	char id[RESULT_VALUE_SIZE];
 	char artist[RESULT_VALUE_SIZE];
 	char album[RESULT_VALUE_SIZE];
 	char song[RESULT_VALUE_SIZE];
 	char price[RESULT_VALUE_SIZE];
-} Song;
+} cgc_Song;
 
-typedef struct SongList {
+typedef struct cgc_SongList {
 	unsigned int size;
 #ifdef PATCHED
 	unsigned int maxSize;
 #else
 #endif
-	Song* songs;
+	cgc_Song* songs;
 	unsigned char balance;
-} SongList;
+} cgc_SongList;

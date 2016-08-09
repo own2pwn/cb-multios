@@ -1,7 +1,7 @@
 #ifndef THOMPSON_H_
 #define THOMPSON_H_
 
-void debug_print_re(unsigned char* re);
-int retorpn(unsigned char *infix, size_t size, unsigned char **rpn);
+void cgc_debug_print_re(unsigned char* re);
+int cgc_retorpn(unsigned char *infix, cgc_size_t size, unsigned char **rpn);
 
 #endif

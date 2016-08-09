@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,7 +23,7 @@
 
 #include "mgc_tag.h"
 
-unsigned int mgc_tag::header_size()
+unsigned int cgc_mgc_tag::cgc_header_size()
 {
     return (sizeof(header) + sizeof(title) + sizeof(artist) + sizeof(album) + sizeof(year) +
             sizeof(comment) + sizeof(has_track) + sizeof(track_number) + sizeof(unused));

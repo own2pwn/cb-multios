@@ -23,18 +23,18 @@
 #include "libc.h"
 #include "service.h"
 
-void identityMap(Message* message)
+void cgc_identityMap(cgc_Message* message)
 {
 
 }
 
-void constantMap(Message* message)
+void cgc_constantMap(cgc_Message* message)
 {
 		message->value[PERM_FIELD] = 1;
 
 }
 
-void absoluteValueMap(Message* message)
+void cgc_absoluteValueMap(cgc_Message* message)
 {
 	// Vuln: Use unsigned int for absolute value conversion
 	unsigned short absoluteVal;
@@ -64,7 +64,7 @@ void absoluteValueMap(Message* message)
 
 }
 
-int modulus(short n, short M) {
+int cgc_modulus(short n, short M) {
 	short result;
 	if (M == 0)
 		return n;
@@ -73,34 +73,34 @@ int modulus(short n, short M) {
 	return result;
 }
 
-void modulusCoordinatesWithDimensions(Message* message)
+void cgc_modulusCoordinatesWithDimensions(cgc_Message* message)
 {
 
-	message->value[X_FIELD] = modulus(message->value[X_FIELD], message->value[LENGTH_FIELD]);
-	message->value[Y_FIELD] = modulus(message->value[Y_FIELD], message->value[WIDTH_FIELD]);
+	message->value[X_FIELD] = cgc_modulus(message->value[X_FIELD], message->value[LENGTH_FIELD]);
+	message->value[Y_FIELD] = cgc_modulus(message->value[Y_FIELD], message->value[WIDTH_FIELD]);
 
 }
 
-void processMessage(Worker* worker)
+void cgc_processMessage(cgc_Worker* worker)
 {
-	Message* message;
+	cgc_Message* message;
 	message = worker->inbox;
 
 	if(message != NULL) {
-		worker->processMessage(message);
+		worker->cgc_processMessage(message);
 		worker->outbox = message;
 		worker->inbox = NULL;
 	}
 }
 
 
-void receiveMessage(Message* message) {
-	size_t bytes_read = 0;
-	size_t message_size;
+void cgc_receiveMessage(cgc_Message* message) {
+	cgc_size_t bytes_read = 0;
+	cgc_size_t message_size;
 	char *message_ptr;
 
 	message_ptr = (char *) message;
-	message_size = sizeof(Message) - sizeof(short**) - 2;
+	message_size = sizeof(cgc_Message) - sizeof(short**) - 2;
 
 	while(message_size) {
 		if(receive(STDIN, message_ptr++, 1, &bytes_read))
@@ -110,23 +110,23 @@ void receiveMessage(Message* message) {
 	}
 }
 
-void sendMessage(Message* message) {
+void cgc_sendMessage(cgc_Message* message) {
 
-	if(transmit_all(STDOUT, (char *) message, sizeof(Message) - sizeof(short**)))
+	if(cgc_transmit_all(STDOUT, (char *) message, sizeof(cgc_Message) - sizeof(short**)))
 		_terminate(ERROR_FAILED_SEND);
 
 }
 
-void swap (Worker *workerA, Worker *workerB)
+void cgc_swap (cgc_Worker *workerA, cgc_Worker *workerB)
 {
- 	void (* temp)(Message* );
-	temp = workerA->processMessage;
-	workerA->processMessage = workerB->processMessage;
-	workerB->processMessage = temp;
+ 	void (* temp)(cgc_Message* );
+	temp = workerA->cgc_processMessage;
+	workerA->cgc_processMessage = workerB->cgc_processMessage;
+	workerB->cgc_processMessage = temp;
 
 }
 
-void permute(Worker* list, int start, int end, int* index, int stop)
+void cgc_permute(cgc_Worker* list, int start, int end, int* index, int stop)
 {
 	int j;
 	
@@ -141,10 +141,10 @@ void permute(Worker* list, int start, int end, int* index, int stop)
 	{
 		for(j = start; j <= end; j++)
 		{
-			swap(&list[start], &list[j]);
-			permute(list, start+1, end, index, stop);
+			cgc_swap(&list[start], &list[j]);
+			cgc_permute(list, start+1, end, index, stop);
 			if((*index) != stop)
-				swap(&list[start], &list[j]);
+				cgc_swap(&list[start], &list[j]);
 			else
 				break;
 		}
@@ -152,7 +152,7 @@ void permute(Worker* list, int start, int end, int* index, int stop)
 
 }
 
-void computeResult(Message *message)
+void cgc_computeResult(cgc_Message *message)
 {
 	short x, y;
 	x = message->value[X_FIELD];
@@ -194,8 +194,8 @@ void computeResult(Message *message)
 			y = message->value[WIDTH_FIELD] - y + message->value[Y_FIELD];
 		
 #else
-		x = modulus(x+message->value[X_FIELD], message->value[LENGTH_FIELD]);
-		y = modulus(y+message->value[Y_FIELD], message->value[WIDTH_FIELD]);
+		x = cgc_modulus(x+message->value[X_FIELD], message->value[LENGTH_FIELD]);
+		y = cgc_modulus(y+message->value[Y_FIELD], message->value[WIDTH_FIELD]);
 #endif
 
 	}
@@ -203,33 +203,33 @@ void computeResult(Message *message)
 }
 
 int main(void) {
-	Message* message = NULL;
-	Worker worker[4] = {0};
+	cgc_Message* message = NULL;
+	cgc_Worker worker[4] = {0};
 	int i;
 	int index;
 	int ret;
 
-	ret = allocate(sizeof(Message), 0, (void **) &message);
+	ret = allocate(sizeof(cgc_Message), 0, (void **) &message);
 	if(ret != 0)
 		_terminate(1);
 
-	receiveMessage(message);
+	cgc_receiveMessage(message);
 
-	worker[0].processMessage = identityMap;
-	worker[1].processMessage = constantMap;
-	worker[2].processMessage = absoluteValueMap;
-	worker[3].processMessage = modulusCoordinatesWithDimensions;
+	worker[0].cgc_processMessage = cgc_identityMap;
+	worker[1].cgc_processMessage = cgc_constantMap;
+	worker[2].cgc_processMessage = cgc_absoluteValueMap;
+	worker[3].cgc_processMessage = cgc_modulusCoordinatesWithDimensions;
 
 	index = 0; 
 
-	permute(worker, 0, 3, &index, message->value[PERM_FIELD]);
+	cgc_permute(worker, 0, 3, &index, message->value[PERM_FIELD]);
 
 	while(1) {
 
 		worker[0].inbox = message;
 
 		for(i=3; i>=0; i--) {
-			processMessage(&worker[i]);
+			cgc_processMessage(&worker[i]);
 
 			if(i<3)
 				worker[i+1].inbox = worker[i].outbox;
@@ -237,9 +237,9 @@ int main(void) {
 
 		if(worker[3].outbox != NULL) {
 
-			computeResult(worker[3].outbox);
+			cgc_computeResult(worker[3].outbox);
 
-			sendMessage(worker[3].outbox);
+			cgc_sendMessage(worker[3].outbox);
 
 			ret = deallocate(worker[3].outbox->result[0], worker[3].outbox->value[LENGTH_FIELD]*worker[3].outbox->value[WIDTH_FIELD]*sizeof(short));
 			if (ret != 0)
@@ -249,16 +249,16 @@ int main(void) {
 			if (ret != 0)
 				_terminate(2);
 
-			ret = deallocate(worker[3].outbox, sizeof(Message));
+			ret = deallocate(worker[3].outbox, sizeof(cgc_Message));
 			if (ret != 0)
 				_terminate(2);
 		}
 
-		ret = allocate(sizeof(Message), 0, (void **) &message);
+		ret = allocate(sizeof(cgc_Message), 0, (void **) &message);
 		if(ret != 0)
 			_terminate(1);
 
-		receiveMessage(message);
+		cgc_receiveMessage(message);
 	}
 
 

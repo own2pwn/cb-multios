@@ -30,7 +30,7 @@ THE SOFTWARE.
  *    Possible set commands are: newset = oldset
  *    setx = |"data", setn|    (initiate a set)
  *    setx = seta+setb    (union)
- *    setx = seta^setb     (intersect)
+ *    setx = seta^setb     (cgc_intersect)
  *    setx = seta-setb    (set difference)
  *    setx = seta~setb    (symmetric difference)
  *    seta @ setb        (subset) Prints True if seta is a subset of setb
@@ -52,23 +52,23 @@ THE SOFTWARE.
 #include "struct_inits.h"
 #include "service.h"
 
-psetArray root = NULL;
+cgc_psetArray root = NULL;
 
-psplitCommand parse_command_line( char *cmd )
+cgc_psplitCommand cgc_parse_command_line( char *cmd )
 {
-    psplitCommand sc = NULL;
+    cgc_psplitCommand sc = NULL;
     int index = 0;
 
     if ( cmd == NULL ) {
         goto end;
     }
 
-    if (allocate( sizeof(splitCommand), 0, (void**)&sc) != 0) {
+    if (allocate( sizeof(cgc_splitCommand), 0, (void**)&sc) != 0) {
         sc = NULL;
         goto end;
     }
 
-    bzero( sc, sizeof(splitCommand) );
+    cgc_bzero( sc, sizeof(cgc_splitCommand) );
 
     while (cmd[index] && index < 0x100) {
         /// The only valid middle are '=' to modfiy a set's value
@@ -86,7 +86,7 @@ psplitCommand parse_command_line( char *cmd )
             if ( sc->right == NULL ) {
                 cmd[index] = 0x00;
             }
-        } else if ( isalnum( cmd[index] ) ) {
+        } else if ( cgc_isalnum( cmd[index] ) ) {
             /// if left or right are not set then this is it
             if ( sc->left == NULL ) {
                 sc->left = cmd + index;
@@ -120,8 +120,8 @@ psplitCommand parse_command_line( char *cmd )
         goto end;
     }
 error:
-    printf("!!Error parsing commandline\n");
-    deallocate( (void*)sc, sizeof(splitCommand) );
+    cgc_printf("!!Error parsing commandline\n");
+    deallocate( (void*)sc, sizeof(cgc_splitCommand) );
     sc = NULL;
 end:
     return sc;
@@ -131,13 +131,13 @@ end:
  * Handles the .p command to print the current available sets
  * @return Returns nothing
  **/
-void print_sets( )
+void cgc_print_sets( )
 {
-    psetArray walker = root;
+    cgc_psetArray walker = root;
     int index = 0;
 
     while ( walker ) {
-        print_set( walker );
+        cgc_print_set( walker );
         walker = walker->next;
         if ( walker == root ) {
             break;
@@ -147,7 +147,7 @@ void print_sets( )
     return;
 }
 
-int copymem( char *dest, char*src, int start, int len )
+int cgc_copymem( char *dest, char*src, int start, int len )
 {
 	int index = 0;
 
@@ -174,9 +174,9 @@ int copymem( char *dest, char*src, int start, int len )
  * @return Returns a buffer containing the subset
  **/
 #ifdef PATCHED 
-char * print_subsets( psetArray r, int addName, int depth )
+char * cgc_print_subsets( cgc_psetArray r, int addName, int depth )
 #else
-char * print_subsets( psetArray r, int addName )
+char * cgc_print_subsets( cgc_psetArray r, int addName )
 #endif
 {
 	char *outbuff = NULL;
@@ -194,11 +194,11 @@ char * print_subsets( psetArray r, int addName )
 		return NULL;
 	}
 
-	bzero( data, DATAMAX);
+	cgc_bzero( data, DATAMAX);
 
 	if (addName != 0 ) {
-		index = copymem( data, r->varName, index, strlen(r->varName) );
-		index = copymem( data, " = ", index, 3 );
+		index = cgc_copymem( data, r->varName, index, cgc_strlen(r->varName) );
+		index = cgc_copymem( data, " = ", index, 3 );
 	}
 
 	data[index++] = '|';
@@ -213,22 +213,22 @@ char * print_subsets( psetArray r, int addName )
 			t = r->sElems[ei]->value;
 
 #ifdef PATCHED
-			if ( index + strlen(t) >= DATAMAX-1 ) {
+			if ( index + cgc_strlen(t) >= DATAMAX-1 ) {
 				goto end;
 			}
 #endif
-			index = copymem( data, t, index, strlen(t));
+			index = cgc_copymem( data, t, index, cgc_strlen(t));
 
 #ifdef PATCHED
 			if ( index < DATAMAX-1 )
 #endif
 				data[index++] = '"';
 		} else {
-			psetArray tp = retrieve_set( r->sElems[ei]->value);
+			cgc_psetArray tp = cgc_retrieve_set( r->sElems[ei]->value);
 #ifdef PATCHED
-            t = print_subsets( tp, 0, depth + 1);
+            t = cgc_print_subsets( tp, 0, depth + 1);
 #else
-			t = print_subsets( tp, 0 );
+			t = cgc_print_subsets( tp, 0 );
 #endif
 
 			if ( t == NULL ) {
@@ -237,14 +237,14 @@ char * print_subsets( psetArray r, int addName )
 			}
 
 #ifdef PATCHED
-			if ( index + strlen(t) >= DATAMAX-1 ) {
-				deallocate(t, strlen(t) + 1 );
+			if ( index + cgc_strlen(t) >= DATAMAX-1 ) {
+				deallocate(t, cgc_strlen(t) + 1 );
 				goto end;
 			}
 #endif
 
-			index = copymem( data, t, index, strlen(t));
-			deallocate(t, strlen(t) + 1 );	
+			index = cgc_copymem( data, t, index, cgc_strlen(t));
+			deallocate(t, cgc_strlen(t) + 1 );	
 		}
 
 #ifdef PATCHED
@@ -266,20 +266,20 @@ char * print_subsets( psetArray r, int addName )
 		}
 	}
 
-	if ( allocate( strlen(data) + 1, 0, (void*)&outbuff) != 0 ) {
+	if ( allocate( cgc_strlen(data) + 1, 0, (void*)&outbuff) != 0 ) {
 		outbuff = NULL;
 		goto end;
 	}
 
-	bzero( outbuff, strlen(data) + 1 );
+	cgc_bzero( outbuff, cgc_strlen(data) + 1 );
 
-	copymem( outbuff, data, 0, strlen(data) );
+	cgc_copymem( outbuff, data, 0, cgc_strlen(data) );
 
 end:
 	return outbuff;
 }
 
-int memcmp( const char *s1, const char *s2, int n )
+int cgc_memcmp( const char *s1, const char *s2, int n )
 {
 	int index = 0;
 
@@ -298,60 +298,60 @@ int memcmp( const char *s1, const char *s2, int n )
  * @param cmd Pointer to the command line
  * @return Returns nothing
  **/
-void exec_command( char *cmd )
+void cgc_exec_command( char *cmd )
 {
     char *ps = NULL;
     int index = 0;
-    psetArray psa = NULL;
+    cgc_psetArray psa = NULL;
 
     if ( cmd == NULL ) {
         goto end;
     }
 
-    if ( strcmp( cmd, ".l") == 0 ) {
+    if ( cgc_strcmp( cmd, ".l") == 0 ) {
         _terminate(0);
-    } else if ( strcmp( cmd, ".h") == 0 ) {
-        printf("setx = |\"data\", sety|\tInitialize a set\n");
-	printf("setx = seta+setb\tunion\n");
-	printf("setx = seta^setb\tintersect\n");
-	printf("setx = seta-setb\tset difference\n");
-	printf("setx = seta~setb\tsymmetric difference\n");
-	printf("seta @@ setb\t\tsubset. Returns TRUE or FALSE\n");
-	printf(".h\t\tPrint this menu\n");
-	printf(".l\t\tExit the program\n");
-	printf(".p\t\tPrint sets and their elements\n");
-	printf(".ps <setvar>\tPrint an expanded set\n");
-    } else if ( memcmp( cmd, ".ps", 3) == 0 ) {
+    } else if ( cgc_strcmp( cmd, ".h") == 0 ) {
+        cgc_printf("setx = |\"data\", sety|\tInitialize a set\n");
+	cgc_printf("setx = seta+setb\tunion\n");
+	cgc_printf("setx = seta^setb\tintersect\n");
+	cgc_printf("setx = seta-setb\tset difference\n");
+	cgc_printf("setx = seta~setb\tsymmetric difference\n");
+	cgc_printf("seta @@ setb\t\tsubset. Returns TRUE or FALSE\n");
+	cgc_printf(".h\t\tPrint this menu\n");
+	cgc_printf(".l\t\tExit the program\n");
+	cgc_printf(".p\t\tPrint sets and their elements\n");
+	cgc_printf(".ps <setvar>\tPrint an expanded set\n");
+    } else if ( cgc_memcmp( cmd, ".ps", 3) == 0 ) {
 	cmd += 3;
 
         /// Skip any spaces
 	while( *cmd == ' ' ) { ++cmd; }
 
         /// Skip to the end of the argument
-	while( isalnum(cmd[index]) ) { index++; }
+	while( cgc_isalnum(cmd[index]) ) { index++; }
 
         /// Add a null
 	cmd[index] = 0x00;
 	
-	psa = retrieve_set( cmd );
+	psa = cgc_retrieve_set( cmd );
 
 	if ( psa == NULL ) {
-            printf("!!Failed to find set: @s\n", cmd );
+            cgc_printf("!!Failed to find set: @s\n", cmd );
             goto end;
         }
 #ifdef PATCHED
-        ps = print_subsets( psa, 1, 0);
+        ps = cgc_print_subsets( psa, 1, 0);
 #else
-        ps = print_subsets( psa, 1 );
+        ps = cgc_print_subsets( psa, 1 );
 #endif 
         if ( ps != NULL ) {
-        	printf("@s\n", ps);
-		deallocate(ps, strlen(ps)+1);
+        	cgc_printf("@s\n", ps);
+		deallocate(ps, cgc_strlen(ps)+1);
 	}
-    } else if ( strcmp( cmd, ".p") == 0 ) {
-        print_sets();
+    } else if ( cgc_strcmp( cmd, ".p") == 0 ) {
+        cgc_print_sets();
     } else {
-        printf("!!Unrecognized command: @s\n", cmd);
+        cgc_printf("!!Unrecognized command: @s\n", cmd);
         goto end;
     }
 
@@ -362,11 +362,11 @@ end:
 /**
  * Function to retrieve an existing set structure from the list
  * @param varName Pointer to the name of the set to retrieve
- * @return Returns a pointer to the setArray structure or NULL if not found
+ * @return Returns a pointer to the cgc_setArray structure or NULL if not found
  **/
-psetArray retrieve_set( char *varname )
+cgc_psetArray cgc_retrieve_set( char *varname )
 {
-    psetArray set = NULL;
+    cgc_psetArray set = NULL;
 
     if (varname == NULL ) {
         goto end;
@@ -375,7 +375,7 @@ psetArray retrieve_set( char *varname )
     set = root;
 
     while ( set ) {
-        if (strcmp( varname, set->varName ) == 0 ) {
+        if (cgc_strcmp( varname, set->varName ) == 0 ) {
             goto end;
         }
 
@@ -397,7 +397,7 @@ end:
  * @param set Pointer to the new set
  * @return Does not return anything
  **/
-void add_set( psetArray newset )
+void cgc_add_set( cgc_psetArray newset )
 {
     if ( newset == NULL ) {
         goto end;
@@ -425,15 +425,15 @@ end:
  * @param Pointer to a string where the new set starts
  * @return Returns a set structure with the values populated
  **/
-psetArray parse_set( char *setstring)
+cgc_psetArray cgc_parse_set( char *setstring)
 {
-    psetArray psa = NULL;
+    cgc_psetArray psa = NULL;
     char *right = NULL;
     char *var_start = NULL;
     char *var_end = NULL;
-    setState state = start;
-    psetElement se = NULL;
-    psetArray t = NULL;
+    cgc_setState state = start;
+    cgc_psetElement se = NULL;
+    cgc_psetArray t = NULL;
 
     char temp[0x100];
 
@@ -442,12 +442,12 @@ psetArray parse_set( char *setstring)
     }
 
     // Allocate the new set array
-    if ( allocate( sizeof(setArray), 0, (void**)&psa) != 0 ) {
+    if ( allocate( sizeof(cgc_setArray), 0, (void**)&psa) != 0 ) {
         psa = NULL;
         goto end;
     }
 
-    bzero( psa, sizeof(setArray) );
+    cgc_bzero( psa, sizeof(cgc_setArray) );
 
     right = setstring;
 
@@ -461,47 +461,47 @@ psetArray parse_set( char *setstring)
                     break;
                 case new_var:
                     state = error;
-                    printf("!!Additional variable expected\n");
+                    cgc_printf("!!Additional variable expected\n");
                     break;
                 case set_var:
-                    bzero(temp, 0x100);
+                    cgc_bzero(temp, 0x100);
 
                     // Max value length of 10
                     if ( right-var_start > 10 ) {
-                        printf("!!Invalid set data length\n");
+                        cgc_printf("!!Invalid set data length\n");
                         state = error;
                         goto end;
                     }
 
-                    memcpy( temp, var_start, right-var_start);
-                    t = retrieve_set( temp );
+                    cgc_memcpy( temp, var_start, right-var_start);
+                    t = cgc_retrieve_set( temp );
 
                     if ( t == NULL ) {
-                        printf("!!Cannot have a non-existant set as an element\n");
+                        cgc_printf("!!Cannot have a non-existant set as an element\n");
                         state = error;
                         break;
                     }
 
-                    se = create_element( temp, SET );
+                    se = cgc_create_element( temp, SET );
 
                     if ( se == NULL ) {
-                        printf("!!Failed to create element\n");
+                        cgc_printf("!!Failed to create element\n");
                         state = error;
                         break;
                     }
 
-                    if ( element_in_set( psa, se ) ) {
-                        printf("!!Elements must be unique\n");
-                        free_element(se);
-                        free_set_array( psa );
+                    if ( cgc_element_in_set( psa, se ) ) {
+                        cgc_printf("!!Elements must be unique\n");
+                        cgc_free_element(se);
+                        cgc_free_set_array( psa );
                         se = NULL;
                         psa = NULL;
                         state = error;
                         goto end;
                     }
 
-                    if ( add_element_to_set( psa, se ) ) {
-                        printf("Failed to ad el\n");
+                    if ( cgc_add_element_to_set( psa, se ) ) {
+                        cgc_printf("Failed to ad el\n");
                         state = error;
                         goto end;
                     }
@@ -513,36 +513,36 @@ psetArray parse_set( char *setstring)
             switch ( state ) {
                 case open_double:
                     state = close_double;
-                    bzero(temp, 0x100);
+                    cgc_bzero(temp, 0x100);
 
                     // Max value length of 10
                     if ( right-var_start > 10 ) {
-                        printf("!!Invalid set data length\n");
+                        cgc_printf("!!Invalid set data length\n");
                         state = error;
                         goto end;
                     }
 
-                    memcpy( temp, var_start, right-var_start);
-                    se = create_element( temp, VALUE );
+                    cgc_memcpy( temp, var_start, right-var_start);
+                    se = cgc_create_element( temp, VALUE );
 
                     if ( se == NULL ) {
-                        printf("Failed to cel\n");
+                        cgc_printf("Failed to cel\n");
                         state = error;
                         goto end;
                     }
 
-                    if ( element_in_set( psa, se ) ) {
-                        printf("!!Elements must be unique\n");
-                        free_element(se);
-                        free_set_array( psa );
+                    if ( cgc_element_in_set( psa, se ) ) {
+                        cgc_printf("!!Elements must be unique\n");
+                        cgc_free_element(se);
+                        cgc_free_set_array( psa );
                         se = NULL;
                         psa = NULL;
                         state = error;
                         goto end;
                     }
 
-                    if ( add_element_to_set( psa, se ) ) {
-                        printf("Failed to ad el\n");
+                    if ( cgc_add_element_to_set( psa, se ) ) {
+                        cgc_printf("Failed to ad el\n");
                         state = error;
                         goto end;
                     }
@@ -551,7 +551,7 @@ psetArray parse_set( char *setstring)
                 case set_var:
                 case close_double:
                     state = error;
-                    printf("!!Malformed set\n");
+                    cgc_printf("!!Malformed set\n");
                     break;
                 default:
                     state = open_double;
@@ -562,36 +562,36 @@ psetArray parse_set( char *setstring)
             switch ( state ) {
                 case set_var:
                     var_end = right;
-                    bzero( temp, 0x100 );
+                    cgc_bzero( temp, 0x100 );
 
                     // Max set name is 15
                     if ( right-var_start > 15 ) {
-                        printf("!!Invalid set name length\n");
+                        cgc_printf("!!Invalid set name length\n");
                         state = error;
                         goto end;
                     }
 
-                    memcpy( temp, var_start, right-var_start);
-                    se = create_element( temp, SET );
+                    cgc_memcpy( temp, var_start, right-var_start);
+                    se = cgc_create_element( temp, SET );
 
                     if ( se == NULL ) {
-                        printf("!!Create element failed\n");
+                        cgc_printf("!!Create element failed\n");
                         state = error;
                         goto end;
                     }
 
-                    if ( element_in_set( psa, se ) ) {
-                        printf("!!Elements must be unique\n");
-                        free_element(se);
-                        free_set_array( psa );
+                    if ( cgc_element_in_set( psa, se ) ) {
+                        cgc_printf("!!Elements must be unique\n");
+                        cgc_free_element(se);
+                        cgc_free_set_array( psa );
                         se = NULL;
                         psa = NULL;
                         state = error;
                         goto end;
                     }
 
-                    if ( add_element_to_set( psa, se ) ) {
-                        printf("!!Failed to add element\n");
+                    if ( cgc_add_element_to_set( psa, se ) ) {
+                        cgc_printf("!!Failed to add element\n");
                         state = error;
                         goto end;
                     }
@@ -604,46 +604,46 @@ psetArray parse_set( char *setstring)
             switch ( state ) {
                 case open_set:
                     state = error;
-                    printf("!!Malformed set\n");
+                    cgc_printf("!!Malformed set\n");
                     break;
                 case set_var:
-                    bzero( temp, 0x100 );
+                    cgc_bzero( temp, 0x100 );
 
                     // Max set name is 15
                     if ( right-var_start > 15 ) {
-                        printf("!!Invalid set name length\n");
+                        cgc_printf("!!Invalid set name length\n");
                         state = error;
                         goto end;
                     }
 
-                    memcpy( temp, var_start, right-var_start);
-                    se = create_element( temp, SET );
+                    cgc_memcpy( temp, var_start, right-var_start);
+                    se = cgc_create_element( temp, SET );
 
                     if ( se == NULL ) {
-                        printf("!!Failed to create element\n");
+                        cgc_printf("!!Failed to create element\n");
                         state = error;
                         goto end;
                     }
 
-                    if ( element_in_set( psa, se ) ) {
-                        printf("!!Elements must be unique\n");
-                        free_element(se);
-                        free_set_array( psa );
+                    if ( cgc_element_in_set( psa, se ) ) {
+                        cgc_printf("!!Elements must be unique\n");
+                        cgc_free_element(se);
+                        cgc_free_set_array( psa );
                         se = NULL;
                         psa = NULL;
                         state = error;
                         goto end;
                     }
 
-                    if ( add_element_to_set( psa, se ) ) {
-                        printf("!!Failed to add element\n");
+                    if ( cgc_add_element_to_set( psa, se ) ) {
+                        cgc_printf("!!Failed to add element\n");
                         state = error;
                         goto end;
                     }
                     state = new_var;
                     break;
 		case open_double:
-                    printf("!!Improperly formated set\n");
+                    cgc_printf("!!Improperly formated set\n");
                     state = error;
                     goto end;
                     break;
@@ -662,7 +662,7 @@ psetArray parse_set( char *setstring)
                     break;
                 case close_double:
                     state = error;
-                    printf("!!Invalid character\n");
+                    cgc_printf("!!Invalid character\n");
                     goto end;
                 default:
                     break;
@@ -673,7 +673,7 @@ psetArray parse_set( char *setstring)
 
 end:
     if ( state != close_set ) {
-        free_set_array( psa );
+        cgc_free_set_array( psa );
         psa = NULL;
     }
 
@@ -688,35 +688,35 @@ end:
  * @param settwo Second set
  * @return The symmetric difference of the two sets.
  **/
-psetArray symmetric_difference( psetArray setone, psetArray settwo )
+cgc_psetArray cgc_symmetric_difference( cgc_psetArray setone, cgc_psetArray settwo )
 {
-	psetArray final = NULL;
-	psetArray diffone = NULL;
-	psetArray difftwo = NULL;
+	cgc_psetArray final = NULL;
+	cgc_psetArray diffone = NULL;
+	cgc_psetArray difftwo = NULL;
 	int index = 0;
 
 	if ( setone == NULL || settwo == NULL ) {
 		goto end;
 	}
 
-	diffone = set_difference( setone, settwo );
+	diffone = cgc_set_difference( setone, settwo );
 
 	if ( diffone == NULL ) {
 		goto end;
 	}
 
-	difftwo = set_difference( settwo, setone );
+	difftwo = cgc_set_difference( settwo, setone );
 
 	if ( difftwo == NULL ) {
-		free_set_array( diffone );
+		cgc_free_set_array( diffone );
 		diffone = NULL;
 		goto end;
 	}
 
-	final = unionset( diffone, difftwo );
+	final = cgc_unionset( diffone, difftwo );
 
-	free_set_array(diffone);
-	free_set_array(difftwo);
+	cgc_free_set_array(diffone);
+	cgc_free_set_array(difftwo);
 
 end:
 	return final;
@@ -731,9 +731,9 @@ end:
  * @param settwo Second set
  * @return The set difference of the two sets.
  **/
-psetArray set_difference( psetArray setone, psetArray settwo )
+cgc_psetArray cgc_set_difference( cgc_psetArray setone, cgc_psetArray settwo )
 {
-    psetArray final = NULL;
+    cgc_psetArray final = NULL;
     int index = 0;
     int res = 0;
 
@@ -741,25 +741,25 @@ psetArray set_difference( psetArray setone, psetArray settwo )
         goto end;
     }
 
-    if ( allocate( sizeof(setArray), 0, (void**)&final ) != 0 ) {
+    if ( allocate( sizeof(cgc_setArray), 0, (void**)&final ) != 0 ) {
         final = NULL;
         goto end;
     }
 
-    bzero( final, sizeof(setArray) );
+    cgc_bzero( final, sizeof(cgc_setArray) );
 
     while ( index < setone->varCount ) {
-        res = element_in_set( settwo, setone->sElems[index] );
+        res = cgc_element_in_set( settwo, setone->sElems[index] );
 
         if ( res == -1 ) {
-            free_set_array( final );
+            cgc_free_set_array( final );
             final = NULL;
             goto end;
         }
 
         if ( res == 0 ) {
-            if ( add_element_to_set( final, copy_element( setone->sElems[index])) != 0 ) {
-                free_set_array(final);
+            if ( cgc_add_element_to_set( final, cgc_copy_element( setone->sElems[index])) != 0 ) {
+                cgc_free_set_array(final);
                 final = NULL;
                 goto end;
             }
@@ -773,14 +773,14 @@ end:
 }
 
 /**
- * Performs an intersect on two sets
+ * Performs an cgc_intersect on two sets
  * @param setone First set
  * @param settwo Second set
- * @return The intersect of the two sets
+ * @return The cgc_intersect of the two sets
  **/
-psetArray intersect( psetArray setone, psetArray settwo )
+cgc_psetArray cgc_intersect( cgc_psetArray setone, cgc_psetArray settwo )
 {
-    psetArray newset = NULL;
+    cgc_psetArray newset = NULL;
     int index = 0;
     int res = 0;
 
@@ -788,27 +788,27 @@ psetArray intersect( psetArray setone, psetArray settwo )
         goto end;
     }
 
-    if ( allocate( sizeof(setArray), 0, (void**)&newset) != 0 ) {
-        printf("!!Failed to allocate newset\n");
+    if ( allocate( sizeof(cgc_setArray), 0, (void**)&newset) != 0 ) {
+        cgc_printf("!!Failed to allocate newset\n");
         newset = NULL;
         goto end;
     }
 
-    bzero( newset, sizeof(setArray) );
+    cgc_bzero( newset, sizeof(cgc_setArray) );
 
     /// Only those elements in both are put into the newset
     while ( index < setone->varCount ) {
-        res = element_in_set( settwo, setone->sElems[index] );
+        res = cgc_element_in_set( settwo, setone->sElems[index] );
 
         if ( res == -1 ) {
-            printf("!!Unknown error\n");
-            free_set_array( newset );
+            cgc_printf("!!Unknown error\n");
+            cgc_free_set_array( newset );
             newset = NULL;
             goto end;
         } else if ( res == 1 ) {
-            if ( add_element_to_set( newset, copy_element(setone->sElems[index])) != 0 ) {
-                printf("!!Error adding element in intersect\n");
-                free_set_array( newset);
+            if ( cgc_add_element_to_set( newset, cgc_copy_element(setone->sElems[index])) != 0 ) {
+                cgc_printf("!!Error adding element in cgc_intersect\n");
+                cgc_free_set_array( newset);
                 newset = NULL;
                 goto end;
             }
@@ -827,9 +827,9 @@ end:
  * @param settwo Second set
  * @return The union of the two sets
  **/
-psetArray unionset( psetArray setone, psetArray settwo )
+cgc_psetArray cgc_unionset( cgc_psetArray setone, cgc_psetArray settwo )
 {
-    psetArray newset = NULL;
+    cgc_psetArray newset = NULL;
     int index = 0;
     int res = 0;
 
@@ -837,19 +837,19 @@ psetArray unionset( psetArray setone, psetArray settwo )
         goto end;
     }
 
-    if ( allocate( sizeof(setArray), 0, (void**)&newset) != 0 ) {
-        printf("!!Failed to allocate new nset\n");
+    if ( allocate( sizeof(cgc_setArray), 0, (void**)&newset) != 0 ) {
+        cgc_printf("!!Failed to allocate new nset\n");
         newset = NULL;
         goto end;
     }
 
-    bzero( newset, sizeof(setArray) );
+    cgc_bzero( newset, sizeof(cgc_setArray) );
 
     /// All elements of the first set will be in the union
     while ( index < setone->varCount ) {
-        if ( add_element_to_set( newset, copy_element( setone->sElems[index]) ) != 0 ) {
-            printf("!!Failed to add element in union\n");
-            free_set_array( newset );
+        if ( cgc_add_element_to_set( newset, cgc_copy_element( setone->sElems[index]) ) != 0 ) {
+            cgc_printf("!!Failed to add element in union\n");
+            cgc_free_set_array( newset );
             newset = NULL;
             goto end;
         }
@@ -860,17 +860,17 @@ psetArray unionset( psetArray setone, psetArray settwo )
 
     /// Only elements from the second not already in the first will be copied
     while ( index < settwo->varCount ) {
-        res = element_in_set( newset, settwo->sElems[index] );
+        res = cgc_element_in_set( newset, settwo->sElems[index] );
 
         if ( res == -1 ) {
-            printf("!!!Error in intersect\n");
-            free_set_array( newset );
+            cgc_printf("!!!Error in cgc_intersect\n");
+            cgc_free_set_array( newset );
             newset = NULL;
             goto end;
         } else if ( res == 0 ) {
-            if ( add_element_to_set( newset, copy_element( settwo->sElems[index]) ) != 0 ) {
-                printf("!!!Failed to add element in intersect\n");
-                free_set_array( newset );
+            if ( cgc_add_element_to_set( newset, cgc_copy_element( settwo->sElems[index]) ) != 0 ) {
+                cgc_printf("!!!Failed to add element in cgc_intersect\n");
+                cgc_free_set_array( newset );
                 newset = NULL;
                 goto end;
             }
@@ -889,16 +889,16 @@ end:
  * @param setData Data to parse
  * @return Returns the newly created set
  **/
-psetArray parse_operations( char *setName, char *setData )
+cgc_psetArray cgc_parse_operations( char *setName, char *setData )
 {
-    psetArray setone = NULL;
+    cgc_psetArray setone = NULL;
     int set_one_is_new = 0;
-    psetArray settwo = NULL;
+    cgc_psetArray settwo = NULL;
     int set_two_is_new = 0;
     char setval[0x10];
     int operation = 0;
     int nlen = 0;
-    psetArray final = NULL;
+    cgc_psetArray final = NULL;
 
     if ( setName == NULL || setData == NULL ) {
         goto end;
@@ -909,7 +909,7 @@ psetArray parse_operations( char *setName, char *setData )
 
             /// Only two sets can be referenced per command
             if ( setone == NULL ) {
-                setone = parse_set( setData );
+                setone = cgc_parse_set( setData );
 
                 /// Skip the opening "|"
                 setData++;
@@ -921,12 +921,12 @@ psetArray parse_operations( char *setName, char *setData )
                     // This is for the later freeing operation
                     set_one_is_new = 1;
                 } else {
-                    printf("!!Set parsing failed\n");
+                    cgc_printf("!!Set parsing failed\n");
                     goto end;
                 }
 
             } else if ( settwo == NULL ) {
-                settwo = parse_set( setData );
+                settwo = cgc_parse_set( setData );
 
                 /// This is to pass the '|'
                 setData++;
@@ -935,28 +935,28 @@ psetArray parse_operations( char *setName, char *setData )
 
                     set_two_is_new = 1;
                 } else {
-                    printf("!!Set parsing failed\n");
+                    cgc_printf("!!Set parsing failed\n");
                     goto end;
                 }
             } else {
-                printf("!!Too many sets\n");
+                cgc_printf("!!Too many sets\n");
                 goto end;
             }
         } else if (*setData == '^' || *setData == '+' || *setData == '-'
 			|| *setData == '~') {
             if ( operation != 0 ) {
-                printf("!!Only one operation allowed.\n");
+                cgc_printf("!!Only one operation allowed.\n");
                 goto end;
             }
 
             operation = *setData;
-        } else if ( isalnum(*setData) ) {
+        } else if ( cgc_isalnum(*setData) ) {
             char *setstart = setData;
 
             /// Get to the end of the set value
-            while( isalnum(*setData) ) { setData++; }
+            while( cgc_isalnum(*setData) ) { setData++; }
 
-            bzero( setval, 0x10);
+            cgc_bzero( setval, 0x10);
             nlen = setData-setstart;
 
             /// Because there is a later increment of setData the value
@@ -964,33 +964,33 @@ psetArray parse_operations( char *setName, char *setData )
             --setData;            
 
             if ( nlen > 0x0f ) {
-                printf("!!Invalid set name length\n");
+                cgc_printf("!!Invalid set name length\n");
                 goto end;
             }
 
-            memcpy( setval, setstart, nlen );
+            cgc_memcpy( setval, setstart, nlen );
 
             if ( setone == NULL ) {
-                setone = retrieve_set( setval );
+                setone = cgc_retrieve_set( setval );
                 if ( setone == NULL ) {
-                    printf("!!Nonexistant set: @s\n", setval);
+                    cgc_printf("!!Nonexistant set: @s\n", setval);
                     goto end;
                 }
             } else if ( settwo == NULL ) {
-                settwo = retrieve_set( setval );
+                settwo = cgc_retrieve_set( setval );
                 if ( settwo == NULL ) {
-                    printf("!!Nonexistant set: @s\n", setval);
+                    cgc_printf("!!Nonexistant set: @s\n", setval);
                     goto end;
                 }
             } else {
-                printf("!!Too many sets\n");
+                cgc_printf("!!Too many sets\n");
                 goto end;
             }
         } else if ( *setData == ' ' ) {
             setData++;
             continue;
         } else {
-            printf("!!Invalid sets\n");
+            cgc_printf("!!Invalid sets\n");
             goto end;
         }
 
@@ -999,20 +999,20 @@ psetArray parse_operations( char *setName, char *setData )
 
     /// Handle operation
     if ( operation == '+' ) {
-        final = unionset( setone, settwo );
+        final = cgc_unionset( setone, settwo );
     } else if ( operation == '^' ) {
-        final = intersect( setone, settwo );
+        final = cgc_intersect( setone, settwo );
     } else if ( operation == '-' ) {
-        final = set_difference(setone, settwo );
+        final = cgc_set_difference(setone, settwo );
     } else if ( operation == '~' ) {
-        final = symmetric_difference( setone, settwo );
+        final = cgc_symmetric_difference( setone, settwo );
     } else {
         // If it is just a new set being initialized then do not
         //      free it.
-        final = copy_set( setone );
+        final = cgc_copy_set( setone );
 
 	if ( final == NULL ) {
-		printf("!!Copy failed\n");
+		cgc_printf("!!Copy failed\n");
 		goto end;
 	}
     }
@@ -1021,15 +1021,15 @@ psetArray parse_operations( char *setName, char *setData )
         goto end;
     }
  
-    strncpy( final->varName, setName, 15 );
+    cgc_strncpy( final->varName, setName, 15 );
 
     // Ensure that final will not contain itself as a set
     int index = 0;
     for (index = 0; index < final->varCount; index++ ) {
         if ( final->sElems[index]->type == SET ) {
-            if ( strcmp( final->sElems[index]->value, final->varName ) == 0 ) {
-                printf("!!A set cannot contain itself\n");
-                free_set_array(final);
+            if ( cgc_strcmp( final->sElems[index]->value, final->varName ) == 0 ) {
+                cgc_printf("!!A set cannot contain itself\n");
+                cgc_free_set_array(final);
                 final = NULL;
                 goto end;
             }
@@ -1038,12 +1038,12 @@ psetArray parse_operations( char *setName, char *setData )
  
 end:
     if ( settwo && set_two_is_new) {
-        free_set_array( settwo );
+        cgc_free_set_array( settwo );
         settwo = NULL;
     }
 
     if ( setone && set_one_is_new) {
-        free_set_array( setone );
+        cgc_free_set_array( setone );
         setone = NULL;
     }
 
@@ -1055,11 +1055,11 @@ end:
  * @param psc Pointer to a split command line structure
  * @return Returns 0 on success, non zero on failure
  **/
-int handle_set_var( psplitCommand psc )
+int cgc_handle_set_var( cgc_psplitCommand psc )
 {
     int retval = -1;
-    psetArray psa = NULL;
-    psetArray existing_sa = NULL;
+    cgc_psetArray psa = NULL;
+    cgc_psetArray existing_sa = NULL;
 
     if ( psc == NULL ) {
         goto end;
@@ -1073,22 +1073,22 @@ int handle_set_var( psplitCommand psc )
         goto end;
     }
 
-    psa = parse_operations( psc->left, psc->right );
+    psa = cgc_parse_operations( psc->left, psc->right );
 
     if (psa == NULL) {
-        printf("!!Error parsing sets\n");
+        cgc_printf("!!Error parsing sets\n");
         goto end;
     }
 
-    existing_sa = retrieve_set( psa->varName );
+    existing_sa = cgc_retrieve_set( psa->varName );
 
     if ( existing_sa == NULL ) {
 	/// If the set is not yet in the list then add it
-        add_set( psa );        
+        cgc_add_set( psa );        
     } else {
         /// Free existing set elements
         for ( retval = 0; retval < existing_sa->varCount; retval++) {
-            free_element( existing_sa->sElems[retval] );
+            cgc_free_element( existing_sa->sElems[retval] );
             existing_sa->sElems[retval] = NULL;
         }
 
@@ -1100,9 +1100,9 @@ int handle_set_var( psplitCommand psc )
 	/// Update to the correct element count
         existing_sa->varCount = psa->varCount;
 
-	/// deallocate is used instead of free_set_array to prevent
+	/// deallocate is used instead of cgc_free_set_array to prevent
 	///	the elements from being freed as well.
-        deallocate(psa, sizeof(setArray));
+        deallocate(psa, sizeof(cgc_setArray));
     }
 
     retval = 0;
@@ -1111,11 +1111,11 @@ end:
     return retval;
 }
 
-void issubset( char *left, char* right )
+void cgc_issubset( char *left, char* right )
 {
 	int index = 0;
-	psetArray sub = NULL;
-	psetArray super = NULL;
+	cgc_psetArray sub = NULL;
+	cgc_psetArray super = NULL;
 	char * setone = NULL;
 	char * settwo = NULL;
 
@@ -1128,17 +1128,17 @@ void issubset( char *left, char* right )
 	}
 
 	if ( left[0] == '|' ) {
-		sub = parse_set( left );
+		sub = cgc_parse_set( left );
 	} else {
 		while ( left[index] != ' ' && left[index] != 0x00 ) {
 			index++;
 		}
 		left[index] = 0x00;
-		sub = retrieve_set( left );
+		sub = cgc_retrieve_set( left );
 	}
 
 	if ( sub == NULL ) {
-		printf("!!Failed to parse left set\n");
+		cgc_printf("!!Failed to parse left set\n");
 		goto end;
 	}
 
@@ -1147,36 +1147,36 @@ void issubset( char *left, char* right )
 	}
 
 	if ( right[0] == '|' ) {
-		super = parse_set( right );
+		super = cgc_parse_set( right );
 	} else {
 		index = 0;
 		while ( right[index] != ' ' && right[index] != 0x00 ) {
 			index++;
 		}
 		right[index] = 0x00;
-		super = retrieve_set( right );
+		super = cgc_retrieve_set( right );
 	}
 
 	if ( super == NULL ) {
-		printf("!!Failed to parse right set\n");
+		cgc_printf("!!Failed to parse right set\n");
 		goto end;
 	}
 
 	index = 0;
 	while ( index < sub->varCount ) {
-		if ( !element_in_set( super, sub->sElems[index] ) ) {
-			printf("FALSE\n");
+		if ( !cgc_element_in_set( super, sub->sElems[index] ) ) {
+			cgc_printf("FALSE\n");
 			goto end;
 		}
 		index++;
 	}	
 	
-	printf("TRUE\n");
+	cgc_printf("TRUE\n");
 end:
 	if ( super ) {
 		// If the next pointer is null it means it was a new set
 		if ( super->next == NULL ) {
-			free_set_array( super );
+			cgc_free_set_array( super );
 			super = NULL;
 		}
 	}
@@ -1188,22 +1188,22 @@ end:
  * Function to handle the command line interface and accept input
  * @return Return indicates the end of the program.
  **/
-void command_loop( void )
+void cgc_command_loop( void )
 {
     int result = 0;
     char cmd[0x100];
-    psplitCommand psc = NULL;
+    cgc_psplitCommand psc = NULL;
 
     while ( 1 ) {
-        bzero( cmd, 0x100 );
-        printf("> ");
+        cgc_bzero( cmd, 0x100 );
+        cgc_printf("> ");
         
-        result = receive_until( cmd, '\n', 0xff );
+        result = cgc_receive_until( cmd, '\n', 0xff );
 
         if ( cmd[0] == '.' ) {
-            exec_command( cmd );
+            cgc_exec_command( cmd );
         } else {
-            psc = parse_command_line( cmd );
+            psc = cgc_parse_command_line( cmd );
 
             /// If command line parsing failed then exit
             if ( psc == NULL ) {
@@ -1212,12 +1212,12 @@ void command_loop( void )
             }
 
             if ( psc->mid == '=' ) {
-                handle_set_var( psc );
+                cgc_handle_set_var( psc );
             } else if ( psc->mid == '@' ) {
-                issubset( psc->left, psc->right );
+                cgc_issubset( psc->left, psc->right );
             }
 
-            deallocate( psc, sizeof( splitCommand ) );
+            deallocate( psc, sizeof( cgc_splitCommand ) );
         }
     }
 end:
@@ -1226,6 +1226,6 @@ end:
 
 int main(void)
 {
-    command_loop();
+    cgc_command_loop();
     return 0;
 }

@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,18 +33,18 @@ typedef struct Ingredient {
 	char item[100];
 	struct Ingredient *next;
 
-} Ingredient_Type;
+} cgc_Ingredient_Type;
 
 
 typedef struct Recipe {
 
 	char Title[200];
 	int Tagged;
-	Ingredient_Type *Ingredient_List;
+	cgc_Ingredient_Type *Ingredient_List;
 	char **Instructions;
 	struct Recipe *next;
 
-} Recipe_Type;
+} cgc_Recipe_Type;
 
 
 typedef struct List {
@@ -52,23 +52,23 @@ typedef struct List {
 	char *item;
 	struct List *next;
 
-} Shopping_List_Type;
+} cgc_Shopping_List_Type;
 
 
-void print_main_menu(void);
-int new_recipe(Recipe_Type **);
-int get_ingredients(Recipe_Type *);
-void get_instructions(Recipe_Type *);
-void print_all_tagged(Recipe_Type *);
-void find_recipe(Recipe_Type *);
-void print_recipe(Recipe_Type *);
-void print_shopping_list(Recipe_Type *);
-Shopping_List_Type *build_shopping_list(Recipe_Type *);
-int match_str(char *search, char *);
-int validate_measurement(char *);
-void sort_shopping_list(Shopping_List_Type *);
-int compare_strings(char *, char *);
-int split_ingredient(char *, char *, int, char *, int);
+void cgc_print_main_menu(void);
+int cgc_new_recipe(cgc_Recipe_Type **);
+int cgc_get_ingredients(cgc_Recipe_Type *);
+void cgc_get_instructions(cgc_Recipe_Type *);
+void cgc_print_all_tagged(cgc_Recipe_Type *);
+void cgc_find_recipe(cgc_Recipe_Type *);
+void cgc_print_recipe(cgc_Recipe_Type *);
+void cgc_print_shopping_list(cgc_Recipe_Type *);
+cgc_Shopping_List_Type *cgc_build_shopping_list(cgc_Recipe_Type *);
+int cgc_match_str(char *search, char *);
+int cgc_validate_measurement(char *);
+void cgc_sort_shopping_list(cgc_Shopping_List_Type *);
+int cgc_compare_strings(char *, char *);
+int cgc_split_ingredient(char *, char *, int, char *, int);
 
 //int parse_command(char *buffer, char separator, char ***args);
 //void find_matches(bst_node_type *head, int arg_count, char **args);

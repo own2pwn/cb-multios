@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,7 +23,7 @@
 
 #include "compare.h"
 
-int CompareIds(tag_and_file *song1, tag_and_file *song2)
+int cgc_CompareIds(cgc_tag_and_file *song1, cgc_tag_and_file *song2)
 {
     if (song1->tag.id > song2->tag.id)
         return 1;
@@ -33,22 +33,22 @@ int CompareIds(tag_and_file *song1, tag_and_file *song2)
         return -1;
 }
 
-int CompareTitles(tag_and_file *song1, tag_and_file *song2)
+int cgc_CompareTitles(cgc_tag_and_file *song1, cgc_tag_and_file *song2)
 {
-    return memcmp(song1->tag.title, song2->tag.title, sizeof(song1->tag.title));
+    return cgc_memcmp(song1->tag.title, song2->tag.title, sizeof(song1->tag.title));
 }
 
-int CompareArtists(tag_and_file *song1, tag_and_file *song2)
+int cgc_CompareArtists(cgc_tag_and_file *song1, cgc_tag_and_file *song2)
 {
-    return memcmp(song1->tag.artist, song2->tag.artist, sizeof(song1->tag.artist));
+    return cgc_memcmp(song1->tag.artist, song2->tag.artist, sizeof(song1->tag.artist));
 }
 
-int CompareAlbums(tag_and_file *song1, tag_and_file *song2)
+int cgc_CompareAlbums(cgc_tag_and_file *song1, cgc_tag_and_file *song2)
 {
-    return memcmp(song1->tag.album, song2->tag.album, sizeof(song1->tag.album));
+    return cgc_memcmp(song1->tag.album, song2->tag.album, sizeof(song1->tag.album));
 }
 
-int CompareAlbumTracks(tag_and_file *song1, tag_and_file *song2)
+int cgc_CompareAlbumTracks(cgc_tag_and_file *song1, cgc_tag_and_file *song2)
 {
     if (song1->tag.track_number > song2->tag.track_number)
         return 1;

@@ -69,7 +69,7 @@ DefineFunction(TrainerObject, void, init, unsigned int level)
     for (i = 0; i < count; i++)
     {
         int mlevel = $($g->m_random, randint, 4) + level - count;
-        Monster *m = Monster_new_random(mlevel > 0 ? mlevel : 1);
+        Monster *m = Monster_new_cgc_random(mlevel > 0 ? mlevel : 1);
         $(this->m_team, push, m);
     }
 }

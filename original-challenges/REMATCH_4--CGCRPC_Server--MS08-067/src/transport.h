@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,17 +29,17 @@ THE SOFTWARE.
 #define MAX_TRANSPORT_SIZE 1024*4
 
 typedef struct TransportMessage_s {
-  uint8_t reserved;
-  uint32_t size;
-  uint8_t *data;
-  uint32_t currentOffset;
-} TransportMessage;
+  cgc_uint8_t reserved;
+  cgc_uint32_t size;
+  cgc_uint8_t *data;
+  cgc_uint32_t currentOffset;
+} cgc_TransportMessage;
 
 
-int ReceiveTransportMessage(TransportMessage **ptpMessage);
-void DestroyTransportMessage(TransportMessage **ptpMessage);
-void SendTransportMessage(TransportMessage *tpMessage);
-void ResetTransportMessage(TransportMessage *tpMessage);
-int ReadFromTransportMessage(TransportMessage *tpMessage, uint8_t *buffer, int size);
+int cgc_ReceiveTransportMessage(cgc_TransportMessage **ptpMessage);
+void cgc_DestroyTransportMessage(cgc_TransportMessage **ptpMessage);
+void cgc_SendTransportMessage(cgc_TransportMessage *tpMessage);
+void cgc_ResetTransportMessage(cgc_TransportMessage *tpMessage);
+int cgc_ReadFromTransportMessage(cgc_TransportMessage *tpMessage, cgc_uint8_t *buffer, int size);
 
 #endif

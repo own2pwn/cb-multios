@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,15 +23,15 @@
 #include <cstdio.h>
 #include "interface.h"
 
-Interface::Interface(Engine &engine) : d_engine(engine)
+cgc_Interface::cgc_Interface(cgc_Engine &engine) : d_engine(engine)
 {
 }
 
-Interface::~Interface()
+cgc_Interface::~cgc_Interface()
 {
 }
 
-bool Interface::process(unsigned char *data, unsigned int len)
+bool cgc_Interface::cgc_process(unsigned char *data, unsigned int len)
 {
     unsigned int msg;
 
@@ -45,28 +45,28 @@ bool Interface::process(unsigned char *data, unsigned int len)
     switch (msg)
     {
     case MSG_QUIT:
-        send_response(RESP_OK);
+        cgc_send_response(RESP_OK);
         return false;
     case MSG_UPDATE:
-        if (d_engine.update_rules(data, len))
-            return send_response(RESP_OK);
+        if (d_engine.cgc_update_rules(data, len))
+            return cgc_send_response(RESP_OK);
         else
-            return send_response(RESP_ERROR);
+            return cgc_send_response(RESP_ERROR);
     case MSG_CHECK:
-        if (d_engine.process(data, len))
+        if (d_engine.cgc_process(data, len))
             // return ERROR if malware
-            return send_response(RESP_ERROR);
+            return cgc_send_response(RESP_ERROR);
         else
-            return send_response(RESP_OK);
+            return cgc_send_response(RESP_OK);
     case MSG_WHITELIST:
-        d_engine.whitelist(data, len);
-        return send_response(RESP_OK);
+        d_engine.cgc_whitelist(data, len);
+        return cgc_send_response(RESP_OK);
     default:
-        return send_response(RESP_ERROR);
+        return cgc_send_response(RESP_ERROR);
     }
 }
 
-bool Interface::send_response(unsigned int resp)
+bool cgc_Interface::cgc_send_response(unsigned int resp)
 {
-    return fwrite(&resp, 4, stdout) == 4;
+    return cgc_fwrite(&resp, 4, stdout) == 4;
 }

@@ -29,16 +29,16 @@ THE SOFTWARE.
 
 #include "stdlib.h"
 
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define va_start(v,l)   __builtin_va_start(v,l)
 #define va_end(v)       __builtin_va_end(v)
 #define va_arg(v,l)     __builtin_va_arg(v,l)
 
-void FailAndTerminate(char *error_msg);
-void ReceiveBytes(void *buffer, size_t size);
-void HexDump(uint8_t *data, size_t size);
-void TransmitBytes(void *buffer, size_t size);
-void TransmitFormattedBytes(char *format, ...);
-void vTransmitFormattedBytes(char *format, va_list arg_list);
+void cgc_FailAndTerminate(char *error_msg);
+void cgc_ReceiveBytes(void *buffer, cgc_size_t size);
+void cgc_HexDump(cgc_uint8_t *data, cgc_size_t size);
+void cgc_TransmitBytes(void *buffer, cgc_size_t size);
+void cgc_TransmitFormattedBytes(char *format, ...);
+void cgc_vTransmitFormattedBytes(char *format, cgc_va_list arg_list);
 
 #endif

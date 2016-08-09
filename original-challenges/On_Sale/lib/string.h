@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,7 +32,7 @@
  * @param term String termination char
  * @return 0 if equal, -1 if not
  */
-int streq(const char* str1, const char* str2, const char term);
+int cgc_streq(const char* str1, const char* str2, const char term);
 
 /**
  * Compares two strings.
@@ -42,7 +42,7 @@ int streq(const char* str1, const char* str2, const char term);
  * @param term String termination char
  * @return 0 if equal, -1 if str1 < str2, 1 if str1 > str2
  */
-int strcmp(const char* str1, const char* str2, const char term);
+int cgc_strcmp(const char* str1, const char* str2, const char term);
 
 /**
  * Count number of chars preceeding the term char.
@@ -51,7 +51,7 @@ int strcmp(const char* str1, const char* str2, const char term);
  * @param term String termination char
  * @returns Number of bytes preceeding the term char.
  */
-unsigned int strlen(const char *str, const char term);
+unsigned int cgc_strlen(const char *str, const char term);
 
 #endif
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,23 +24,23 @@
 #include "common.h"
 #include "rng.h"
 
-static int system_init(rng_t *rng)
+static int cgc_system_init(cgc_rng_t *rng)
 {
     rng->priv = NULL;
     return SUCCESS;
 }
 
-static int system_get_bytes(rng_t *rng, unsigned char *out, unsigned int cnt)
+static int cgc_system_get_bytes(cgc_rng_t *rng, unsigned char *out, unsigned int cnt)
 {
-    size_t bytes;
-    if (random(out, cnt, &bytes) != 0 || bytes != cnt)
+    cgc_size_t bytes;
+    if (cgc_random(out, cnt, &bytes) != 0 || bytes != cnt)
         return FAILURE;
     return SUCCESS;
 }
 
-const rng_def_t system_rng = {
+const cgc_rng_def_t system_rng = {
     .name = "System",
     .id = RNG_SYSTEM,
-    .init = system_init,
-    .get_bytes = system_get_bytes
+    .init = cgc_system_init,
+    .get_bytes = cgc_system_get_bytes
 };

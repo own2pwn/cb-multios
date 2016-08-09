@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,19 +28,19 @@
 #include "strncmp.h"
 #include "strtod.h"
 
-kty_parser_t *g_parser;
+cgc_kty_parser_t *g_parser;
 
-void kty_print_item(kty_item_t *item, int depth);
-char* parse_item(kty_item_t *item, char *str);
+void cgc_kty_print_item(cgc_kty_item_t *item, int depth);
+char* cgc_parse_item(cgc_kty_item_t *item, char *str);
 
-char* eat_ws(char *str)
+char* cgc_eat_ws(char *str)
 {
   while (str && str[0] && str[0] <= ' ')
     str++;
   return str;
 }
 
-void print_escaped(char *str, int len)
+void cgc_print_escaped(char *str, int len)
 {
   int i = 0;
   char c[2] = {0}, tmp[2] = {0};
@@ -52,40 +52,40 @@ void print_escaped(char *str, int len)
     switch (c[0])
     {
       case '"':
-        fdprintf(STDOUT, "\\\""); break;
+        cgc_fdprintf(STDOUT, "\\\""); break;
       case '\\':
-        fdprintf(STDOUT, "\\\\"); break;
+        cgc_fdprintf(STDOUT, "\\\\"); break;
       case '/':
-        fdprintf(STDOUT, "\\/");  break;
+        cgc_fdprintf(STDOUT, "\\/");  break;
       case '\b':
-        fdprintf(STDOUT, "\\b");  break;
+        cgc_fdprintf(STDOUT, "\\b");  break;
       case '\f':
-        fdprintf(STDOUT, "\\f");  break;
+        cgc_fdprintf(STDOUT, "\\f");  break;
       case '\n':
-        fdprintf(STDOUT, "\\n");  break;
+        cgc_fdprintf(STDOUT, "\\n");  break;
       case '\r':
-        fdprintf(STDOUT, "\\r");  break;
+        cgc_fdprintf(STDOUT, "\\r");  break;
       case '\t':
-        fdprintf(STDOUT, "\\t");  break;
+        cgc_fdprintf(STDOUT, "\\t");  break;
       default:
-        fdprintf(STDOUT, "%s", c); break;
+        cgc_fdprintf(STDOUT, "%s", c); break;
     }
   }
 }
 
-void print_indent(int depth)
+void cgc_print_indent(int depth)
 {
   int i;
   for (i = 0; i < depth * 2; ++i)
-    fdprintf(STDOUT, " ");
+    cgc_fdprintf(STDOUT, " ");
 }
 
-void kty_int_to_string(kty_item_t *item)
+void cgc_kty_int_to_string(cgc_kty_item_t *item)
 {
-  fdprintf(STDOUT, "%d", item->item.i_int);
+  cgc_fdprintf(STDOUT, "%d", item->item.i_int);
 }
 
-void kty_double_to_string(kty_item_t *item)
+void cgc_kty_double_to_string(cgc_kty_item_t *item)
 {
   int tmp;
   double val;
@@ -93,162 +93,162 @@ void kty_double_to_string(kty_item_t *item)
   val = item->item.i_double;
   tmp = (int) val;
   if (val < 0.0 && tmp == 0)
-    fdprintf(STDOUT, "-");
-  fdprintf(STDOUT, "%d.", tmp);
+    cgc_fdprintf(STDOUT, "-");
+  cgc_fdprintf(STDOUT, "%d.", tmp);
   tmp = ((int)(val * 100.0)) % 100;
   if (tmp < 0)
     tmp = -tmp;
-  fdprintf(STDOUT, "%02d", tmp);
+  cgc_fdprintf(STDOUT, "%02d", tmp);
 }
 
-void kty_string_to_string(kty_item_t *item)
+void cgc_kty_string_to_string(cgc_kty_item_t *item)
 {
-  fdprintf(STDOUT, "\"");
-  print_escaped(item->item.i_string.s, item->item.i_string.len);
-  fdprintf(STDOUT, "\"");
+  cgc_fdprintf(STDOUT, "\"");
+  cgc_print_escaped(item->item.i_string.s, item->item.i_string.len);
+  cgc_fdprintf(STDOUT, "\"");
 }
 
-void kty_object_to_string(kty_item_t *item, int depth)
+void cgc_kty_object_to_string(cgc_kty_item_t *item, int depth)
 {
   int count = 0;
-  htbl_t *table;
-  entry_t *entry;
+  cgc_htbl_t *table;
+  cgc_entry_t *entry;
 
-  fdprintf(STDOUT, "{");
+  cgc_fdprintf(STDOUT, "{");
   table = item->item.i_object;
   if (table)
   {
-    fdprintf(STDOUT, "\n");
+    cgc_fdprintf(STDOUT, "\n");
     for (entry = table->head; entry != NULL ; entry = entry->next)
     {
       if (count > 0)
-        fdprintf(STDOUT, ",\n");
+        cgc_fdprintf(STDOUT, ",\n");
       count++;
-      print_indent(depth + 1);
-      fdprintf(STDOUT, "\"");
-      print_escaped(entry->key, strlen(entry->key));
-      fdprintf(STDOUT, "\": ");
-      kty_print_item(entry->val, depth + 1);
+      cgc_print_indent(depth + 1);
+      cgc_fdprintf(STDOUT, "\"");
+      cgc_print_escaped(entry->key, cgc_strlen(entry->key));
+      cgc_fdprintf(STDOUT, "\": ");
+      cgc_kty_print_item(entry->val, depth + 1);
     }
   }
   if (count > 0)
   {
-    fdprintf(STDOUT, "\n");
-    print_indent(depth);
+    cgc_fdprintf(STDOUT, "\n");
+    cgc_print_indent(depth);
   }
-  fdprintf(STDOUT, "}");
+  cgc_fdprintf(STDOUT, "}");
 }
 
-void kty_array_to_string(kty_item_t *item, int depth)
+void cgc_kty_array_to_string(cgc_kty_item_t *item, int depth)
 {
   int i, count = 0;
-  kty_item_t *elem;
+  cgc_kty_item_t *elem;
 
-  fdprintf(STDOUT, "[");
-  if (array_length(item->item.i_array) > 0)
-    fdprintf(STDOUT, "\n");
-  for (i = 0; i < array_length(item->item.i_array); ++i)
+  cgc_fdprintf(STDOUT, "[");
+  if (cgc_array_length(item->item.i_array) > 0)
+    cgc_fdprintf(STDOUT, "\n");
+  for (i = 0; i < cgc_array_length(item->item.i_array); ++i)
   {
     if (count > 0)
-      fdprintf(STDOUT, ",\n");
+      cgc_fdprintf(STDOUT, ",\n");
     count++;
-    print_indent(depth + 1);
-    elem = array_get(item->item.i_array, i);
-    kty_print_item(elem, depth + 1);
+    cgc_print_indent(depth + 1);
+    elem = cgc_array_get(item->item.i_array, i);
+    cgc_kty_print_item(elem, depth + 1);
   }
   if (count > 0)
   {
-    fdprintf(STDOUT, "\n");
-    print_indent(depth);
+    cgc_fdprintf(STDOUT, "\n");
+    cgc_print_indent(depth);
   }
-  fdprintf(STDOUT, "]");
+  cgc_fdprintf(STDOUT, "]");
 }
 
-void kty_boolean_to_string(kty_item_t *item)
+void cgc_kty_boolean_to_string(cgc_kty_item_t *item)
 {
-  fdprintf(STDOUT, "%s", item->item.i_bool ? "true" : "false");
+  cgc_fdprintf(STDOUT, "%s", item->item.i_bool ? "true" : "false");
 }
 
-void kty_null_to_string(kty_item_t *item)
+void cgc_kty_null_to_string(cgc_kty_item_t *item)
 {
-  fdprintf(STDOUT, "null");
+  cgc_fdprintf(STDOUT, "null");
 }
 
-void kty_cat_to_string(kty_item_t *item)
+void cgc_kty_cat_to_string(cgc_kty_item_t *item)
 {
   g_parser->cats++;
-  fdprintf(STDOUT, "=^.^=");
+  cgc_fdprintf(STDOUT, "=^.^=");
 }
 
-void kty_print_item(kty_item_t *item, int depth)
+void cgc_kty_print_item(cgc_kty_item_t *item, int depth)
 {
   switch (item->type)
   {
     case KTY_INT:
-      kty_int_to_string(item);
+      cgc_kty_int_to_string(item);
       break;
     case KTY_DOUBLE:
-      kty_double_to_string(item);
+      cgc_kty_double_to_string(item);
       break;
     case KTY_STRING:
-      kty_string_to_string(item);
+      cgc_kty_string_to_string(item);
       break;
     case KTY_OBJECT:
-      kty_object_to_string(item, depth);
+      cgc_kty_object_to_string(item, depth);
       break;
     case KTY_ARRAY:
-      kty_array_to_string(item, depth);
+      cgc_kty_array_to_string(item, depth);
       break;
     case KTY_BOOLEAN:
-      kty_boolean_to_string(item);
+      cgc_kty_boolean_to_string(item);
       break;
     case KTY_NULL:
-      kty_null_to_string(item);
+      cgc_kty_null_to_string(item);
       break;
     case KTY_CAT:
-      kty_cat_to_string(item);
+      cgc_kty_cat_to_string(item);
       break;
     default:
       break;
   }
 }
 
-void kty_dumps(kty_item_t *kty)
+void cgc_kty_dumps(cgc_kty_item_t *kty)
 {
   int depth = 0;
   g_parser->cats = 0;
   if (kty)
   {
-    kty_print_item(kty, depth);
+    cgc_kty_print_item(kty, depth);
   }
 }
 
-char* parse_number(kty_item_t *item, char *str)
+char* cgc_parse_number(cgc_kty_item_t *item, char *str)
 {
   char decimal[3] = {0};
   char *c1, *c2;
   int i;
   double d;
 
-  c1 = strchr(str, ' ');
+  c1 = cgc_strchr(str, ' ');
   if (c1 == NULL)
-    c1 = strchr(str, ',');
+    c1 = cgc_strchr(str, ',');
   if (c1 == NULL)
-    c1 = strchr(str, ']');
+    c1 = cgc_strchr(str, ']');
   if (c1 == NULL)
-    c1 = strchr(str, '}');
-  c2 = strchr(str, '.');
+    c1 = cgc_strchr(str, '}');
+  c2 = cgc_strchr(str, '.');
   if ((c1 && c2 && c2 < c1) || (c2 && c1 == NULL))
   {
     // Double
-    d = strtod(str, &str);
+    d = cgc_strtod(str, &str);
     item->type = KTY_DOUBLE;
     item->item.i_double = d;
   }
   else
   {
     // Int
-    i = strtol(str, &str, 10);
+    i = cgc_strtol(str, &str, 10);
     item->type = KTY_INT;
     item->item.i_int = i;
   }
@@ -256,7 +256,7 @@ char* parse_number(kty_item_t *item, char *str)
   return str;
 }
 
-char* parse_string(kty_item_t *item, char *str)
+char* cgc_parse_string(cgc_kty_item_t *item, char *str)
 {
   int read = 0, len = 0;
   char *c = str + 1;
@@ -280,7 +280,7 @@ char* parse_string(kty_item_t *item, char *str)
 
   if (len >= MAX_KTY_STRING)
     return NULL;
-  item->item.i_string.s = malloc(len + 1);
+  item->item.i_string.s = cgc_malloc(len + 1);
   if (item->item.i_string.s == NULL)
     return NULL;
 
@@ -328,38 +328,38 @@ char* parse_string(kty_item_t *item, char *str)
   return str + read;
 }
 
-char* parse_array(kty_item_t *item, char *str)
+char* cgc_parse_array(cgc_kty_item_t *item, char *str)
 {
-  kty_item_t *new;
+  cgc_kty_item_t *new;
 
   item->type = KTY_ARRAY;
   item->item.i_array = NULL;
-  str = eat_ws(str + 1);
+  str = cgc_eat_ws(str + 1);
   if (str[0] == ']')
     return str + 1;
 
-  new = (kty_item_t *) malloc(sizeof(kty_item_t));
+  new = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
   if (new == NULL)
     goto fail;
-  item->item.i_array = array_create(4, free_kty_item);
+  item->item.i_array = cgc_array_create(4, cgc_free_kty_item);
   if (item->item.i_array == NULL)
     goto fail;
-  str = eat_ws(parse_item(new, eat_ws(str)));
+  str = cgc_eat_ws(cgc_parse_item(new, cgc_eat_ws(str)));
   if (str == NULL)
     goto fail;
-  array_append(item->item.i_array, new);
+  cgc_array_append(item->item.i_array, new);
   new = NULL;
 
   while (str[0] == ',')
   {
-    new = (kty_item_t *) malloc(sizeof(kty_item_t));
+    new = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
     if (new == NULL)
       goto fail;
     str++;
-    str = eat_ws(parse_item(new, eat_ws(str)));
+    str = cgc_eat_ws(cgc_parse_item(new, cgc_eat_ws(str)));
     if (str == NULL)
       goto fail;
-    array_append(item->item.i_array, new);
+    cgc_array_append(item->item.i_array, new);
     new = NULL;
   }
 
@@ -368,84 +368,84 @@ char* parse_array(kty_item_t *item, char *str)
 
 fail:
   if (new)
-    free_kty_item(new);
+    cgc_free_kty_item(new);
   return NULL;
 }
 
-char* parse_object(kty_item_t *item, char *str)
+char* cgc_parse_object(cgc_kty_item_t *item, char *str)
 {
   char *key = NULL;
-  kty_item_t *new = NULL, *k = NULL, *dup = NULL;
+  cgc_kty_item_t *new = NULL, *k = NULL, *dup = NULL;
 
   item->type = KTY_OBJECT;
   item->item.i_object = NULL;
 
-  str = eat_ws(str + 1);
+  str = cgc_eat_ws(str + 1);
   if (str[0] == '}')
     return str + 1;
 
-  k = (kty_item_t *) malloc(sizeof(kty_item_t));
+  k = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
   if (k == NULL)
     goto fail;
-  item->item.i_object = htbl_create(4, free_kty_item);
+  item->item.i_object = cgc_htbl_create(4, cgc_free_kty_item);
   if (item->item.i_object == NULL)
     goto fail;
-  str = eat_ws(parse_string(k, eat_ws(str)));
+  str = cgc_eat_ws(cgc_parse_string(k, cgc_eat_ws(str)));
   key = k->item.i_string.s;
   if (str == NULL || str[0] != ':')
     goto fail;
   str++;
-  new = (kty_item_t *) malloc(sizeof(kty_item_t));
+  new = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
   if (new == NULL)
     goto fail;
-  str = eat_ws(parse_item(new, eat_ws(str)));
+  str = cgc_eat_ws(cgc_parse_item(new, cgc_eat_ws(str)));
   if (str == NULL)
     goto fail;
-  htbl_put(item->item.i_object, key, new);
-  if (strcmp("nyan_says", key) == 0 && new->type == KTY_STRING)
+  cgc_htbl_put(item->item.i_object, key, new);
+  if (cgc_strcmp("nyan_says", key) == 0 && new->type == KTY_STRING)
   {
-    dup = (kty_item_t *) malloc(sizeof(kty_item_t));
+    dup = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
     if (dup == NULL)
       goto fail;
     dup->type = new->type;
-    dup->item.i_string.s = strdup(new->item.i_string.s);
+    dup->item.i_string.s = cgc_strdup(new->item.i_string.s);
     dup->item.i_string.len = new->item.i_string.len;
-    array_append(g_parser->nyan_says, dup);
+    cgc_array_append(g_parser->nyan_says, dup);
     dup = NULL;
   }
-  free_kty_item(k);
+  cgc_free_kty_item(k);
   k = NULL;
   new = NULL;
 
   while (str[0] == ',')
   {
-    k = (kty_item_t *) malloc(sizeof(kty_item_t));
+    k = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
     if (k == NULL)
       goto fail;
-    str = eat_ws(parse_string(k, eat_ws(str + 1)));
+    str = cgc_eat_ws(cgc_parse_string(k, cgc_eat_ws(str + 1)));
     key = k->item.i_string.s;
     if (str == NULL || str[0] != ':')
       goto fail;
     str++;
-    new = (kty_item_t *) malloc(sizeof(kty_item_t));
+    new = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
     if (new == NULL)
       goto fail;
-    str = eat_ws(parse_item(new, eat_ws(str)));
+    str = cgc_eat_ws(cgc_parse_item(new, cgc_eat_ws(str)));
     if (str == NULL)
       goto fail;
-    htbl_put(item->item.i_object, key, new);
-    if (strcmp("nyan_says", key) == 0 && new->type == KTY_STRING)
+    cgc_htbl_put(item->item.i_object, key, new);
+    if (cgc_strcmp("nyan_says", key) == 0 && new->type == KTY_STRING)
     {
-      dup = (kty_item_t *) malloc(sizeof(kty_item_t));
+      dup = (cgc_kty_item_t *) cgc_malloc(sizeof(cgc_kty_item_t));
       if (dup == NULL)
         goto fail;
       dup->type = new->type;
-      dup->item.i_string.s = strdup(new->item.i_string.s);
+      dup->item.i_string.s = cgc_strdup(new->item.i_string.s);
       dup->item.i_string.len = new->item.i_string.len;
-      array_append(g_parser->nyan_says, dup);
+      cgc_array_append(g_parser->nyan_says, dup);
       dup = NULL;
     }
-    free_kty_item(k);
+    cgc_free_kty_item(k);
     k = NULL;
     new = NULL;
   }
@@ -455,38 +455,38 @@ char* parse_object(kty_item_t *item, char *str)
 
 fail:
   if (new)
-    free_kty_item(new);
+    cgc_free_kty_item(new);
   if (k)
-    free_kty_item(k);
+    cgc_free_kty_item(k);
   if (dup)
-    free_kty_item(dup);
+    cgc_free_kty_item(dup);
   return NULL;
 }
 
-char* parse_item(kty_item_t *item, char *str)
+char* cgc_parse_item(cgc_kty_item_t *item, char *str)
 {
   char c;
   if (item && str)
   {
     c = str[0];
-    if (strncmp(str, "true", 4) == 0)
+    if (cgc_strncmp(str, "true", 4) == 0)
     {
       item->type = KTY_BOOLEAN;
       item->item.i_bool = 1;
       return str + 4;
     }
-    if (strncmp(str, "false", 5) == 0)
+    if (cgc_strncmp(str, "false", 5) == 0)
     {
       item->type = KTY_BOOLEAN;
       item->item.i_bool = 0;
       return str + 5;
     }
-    if (strncmp(str, "null", 4) == 0)
+    if (cgc_strncmp(str, "null", 4) == 0)
     {
       item->type = KTY_NULL;
       return str + 4;
     }
-    if (strncmp(str, "=^.^=", 5) == 0)
+    if (cgc_strncmp(str, "=^.^=", 5) == 0)
     {
       item->type = KTY_CAT;
       return str + 5;
@@ -495,14 +495,14 @@ char* parse_item(kty_item_t *item, char *str)
     switch (c)
     {
       case '[':
-        return parse_array(item, str);
+        return cgc_parse_array(item, str);
       case '{':
-        return parse_object(item, str);
+        return cgc_parse_object(item, str);
       case '-': case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9': case '+':
-        return parse_number(item, str);
+        return cgc_parse_number(item, str);
       case '\"':
-        return parse_string(item, str);
+        return cgc_parse_string(item, str);
     }
   }
 #if PATCHED
@@ -512,24 +512,24 @@ char* parse_item(kty_item_t *item, char *str)
   return NULL;
 }
 
-kty_item_t* kty_loads(char *str)
+cgc_kty_item_t* cgc_kty_loads(char *str)
 {
   char *c;
   char string[MAX_KTY_STRING];
   int i = 0, init = 0, state = -1;
-  kty_item_t *root;
+  cgc_kty_item_t *root;
 
-  root = (kty_item_t *) calloc(1, sizeof(kty_item_t));
+  root = (cgc_kty_item_t *) cgc_calloc(1, sizeof(cgc_kty_item_t));
   if (root == NULL)
     goto fail;
 
   if (g_parser->nyan_says)
-    array_destroy(g_parser->nyan_says);
-  g_parser->nyan_says = array_create(16, free_kty_item);
+    cgc_array_destroy(g_parser->nyan_says);
+  g_parser->nyan_says = cgc_array_create(16, cgc_free_kty_item);
   if (g_parser->nyan_says == NULL)
     goto fail;
 
-  c = parse_item(root, eat_ws(str));
+  c = cgc_parse_item(root, cgc_eat_ws(str));
   if (c == NULL)
     goto fail;
 
@@ -537,45 +537,45 @@ kty_item_t* kty_loads(char *str)
 
 fail:
   if (root)
-    free_kty_item(root);
+    cgc_free_kty_item(root);
   return NULL;
 }
 
-int kty_init(kty_parser_t *parser)
+int cgc_kty_init(cgc_kty_parser_t *parser)
 {
   if (parser)
   {
     parser->cats = 0;
     parser->nyan_says = NULL;
-    parser->dumps = kty_dumps;
-    parser->loads = kty_loads;
+    parser->dumps = cgc_kty_dumps;
+    parser->loads = cgc_kty_loads;
     g_parser = parser;
     return 0;
   }
   return -1;
 }
 
-void free_kty_item(void *e)
+void cgc_free_kty_item(void *e)
 {
   if (e)
   {
-    kty_item_t *item = (kty_item_t *) e;
+    cgc_kty_item_t *item = (cgc_kty_item_t *) e;
 
     switch (item->type)
     {
       case KTY_STRING:
         if (item->item.i_string.s)
-          free(item->item.i_string.s);
+          cgc_free(item->item.i_string.s);
         break;
       case KTY_ARRAY:
-        array_destroy(item->item.i_array);
+        cgc_array_destroy(item->item.i_array);
         break;
       case KTY_OBJECT:
-        htbl_destroy(item->item.i_object);
+        cgc_htbl_destroy(item->item.i_object);
         break;
       default:
         break;
     }
-    free(item);
+    cgc_free(item);
   }
 }

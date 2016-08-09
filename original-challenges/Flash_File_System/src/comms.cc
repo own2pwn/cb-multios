@@ -34,7 +34,7 @@ extern "C"
 
 #include "comms.h"
 
-uint32_t RecvData( int32_t fd, uint8_t *pDest, uint32_t recvLen )
+cgc_uint32_t cgc_RecvData( cgc_int32_t fd, cgc_uint8_t *pDest, cgc_uint32_t recvLen )
 {
 	if ( pDest == NULL )
 		return (0);
@@ -42,12 +42,12 @@ uint32_t RecvData( int32_t fd, uint8_t *pDest, uint32_t recvLen )
 	if ( recvLen == 0 )
 		return (0);
 
-	uint32_t curRecvLen = 0;
+	cgc_uint32_t curRecvLen = 0;
 
 	while ( curRecvLen < recvLen )
 	{
-		size_t num_bytes;
-		uint32_t recvRemaining = (recvLen - curRecvLen);
+		cgc_size_t num_bytes;
+		cgc_uint32_t recvRemaining = (recvLen - curRecvLen);
 
 		if ( receive( fd, (pDest+curRecvLen), recvRemaining, &num_bytes ) != 0 )
 			_terminate( -1 );
@@ -61,7 +61,7 @@ uint32_t RecvData( int32_t fd, uint8_t *pDest, uint32_t recvLen )
 	return curRecvLen;
 }
 
-uint32_t SendData( int32_t fd, uint8_t *pSource, uint32_t sendLen )
+cgc_uint32_t cgc_SendData( cgc_int32_t fd, cgc_uint8_t *pSource, cgc_uint32_t sendLen )
 {
 	if ( pSource == NULL )
 		return (0);
@@ -69,12 +69,12 @@ uint32_t SendData( int32_t fd, uint8_t *pSource, uint32_t sendLen )
 	if ( sendLen == 0 )
 		return (0);
 
-	uint32_t curSendLen = 0;
+	cgc_uint32_t curSendLen = 0;
 
 	while ( curSendLen < sendLen )
 	{
-		size_t num_bytes;
-		uint32_t sendRemaining = (sendLen - curSendLen);
+		cgc_size_t num_bytes;
+		cgc_uint32_t sendRemaining = (sendLen - curSendLen);
 
 		if ( transmit( fd, (pSource+curSendLen), sendRemaining, &num_bytes ) != 0 )
 			_terminate( -1 );

@@ -27,7 +27,7 @@
 #include "malloc.h"
 #include "stdlib.h"
 
-size_t size_class_limits[NUM_FREE_LISTS] = {
+cgc_size_t size_class_limits[NUM_FREE_LISTS] = {
   2, 3, 4, 8,
   16, 24, 32, 48,
   64, 96, 128, 192,
@@ -49,7 +49,7 @@ static void remove_from_blist(struct blk_t *blk)
     blk->next->prev = blk->prev;
 }
 
-int get_size_class(size_t size)
+int get_size_class(cgc_size_t size)
 {
   int i;
   for (i = 0; i < NUM_FREE_LISTS && size > size_class_limits[i]; i++);

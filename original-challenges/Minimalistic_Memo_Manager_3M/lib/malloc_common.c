@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,10 +29,10 @@
 #include "stdlib.h"
 
 #ifdef FILAMENTS
-mutex_t malloc_mutex;
+cgc_mutex_t malloc_mutex;
 #endif
 
-size_t size_class_limits[NUM_FREE_LISTS] = {
+cgc_size_t size_class_limits[NUM_FREE_LISTS] = {
   2, 3, 4, 8,
   16, 24, 32, 48,
   64, 96, 128, 192,
@@ -45,7 +45,7 @@ size_t size_class_limits[NUM_FREE_LISTS] = {
 
 struct blk_t *free_lists[NUM_FREE_LISTS] = {0};
 
-static void remove_from_blist(struct blk_t *blk)
+static void cgc_remove_from_blist(struct blk_t *blk)
 {
   if (blk->prev)
     blk->prev->next = blk->next;
@@ -54,7 +54,7 @@ static void remove_from_blist(struct blk_t *blk)
     blk->next->prev = blk->prev;
 }
 
-int get_size_class(size_t size)
+int cgc_get_size_class(cgc_size_t size)
 {
   int i;
   for (i = 0; i < NUM_FREE_LISTS && size > size_class_limits[i]; i++);
@@ -62,10 +62,10 @@ int get_size_class(size_t size)
 }
 
 
-void insert_into_flist(struct blk_t *blk)
+void cgc_insert_into_flist(struct blk_t *blk)
 {
-  int sc_i = get_size_class(blk->size);
-  blk->free = 1;
+  int sc_i = cgc_get_size_class(blk->size);
+  blk->cgc_free = 1;
 
   if (free_lists[sc_i] == NULL) {
     free_lists[sc_i] = blk;
@@ -78,9 +78,9 @@ void insert_into_flist(struct blk_t *blk)
   blk->fpred = NULL;
 }
 
-void remove_from_flist(struct blk_t *blk)
+void cgc_remove_from_flist(struct blk_t *blk)
 {
-  int sc_i = get_size_class(blk->size);
+  int sc_i = cgc_get_size_class(blk->size);
 
   if (blk->fpred)
     blk->fpred->fsucc = blk->fsucc;
@@ -93,40 +93,40 @@ void remove_from_flist(struct blk_t *blk)
 
   blk->fsucc = NULL;
   blk->fpred = NULL;
-  blk->free = 0;
+  blk->cgc_free = 0;
 }
 
-void coalesce(struct blk_t *blk)
+void cgc_coalesce(struct blk_t *blk)
 {
-  /* prev and next are free */
-  if (blk->prev && blk->prev->free && blk->next && blk->next->free) {
-    remove_from_flist(blk->prev);
-    remove_from_flist(blk->next);
-    remove_from_flist(blk);
+  /* prev and next are cgc_free */
+  if (blk->prev && blk->prev->cgc_free && blk->next && blk->next->cgc_free) {
+    cgc_remove_from_flist(blk->prev);
+    cgc_remove_from_flist(blk->next);
+    cgc_remove_from_flist(blk);
 
     blk->prev->size += blk->size;
     blk->prev->size += blk->next->size;
-    remove_from_blist(blk->next);
-    remove_from_blist(blk);
+    cgc_remove_from_blist(blk->next);
+    cgc_remove_from_blist(blk);
 
-    insert_into_flist(blk->prev);
-  /* Just prev is free */
-  } else if (blk->prev && blk->prev->free) {
-    remove_from_flist(blk->prev);
-    remove_from_flist(blk);
+    cgc_insert_into_flist(blk->prev);
+  /* Just prev is cgc_free */
+  } else if (blk->prev && blk->prev->cgc_free) {
+    cgc_remove_from_flist(blk->prev);
+    cgc_remove_from_flist(blk);
 
     blk->prev->size += blk->size;
-    remove_from_blist(blk);
+    cgc_remove_from_blist(blk);
 
-    insert_into_flist(blk->prev);
-  /* Just next is free */
-  } else if (blk->next && blk->next->free) {
-    remove_from_flist(blk->next);
-    remove_from_flist(blk);
+    cgc_insert_into_flist(blk->prev);
+  /* Just next is cgc_free */
+  } else if (blk->next && blk->next->cgc_free) {
+    cgc_remove_from_flist(blk->next);
+    cgc_remove_from_flist(blk);
 
     blk->size += blk->next->size;
-    remove_from_blist(blk->next);
+    cgc_remove_from_blist(blk->next);
 
-    insert_into_flist(blk);
+    cgc_insert_into_flist(blk);
   }
 }

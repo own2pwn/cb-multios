@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,19 +29,19 @@ THE SOFTWARE.
 
 typedef struct _vars {
 	char name[MAX_NAME_LEN];
-	uint8_t type;
+	cgc_uint8_t type;
 	unsigned char value[MAX_VALUE_LEN];
 	struct _vars *prev;
 	struct _vars *next;
-} vars_t;
+} cgc_vars_t;
 
 #define STRING (1)
 #define INT32 (2)
 
-int32_t InitVARS(void);
-int32_t DestroyVARS(void);
-vars_t *SearchVARS(char *target_name);
-vars_t *CreateVARSObject(char *, uint8_t, void *);
-int32_t InsertVARSObject(vars_t *);
-int32_t DeleteVARSObject(vars_t *);
-vars_t *UpdateVARSObject(char *, uint8_t, void *);
+cgc_int32_t cgc_InitVARS(void);
+cgc_int32_t cgc_DestroyVARS(void);
+cgc_vars_t *cgc_SearchVARS(char *target_name);
+cgc_vars_t *cgc_CreateVARSObject(char *, cgc_uint8_t, void *);
+cgc_int32_t cgc_InsertVARSObject(cgc_vars_t *);
+cgc_int32_t cgc_DeleteVARSObject(cgc_vars_t *);
+cgc_vars_t *cgc_UpdateVARSObject(char *, cgc_uint8_t, void *);

@@ -27,31 +27,31 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "churn.h"
 
-churn_item gyre[CHURN_GYRE_SIZE];
-size_t gyre_pos = 0;
+cgc_churn_item gyre[CHURN_GYRE_SIZE];
+cgc_size_t gyre_pos = 0;
 
-uint64  init_one(uint64,  uint64);
-float64 init_two(float64, float64);
-uint64  init_thr(uint64,  uint64);
-float64 init_fou(float64, float64);
+cgc_uint64  cgc_init_one(cgc_uint64,  cgc_uint64);
+cgc_float64 cgc_init_two(cgc_float64, cgc_float64);
+cgc_uint64  cgc_init_thr(cgc_uint64,  cgc_uint64);
+cgc_float64 cgc_init_fou(cgc_float64, cgc_float64);
 
-void churn_initialize(churn_item* start) {
+void cgc_churn_initialize(cgc_churn_item* start) {
   // "zedo cat"
-  churn_item cursor = {0x7a65646f20636174};
-  uint64 shifter = 5;
+  cgc_churn_item cursor = {0x7a65646f20636174};
+  cgc_uint64 shifter = 5;
 
-  for (uint32 i = 0; i < (CHURN_GYRE_SIZE / CHURN_INITIALIZER_COUNT); i++) {
-    uint32 s = i * 4;
-    churn_item ct;
+  for (cgc_uint32 i = 0; i < (CHURN_GYRE_SIZE / CHURN_INITIALIZER_COUNT); i++) {
+    cgc_uint32 s = i * 4;
+    cgc_churn_item ct;
 
-    gyre[s + 0].i = cursor.i = init_one(cursor.i ^ s, start[0].i);
+    gyre[s + 0].i = cursor.i = cgc_init_one(cursor.i ^ s, start[0].i);
     ct = cursor;
     ct.i ^= s;
-    gyre[s + 1].f = cursor.f = init_two(ct.f, start[1].f);
-    gyre[s + 2].i = cursor.i = init_thr(cursor.i ^ s, start[2].i);
+    gyre[s + 1].f = cursor.f = cgc_init_two(ct.f, start[1].f);
+    gyre[s + 2].i = cursor.i = cgc_init_thr(cursor.i ^ s, start[2].i);
     ct = cursor;
     ct.i ^= s;
-    gyre[s + 3].f = cursor.f = init_fou(ct.f, start[3].f);
+    gyre[s + 3].f = cursor.f = cgc_init_fou(ct.f, start[3].f);
   }
 
   gyre_pos = 0;
@@ -59,7 +59,7 @@ void churn_initialize(churn_item* start) {
 
 
 
-uint64 init_one(uint64 i, uint64 j) {
+cgc_uint64 cgc_init_one(cgc_uint64 i, cgc_uint64 j) {
   i = i ^ (j >> 21);
   i = i ^ ((j << 37) & 0x6469652068617264); // die hard
   i = i ^ ((j >> 9) & 0x6372616e6b74776f); // cranktwo
@@ -67,7 +67,7 @@ uint64 init_one(uint64 i, uint64 j) {
   return i;
 }
 
-float64 init_two(float64 i, float64 j) {
+cgc_float64 cgc_init_two(cgc_float64 i, cgc_float64 j) {
   i = fabs(sin(i)) + fabs(cos(j));
   i *= 3 + cos(i);
   i += cos(j) + cos(i);
@@ -75,7 +75,7 @@ float64 init_two(float64 i, float64 j) {
   return i;
 }
 
-uint64 init_thr(uint64 i, uint64 j) {
+cgc_uint64 cgc_init_thr(cgc_uint64 i, cgc_uint64 j) {
   i = i ^ (j << 16);
   i = i ^ ((j >> 44) & 0x6578706e64626c73); // expndbls
   i = i ^ ((j << 36) & 0x636f6d6d616e646f); // commando
@@ -83,8 +83,8 @@ uint64 init_thr(uint64 i, uint64 j) {
   return i;
 }
 
-float64 init_fou(float64 i, float64 j) {
-  float64 k = fabs(cos(j) / sin(i));
+cgc_float64 cgc_init_fou(cgc_float64 i, cgc_float64 j) {
+  cgc_float64 k = fabs(cos(j) / sin(i));
   j -= sin(k);
   i += log2(fabs(k));
   k += i + j;
@@ -92,34 +92,34 @@ float64 init_fou(float64 i, float64 j) {
   return i;
 }
 
-uint8 churn_rand_uint8() {
-  uint64 candidate = churn_rand_uint64();
-  uint64 selector = 8 * (candidate & 7);
-  return (uint8) ((candidate >> selector) & 0xff);
+cgc_uint8 cgc_churn_rand_uint8() {
+  cgc_uint64 candidate = cgc_churn_rand_uint64();
+  cgc_uint64 selector = 8 * (candidate & 7);
+  return (cgc_uint8) ((candidate >> selector) & 0xff);
 }
 
-uint32 churn_rand_uint32() {
-  uint64 candidate = churn_rand_uint64();
+cgc_uint32 cgc_churn_rand_uint32() {
+  cgc_uint64 candidate = cgc_churn_rand_uint64();
   if ((candidate & 1) == 1) {
-    return (uint32) ((candidate >> 31) & 0x00000000ffffffff);
+    return (cgc_uint32) ((candidate >> 31) & 0x00000000ffffffff);
   } else {
-    return (uint32) candidate & 0x00000000ffffffff;
+    return (cgc_uint32) candidate & 0x00000000ffffffff;
   }
 };
 
-uint64 churn_rand_uint64() {
-  return churn_rand_item().i;
+cgc_uint64 cgc_churn_rand_uint64() {
+  return cgc_churn_rand_item().i;
 }
 
-float64 churn_rand_float64() {
-  return churn_rand_item().f;
+cgc_float64 cgc_churn_rand_float64() {
+  return cgc_churn_rand_item().f;
 }
 
-churn_item churn_rand_item() {
-  churn_item candidate = gyre[gyre_pos];
-  churn_item replacement;
-  replacement.i = init_one(candidate.i, gyre_pos);
-  replacement.f = init_fou(candidate.f, replacement.f);
+cgc_churn_item cgc_churn_rand_item() {
+  cgc_churn_item candidate = gyre[gyre_pos];
+  cgc_churn_item replacement;
+  replacement.i = cgc_init_one(candidate.i, gyre_pos);
+  replacement.f = cgc_init_fou(candidate.f, replacement.f);
   gyre[gyre_pos] = replacement;
   gyre_pos = (gyre_pos + 1) % CHURN_GYRE_SIZE;
 

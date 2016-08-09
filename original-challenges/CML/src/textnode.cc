@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,19 +22,19 @@
  */
 #include "textnode.h"
 
-TextNode::TextNode(const String *ns, const String *tag)
-    : Node(ns, tag, NodeClass::TEXTNODE), d_text(nullptr)
+cgc_TextNode::cgc_TextNode(const cgc_String *cgc_ns, const cgc_String *cgc_tag)
+    : cgc_Node(cgc_ns, cgc_tag, NodeClass::TEXTNODE), d_text(nullptr)
 {
 }
 
-const String *TextNode::text()
+const cgc_String *cgc_TextNode::cgc_text()
 {
-    return d_text == nullptr ? String::intern("") : d_text;
+    return d_text == nullptr ? cgc_String::cgc_intern("") : d_text;
 }
 
-void TextNode::set_text(String *text)
+void cgc_TextNode::cgc_set_text(cgc_String *cgc_text)
 {
     if (d_text)
-        d_text->destroy();
-    d_text = text;
+        d_text->cgc_destroy();
+    d_text = cgc_text;
 }

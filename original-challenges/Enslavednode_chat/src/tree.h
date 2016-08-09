@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,17 +26,17 @@
 
 #include "common.h"
 #include "list.h"
-typedef struct tree tree;
-struct tree {
+typedef struct cgc_tree cgc_tree;
+struct cgc_tree {
   HASH h;
-  list *dl;
-  tree *l;
-  tree *r;
+  cgc_list *dl;
+  cgc_tree *l;
+  cgc_tree *r;
 };
 
-tree *init_tree(HASH h, const DATA d);
-int ins_tree(tree *t, HASH h, const DATA d);
-list *tree_to_list(tree *t);
-size_t num_nodes(tree *t);
-list *get_tree(tree *t, HASH h);
+cgc_tree *cgc_init_tree(HASH h, const DATA d);
+int cgc_ins_tree(cgc_tree *t, HASH h, const DATA d);
+cgc_list *cgc_tree_to_list(cgc_tree *t);
+cgc_size_t cgc_num_nodes(cgc_tree *t);
+cgc_list *cgc_get_tree(cgc_tree *t, HASH h);
 #endif /* __TREE__H */

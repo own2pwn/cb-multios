@@ -21,9 +21,9 @@
  *
  */
 #include "ctype.h"
-int strcasecmp(const char *s1, const char *s2)
+int cgc_strcasecmp(const char *s1, const char *s2)
 {
-  while (*s1 && *s2 && tolower(*s1) == tolower(*s2))
+  while (*s1 && *s2 && cgc_tolower(*s1) == cgc_tolower(*s2))
     s1++, s2++;
   return *s1 - *s2;
 }

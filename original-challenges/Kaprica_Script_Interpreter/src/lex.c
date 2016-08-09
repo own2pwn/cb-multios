@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,59 +34,59 @@
 #define END_PRINT 0x101
 
 // prototypes
-static expr_t *init_expression(int op);
-static void free_expression(void *exp);
-static void free_pattern(void *pat);
-static void free_statement(stmt_t *stmt);
+static cgc_expr_t *cgc_init_expression(int op);
+static void cgc_free_expression(void *exp);
+static void cgc_free_pattern(void *pat);
+static void cgc_free_statement(cgc_stmt_t *stmt);
 
-static void *parse_pattern(program_t *prog);
-static int parse_statements(program_t *prog, stmt_t **result);
-static int parse_expression(program_t *prog, expr_t **result, int end);
-static int parse_quoted_string(program_t *prog, expr_t **result);
-static int parse_regexp(program_t *prog, expr_t **result);
-static int parse_number(program_t *prog, expr_t **result);
-static int parse_variable(program_t *prog, expr_t **result);
+static void *cgc_parse_pattern(cgc_program_t *prog);
+static int cgc_parse_statements(cgc_program_t *prog, cgc_stmt_t **result);
+static int cgc_parse_expression(cgc_program_t *prog, cgc_expr_t **result, int end);
+static int cgc_parse_quoted_string(cgc_program_t *prog, cgc_expr_t **result);
+static int cgc_parse_regexp(cgc_program_t *prog, cgc_expr_t **result);
+static int cgc_parse_number(cgc_program_t *prog, cgc_expr_t **result);
+static int cgc_parse_variable(cgc_program_t *prog, cgc_expr_t **result);
 
-static int match(program_t *prog, const char *s);
-static int pattern_match(program_t *prog, const char *s);
-static void skip_line(program_t *prog);
-static void skip_whitespace(program_t *prog);
-static int verify_expression(expr_t *expr);
-static int treeify_expression(expr_t **expr, int stages);
+static int cgc_match(cgc_program_t *prog, const char *s);
+static int cgc_pattern_match(cgc_program_t *prog, const char *s);
+static void cgc_skip_line(cgc_program_t *prog);
+static void cgc_skip_whitespace(cgc_program_t *prog);
+static int cgc_verify_expression(cgc_expr_t *expr);
+static int cgc_treeify_expression(cgc_expr_t **expr, int stages);
 #ifdef DEBUG
-static void print_expression(expr_t *expr, const char *prefix);
-static void print_statement(stmt_t *stmt, const char *prefix);
+static void print_expression(cgc_expr_t *expr, const char *prefix);
+static void print_statement(cgc_stmt_t *stmt, const char *prefix);
 #endif
-static int is_keyword(const char *s);
-static int is_unary(int op);
-static int is_binary(int op);
-static int is_assign(int op);
-static int is_assignable(int op);
+static int cgc_is_keyword(const char *s);
+static int cgc_is_unary(int op);
+static int cgc_is_binary(int op);
+static int cgc_is_assign(int op);
+static int cgc_is_assignable(int op);
 
-void program_init(program_t *prog, io_t *io)
+void cgc_program_init(cgc_program_t *prog, cgc_io_t *io)
 {
-    memset(prog, 0, sizeof(program_t));
+    cgc_memset(prog, 0, sizeof(cgc_program_t));
     prog->io = io;
 }
 
-int program_parse(program_t *prog)
+int cgc_program_parse(cgc_program_t *prog)
 {
     void *pat;
-    pattern_t *p, *tail = NULL;
-    stmt_t *actions;
+    cgc_pattern_t *p, *tail = NULL;
+    cgc_stmt_t *actions;
 
     do {
-        io_mark(prog->io);
-        pat = parse_pattern(prog);
+        cgc_io_mark(prog->io);
+        pat = cgc_parse_pattern(prog);
         if (pat == PATTERN_INVALID)
             goto fail;
-        if (!parse_statements(prog, &actions))
+        if (!cgc_parse_statements(prog, &actions))
             goto fail;
 #ifdef DEBUG
         print_statement(actions, "");
 #endif
 
-        p = malloc(sizeof(pattern_t));
+        p = cgc_malloc(sizeof(cgc_pattern_t));
         if (p == NULL)
             break;
 
@@ -102,81 +102,81 @@ int program_parse(program_t *prog)
     return 1;
 
 fail:
-    free_pattern(pat);
+    cgc_free_pattern(pat);
     return 0;
 }
 
-static void *parse_pattern(program_t *prog)
+static void *cgc_parse_pattern(cgc_program_t *prog)
 {
     int c;
     unsigned int pos;
-    expr_t *exp;
+    cgc_expr_t *exp;
 
-    if (pattern_match(prog, "BEGIN"))
+    if (cgc_pattern_match(prog, "BEGIN"))
         return PATTERN_BEGIN;
-    if (pattern_match(prog, "END"))
+    if (cgc_pattern_match(prog, "END"))
         return PATTERN_END;
-    if (pattern_match(prog, ""))
+    if (cgc_pattern_match(prog, ""))
         return PATTERN_EMPTY;
 
-    pos = io_tell(prog->io);
-    if (!parse_expression(prog, &exp, '{'))
+    pos = cgc_io_tell(prog->io);
+    if (!cgc_parse_expression(prog, &exp, '{'))
     {
-        io_seek(prog->io, pos);
+        cgc_io_seek(prog->io, pos);
         return PATTERN_INVALID;
     }
 
-    io_ungetc(prog->io);
+    cgc_io_ungetc(prog->io);
     return exp;
 }
 
-static int pattern_match(program_t *prog, const char *s)
+static int cgc_pattern_match(cgc_program_t *prog, const char *s)
 {
-    unsigned int pos = io_tell(prog->io), i;
+    unsigned int pos = cgc_io_tell(prog->io), i;
     int c;
     
-    while ((c = io_getc(prog->io)) >= 0)
-        if (!isspace(c))
+    while ((c = cgc_io_getc(prog->io)) >= 0)
+        if (!cgc_isspace(c))
             break;
     if (c < 0) goto fail;
-    io_ungetc(prog->io);
+    cgc_io_ungetc(prog->io);
 
     for (i = 0; s[i] != 0; i++)
     {
-        if ((c = io_getc(prog->io)) < 0)
+        if ((c = cgc_io_getc(prog->io)) < 0)
             goto fail;
         if (s[i] != c)
             goto fail;
     }
 
-    skip_whitespace(prog);
-    if (io_peek(prog->io) != '{')
+    cgc_skip_whitespace(prog);
+    if (cgc_io_peek(prog->io) != '{')
         goto fail;
 
     return 1;
 
 fail:
-    io_seek(prog->io, pos);
+    cgc_io_seek(prog->io, pos);
     return 0;
 }
 
-static void free_pattern(void *pat)
+static void cgc_free_pattern(void *pat)
 {
     if (pat == PATTERN_INVALID || pat == PATTERN_EMPTY || pat == PATTERN_BEGIN || pat == PATTERN_END)
         return;
 
-    free_expression(pat);
+    cgc_free_expression(pat);
 }
 
-static void free_expression(void *expr)
+static void cgc_free_expression(void *expr)
 {
 }
 
-static void free_statement(stmt_t *stmt)
+static void cgc_free_statement(cgc_stmt_t *stmt)
 {
 }
 
-static char *parse_var(program_t *prog)
+static char *cgc_parse_var(cgc_program_t *prog)
 {
     char tmp[MAX_NAME+1];
     unsigned int i;
@@ -184,10 +184,10 @@ static char *parse_var(program_t *prog)
     for (i = 0; i < sizeof(tmp) - 1; i++)
     {
         int c;
-        c = io_getc(prog->io);
+        c = cgc_io_getc(prog->io);
         if (c < 0)
             return NULL;
-        if (islower(c) || isupper(c) || (i > 0 && isdigit(c)))
+        if (cgc_islower(c) || cgc_isupper(c) || (i > 0 && cgc_isdigit(c)))
             tmp[i] = c;
         else
             break;
@@ -196,43 +196,43 @@ static char *parse_var(program_t *prog)
     if (i == sizeof(tmp))
         return NULL;
 
-    io_ungetc(prog->io);
+    cgc_io_ungetc(prog->io);
     tmp[i] = 0;
-    return strdup(tmp);
+    return cgc_strdup(tmp);
 }
 
-static int parse_statements(program_t *prog, stmt_t **result)
+static int cgc_parse_statements(cgc_program_t *prog, cgc_stmt_t **result)
 {
     int c;
-    unsigned int pos = io_tell(prog->io), pos2;
+    unsigned int pos = cgc_io_tell(prog->io), pos2;
     char *kw = NULL;
-    stmt_t *stmt = NULL;
+    cgc_stmt_t *stmt = NULL;
     
-    skip_whitespace(prog);
-    if (io_getc(prog->io) == '{')
+    cgc_skip_whitespace(prog);
+    if (cgc_io_getc(prog->io) == '{')
     {
-        stmt_t *tail = NULL;
+        cgc_stmt_t *tail = NULL;
         while (1)
         {
-            stmt_t *tmp;
+            cgc_stmt_t *tmp;
 
-            skip_whitespace(prog);
+            cgc_skip_whitespace(prog);
             
-            c = io_peek(prog->io);
+            c = cgc_io_peek(prog->io);
             if (c == '#')
             {
                 // skip comments
-                skip_line(prog);
+                cgc_skip_line(prog);
                 continue;
             }
 
             if (c == '}')
             {
-                io_getc(prog->io);
+                cgc_io_getc(prog->io);
                 break;
             }
             
-            if (!parse_statements(prog, &tmp))
+            if (!cgc_parse_statements(prog, &tmp))
                 goto fail;
 
 #ifdef PATCHED
@@ -249,68 +249,68 @@ static int parse_statements(program_t *prog, stmt_t **result)
         return 1;
     }
     
-    pos2 = io_tell(prog->io) - 1;
-    io_seek(prog->io, pos2);
-    kw = parse_var(prog);
+    pos2 = cgc_io_tell(prog->io) - 1;
+    cgc_io_seek(prog->io, pos2);
+    kw = cgc_parse_var(prog);
     if (kw == NULL)
         goto fail;
-    skip_whitespace(prog);
+    cgc_skip_whitespace(prog);
 
-    stmt = calloc(1, sizeof(stmt_t));
+    stmt = cgc_calloc(1, sizeof(cgc_stmt_t));
 
-    if (strcmp(kw, "if") == 0)
+    if (cgc_strcmp(kw, "if") == 0)
     {
         stmt->type = STMT_IF;
-        if (io_getc(prog->io) != '(')
+        if (cgc_io_getc(prog->io) != '(')
             goto fail;
-        if (!parse_expression(prog, &stmt->s_if.cond, ')'))
+        if (!cgc_parse_expression(prog, &stmt->s_if.cond, ')'))
             goto fail;
-        if (!parse_statements(prog, &stmt->s_if.child))
+        if (!cgc_parse_statements(prog, &stmt->s_if.child))
             goto fail;
     }
-    else if (strcmp(kw, "while") == 0)
+    else if (cgc_strcmp(kw, "while") == 0)
     {
         stmt->type = STMT_WHILE;
         stmt->s_while.post = 0;
-        if (io_getc(prog->io) != '(')
+        if (cgc_io_getc(prog->io) != '(')
             goto fail;
-        if (!parse_expression(prog, &stmt->s_while.cond, ')'))
+        if (!cgc_parse_expression(prog, &stmt->s_while.cond, ')'))
             goto fail;
-        if (!parse_statements(prog, &stmt->s_while.child))
+        if (!cgc_parse_statements(prog, &stmt->s_while.child))
             goto fail;
     }
-    else if (strcmp(kw, "do") == 0)
+    else if (cgc_strcmp(kw, "do") == 0)
     {
         stmt->type = STMT_WHILE;
         stmt->s_while.post = 1;
-        if (!parse_statements(prog, &stmt->s_while.child))
+        if (!cgc_parse_statements(prog, &stmt->s_while.child))
             goto fail;
-        free(kw);
-        skip_whitespace(prog);
-        kw = parse_var(prog);
-        if (kw == NULL || strcmp(kw, "while"))
+        cgc_free(kw);
+        cgc_skip_whitespace(prog);
+        kw = cgc_parse_var(prog);
+        if (kw == NULL || cgc_strcmp(kw, "while"))
             goto fail;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != '(')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != '(')
             goto fail;
-        if (!parse_expression(prog, &stmt->s_while.cond, ')'))
+        if (!cgc_parse_expression(prog, &stmt->s_while.cond, ')'))
             goto fail;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != ';')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != ';')
             goto fail;
     }
-    else if (strcmp(kw, "for") == 0)
+    else if (cgc_strcmp(kw, "for") == 0)
     {
         stmt->type = STMT_FOR;
-        if (io_getc(prog->io) != '(')
+        if (cgc_io_getc(prog->io) != '(')
             goto fail;
-        if (parse_expression(prog, &stmt->s_for.init, ';'))
+        if (cgc_parse_expression(prog, &stmt->s_for.init, ';'))
         {
-            if (!parse_expression(prog, &stmt->s_for.cond, ';'))
+            if (!cgc_parse_expression(prog, &stmt->s_for.cond, ';'))
                 goto fail;
-            if (!parse_expression(prog, &stmt->s_for.post, ')'))
+            if (!cgc_parse_expression(prog, &stmt->s_for.post, ')'))
                 goto fail;
-            if (!parse_statements(prog, &stmt->s_for.child))
+            if (!cgc_parse_statements(prog, &stmt->s_for.child))
                 goto fail;
         }
         else
@@ -319,63 +319,63 @@ static int parse_statements(program_t *prog, stmt_t **result)
             goto fail;
         }
     }
-    else if (strcmp(kw, "continue") == 0)
+    else if (cgc_strcmp(kw, "continue") == 0)
     {
         stmt->type = STMT_CONTINUE;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != ';')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != ';')
             goto fail;
     }
-    else if (strcmp(kw, "break") == 0)
+    else if (cgc_strcmp(kw, "break") == 0)
     {
         stmt->type = STMT_BREAK;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != ';')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != ';')
             goto fail;
     }
-    else if (strcmp(kw, "next") == 0)
+    else if (cgc_strcmp(kw, "next") == 0)
     {
         stmt->type = STMT_NEXT;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != ';')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != ';')
             goto fail;
     }
-    else if (strcmp(kw, "exit") == 0)
+    else if (cgc_strcmp(kw, "cgc_exit") == 0)
     {
         stmt->type = STMT_EXIT;
-        skip_whitespace(prog);
-        if (io_getc(prog->io) != ';')
+        cgc_skip_whitespace(prog);
+        if (cgc_io_getc(prog->io) != ';')
             goto fail;
     }
-    else if (strcmp(kw, "printf") == 0 || strcmp(kw, "print") == 0)
+    else if (cgc_strcmp(kw, "printf") == 0 || cgc_strcmp(kw, "print") == 0)
     {
-        expr_t *tail = NULL;
+        cgc_expr_t *tail = NULL;
 
         stmt->type = STMT_PRINT;
-        if (strcmp(kw, "printf") == 0)
+        if (cgc_strcmp(kw, "printf") == 0)
         {
-            if (!parse_expression(prog, &stmt->s_print.fmt, END_PRINT))
+            if (!cgc_parse_expression(prog, &stmt->s_print.fmt, END_PRINT))
                 goto fail;
-            io_ungetc(prog->io);
-            if (io_getc(prog->io) != ',')
+            cgc_io_ungetc(prog->io);
+            if (cgc_io_getc(prog->io) != ',')
                 goto fail; // missing second argument
         }
 
         do {
-            expr_t *tmp;
-            if (!parse_expression(prog, &tmp, END_PRINT))
+            cgc_expr_t *tmp;
+            if (!cgc_parse_expression(prog, &tmp, END_PRINT))
                 goto fail;
             if (tail == NULL)
                 tail = stmt->s_print.expr = tmp;
             else
                 tail = tail->next = tmp;
-        } while ((io_ungetc(prog->io), io_getc(prog->io)) == ',');
+        } while ((cgc_io_ungetc(prog->io), cgc_io_getc(prog->io)) == ',');
     }
     else
     {
-        io_seek(prog->io, pos2);
+        cgc_io_seek(prog->io, pos2);
         stmt->type = STMT_EXPR;
-        if (!parse_expression(prog, &stmt->s_expr.expr, END_STMT))
+        if (!cgc_parse_expression(prog, &stmt->s_expr.expr, END_STMT))
             goto fail;
     }
 
@@ -383,28 +383,28 @@ static int parse_statements(program_t *prog, stmt_t **result)
     return 1;
 
 fail:
-    free(kw);
-    free_statement(stmt);
-    io_seek(prog->io, pos);
+    cgc_free(kw);
+    cgc_free_statement(stmt);
+    cgc_io_seek(prog->io, pos);
     return 0;
 }
 
-static int parse_expression(program_t *prog, expr_t **result, int end)
+static int cgc_parse_expression(cgc_program_t *prog, cgc_expr_t **result, int end)
 {
     int pos;
-    expr_t *head = NULL, *tail = NULL;
-    skip_whitespace(prog);
+    cgc_expr_t *head = NULL, *tail = NULL;
+    cgc_skip_whitespace(prog);
 
     do
     {
-        expr_t *tmp = NULL;
+        cgc_expr_t *tmp = NULL;
         int c;
         
         // strip whitespace, but need to know if there is whitespace to
         // support concatenation
-        skip_whitespace(prog);
+        cgc_skip_whitespace(prog);
 
-        c = io_getc(prog->io);
+        c = cgc_io_getc(prog->io);
         if (c == end)
             break;
         // special case: new-line or semicolon terminates a statement
@@ -416,28 +416,28 @@ static int parse_expression(program_t *prog, expr_t **result, int end)
 
         switch (c) {
         case '(':
-            if (!parse_expression(prog, &tmp, ')'))
+            if (!cgc_parse_expression(prog, &tmp, ')'))
                 goto fail;
             break;
         case '"':
-            io_ungetc(prog->io);
-            if (!parse_quoted_string(prog, &tmp))
+            cgc_io_ungetc(prog->io);
+            if (!cgc_parse_quoted_string(prog, &tmp))
                 goto fail;
             break;
         case '\\':
-            if (io_getc(prog->io) != '\n')
+            if (cgc_io_getc(prog->io) != '\n')
                 goto fail;
             break;
         case '$':
-            pos = io_tell(prog->io);
-            if (parse_number(prog, &tmp))
+            pos = cgc_io_tell(prog->io);
+            if (cgc_parse_number(prog, &tmp))
             {
                 tmp->op = OP_FIELD;
                 break;
             }
 
-            io_seek(prog->io, pos);
-            if (parse_variable(prog, &tmp))
+            cgc_io_seek(prog->io, pos);
+            if (cgc_parse_variable(prog, &tmp))
             {
                 tmp->op = OP_FIELD_VAR;
                 break;
@@ -445,152 +445,152 @@ static int parse_expression(program_t *prog, expr_t **result, int end)
 
             goto fail;
         case '?':
-            tmp = init_expression(OP_CONDITIONAL);
+            tmp = cgc_init_expression(OP_CONDITIONAL);
             if (tmp == NULL)
                 goto fail;
-            if (!parse_expression(prog, &tmp->e_cond.vtrue, ':'))
+            if (!cgc_parse_expression(prog, &tmp->e_cond.vtrue, ':'))
                 goto fail; 
             break;
         case '=':
-            if (io_getc(prog->io) == '=')
+            if (cgc_io_getc(prog->io) == '=')
             {
                 // equality test
-                tmp = init_expression(OP_EQ);
+                tmp = cgc_init_expression(OP_EQ);
                 if (tmp == NULL)
                     goto fail;
             }
             else
             {
                 // assignment
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_ASSIGN);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_ASSIGN);
                 if (tmp == NULL)
                     goto fail;
             }
             break;
         case '>':
-            if (io_getc(prog->io) == '=')
-                tmp = init_expression(OP_GTE);
+            if (cgc_io_getc(prog->io) == '=')
+                tmp = cgc_init_expression(OP_GTE);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_GT);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_GT);
             }
             if (tmp == NULL)
                 goto fail;
             break;
         case '<':
-            if (io_getc(prog->io) == '=')
-                tmp = init_expression(OP_LTE);
+            if (cgc_io_getc(prog->io) == '=')
+                tmp = cgc_init_expression(OP_LTE);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_LT);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_LT);
             }
             if (tmp == NULL)
                 goto fail;
             break;
         case '*':
-            c = io_getc(prog->io);
+            c = cgc_io_getc(prog->io);
             if (c == '=')
-                tmp = init_expression(OP_ASSIGN_MUL);
+                tmp = cgc_init_expression(OP_ASSIGN_MUL);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_MUL);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_MUL);
             }
             break;
         case '/':
-            if (tail == NULL || is_unary(tail->op) || is_binary(tail->op))
+            if (tail == NULL || cgc_is_unary(tail->op) || cgc_is_binary(tail->op))
             {
                 // regexp
-                io_ungetc(prog->io);
-                if (!parse_regexp(prog, &tmp))
+                cgc_io_ungetc(prog->io);
+                if (!cgc_parse_regexp(prog, &tmp))
                     goto fail;
             }
             else
             {
                 // divide
-                c = io_getc(prog->io);
+                c = cgc_io_getc(prog->io);
                 if (c == '=')
-                    tmp = init_expression(OP_ASSIGN_DIV);
+                    tmp = cgc_init_expression(OP_ASSIGN_DIV);
                 else
                 {
-                    io_ungetc(prog->io);
-                    tmp = init_expression(OP_DIV);
+                    cgc_io_ungetc(prog->io);
+                    tmp = cgc_init_expression(OP_DIV);
                 }
             }
             break;
         case '%':
-            c = io_getc(prog->io);
+            c = cgc_io_getc(prog->io);
             if (c == '=')
-                tmp = init_expression(OP_ASSIGN_MOD);
+                tmp = cgc_init_expression(OP_ASSIGN_MOD);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_MOD);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_MOD);
             }
             break;
         case '-':
-            c = io_getc(prog->io);
+            c = cgc_io_getc(prog->io);
             if (c == '-')
-                tmp = init_expression(OP_DEC);
+                tmp = cgc_init_expression(OP_DEC);
             else if (c == '=')
-                tmp = init_expression(OP_ASSIGN_SUB);
+                tmp = cgc_init_expression(OP_ASSIGN_SUB);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_NEGATE_OR_SUB);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_NEGATE_OR_SUB);
             }
             break;
         case '+':
-            c = io_getc(prog->io);
+            c = cgc_io_getc(prog->io);
             if (c == '+')
-                tmp = init_expression(OP_INC);
+                tmp = cgc_init_expression(OP_INC);
             else if (c == '=')
-                tmp = init_expression(OP_ASSIGN_ADD);
+                tmp = cgc_init_expression(OP_ASSIGN_ADD);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_ADD);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_ADD);
             }
             break;
         case '&':
-            if (io_getc(prog->io) == '&')
-                tmp = init_expression(OP_AND);
+            if (cgc_io_getc(prog->io) == '&')
+                tmp = cgc_init_expression(OP_AND);
             else
                 goto fail;
             break;
         case '|':
-            if (io_getc(prog->io) == '|')
-                tmp = init_expression(OP_OR);
+            if (cgc_io_getc(prog->io) == '|')
+                tmp = cgc_init_expression(OP_OR);
             else
                 goto fail;
             break;
         case '~':
-            tmp = init_expression(OP_MATCH);
+            tmp = cgc_init_expression(OP_MATCH);
             break;
         case '!':
-            c = io_getc(prog->io);
+            c = cgc_io_getc(prog->io);
             if (c == '=')
-                tmp = init_expression(OP_NEQ);
+                tmp = cgc_init_expression(OP_NEQ);
             else if (c == '~')
-                tmp = init_expression(OP_NOT_MATCH);
+                tmp = cgc_init_expression(OP_NOT_MATCH);
             else
             {
-                io_ungetc(prog->io);
-                tmp = init_expression(OP_NOT);
+                cgc_io_ungetc(prog->io);
+                tmp = cgc_init_expression(OP_NOT);
             }
             break;
         default:
-            io_ungetc(prog->io);
+            cgc_io_ungetc(prog->io);
 
-            pos = io_tell(prog->io);
-            if (parse_number(prog, &tmp))
+            pos = cgc_io_tell(prog->io);
+            if (cgc_parse_number(prog, &tmp))
                 break;
 
-            io_seek(prog->io, pos);
-            if (parse_variable(prog, &tmp))
+            cgc_io_seek(prog->io, pos);
+            if (cgc_parse_variable(prog, &tmp))
                 break;
 
             goto fail;
@@ -616,27 +616,27 @@ static int parse_expression(program_t *prog, expr_t **result, int end)
     } while (1);
 
     // convert linked list into tree using precedence rules
-    if (!treeify_expression(&head, 99))
+    if (!cgc_treeify_expression(&head, 99))
         goto fail;
 
     *result = head;
     return 1;
 
 fail:
-    free_expression(head);
+    cgc_free_expression(head);
     return 0;
 }
 
-static int parse_variable(program_t *prog, expr_t **result)
+static int cgc_parse_variable(cgc_program_t *prog, cgc_expr_t **result)
 {
     char *name = NULL;
-    expr_t *expr = NULL;
+    cgc_expr_t *expr = NULL;
 
-    name = parse_var(prog);
-    if (name == NULL || strlen(name) == 0 || is_keyword(name))
+    name = cgc_parse_var(prog);
+    if (name == NULL || cgc_strlen(name) == 0 || cgc_is_keyword(name))
         goto fail;
 
-    expr = init_expression(OP_VAR);
+    expr = cgc_init_expression(OP_VAR);
     if (expr == NULL)
         goto fail;
 
@@ -645,32 +645,32 @@ static int parse_variable(program_t *prog, expr_t **result)
     return 1;
 
 fail:
-    free(name);
+    cgc_free(name);
     return 0;
 }
 
 // TODO: support octal and hexadecimal constants
-static int parse_number(program_t *prog, expr_t **result)
+static int cgc_parse_number(cgc_program_t *prog, cgc_expr_t **result)
 {
     char buf[64];
     int c, i = 0, value;
-    expr_t *expr = NULL;
+    cgc_expr_t *expr = NULL;
 
     do {
-        c = io_getc(prog->io);
+        c = cgc_io_getc(prog->io);
         if (c < 0)
             goto fail;
         buf[i++] = c;
-    } while (i < sizeof(buf) && isdigit(c));
+    } while (i < sizeof(buf) && cgc_isdigit(c));
 
-    io_ungetc(prog->io);
+    cgc_io_ungetc(prog->io);
     if (i <= 1)
         goto fail;
 
     buf[i-1] = 0;
-    value = strtol(buf, NULL, 10);
+    value = cgc_strtol(buf, NULL, 10);
 
-    expr = init_expression(OP_CONST_INT);
+    expr = cgc_init_expression(OP_CONST_INT);
     if (expr == NULL)
         goto fail;
 
@@ -680,80 +680,80 @@ static int parse_number(program_t *prog, expr_t **result)
     return 1;
 
 fail:
-    free(expr);
+    cgc_free(expr);
     return 0;
 }
 
-static int parse_regexp(program_t *prog, expr_t **result)
+static int cgc_parse_regexp(cgc_program_t *prog, cgc_expr_t **result)
 {
     int c;
-    expr_t *expr = NULL;
-    strio_t str;
+    cgc_expr_t *expr = NULL;
+    cgc_strio_t str;
 
-    strio_init(&str);
+    cgc_strio_init(&str);
 
-    if (!io_getc(prog->io) == '"')
+    if (!cgc_io_getc(prog->io) == '"')
         goto fail;
 
     while (1)
     {
-        c = io_getc(prog->io);
+        c = cgc_io_getc(prog->io);
         if (c < 0)
             goto fail;
         else if (c == '/')
             break;
         else if (c != '\\')
-            strio_append_char(&str, c);
+            cgc_strio_append_char(&str, c);
         else
         {
-            if (io_getc(prog->io) == '/')
-                strio_append_char(&str, '/');
+            if (cgc_io_getc(prog->io) == '/')
+                cgc_strio_append_char(&str, '/');
             else
-                io_ungetc(prog->io);
+                cgc_io_ungetc(prog->io);
         }
     }
 
-    expr = init_expression(OP_CONST_REGEXP);
+    expr = cgc_init_expression(OP_CONST_REGEXP);
     if (expr == NULL)
         goto fail;
 
-    expr->e_cregexp.value = strio_dup(&str);
+    expr->e_cregexp.value = cgc_strio_dup(&str);
     if (expr->e_cregexp.value == NULL)
         goto fail;
 
-    strio_free(&str);
+    cgc_strio_free(&str);
     *result = expr;
     return 1;
 
 fail:
-    free(expr);
-    strio_free(&str);
+    cgc_free(expr);
+    cgc_strio_free(&str);
     return 0;
 }
 
-static int parse_quoted_string(program_t *prog, expr_t **result)
+static int cgc_parse_quoted_string(cgc_program_t *prog, cgc_expr_t **result)
 {
     int c;
-    expr_t *expr = NULL;
-    strio_t str;
+    cgc_expr_t *expr = NULL;
+    cgc_strio_t str;
 
-    strio_init(&str);
+    cgc_strio_init(&str);
 
-    if (!io_getc(prog->io) == '"')
+    if (!cgc_io_getc(prog->io) == '"')
         goto fail;
 
     while (1)
     {
-        c = io_getc(prog->io);
+        c = cgc_io_getc(prog->io);
         if (c < 0)
             goto fail;
         else if (c == '"')
             break;
         else if (c != '\\')
-            strio_append_char(&str, c);
+            cgc_strio_append_char(&str, c);
         else
         {
-            int c2 = io_getc(prog->io);
+            int c2 = cgc_io_getc(prog->io);
             if (c2 < 0)
                 goto fail;
             switch (c2)
@@ -762,25 +762,25 @@ static int parse_quoted_string(program_t *prog, expr_t **result)
                 // ignore
                 break;
             case 'a':
-                strio_append_char(&str, '\a');
+                cgc_strio_append_char(&str, '\a');
                 break;
             case 'b':
-                strio_append_char(&str, '\b');
+                cgc_strio_append_char(&str, '\b');
                 break;
             case 't':
-                strio_append_char(&str, '\t');
+                cgc_strio_append_char(&str, '\t');
                 break;
             case 'n':
-                strio_append_char(&str, '\n');
+                cgc_strio_append_char(&str, '\n');
                 break;
             case 'v':
-                strio_append_char(&str, '\v');
+                cgc_strio_append_char(&str, '\v');
                 break;
             case 'f':
-                strio_append_char(&str, '\f');
+                cgc_strio_append_char(&str, '\f');
                 break;
             case 'r':
-                strio_append_char(&str, '\r');
+                cgc_strio_append_char(&str, '\r');
                 break;
             case 'x':
                 // XXX parse hex
@@ -796,69 +796,69 @@ static int parse_quoted_string(program_t *prog, expr_t **result)
                 // XXX parse octal
                 break;
             default:
-                strio_append_char(&str, c);
+                cgc_strio_append_char(&str, c);
                 // fall through
             case '\\':
             case '"':
-                strio_append_char(&str, c2);
+                cgc_strio_append_char(&str, c2);
                 break;
             }
         }
     }
 
-    expr = init_expression(OP_CONST_STRING);
+    expr = cgc_init_expression(OP_CONST_STRING);
     if (expr == NULL)
         goto fail;
 
-    expr->e_cstring.value = strio_dup(&str);
+    expr->e_cstring.value = cgc_strio_dup(&str);
     if (expr->e_cstring.value == NULL)
         goto fail;
 
     *result = expr;
-    strio_free(&str);
+    cgc_strio_free(&str);
     return 1;
 
 fail:
-    free(expr);
-    strio_free(&str);
+    cgc_free(expr);
+    cgc_strio_free(&str);
     return 0;
 }
 
-static void skip_line(program_t *prog)
+static void cgc_skip_line(cgc_program_t *prog)
 {
     int c;
-    while ((c = io_getc(prog->io)) >= 0)
+    while ((c = cgc_io_getc(prog->io)) >= 0)
     {
         if (c == '\n')
             break;
     }
 }
 
-static void skip_whitespace(program_t *prog)
+static void cgc_skip_whitespace(cgc_program_t *prog)
 {
     int c;
-    while ((c = io_getc(prog->io)) >= 0)
+    while ((c = cgc_io_getc(prog->io)) >= 0)
     {
-        if (!isspace(c))
+        if (!cgc_isspace(c))
         {
-            io_ungetc(prog->io);
+            cgc_io_ungetc(prog->io);
             break;
         }
     }
 }
 
-static int is_keyword(const char *s)
+static int cgc_is_keyword(const char *s)
 {
-    if (strcmp(s, "if") == 0 ||
-        strcmp(s, "while") == 0 ||
-        strcmp(s, "continue") == 0 ||
-        strcmp(s, "do") == 0 ||
-        strcmp(s, "for") == 0 || 
-        strcmp(s, "break") == 0 ||
-        strcmp(s, "next") == 0 ||
-        strcmp(s, "exit") == 0 ||
-        strcmp(s, "print") == 0 ||
-        strcmp(s, "printf") == 0)
+    if (cgc_strcmp(s, "if") == 0 ||
+        cgc_strcmp(s, "while") == 0 ||
+        cgc_strcmp(s, "continue") == 0 ||
+        cgc_strcmp(s, "do") == 0 ||
+        cgc_strcmp(s, "for") == 0 || 
+        cgc_strcmp(s, "break") == 0 ||
+        cgc_strcmp(s, "next") == 0 ||
+        cgc_strcmp(s, "cgc_exit") == 0 ||
+        cgc_strcmp(s, "print") == 0 ||
+        cgc_strcmp(s, "printf") == 0)
     {
         return 1;
     }
@@ -868,7 +868,7 @@ static int is_keyword(const char *s)
     }
 }
 
-static const char *op_to_name(int op)
+static const char *cgc_op_to_name(int op)
 {
 #define CASE(x) case OP_##x : \
     return #x ;
@@ -921,7 +921,7 @@ static const char *op_to_name(int op)
 #undef CASE
 }
 
-static int is_unary(int op)
+static int cgc_is_unary(int op)
 {
     return op == OP_NEGATE ||
         op == OP_NOT ||
@@ -931,7 +931,7 @@ static int is_unary(int op)
         op == OP_DEC_POST;
 }
 
-static int is_binary(int op)
+static int cgc_is_binary(int op)
 {
     return op == OP_ASSIGN ||
         op == OP_ASSIGN_ADD ||
@@ -958,7 +958,7 @@ static int is_binary(int op)
         op == OP_MOD;
 }
 
-static int is_assign(int op)
+static int cgc_is_assign(int op)
 {
     return op == OP_ASSIGN ||
         op == OP_ASSIGN_ADD ||
@@ -968,14 +968,14 @@ static int is_assign(int op)
         op == OP_ASSIGN_MOD;
 }
 
-static int is_assignable(int op)
+static int cgc_is_assignable(int op)
 {
     return op == OP_FIELD ||
         op == OP_FIELD_VAR ||
         op == OP_VAR;
 }
 
-static void unlink(expr_t *e)
+static void cgc_unlink(cgc_expr_t *e)
 {
     if (e->next)
         e->next->prev = e->prev;
@@ -985,9 +985,9 @@ static void unlink(expr_t *e)
     e->prev = NULL;
 }
 
-static int treeify_expression(expr_t **expr, int stages)
+static int cgc_treeify_expression(cgc_expr_t **expr, int stages)
 {
-    expr_t *iter, *old;
+    cgc_expr_t *iter, *old;
     if (*expr == NULL)
         return 1;
 
@@ -1000,10 +1000,10 @@ static int treeify_expression(expr_t **expr, int stages)
         {
             if (iter->next == NULL)
                 goto fail;
-            if (!treeify_expression(&iter->next, 1))
+            if (!cgc_treeify_expression(&iter->next, 1))
                 goto fail;
             iter->e_unop.expr = iter->next;
-            unlink(iter->e_unop.expr);
+            cgc_unlink(iter->e_unop.expr);
         }
     }
 
@@ -1015,36 +1015,36 @@ static int treeify_expression(expr_t **expr, int stages)
     {
         if (iter->op == OP_DEC && iter->e_unop.expr == NULL)
         {
-            if (iter->prev != NULL && is_assignable(iter->prev->op))
+            if (iter->prev != NULL && cgc_is_assignable(iter->prev->op))
             {
                 iter->op = OP_DEC_POST;
                 iter->e_unop.expr = iter->prev;
-                unlink(iter->e_unop.expr);
+                cgc_unlink(iter->e_unop.expr);
                 if (*expr == iter->e_unop.expr)
                     *expr = iter;
             }
-            else if (iter->next != NULL && is_assignable(iter->next->op))
+            else if (iter->next != NULL && cgc_is_assignable(iter->next->op))
             {
                 iter->op = OP_DEC_PRE;
                 iter->e_unop.expr = iter->next;
-                unlink(iter->e_unop.expr);
+                cgc_unlink(iter->e_unop.expr);
             }
         }
         if (iter->op == OP_INC && iter->e_unop.expr == NULL)
         {
-            if (iter->prev != NULL && is_assignable(iter->prev->op))
+            if (iter->prev != NULL && cgc_is_assignable(iter->prev->op))
             {
                 iter->op = OP_INC_POST;
                 iter->e_unop.expr = iter->prev;
-                unlink(iter->e_unop.expr);
+                cgc_unlink(iter->e_unop.expr);
                 if (*expr == iter->e_unop.expr)
                     *expr = iter;
             }
-            else if (iter->next != NULL && is_assignable(iter->next->op))
+            else if (iter->next != NULL && cgc_is_assignable(iter->next->op))
             {
                 iter->op = OP_INC_PRE;
                 iter->e_unop.expr = iter->next;
-                unlink(iter->e_unop.expr);
+                cgc_unlink(iter->e_unop.expr);
             }
         }
     }
@@ -1056,20 +1056,20 @@ static int treeify_expression(expr_t **expr, int stages)
     for (iter = *expr; iter->next != NULL; iter = iter->next) ;
     while (iter != NULL)
     {
-        if (is_assign(iter->op) && iter->e_binop.lhs == NULL)
+        if (cgc_is_assign(iter->op) && iter->e_binop.lhs == NULL)
         {
             if (iter->prev == NULL || iter->next == NULL)
                 goto fail;
-            if (!is_assignable(iter->prev->op))
+            if (!cgc_is_assignable(iter->prev->op))
                 goto fail;
 
-            if (!treeify_expression(&iter->next, 99))
+            if (!cgc_treeify_expression(&iter->next, 99))
                 goto fail;
 
             iter->e_binop.lhs = iter->prev;
             iter->e_binop.rhs = iter->next;
-            unlink(iter->e_binop.lhs);
-            unlink(iter->e_binop.rhs);
+            cgc_unlink(iter->e_binop.lhs);
+            cgc_unlink(iter->e_binop.rhs);
 
             if (*expr == iter->e_binop.lhs)
                 *expr = iter;
@@ -1086,16 +1086,16 @@ static int treeify_expression(expr_t **expr, int stages)
             if (iter->prev == NULL || iter->next == NULL)
                 goto fail;
 
-            if (!treeify_expression(&iter->next, 99))
+            if (!cgc_treeify_expression(&iter->next, 99))
                 goto fail;
             iter->e_cond.vfalse = iter->next;
-            unlink(iter->e_cond.vfalse);
+            cgc_unlink(iter->e_cond.vfalse);
 
             iter->e_cond.cond = *expr;
             iter->prev->next = NULL;
             iter->prev = NULL;
             *expr = iter;
-            if (!treeify_expression(&iter->e_cond.cond, 99))
+            if (!cgc_treeify_expression(&iter->e_cond.cond, 99))
                 goto fail;
         }
         iter = iter->prev;
@@ -1105,12 +1105,12 @@ static int treeify_expression(expr_t **expr, int stages)
         if (iter->op == x && iter->e_binop.lhs == NULL) { \
             if (iter->prev == NULL || iter->next == NULL) \
                 goto fail; \
-            if (!treeify_expression(&iter->next, 99)) \
+            if (!cgc_treeify_expression(&iter->next, 99)) \
                 goto fail; \
             iter->e_binop.lhs = iter->prev; \
             iter->e_binop.rhs = iter->next; \
-            unlink(iter->e_binop.lhs); \
-            unlink(iter->e_binop.rhs); \
+            cgc_unlink(iter->e_binop.lhs); \
+            cgc_unlink(iter->e_binop.rhs); \
             if (*expr == iter->e_binop.lhs) \
                 *expr = iter; \
         } \
@@ -1134,7 +1134,7 @@ static int treeify_expression(expr_t **expr, int stages)
     }
 #endif
 
-    // process match operators
+    // process cgc_match operators
     for (iter = *expr; iter != NULL; iter = iter->next)
     {
         HANDLE_BINOP(OP_NOT_MATCH);
@@ -1180,25 +1180,25 @@ static int treeify_expression(expr_t **expr, int stages)
         {
             if (iter->next == NULL)
                 goto fail;
-            if (!treeify_expression(&iter->next, 99))
+            if (!cgc_treeify_expression(&iter->next, 99))
                 goto fail;
             iter->op = OP_NEGATE;
             iter->e_unop.expr = iter->next;
-            unlink(iter->e_unop.expr);
+            cgc_unlink(iter->e_unop.expr);
         }
     }
 
     // combine remainder with concatenations
     while ((*expr)->next)
     {
-        if (!treeify_expression(&(*expr)->next, 99))
+        if (!cgc_treeify_expression(&(*expr)->next, 99))
             goto fail;
 
-        iter = init_expression(OP_CONCAT);
+        iter = cgc_init_expression(OP_CONCAT);
         iter->e_binop.lhs = *expr;
         iter->e_binop.rhs = (*expr)->next;
-        unlink((*expr)->next);
-        unlink(*expr);
+        cgc_unlink((*expr)->next);
+        cgc_unlink(*expr);
         *expr = iter;
     }
 
@@ -1213,18 +1213,18 @@ fail:
     return 0;
 }
 
-static int verify_expression(expr_t *expr)
+static int cgc_verify_expression(cgc_expr_t *expr)
 {
 #ifdef DEBUG
     print_expression(expr, "");
 #endif
-    fdprintf(STDERR, "\n");
+    cgc_fdprintf(STDERR, "\n");
     return 1;
 }
 
-static expr_t *init_expression(int op)
+static cgc_expr_t *cgc_init_expression(int op)
 {
-    expr_t *expr = calloc(1, sizeof(expr_t));
+    cgc_expr_t *expr = cgc_calloc(1, sizeof(cgc_expr_t));
     if (expr == NULL)
         return NULL;
     expr->op = op;
@@ -1232,57 +1232,57 @@ static expr_t *init_expression(int op)
 }
 
 #ifdef DEBUG
-static void print_expression(expr_t *expr, const char *prefix)
+static void print_expression(cgc_expr_t *expr, const char *prefix)
 {
     char buf[64];
     if (expr == NULL)
         return;
 
-    strcpy(buf, prefix);
-    fdprintf(STDERR, "%s%s", prefix, op_to_name(expr->op));
+    cgc_strcpy(buf, prefix);
+    cgc_fdprintf(STDERR, "%s%s", prefix, cgc_op_to_name(expr->op));
     switch (expr->op)
     {
     case OP_CONST_REGEXP:
-        fdprintf(STDERR, "[%s]", expr->e_cregexp.value);
+        cgc_fdprintf(STDERR, "[%s]", expr->e_cregexp.value);
         break;
     case OP_CONST_STRING:
-        fdprintf(STDERR, "[%s]", expr->e_cstring.value);
+        cgc_fdprintf(STDERR, "[%s]", expr->e_cstring.value);
         break;
     case OP_FIELD:
     case OP_CONST_INT:
-        fdprintf(STDERR, " [%d]", expr->e_cint.value);
+        cgc_fdprintf(STDERR, " [%d]", expr->e_cint.value);
         break;
     case OP_FIELD_VAR:
     case OP_VAR:
-        fdprintf(STDERR, " [%s]", expr->e_var.name);
+        cgc_fdprintf(STDERR, " [%s]", expr->e_var.name);
         break;
     default:
         break;
     }
 
-    fdprintf(STDERR, "\n");
+    cgc_fdprintf(STDERR, "\n");
 
-    if (strlen(buf) < sizeof(buf)-1)
-        strcat(buf, "\t");
+    if (cgc_strlen(buf) < sizeof(buf)-1)
+        cgc_strcat(buf, "\t");
 
     if (expr->op == OP_CONDITIONAL)
     {
-        fdprintf(STDERR, "%scond=\n", prefix);
+        cgc_fdprintf(STDERR, "%scond=\n", prefix);
         print_expression(expr->e_cond.cond, buf);
-        fdprintf(STDERR, "%svtrue=\n", prefix);
+        cgc_fdprintf(STDERR, "%svtrue=\n", prefix);
         print_expression(expr->e_cond.vtrue, buf);
-        fdprintf(STDERR, "%svfalse=\n", prefix);
+        cgc_fdprintf(STDERR, "%svfalse=\n", prefix);
         print_expression(expr->e_cond.vfalse, buf);
     }
-    else if (is_unary(expr->op))
+    else if (cgc_is_unary(expr->op))
     {
         print_expression(expr->e_unop.expr, buf);
     }
-    else if (is_binary(expr->op))
+    else if (cgc_is_binary(expr->op))
     {
-        fdprintf(STDERR, "%slhs=\n", prefix);
+        cgc_fdprintf(STDERR, "%slhs=\n", prefix);
         print_expression(expr->e_binop.lhs, buf);
-        fdprintf(STDERR, "%srhs=\n", prefix);
+        cgc_fdprintf(STDERR, "%srhs=\n", prefix);
         print_expression(expr->e_binop.rhs, buf);
     }
 
@@ -1311,54 +1311,54 @@ static const char *stmt_to_name(int type)
 #undef CASE
 }
 
-static void print_statement(stmt_t *stmt, const char *prefix)
+static void print_statement(cgc_stmt_t *stmt, const char *prefix)
 {
     char buf[64];
     if (stmt == NULL)
         return;
 
-    fdprintf(STDERR, "%s%s\n", prefix, stmt_to_name(stmt->type));
+    cgc_fdprintf(STDERR, "%s%s\n", prefix, stmt_to_name(stmt->type));
     
-    strcpy(buf, prefix);
-    if (strlen(buf) < sizeof(buf) - 1)
-        strcat(buf, "\t");
+    cgc_strcpy(buf, prefix);
+    if (cgc_strlen(buf) < sizeof(buf) - 1)
+        cgc_strcat(buf, "\t");
 
     switch(stmt->type)
     {
     case STMT_WHILE:
-        fdprintf(STDERR, "%spost=%d\n", prefix, stmt->s_while.post);
-        fdprintf(STDERR, "%scond=\n", prefix);
+        cgc_fdprintf(STDERR, "%spost=%d\n", prefix, stmt->s_while.post);
+        cgc_fdprintf(STDERR, "%scond=\n", prefix);
         print_expression(stmt->s_while.cond, buf);
-        fdprintf(STDERR, "%schild=\n", prefix);
+        cgc_fdprintf(STDERR, "%schild=\n", prefix);
         print_statement(stmt->s_while.child, buf);
         break;
     case STMT_EXIT:
-        fdprintf(STDERR, "%svalue=%d\n", stmt->s_exit.value);
+        cgc_fdprintf(STDERR, "%svalue=%d\n", stmt->s_exit.value);
         break;
     case STMT_IF:
-        fdprintf(STDERR, "%scond=\n", prefix);
+        cgc_fdprintf(STDERR, "%scond=\n", prefix);
         print_expression(stmt->s_if.cond, buf);
-        fdprintf(STDERR, "%schild=\n", prefix);
+        cgc_fdprintf(STDERR, "%schild=\n", prefix);
         print_statement(stmt->s_if.child, buf);
         break;
     case STMT_EXPR:
-        fdprintf(STDERR, "%sexpr=\n", prefix);
+        cgc_fdprintf(STDERR, "%sexpr=\n", prefix);
         print_expression(stmt->s_expr.expr, buf);
         break;
     case STMT_FOR:
-        fdprintf(STDERR, "%sinit=\n", prefix);
+        cgc_fdprintf(STDERR, "%sinit=\n", prefix);
         print_expression(stmt->s_for.init, buf);
-        fdprintf(STDERR, "%scond=\n", prefix);
+        cgc_fdprintf(STDERR, "%scond=\n", prefix);
         print_expression(stmt->s_for.cond, buf);
-        fdprintf(STDERR, "%spost=\n", prefix);
+        cgc_fdprintf(STDERR, "%spost=\n", prefix);
         print_expression(stmt->s_for.post, buf);
-        fdprintf(STDERR, "%schild=\n", prefix);
+        cgc_fdprintf(STDERR, "%schild=\n", prefix);
         print_statement(stmt->s_for.child, buf);
         break;
     case STMT_PRINT:
-        fdprintf(STDERR, "%sfmt=\n", prefix);
+        cgc_fdprintf(STDERR, "%sfmt=\n", prefix);
         print_expression(stmt->s_print.fmt, buf);
-        fdprintf(STDERR, "%sargs=\n", prefix);
+        cgc_fdprintf(STDERR, "%sargs=\n", prefix);
         print_expression(stmt->s_print.expr, buf);
         break;
     }

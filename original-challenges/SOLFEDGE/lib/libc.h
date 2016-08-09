@@ -24,10 +24,10 @@
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
 
-typedef signed char int8_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-typedef unsigned char uint8_t;
+typedef signed char cgc_int8_t;
+typedef signed int cgc_int32_t;
+typedef unsigned int cgc_uint32_t;
+typedef unsigned char cgc_uint8_t;
 
 #define SUCCESS 0
 #define ERRNO_ALLOC 505
@@ -35,11 +35,11 @@ typedef unsigned char uint8_t;
 
 // libc libs borrowed from EAGLE_00004
 
-int send(const char *buf, const size_t size);
-int transmit_all(int fd, const char *buf, const size_t size);
-unsigned int recv_all(char *res_buf, size_t res_buf_size);
-unsigned int read_all(int fd, char *buf, unsigned int size);
+int cgc_send(const char *buf, const cgc_size_t size);
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
+unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
-void *memset(void *dst, int c, unsigned int n);
+void *cgc_memset(void *dst, int c, unsigned int n);
 
 #endif

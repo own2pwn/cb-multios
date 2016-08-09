@@ -1,27 +1,27 @@
 #include "file.h"
 #include "ascii.h"
 
-class AsciiArt : public File, private AsciiInterface
+class cgc_AsciiArt : public cgc_File, private cgc_AsciiInterface
 {
 private:
-    struct AsciiArtHeader
+    struct cgc_AsciiArtHeader
     {
         unsigned int magic;
         unsigned short line_width;
         unsigned short num_lines;
     };
 
-    AsciiArtHeader header;
+    cgc_AsciiArtHeader header;
 public:
-    AsciiArt(void *_header, void *data, char *_filename);
-    virtual ~AsciiArt();
+    cgc_AsciiArt(void *_header, void *data, char *_filename);
+    virtual ~cgc_AsciiArt();
 
-    virtual unsigned int get_magic();
-    virtual bool is_ascii(char *_stream);
+    virtual unsigned int cgc_get_magic();
+    virtual bool cgc_is_ascii(char *_stream);
 
-    static size_t find_header_size();
-    static size_t find_data_size(void *header);
+    static cgc_size_t cgc_find_header_size();
+    static cgc_size_t cgc_find_data_size(void *header);
 
-    void print_asciiart();
+    void cgc_print_asciiart();
 };
 

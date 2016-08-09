@@ -28,16 +28,16 @@
 #include "fixups.h"
 
 // FASTLANE
-int do_tip(char *uri);
-int do_status();
-int do_gimme(char *uri);
-int do_list();
+int cgc_do_tip(char *uri);
+int cgc_do_status();
+int cgc_do_gimme(char *uri);
+int cgc_do_list();
 
 // SLOWLANE
-int do_smore(char *uri);
-int do_youup();
-int do_mooch(char *uri);
-int do_sup();
-int do_auth(char *uri);
+int cgc_do_smore(char *uri);
+int cgc_do_youup();
+int cgc_do_mooch(char *uri);
+int cgc_do_sup();
+int cgc_do_auth(char *uri);
 
 #endif

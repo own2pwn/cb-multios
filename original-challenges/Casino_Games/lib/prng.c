@@ -29,13 +29,13 @@ THE SOFTWARE.
 #include "stdint.h"
 #include "prng.h"	
 
-uint64_t state[16];
+cgc_uint64_t state[16];
 int position;
 
 // Seeds the RNG state by passing the 64-bit input seed through xorshift64* algorithm
-void sprng(uint64_t seed)
+void cgc_sprng(cgc_uint64_t seed)
 {
-	uint64_t state_64 = seed;
+	cgc_uint64_t state_64 = seed;
 	for (int i = 0; i < 16; i++)
 	{
 		state_64 ^= state_64 >> COEFFICIENT_A_64;
@@ -47,11 +47,11 @@ void sprng(uint64_t seed)
 }
 
 // Generates a random 64-bit number using the xorshift1024* algorithm
-uint64_t prng()
+cgc_uint64_t cgc_prng()
 {
-	uint64_t state0 = state[position];
+	cgc_uint64_t state0 = state[position];
 	position = (position + 1) % 16;
-	uint64_t state1 = state[position];
+	cgc_uint64_t state1 = state[position];
 
 	state1 ^= state1 << COEFFICIENT_A_1024;
 	state1 ^= state1 >> COEFFICIENT_B_1024;
@@ -61,7 +61,7 @@ uint64_t prng()
 }
 
 // Generate an unsigned integer in the range min to max, inclusive. 
-uint32_t random_in_range(uint32_t min, uint32_t max)
+cgc_uint32_t cgc_random_in_range(cgc_uint32_t min, cgc_uint32_t max)
 {
 	if (max <= min)
 	{
@@ -72,7 +72,7 @@ uint32_t random_in_range(uint32_t min, uint32_t max)
 	unsigned int rand_uint;
 	do
 	{
-		rand_uint = prng();
+		rand_uint = cgc_prng();
 	} while (rand_uint >= scale_factor * range); // Discard numbers that would cause bias
 		
 	return (rand_uint / scale_factor + min);

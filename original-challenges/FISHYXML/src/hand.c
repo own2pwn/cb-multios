@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,17 +25,17 @@
 #include "card.h"
 #include "hand.h"
 
-struct hand *create_hand() {
+struct hand *cgc_create_hand() {
 	struct hand *h = NULL;
-	h = calloc(sizeof(struct hand));
+	h = cgc_calloc(sizeof(struct hand));
 
 	return h;
 }
 
-void consolidate_hand(struct hand *h) {
-	uint8_t qty_in_place = 0; // number of cards that are verified consolidated
-	uint8_t r_idx = 0; // idx where card is read from
-	uint8_t w_idx = 0; // idx where card is written to
+void cgc_consolidate_hand(struct hand *h) {
+	cgc_uint8_t qty_in_place = 0; // number of cards that are verified consolidated
+	cgc_uint8_t r_idx = 0; // idx where card is read from
+	cgc_uint8_t w_idx = 0; // idx where card is written to
 
 	while ((r_idx < 52) && (qty_in_place < h->count)) {
 		if (NULL == h->cards[r_idx]) {
@@ -54,7 +54,7 @@ void consolidate_hand(struct hand *h) {
 	}
 }
 
-int add_card_to_hand(struct hand *h, struct card *c) {
+int cgc_add_card_to_hand(struct hand *h, struct card *c) {
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
 	}
@@ -74,7 +74,7 @@ int add_card_to_hand(struct hand *h, struct card *c) {
  	return SUCCESS;
 }
 
-int add_cards_to_hand(struct hand *h, struct card *cards[], uint8_t qty) {
+int cgc_add_cards_to_hand(struct hand *h, struct card *cards[], cgc_uint8_t qty) {
 	int ret = SUCCESS;
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
@@ -86,14 +86,14 @@ int add_cards_to_hand(struct hand *h, struct card *cards[], uint8_t qty) {
 	if (NULL == cards) {
 		return ERR_NULL_CARD;
 	}
-	for (uint8_t idx_ = 0; idx_ < qty; idx_++) {
+	for (cgc_uint8_t idx_ = 0; idx_ < qty; idx_++) {
 		if (NULL == cards[idx_]) {
 			return ERR_NULL_CARD;
 		}
 	}
 
-	for (uint8_t idx = 0; idx < qty; idx++) {
-		ret = add_card_to_hand(h, cards[idx]);
+	for (cgc_uint8_t idx = 0; idx < qty; idx++) {
+		ret = cgc_add_card_to_hand(h, cards[idx]);
 		if (SUCCESS != ret) {
 			return ret;
 		}
@@ -102,7 +102,7 @@ int add_cards_to_hand(struct hand *h, struct card *cards[], uint8_t qty) {
 	return ret;
 }
 
-int rm_card_from_hand(struct hand *h, uint8_t idx, struct card **c) {
+int cgc_rm_card_from_hand(struct hand *h, cgc_uint8_t idx, struct card **c) {
 
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
@@ -120,12 +120,12 @@ int rm_card_from_hand(struct hand *h, uint8_t idx, struct card **c) {
 	h->cards[idx] = NULL;
 	h->count--;
 
-	consolidate_hand(h);
+	cgc_consolidate_hand(h);
 
 	return SUCCESS;
 }
 
-int qty_of_rank_in_hand(struct hand *h, uint8_t rank) {
+int cgc_qty_of_rank_in_hand(struct hand *h, cgc_uint8_t rank) {
 
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
@@ -133,7 +133,7 @@ int qty_of_rank_in_hand(struct hand *h, uint8_t rank) {
 
 	int qty = 0;
 	for (int idx = 0; idx < h->count; idx++) {
-		if (TRUE == is_rank(h->cards[idx], rank)) {
+		if (TRUE == cgc_is_rank(h->cards[idx], rank)) {
 			qty++;
 		}
 	}
@@ -141,7 +141,7 @@ int qty_of_rank_in_hand(struct hand *h, uint8_t rank) {
 	return qty;
 }
 
-int get_all_of_rank_from_hand(struct hand *h, uint8_t rank, struct card *cards[]) {
+int cgc_get_all_of_rank_from_hand(struct hand *h, cgc_uint8_t rank, struct card *cards[]) {
 
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
@@ -154,18 +154,18 @@ int get_all_of_rank_from_hand(struct hand *h, uint8_t rank, struct card *cards[]
 	if (0 == rank) {
 		return 0;
 	}
-	// rm_card_from_hand() runs consolidate, so need to use cnt
+	// cgc_rm_card_from_hand() runs consolidate, so need to use cnt
 	// instead of idx to index into the hand and allow the idx variable
 	// to just count through the original number of cards. also need to
 	// use hand_size for the upper bound because h->count will change
 	// when consolidate is run.
 	int cnt = 0;
 	int hand_size = h->count;
-	uint8_t qty = 0;
+	cgc_uint8_t qty = 0;
 	int ret = 0;
 	for (int idx = 0; idx < hand_size; idx++) {
-		if (TRUE == is_rank(h->cards[cnt], rank)) {
-			ret = rm_card_from_hand(h, cnt, &cards[qty]);
+		if (TRUE == cgc_is_rank(h->cards[cnt], rank)) {
+			ret = cgc_rm_card_from_hand(h, cnt, &cards[qty]);
 			if (0 > ret) {
 				return ret;
 			}
@@ -178,52 +178,52 @@ int get_all_of_rank_from_hand(struct hand *h, uint8_t rank, struct card *cards[]
 	return qty;
 }
 
-int get_count_cards_in_hand(struct hand *h) {
+int cgc_get_count_cards_in_hand(struct hand *h) {
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
 	}
 	return h->count;
 }
 
-int get_rank_of_random_card_in_hand(struct hand *h) {
+int cgc_get_rank_of_random_card_in_hand(struct hand *h) {
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
 	}
 
-	int count = get_count_cards_in_hand(h);
+	int count = cgc_get_count_cards_in_hand(h);
 	if (0 > count) {
 		return count;
 	}
 	if (0 == count) {
 		return ERR_HAND_EMPTY;		
 	}
-	uint8_t rand_idx = 0;
+	cgc_uint8_t rand_idx = 0;
 	if (1 < count) {
-		uint8_t p = prng_get_next();
+		cgc_uint8_t p = cgc_prng_get_next();
 		rand_idx = p % count;
 	}
 
 	return h->cards[rand_idx]->rank;
 }
 
-int is_hand_empty(struct hand *h) {
+int cgc_is_hand_empty(struct hand *h) {
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
 	}
 
-	if (0 == get_count_cards_in_hand(h)) {
+	if (0 == cgc_get_count_cards_in_hand(h)) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-int get_latest_card(struct hand *h, struct card **c) {
+int cgc_get_latest_card(struct hand *h, struct card **c) {
 	if (NULL == h) {
 		return ERR_UNINITIALIZED_HAND;
 	}
 
-	if (TRUE == is_hand_empty(h)) {
+	if (TRUE == cgc_is_hand_empty(h)) {
 		return ERR_HAND_EMPTY;
 	}
 

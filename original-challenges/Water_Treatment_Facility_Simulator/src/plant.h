@@ -30,19 +30,19 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "plant_system.h"
 
-void RandomInfluent(void);
-void InitPlant(void);
-void PrintPlantSchematic(void);
-void PrintPlantStatus(void);
-char *PrintPlantStatusBuf(void);
-void SetValveOutput(pPlantSystem pValve, uint8_t Output, double PctOpen);
-double GetValvePctFlow(pPlantSystem pValve, uint8_t Output);
-void ChangeAerationPercent(pPlantSystem pAsp, double NewPct);
-void ChangeGlycerinRate(pPlantSystem pAsp, double NewRate);
-void ChangeAlumRate(pPlantSystem pAsp, double NewRate);
-void ChangeNumActiveFilters(pPlantSystem pFilter, uint8_t NumFilters);
-void ChangeChlorineRate(pPlantSystem pDisinfection, double NewChlorineRate);
-void SetSystemName(pPlantSystem pSystem, char *NewName);
-void CheckEffluentQuality(void);
+void cgc_RandomInfluent(void);
+void cgc_InitPlant(void);
+void cgc_PrintPlantSchematic(void);
+void cgc_PrintPlantStatus(void);
+char *cgc_PrintPlantStatusBuf(void);
+void cgc_SetValveOutput(cgc_pPlantSystem pValve, cgc_uint8_t Output, double PctOpen);
+double cgc_GetValvePctFlow(cgc_pPlantSystem pValve, cgc_uint8_t Output);
+void cgc_ChangeAerationPercent(cgc_pPlantSystem pAsp, double NewPct);
+void cgc_ChangeGlycerinRate(cgc_pPlantSystem pAsp, double NewRate);
+void cgc_ChangeAlumRate(cgc_pPlantSystem pAsp, double NewRate);
+void cgc_ChangeNumActiveFilters(cgc_pPlantSystem pFilter, cgc_uint8_t NumFilters);
+void cgc_ChangeChlorineRate(cgc_pPlantSystem pDisinfection, double NewChlorineRate);
+void cgc_SetSystemName(cgc_pPlantSystem pSystem, char *NewName);
+void cgc_CheckEffluentQuality(void);
 
 #endif

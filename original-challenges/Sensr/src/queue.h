@@ -31,7 +31,7 @@ typedef struct { \
     type contents[]; \
 } name##_t; \
 static int name##_init(name##_t **q, unsigned int size) { \
-    name##_t *queue = malloc(sizeof(*queue) + sizeof(type) * size); \
+    name##_t *queue = cgc_malloc(sizeof(*queue) + sizeof(type) * size); \
     if (queue == NULL) return 0; \
     queue->head = queue->tail = 0; \
     queue->size = size; \
@@ -39,7 +39,7 @@ static int name##_init(name##_t **q, unsigned int size) { \
     return 1; \
 } \
 static void name##_destroy(name##_t **q) { \
-    free(*q); \
+    cgc_free(*q); \
     *q = NULL; \
 } \
 static void name##_clear(name##_t *q) { \

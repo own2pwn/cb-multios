@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.com)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,13 +36,13 @@ THE SOFTWARE.
 #include "ui.h"
 
 int main(){
-	ui_main();
+	cgc_ui_main();
 	return 0;
 }
 
-pState init_state(){
-	pState state = malloc (sizeof(sState));
-	bzero(state,sizeof(sState));
+cgc_pState cgc_init_state(){
+	cgc_pState state = cgc_malloc (sizeof(cgc_sState));
+	cgc_bzero(state,sizeof(cgc_sState));
 	//initialize
 	state->currentTemp = 75;
 	state->sensorCount = 0;
@@ -52,7 +52,7 @@ pState init_state(){
 	state->currentStep = -1;
 	state->smoke = OFF;
 	state->ambientTemp = 75;
-	bzero(state->history, sizeof(unsigned short int) * HISTSIZE);
+	cgc_bzero(state->history, sizeof(unsigned short int) * HISTSIZE);
 	state->historyPosition = 0;
 	state->finished = FALSE;
 	state->currentTime = 0;
@@ -61,8 +61,8 @@ pState init_state(){
 
 
 //frees old state and inits a new state
-void new_state(pState state){
-	free_program(state);
+void cgc_new_state(cgc_pState state){
+	cgc_free_program(state);
 	state->currentTemp = 75;
 	state->setTemp = 175;
 	state->power = OFF;
@@ -70,70 +70,70 @@ void new_state(pState state){
 	state->currentStep = -1;
 	state->smoke = OFF;
 	state->ambientTemp = 75;
-	// bzero(state->history, sizeof(unsigned short int) * HISTSIZE);
+	// cgc_bzero(state->history, sizeof(unsigned short int) * HISTSIZE);
 	state->historyPosition = 0;
 	state->finished = FALSE;
 	state->currentTime = 0;
-	reset_sensors(state);
+	cgc_reset_sensors(state);
 	return;
 }
 
 
-int power_on(pState state){
+int cgc_power_on(cgc_pState state){
 	if (state == NULL){return 1;}	
 //	if (state->power == ON){return 2;}
 	state->power = ON;
 	return 0;
 }
 
-int power_off(pState state){
+int cgc_power_off(cgc_pState state){
 	if (state == NULL){return 1;}	
 //	if (state->power == OFF){return 2;}
-	new_state(state);
+	cgc_new_state(state);
 	return 0;
 }
 
-int smoke_on(pState state){
+int cgc_smoke_on(cgc_pState state){
 	if (state == NULL){return 1;}	
 	if (state->smoke == ON){return 2;}
 	state->smoke = ON;
 	return 0;
 }
 
-int smoke_off(pState state){
+int cgc_smoke_off(cgc_pState state){
 	if (state == NULL){return 1;}	
 	if (state->smoke == OFF){return 2;}
 	state->smoke = OFF;
 	return 0;
 }
 
-int set_ambient_temp(pState state, int temp){
+int cgc_set_ambient_temp(cgc_pState state, int temp){
 	if (state == NULL){return 1;}
 	if ( temp > 175 ){return 2;}
 	state->ambientTemp = temp;
 	return 0;
 }
 
-int set_temp(pState state, unsigned short int temp){
+int cgc_set_temp(cgc_pState state, unsigned short int temp){
 	if (state == NULL){return 1;}
 	if (  ( temp < 175 ) || ( temp > 350 )  ){return 2;}
 	state->setTemp = temp;
 	return 0;
 }
 
-int add_sensor(pState state, unsigned short int sensorID, unsigned int sensorAddr, unsigned int coeff, unsigned int sensorTemp){
+int cgc_add_sensor(cgc_pState state, unsigned short int sensorID, unsigned int sensorAddr, unsigned int coeff, unsigned int sensorTemp){
 	if (state == NULL){return 1;}
-	if (find_sensor(state, sensorID) != NULL){
+	if (cgc_find_sensor(state, sensorID) != NULL){
 		return 2;
 	}//sensorID exists already}
 	if (state->sensorCount > (MAX_SENSOR-1)){
 		return 3;
 	}//max sensor count
-	pSensor tempSensor = state->sensorList;
-	pSensor thisSensor = state->sensorList;
+	cgc_pSensor tempSensor = state->sensorList;
+	cgc_pSensor thisSensor = state->sensorList;
 
 	if (tempSensor == NULL){//no sensors
-		thisSensor = malloc(sizeof(sSensor));
+		thisSensor = cgc_malloc(sizeof(cgc_sSensor));
 		state->sensorList = thisSensor;//set list head
 		thisSensor->prev = NULL;//prev of list head is null
 
@@ -144,7 +144,7 @@ int add_sensor(pState state, unsigned short int sensorID, unsigned int sensorAdd
 			tempSensor = tempSensor->next;
 		}//write next and prev, then set thisSensor
 
-		thisSensor->next = malloc(sizeof(sSensor));
+		thisSensor->next = cgc_malloc(sizeof(cgc_sSensor));
 		thisSensor->next->prev =  thisSensor;
 		thisSensor = thisSensor->next;
 	}
@@ -157,14 +157,14 @@ int add_sensor(pState state, unsigned short int sensorID, unsigned int sensorAdd
 	return 0;
 }
 
-pSensor find_sensor(pState state, unsigned short sensorID){
+cgc_pSensor cgc_find_sensor(cgc_pState state, unsigned short sensorID){
 	//return pointer to sensor with ID or 0;
 	if (state == NULL){return NULL;}	//no state
 	if (state->sensorList == NULL){
 		return NULL;
 	}//no sensors in list
-	pSensor tempSensor = state->sensorList;
-	pSensor thisSensor = state->sensorList;
+	cgc_pSensor tempSensor = state->sensorList;
+	cgc_pSensor thisSensor = state->sensorList;
 	while ( (tempSensor != NULL) && (thisSensor->sensorID != sensorID) ){
 		thisSensor = tempSensor;
 		tempSensor = tempSensor->next;
@@ -177,8 +177,8 @@ pSensor find_sensor(pState state, unsigned short sensorID){
 }
 
 //reminder if sensor count is decremented on an empty remove, list can grow too large
-int remove_sensor(pState state, unsigned short sensorID){
-	pSensor thisSensor = find_sensor(state, sensorID);
+int cgc_remove_sensor(cgc_pState state, unsigned short sensorID){
+	cgc_pSensor thisSensor = cgc_find_sensor(state, sensorID);
 
 	if (thisSensor == NULL){
 		return 1;
@@ -194,29 +194,29 @@ int remove_sensor(pState state, unsigned short sensorID){
 		thisSensor->prev->next = thisSensor->next;
 	}
 	state->sensorCount = state->sensorCount - 1;
-	free(thisSensor);
+	cgc_free(thisSensor);
 
 	return 0;
 }
 
-void free_program(pState state){
-	//free each program node in programList
+void cgc_free_program(cgc_pState state){
+	//cgc_free each program node in programList
 	if (state->programList == NULL){
 		return;
 	}
-	pProgram nextProgram = state->programList;
-	pProgram thisProgram = NULL;
+	cgc_pProgram nextProgram = state->programList;
+	cgc_pProgram thisProgram = NULL;
 	while (nextProgram != NULL){
 		thisProgram = nextProgram;
 		nextProgram = nextProgram->next;
-		free(thisProgram);
+		cgc_free(thisProgram);
 	}
 	state->programList = NULL;
 	state->numSteps = 0;
 	return;
 }
 
-int add_steps(pState state, unsigned int numSteps, pStep steps ){
+int cgc_add_steps(cgc_pState state, unsigned int numSteps, cgc_pStep steps ){
 	//steps is pointer to the program buf 
 
 
@@ -225,7 +225,7 @@ int add_steps(pState state, unsigned int numSteps, pStep steps ){
 	}
 	//each step for numSteps must be read, checked and added to pstate->programList
 	for (unsigned int i=0;i<numSteps;i++){
-		// int allows bad type that isn't checked for valid timeval, allowing the
+		// int allows bad type that isn't checked for valid cgc_timeval, allowing the
 		// program to run for indeterminated time, which writes off the end of history buffer
 #ifdef PATCHED_1
 		unsigned short int type = steps[i].type;
@@ -236,7 +236,7 @@ int add_steps(pState state, unsigned int numSteps, pStep steps ){
 		unsigned int sensorID = steps[i].sensorID;
 		unsigned int timeVal = steps[i].timeVal;
 		unsigned int temp = steps[i].temp;
-		//type and sensorID/timeval check
+		//type and sensorID/cgc_timeval check
 		if (type == 0 ){
 			 //sensorID check
 
@@ -248,7 +248,7 @@ int add_steps(pState state, unsigned int numSteps, pStep steps ){
 			}
 		}
 		if ( type == 1 ){
-			//timeval check
+			//cgc_timeval check
 			if (  ( timeVal < (30*60) ) || ( timeVal > (240*60) )  ){
 				return 2;
 			}
@@ -263,13 +263,13 @@ int add_steps(pState state, unsigned int numSteps, pStep steps ){
 	}
 
 	//if all is ok, add steps
-	new_state(state);
+	cgc_new_state(state);
 	for (unsigned int i=0;i<numSteps;i++){
 		unsigned int type = steps[i].type;
 		unsigned int sensorID = steps[i].sensorID;
 		unsigned int timeVal = steps[i].timeVal;
 		unsigned int temp = steps[i].temp;
-		int retval = add_step(state, type, sensorID, temp);
+		int retval = cgc_add_step(state, type, sensorID, temp);
 	}
 	state->currentStep = 0;
 	state->numSteps = numSteps;
@@ -277,12 +277,12 @@ int add_steps(pState state, unsigned int numSteps, pStep steps ){
 }	
 
 //adds a step to a program, return NULL if error
-int add_step(pState state, unsigned int type, unsigned int val, unsigned int temp){//val is sensorID or timeval
-	pProgram program = state->programList;
-	pProgram tempProgram = program;
+int cgc_add_step(cgc_pState state, unsigned int type, unsigned int val, unsigned int temp){//val is sensorID or cgc_timeval
+	cgc_pProgram program = state->programList;
+	cgc_pProgram tempProgram = program;
 	if (program == NULL ){
-		program = malloc(sizeof(sProgram));
-		bzero(program,sizeof(sProgram));
+		program = cgc_malloc(sizeof(cgc_sProgram));
+		cgc_bzero(program,sizeof(cgc_sProgram));
 		program->prev = NULL;
 		state->programList = program;
 	} else {
@@ -290,8 +290,8 @@ int add_step(pState state, unsigned int type, unsigned int val, unsigned int tem
 			program = tempProgram;
 			tempProgram = tempProgram->next;
 		}//go to end of list
-		program->next = malloc(sizeof(sProgram));
-		bzero(program->next,sizeof(sProgram));
+		program->next = cgc_malloc(sizeof(cgc_sProgram));
+		cgc_bzero(program->next,sizeof(cgc_sProgram));
 		program = program->next;
 	}
 	program->next = NULL;
@@ -306,14 +306,14 @@ int add_step(pState state, unsigned int type, unsigned int val, unsigned int tem
 } 
 
 
-unsigned int get_program(pState state,unsigned int *size, unsigned int buf[30]){
+unsigned int cgc_get_program(cgc_pState state,unsigned int *size, unsigned int buf[30]){
 	if (state == NULL){
 		return 1;
 	}
 	if (state->programList == NULL){
 		return 1;
 	}	
-	pProgram program = state->programList;
+	cgc_pProgram program = state->programList;
 
 	unsigned int len = 0;
 	while(program != NULL){
@@ -327,7 +327,7 @@ unsigned int get_program(pState state,unsigned int *size, unsigned int buf[30]){
 	return 0;
 }
 
-unsigned int get_status(pState state,unsigned int status[6]){
+unsigned int cgc_get_status(cgc_pState state,unsigned int status[6]){
 	if (state == NULL){
 		return 1;
 	}	
@@ -341,8 +341,8 @@ unsigned int get_status(pState state,unsigned int status[6]){
 	return 0;
 }
 
-void get_sensors(pState state,unsigned int sensors[40*sizeof(int)]){
-	pSensor tempSensor = state->sensorList;
+void cgc_get_sensors(cgc_pState state,unsigned int sensors[40*sizeof(int)]){
+	cgc_pSensor tempSensor = state->sensorList;
 	unsigned int sensorCount = state->sensorCount;
 	unsigned int i=0;
 	unsigned int temp[40*sizeof(int)];
@@ -354,13 +354,13 @@ void get_sensors(pState state,unsigned int sensors[40*sizeof(int)]){
 		tempSensor = tempSensor->next;
 		i = i + 1;
 	}
-	memcpy(sensors,temp,(i*sizeof(int)*4));
+	cgc_memcpy(sensors,temp,(i*sizeof(int)*4));
 }
 
 
-void update_sensors(pState state){
+void cgc_update_sensors(cgc_pState state){
 	//for each sensor in sensorlist write sensor.currentTemp = (state.currentTemp - sensor.currentTemp) * (0.5 + (sensor.coeff/20000))
-	pSensor tempSensor = state->sensorList;
+	cgc_pSensor tempSensor = state->sensorList;
 	while (tempSensor != NULL){
 		//sensor coeff of 10000 means sensor is not places in food
 		double factor = (double)0.5 + (double)tempSensor->sensorCoef/(double)20000;
@@ -372,8 +372,8 @@ void update_sensors(pState state){
 	return;
 }
 
-void reset_sensors(pState state){
-	pSensor tempSensor = state->sensorList;
+void cgc_reset_sensors(cgc_pState state){
+	cgc_pSensor tempSensor = state->sensorList;
 	while (tempSensor != NULL){
 		tempSensor->sensorTemp = state->ambientTemp;
 		tempSensor = tempSensor->next;
@@ -382,8 +382,8 @@ void reset_sensors(pState state){
 
 }
 
-pProgram get_step(pState state, int step){
-	pProgram thisStep = state->programList;
+cgc_pProgram cgc_get_step(cgc_pState state, int step){
+	cgc_pProgram thisStep = state->programList;
 	for (int i=0;i<step;i++){
 		if (thisStep == NULL){
 			break;
@@ -393,15 +393,15 @@ pProgram get_step(pState state, int step){
 	return thisStep;
 }
 
-void check_program(pState state){
+void cgc_check_program(cgc_pState state){
 
-	pProgram thisStep = get_step(state, state->currentStep);
+	cgc_pProgram thisStep = cgc_get_step(state, state->currentStep);
 	if (thisStep == NULL){
 		state->finished = TRUE;
 		return; 
 	}
 	if (thisStep->step.type == 0){
-		pSensor thisSensor = find_sensor(state, thisStep->step.sensorID);
+		cgc_pSensor thisSensor = cgc_find_sensor(state, thisStep->step.sensorID);
 		//if no sensor corresponds to sensorID, go to next step
 		if (thisSensor == NULL){
 			state->currentStep = state->currentStep + 1;
@@ -425,12 +425,12 @@ void check_program(pState state){
 	return;
 }
 
-void add_history(pState state){
+void cgc_add_history(cgc_pState state){
 	state->history[state->historyPosition] = (unsigned int) state->currentTemp;
 	state->historyPosition = state->historyPosition + 1;
 }
 
-int simulate_seconds(pState state, int seconds){
+int cgc_simulate_seconds(cgc_pState state, int seconds){
 	if (state == NULL){
 		return 1;
 	}	
@@ -458,16 +458,16 @@ int simulate_seconds(pState state, int seconds){
 				state->currentTemp = (double)state->currentTemp - 0.25;
 			}
 		}
-		update_sensors(state);
+		cgc_update_sensors(state);
 //		only run program if there is a program.
 		if (state->currentStep > -1){		
-			check_program(state);
+			cgc_check_program(state);
 			if (state->finished){
 				return 2;		
 			}			
 		}
 		if (state->currentTime%60 == 0){
-			add_history(state);
+			cgc_add_history(state);
 		}
 
 		state->currentTime = state->currentTime + 1;
@@ -477,7 +477,7 @@ int simulate_seconds(pState state, int seconds){
 	return 0;
 }
 
-unsigned int validate_fw(pState state){
+unsigned int cgc_validate_fw(cgc_pState state){
 	if (state == NULL){
 		return 1;
 	}	
@@ -488,10 +488,10 @@ unsigned int validate_fw(pState state){
 		tempval = (tempval + ( magicpage[i] * (i+1))) ;	
 	}
 	return tempval;		
-	return check_val(magicpage,MagicPageSize);
+	return cgc_check_val(magicpage,MagicPageSize);
 }
 
-int check_val(unsigned char *buf,unsigned short size){
+int cgc_check_val(unsigned char *buf,unsigned short size){
 
 	unsigned int tempval = 0;
 	for (unsigned short i=0;i<size;++i){
@@ -500,7 +500,7 @@ int check_val(unsigned char *buf,unsigned short size){
 	return tempval;
 }
 
-int exit_normal(){
+int cgc_exit_normal(){
 
 	_terminate(0);
 }

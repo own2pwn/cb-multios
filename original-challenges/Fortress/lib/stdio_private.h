@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 #define F_READ 1
 #define F_WRITE 2
 
-struct FILE {
+struct cgc_FILE {
     int fd;
     int rw;
     int idx;
@@ -37,14 +37,14 @@ struct FILE {
     char buffer[1024];
 };
 
-static inline int transmit_all(int fd, const void *buf, size_t count)
+static inline int cgc_transmit_all(int fd, const void *buf, cgc_size_t count)
 {
     const char *cbuf = (const char *)buf;
-    size_t i;
+    cgc_size_t i;
 
     for (i = 0; i < count; )
     {
-        size_t bytes;
+        cgc_size_t bytes;
         if (transmit(fd, cbuf + i, count - i, &bytes) != 0)
             return -1;
         i += bytes;

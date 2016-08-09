@@ -1,0 +1,8 @@
+set( POLLS_TESTING_SEED "-81977984" )
+set( TCP_PORT "10010" )
+set( CXXFLAGS "-fno-exceptions -fno-rtti" )
+set( POLLS_RELEASE_SEED "1900525947" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O0 -g -Wall -fno-exceptions -fno-rtti" )
+set( SERVICE_ID "00053" )
+set( AUTHOR_ID "KPRCA" )
+buildCB(${CFLAGS})

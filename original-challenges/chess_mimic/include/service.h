@@ -29,23 +29,23 @@ THE SOFTWARE.
 #define HEIGHT 8
 
 // Defines a single location on the 8x8 board
-typedef struct Location
+typedef struct cgc_Location
 {
 	int x;
 	int y;
-} Location;
+} cgc_Location;
 
 // Defines a move: source and destination locations
-typedef struct Move
+typedef struct cgc_Move
 {
-	Location src;
-	Location dst;
-} Move;
+	cgc_Location src;
+	cgc_Location dst;
+} cgc_Move;
 
-void initboard(void);
-int checklegal(Move);
-void swap(Move);
-int parseUserInput(Move*);
+void cgc_initboard(void);
+int cgc_checklegal(cgc_Move);
+void cgc_swap(cgc_Move);
+int cgc_parseUserInput(cgc_Move*);
 
 /* CHESS PIECES */
 
@@ -78,7 +78,7 @@ int parseUserInput(Move*);
 #define OK "OK\n"
 #define NO "NO\n"
 
-// parseUserInput return values
+// cgc_parseUserInput return values
 #define INPUT_ERROR -1
 #define INVALID_INPUT 0
 #define GOOD_INPUT 1

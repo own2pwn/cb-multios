@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,9 +23,9 @@ THE SOFTWARE.
 
 #include "service.h"
 
-size_t receiveIt( void *data, size_t length )
+cgc_size_t cgc_receiveIt( void *data, cgc_size_t length )
 {
-	size_t count = 0;
+	cgc_size_t count = 0;
 	unsigned char *tdata = (unsigned char *)data;
 	int bread = 0;
 
@@ -35,7 +35,7 @@ size_t receiveIt( void *data, size_t length )
 
 	while ( 0 < length ) {
 		if ( receive( 0, tdata + bread, length, &count ) != 0 ) {
-			printf("[ERROR] Failed to receive\n");
+			cgc_printf("[ERROR] Failed to receive\n");
 			return 0;
 		}
 
@@ -50,52 +50,52 @@ size_t receiveIt( void *data, size_t length )
  * This function provides the ability to read in the size of the video stream followed by the specified number of bytes for the image data. The maximum size for a video is 4096 bytes and the minimum is 8
  * @return Returns a readable bitstream of the newly received data.
  **/
-pBitStream readImageData( void )
+cgc_pBitStream cgc_readImageData( void )
 {
 	int length = 0;
-	size_t bytes_read = 0;
-	pBitStream npbs = NULL;
+	cgc_size_t bytes_read = 0;
+	cgc_pBitStream npbs = NULL;
 	char *newData = NULL;
 
-	printf("----------------Stream Me Your Video----------------\n");
+	cgc_printf("----------------Stream Me Your Video----------------\n");
 
-	bytes_read = receiveIt( &length, 4 );
+	bytes_read = cgc_receiveIt( &length, 4 );
 
 	if ( bytes_read != 4 ) {
 		return NULL;
 	}
 
 	if ( length > 4096 ) {
-		printf("[ERROR] Image must be smaller than 4096 bytes\n");
+		cgc_printf("[ERROR] Image must be smaller than 4096 bytes\n");
 		return NULL;
 	}
 
 	if ( length < 8 ) {
-		printf("[ERROR] Image must be greater than 8 bytes\n");
+		cgc_printf("[ERROR] Image must be greater than 8 bytes\n");
 		return NULL;
 	}
 
-	newData = malloc( length );
+	newData = cgc_malloc( length );
 
 	if ( newData == NULL ) {
 		return NULL;
 	}
 
-	memset( newData, 0, length );	
+	cgc_memset( newData, 0, length );	
 
-	bytes_read = receiveIt( newData, length );
+	bytes_read = cgc_receiveIt( newData, length );
 
 	if ( bytes_read != length ) {
-		free( newData );
+		cgc_free( newData );
 		return NULL;
 	}
 
 	/// This function allocates a new block and copies the existing data 
 	/// into that new buffer without freeing the data buffer
-	npbs = initStream( newData, length );
+	npbs = cgc_initStream( newData, length );
 
-	/// We no longer need the old data so free the buffer.
-	free( newData );
+	/// We no longer need the old data so cgc_free the buffer.
+	cgc_free( newData );
 	newData = NULL;
 
 	return npbs;
@@ -105,16 +105,16 @@ int main(void)
 {
 	unsigned char ba = 0;
 
-	pBitStream bs;
+	cgc_pBitStream bs;
 
-	bs = readImageData( );
+	bs = cgc_readImageData( );
 
 	if ( bs == NULL ) {
 		return 0;
 	}
 
-	renderCVF( bs );
+	cgc_renderCVF( bs );
 
-	freeStream( &bs );
+	cgc_freeStream( &bs );
 	return 0;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,7 +33,7 @@ static char g_genre_comedy[] = "Comedy";
 static char g_genre_horror[]  = "Horror";
 static char g_genre_other[] = "Other";
 
-static size_t g_num_genres = 5;
+static cgc_size_t g_num_genres = 5;
 static char *g_all_genres[10] = {
     g_genre_action, g_genre_romance, g_genre_comedy,
     g_genre_horror, g_genre_other
@@ -46,40 +46,40 @@ static char g_mpaa_pg13[] = "PG13";
 static char g_mpaa_r[] = "R";
 static char g_mpaa_unknown[] = "Unknown";
 
-static size_t g_num_mpaa_ratings = 5;
+static cgc_size_t g_num_mpaa_ratings = 5;
 static char *g_all_mpaa_ratings[10] = {
     g_mpaa_g, g_mpaa_pg, g_mpaa_pg13, g_mpaa_r, g_mpaa_unknown
 };
 
-static size_t g_list_size = 0;
-static size_t g_list_length = 0;
-static size_t g_num_rented = 0;
+static cgc_size_t g_list_size = 0;
+static cgc_size_t g_list_length = 0;
+static cgc_size_t g_num_rented = 0;
 
-static cmdb_entry_t *g_cmdb = NULL;
+static cgc_cmdb_entry_t *g_cmdb = NULL;
 
-static char *check_genre(char *genre)
+static char *cgc_check_genre(char *genre)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (i = 0; i < g_num_genres; i++) {
-        if(strcmp(genre, g_all_genres[i]) == 0)
+        if(cgc_strcmp(genre, g_all_genres[i]) == 0)
             return g_all_genres[i];
     }
 
     return NULL;
 }
 
-static char *check_rating(char *rating)
+static char *cgc_check_rating(char *rating)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (i = 0; i < g_num_mpaa_ratings; i++) {
-        if(strcmp(rating, g_all_mpaa_ratings[i]) == 0)
+        if(cgc_strcmp(rating, g_all_mpaa_ratings[i]) == 0)
             return g_all_mpaa_ratings[i];
     }
 
     return NULL;
 }
 
-char *get_genre(int id)
+char *cgc_get_genre(int id)
 {
     if(id < 1 || id > g_num_genres)
         return NULL;
@@ -87,7 +87,7 @@ char *get_genre(int id)
     return g_all_genres[id-1];
 }
 
-char *get_rating(int id)
+char *cgc_get_rating(int id)
 {
     if(id < 1 || id > g_num_mpaa_ratings)
         return NULL;
@@ -95,18 +95,18 @@ char *get_rating(int id)
     return g_all_mpaa_ratings[id-1];
 }
 
-size_t get_list_length()
+cgc_size_t cgc_get_list_length()
 {
     return g_list_length;
 }
 
-size_t get_num_rented()
+cgc_size_t cgc_get_num_rented()
 {
     return g_num_rented;
 }
 
-int add_movie(char *name, char *desc, short year, char score, char *type, char *mpaa) {
-    char *genre = check_genre(type), *rating = check_rating(mpaa);
+int cgc_add_movie(char *name, char *desc, short year, char score, char *type, char *mpaa) {
+    char *genre = cgc_check_genre(type), *rating = cgc_check_rating(mpaa);
     if (!genre || !rating)
         return -1;
     if (year < 1800 || year > 2015)
@@ -114,53 +114,53 @@ int add_movie(char *name, char *desc, short year, char score, char *type, char *
     if (score < 0 || score > 100)
         return -1;
 
-    cmdb_entry_t *row = malloc(sizeof(cmdb_entry_t));
+    cgc_cmdb_entry_t *row = cgc_malloc(sizeof(cgc_cmdb_entry_t));
     if (!row)
         return -1;
 
-    row->name = strdup(name);
-    row->desc = strdup(desc);
+    row->name = cgc_strdup(name);
+    row->desc = cgc_strdup(desc);
     row->year = year;
     row->score = score;
     row->type = genre;
     row->mpaa = rating;
     row->is_checked_out = 0;
 
-    if (add_entry(row) != 0) {
-        free(row);
+    if (cgc_add_entry(row) != 0) {
+        cgc_free(row);
         return -1;
     }
 
     return 0;
 }
 
-int add_entry(cmdb_entry_t *entry)
+int cgc_add_entry(cgc_cmdb_entry_t *entry)
 {
     if (g_list_size == 0) {
-        g_cmdb = malloc(sizeof(cmdb_entry_t) * 16);
+        g_cmdb = cgc_malloc(sizeof(cgc_cmdb_entry_t) * 16);
         if (!g_cmdb) {
             return -1;
         }
         g_list_size = 16;
     } else if(g_list_size == g_list_length) {
-        size_t i;
-        cmdb_entry_t *temp_db = g_cmdb;
-        g_cmdb = malloc(sizeof(cmdb_entry_t) * g_list_size<<1);
+        cgc_size_t i;
+        cgc_cmdb_entry_t *temp_db = g_cmdb;
+        g_cmdb = cgc_malloc(sizeof(cgc_cmdb_entry_t) * g_list_size<<1);
         if (!g_cmdb) {
             g_cmdb = temp_db;
             return -1;
         }
-        memcpy(g_cmdb, temp_db, (sizeof(cmdb_entry_t) * g_list_size));
+        cgc_memcpy(g_cmdb, temp_db, (sizeof(cgc_cmdb_entry_t) * g_list_size));
 
         g_list_size <<= 1;
-        free(temp_db);
+        cgc_free(temp_db);
     }
 
-    memcpy(&g_cmdb[g_list_length++], entry, sizeof(cmdb_entry_t));
+    cgc_memcpy(&g_cmdb[g_list_length++], entry, sizeof(cgc_cmdb_entry_t));
     return 0;
 }
 
-int delete_entry(int id)
+int cgc_delete_entry(int id)
 {
     if (!g_list_length)
         return 1;
@@ -169,18 +169,18 @@ int delete_entry(int id)
         return -1;
     id--;
 
-    free(g_cmdb[id].name);
-    free(g_cmdb[id].desc);
+    cgc_free(g_cmdb[id].name);
+    cgc_free(g_cmdb[id].desc);
 
     if (id+1 < g_list_length)
-        memcpy(&g_cmdb[id], &g_cmdb[id+1], sizeof(cmdb_entry_t) * (g_list_length - (id+1)));
+        cgc_memcpy(&g_cmdb[id], &g_cmdb[id+1], sizeof(cgc_cmdb_entry_t) * (g_list_length - (id+1)));
 
     g_list_length--;
     printf("Successfully removed the movie!\n");
     return 0;
 }
 
-int rent_entry(int id)
+int cgc_rent_entry(int id)
 {
     if (id < 1 || id > g_list_length)
         return -1;
@@ -198,7 +198,7 @@ int rent_entry(int id)
     return 0;
 }
 
-int return_entry(int id)
+int cgc_return_entry(int id)
 {
     if (id < 1 || id > g_num_rented)
         return -1;
@@ -221,18 +221,18 @@ int return_entry(int id)
     return -1;
 }
 
-cmdb_entry_t *find_entry(char *name)
+cgc_cmdb_entry_t *cgc_find_entry(char *name)
 {
     int i;
     for (i = 0; i < g_list_length; i++) {
-        if (strcmp(g_cmdb[i].name, name) == 0)
+        if (cgc_strcmp(g_cmdb[i].name, name) == 0)
             return &g_cmdb[i];
     }
 
     return NULL;
 }
 
-cmdb_entry_t *get_entry(int id)
+cgc_cmdb_entry_t *cgc_get_entry(int id)
 {
     if (id < 1 || id > g_list_length)
         return NULL;
@@ -240,13 +240,13 @@ cmdb_entry_t *get_entry(int id)
     return &g_cmdb[--id];
 }
 
-void print_entry(cmdb_entry_t *entry)
+void cgc_print_entry(cgc_cmdb_entry_t *entry)
 {
     printf("%s (%d, %s) - %s [%d/100]\n", entry->name, entry->year, entry->mpaa, entry->type, entry->score);
     printf("  => %s\n", entry->desc);
 }
 
-void print_movies(filter_e filter)
+void cgc_print_movies(cgc_filter_e filter)
 {
     int i;
 
@@ -256,7 +256,7 @@ void print_movies(filter_e filter)
 
         for (i = 0; i < g_list_length; i++) {
             printf("[%d] ", i+1);
-            print_entry(&g_cmdb[i]);
+            cgc_print_entry(&g_cmdb[i]);
         }
 
         printf("--------------\n");
@@ -270,7 +270,7 @@ void print_movies(filter_e filter)
         for (i = 0; (i < g_list_length) && g_num_rented; i++) {
             if (g_cmdb[i].is_checked_out) {
                 printf("[%d] ", ++j);
-                print_entry(&g_cmdb[i]);
+                cgc_print_entry(&g_cmdb[i]);
             }
         }
 
@@ -279,7 +279,7 @@ void print_movies(filter_e filter)
     }
 }
 
-void print_genres()
+void cgc_print_genres()
 {
     int i;
     for (i = 0; i < g_num_genres; i++) {
@@ -293,7 +293,7 @@ void print_genres()
     printf("\n");
 }
 
-void print_ratings()
+void cgc_print_ratings()
 {
     int i;
     for (i = 0; i < g_num_mpaa_ratings; i++)
@@ -302,22 +302,22 @@ void print_ratings()
 }
 
 //Debug add genre
-void dag(char *new_genre)
+void cgc_dag(char *new_genre)
 {
     if (!new_genre)
         return;
 
     if (g_num_genres < 10)
-        g_all_genres[g_num_genres++] = strdup(new_genre);
+        g_all_genres[g_num_genres++] = cgc_strdup(new_genre);
 }
 
 //Debug add rating
-void dar(char *new_rating)
+void cgc_dar(char *new_rating)
 {
     if (!new_rating)
         return;
 
     if (g_num_mpaa_ratings < 10)
-        g_all_mpaa_ratings[g_num_mpaa_ratings++] = strdup(new_rating);
+        g_all_mpaa_ratings[g_num_mpaa_ratings++] = cgc_strdup(new_rating);
 }
 

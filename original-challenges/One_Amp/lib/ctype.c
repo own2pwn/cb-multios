@@ -53,66 +53,66 @@ static unsigned char __ctype[256] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-int isascii(int c)
+int cgc_isascii(int c)
 {
     return __ctype[c & 0xff] & IS_ASCII;
 }
 
-int isdigit(int c)
+int cgc_isdigit(int c)
 {
     return __ctype[c & 0xff] & IS_DIGIT;
 }
 
-int isprint(int c)
+int cgc_isprint(int c)
 {
     return __ctype[c & 0xff] & IS_PRINT;
 }
 
-int isalnum(int c)
+int cgc_isalnum(int c)
 {
     return __ctype[c & 0xff] & (IS_LOWER | IS_UPPER | IS_DIGIT);
 }
 
-int isalpha(int c)
+int cgc_isalpha(int c)
 {
     return __ctype[c & 0xff] & (IS_LOWER | IS_UPPER);
 }
 
-int islower(int c)
+int cgc_islower(int c)
 {
     return __ctype[c & 0xff] & IS_LOWER;
 }
 
-int isupper(int c)
+int cgc_isupper(int c)
 {
     return __ctype[c & 0xff] & IS_UPPER;
 }
 
-int isspace(int c)
+int cgc_isspace(int c)
 {
     return __ctype[c & 0xff] & IS_SPACE;
 }
 
-int ispunct(int c)
+int cgc_ispunct(int c)
 {
     return __ctype[c & 0xff] & IS_PUNCT;
 }
 
-int iscntrl(int c)
+int cgc_iscntrl(int c)
 {
     return __ctype[c & 0xff] & IS_CNTRL;
 }
 
-int isxdigit(int c)
+int cgc_isxdigit(int c)
 {
-    c = toupper(c);
-    return isdigit(c) || (c >= 'A' && c <= 'F');
+    c = cgc_toupper(c);
+    return cgc_isdigit(c) || (c >= 'A' && c <= 'F');
 }
 
-int digittoint(int c)
+int cgc_digittoint(int c)
 {
-    c = toupper(c);
-    if (isdigit(c))
+    c = cgc_toupper(c);
+    if (cgc_isdigit(c))
         return c - '0';
     else if (c >= 'A' && c <= 'F')
         return c - 'A' + 10;
@@ -120,19 +120,19 @@ int digittoint(int c)
         return 0;
 }
 
-int tolower(int c)
+int cgc_tolower(int c)
 {
     c &= 0xff;
-    if (isupper(c))
+    if (cgc_isupper(c))
         return c ^= 0x20;
     else
         return c;
 }
 
-int toupper(int c)
+int cgc_toupper(int c)
 {
     c &= 0xff;
-    if (isupper(c))
+    if (cgc_isupper(c))
         return c ^= 0x20;
     else
         return c;

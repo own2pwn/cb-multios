@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,7 +26,7 @@
 
 #define QUIT_CMD "quit"
 
-#define UP_AUTH_TYPE  "UserPass"
+#define UP_AUTH_TYPE  "cgc_UserPass"
 
 #define COMMAND_HDR "Command"
 #define RESPONSE_HDR "Response"
@@ -35,15 +35,15 @@
 #define DEFAULT_PASS "pass"
 
 #define RESPONSE_ERR_NO_AUTH "Failed Authentication"
-#define RESPONSE_ERR_NO_SERVICE "Invalid Service"
-#define RESPONSE_ERR_NO_MESSAGE "Invalid Message"
+#define RESPONSE_ERR_NO_SERVICE "Invalid cgc_Service"
+#define RESPONSE_ERR_NO_MESSAGE "Invalid cgc_Message"
 
 typedef struct {
  	int a;
   	void (* callback)(int, char*, unsigned int*);
  	char* name;
    	void* next;
-} Service;
+} cgc_Service;
 
 typedef struct {
 	char* command;
@@ -51,11 +51,11 @@ typedef struct {
 	int id;
 	void* credential;
 	char* body;
-} Message;
+} cgc_Message;
 
 typedef struct {
 	char* username;
 	char* password;
-} UserPass;
+} cgc_UserPass;
 
 unsigned int expiration_date=0;

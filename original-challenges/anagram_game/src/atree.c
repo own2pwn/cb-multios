@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,12 +28,12 @@
 #include "random.h"
 
 /* given a frequency table create a new atree */
-atree_t *atree_init(freqtab_t *ftab)
+cgc_atree_t *cgc_atree_init(cgc_freqtab_t *ftab)
 {
     int i, j;
-    atree_t *tree;
+    cgc_atree_t *tree;
 
-    tree = calloc(sizeof(atree_t), 1);
+    tree = cgc_calloc(sizeof(cgc_atree_t), 1);
     if (tree == NULL)
         return NULL;
 
@@ -60,7 +60,7 @@ atree_t *atree_init(freqtab_t *ftab)
 }
 
 #define INVALID ((unsigned int) -1)
-static unsigned int _atree_find_freq(atree_node_t *node, unsigned int freq)
+static unsigned int cgc__atree_find_freq(cgc_atree_node_t *node, unsigned int freq)
 {
     unsigned int min = 0, max = node->degree - 1;
     if (node->degree == 0)
@@ -83,7 +83,7 @@ static unsigned int _atree_find_freq(atree_node_t *node, unsigned int freq)
         return min;
 }
 
-static unsigned int _atree_find_word(atree_node_t *node, const char *word)
+static unsigned int cgc__atree_find_word(cgc_atree_node_t *node, const char *word)
 {
     unsigned int min = 0, max = node->degree - 1;
     if (node->degree == 0)
@@ -92,7 +92,7 @@ static unsigned int _atree_find_word(atree_node_t *node, const char *word)
     while (min + 1 < max)
     {
         unsigned int mid = (max - min) / 2 + min;
-        int cmp = strcmp(node->words[mid], word);
+        int cmp = cgc_strcmp(node->words[mid], word);
         if (cmp == 0)
             return mid;
         else if (cmp > 0)
@@ -101,17 +101,17 @@ static unsigned int _atree_find_word(atree_node_t *node, const char *word)
             min = mid;
     }
 
-    if (strcmp(node->words[max], word) <= 0)
+    if (cgc_strcmp(node->words[max], word) <= 0)
         return max;
     else
         return min;
 }
 
-static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
+static cgc_atree_node_t **cgc__atree_walk(cgc_atree_t *tree, cgc_freqtab_t *ftab, int is_insert)
 {
     char c;
     unsigned int i, idx, freq;
-    atree_node_t *node, **pnode;
+    cgc_atree_node_t *node, **pnode;
 
     pnode = &tree->root;
     for (i = 0; i < ALPHABET_SIZE; i++)
@@ -123,7 +123,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
 
         if (node == NULL || node->level > i)
         {
-            atree_node_t *n;
+            cgc_atree_node_t *n;
 
             if (freq == 0)
                 continue; // skip an empty level
@@ -132,7 +132,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
                 return NULL;
 
             // insert new level
-            n = calloc(NODE_MIN_SIZE, 1);
+            n = cgc_calloc(NODE_MIN_SIZE, 1);
             if (n == NULL)
                 return NULL;
 
@@ -150,7 +150,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
             node = *pnode = n;
         }
 
-        idx = _atree_find_freq(node, freq);
+        idx = cgc__atree_find_freq(node, freq);
         if (idx == INVALID || node->children[idx].freq != freq)
         {
             if (!is_insert)
@@ -161,7 +161,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
             if (node->degree > node->max_degree)
             {
                 unsigned int new_length = node->degree + 2;
-                atree_node_t *n = realloc(node, sizeof(atree_node_t) + new_length * sizeof(node->children[0]));
+                cgc_atree_node_t *n = cgc_realloc(node, sizeof(cgc_atree_node_t) + new_length * sizeof(node->children[0]));
                 if (n == NULL)
                 {
                     // XXX node->degree already incremented
@@ -180,7 +180,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
                 idx++;
 
             if (node->degree - 1 > idx)
-                memmove(&node->children[idx+1], &node->children[idx], sizeof(node->children[0]) * (node->degree - idx - 1));
+                cgc_memmove(&node->children[idx+1], &node->children[idx], sizeof(node->children[0]) * (node->degree - idx - 1));
 
             node->children[idx].child = NULL;
             node->children[idx].freq = freq;
@@ -196,7 +196,7 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
         if (!is_insert)
             return NULL;
 
-        *pnode = node = calloc(NODE_MIN_SIZE, 1);
+        *pnode = node = cgc_calloc(NODE_MIN_SIZE, 1);
         if (node == NULL)
             return NULL;
 
@@ -213,29 +213,29 @@ static atree_node_t **_atree_walk(atree_t *tree, freqtab_t *ftab, int is_insert)
 }
 
 /* add a word to the tree */
-int atree_add(atree_t *tree, const char *word)
+int cgc_atree_add(cgc_atree_t *tree, const char *word)
 {
     unsigned int i;
     int cmp;
-    atree_node_t *node, **pnode;
-    freqtab_t ftab;
+    cgc_atree_node_t *node, **pnode;
+    cgc_freqtab_t ftab;
 
-    ftab_init(&ftab, word);
-    pnode = _atree_walk(tree, &ftab, 1);
+    cgc_ftab_init(&ftab, word);
+    pnode = cgc__atree_walk(tree, &ftab, 1);
     if (pnode == NULL)
         return 0;
 
     node = *pnode;
 
     // make sure that word is not already in the list
-    i = _atree_find_word(node, word);
+    i = cgc__atree_find_word(node, word);
     if (i == INVALID)
     {
         i = 0;
     }
     else
     {
-        cmp = strcmp(node->words[i], word);
+        cmp = cgc_strcmp(node->words[i], word);
         if (cmp == 0)
             return 0;
         else if (cmp < 0)
@@ -249,7 +249,7 @@ int atree_add(atree_t *tree, const char *word)
     if (node->degree > node->max_degree)
     {
         unsigned int new_length = node->degree + 8;
-        node = realloc(node, sizeof(atree_node_t) + sizeof(const char *) * new_length);
+        node = cgc_realloc(node, sizeof(cgc_atree_node_t) + sizeof(const char *) * new_length);
         if (node == NULL)
         {
 #ifdef PATCHED
@@ -271,7 +271,7 @@ int atree_add(atree_t *tree, const char *word)
     }
 
     if (i < node->degree - 1)
-        memmove(&node->words[i+1], &node->words[i], sizeof(const char *) * (node->degree - 1 - i));
+        cgc_memmove(&node->words[i+1], &node->words[i], sizeof(const char *) * (node->degree - 1 - i));
     node->words[i] = word;
 
     tree->count++;
@@ -279,26 +279,26 @@ int atree_add(atree_t *tree, const char *word)
 }
 
 /* remove a word from the tree */
-int atree_remove(atree_t *tree, const char *word)
+int cgc_atree_remove(cgc_atree_t *tree, const char *word)
 {
     unsigned int i;
-    atree_node_t *node, **pnode;
-    freqtab_t ftab;
+    cgc_atree_node_t *node, **pnode;
+    cgc_freqtab_t ftab;
 
-    ftab_init(&ftab, word);
-    pnode = _atree_walk(tree, &ftab, 0);
+    cgc_ftab_init(&ftab, word);
+    pnode = cgc__atree_walk(tree, &ftab, 0);
     if (pnode == NULL)
         return 0;
     node = *pnode;
 
     for (i = 0; i < node->degree; i++)
-        if (strcmp(word, node->words[i]) == 0)
+        if (cgc_strcmp(word, node->words[i]) == 0)
             break;
 
     if (i < node->degree)
     {
         if (i < node->degree - 1)
-            memmove(&node->words[i], &node->words[i + 1], sizeof(const char *) * (node->degree - i - 1));
+            cgc_memmove(&node->words[i], &node->words[i + 1], sizeof(const char *) * (node->degree - i - 1));
         node->degree--;
         tree->count--;
         return 1;
@@ -307,33 +307,33 @@ int atree_remove(atree_t *tree, const char *word)
 }
 
 /* return a NULL-terminated list of words that are an anagram of word */
-char **atree_query(atree_t *tree, const char *word)
+char **cgc_atree_query(cgc_atree_t *tree, const char *word)
 {
     char **result;
-    atree_node_t *node, **pnode;
-    freqtab_t ftab;
+    cgc_atree_node_t *node, **pnode;
+    cgc_freqtab_t ftab;
 
-    ftab_init(&ftab, word);
-    pnode = _atree_walk(tree, &ftab, 0);
+    cgc_ftab_init(&ftab, word);
+    pnode = cgc__atree_walk(tree, &ftab, 0);
     if (pnode == NULL)
     {
-        result = calloc(sizeof(const char *), 1);
+        result = cgc_calloc(sizeof(const char *), 1);
         if (result == NULL)
             return NULL;
         return result;
     }
     node = *pnode;
 
-    result = calloc(sizeof(const char *), node->degree + 1);
+    result = cgc_calloc(sizeof(const char *), node->degree + 1);
     if (result == NULL)
         return NULL;
 
-    memcpy(result, node->words, sizeof(const char *) * node->degree);
+    cgc_memcpy(result, node->words, sizeof(const char *) * node->degree);
     result[node->degree] = NULL;
     return result;
 }
 
-static void _atree_gather_subset(atree_t *tree, freqtab_t *ftab, atree_node_t *node, char ***results, size_t *count)
+static void cgc__atree_gather_subset(cgc_atree_t *tree, cgc_freqtab_t *ftab, cgc_atree_node_t *node, char ***results, cgc_size_t *count)
 {
     char c;
     unsigned int i, idx, freq;
@@ -344,13 +344,13 @@ static void _atree_gather_subset(atree_t *tree, freqtab_t *ftab, atree_node_t *n
     if (node->level == ALPHABET_SIZE)
     {
         char **r;
-        size_t c = *count + node->degree + 1;
+        cgc_size_t c = *count + node->degree + 1;
         // leaf node
-        r = realloc(*results, c * sizeof(char *));
+        r = cgc_realloc(*results, c * sizeof(char *));
         if (r == NULL)
             return;
         
-        memcpy(&r[*count], node->words, node->degree * sizeof(char *));
+        cgc_memcpy(&r[*count], node->words, node->degree * sizeof(char *));
         *results = r;
         *count += node->degree;
         return;
@@ -358,7 +358,7 @@ static void _atree_gather_subset(atree_t *tree, freqtab_t *ftab, atree_node_t *n
 
     c = tree->levelmap[node->level];
     freq = ftab->freq[c - ALPHABET_START];
-    idx = _atree_find_freq(node, freq);
+    idx = cgc__atree_find_freq(node, freq);
 
     if (idx == INVALID)
         return; // frequency is too low
@@ -372,33 +372,33 @@ static void _atree_gather_subset(atree_t *tree, freqtab_t *ftab, atree_node_t *n
     }
 
     for (i = 0; i <= idx; i++)
-        _atree_gather_subset(tree, ftab, node->children[i].child, results, count);
+        cgc__atree_gather_subset(tree, ftab, node->children[i].child, results, count);
 }
 
 /* return a NULL-terminated list of words that are a subset anagram of word */
-char **atree_query_subset(atree_t *tree, const char *word)
+char **cgc_atree_query_subset(cgc_atree_t *tree, const char *word)
 {
-    char **results = malloc(sizeof(char *));
-    size_t count = 0;
-    freqtab_t ftab;
+    char **results = cgc_malloc(sizeof(char *));
+    cgc_size_t count = 0;
+    cgc_freqtab_t ftab;
 
-    ftab_init(&ftab, word);
-    _atree_gather_subset(tree, &ftab, tree->root, &results, &count);
+    cgc_ftab_init(&ftab, word);
+    cgc__atree_gather_subset(tree, &ftab, tree->root, &results, &count);
     results[count] = NULL;
 
     return results;
 }
 
 /* return a random word from the tree */
-const char *atree_random(atree_t *tree)
+const char *cgc_atree_cgc_random(cgc_atree_t *tree)
 {
     unsigned int r;
-    atree_node_t *node;
+    cgc_atree_node_t *node;
 
     if (tree->count == 0)
         return NULL;
 
-    r = randint(0, tree->count);
+    r = cgc_randint(0, tree->count);
     for (node = tree->leaf; node != NULL; node = node->next_leaf)
     {
         if (r < node->degree)

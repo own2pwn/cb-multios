@@ -30,17 +30,17 @@ THE SOFTWARE.
 #include "device.h"
 #include "user.h"
 
-extern Device Devices[MAX_DEVICES];
+extern cgc_Device Devices[MAX_DEVICES];
 
-uint8_t IsDeviceInAlarm(uint8_t TargetDevice) {
-	pContact ContactAttributes;
-	pMotion MotionAttributes;
-	pSmoke SmokeAttributes;
-	pHeat HeatAttributes;
+cgc_uint8_t cgc_IsDeviceInAlarm(cgc_uint8_t TargetDevice) {
+	cgc_pContact ContactAttributes;
+	cgc_pMotion MotionAttributes;
+	cgc_pSmoke SmokeAttributes;
+	cgc_pHeat HeatAttributes;
 
 	switch (Devices[TargetDevice].Type) {
 		case DEVICE_CONTACT:
-			ContactAttributes = (pContact)(Devices[TargetDevice].Attributes);
+			ContactAttributes = (cgc_pContact)(Devices[TargetDevice].Attributes);
 			if (ContactAttributes->Mode == CONTACT_NO) {
 				if (ContactAttributes->State == CONTACT_OPEN) {
 					return(0);
@@ -57,7 +57,7 @@ uint8_t IsDeviceInAlarm(uint8_t TargetDevice) {
 			}
 			break;
 		case DEVICE_MOTION:
-			MotionAttributes = (pMotion)(Devices[TargetDevice].Attributes);
+			MotionAttributes = (cgc_pMotion)(Devices[TargetDevice].Attributes);
 			if (MotionAttributes->State == MOTION_ACTIVE) {
 				return(1);
 			} else {
@@ -65,7 +65,7 @@ uint8_t IsDeviceInAlarm(uint8_t TargetDevice) {
 			}
 			break;
 		case DEVICE_SMOKE:
-			SmokeAttributes = (pSmoke)(Devices[TargetDevice].Attributes);
+			SmokeAttributes = (cgc_pSmoke)(Devices[TargetDevice].Attributes);
 			if (SmokeAttributes->State == SMOKE_ACTIVE) {
 				return(1);
 			} else {
@@ -73,7 +73,7 @@ uint8_t IsDeviceInAlarm(uint8_t TargetDevice) {
 			}
 			break;
 		case DEVICE_HEAT:
-			HeatAttributes = (pHeat)(Devices[TargetDevice].Attributes);
+			HeatAttributes = (cgc_pHeat)(Devices[TargetDevice].Attributes);
 			if (HeatAttributes->CurrentTemperature > HeatAttributes->ThresholdTemperature) {
 				return(1);
 			} else {
@@ -88,17 +88,17 @@ uint8_t IsDeviceInAlarm(uint8_t TargetDevice) {
 	return(0);
 }
 
-void InvertAlarmState(uint8_t TargetDevice) {
-	uint8_t i;
-	uint8_t j;
-	pAlarmAttributes AA;
+void cgc_InvertAlarmState(cgc_uint8_t TargetDevice) {
+	cgc_uint8_t i;
+	cgc_uint8_t j;
+	cgc_pAlarmAttributes AA;
 
 	// find any alarms associated with this device
 	for (i = 0; i < MAX_DEVICES; i++) {
 		if (Devices[i].Type != DEVICE_ALARM) {
 			continue;
 		}
-		AA = (pAlarmAttributes)(Devices[i].Attributes);
+		AA = (cgc_pAlarmAttributes)(Devices[i].Attributes);
 		if (!AA) {
 			continue;
 		}
@@ -113,13 +113,13 @@ void InvertAlarmState(uint8_t TargetDevice) {
 	return;
 }
 
-void ProcessAlarms(void) {
-	uint8_t i;
-	uint8_t j;
-	pAlarmAttributes AA;
-	uint8_t TargetDevice;
-	uint8_t PrevAlarmState;
-	uint8_t NewState;
+void cgc_ProcessAlarms(void) {
+	cgc_uint8_t i;
+	cgc_uint8_t j;
+	cgc_pAlarmAttributes AA;
+	cgc_uint8_t TargetDevice;
+	cgc_uint8_t PrevAlarmState;
+	cgc_uint8_t NewState;
 
 	// for each alarm
 	for (i = 0; i < MAX_DEVICES; i++) {
@@ -127,7 +127,7 @@ void ProcessAlarms(void) {
 			continue;
 		}
 	
-		AA = (pAlarmAttributes)(Devices[i].Attributes);
+		AA = (cgc_pAlarmAttributes)(Devices[i].Attributes);
 		if (!AA) {
 			continue;
 		}
@@ -146,7 +146,7 @@ void ProcessAlarms(void) {
 			for (j = 0; j < MAX_DEVICES; j++) {
 				TargetDevice = AA->DeviceList[j];
 				// is it in an alarm state?
-				if (IsDeviceInAlarm(TargetDevice)) {
+				if (cgc_IsDeviceInAlarm(TargetDevice)) {
 					// yes, set the alarm
 					NewState = ALARM_ACTIVE;
 				}
@@ -156,7 +156,7 @@ void ProcessAlarms(void) {
 			if (AA->Active == ALARM_INACTIVE) {
 				if (NewState == ALARM_ACTIVE) {
 					AA->Active = NewState;
-					SendResp(RESP_ALARM_ON, (unsigned char *)&(Devices[i].DeviceId));
+					cgc_SendResp(RESP_ALARM_ON, (unsigned char *)&(Devices[i].DeviceId));
 				}
 			}
 
@@ -167,7 +167,7 @@ void ProcessAlarms(void) {
 			// if its previous state was ACTIVE, then send a response
 			// indicating the new alarm state
 			if (PrevAlarmState == ALARM_ACTIVE) {
-				SendResp(RESP_ALARM_OFF, (unsigned char *)&(Devices[i].DeviceId));
+				cgc_SendResp(RESP_ALARM_OFF, (unsigned char *)&(Devices[i].DeviceId));
 			}
 		}
 	}

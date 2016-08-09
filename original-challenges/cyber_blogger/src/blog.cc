@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,29 +28,29 @@ extern "C" {
 #include <string.h>
 };
 
-static List<User *> g_reg_users;
+static cgc_List<cgc_User *> g_reg_users;
 
-User *Blog::get_user(char *username)
+cgc_User *Blog::cgc_get_user(char *username)
 {
-    for (int i=0; i < g_reg_users.length(); i++) {
-        if(strcasecmp(username, g_reg_users[i]->get_username()) == 0)
+    for (int i=0; i < g_reg_users.cgc_length(); i++) {
+        if(cgc_strcasecmp(username, g_reg_users[i]->cgc_get_username()) == 0)
             return g_reg_users[i];
     }
 
     return NULL;
 }
 
-void Blog::register_user()
+void Blog::cgc_register_user()
 {
     char username[16];
     char pw[16];
     char friend_code[16];
-    User *user;
+    cgc_User *user;
 
     printf("Enter username: ");
-    if (IO::readline()) {
-        if (strlen(IO::buf()) > 2 && strlen(IO::buf()) < 16) {
-            strcpy(username, IO::buf());
+    if (IO::cgc_readline()) {
+        if (cgc_strlen(IO::cgc_buf()) > 2 && cgc_strlen(IO::cgc_buf()) < 16) {
+            cgc_strcpy(username, IO::cgc_buf());
         } else {
             printf("Error: Username must be between 3 and 15 characters\n");
             return;
@@ -59,16 +59,16 @@ void Blog::register_user()
         printf("Bad Input\n");
         return;
     }
-    if (get_user(username) != NULL) {
+    if (cgc_get_user(username) != NULL) {
         printf("Error: Username already exists. Try a different username\n");
         return;
     }
 
     while(true) {
         printf("Enter password: ");
-        if (IO::readline()) {
-            if (strlen(IO::buf()) > 4 && strlen(IO::buf()) < 16) {
-                strcpy(pw, IO::buf());
+        if (IO::cgc_readline()) {
+            if (cgc_strlen(IO::cgc_buf()) > 4 && cgc_strlen(IO::cgc_buf()) < 16) {
+                cgc_strcpy(pw, IO::cgc_buf());
                 break;
             } else {
                 printf("Bad Password\n");
@@ -80,9 +80,9 @@ void Blog::register_user()
 
     while(true) {
         printf("Friend code: ");
-        if (IO::readline()) {
-            if (strlen(IO::buf()) > 4 && strlen(IO::buf()) < 16) {
-                strcpy(friend_code, IO::buf());
+        if (IO::cgc_readline()) {
+            if (cgc_strlen(IO::cgc_buf()) > 4 && cgc_strlen(IO::cgc_buf()) < 16) {
+                cgc_strcpy(friend_code, IO::cgc_buf());
                 break;
             } else {
                 printf("Bad Friend Code\n");
@@ -92,35 +92,35 @@ void Blog::register_user()
         }
     }
 
-    user = new User(username, pw, friend_code);
-    g_reg_users.add(user);
+    user = new cgc_User(username, pw, friend_code);
+    g_reg_users.cgc_add(user);
 }
 
-User *Blog::log_in()
+cgc_User *Blog::cgc_log_in()
 {
     char username[16];
     char pw[16];
-    User *user = NULL;
+    cgc_User *user = NULL;
     printf("Username: ");
-    if (IO::readline()) {
-        if (strlen(IO::buf()) > 4 && strlen(IO::buf()) < 16)
-            strcpy(username, IO::buf());
+    if (IO::cgc_readline()) {
+        if (cgc_strlen(IO::cgc_buf()) > 4 && cgc_strlen(IO::cgc_buf()) < 16)
+            cgc_strcpy(username, IO::cgc_buf());
     } else {
         printf("Bad input\n");
         return NULL;
     }
 
     printf("Password: ");
-    if (IO::readline()) {
-        if (strlen(IO::buf()) > 4 && strlen(IO::buf()) < 16)
-            strcpy(pw, IO::buf());
+    if (IO::cgc_readline()) {
+        if (cgc_strlen(IO::cgc_buf()) > 4 && cgc_strlen(IO::cgc_buf()) < 16)
+            cgc_strcpy(pw, IO::cgc_buf());
     } else {
         printf("Bad input\n");
         return NULL;
     }
 
-    user = get_user(username);
-    if (user && user->check_password(pw)) {
+    user = cgc_get_user(username);
+    if (user && user->cgc_check_password(pw)) {
         printf("Authenticated\n");
         return user;
     } else {
@@ -129,11 +129,11 @@ User *Blog::log_in()
     }
 }
 
-void Blog::add_friend(User *user)
+void Blog::cgc_add_friend(cgc_User *user)
 {
     char username[16];
     char friend_code[16];
-    User *new_friend = NULL;
+    cgc_User *new_friend = NULL;
 
     if (!user) {
         printf("Bad user\n");
@@ -141,10 +141,10 @@ void Blog::add_friend(User *user)
     }
 
     printf("Enter friend username: ");
-    if (IO::readline()) {
-        if (strlen(IO::buf()) > 2 && strlen(IO::buf()) < 16) {
-            strcpy(username, IO::buf());
-            new_friend = get_user(username);
+    if (IO::cgc_readline()) {
+        if (cgc_strlen(IO::cgc_buf()) > 2 && cgc_strlen(IO::cgc_buf()) < 16) {
+            cgc_strcpy(username, IO::cgc_buf());
+            new_friend = cgc_get_user(username);
         } else {
             printf("Error: Username must be between 3 and 15 characters\n");
             return;
@@ -158,9 +158,9 @@ void Blog::add_friend(User *user)
 
     while(true) {
         printf("Friend code: ");
-        if (IO::readline()) {
-            if (strlen(IO::buf()) > 4 && strlen(IO::buf()) < 16) {
-                strcpy(friend_code, IO::buf());
+        if (IO::cgc_readline()) {
+            if (cgc_strlen(IO::cgc_buf()) > 4 && cgc_strlen(IO::cgc_buf()) < 16) {
+                cgc_strcpy(friend_code, IO::cgc_buf());
                 break;
             } else {
                 printf("Bad Friend Code\n");
@@ -170,20 +170,20 @@ void Blog::add_friend(User *user)
         }
     }
 
-    if (user->add_friend(new_friend, friend_code))
+    if (user->cgc_add_friend(new_friend, friend_code))
         printf("Added friend, %s!\n", username);
     else
-        printf("Couldn't add as friend.\n");
+        printf("Couldn't cgc_add as friend.\n");
 }
 
 
-void Blog::view_user_profile(User *user)
+void Blog::cgc_view_user_profile(cgc_User *user)
 {
     if (!user) {
         printf("Enter username: ");
-        if (IO::readline()) {
-            if (strlen(IO::buf()) > 2 && strlen(IO::buf()) < 16) {
-                user = get_user(IO::buf());
+        if (IO::cgc_readline()) {
+            if (cgc_strlen(IO::cgc_buf()) > 2 && cgc_strlen(IO::cgc_buf()) < 16) {
+                user = cgc_get_user(IO::cgc_buf());
             }
         }
 
@@ -193,16 +193,16 @@ void Blog::view_user_profile(User *user)
         }
     }
 
-    user->print_profile();
+    user->cgc_print_profile();
 }
 
-void Blog::view_user_posts(User *reg_user, User *user, int post_selection)
+void Blog::cgc_view_user_posts(cgc_User *reg_user, cgc_User *user, int post_selection)
 {
     if (!user) {
         printf("Enter username: ");
-        if (IO::readline()) {
-            if (strlen(IO::buf()) > 2 && strlen(IO::buf()) < 16) {
-                user = get_user(IO::buf());
+        if (IO::cgc_readline()) {
+            if (cgc_strlen(IO::cgc_buf()) > 2 && cgc_strlen(IO::cgc_buf()) < 16) {
+                user = cgc_get_user(IO::cgc_buf());
             }
         }
 
@@ -215,30 +215,30 @@ void Blog::view_user_posts(User *reg_user, User *user, int post_selection)
     if (!post_selection) {
         printf("Select a post id to view\n");
         printf("0. Go Back\n");
-        user->list_posts();
+        user->cgc_list_posts();
         printf("Selection: ");
-        post_selection = IO::readnum();
+        post_selection = IO::cgc_readnum();
         if (post_selection == 0) {
             printf("Returning to main menu\n");
             return;
         }
     }
 
-    if( post_selection > user->num_posts()) {
+    if( post_selection > user->cgc_num_posts()) {
         printf("Bad Post Selection\n");
         return;
     }
 
-    user->print_post(post_selection);
+    user->cgc_print_post(post_selection);
     if (reg_user && reg_user != user) {
         int like_selection = 0;
         printf("Like Post?\n");
         printf("1. Yes\n");
         printf("2. No\n");
         printf("Selection: ");
-        like_selection = IO::readnum();
+        like_selection = IO::cgc_readnum();
         if (like_selection == 1) {
-            user->like_post(reg_user, post_selection);
+            user->cgc_like_post(reg_user, post_selection);
         }
     }
 }

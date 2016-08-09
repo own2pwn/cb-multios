@@ -39,24 +39,24 @@ extern "C"
 #define NULL (0)
 #endif
 
-CNORFlash::CNORFlash( )
+cgc_CNORFlash::cgc_CNORFlash( )
 	: m_pFlashMemory( NULL ), m_blockSize( 0 ), m_blocksPerSector( 0 ), m_sectorCount( 0 )
 {
 
 }
 
-CNORFlash::~CNORFlash( )
+cgc_CNORFlash::~cgc_CNORFlash( )
 {
 	if ( m_pFlashMemory )
 	{
-		uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
+		cgc_uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
 
 		if ( deallocate( m_pFlashMemory, memorySize ) != 0 )
 			_terminate( -1 );
 	}
 }
 
-void CNORFlash::Init( uint32_t blockSize, uint32_t blocksPerSector, uint32_t sectorCount )
+void cgc_CNORFlash::cgc_Init( cgc_uint32_t blockSize, cgc_uint32_t blocksPerSector, cgc_uint32_t sectorCount )
 {
 	if ( blockSize % 64 != 0 )
 		m_blockSize = ((blockSize / 64)+1) * 64;
@@ -76,28 +76,28 @@ void CNORFlash::Init( uint32_t blockSize, uint32_t blocksPerSector, uint32_t sec
 	else
 		m_sectorCount = sectorCount;		
 
-	uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
+	cgc_uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
 
 	// Allocate
 	if ( allocate( memorySize, 0, (void **)&m_pFlashMemory ) != 0 )
 		_terminate( -1 );	// Allocate failed
 
 	// Flash memory -- erase to all 1's
-	memset( m_pFlashMemory, 0xFF, memorySize );
+	cgc_memset( m_pFlashMemory, 0xFF, memorySize );
 }
 
-int32_t CNORFlash::WriteData( uint32_t address, uint8_t *pData, uint32_t dataLen )
+cgc_int32_t cgc_CNORFlash::cgc_WriteData( cgc_uint32_t address, cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	if ( m_pFlashMemory == NULL )
 		return (FLASH_NO_MEMORY);
 
-	uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
+	cgc_uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
 
 	if ( (address+dataLen) > memorySize )
 		return (FLASH_INVALID_ADDRESS);
 
 	// Simulate a write to flash -- IE: we can only set bits to 0 -- they cannot be reset to 1
-	uint32_t curPos = 0;	
+	cgc_uint32_t curPos = 0;	
 	while ( dataLen > 0 )
 	{
 		m_pFlashMemory[address] &= pData[curPos];
@@ -110,18 +110,18 @@ int32_t CNORFlash::WriteData( uint32_t address, uint8_t *pData, uint32_t dataLen
 	return (curPos);	
 }
 
-int32_t CNORFlash::ReadData( uint32_t address, uint8_t *pData, uint32_t dataLen )
+cgc_int32_t cgc_CNORFlash::cgc_ReadData( cgc_uint32_t address, cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	if ( m_pFlashMemory == NULL )
 		return (FLASH_NO_MEMORY);
 
-	uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
+	cgc_uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
 
 	if ( (address+dataLen) > memorySize )
 		return (FLASH_INVALID_ADDRESS);
 
 	// Simulate a write to flash -- IE: we can only set bits to 0 -- they cannot be reset to 1
-	uint32_t curPos = 0;	
+	cgc_uint32_t curPos = 0;	
 	while ( dataLen > 0 )
 	{
 		pData[curPos] = m_pFlashMemory[address];
@@ -134,41 +134,41 @@ int32_t CNORFlash::ReadData( uint32_t address, uint8_t *pData, uint32_t dataLen 
 	return (curPos);	
 }
 
-int32_t CNORFlash::DeviceErase( void )
+cgc_int32_t cgc_CNORFlash::cgc_DeviceErase( void )
 {
-	uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
+	cgc_uint32_t memorySize = (m_blockSize * m_blocksPerSector * m_sectorCount);
 
 	// Flash memory -- erase to all 1's
-	memset( m_pFlashMemory, 0xFF, memorySize );
+	cgc_memset( m_pFlashMemory, 0xFF, memorySize );
 
 	return (FLASH_SUCCESS);
 }
 
-int32_t CNORFlash::SectorErase( uint32_t sectorNum )
+cgc_int32_t cgc_CNORFlash::cgc_SectorErase( cgc_uint32_t sectorNum )
 {
 	if ( sectorNum >= m_sectorCount )
 		return (FLASH_INVALID_SECTOR);
 
 	// Get sector address
-	uint32_t sectorSize = (m_blockSize * m_blocksPerSector);
+	cgc_uint32_t sectorSize = (m_blockSize * m_blocksPerSector);
 
-	uint32_t sectorAddress = (sectorSize * sectorNum);
+	cgc_uint32_t sectorAddress = (sectorSize * sectorNum);
 
 	// Erase sector (All 1's)
-	memset( (m_pFlashMemory+sectorAddress), 0xFF, sectorSize );	
+	cgc_memset( (m_pFlashMemory+sectorAddress), 0xFF, sectorSize );	
 
 	return (FLASH_SUCCESS);
 }
 
-int32_t CNORFlash::BlockErase( uint32_t blockNum )
+cgc_int32_t cgc_CNORFlash::cgc_BlockErase( cgc_uint32_t blockNum )
 {
-	uint32_t blocksTotal = (m_blocksPerSector * m_sectorCount);
+	cgc_uint32_t blocksTotal = (m_blocksPerSector * m_sectorCount);
 
 	if ( blockNum >= blocksTotal )
 		return (FLASH_INVALID_BLOCK);
 
 	// Erase block (All 1's)
-	memset( (m_pFlashMemory+(m_blockSize*blockNum)), 0xFF, m_blockSize );
+	cgc_memset( (m_pFlashMemory+(m_blockSize*blockNum)), 0xFF, m_blockSize );
 
 	return (FLASH_SUCCESS);
 }

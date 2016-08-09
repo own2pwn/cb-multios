@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,38 +31,38 @@
 #define FALSE 0
 #define TRUE 1
 
-typedef enum {ALL, LIVING_CELL, DEAD_CELL, BOMB} cell_filter_e;
+typedef enum {ALL, LIVING_CELL, DEAD_CELL, BOMB} cgc_cell_filter_e;
 
 typedef struct coord {
     int x;
     int y;
-} coord_t;
+} cgc_coord_t;
 
 typedef struct region {
-    coord_t start;
-    coord_t end;
-} region_t;
+    cgc_coord_t start;
+    cgc_coord_t end;
+} cgc_region_t;
 
 typedef struct conway_pixel {
-    coord_t point;
+    cgc_coord_t point;
     int is_alive;
     int bomb_set;
-} conway_pixel_t;
+} cgc_conway_pixel_t;
 
-typedef struct coord_list coord_list_t;
+typedef struct coord_list cgc_coord_list_t;
 struct coord_list {
-    coord_t coord;
+    cgc_coord_t coord;
 
-    coord_list_t *prev;
-    coord_list_t *next;
+    cgc_coord_list_t *prev;
+    cgc_coord_list_t *next;
 };
 
-typedef struct pixel_list pixel_list_t;
+typedef struct pixel_list cgc_pixel_list_t;
 struct pixel_list {
-    conway_pixel_t px;
+    cgc_conway_pixel_t px;
 
-    pixel_list_t *prev;
-    pixel_list_t *next;
+    cgc_pixel_list_t *prev;
+    cgc_pixel_list_t *next;
 };
 
 #define UNSET_COORD(_coord)      \
@@ -118,7 +118,7 @@ struct pixel_list {
         if (_head == NULL) {                                                \
             _head = _pixel;                                                 \
         } else if (_pixel != NULL) {                                        \
-            pixel_list_t *iter = _head;                                     \
+            cgc_pixel_list_t *iter = _head;                                     \
             while (iter != NULL) {                                          \
                 if(iter->px.point.x < _pixel->px.point.x) {                 \
                     if(!iter->next) {                                       \
@@ -172,7 +172,7 @@ struct pixel_list {
             _head = _item->next;                \
         _item->prev = NULL;                     \
         _item->next = NULL;                     \
-        free(_item);                            \
+        cgc_free(_item);                            \
     } while(0)
 
 
@@ -182,49 +182,49 @@ struct pixel_list {
         while (_head != NULL) {                 \
             l = _head;                          \
             _head = _head->next;                \
-            free(l);                            \
+            cgc_free(l);                            \
         }                                       \
     } while(0)
 
 // quadtree functions
-typedef struct qtree qtree_t;
-typedef int (*qtree_insert)(qtree_t *qt, conway_pixel_t px);
-typedef conway_pixel_t* (*qtree_get_pixel)(qtree_t *qt, coord_t point);
+typedef struct qtree cgc_qtree_t;
+typedef int (*cgc_qtree_insert)(cgc_qtree_t *qt, cgc_conway_pixel_t px);
+typedef cgc_conway_pixel_t* (*cgc_qtree_get_pixel)(cgc_qtree_t *qt, cgc_coord_t point);
 
 // game functions
-typedef int (*conway_generation)(int num_steps);
-typedef int (*gunshot)(coord_t point);
-typedef int (*bomber)(coord_t point);
+typedef int (*cgc_conway_generation)(int num_steps);
+typedef int (*cgc_gunshot)(cgc_coord_t point);
+typedef int (*cgc_bomber)(cgc_coord_t point);
 
 struct qtree
 {
-    size_t max_levels;
-    size_t max_pixels;
-    size_t num_pixels;
-    pixel_list_t *pixels;
+    cgc_size_t max_levels;
+    cgc_size_t max_pixels;
+    cgc_size_t num_pixels;
+    cgc_pixel_list_t *pixels;
 
-    region_t valid_region;
+    cgc_region_t valid_region;
     int is_subdivided;
 
     // Functions
-    qtree_insert insert;
-    qtree_get_pixel get_pixel;
+    cgc_qtree_insert insert;
+    cgc_qtree_get_pixel get_pixel;
 
-    conway_generation step;
-    gunshot shoot_pixel;
-    bomber set_bomb;
+    cgc_conway_generation step;
+    cgc_gunshot shoot_pixel;
+    cgc_bomber set_bomb;
 
     // Subnodes
-    qtree_t *nw;
-    qtree_t *ne;
-    qtree_t *sw;
-    qtree_t *se;
+    cgc_qtree_t *nw;
+    cgc_qtree_t *ne;
+    cgc_qtree_t *sw;
+    cgc_qtree_t *se;
 
 };
 
-qtree_t *gld_init_game();
-void gld_clear_board();
-void gld_print_board(char *str);
+cgc_qtree_t *cgc_gld_init_game();
+void cgc_gld_clear_board();
+void cgc_gld_print_board(char *str);
 
-void qt_debug_print_tree(qtree_t *qt, char *str);
+void cgc_qt_debug_print_tree(cgc_qtree_t *qt, char *str);
 #endif

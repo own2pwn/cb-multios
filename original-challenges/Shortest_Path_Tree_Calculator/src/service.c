@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,19 +32,19 @@ THE SOFTWARE.
 #include "ll.h"
 #include "io.h"
 
-pNode Nodes;
-pEdge Edges;
+cgc_pNode Nodes;
+cgc_pEdge Edges;
 
 int main(void) {
-	uint32_t count = 0;
+	cgc_uint32_t count = 0;
 	// initialize the graph pointers
 	Nodes = NULL;
 	Edges = NULL;
 
-	while (ReadCmd() && count < 0x20) {
+	while (cgc_ReadCmd() && count < 0x20) {
 		count++;
 	}
 
-	DestroyNodes();
-	DestroyEdges();
+	cgc_DestroyNodes();
+	cgc_DestroyEdges();
 }

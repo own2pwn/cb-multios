@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,8 +30,8 @@ THE SOFTWARE.
 #ifndef AUTH_H
 #define AUTH_H
 
-securityIdType authenticate(char *name, char *password);
-securityIdType create_user(char *name, char *password, char *real_name);
+cgc_securityIdType cgc_authenticate(char *name, char *password);
+cgc_securityIdType cgc_create_user(char *name, char *password, char *real_name);
 
 #endif
 

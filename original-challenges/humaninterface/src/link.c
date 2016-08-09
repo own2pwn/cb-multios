@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,11 +25,11 @@
 
 #include "link.h"
 
-void link_send(unsigned channel, unsigned length, const unsigned char *payload)
+void cgc_link_send(unsigned channel, unsigned length, const unsigned char *payload)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     union {
-        link_hdr_t hdr;
+        cgc_link_hdr_t hdr;
         unsigned char rawdata[LINK_PACKET_SIZE];
     } pkt;
 
@@ -41,17 +41,17 @@ void link_send(unsigned channel, unsigned length, const unsigned char *payload)
     if (length > LINK_PAYLOAD_SIZE)
         length = LINK_PAYLOAD_SIZE;
 
-    memcpy(pkt.hdr.payload, payload, length);
-    transmit(STDOUT, pkt.rawdata, length + sizeof(link_hdr_t), &bytes);
+    cgc_memcpy(pkt.hdr.payload, payload, length);
+    transmit(STDOUT, pkt.rawdata, length + sizeof(cgc_link_hdr_t), &bytes);
 }
 
-int link_recv(unsigned *channel, unsigned *length, unsigned char *payload)
+int cgc_link_recv(unsigned *channel, unsigned *length, unsigned char *payload)
 {
-    size_t bytes;
-    link_hdr_t hdr;
+    cgc_size_t bytes;
+    cgc_link_hdr_t hdr;
 
 retry:
-    if (receive(STDIN, &hdr, sizeof(link_hdr_t), &bytes) != 0 || bytes < sizeof(link_hdr_t))
+    if (receive(STDIN, &hdr, sizeof(cgc_link_hdr_t), &bytes) != 0 || bytes < sizeof(cgc_link_hdr_t))
         return -1;
     
     if (hdr.length > LINK_PAYLOAD_SIZE)

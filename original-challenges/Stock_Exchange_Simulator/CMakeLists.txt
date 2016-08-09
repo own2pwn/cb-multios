@@ -1,0 +1,6 @@
+set( SERVICE_ID "00045" )
+set( AUTHOR_ID "NRFIN" )
+set( POLLS_RELEASE_MAX_DEPTH "500" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O0 -g  -Wno-overlength-strings -Wno-packed" )
+set( VULN_COUNT "1" )
+buildCB(${CFLAGS})

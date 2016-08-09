@@ -32,22 +32,22 @@ THE SOFTWARE.
 
 
 // Print the slot machine state
-void print_board(int board_size, unsigned char board[][board_size])
+void cgc_print_board(int board_size, unsigned char board[][board_size])
 {
 	for (int y=0; y<board_size; y++)
 	{
 		for(int x=0; x<board_size; x++)
 		{
-			printf("@c ", board[x][y]);
+			cgc_printf("@c ", board[x][y]);
 		}
-		printf("\n");
+		cgc_printf("\n");
 	}
 }
 
 // Runs the slot machine game
-void slots(player_info *player)
+void cgc_slots(cgc_player_info *player)
 {
-	player_info placeholder;
+	cgc_player_info placeholder;
 	if (player == 0)
 	{
 		player = &placeholder;
@@ -55,8 +55,8 @@ void slots(player_info *player)
 	
 	// Accept board size
 	char input;
-	printf("Enter number of rows (2 to 5):");
-	receive_fixed_input(&input, '\n', sizeof(input));
+	cgc_printf("Enter number of rows (2 to 5):");
+	cgc_receive_fixed_input(&input, '\n', sizeof(input));
 	if ((input < '2') || (input > '5'))
 	{
 		return;
@@ -71,7 +71,7 @@ void slots(player_info *player)
 		}
 		player->slots_score += 1;
 		unsigned char board[board_size][board_size];
-		bzero(board, sizeof(board));
+		cgc_bzero(board, sizeof(board));
 
 		// Adjust number of characters used to control odds of winning
 		char max_char = '/';
@@ -93,10 +93,10 @@ void slots(player_info *player)
 		{
 			for(int y=0; y < board_size; y++)
 			{
-				board[x][y] = random_in_range('!', max_char);
+				board[x][y] = cgc_random_in_range('!', max_char);
 			}	
 		}
-		print_board(board_size, board);
+		cgc_print_board(board_size, board);
 
 		// Check for a win
 		// Column check
@@ -112,7 +112,7 @@ void slots(player_info *player)
 			}
 			if (y == board_size)
 			{
-				printf("Column match: @d!\n", x);
+				cgc_printf("Column match: @d!\n", x);
 				if (player)
 				{
 					player->wallet += payouts[SLOTS_COLUMN_MATCH];
@@ -132,14 +132,14 @@ void slots(player_info *player)
 			}
 			if (x == board_size)
 			{
-				printf("Row match: @d!\n", y);
+				cgc_printf("Row match: @d!\n", y);
 				if (player)
 				{
 					player->wallet += payouts[SLOTS_ROW_MATCH];
 				}
 			}
 		}
-		printf("Enter q to quit, any other key to play again:");
-		receive_fixed_input(&input, '\n', sizeof(input));
+		cgc_printf("Enter q to quit, any other key to play again:");
+		cgc_receive_fixed_input(&input, '\n', sizeof(input));
 	}
 }

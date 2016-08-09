@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,18 +27,18 @@
 #include "bitmap.h"
 #include "codes.h"
 
-static unsigned char *create_barcode_bmp_data(barcode_128_t *barcode, unsigned int *bytes_alloc, int *bmp_width)
+static unsigned char *cgc_create_barcode_bmp_data(cgc_barcode_128_t *barcode, unsigned int *bytes_alloc, int *bmp_width)
 {
     *bytes_alloc = 0;
     *bmp_width = 0;
-    char *barcode_ascii = create_barcode_ascii(barcode);
+    char *barcode_ascii = cgc_create_barcode_ascii(barcode);
     char *barcode_ascii_start = barcode_ascii;
-    if (!barcode_ascii || strlen(barcode->raw_str) > MAX_BARCODE_LENGTH)
+    if (!barcode_ascii || cgc_strlen(barcode->raw_str) > MAX_BARCODE_LENGTH)
         return NULL;
-    *bytes_alloc = strlen(barcode_ascii) * PIXELW * PIXELH * 3;
-    unsigned char *data = calloc(1, *bytes_alloc);
+    *bytes_alloc = cgc_strlen(barcode_ascii) * PIXELW * PIXELH * 3;
+    unsigned char *data = cgc_calloc(1, *bytes_alloc);
     unsigned char *pdata = data;
-    unsigned int width = strlen(barcode_ascii) * PIXELW * 3;
+    unsigned int width = cgc_strlen(barcode_ascii) * PIXELW * 3;
     *bmp_width = width;
 
     int j = 0, i = 0;
@@ -53,26 +53,26 @@ static unsigned char *create_barcode_bmp_data(barcode_128_t *barcode, unsigned i
         }
 
         for (i = 0; i < PIXELW; i++) {
-            memcpy(pdata, value, 3);
+            cgc_memcpy(pdata, value, 3);
             pdata += 3;
         }
         barcode_ascii++;
     }
     for (j = 1; j < PIXELH; j++)
-        memcpy(&data[(j * width)], &data[0], width);
+        cgc_memcpy(&data[(j * width)], &data[0], width);
 
-    free(barcode_ascii_start);
+    cgc_free(barcode_ascii_start);
     return data;
 }
 
 
-int validate_bmp_headers(bmp_header_t *bheader, bmp_info_t *binfo)
+int cgc_validate_bmp_headers(cgc_bmp_header_t *bheader, cgc_bmp_info_t *binfo)
 {
-    if (memcmp(bheader->magic, "BM", 2) != 0)
+    if (cgc_memcmp(bheader->magic, "BM", 2) != 0)
         goto error;
     if (bheader->reserved != 0)
         goto error;
-    if (bheader->file_size != (binfo->imagesize + sizeof(barcode_bmp_t)))
+    if (bheader->file_size != (binfo->imagesize + sizeof(cgc_barcode_bmp_t)))
         goto error;
     if (binfo->size != 40)
         goto error;
@@ -98,23 +98,23 @@ error:
     return -1;
 }
 
-barcode_bmp_t *create_barcode_bmp(barcode_128_t *barcode)
+cgc_barcode_bmp_t *cgc_create_barcode_bmp(cgc_barcode_128_t *barcode)
 {
-    bmp_header_t bheader;
-    bmp_info_t binfo;
+    cgc_bmp_header_t bheader;
+    cgc_bmp_info_t binfo;
 
     unsigned int image_size = 0;
     int width = 0;
-    unsigned char *bmp_data = create_barcode_bmp_data(barcode, &image_size, &width);
+    unsigned char *bmp_data = cgc_create_barcode_bmp_data(barcode, &image_size, &width);
     if (!bmp_data || !image_size)
         return NULL;
 
-    memcpy(bheader.magic, "BM", 2);
+    cgc_memcpy(bheader.magic, "BM", 2);
     bheader.reserved = 0;
-    bheader.file_size = sizeof(barcode_bmp_t) + image_size;
-    bheader.data_offset = sizeof(barcode_bmp_t);
+    bheader.file_size = sizeof(cgc_barcode_bmp_t) + image_size;
+    bheader.data_offset = sizeof(cgc_barcode_bmp_t);
 
-    binfo.size = sizeof(bmp_info_t);
+    binfo.size = sizeof(cgc_bmp_info_t);
     binfo.bits = 24;
     binfo.width = width / (binfo.bits / 8);
     binfo.height = PIXELH;
@@ -126,20 +126,20 @@ barcode_bmp_t *create_barcode_bmp(barcode_128_t *barcode)
     binfo.num_colors = 0;
     binfo.imp_colors = 0;
 
-    barcode_bmp_t *barcode_bmp = malloc(sizeof(barcode_bmp_t) + image_size);
-    memcpy(&barcode_bmp->header, &bheader, sizeof(bmp_header_t));
-    memcpy(&barcode_bmp->info, &binfo, sizeof(bmp_info_t));
-    memcpy(barcode_bmp->data, bmp_data, image_size);
-    free(bmp_data);
+    cgc_barcode_bmp_t *barcode_bmp = cgc_malloc(sizeof(cgc_barcode_bmp_t) + image_size);
+    cgc_memcpy(&barcode_bmp->header, &bheader, sizeof(cgc_bmp_header_t));
+    cgc_memcpy(&barcode_bmp->info, &binfo, sizeof(cgc_bmp_info_t));
+    cgc_memcpy(barcode_bmp->data, bmp_data, image_size);
+    cgc_free(bmp_data);
     return barcode_bmp;
 }
 
-barcode_128_t *create_barcode_from_bmp(barcode_bmp_t *barcode_bmp)
+cgc_barcode_128_t *cgc_create_barcode_from_bmp(cgc_barcode_bmp_t *barcode_bmp)
 {
-    if (validate_bmp_headers(&barcode_bmp->header, &barcode_bmp->info) != 0)
+    if (cgc_validate_bmp_headers(&barcode_bmp->header, &barcode_bmp->info) != 0)
         return NULL;
 
-    char *barcode_ascii = calloc(1, (barcode_bmp->info.width / PIXELW) + 1);
+    char *barcode_ascii = cgc_calloc(1, (barcode_bmp->info.width / PIXELW) + 1);
     int j = 0, i = 0;
     int step = (barcode_bmp->info.bits /  8) * PIXELW;
     for (i = 0; i < barcode_bmp->info.width * (barcode_bmp->info.bits / 8); i+=step) {
@@ -156,14 +156,14 @@ barcode_128_t *create_barcode_from_bmp(barcode_bmp_t *barcode_bmp)
     }
     for (j = 1; j < PIXELH; j++) {
         unsigned char *p1 = &barcode_bmp->data[(j * barcode_bmp->info.width * (barcode_bmp->info.bits / 8))];
-        if (memcmp(p1, &barcode_bmp->data, barcode_bmp->info.width * (barcode_bmp->info.bits / 8)) != 0)
+        if (cgc_memcmp(p1, &barcode_bmp->data, barcode_bmp->info.width * (barcode_bmp->info.bits / 8)) != 0)
             goto error;
     }
 
-    barcode_128_t *new_barcode = create_barcode_from_encoded_data(barcode_ascii);
-    free(barcode_ascii);
+    cgc_barcode_128_t *new_barcode = cgc_create_barcode_from_encoded_data(barcode_ascii);
+    cgc_free(barcode_ascii);
     return new_barcode;
 error:
-    free(barcode_ascii);
+    cgc_free(barcode_ascii);
     return NULL;
 }

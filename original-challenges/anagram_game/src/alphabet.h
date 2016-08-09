@@ -6,10 +6,10 @@
 
 typedef struct {
     unsigned int freq[ALPHABET_SIZE];
-} freqtab_t;
+} cgc_freqtab_t;
 
-void ftab_init(freqtab_t *ftab, const char *word);
-void ftab_init1(freqtab_t *ftab);
-void ftab_add(freqtab_t *ftab, const char *word);
+void cgc_ftab_init(cgc_freqtab_t *ftab, const char *word);
+void cgc_ftab_init1(cgc_freqtab_t *ftab);
+void cgc_ftab_add(cgc_freqtab_t *ftab, const char *word);
 
 #endif /* !ALPHABET_H_ */

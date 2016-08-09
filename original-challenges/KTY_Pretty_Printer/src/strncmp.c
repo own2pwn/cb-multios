@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "strncmp.h"
 
-int strncmp(char *s1, char *s2, int n)
+int cgc_strncmp(char *s1, char *s2, int n)
 {
   while (*s1 && *s2 && n--)
   {

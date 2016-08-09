@@ -4,10 +4,10 @@
 typedef struct {
     double real;
     double imag;
-} complex_t;
+} cgc_complex_t;
 
 
-complex_t *dft(double *real_coeff, unsigned int samples, int *len);
-double *idft(complex_t *coeff, unsigned int samples, int *len);
+cgc_complex_t *cgc_dft(double *real_coeff, unsigned int samples, int *len);
+double *cgc_idft(cgc_complex_t *coeff, unsigned int samples, int *len);
 
 #endif /* !DFT_H_ */

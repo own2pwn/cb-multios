@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,48 +33,48 @@ THE SOFTWARE.
 
 #define DEBUG_PACKET			(0)
 
-typedef void (*fpPacketTypeHandler)( uint8_t *pPacketData, uint32_t dataLen );
+typedef void (*cgc_fpPacketTypeHandler)( cgc_uint8_t *pPacketData, cgc_uint32_t dataLen );
 
 typedef struct
 {
-	uint8_t packetType;
-	fpPacketTypeHandler fpHandler;		
-} tPacketTypeHandler;
+	cgc_uint8_t packetType;
+	cgc_fpPacketTypeHandler fpHandler;		
+} cgc_tPacketTypeHandler;
 
 typedef struct
 {
-	tPacketTypeHandler *pHandlers;
-	uint8_t handlerCount;
-} tPacketHandler;
+	cgc_tPacketTypeHandler *pHandlers;
+	cgc_uint8_t handlerCount;
+} cgc_tPacketHandler;
 
 typedef struct PACKET_INFO_STRUCT
 {
-	uint8_t packetData[MAX_PACKET_LENGTH];
-	uint32_t dataLen;
+	cgc_uint8_t packetData[MAX_PACKET_LENGTH];
+	cgc_uint32_t dataLen;
 	struct PACKET_INFO_STRUCT *pNextPacket;
-	fpPacketTypeHandler fpHandler;		
-	uint8_t packetType;
-} tSinglePacketData;
+	cgc_fpPacketTypeHandler fpHandler;		
+	cgc_uint8_t packetType;
+} cgc_tSinglePacketData;
 
 typedef struct
 {
-	tSinglePacketData *pPacketList;
-	uint32_t packetCount;
-	uint32_t byteCount;
-	uint32_t invalidPacketCount;
-} tPacketData;
+	cgc_tSinglePacketData *pPacketList;
+	cgc_uint32_t packetCount;
+	cgc_uint32_t byteCount;
+	cgc_uint32_t invalidPacketCount;
+} cgc_tPacketData;
 
-void init_packet_handler( void );
-void receive_packet( uint8_t *pData, uint8_t dataLen, uint16_t packetCRC );
-void add_new_packet( uint8_t packetType, fpPacketTypeHandler fpHandler, uint8_t *pData, uint8_t dataLen );
-void destroy_packet_handler( void );
+void cgc_init_packet_handler( void );
+void cgc_receive_packet( cgc_uint8_t *pData, cgc_uint8_t dataLen, cgc_uint16_t packetCRC );
+void cgc_add_new_packet( cgc_uint8_t packetType, cgc_fpPacketTypeHandler fpHandler, cgc_uint8_t *pData, cgc_uint8_t dataLen );
+void cgc_destroy_packet_handler( void );
 
-void display_packets( void );
+void cgc_display_packets( void );
 
-void HandleBroadcastPacket( uint8_t *pData, uint32_t dataLen );
-void HandleChannelPacket( uint8_t *pData, uint32_t dataLen );
-void HandlePrivatePacket( uint8_t *pData, uint32_t dataLen );
-void HandleConnectPacket( uint8_t *pData, uint32_t dataLen );
-void HandleDisconnectPacket( uint8_t *pData, uint32_t dataLen );
+void cgc_HandleBroadcastPacket( cgc_uint8_t *pData, cgc_uint32_t dataLen );
+void cgc_HandleChannelPacket( cgc_uint8_t *pData, cgc_uint32_t dataLen );
+void cgc_HandlePrivatePacket( cgc_uint8_t *pData, cgc_uint32_t dataLen );
+void cgc_HandleConnectPacket( cgc_uint8_t *pData, cgc_uint32_t dataLen );
+void cgc_HandleDisconnectPacket( cgc_uint8_t *pData, cgc_uint32_t dataLen );
 
 #endif // __PACKET_H__

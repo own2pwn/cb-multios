@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,7 +26,7 @@
 #define DEBUG_BYTECODE 1
 #endif
 
-int bytecode_exec(uint8_t *buf, uint16_t sz) {
+int cgc_bytecode_exec(uint8_t *buf, uint16_t sz) {
 	
 	int ret = SUCCESS;
 	uint8_t *cursor = buf + BASE_ADDR_SZ;
@@ -47,7 +47,7 @@ int bytecode_exec(uint8_t *buf, uint16_t sz) {
 	
 	#ifdef DEBUG
     fprintf(stderr, 
-    	"[D] %s | ENTER bytecode_exec; base_addr = 0x%08x, scratch_base = 0x%08x\n", 
+    	"[D] %s | ENTER cgc_bytecode_exec; base_addr = 0x%08x, scratch_base = 0x%08x\n", 
     	__func__, base_addr, scratch_base);
     #endif
 

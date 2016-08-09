@@ -37,7 +37,7 @@ THE SOFTWARE.
 #define TBIR_CHKSUM 0x00100000
 #define TBIR_EOF    0x01000000
 
-typedef struct tbir_image_data {
+typedef struct cgc_tbir_image_data {
 	char *buffer;
 	int max;
 	int cbyte;
@@ -59,19 +59,19 @@ typedef struct tbir_image_data {
 	/// 0x00100000 - Checksum checked
 	/// 0x01000000 - EOF reached
 	int flags;
-} tbir_image_data, *ptbir_image_data;
+} cgc_tbir_image_data, *cgc_ptbir_image_data;
 
-int tbir_read_check( ptbir_image_data tid, int bitcount);
-int tbir_read_nbits( ptbir_image_data tid, int bitcount, int *value);
-int tbir_read_magic( ptbir_image_data tid );
-int tbir_read_typef( ptbir_image_data tid );
-int tbir_read_pixeltype( ptbir_image_data tid );
-int tbir_read_loadd( ptbir_image_data tid );
-int tbir_read_flags( ptbir_image_data tid );
-int tbir_read_header( ptbir_image_data tid );
-int tbir_read_width( ptbir_image_data tid );
-int tbir_read_height( ptbir_image_data tid);
-int tbir_display_img( ptbir_image_data tid);
-int tbir_read_pixels( ptbir_image_data tid);
-int tbir_read_chksum( ptbir_image_data tid);
+int cgc_tbir_read_check( cgc_ptbir_image_data tid, int bitcount);
+int cgc_tbir_read_nbits( cgc_ptbir_image_data tid, int bitcount, int *value);
+int cgc_tbir_read_magic( cgc_ptbir_image_data tid );
+int cgc_tbir_read_typef( cgc_ptbir_image_data tid );
+int cgc_tbir_read_pixeltype( cgc_ptbir_image_data tid );
+int cgc_tbir_read_loadd( cgc_ptbir_image_data tid );
+int cgc_tbir_read_flags( cgc_ptbir_image_data tid );
+int cgc_tbir_read_header( cgc_ptbir_image_data tid );
+int cgc_tbir_read_width( cgc_ptbir_image_data tid );
+int cgc_tbir_read_height( cgc_ptbir_image_data tid);
+int cgc_tbir_display_img( cgc_ptbir_image_data tid);
+int cgc_tbir_read_pixels( cgc_ptbir_image_data tid);
+int cgc_tbir_read_chksum( cgc_ptbir_image_data tid);
 #endif

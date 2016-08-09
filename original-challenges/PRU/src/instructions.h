@@ -27,12 +27,12 @@ THE SOFTWARE.
 #ifndef _INSTRUCTIONS_H
 #define _INSTRUCTIONS_H
 
-void dprintf(char *str);
+void cgc_dprintf(char *str);
 
 typedef struct _regTarget {
 	unsigned char regSel:3;
 	unsigned char reg:5;
-} regTarget;
+} cgc_regTarget;
 
 typedef struct _fmtQatbInstruction {
 	unsigned char op:2;
@@ -42,13 +42,13 @@ typedef struct _fmtQatbInstruction {
 	unsigned char broff1:2;
 	unsigned char io:1;
 	union {
-		regTarget rs2;
+		cgc_regTarget rs2;
 		unsigned char imm;
 	} arg2;
-	regTarget rs1;
+	cgc_regTarget rs1;
 	unsigned char broff2:8;
 
-} fmtQatbInstruction;
+} cgc_fmtQatbInstruction;
 
 
 #endif

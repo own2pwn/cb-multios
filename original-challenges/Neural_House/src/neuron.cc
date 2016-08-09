@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,64 +23,64 @@
 #include "neuron.h"
 #include <cstdio.h>
 
-double Neuron::k_eta = 0.20;
-double Neuron::k_alpha = 0.50;
+double cgc_Neuron::k_eta = 0.20;
+double cgc_Neuron::k_alpha = 0.50;
 
-Neuron::Neuron(unsigned int n, unsigned int outLen)
+cgc_Neuron::cgc_Neuron(unsigned int n, unsigned int outLen)
 {
   unsigned int i;
   m_n = n;
   for (i = 0; i < outLen; ++i)
   {
-    m_weights.push_back(Edge());
-    double w = int(g_prng() & 0xFFFF) * 1.0 / double(0xFFFF);
-    m_weights.back().weight = w;
+    m_weights.cgc_push_back(cgc_Edge());
+    double w = int(cgc_g_prng() & 0xFFFF) * 1.0 / double(0xFFFF);
+    m_weights.cgc_back().weight = w;
   }
 }
 
-double Neuron::sigmoid(double x)
+double cgc_Neuron::cgc_sigmoid(double x)
 {
   double abs_x = (x < 0) ? -x : x;
   return (x / (1 + abs_x));
 }
 
-double Neuron::dsigmoid(double x)
+double cgc_Neuron::cgc_dsigmoid(double x)
 {
   double abs_x = (x < 0) ? -x : x;
   return (1 / ((abs_x + 1) * (abs_x + 1)));
 }
 
-void Neuron::feedForward(vector<Neuron> &prev)
+void cgc_Neuron::cgc_feedForward(cgc_vector<cgc_Neuron> &prev)
 {
   unsigned int i;
   double val = 0.0;
-  for (i = 0; i < prev.size(); ++i)
-    val += prev[i].getValue() * prev[i].m_weights[m_n].weight;
-  m_value = sigmoid(val);
+  for (i = 0; i < prev.cgc_size(); ++i)
+    val += prev[i].cgc_getValue() * prev[i].m_weights[m_n].weight;
+  m_value = cgc_sigmoid(val);
 }
 
-void Neuron::computeOutGrad(double target)
+void cgc_Neuron::cgc_computeOutGrad(double target)
 {
-  m_gradient = (target - m_value) * dsigmoid(m_value);
+  m_gradient = (target - m_value) * cgc_dsigmoid(m_value);
 }
 
-void Neuron::computeHiddenGrad(vector<Neuron> &next)
+void cgc_Neuron::cgc_computeHiddenGrad(cgc_vector<cgc_Neuron> &next)
 {
   unsigned int i;
   double val = 0.0;
-  for (i = 0; i < next.size() - 1; ++i)
+  for (i = 0; i < next.cgc_size() - 1; ++i)
     val += next[i].m_gradient * m_weights[i].weight;
-  m_gradient = val * dsigmoid(m_value);
+  m_gradient = val * cgc_dsigmoid(m_value);
 }
 
-void Neuron::updateWeights(vector<Neuron> &prev)
+void cgc_Neuron::cgc_updateWeights(cgc_vector<cgc_Neuron> &prev)
 {
   double old, tmp;
   unsigned int i;
-  for (i = 0; i < prev.size(); ++i)
+  for (i = 0; i < prev.cgc_size(); ++i)
   {
     old = prev[i].m_weights[m_n].delta;
-    tmp = k_eta * prev[i].getValue() * m_gradient + k_alpha * old;
+    tmp = k_eta * prev[i].cgc_getValue() * m_gradient + k_alpha * old;
     prev[i].m_weights[m_n].delta = tmp;
     prev[i].m_weights[m_n].weight += tmp;
   }

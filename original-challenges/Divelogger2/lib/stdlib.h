@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,27 +29,27 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "malloc.h"
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
-int tolower( int c );
-int toupper( int c );
-double atof(const char *str);
-int atoi(const char *str);
-int abs( int );
+int cgc_isspace( int c );
+int cgc_isdigit( int c );
+int cgc_isnan( double val );
+int cgc_isinf( double val );
+int cgc_tolower( int c );
+int cgc_toupper( int c );
+double cgc_atof(const char *str);
+int cgc_atoi(const char *str);
+int cgc_abs( int );
 
-int strcmp( char *str1, char *str2 );
-char *strcpy( char *dest, char *src );
-char *strncpy( char *dest, const char *src, size_t num );
-size_t strlen( const char *str );
-int printf( const char *fmt, ... );
-int sprintf( char *str, const char *fmt, ... );
-size_t getline( char *buffer, size_t len );
-size_t receive_until( char *, char, size_t );
-int flush_input( int );
+int cgc_strcmp( char *str1, char *str2 );
+char *cgc_strcpy( char *dest, char *src );
+char *cgc_strncpy( char *dest, const char *src, cgc_size_t num );
+cgc_size_t cgc_strlen( const char *str );
+int cgc_printf( const char *fmt, ... );
+int cgc_sprintf( char *str, const char *fmt, ... );
+cgc_size_t cgc_getline( char *buffer, cgc_size_t len );
+cgc_size_t cgc_receive_until( char *, char, cgc_size_t );
+int cgc_flush_input( int );
 
-void* memcpy( void *dest, void *src, size_t numbytes );
-void* memset( void *dest, int value, size_t num );
+void* cgc_memcpy( void *dest, void *src, cgc_size_t numbytes );
+void* cgc_memset( void *dest, int value, cgc_size_t num );
 
 #endif // __STDLIB_H__

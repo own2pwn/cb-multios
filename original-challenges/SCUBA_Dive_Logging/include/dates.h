@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,7 +27,7 @@ THE SOFTWARE.
 #ifndef DATES_H
 #define DATES_H
 
-typedef unsigned long time_t;
+typedef unsigned long cgc_time_t;
 
 typedef struct {
 
@@ -37,34 +37,34 @@ typedef struct {
 	unsigned int hour;   // 0-23
 	unsigned int min;    // 0-59
 	unsigned int sec;    // 0-59
-	unsigned int doy;    // 0-366
+	unsigned int cgc_doy;    // 0-366
 
-}  datetime_struct_type;
+}  cgc_datetime_struct_type;
 
 
-// from a string formatted MM/DD/YYYY HH:MM:SS in buff, fill out the datetime_struct and return a time_t value
-time_t str2datetime(char *buff, datetime_struct_type *);
+// from a string formatted MM/DD/YYYY HH:MM:SS in buff, fill out the datetime_struct and return a cgc_time_t value
+cgc_time_t cgc_str2datetime(char *buff, cgc_datetime_struct_type *);
 
-time_t datetime2time_t(datetime_struct_type *);
+cgc_time_t cgc_datetime2time_t(cgc_datetime_struct_type *);
 
-int time_t2datetime(time_t, datetime_struct_type *);
+int cgc_time_t2datetime(cgc_time_t, cgc_datetime_struct_type *);
 
-void print_time_t (time_t);
+void cgc_print_time_t (cgc_time_t);
 
-void print_datetime(datetime_struct_type *tm);
+void cgc_print_datetime(cgc_datetime_struct_type *tm);
 
-int diff_between_dates(time_t start, time_t end);
+int cgc_diff_between_dates(cgc_time_t start, cgc_time_t end);
 
-int to_date_str(datetime_struct_type *tm, char *buffer);
-int to_time_str(datetime_struct_type *tm, char *buffer);
+int cgc_to_date_str(cgc_datetime_struct_type *tm, char *buffer);
+int cgc_to_time_str(cgc_datetime_struct_type *tm, char *buffer);
 
 // returns 1 if year is a leap year, 0 otherwise
-unsigned int leap_year(unsigned int year);
+unsigned int cgc_leap_year(unsigned int year);
 
 // returns the day of the year.  1-366 ( 365 for non leap years)
-unsigned int doy(unsigned year, unsigned month, unsigned day);
+unsigned int cgc_doy(unsigned year, unsigned month, unsigned day);
 
-int print_date (time_t);
+int cgc_print_date (cgc_time_t);
 
 
 

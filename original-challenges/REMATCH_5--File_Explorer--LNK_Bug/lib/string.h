@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,16 +28,16 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-size_t strlen( const char *str );
-void bzero(void *s, size_t n);
-void *memset( void *ptr, int value, size_t num );
-char *strchr(char *s, int c);
-char *strstr( char *str, char *sub, size_t len);
-char *strtok(char *str, char *sep);
-int strcmp(const char *s1, const char *s2);
-int strncmp(const char *s1, const char *s2, size_t n);
-char *strcat(char *restrict s1, const char *restrict s2);
-char *strncat(char *s1, char *s2, size_t n);
-int memcmp( const void *s1, const void *s2, size_t n );
+cgc_size_t cgc_strlen( const char *str );
+void cgc_bzero(void *s, cgc_size_t n);
+void *cgc_memset( void *ptr, int value, cgc_size_t num );
+char *cgc_strchr(char *s, int c);
+char *cgc_strstr( char *str, char *sub, cgc_size_t len);
+char *cgc_strtok(char *str, char *sep);
+int cgc_strcmp(const char *s1, const char *s2);
+int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n);
+char *cgc_strcat(char *restrict s1, const char *restrict s2);
+char *cgc_strncat(char *s1, char *s2, cgc_size_t n);
+int cgc_memcmp( const void *s1, const void *s2, cgc_size_t n );
 
 #endif // __STRING_H__

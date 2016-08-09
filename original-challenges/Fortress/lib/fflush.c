@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,7 +22,7 @@
  */
 #include "stdio_private.h"
 
-int fflush(FILE *stream)
+int cgc_fflush(cgc_FILE *stream)
 {
     if (stream->idx == INVALID_IDX)
         return 0;
@@ -38,7 +38,7 @@ int fflush(FILE *stream)
         int ret = 0;
 
         /* flush to fd */
-        if (transmit_all(stream->fd, stream->buffer + stream->idx, stream->length - stream->idx) != 0)
+        if (cgc_transmit_all(stream->fd, stream->buffer + stream->idx, stream->length - stream->idx) != 0)
             ret = -1;
 
         stream->idx = stream->length = 0;
@@ -46,10 +46,10 @@ int fflush(FILE *stream)
     }
 }
 
-void fbuffered(FILE *stream, int enabled)
+void cgc_fbuffered(cgc_FILE *stream, int enabled)
 {
     if (stream->idx != INVALID_IDX)
-        fflush(stream);
+        cgc_fflush(stream);
 
     if (enabled)
     {

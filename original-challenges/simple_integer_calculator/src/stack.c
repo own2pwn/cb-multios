@@ -4,7 +4,7 @@ Author: Dustin Fraze <df@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,14 +28,14 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdlib.h>
 
-void *pop(stack *myStack) {
+void *cgc_pop(cgc_stack *myStack) {
 	void *ret;
 	ret = (void *)myStack->items[myStack->top];
 	myStack->top--;
 	return ret;
 }
 
-void push(stack *myStack, void *value) {
+void cgc_push(cgc_stack *myStack, void *value) {
 	#ifdef PATCHED
 	if(myStack->top < 31) {
 	#endif
@@ -46,19 +46,19 @@ void push(stack *myStack, void *value) {
 	#endif
 }
 
-int isEmpty(stack *myStack) {
+int cgc_isEmpty(cgc_stack *myStack) {
 	return myStack->top == 0;
 }
 
 
-stack *initStack() {
-	stack *ret;
+cgc_stack *cgc_initStack() {
+	cgc_stack *ret;
 
-	ret = calloc(sizeof(stack), 1);
+	ret = cgc_calloc(sizeof(cgc_stack), 1);
 	if(ret != NULL) {
 
 	} else {
-		puts("Critical memory error.  Corwardly exiting.");
+		cgc_puts("Critical memory error.  Corwardly exiting.");
 		_terminate(-1);
 	}
 

@@ -19,18 +19,18 @@ typedef struct {
     unsigned char sub_chunk2_id[4];
     unsigned int sub_chunk2_size;
     char* data;
-} uwfc_t;
+} cgc_uwfc_t;
 
-int validate_header(uwfc_t *header);
-uwfc_t *init_track();
-void clear_track(uwfc_t **uwfc_track);
+int cgc_validate_header(cgc_uwfc_t *header);
+cgc_uwfc_t *cgc_init_track();
+void cgc_clear_track(cgc_uwfc_t **uwfc_track);
 
-void wave_vis(uwfc_t *track);
-void eq_vis(uwfc_t *track, int vis_type, int filter_type);
-void low_pass_filter(uwfc_t *track);
-void high_pass_filter(uwfc_t *track);
-void set_vis_multiplier(char c);
-int get_vis_multiplier();
+void cgc_wave_vis(cgc_uwfc_t *track);
+void cgc_eq_vis(cgc_uwfc_t *track, int vis_type, int filter_type);
+void cgc_low_pass_filter(cgc_uwfc_t *track);
+void cgc_high_pass_filter(cgc_uwfc_t *track);
+void cgc_set_vis_multiplier(char c);
+int cgc_get_vis_multiplier();
 
 
 #endif /* !UWFC_H_ */

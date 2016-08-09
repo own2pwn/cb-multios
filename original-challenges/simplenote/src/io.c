@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,13 +25,13 @@
 #include <string.h>
 #include "io.h"
 
-int send_n_bytes(int fd, size_t n, char* buf)
+int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  size_t tx = 0;
-  size_t to_send = n;
+  cgc_size_t tx = 0;
+  cgc_size_t to_send = n;
 
   while (to_send > 0) {
     if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0)
@@ -50,13 +50,13 @@ int send_n_bytes(int fd, size_t n, char* buf)
   return n - to_send;
 }
 
-int read_n_bytes(int fd, size_t n, char* buf)
+int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  size_t rx = 0;
-  size_t to_read = n;
+  cgc_size_t rx = 0;
+  cgc_size_t to_read = n;
 
   while (to_read > 0) {
     if (receive(fd, buf + (n - to_read), to_read, &rx) != 0)
@@ -76,28 +76,28 @@ int read_n_bytes(int fd, size_t n, char* buf)
   return n - to_read;
 }
 
-int transmit_string(int fd, char* s)
+int cgc_transmit_string(int fd, char* s)
 {
-  size_t len = strlen(s);
+  cgc_size_t len = cgc_strlen(s);
   if (len == 0)
     return 0;
-  else if (send_n_bytes(fd, len, s) != len)
+  else if (cgc_send_n_bytes(fd, len, s) != len)
     return -1;
   else
     return 0;
 }
 
-int read_until(int fd, size_t n, char terminator, char* buf)
+int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf)
 {
-  size_t read = 0;
+  cgc_size_t read = 0;
   while (read < n)
   {
-    size_t tmp_read;
+    cgc_size_t tmp_read;
     if (receive(fd, buf + read, 1, &tmp_read) != 0 || tmp_read == 0)
       return -1;
-    if (memchr(buf + read, terminator, tmp_read) != NULL)
+    if (cgc_memchr(buf + read, terminator, tmp_read) != NULL)
     {
-      *((char* )memchr(buf + read, terminator, tmp_read)) = '\0';
+      *((char* )cgc_memchr(buf + read, terminator, tmp_read)) = '\0';
       return read + tmp_read;
     }
     else

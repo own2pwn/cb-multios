@@ -93,7 +93,7 @@ struct bitboard {
     /** Contains all of the pieces on the board, packed into bitsets */
     unsigned long long boards[NUM_COLORS * NUM_TYPES];
     /** What castling moves are still valid */
-    int can_castle[NUM_COLORS][NUM_CASTLE_TYPE];
+    int cgc_can_castle[NUM_COLORS][NUM_CASTLE_TYPE];
     /** Can an en passant capture move be made */
     int ep_row, ep_col;
     /** How many moves until stalemate declared */
@@ -113,7 +113,7 @@ struct move {
     /** Is this move a pawn promotion */
     int is_promotion;
     /** Is this move check or checkmate */
-    int is_check, is_checkmate;
+    int is_check, cgc_is_checkmate;
     /** The source coordinates of the piece */
     int src_row, src_col;
     /** The destination coordinates of the piece */
@@ -125,7 +125,7 @@ struct move {
  *
  * @param board The board to initialize
  */
-void init_bitboard(struct bitboard *board);
+void cgc_init_bitboard(struct bitboard *board);
 
 /**
  * Print a board as viewed by one of the players.
@@ -133,7 +133,7 @@ void init_bitboard(struct bitboard *board);
  * @param board The board to print
  * @param color The player from who's perspective to print the board
  */
-void print_bitboard(struct bitboard *board, enum color color);
+void cgc_print_bitboard(struct bitboard *board, enum color color);
 
 /**
  * Set a square on the board to contain a certain piece.
@@ -144,7 +144,7 @@ void print_bitboard(struct bitboard *board, enum color color);
  * @param piece The piece to set
  * @return 0 on success, -1 on failure
  */
-int set_piece(struct bitboard *board, int row, int col,
+int cgc_set_piece(struct bitboard *board, int row, int col,
         struct piece piece);
 
 /**
@@ -155,7 +155,7 @@ int set_piece(struct bitboard *board, int row, int col,
  * @param column The column on the board to clear
  * @return 0 on success, -1 on failure
  */
-int clear_piece(struct bitboard *board, int row, int col);
+int cgc_clear_piece(struct bitboard *board, int row, int col);
 
 /**
  * Get a piece from the board.
@@ -166,7 +166,7 @@ int clear_piece(struct bitboard *board, int row, int col);
  * @param piece Pointer to place the result in
  * @return 0 if empty, 1 if piece found, -1 on failure
  */
-int get_piece(struct bitboard *board, int row, int col,
+int cgc_get_piece(struct bitboard *board, int row, int col,
         struct piece *piece);
 
 /**
@@ -176,7 +176,7 @@ int get_piece(struct bitboard *board, int row, int col,
  * @param move The move to make
  * @return Result of the move
  */
-enum result make_move(struct bitboard *board, struct move *move);
+enum result cgc_make_move(struct bitboard *board, struct move *move);
 
 /**
  * Parse a move written in standard algebraic notation.
@@ -187,7 +187,7 @@ enum result make_move(struct bitboard *board, struct move *move);
  * @param move Pointer to place the result in
  * @return 0 on success, -1 on failure
  */
-int parse_san(struct bitboard *board, enum color color, char *san,
+int cgc_parse_san(struct bitboard *board, enum color color, char *san,
         struct move *move);
 
 #endif /* BITBOARD_H_ */

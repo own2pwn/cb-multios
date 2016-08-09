@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,120 +29,120 @@ extern "C" {
 
 namespace {
     /* PRIVATE HELPER FUNCTIONS */
-    void print_helper(void *_topping)
+    void cgc_print_helper(void *_topping)
     {
-        Topping *topping = (Topping*)_topping;
-        printf("%s", topping->get_topping_name());
-        if (topping->contains_pork())
+        cgc_Topping *cgc_topping = (cgc_Topping*)_topping;
+        printf("%s", cgc_topping->cgc_get_topping_name());
+        if (cgc_topping->cgc_contains_pork())
             printf("**");
-        else if(!topping->is_vegetarian())
+        else if(!cgc_topping->cgc_is_vegetarian())
             printf("*");
         printf("\n");
     }
 }
 
 
-Pizza::Pizza()
+cgc_Pizza::cgc_Pizza()
 {
 }
 
-Pizza::~Pizza()
+cgc_Pizza::~cgc_Pizza()
 {
-    Topping *topping;
-    Sauce *sauce;
+    cgc_Topping *cgc_topping;
+    cgc_Sauce *sauce;
 
-    while (toppings.pop(topping))
-        delete topping;
-    while (sauce_ots.pop(sauce))
+    while (cgc_toppings.cgc_pop(cgc_topping))
+        delete cgc_topping;
+    while (sauce_ots.cgc_pop(sauce))
         delete sauce;
 }
 
-bool Pizza::add_topping(Topping *topping)
+bool cgc_Pizza::cgc_add_topping(cgc_Topping *cgc_topping)
 {
-    size_t i;
-    for (i = 0; i < toppings.length(); i++)
-        if (*toppings[i] == *topping)
+    cgc_size_t i;
+    for (i = 0; i < cgc_toppings.cgc_length(); i++)
+        if (*cgc_toppings[i] == *cgc_topping)
             return false;
 
-    return toppings.add(topping);
+    return cgc_toppings.cgc_add(cgc_topping);
 }
 
-bool Pizza::remove_topping(size_t idx)
+bool cgc_Pizza::cgc_remove_topping(cgc_size_t idx)
 {
-    return toppings.remove(idx);
+    return cgc_toppings.cgc_remove(idx);
 }
 
-bool Pizza::add_sauce(Sauce *sauce)
+bool cgc_Pizza::cgc_add_sauce(cgc_Sauce *sauce)
 {
-    return sauce_ots.add(sauce);
+    return sauce_ots.cgc_add(sauce);
 }
 
-bool Pizza::remove_sauce(size_t idx)
+bool cgc_Pizza::cgc_remove_sauce(cgc_size_t idx)
 {
-    return sauce_ots.remove(idx);
+    return sauce_ots.cgc_remove(idx);
 }
 
-void Pizza::print_toppings()
+void cgc_Pizza::cgc_print_toppings()
 {
-    if (toppings.is_empty())
+    if (cgc_toppings.cgc_is_empty())
         printf("\tNone\n");
     else
-        toppings.print_list(&print_helper);
+        cgc_toppings.cgc_print_list(&cgc_print_helper);
 }
 
-void Pizza::print_sauces()
+void cgc_Pizza::cgc_print_sauces()
 {
-    if (sauce_ots.is_empty())
+    if (sauce_ots.cgc_is_empty())
         printf("\tNone\n");
     else
-        sauce_ots.print_list(&print_helper);
+        sauce_ots.cgc_print_list(&cgc_print_helper);
 }
 
-size_t Pizza::get_num_toppings()
+cgc_size_t cgc_Pizza::cgc_get_num_toppings()
 {
-    return toppings.length();
+    return cgc_toppings.cgc_length();
 }
 
-size_t Pizza::get_num_sauces()
+cgc_size_t cgc_Pizza::cgc_get_num_sauces()
 {
-    return sauce_ots.length();
+    return sauce_ots.cgc_length();
 }
 
-void Pizza::print_pizza()
+void cgc_Pizza::cgc_print_pizza()
 {
-    printf("    Selected Toppings\n");
-    print_toppings();
-    printf("    Sauce on the side\n");
-    print_sauces();
+    printf("    Selected cgc_Toppings\n");
+    cgc_print_toppings();
+    printf("    cgc_Sauce on the side\n");
+    cgc_print_sauces();
 }
 
 
-int Pizza::get_calories()
+int cgc_Pizza::cgc_get_calories()
 {
-    size_t i, calories = 0;
-    for (i = 0; i < toppings.length(); i++)
-        calories += toppings[i]->get_calories();
+    cgc_size_t i, calories = 0;
+    for (i = 0; i < cgc_toppings.cgc_length(); i++)
+        calories += cgc_toppings[i]->cgc_get_calories();
 
-    for (i = 0; i < sauce_ots.length(); i++)
-        calories += sauce_ots[i]->get_calories();
+    for (i = 0; i < sauce_ots.cgc_length(); i++)
+        calories += sauce_ots[i]->cgc_get_calories();
 
     return calories;
 }
 
-int Pizza::get_carbs()
+int cgc_Pizza::cgc_get_carbs()
 {
-    size_t i, carbs = 0;
-    for (i = 0; i < toppings.length(); i++)
-        carbs += toppings[i]->get_carbs();
+    cgc_size_t i, carbs = 0;
+    for (i = 0; i < cgc_toppings.cgc_length(); i++)
+        carbs += cgc_toppings[i]->cgc_get_carbs();
 
-    for (i = 0; i < sauce_ots.length(); i++)
-        carbs += sauce_ots[i]->get_carbs();
+    for (i = 0; i < sauce_ots.cgc_length(); i++)
+        carbs += sauce_ots[i]->cgc_get_carbs();
 
     return carbs;
 }
 
-int Pizza::get_prep_time()
+int cgc_Pizza::cgc_get_prep_time()
 {
-    return toppings.length()* 30 + sauce_ots.length() * 15;
+    return cgc_toppings.cgc_length()* 30 + sauce_ots.cgc_length() * 15;
 }
 

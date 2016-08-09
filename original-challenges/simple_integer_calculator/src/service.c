@@ -4,14 +4,14 @@ Author: Dustin Fraze <df@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
+of this software cgc_and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+to use, copy, modify, merge, publish, distribute, sublicense, cgc_and/or sell
+copies of the Software, cgc_and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
+The above copyright notice cgc_and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -31,370 +31,370 @@ THE SOFTWARE.
 #include "trie.h"
 #include "stack.h"
 
-trie *root;
+cgc_trie *root;
 
-stack *operStack;
-stack *funcStack;
+cgc_stack *operStack;
+cgc_stack *funcStack;
 
-void add();
-void sub();
-void mul();
-void div();
-void mod();
-void xor();
-void and();
-void not();
-void terminate();
-void type();
-void _int();
-void equals();
-void len();
-void process(char *input);
+void cgc_add();
+void cgc_sub();
+void cgc_mul();
+void cgc_div();
+void cgc_mod();
+void cgc_xor();
+void cgc_and();
+void cgc_not();
+void cgc_terminate();
+void cgc_type();
+void cgc__int();
+void cgc_equals();
+void cgc_len();
+void cgc_process(char *input);
 
 int main() {
     char line[256];
     char result[256];
 
-    root = initTrie();
-    operStack = initStack();
-    funcStack = initStack();
-    insertInTrie(root, "add", lfunc("add", &add));
-    insertInTrie(root, "sub", lfunc("sub", &sub));
-    insertInTrie(root, "mul", lfunc("mul", &mul));
-    insertInTrie(root, "div", lfunc("div", &div));
-    insertInTrie(root, "mod", lfunc("mod", &mod));
-    insertInTrie(root, "not", lfunc("not", &not));
-    insertInTrie(root, "int", lfunc("int", &_int));
-    insertInTrie(root, "terminate", lfunc("terminate", &terminate));
-    insertInTrie(root, "equals", lfunc("equals", &equals));
-    insertInTrie(root, "type", lfunc("type", &type));
-    insertInTrie(root, "len", lfunc("len", &len));
+    root = cgc_initTrie();
+    operStack = cgc_initStack();
+    funcStack = cgc_initStack();
+    cgc_insertInTrie(root, "cgc_add", cgc_lfunc("cgc_add", &cgc_add));
+    cgc_insertInTrie(root, "cgc_sub", cgc_lfunc("cgc_sub", &cgc_sub));
+    cgc_insertInTrie(root, "cgc_mul", cgc_lfunc("cgc_mul", &cgc_mul));
+    cgc_insertInTrie(root, "cgc_div", cgc_lfunc("cgc_div", &cgc_div));
+    cgc_insertInTrie(root, "cgc_mod", cgc_lfunc("cgc_mod", &cgc_mod));
+    cgc_insertInTrie(root, "cgc_not", cgc_lfunc("cgc_not", &cgc_not));
+    cgc_insertInTrie(root, "int", cgc_lfunc("int", &cgc__int));
+    cgc_insertInTrie(root, "cgc_terminate", cgc_lfunc("cgc_terminate", &cgc_terminate));
+    cgc_insertInTrie(root, "cgc_equals", cgc_lfunc("cgc_equals", &cgc_equals));
+    cgc_insertInTrie(root, "cgc_type", cgc_lfunc("cgc_type", &cgc_type));
+    cgc_insertInTrie(root, "cgc_len", cgc_lfunc("cgc_len", &cgc_len));
  
     while(1) {
-        memset(line, 0, 256);
+        cgc_memset(line, 0, 256);
 
         transmit(STDOUT, "> ", 2, NULL);
-        if(receive_until(line, '\n', 255) == 0)
+        if(cgc_receive_until(line, '\n', 255) == 0)
             _terminate(0);
-        process(line);
+        cgc_process(line);
     }
 
 }
 
-void process(char *input) {
+void cgc_process(char *input) {
     char *tmp;
     int i = 0;
-    ltype* foo;
+    cgc_ltype* foo;
     char *save;
-    tmp = strtok(input, " ");
+    tmp = cgc_strtok(input, " ");
     while(tmp) {
-        if(isdigit(tmp[0]) || (tmp[0] == '-' && strlen(tmp) > 1)) {
+        if(cgc_isdigit(tmp[0]) || (tmp[0] == '-' && cgc_strlen(tmp) > 1)) {
             //variables can't start with number.  Make sure the rest is a number.
-            for(i=1;i<strlen(tmp);i++)
-                if(!isdigit(tmp[i]))
+            for(i=1;i<cgc_strlen(tmp);i++)
+                if(!cgc_isdigit(tmp[i]))
                     break;
-            if(i < strlen(tmp))
-                puts("NOT A NUMBER");
+            if(i < cgc_strlen(tmp))
+                cgc_puts("NOT A NUMBER");
             else {
-                foo = lint("", tmp);
-                push(operStack, foo);
+                foo = cgc_lint("", tmp);
+                cgc_push(operStack, foo);
             }
         } else if(tmp[0] == '"') {
             char *match;
             tmp++;
-            match = strchr(tmp, '"');
+            match = cgc_strchr(tmp, '"');
             if(match) {
                 *match = 0;
-                push(operStack, lstring("", tmp));
+                cgc_push(operStack, cgc_lstring("", tmp));
             } else {
                 tmp--;
-                printf("Unterminated string constant: @s\n", tmp);
+                cgc_printf("Unterminated string constant: @s\n", tmp);
             }
         } else {
             //starts with alpha.  Is either a function or a variable.
 
-            if(strcmp(tmp, "var") == 0)
+            if(cgc_strcmp(tmp, "var") == 0)
             {
                 //variable declaration.
-                //lets assume it's an int and fix it later.
-                char *varName = strtok(NULL, " ");
-                char *equals = strtok(NULL, " ");
+                //lets assume it's an int cgc_and fix it later.
+                char *varName = cgc_strtok(NULL, " ");
+                char *cgc_equals = cgc_strtok(NULL, " ");
 #ifdef PATCHED
-		if ( equals == NULL ) {
+		if ( cgc_equals == NULL ) {
 			break;
 		}
 #endif
-                if(equals && *equals == '=') {
-                    //declaration and assignment at once.
+                if(cgc_equals && *cgc_equals == '=') {
+                    //declaration cgc_and assignment at once.
                     char *tmp;
-                    tmp = strtok(NULL, " ");
+                    tmp = cgc_strtok(NULL, " ");
                     if(tmp == NULL) {
-                        printf("Malformed variable declaration\n");
+                        cgc_printf("Malformed variable declaration\n");
                         break;
                     }
                     if(tmp[0] == '"') {
                         char *match;
                         tmp++;
-                        match = strchr(tmp, '"');
+                        match = cgc_strchr(tmp, '"');
                         if(match) {
                             *match = 0;
-                            insertInTrie(root, varName, (char *)lstring(varName, tmp));
+                            cgc_insertInTrie(root, varName, (char *)cgc_lstring(varName, tmp));
                         }
                     } else {
-                        if(strcmp(tmp, "False") == 0)
-                            insertInTrie(root, varName, (char *)lbool(varName, tmp));
-                        else if (strcmp(tmp, "True") == 0)
-                            insertInTrie(root, varName, (char *)lbool(varName, tmp));
+                        if(cgc_strcmp(tmp, "False") == 0)
+                            cgc_insertInTrie(root, varName, (char *)cgc_lbool(varName, tmp));
+                        else if (cgc_strcmp(tmp, "True") == 0)
+                            cgc_insertInTrie(root, varName, (char *)cgc_lbool(varName, tmp));
                         else
-                            insertInTrie(root, varName, (char *)lint(varName, tmp));
+                            cgc_insertInTrie(root, varName, (char *)cgc_lint(varName, tmp));
                     }
                 } else {
                     //just a declaration.  Set it to 0 for now.
-                    insertInTrie(root, varName, (char *)lint(varName, "0"));
+                    cgc_insertInTrie(root, varName, (char *)cgc_lint(varName, "0"));
                 }
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "True") == 0)
+            if(cgc_strcmp(tmp, "True") == 0)
             {
-                push(operStack, lbool("", "True"));
-                tmp = strtok(NULL, " ");
+                cgc_push(operStack, cgc_lbool("", "True"));
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "False") == 0)
+            if(cgc_strcmp(tmp, "False") == 0)
             {
-                push(operStack, lbool("", "False"));
-                tmp = strtok(NULL, " ");
+                cgc_push(operStack, cgc_lbool("", "False"));
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "+") == 0)
+            if(cgc_strcmp(tmp, "+") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "add")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_add")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "-") == 0)
+            if(cgc_strcmp(tmp, "-") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "sub")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_sub")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "*") == 0)
+            if(cgc_strcmp(tmp, "*") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "mul")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_mul")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "/") == 0)
+            if(cgc_strcmp(tmp, "/") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "div")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_div")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "%") == 0)
+            if(cgc_strcmp(tmp, "%") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "mod")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_mod")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
-            if(strcmp(tmp, "==") == 0)
+            if(cgc_strcmp(tmp, "==") == 0)
             {
-                ltype *out;
-                out = (ltype *)findInTrie(root, "equals")->value;
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, "cgc_equals")->value;
                 #ifndef PATCHED
-                push(funcStack, out);
+                cgc_push(funcStack, out);
                 #else
-                if(strcmp(out->type, "Function") == 0)
-                    push(funcStack, out);
+                if(cgc_strcmp(out->type, "Function") == 0)
+                    cgc_push(funcStack, out);
                 else
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 #endif
-                tmp = strtok(NULL, " ");
+                tmp = cgc_strtok(NULL, " ");
                 continue;
             }
 
-            if(findInTrie(root, tmp)) {
-                ltype *out;
-                out = (ltype *)findInTrie(root, tmp)->value;
-                if(strcmp(out->type, "Function") == 0) {
-                    push(funcStack, out);
+            if(cgc_findInTrie(root, tmp)) {
+                cgc_ltype *out;
+                out = (cgc_ltype *)cgc_findInTrie(root, tmp)->value;
+                if(cgc_strcmp(out->type, "Function") == 0) {
+                    cgc_push(funcStack, out);
                 } else {
-                    push(operStack, out);
+                    cgc_push(operStack, out);
                 }
             } else {
-                printf("Undeclared identifier: @s\n", tmp);
+                cgc_printf("Undeclared identifier: @s\n", tmp);
             }
         }
-        tmp = strtok(NULL, " ");
+        tmp = cgc_strtok(NULL, " ");
     }
-    while(!isEmpty(funcStack)) {
-        ltype *func = pop(funcStack);
+    while(!cgc_isEmpty(funcStack)) {
+        cgc_ltype *func = cgc_pop(funcStack);
         ((void (*)())func->value)();
     }
-    if(!(isEmpty(operStack))) {
-        ltype *oper = pop(operStack);
-        if(strcmp(oper->type, "Integer") == 0)
-            printf("@d\n", oper->value);
-        else if(strcmp(oper->type, "String") == 0)
-            printf("@s\n", oper->value);
-        else if(strcmp(oper->type, "Boolean") == 0)
-            printf("@s\n", (int)oper->value == 1 ? "True" : "False");
+    if(!(cgc_isEmpty(operStack))) {
+        cgc_ltype *oper = cgc_pop(operStack);
+        if(cgc_strcmp(oper->type, "Integer") == 0)
+            cgc_printf("@d\n", oper->value);
+        else if(cgc_strcmp(oper->type, "String") == 0)
+            cgc_printf("@s\n", oper->value);
+        else if(cgc_strcmp(oper->type, "Boolean") == 0)
+            cgc_printf("@s\n", (int)oper->value == 1 ? "True" : "False");
     }
 }
 
-void add() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_add() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
     else {
-        puts("Not enough operands for add");
+        cgc_puts("Not enough operands for cgc_add");
         return;
     }
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
     else {
-        puts("Not enough operands for add");
+        cgc_puts("Not enough operands for cgc_add");
         return;
     }
 
-    if((strcmp(oper1->type, "Integer") == 0) && (strcmp(oper2->type, "Integer") == 0))
+    if((cgc_strcmp(oper1->type, "Integer") == 0) && (cgc_strcmp(oper2->type, "Integer") == 0))
     {
         char result[32];
-        bzero(result, 32);
-        int_to_str((int)oper1->value + (int)oper2->value, result);
-        push(operStack, lint("", result));
-    } else if((strcmp(oper1->type, "String") == 0) && (strcmp(oper2->type, "String") == 0)) {
+        cgc_bzero(result, 32);
+        cgc_int_to_str((int)oper1->value + (int)oper2->value, result);
+        cgc_push(operStack, cgc_lint("", result));
+    } else if((cgc_strcmp(oper1->type, "String") == 0) && (cgc_strcmp(oper2->type, "String") == 0)) {
         char *tmp;
-        tmp = calloc(oper1->len + oper2->len + 1, 1);
+        tmp = cgc_calloc(oper1->len + oper2->len + 1, 1);
         if(tmp) {
-            memcpy(tmp, oper2->value, oper2->len);
-            memcpy(tmp+(oper2->len), oper1->value, oper1->len);
-            push(operStack, lstring("", tmp));
-            free(tmp);
+            cgc_memcpy(tmp, oper2->value, oper2->len);
+            cgc_memcpy(tmp+(oper2->len), oper1->value, oper1->len);
+            cgc_push(operStack, cgc_lstring("", tmp));
+            cgc_free(tmp);
         } else {
-            puts("Critical memory error.  Exiting.");
+            cgc_puts("Critical memory error.  Exiting.");
             _terminate(-1);
         }
-    } else if((strcmp(oper2->type, "String") == 0) && (strcmp(oper1->type, "Integer") == 0)) {
+    } else if((cgc_strcmp(oper2->type, "String") == 0) && (cgc_strcmp(oper1->type, "Integer") == 0)) {
         char *tmp;
         char result[32];
-        bzero(result, 32);
-        int_to_str((int)oper1->value, result);
-        tmp = calloc(oper2->len + oper1->len + 1, 1);
+        cgc_bzero(result, 32);
+        cgc_int_to_str((int)oper1->value, result);
+        tmp = cgc_calloc(oper2->len + oper1->len + 1, 1);
         if(tmp) {
-            memcpy(tmp, oper2->value, oper2->len);
-            memcpy(tmp+oper2->len, result, strlen(result));
-            push(operStack, lstring("", tmp));
-            free(tmp);
+            cgc_memcpy(tmp, oper2->value, oper2->len);
+            cgc_memcpy(tmp+oper2->len, result, cgc_strlen(result));
+            cgc_push(operStack, cgc_lstring("", tmp));
+            cgc_free(tmp);
         } else {
-            puts("Critical memory error.  Exiting.");
+            cgc_puts("Critical memory error.  Exiting.");
             _terminate(-1);
         }
     } else {
-        printf("Add doesn't make sense on @s and @s\n", oper2->type, oper1->type);
+        cgc_printf("Add doesn't make sense on @s cgc_and @s\n", oper2->type, oper1->type);
     }
 
 }
 
-void _int() {
-    ltype *oper = NULL;
+void cgc__int() {
+    cgc_ltype *oper = NULL;
     int i;
     char *tmp;
 
-    if(!(isEmpty(operStack)))
-        oper = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper = cgc_pop(operStack);
 
     if(oper) {
-        if(strcmp(oper->type, "Integer") == 0)
-            push(operStack, oper);
-        else if(strcmp(oper->type, "String") == 0)
+        if(cgc_strcmp(oper->type, "Integer") == 0)
+            cgc_push(operStack, oper);
+        else if(cgc_strcmp(oper->type, "String") == 0)
         {
             tmp = oper->value;
-            for(i=0;i<strlen(tmp);i++)
+            for(i=0;i<cgc_strlen(tmp);i++)
             {
-                if(!isdigit(tmp[i]))
+                if(!cgc_isdigit(tmp[i]))
                 {
-                    puts("Could not convert argument to int");
+                    cgc_puts("Could cgc_not convert argument to int");
                     return;
                 }
             }
-            push(operStack, lint("", oper->value));
-        } else if(strcmp(oper->type, "Boolean") == 0) {
+            cgc_push(operStack, cgc_lint("", oper->value));
+        } else if(cgc_strcmp(oper->type, "Boolean") == 0) {
             if(oper->value)
-                push(operStack, lint("", "1"));
+                cgc_push(operStack, cgc_lint("", "1"));
             else
-                push(operStack, lint("", "0"));
+                cgc_push(operStack, cgc_lint("", "0"));
         }
     } else {
-        puts("Not enough operands for int");
+        cgc_puts("Not enough operands for int");
     }
 }
 
-void mul() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_mul() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
 
     if(oper1 && oper2) {
-        if(strcmp(oper2->type, "Integer") == 0 && strcmp(oper1->type, "Integer") == 0) {
+        if(cgc_strcmp(oper2->type, "Integer") == 0 && cgc_strcmp(oper1->type, "Integer") == 0) {
             char tmp[32];
-            bzero(tmp, 32);
-            int_to_str((int)oper2->value * (int)oper1->value, tmp);
-            push(operStack, lint("", tmp));
-        } else if(strcmp(oper2->type, "String") == 0 && strcmp(oper1->type, "Integer") == 0) {
+            cgc_bzero(tmp, 32);
+            cgc_int_to_str((int)oper2->value * (int)oper1->value, tmp);
+            cgc_push(operStack, cgc_lint("", tmp));
+        } else if(cgc_strcmp(oper2->type, "String") == 0 && cgc_strcmp(oper1->type, "Integer") == 0) {
             char *tmp;
             int size;
             int times;
@@ -409,195 +409,195 @@ void mul() {
             #endif
             times = (int)oper1->value;
             size = (oper2->len * (int)oper1->value) + 1;
-            tmp = calloc(size, 1);
+            tmp = cgc_calloc(size, 1);
             orig = tmp;
             if(tmp)
             {
                 while(times--) {
-                    memcpy(tmp, oper2->value, oper2->len);
+                    cgc_memcpy(tmp, oper2->value, oper2->len);
                     tmp+=oper2->len;
                 }
-                push(operStack, lstring("", orig));
+                cgc_push(operStack, cgc_lstring("", orig));
             } else {
-                puts("Critical memory error.  Terminating.");
+                cgc_puts("Critical memory error.  Terminating.");
                 _terminate(-1);
             }
         } else {
-            printf("Mul does not make sense with @s and @s.\n", oper2->type, oper1->type);
+            cgc_printf("Mul does cgc_not make sense with @s cgc_and @s.\n", oper2->type, oper1->type);
         }
     } else
-        puts("Not enough operands for multiplication");
+        cgc_puts("Not enough operands for multiplication");
 }
 
-void sub() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_sub() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
     else {
-        puts("Not enough operands for sub");
+        cgc_puts("Not enough operands for cgc_sub");
         return;
     }
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
     else {
-        puts("Not enough operands for sub");
+        cgc_puts("Not enough operands for cgc_sub");
         return;
     }
 
-    if((strcmp(oper1->type, "Integer") == 0) && (strcmp(oper2->type, "Integer") == 0))
+    if((cgc_strcmp(oper1->type, "Integer") == 0) && (cgc_strcmp(oper2->type, "Integer") == 0))
     {
         char result[32];
-        bzero(result, 32);
-        int_to_str((int)oper2->value - (int)oper1->value, result);
-        push(operStack, lint("", result));
+        cgc_bzero(result, 32);
+        cgc_int_to_str((int)oper2->value - (int)oper1->value, result);
+        cgc_push(operStack, cgc_lint("", result));
     } else {
-        printf("Sub does not make sense on @s and @s\n", oper2->type, oper1->type);
+        cgc_printf("Sub does cgc_not make sense on @s cgc_and @s\n", oper2->type, oper1->type);
     }
 }
 
-void div() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_div() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
     
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
 
     if(oper1 && oper2) {
-        if((strcmp(oper1->type, "Integer") == 0) && (strcmp(oper2->type, "Integer") == 0)) {
+        if((cgc_strcmp(oper1->type, "Integer") == 0) && (cgc_strcmp(oper2->type, "Integer") == 0)) {
             char result[32];
-            bzero(result, 32);
+            cgc_bzero(result, 32);
             if(oper1->value != 0) {
-                int_to_str((int)oper2->value / (int)oper1->value, result);
-                push(operStack, lint("", result));
+                cgc_int_to_str((int)oper2->value / (int)oper1->value, result);
+                cgc_push(operStack, cgc_lint("", result));
             } else
-                puts("Cannot divide by zero.");
+                cgc_puts("Cannot divide by zero.");
         } else
-            printf("Division does not make sense on @s and @s\n", oper2->type, oper1->type);
+            cgc_printf("Division does cgc_not make sense on @s cgc_and @s\n", oper2->type, oper1->type);
     } else {
-        puts("Not enough operands for division.");
+        cgc_puts("Not enough operands for division.");
     }
 }
 
-void mod() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_mod() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
     
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
 
     if(oper1 && oper2) {
-        if((strcmp(oper1->type, "Integer") == 0) && (strcmp(oper2->type, "Integer") == 0)) {
+        if((cgc_strcmp(oper1->type, "Integer") == 0) && (cgc_strcmp(oper2->type, "Integer") == 0)) {
             char result[32];
-            bzero(result, 32);
+            cgc_bzero(result, 32);
             if(oper1->value != 0) {
-                int_to_str((int)oper2->value % (int)oper1->value, result);
-                push(operStack, lint("", result));
+                cgc_int_to_str((int)oper2->value % (int)oper1->value, result);
+                cgc_push(operStack, cgc_lint("", result));
             } else
-                puts("Cannot mod by zero.");
+                cgc_puts("Cannot cgc_mod by zero.");
         } else
-            printf("Mod does not make sense on @s and @s\n", oper2->type, oper1->type);
+            cgc_printf("Mod does cgc_not make sense on @s cgc_and @s\n", oper2->type, oper1->type);
     } else {
-        puts("Not enough operands for mod.");
+        cgc_puts("Not enough operands for cgc_mod.");
     }
 }
 
-void not() {
-    ltype *oper1 = NULL;
+void cgc_not() {
+    cgc_ltype *oper1 = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
     else {
-        puts("Not enough operands for not.");
+        cgc_puts("Not enough operands for cgc_not.");
         return;
     }
-    //this is mostly a stupid joke...because it's not the string passed in.
-    if(strcmp(oper1->type, "String") == 0) {
-        if(strcmp(oper1->value, "OMG"))
-            push(operStack, lstring("", "OMG"));
+    //this is mostly a stupid joke...because it's cgc_not the string passed in.
+    if(cgc_strcmp(oper1->type, "String") == 0) {
+        if(cgc_strcmp(oper1->value, "OMG"))
+            cgc_push(operStack, cgc_lstring("", "OMG"));
         else
-            push(operStack, lstring("", "BBQ"));
-    } else if(strcmp(oper1->type, "Integer") == 0) {
+            cgc_push(operStack, cgc_lstring("", "BBQ"));
+    } else if(cgc_strcmp(oper1->type, "Integer") == 0) {
         char result[32];
-        bzero(result, 32);
-        int_to_str(~(int)oper1->value, result);
-        push(operStack, lint("", result));
+        cgc_bzero(result, 32);
+        cgc_int_to_str(~(int)oper1->value, result);
+        cgc_push(operStack, cgc_lint("", result));
     } else {
-        (int)oper1->value == 1 ? push(operStack, lbool("", "False")) : push(operStack, lbool("", "True"));
+        (int)oper1->value == 1 ? cgc_push(operStack, cgc_lbool("", "False")) : cgc_push(operStack, cgc_lbool("", "True"));
     }
 }
 
-void len() {
-    ltype *oper = NULL;
+void cgc_len() {
+    cgc_ltype *oper = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper = cgc_pop(operStack);
     else {
-        puts("Not enough operands for len.");
+        cgc_puts("Not enough operands for cgc_len.");
         return;
     }
     char tmp[32];
-    bzero(tmp, 32);
-    int_to_str(oper->len, tmp);
-    push(operStack, lint("", tmp));
+    cgc_bzero(tmp, 32);
+    cgc_int_to_str(oper->len, tmp);
+    cgc_push(operStack, cgc_lint("", tmp));
 }
 
-void equals() {
-    ltype *oper1 = NULL;
-    ltype *oper2 = NULL;
+void cgc_equals() {
+    cgc_ltype *oper1 = NULL;
+    cgc_ltype *oper2 = NULL;
 
-    if(!(isEmpty(operStack)))
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper1 = cgc_pop(operStack);
 
-    if(!(isEmpty(operStack)))
-        oper2 = pop(operStack);
+    if(!(cgc_isEmpty(operStack)))
+        oper2 = cgc_pop(operStack);
 
     if(oper1 && oper2)
     {
-        if((strcmp(oper1->type, "Integer") == 0 && strcmp(oper2->type, "Integer") == 0) || (strcmp(oper1->type, "Boolean") == 0 && strcmp(oper2->type, "Boolean") == 0)) {
+        if((cgc_strcmp(oper1->type, "Integer") == 0 && cgc_strcmp(oper2->type, "Integer") == 0) || (cgc_strcmp(oper1->type, "Boolean") == 0 && cgc_strcmp(oper2->type, "Boolean") == 0)) {
             if(oper1->value == oper2->value)
-                push(operStack, lbool("", "True"));
+                cgc_push(operStack, cgc_lbool("", "True"));
             else
-                push(operStack, lbool("", "False"));
-        } else if (strcmp(oper1->type, "String") == 0 && strcmp(oper2->type, "String") == 0) {
-            if(strcmp(oper1->value, oper2->value) == 0)
-                push(operStack, lbool("", "True"));
+                cgc_push(operStack, cgc_lbool("", "False"));
+        } else if (cgc_strcmp(oper1->type, "String") == 0 && cgc_strcmp(oper2->type, "String") == 0) {
+            if(cgc_strcmp(oper1->value, oper2->value) == 0)
+                cgc_push(operStack, cgc_lbool("", "True"));
             else
-                push(operStack, lbool("", "False"));
+                cgc_push(operStack, cgc_lbool("", "False"));
         } else
-            push(operStack, lbool("", "False"));
+            cgc_push(operStack, cgc_lbool("", "False"));
     } else {
-        puts("Not enough operands for equality");
+        cgc_puts("Not enough operands for equality");
     }
 }
 
-void type() {
-    ltype *oper1 = NULL;
+void cgc_type() {
+    cgc_ltype *oper1 = NULL;
 
-    if(!(isEmpty(operStack))) {
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack))) {
+        oper1 = cgc_pop(operStack);
     }
 
     if(oper1 != NULL)
-        push(operStack, lstring("", oper1->type));
+        cgc_push(operStack, cgc_lstring("", oper1->type));
 }
 
-void terminate() {
-    ltype *oper1 = NULL;
+void cgc_terminate() {
+    cgc_ltype *oper1 = NULL;
 
-    if(!(isEmpty(operStack))) {
-        oper1 = pop(operStack);
+    if(!(cgc_isEmpty(operStack))) {
+        oper1 = cgc_pop(operStack);
     }
-    //don't worry if the stack is empty.  We're going to terminate anyway.
-    if(oper1 && (strcmp(oper1->type, "Integer") == 0))
+    //don't worry if the cgc_stack is empty.  We're going to cgc_terminate anyway.
+    if(oper1 && (cgc_strcmp(oper1->type, "Integer") == 0))
         _terminate((int)oper1->value);
     else 
         _terminate(0);

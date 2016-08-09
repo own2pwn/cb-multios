@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,20 +30,20 @@
 
 #define NUM_PRINTERS 10
 
-printer_t *printers = NULL;
+cgc_printer_t *printers = NULL;
 
-printer_t* find_printer(char *queue)
+cgc_printer_t* cgc_find_printer(char *queue)
 {
     int i;
     for (i = 0; i < NUM_PRINTERS; ++i)
     {
-        if (strcmp(printers[i].queue, queue) == 0)
+        if (cgc_strcmp(printers[i].queue, queue) == 0)
             return &printers[i];
     }
     return NULL;
 }
 
-void set_name(printer_t *printer, int index)
+void cgc_set_name(cgc_printer_t *printer, int index)
 {
     static const int name_len = 32;
     static const unsigned char *secrets = (void *)0x4347C000;
@@ -59,24 +59,24 @@ int main()
     int i, recv_mode = 0;
     char buf[2048];
     char *tmp, *queue;
-    printer_t *printer = NULL;
+    cgc_printer_t *printer = NULL;
 
     /* Initialize printers */
-    printers = (printer_t *) malloc(NUM_PRINTERS * sizeof(printer_t));
-    memset(printers, 0, NUM_PRINTERS * sizeof(printer_t));
+    printers = (cgc_printer_t *) cgc_malloc(NUM_PRINTERS * sizeof(cgc_printer_t));
+    cgc_memset(printers, 0, NUM_PRINTERS * sizeof(cgc_printer_t));
     for (i = 0; i < NUM_PRINTERS; ++i)
     {
         if (i == 0)
-            strcpy(printers[i].queue, "DEFAULT");
+            cgc_strcpy(printers[i].queue, "DEFAULT");
         else
-            set_name(&printers[i], i);
+            cgc_set_name(&printers[i], i);
         printers[i].state = PS_IDLE;
-        printers[i].tick_func = printer_tick;
+        printers[i].tick_func = cgc_printer_tick;
         printers[i].self = &printers[i];
     }
 
     /* Process commands */
-    while (read_until(STDIN, buf, sizeof(buf), '\n') > 0)
+    while (cgc_read_until(STDIN, buf, sizeof(buf), '\n') > 0)
     {
         switch (buf[0])
         {
@@ -88,7 +88,7 @@ int main()
             case 1:
                 if (recv_mode)
                 {
-                    if (cmd_abort_job(printer) == 0)
+                    if (cgc_cmd_abort_job(printer) == 0)
                     {
                         transmit(STDOUT, "\x00", 1, NULL);
                         break;
@@ -98,10 +98,10 @@ int main()
                 }
                 else
                 {
-                    printer = find_printer(&buf[1]);
+                    printer = cgc_find_printer(&buf[1]);
                     if (printer)
                     {
-                        if (cmd_print_jobs(printer) == 0)
+                        if (cgc_cmd_print_jobs(printer) == 0)
                         {
                             transmit(STDOUT, "\x00", 1, NULL);
                             break;
@@ -113,7 +113,7 @@ int main()
             case 2:
                 if (recv_mode)
                 {
-                    if (cmd_recv_control_file(printer, &buf[1]) == 0)
+                    if (cgc_cmd_recv_control_file(printer, &buf[1]) == 0)
                     {
                         transmit(STDOUT, "\x00", 1, NULL);
                         break;
@@ -123,10 +123,10 @@ int main()
                 }
                 else
                 {
-                    printer = find_printer(&buf[1]);
+                    printer = cgc_find_printer(&buf[1]);
                     if (printer)
                     {
-                        if (cmd_recv_job(printer) == 0)
+                        if (cgc_cmd_recv_job(printer) == 0)
                         {
                             recv_mode = 1;
                             transmit(STDOUT, "\x00", 1, NULL);
@@ -139,7 +139,7 @@ int main()
             case 3:
                 if (recv_mode)
                 {
-                    if (cmd_recv_data_file(printer, &buf[1]) == 0)
+                    if (cgc_cmd_recv_data_file(printer, &buf[1]) == 0)
                     {
                         transmit(STDOUT, "\x00", 1, NULL);
                         break;
@@ -154,11 +154,11 @@ int main()
                     break;
                 }
                 tmp = &buf[1];
-                queue = strsep(&tmp, " ");
-                printer = find_printer(queue);
+                queue = cgc_strsep(&tmp, " ");
+                printer = cgc_find_printer(queue);
                 if (printer)
                 {
-                    if (cmd_send_queue_state(printer) == 0)
+                    if (cgc_cmd_send_queue_state(printer) == 0)
                     {
                         transmit(STDOUT, "\x00", 1, NULL);
                         break;
@@ -173,15 +173,15 @@ int main()
                     break;
                 }
                 tmp = &buf[1];
-                queue = strsep(&tmp, " ");
-                printer = find_printer(queue);
+                queue = cgc_strsep(&tmp, " ");
+                printer = cgc_find_printer(queue);
                 if (printer)
                 {
-                    char *agent = strsep(&tmp, " ");
+                    char *agent = cgc_strsep(&tmp, " ");
                     unsigned int job_id = 0;
-                    if (strlen(tmp) > 0)
-                        job_id = strtoul(tmp, NULL, 10);
-                    if (cmd_remove_jobs(printer, agent, job_id) == 0)
+                    if (cgc_strlen(tmp) > 0)
+                        job_id = cgc_strtoul(tmp, NULL, 10);
+                    if (cgc_cmd_remove_jobs(printer, agent, job_id) == 0)
                     {
                         transmit(STDOUT, "\x00", 1, NULL);
                         break;
@@ -190,7 +190,7 @@ int main()
                 transmit(STDOUT, "\xFF", 1, NULL);
                 break;
             case 7:
-                exit(0);
+                cgc_exit(0);
                 break;
             default:
                 transmit(STDOUT, "\xFF", 1, NULL);

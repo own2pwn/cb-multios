@@ -34,27 +34,27 @@ extern "C"
 #include "dma.h"
 #include "mmu.h"
 
-CDMA::CDMA( )
+cgc_CDMA::cgc_CDMA( )
 {
-	for ( uint32_t i = 0; i < 256; i++ )
+	for ( cgc_uint32_t i = 0; i < 256; i++ )
 		m_pPeripherals[i] = NULL;
 }
 
-CDMA::~CDMA( )
+cgc_CDMA::~cgc_CDMA( )
 {
 
 }
 
-void CDMA::InitDMA( void )
+void cgc_CDMA::cgc_InitDMA( void )
 {
-	for ( uint32_t i = 0; i < MAX_DMA_WORKERS; i++ )
-		m_dmaWorkers[i].ClearWorker();
+	for ( cgc_uint32_t i = 0; i < MAX_DMA_WORKERS; i++ )
+		m_dmaWorkers[i].cgc_ClearWorker();
 
 	m_workerLast = 0;
 	m_workerCount = 0;
 }
 
-bool CDMA::AddPeripheral( uint8_t deviceID, CPeripheral *pPeripheral )
+bool cgc_CDMA::cgc_AddPeripheral( cgc_uint8_t deviceID, cgc_CPeripheral *pPeripheral )
 {
 	if ( !pPeripheral )
 		return (false);
@@ -67,9 +67,9 @@ bool CDMA::AddPeripheral( uint8_t deviceID, CPeripheral *pPeripheral )
 	return (true);
 }
 
-bool CDMA::InitReadWorker( uint8_t deviceID, uint16_t address, uint16_t length  )
+bool cgc_CDMA::cgc_InitReadWorker( cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length  )
 {
-	uint32_t workerCur = m_workerCount++;
+	cgc_uint32_t workerCur = m_workerCount++;
 
 #ifdef PATCHED_1
 	if ( workerCur >= MAX_DMA_WORKERS )
@@ -78,14 +78,14 @@ bool CDMA::InitReadWorker( uint8_t deviceID, uint16_t address, uint16_t length  
 #endif
 		return (false);
 
-	m_dmaWorkers[workerCur].StartWorker( DMA_WORKER_READ, deviceID, address, length );
+	m_dmaWorkers[workerCur].cgc_StartWorker( DMA_WORKER_READ, deviceID, address, length );
 
 	return (true);
 }
 
-bool CDMA::InitWriteWorker( uint8_t deviceID, uint16_t address, uint16_t length )
+bool cgc_CDMA::cgc_InitWriteWorker( cgc_uint8_t deviceID, cgc_uint16_t address, cgc_uint16_t length )
 {
-	uint32_t workerCur = m_workerCount++;
+	cgc_uint32_t workerCur = m_workerCount++;
 
 #ifdef PATCHED_1
 	if ( workerCur >= MAX_DMA_WORKERS )
@@ -94,17 +94,17 @@ bool CDMA::InitWriteWorker( uint8_t deviceID, uint16_t address, uint16_t length 
 #endif
 		return (false);
 
-	m_dmaWorkers[workerCur].StartWorker( DMA_WORKER_WRITE, deviceID, address, length );
+	m_dmaWorkers[workerCur].cgc_StartWorker( DMA_WORKER_WRITE, deviceID, address, length );
 
 	return (true);
 }
 
-void CDMA::ServiceDMA( CMMU *pMMU )
+void cgc_CDMA::cgc_ServiceDMA( cgc_CMMU *pMMU )
 {
 	if ( !pMMU )
 		return;
 
-	uint8_t dmaTransferCount = 0;
+	cgc_uint8_t dmaTransferCount = 0;
 
 	for ( dmaTransferCount = 0; dmaTransferCount < m_workerCount; dmaTransferCount++ )
 	{
@@ -113,19 +113,19 @@ void CDMA::ServiceDMA( CMMU *pMMU )
 			break;
 
 		// Round robin each DMA worker
-		uint8_t workerCur = m_workerLast;
+		cgc_uint8_t workerCur = m_workerLast;
 
 		// Find a worker to service
 		bool bWorkersAvailable = false;
 
-		uint32_t tryCount = 0;
+		cgc_uint32_t tryCount = 0;
 
 		for ( tryCount = 0; tryCount < MAX_DMA_WORKERS; tryCount++ )
 		{
 			if ( workerCur >= MAX_DMA_WORKERS )
 				workerCur = 0;
 
-			if ( m_dmaWorkers[workerCur].IsWorkerAvailable() )
+			if ( m_dmaWorkers[workerCur].cgc_IsWorkerAvailable() )
 			{
 				bWorkersAvailable = true;
 				break;
@@ -136,13 +136,13 @@ void CDMA::ServiceDMA( CMMU *pMMU )
 
 		if ( bWorkersAvailable )
 		{
-			uint8_t deviceID = m_dmaWorkers[workerCur].GetDeviceID();
-			uint16_t address = m_dmaWorkers[workerCur].GetAddress();
-			uint16_t length = m_dmaWorkers[workerCur].GetLength();
-			uint16_t position = m_dmaWorkers[workerCur].GetPosition();
-			eDMAWorkerAction actionType = m_dmaWorkers[workerCur].GetType();
+			cgc_uint8_t deviceID = m_dmaWorkers[workerCur].cgc_GetDeviceID();
+			cgc_uint16_t address = m_dmaWorkers[workerCur].cgc_GetAddress();
+			cgc_uint16_t length = m_dmaWorkers[workerCur].cgc_GetLength();
+			cgc_uint16_t position = m_dmaWorkers[workerCur].cgc_GetPosition();
+			cgc_eDMAWorkerAction actionType = m_dmaWorkers[workerCur].cgc_GetType();
 
-			uint32_t dmaAmount = (length - position);
+			cgc_uint32_t dmaAmount = (length - position);
 			if ( dmaAmount > 4 )
 				dmaAmount = 4;
 
@@ -152,22 +152,22 @@ void CDMA::ServiceDMA( CMMU *pMMU )
 				m_workerCount--;
 
 				// End transfer
-				m_dmaWorkers[workerCur].ClearWorker();
+				m_dmaWorkers[workerCur].cgc_ClearWorker();
 			}
 			else if ( m_pPeripherals[deviceID] )
 			{
-				uint8_t readValue[4];
+				cgc_uint8_t readValue[4];
 
 				if ( actionType == DMA_WORKER_READ )
 				{
 
-					if ( m_pPeripherals[deviceID]->Read( readValue, dmaAmount ) )
-						pMMU->WriteDMA( address+position, readValue, dmaAmount );
+					if ( m_pPeripherals[deviceID]->cgc_Read( readValue, dmaAmount ) )
+						pMMU->cgc_WriteDMA( address+position, readValue, dmaAmount );
 				}
 				else
 				{
-					if ( pMMU->ReadDMA( address+position, readValue, dmaAmount ) )
-						m_pPeripherals[deviceID]->Write( readValue, dmaAmount );
+					if ( pMMU->cgc_ReadDMA( address+position, readValue, dmaAmount ) )
+						m_pPeripherals[deviceID]->cgc_Write( readValue, dmaAmount );
 				}
 
 				if ( position+dmaAmount >= length )
@@ -176,14 +176,14 @@ void CDMA::ServiceDMA( CMMU *pMMU )
 					m_workerCount--;
 
 					// End transfer
-					m_dmaWorkers[workerCur].ClearWorker();
+					m_dmaWorkers[workerCur].cgc_ClearWorker();
 				}
 				else
-					m_dmaWorkers[workerCur].AdvancePosition( dmaAmount );
+					m_dmaWorkers[workerCur].cgc_AdvancePosition( dmaAmount );
 			}
 			else
 			{
-				m_dmaWorkers[workerCur].ClearWorker();
+				m_dmaWorkers[workerCur].cgc_ClearWorker();
 				m_workerCount--;
 			}
 

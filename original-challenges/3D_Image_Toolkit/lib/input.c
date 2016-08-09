@@ -27,10 +27,10 @@ THE SOFTWARE.
 #include <libcgc.h>
 
 
-int receive_bytes (char *buffer, size_t count) 
+int cgc_receive_bytes (char *buffer, cgc_size_t count) 
 {
-size_t total;
-size_t rxbytes;
+cgc_size_t total;
+cgc_size_t rxbytes;
 
     total = 0;
 
@@ -59,10 +59,10 @@ return 0;
 }
 
 
-size_t receive_until( char *buffer, char delim, size_t limit )
+cgc_size_t cgc_receive_until( char *buffer, char delim, cgc_size_t limit )
 {
-    size_t len = 0;
-    size_t rx = 0;
+    cgc_size_t len = 0;
+    cgc_size_t rx = 0;
     char c = 0;
 
     while( len < limit ) {

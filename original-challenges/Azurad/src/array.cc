@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -22,7 +22,7 @@
  */
 #include "array.h"
 
-static inline int abs(int x)
+static inline int cgc_abs(int x)
 {
     if (x < 0)
         return -x;
@@ -30,109 +30,109 @@ static inline int abs(int x)
         return x;
 }
 
-ArrayVar::ArrayVar()
-    : Var(VarType::Array)
+cgc_ArrayVar::cgc_ArrayVar()
+    : cgc_Var(VarType::cgc_Array)
 {
-    array.reset(new Array());
+    array.cgc_reset(new cgc_Array());
 }
 
-ArrayVar::~ArrayVar()
+cgc_ArrayVar::~cgc_ArrayVar()
 {
 }
 
-Var* ArrayVar::copy()
+cgc_Var* cgc_ArrayVar::cgc_copy()
 {
-    return new ArrayVar(*this);
+    return new cgc_ArrayVar(*this);
 }
 
-bool Array::set(int i, Var* val)
+bool cgc_Array::cgc_set(int i, cgc_Var* val)
 {
     if (i < 0)
     {
-        if (abs(i) > length())
+        if (cgc_abs(i) > cgc_length())
             return false;
-        i += length();
+        i += cgc_length();
 #ifdef PATCHED_1
         if (i < 0) return false;
 #endif
     }
 
-    if (i >= items.length())
+    if (i >= items.cgc_length())
     {
         if (i >= MAX_ITEMS)
             return false;
 
-        items.resize(i + 1);
+        items.cgc_resize(i + 1);
     }
 
-    items[i].reset(val);
+    items[i].cgc_reset(val);
     return true;
 }
 
-bool Array::get(int i, Var** pval)
+bool cgc_Array::cgc_get(int i, cgc_Var** pval)
 {
     if (i < 0)
     {
-        if (abs(i) > length())
+        if (cgc_abs(i) > cgc_length())
             return false;
-        i += length();
+        i += cgc_length();
 #ifdef PATCHED_1
         if (i < 0) return false;
 #endif
     }
 
-    if (i >= items.length())
+    if (i >= items.cgc_length())
     {
         *pval = nullptr;
     }
     else
     {
-        *pval = items[i].get();
+        *pval = items[i].cgc_get();
     }
     return true;
 }
 
-static bool func_Array(void *arg, Evaluator& eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_func_Array(void *arg, cgc_Evaluator& eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    if (args.length() != 0)
+    if (args.cgc_length() != 0)
         return false;
-    result.reset(new ArrayVar());
+    result.cgc_reset(new cgc_ArrayVar());
     return true;
 }
 
-static bool func_aget(void *arg, Evaluator& eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_func_aget(void *arg, cgc_Evaluator& eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    Var *item;
-    if (args.length() != 2 || args[0]->getType() != VarType::Array || args[1]->getType() != VarType::Number)
+    cgc_Var *item;
+    if (args.cgc_length() != 2 || args[0]->cgc_getType() != VarType::cgc_Array || args[1]->cgc_getType() != VarType::Number)
         goto error;
-    if (!static_cast<ArrayVar*>(args[0].get())->getArray().get(static_cast<NumberVar*>(args[1].get())->getValue(), &item))
+    if (!static_cast<cgc_ArrayVar*>(args[0].cgc_get())->cgc_getArray().cgc_get(static_cast<cgc_NumberVar*>(args[1].cgc_get())->cgc_getValue(), &item))
         goto error;
     if (item == nullptr)
-        result.reset(new Var(VarType::Nil));
+        result.cgc_reset(new cgc_Var(VarType::Nil));
     else
-        result.reset(item->copy());
+        result.cgc_reset(item->cgc_copy());
     return true;
 error:
     return false;
 }
 
-static bool func_aset(void *arg, Evaluator& eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_func_aset(void *arg, cgc_Evaluator& eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    Var *item;
-    if (args.length() != 3 || args[0]->getType() != VarType::Array || args[1]->getType() != VarType::Number)
+    cgc_Var *item;
+    if (args.cgc_length() != 3 || args[0]->cgc_getType() != VarType::cgc_Array || args[1]->cgc_getType() != VarType::Number)
         goto error;
-    item = args[2] ? args[2]->copy() : nullptr;
-    if (!static_cast<ArrayVar*>(args[0].get())->getArray().set(static_cast<NumberVar*>(args[1].get())->getValue(), item))
+    item = args[2] ? args[2]->cgc_copy() : nullptr;
+    if (!static_cast<cgc_ArrayVar*>(args[0].cgc_get())->cgc_getArray().cgc_set(static_cast<cgc_NumberVar*>(args[1].cgc_get())->cgc_getValue(), item))
         goto error;
-    result.reset(new Var(VarType::Nil));
+    result.cgc_reset(new cgc_Var(VarType::Nil));
     return true;
 error:
     return false;
 }
 
-void ArrayVar::registerExternals(Evaluator& eval)
+void cgc_ArrayVar::cgc_registerExternals(cgc_Evaluator& eval)
 {
-    eval.addExternal("Array", func_Array);
-    eval.addExternal("aget", func_aget);
-    eval.addExternal("aset", func_aset);
+    eval.cgc_addExternal("cgc_Array", cgc_func_Array);
+    eval.cgc_addExternal("aget", cgc_func_aget);
+    eval.cgc_addExternal("aset", cgc_func_aset);
 }

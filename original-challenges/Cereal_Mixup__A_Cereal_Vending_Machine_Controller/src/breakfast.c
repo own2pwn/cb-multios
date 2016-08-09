@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -38,27 +38,27 @@ const char BREAKFAST_READY_MSG[4] 	= {'\x3a', '\xcc', '\x00', '\xe8'};
 
 // need room for one of each subtype per category
 //  index into these arrays using the enum value
-Liquids *liquids_ptrs[L_STI_COUNT] 		= {0};
-Cereals *cereals_ptrs[C_STI_COUNT] 		= {0};
-Toppings *toppings_ptrs[T_STI_COUNT] 	= {0};
+cgc_Liquids *liquids_ptrs[L_STI_COUNT] 		= {0};
+cgc_Cereals *cereals_ptrs[C_STI_COUNT] 		= {0};
+cgc_Toppings *toppings_ptrs[T_STI_COUNT] 	= {0};
 
 /**
  * Reset the object pointer buffers and delete the objects
  */
-void reset_buffers(void) {
-	for (l_sti_t idx = 0; idx < L_STI_COUNT; idx++) {
+void cgc_reset_buffers(void) {
+	for (cgc_l_sti_t idx = 0; idx < L_STI_COUNT; idx++) {
 		if (liquids_ptrs[idx] != NULL) {
 			liquids_ptrs[idx]->destroy(liquids_ptrs[idx]);
 			liquids_ptrs[idx] = NULL;
 		}
 	}
-	for (c_sti_t idx = 0; idx < C_STI_COUNT; idx++) {
+	for (cgc_c_sti_t idx = 0; idx < C_STI_COUNT; idx++) {
 		if (cereals_ptrs[idx] != NULL) {
 			cereals_ptrs[idx]->destroy(cereals_ptrs[idx]);
 			cereals_ptrs[idx] = NULL;
 		}
 	}
-	for (t_sti_t idx = 0; idx < T_STI_COUNT; idx++) {
+	for (cgc_t_sti_t idx = 0; idx < T_STI_COUNT; idx++) {
 		if (toppings_ptrs[idx] != NULL) {
 			toppings_ptrs[idx]->destroy(toppings_ptrs[idx]);
 			toppings_ptrs[idx] = NULL;
@@ -71,7 +71,7 @@ void reset_buffers(void) {
  *
  * @return Number of units of liquids
  */
-unsigned int units_of_liquids(void) {
+unsigned int cgc_units_of_liquids(void) {
 	unsigned int cnt = 0;
 	for (int i = 0; i < L_STI_COUNT; i++) {
 		if (NULL != liquids_ptrs[i])
@@ -85,7 +85,7 @@ unsigned int units_of_liquids(void) {
  *
  * @return Number of units of cereals
  */
-unsigned int units_of_cereals(void) {
+unsigned int cgc_units_of_cereals(void) {
 	unsigned int cnt = 0;
 	for (int i = 0; i < C_STI_COUNT; i++) {
 		if (NULL != cereals_ptrs[i])
@@ -99,7 +99,7 @@ unsigned int units_of_cereals(void) {
  *
  * @return Number of units of toppings
  */
-unsigned int units_of_toppings(void) {
+unsigned int cgc_units_of_toppings(void) {
 	unsigned int cnt = 0;
 	for (int i = 0; i < T_STI_COUNT; i++) {
 		if (NULL != toppings_ptrs[i])
@@ -113,22 +113,22 @@ unsigned int units_of_toppings(void) {
  *
  * @param subTypeID 	ID of liquid to dispense
  */
-void dispense_liquid(l_sti_t subTypeID) {
+void cgc_dispense_liquid(cgc_l_sti_t subTypeID) {
 	switch(subTypeID) {
 		case DAIRY_MILK:
-			dispense_dairy_milk();
+			cgc_dispense_dairy_milk();
 			break;
 		case DAIRY_CREAM:
-			dispense_dairy_cream();
+			cgc_dispense_dairy_cream();
 			break;
 		case WATER:
-			dispense_water();
+			cgc_dispense_water();
 			break;
 		case SOY_MILK:
-			dispense_soy_milk();
+			cgc_dispense_soy_milk();
 			break;
 		case ALMOND_MILK:
-			dispense_almond_milk();
+			cgc_dispense_almond_milk();
 			break;
 		default:
 			return;
@@ -140,28 +140,28 @@ void dispense_liquid(l_sti_t subTypeID) {
  *
  * @param subTypeID 	ID of cereal to dispense
  */
-void dispense_cereal(c_sti_t subTypeID) {
+void cgc_dispense_cereal(cgc_c_sti_t subTypeID) {
 	switch(subTypeID) {
 		case SUGAR_LOOPS:
-			dispense_sugar_loops();
+			cgc_dispense_sugar_loops();
 			break;
 		case MAIZE_FLAKES:
-			dispense_maize_flakes();
+			cgc_dispense_maize_flakes();
 			break;
 		case MARSHMALLOW_FIGURINES:
-			dispense_marshmallow_figuringes();
+			cgc_dispense_marshmallow_figuringes();
 			break;
 		case CHOCOLATE_RICE_PELLETS:
-			dispense_chocolate_rice_pellets();
+			cgc_dispense_chocolate_rice_pellets();
 			break;
 		case OHHS_OF_OATS:
-			dispense_oohs_of_oats();
+			cgc_dispense_oohs_of_oats();
 			break;
 		case CRUNCHY_PUFFS:
-			dispense_crunchy_puffs();
+			cgc_dispense_crunchy_puffs();
 			break;
 		case FRUITZ_N_NUTZ:
-			dispense_frutiz_n_nuts();
+			cgc_dispense_frutiz_n_nuts();
 			break;
 		default:
 			return;
@@ -173,22 +173,22 @@ void dispense_cereal(c_sti_t subTypeID) {
  *
  * @param subTypeID 	ID of topping to dispense
  */
-void dispense_toppings(t_sti_t subTypeID) {
+void cgc_dispense_toppings(cgc_t_sti_t subTypeID) {
 	switch(subTypeID) {
 		case CHOCOLATE_DROPS:
-			dispense_chocolate_drops();
+			cgc_dispense_chocolate_drops();
 			break;
 		case BLUEBERRIES:
-			dispense_blueberries();
+			cgc_dispense_blueberries();
 			break;
 		case BERRY_MEDLEY:
-			dispense_berry_medley();
+			cgc_dispense_berry_medley();
 			break;
 		case SUGAR_CUBE:
-			dispense_sugar_cube();
+			cgc_dispense_sugar_cube();
 			break;
 		case STRAWBERRIES:
-			dispense_strawberries();
+			cgc_dispense_strawberries();
 			break;
 		default:
 			return;
@@ -198,62 +198,62 @@ void dispense_toppings(t_sti_t subTypeID) {
 /**
  * Manage operation of the breakfast dispensing machine
  */
-void dispense_breakfast() {
+void cgc_dispense_breakfast() {
 
-	init_dispenser();
-    send(PLACE_BOWL_MSG, sizeof(PLACE_BOWL_MSG));
+	cgc_init_dispenser();
+    cgc_send(PLACE_BOWL_MSG, sizeof(PLACE_BOWL_MSG));
 	// dispense a bowl
-    dispense_bowl();
+    cgc_dispense_bowl();
 
-	if (0 != units_of_cereals()) {
-		send(ADD_CEREAL_MSG, sizeof(ADD_CEREAL_MSG));
+	if (0 != cgc_units_of_cereals()) {
+		cgc_send(ADD_CEREAL_MSG, sizeof(ADD_CEREAL_MSG));
 		// dispense cereals
-		for (c_sti_t i = 0; i < C_STI_COUNT; i++) {
+		for (cgc_c_sti_t i = 0; i < C_STI_COUNT; i++) {
 			if (NULL != cereals_ptrs[i])
-				dispense_cereal(i);
+				cgc_dispense_cereal(i);
 		}
 	}
 
-	if (0 != units_of_liquids()) {
-		send(ADD_LIQUID_MSG, sizeof(ADD_LIQUID_MSG));
+	if (0 != cgc_units_of_liquids()) {
+		cgc_send(ADD_LIQUID_MSG, sizeof(ADD_LIQUID_MSG));
 		// dispense liquids
-		for (l_sti_t i = 0; i < L_STI_COUNT; i++) {
+		for (cgc_l_sti_t i = 0; i < L_STI_COUNT; i++) {
 			if (NULL != liquids_ptrs[i])
-				dispense_liquid(i);
+				cgc_dispense_liquid(i);
 		}
 	}
 
-	if (0 != units_of_toppings()) {
-		send(ADD_TOPPING_MSG, sizeof(ADD_TOPPING_MSG));
+	if (0 != cgc_units_of_toppings()) {
+		cgc_send(ADD_TOPPING_MSG, sizeof(ADD_TOPPING_MSG));
 		// dispense toppings
-		for (t_sti_t i = 0; i < T_STI_COUNT; i++) {
+		for (cgc_t_sti_t i = 0; i < T_STI_COUNT; i++) {
 			if (NULL != toppings_ptrs[i])
-				dispense_toppings(i);
+				cgc_dispense_toppings(i);
 		}
 	}
 
-	send(BREAKFAST_READY_MSG, sizeof(BREAKFAST_READY_MSG));
-	completion_buzzer();
+	cgc_send(BREAKFAST_READY_MSG, sizeof(BREAKFAST_READY_MSG));
+	cgc_completion_buzzer();
 }
 
-ssize_t process_plain_input(Stream *input_stream) {
-// Plain content, send SVU as UINT32 and STI as UCHAR
+cgc_ssize_t cgc_process_plain_input(cgc_Stream *input_stream) {
+// Plain content, cgc_send SVU as UINT32 and STI as UCHAR
 
-	// scan through Stream->content and extract the data
+	// scan through cgc_Stream->content and extract the data
 	char *cur = input_stream->content;
 	char *end = cur + input_stream->size;
 	unsigned char subTypeID = 0;
-	svu_t svu;
+	cgc_svu_t svu;
 
-	Liquids *p_liquids;
-	Cereals *p_cereals;
-	Toppings *p_toppings;
+	cgc_Liquids *p_liquids;
+	cgc_Cereals *p_cereals;
+	cgc_Toppings *p_toppings;
 
 	int ret = 0;
-	reset_buffers();
+	cgc_reset_buffers();
 
 	while (cur < end) {
-		svu = *(svu_t *)cur;
+		svu = *(cgc_svu_t *)cur;
 		cur += sizeof(unsigned int);
 		switch (svu) {
 			// set the TYPE_ptrs[x] to anything not NULL.
@@ -264,7 +264,7 @@ ssize_t process_plain_input(Stream *input_stream) {
 				if (subTypeID >= L_STI_COUNT) return -1;
 				if (NULL != liquids_ptrs[subTypeID]) return -1;
 
-				p_liquids = constructor_liquids();
+				p_liquids = cgc_constructor_liquids();
 				ret = p_liquids->set_data(p_liquids, svu, subTypeID);
 				if (0 > ret) {
 					p_liquids->destroy(p_liquids);
@@ -279,7 +279,7 @@ ssize_t process_plain_input(Stream *input_stream) {
 				if (subTypeID >= C_STI_COUNT) return -1;
 				if (NULL != cereals_ptrs[subTypeID]) return -1;
 
-				p_cereals = constructor_cereals();
+				p_cereals = cgc_constructor_cereals();
 				ret = p_cereals->set_data(p_cereals, svu, subTypeID);
 				if (0 > ret) {
 					p_cereals->destroy(p_cereals);
@@ -294,7 +294,7 @@ ssize_t process_plain_input(Stream *input_stream) {
 				if (subTypeID >= T_STI_COUNT) return -1;
 				if (NULL != toppings_ptrs[subTypeID]) return -1;
 
-				p_toppings = constructor_toppings();
+				p_toppings = cgc_constructor_toppings();
 				ret = p_toppings->set_data(p_toppings, svu, subTypeID);
 				if (0 > ret) {
 					p_toppings->destroy(p_toppings);
@@ -307,27 +307,27 @@ ssize_t process_plain_input(Stream *input_stream) {
 		}
 	}
 
-	dispense_breakfast();
+	cgc_dispense_breakfast();
 	return 0;
 }
 
-ssize_t process_serialized_input(Stream *input_stream) {
-	ssize_t ret;
+cgc_ssize_t cgc_process_serialized_input(cgc_Stream *input_stream) {
+	cgc_ssize_t ret;
 	char *cur = input_stream->content;
 	char *end = cur + input_stream->size;
-	svu_t svu;
+	cgc_svu_t svu;
 
-	Liquids *p_liquids;
-	Cereals *p_cereals;
-	Toppings *p_toppings;
+	cgc_Liquids *p_liquids;
+	cgc_Cereals *p_cereals;
+	cgc_Toppings *p_toppings;
 
-	reset_buffers();
+	cgc_reset_buffers();
 
 	while (cur < end) {
-		svu = *(svu_t *)cur;
+		svu = *(cgc_svu_t *)cur;
 		switch (svu) {
 			case LIQUID:
-				p_liquids = deserialize_liquids(&cur);
+				p_liquids = cgc_deserialize_liquids(&cur);
 				if (NULL == p_liquids) return -1;
 				if (NULL != liquids_ptrs[p_liquids->subTypeID]) {
 					p_liquids->destroy(p_liquids); // no dups
@@ -337,7 +337,7 @@ ssize_t process_serialized_input(Stream *input_stream) {
 				liquids_ptrs[p_liquids->subTypeID] = p_liquids;
 				break;
 			case CEREAL:
-				p_cereals = deserialize_cereals(&cur);
+				p_cereals = cgc_deserialize_cereals(&cur);
 				if (NULL == p_cereals) return -1;
 				if (NULL != cereals_ptrs[p_cereals->subTypeID]) {
 					p_cereals->destroy(p_cereals); // no dups
@@ -347,7 +347,7 @@ ssize_t process_serialized_input(Stream *input_stream) {
 				cereals_ptrs[p_cereals->subTypeID] = p_cereals;
 				break;
 			case TOPPINGS:
-				p_toppings = deserialize_toppings(&cur);
+				p_toppings = cgc_deserialize_toppings(&cur);
 				if (NULL == p_toppings) return -1;
 				if (NULL != toppings_ptrs[p_toppings->subTypeID]) {
 					p_toppings->destroy(p_toppings); // no dups
@@ -370,7 +370,7 @@ ssize_t process_serialized_input(Stream *input_stream) {
 			*/
 			default:
 #ifndef PATCHED_1
-				ret = check_inherited_types(svu, &cur);
+				ret = cgc_check_inherited_types(svu, &cur);
 				if (-1 == ret) return -1; // unknown type
 #else
 				return -1;
@@ -378,7 +378,7 @@ ssize_t process_serialized_input(Stream *input_stream) {
 		}
 	}
 
-	dispense_breakfast();
+	cgc_dispense_breakfast();
 	return 0;
 }
 

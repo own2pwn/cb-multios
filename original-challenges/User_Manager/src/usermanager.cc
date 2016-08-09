@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,56 +25,56 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CUserManager::CUserManager()
+cgc_CUserManager::cgc_CUserManager()
 {
     m_sAdminPassword = "$admin$77";
 }
 
-CUserManager::~CUserManager()
+cgc_CUserManager::~cgc_CUserManager()
 {
 
 }
 
-void CUserManager::Run( void )
+void cgc_CUserManager::cgc_Run( void )
 {
     // Action string
-    String sAction;
+    cgc_String sAction;
 
     // Print banner
-    printf( "User Manager Console:\n" );
+    cgc_printf( "User Manager Console:\n" );
 
     // Enter command loop
     bool bRunning = true;
     do
     {
         // Main console
-        printf( "1) Create User\n" );
-        printf( "2) User Login\n" );
-        printf( "3) Admin Login\n" );
-        printf( "4) Exit\n" );
+        cgc_printf( "1) Create User\n" );
+        cgc_printf( "2) User Login\n" );
+        cgc_printf( "3) Admin Login\n" );
+        cgc_printf( "4) Exit\n" );
 
         // Get user input
-        ReadLine( sAction );
+        cgc_ReadLine( sAction );
 
-        int32_t actionIntValue;
+        cgc_int32_t actionIntValue;
 
         // Get action value as an integer
-        if ( !sAction.ToInteger( actionIntValue ) )
+        if ( !sAction.cgc_ToInteger( actionIntValue ) )
             actionIntValue = -1;
 
         // Perform action
         switch ( actionIntValue )
         {
         case 1:     // Create User
-            bRunning = RunCreateUser();
+            bRunning = cgc_RunCreateUser();
             break;
 
         case 2:     // User Login
-            bRunning = RunUserLogin();
+            bRunning = cgc_RunUserLogin();
             break;
 
         case 3:     // Admin Login
-            bRunning = RunAdminLogin();
+            bRunning = cgc_RunAdminLogin();
             break;
 
         case 4:     // Exit
@@ -82,30 +82,30 @@ void CUserManager::Run( void )
             break;
 
         default:    // Invalid entry
-            printf( "Invalid choice\n" );
+            cgc_printf( "Invalid choice\n" );
             break;
         }
     } while ( bRunning );
 
     // Exit banner
-    printf( "Exiting\n" );
+    cgc_printf( "Exiting\n" );
 }
 
-bool CUserManager::RunCreateUser( void )
+bool cgc_CUserManager::cgc_RunCreateUser( void )
 {
-    String sUserName;
-    String sPassword;
+    cgc_String sUserName;
+    cgc_String sPassword;
 
     bool bGoodUserName = true;
     do
     {
-        printf( "Username: " );
+        cgc_printf( "Username: " );
 
-        ReadLine( sUserName );
+        cgc_ReadLine( sUserName );
 
-        if ( sUserName.length() > MAX_USERNAME_LENGTH )
+        if ( sUserName.cgc_length() > MAX_USERNAME_LENGTH )
         {
-            printf( "Username too long, only @d characters allowed.\n", MAX_USERNAME_LENGTH );
+            cgc_printf( "Username too long, only @d characters allowed.\n", MAX_USERNAME_LENGTH );
             bGoodUserName = false;
         }
         else
@@ -116,12 +116,12 @@ bool CUserManager::RunCreateUser( void )
     bool bGoodPassword = false;
     do
     {
-        printf( "Password: " );
-        ReadLine( sPassword );
+        cgc_printf( "Password: " );
+        cgc_ReadLine( sPassword );
 
-        if ( sPassword.length() > MAX_PASSWORD_LENGTH )
+        if ( sPassword.cgc_length() > MAX_PASSWORD_LENGTH )
         {
-            printf( "Password too long, only @d characters allowed.\n", MAX_PASSWORD_LENGTH );
+            cgc_printf( "Password too long, only @d characters allowed.\n", MAX_PASSWORD_LENGTH );
             bGoodPassword = false;
         }
         else
@@ -129,81 +129,81 @@ bool CUserManager::RunCreateUser( void )
 
     } while ( !bGoodPassword );
 
-    if ( !m_userDB.CreateUser( sUserName, sPassword ) )
-        printf( "Failed to create user -- user already exists.\n" );
+    if ( !m_userDB.cgc_CreateUser( sUserName, sPassword ) )
+        cgc_printf( "Failed to create user -- user already exists.\n" );
     else
-        printf( "User created successfully.\n" );
+        cgc_printf( "User created successfully.\n" );
 
     // True -- indicates continue running command loop
     return (true);
 }
 
-bool CUserManager::RunUserLogin( void )
+bool cgc_CUserManager::cgc_RunUserLogin( void )
 {
-    String sUserName;
-    String sPassword;
-    String sAction;
+    cgc_String sUserName;
+    cgc_String sPassword;
+    cgc_String sAction;
 
-    printf( "Enter Username: " );
+    cgc_printf( "Enter Username: " );
 
-    ReadLine( sUserName );
+    cgc_ReadLine( sUserName );
 
-    printf( "Enter Password: " );
+    cgc_printf( "Enter Password: " );
 
-    ReadLine( sPassword );
+    cgc_ReadLine( sPassword );
 
     // Verify user credentials
-    CUserEntry *pUserData = m_userDB.FindUserByName( sUserName );
+    cgc_CUserEntry *pUserData = m_userDB.cgc_FindUserByName( sUserName );
 
     if ( !pUserData )
     {
-        printf( "Login failed. Invalid username or password.\n" );
+        cgc_printf( "Login failed. Invalid username or password.\n" );
         return (true);
     }
 
-    if ( pUserData->GetPassword() != sPassword )
+    if ( pUserData->cgc_GetPassword() != sPassword )
     {
-        printf( "Login failed. Invalid username or password.\n" );
+        cgc_printf( "Login failed. Invalid username or password.\n" );
         return (true);
     }
 
-    printf( "Login success.\n" );
+    cgc_printf( "Login success.\n" );
 
     bool bUserLoggedIn = true;
     do
     {
-        printf( "1) Send Message\n" );
-        printf( "2) Read Message\n" );
-        printf( "3) List Messages\n" );
-        printf( "4) Delete Message\n" );
-        printf( "5) Logout\n" );
-        printf( "6) Exit\n" );
+        cgc_printf( "1) Send Message\n" );
+        cgc_printf( "2) Read Message\n" );
+        cgc_printf( "3) List Messages\n" );
+        cgc_printf( "4) Delete Message\n" );
+        cgc_printf( "5) Logout\n" );
+        cgc_printf( "6) Exit\n" );
 
-        ReadLine( sAction );
+        cgc_ReadLine( sAction );
 
-        int32_t actionIntValue;
+        cgc_int32_t actionIntValue;
 
         // Get action value as an integer
-        if ( !sAction.ToInteger( actionIntValue ) )
+        if ( !sAction.cgc_ToInteger( actionIntValue ) )
             actionIntValue = -1;
 
         // Perform action
         switch ( actionIntValue )
         {
         case 1: // Send message
-            DoUserSendMessage( pUserData );
+            cgc_DoUserSendMessage( pUserData );
             break;
 
         case 2: // Read messages
-            DoUserReadMessages( pUserData );
+            cgc_DoUserReadMessages( pUserData );
             break;
 
         case 3: // List messages
-            DoUserListMessages( pUserData );
+            cgc_DoUserListMessages( pUserData );
             break;
 
         case 4: // Delete message
-            DoUserDeleteMessage( pUserData );
+            cgc_DoUserDeleteMessage( pUserData );
             break;
 
         case 5: // Log out this user
@@ -215,68 +215,68 @@ bool CUserManager::RunUserLogin( void )
             break;
 
         default:
-            printf( "Invalid command\n" );
+            cgc_printf( "Invalid command\n" );
             break;
         }
 
     } while ( bUserLoggedIn );
 
-    printf( "Logged out.\n" );
+    cgc_printf( "Logged out.\n" );
 
     // True -- indicates continue running command loop
     return (true);
 }
 
-bool CUserManager::RunAdminLogin( void )
+bool cgc_CUserManager::cgc_RunAdminLogin( void )
 {
-    String sAction;
-    String sAdminPassword;
+    cgc_String sAction;
+    cgc_String sAdminPassword;
 
-    printf( "Admin Password: " );
+    cgc_printf( "Admin Password: " );
 
-    ReadLine( sAdminPassword );
+    cgc_ReadLine( sAdminPassword );
 
     if ( sAdminPassword != m_sAdminPassword )
     {
-        printf( "Invalid Password.\n" );
+        cgc_printf( "Invalid Password.\n" );
         return (true);
     }
 
     bool bExitAdmin = false;
     do
     {
-        printf( "Admin Commands:\n" );
-        printf( "1) List Users\n" );
-        printf( "2) Delete User\n" );
-        printf( "3) Change User Password\n" );
-        printf( "4) Logout\n" );
+        cgc_printf( "Admin Commands:\n" );
+        cgc_printf( "1) List Users\n" );
+        cgc_printf( "2) Delete User\n" );
+        cgc_printf( "3) Change User Password\n" );
+        cgc_printf( "4) Logout\n" );
 
         // Get user input
-        ReadLine( sAction );
+        cgc_ReadLine( sAction );
 
-        int32_t actionIntValue;
+        cgc_int32_t actionIntValue;
 
         // Get action value as an integer
-        if ( !sAction.ToInteger( actionIntValue ) )
+        if ( !sAction.cgc_ToInteger( actionIntValue ) )
             actionIntValue = -1;
 
         // Perform action
         switch ( actionIntValue )
         {
         case 1:
-            DoAdminListUsers();
+            cgc_DoAdminListUsers();
             break;
 
         case 2:
-            DoAdminDeleteUser();
+            cgc_DoAdminDeleteUser();
             break;
 
         case 3:
-            DoAdminChangePassword();
+            cgc_DoAdminChangePassword();
             break;
 
         case 4:
-            printf( "Logging out\n" );
+            cgc_printf( "Logging out\n" );
             bExitAdmin = true;
             break;
         }
@@ -286,213 +286,213 @@ bool CUserManager::RunAdminLogin( void )
     return (true);
 }
 
-void CUserManager::DoAdminListUsers( void )
+void cgc_CUserManager::cgc_DoAdminListUsers( void )
 {
-    printf( "Listing users in database:\n" );
+    cgc_printf( "Listing users in database:\n" );
 
-    uint32_t userIdx;
-    uint32_t userCount = m_userDB.GetUserCount();
+    cgc_uint32_t userIdx;
+    cgc_uint32_t userCount = m_userDB.cgc_GetUserCount();
 
     for ( userIdx = 0; userIdx < userCount; userIdx++ )
     {
-        CUserEntry *pUserData = m_userDB.GetUserForIndex( userIdx );
+        cgc_CUserEntry *pUserData = m_userDB.cgc_GetUserForIndex( userIdx );
 
-        printf( "@d: @s\n", userIdx, pUserData->GetUserName().c_str() );
+        cgc_printf( "@d: @s\n", userIdx, pUserData->cgc_GetUserName().cgc_c_str() );
     }
 }
 
-void CUserManager::DoAdminDeleteUser( void )
+void cgc_CUserManager::cgc_DoAdminDeleteUser( void )
 {
-    String sUserName;
+    cgc_String sUserName;
 
-    printf( "Username to delete: " );
+    cgc_printf( "Username to delete: " );
 
-    ReadLine( sUserName );
+    cgc_ReadLine( sUserName );
 
-    if ( m_userDB.DeleteUserByName( sUserName ) )
-        printf( "User deleted.\n" );
+    if ( m_userDB.cgc_DeleteUserByName( sUserName ) )
+        cgc_printf( "User deleted.\n" );
     else
-        printf( "User not found, failed to delete.\n" );
+        cgc_printf( "User not found, failed to delete.\n" );
 }
 
-void CUserManager::DoAdminChangePassword( void )
+void cgc_CUserManager::cgc_DoAdminChangePassword( void )
 {
-    String sUserName;
-    String sPassword;
+    cgc_String sUserName;
+    cgc_String sPassword;
 
-    printf( "Username to change password: " );
+    cgc_printf( "Username to change password: " );
 
-    ReadLine( sUserName );
+    cgc_ReadLine( sUserName );
 
-    CUserEntry *pUserData = m_userDB.FindUserByName( sUserName );
+    cgc_CUserEntry *pUserData = m_userDB.cgc_FindUserByName( sUserName );
 
     if ( pUserData == NULL )
     {
-        printf( "User not found in database.\n" );
+        cgc_printf( "User not found in database.\n" );
         return;
     }
 
-    printf( "New password: " );
+    cgc_printf( "New password: " );
 
-    ReadLine( sPassword );
+    cgc_ReadLine( sPassword );
 
-    if ( sPassword.length() > MAX_PASSWORD_LENGTH )
+    if ( sPassword.cgc_length() > MAX_PASSWORD_LENGTH )
     {
-        printf( "Password too long. Failed to change password.\n" );
+        cgc_printf( "Password too long. Failed to change password.\n" );
         return;
     }
 
     // Now set users password
-    pUserData->SetPassword( sPassword );
+    pUserData->cgc_SetPassword( sPassword );
 
-    printf( "Password set for user.\n" );
+    cgc_printf( "Password set for user.\n" );
 
     return;
 }
 
 
-void CUserManager::DoUserSendMessage( CUserEntry *pUser )
+void cgc_CUserManager::cgc_DoUserSendMessage( cgc_CUserEntry *pUser )
 {
-    String sUserName;
-    String sMessage;
+    cgc_String sUserName;
+    cgc_String sMessage;
 
-    printf( "Username to send to: " );
+    cgc_printf( "Username to send to: " );
 
-    ReadLine( sUserName );
+    cgc_ReadLine( sUserName );
 
-    CUserEntry *pUserData = m_userDB.FindUserByName( sUserName );
+    cgc_CUserEntry *pUserData = m_userDB.cgc_FindUserByName( sUserName );
 
     if ( pUserData == NULL )
     {
-        printf( "User not found.\n" );
+        cgc_printf( "User not found.\n" );
         return;
     }
 
-    printf( "Enter Message: " );
+    cgc_printf( "Enter Message: " );
 
-    ReadLine( sMessage );
+    cgc_ReadLine( sMessage );
 
-    if ( sMessage.length() > 128 )
+    if ( sMessage.cgc_length() > 128 )
     {
-        printf( "Message too long, truncating.\n" );
-        sMessage.Trim( 128 );
+        cgc_printf( "Message too long, truncating.\n" );
+        sMessage.cgc_Trim( 128 );
     }
 
-    if ( !pUserData->AddMessage( new CUserMessage( pUser->GetUserName(), sMessage ) ) )
-        printf( "Message not sent.\n" );
+    if ( !pUserData->cgc_AddMessage( new cgc_CUserMessage( pUser->cgc_GetUserName(), sMessage ) ) )
+        cgc_printf( "Message not sent.\n" );
     else
-        printf( "Message sent.\n" );
+        cgc_printf( "Message sent.\n" );
 }
 
-void CUserManager::DoUserReadMessages( CUserEntry *pUser )
+void cgc_CUserManager::cgc_DoUserReadMessages( cgc_CUserEntry *pUser )
 {
-    if ( pUser->GetMessageCount() == 0 )
+    if ( pUser->cgc_GetMessageCount() == 0 )
     {
-        printf( "No messages.\n" );
+        cgc_printf( "No messages.\n" );
         return;
     }
 
     // Print new messages
-    if ( pUser->GetUnreadMessageCount() > 0 )
+    if ( pUser->cgc_GetUnreadMessageCount() > 0 )
     {
-        CUserMessage *pCur;
+        cgc_CUserMessage *pCur;
 
-        printf( "@d unread messages available. Last unread message:\n", pUser->GetUnreadMessageCount() );
+        cgc_printf( "@d unread messages available. Last unread message:\n", pUser->cgc_GetUnreadMessageCount() );
 
         // Display last unread message
-        pCur = pUser->GetLastUnreadMessage();
+        pCur = pUser->cgc_GetLastUnreadMessage();
 
-        printf( "From: @s\n", pCur->GetFrom().c_str() );
-        printf( "Message: @s\n", pCur->GetMessage().c_str() );
+        cgc_printf( "From: @s\n", pCur->cgc_GetFrom().cgc_c_str() );
+        cgc_printf( "Message: @s\n", pCur->cgc_GetMessage().cgc_c_str() );
 
-        pUser->ClearUnreadMessages( );
+        pUser->cgc_ClearUnreadMessages( );
     }
 
-    printf( "@d total messages available, enter number to read: ", pUser->GetMessageCount() );
+    cgc_printf( "@d total messages available, enter number to read: ", pUser->cgc_GetMessageCount() );
 
-    String sAction;
+    cgc_String sAction;
 
-    int32_t messageNumber;
+    cgc_int32_t messageNumber;
 
-    ReadLine( sAction );
+    cgc_ReadLine( sAction );
 
-    if ( !sAction.ToInteger( messageNumber ) )
+    if ( !sAction.cgc_ToInteger( messageNumber ) )
     {
-        printf( "Invalid message number.\n" );
+        cgc_printf( "Invalid message number.\n" );
         return;
     }
 
-    if ( messageNumber < 0 || messageNumber >= pUser->GetMessageCount() )
+    if ( messageNumber < 0 || messageNumber >= pUser->cgc_GetMessageCount() )
     {
-        printf( "Invalid message number.\n" );
+        cgc_printf( "Invalid message number.\n" );
         return;
     }
 
-    CUserMessage *pCurMessage = pUser->GetMessageByIndex( messageNumber );
+    cgc_CUserMessage *pCurMessage = pUser->cgc_GetMessageByIndex( messageNumber );
 
     if ( !pCurMessage )
         return;
 
-    printf( "Message @d:\n", messageNumber );
-    printf( "From: @s\n", pCurMessage->GetFrom().c_str() );
-    printf( "Message: @s\n", pCurMessage->GetMessage().c_str() );
+    cgc_printf( "Message @d:\n", messageNumber );
+    cgc_printf( "From: @s\n", pCurMessage->cgc_GetFrom().cgc_c_str() );
+    cgc_printf( "Message: @s\n", pCurMessage->cgc_GetMessage().cgc_c_str() );
 
     return;
 }
 
-void CUserManager::DoUserListMessages( CUserEntry *pUser )
+void cgc_CUserManager::cgc_DoUserListMessages( cgc_CUserEntry *pUser )
 {
-    if ( pUser->GetMessageCount() == 0 )
+    if ( pUser->cgc_GetMessageCount() == 0 )
     {
-        printf( "No messages.\n" );
+        cgc_printf( "No messages.\n" );
         return;
     }
 
-    printf( "Listing @d messages:\n", pUser->GetMessageCount() );
+    cgc_printf( "Listing @d messages:\n", pUser->cgc_GetMessageCount() );
 
-    uint32_t idx = 0;
-    for ( CUserMessage *pCur = pUser->GetFirstMessage(); pCur; pCur = pUser->GetNextMessage( pCur ) )
+    cgc_uint32_t idx = 0;
+    for ( cgc_CUserMessage *pCur = pUser->cgc_GetFirstMessage(); pCur; pCur = pUser->cgc_GetNextMessage( pCur ) )
     {
-        printf( "Message @d:\n", idx );
-        printf( "From: @s\n", pCur->GetFrom().c_str() );
-        printf( "Message: @s\n", pCur->GetMessage().c_str() );
+        cgc_printf( "Message @d:\n", idx );
+        cgc_printf( "From: @s\n", pCur->cgc_GetFrom().cgc_c_str() );
+        cgc_printf( "Message: @s\n", pCur->cgc_GetMessage().cgc_c_str() );
 
         idx++;
     }
 }
 
-void CUserManager::DoUserDeleteMessage( CUserEntry *pUser )
+void cgc_CUserManager::cgc_DoUserDeleteMessage( cgc_CUserEntry *pUser )
 {
-    if ( pUser->GetMessageCount() == 0 )
+    if ( pUser->cgc_GetMessageCount() == 0 )
     {
-        printf( "No messages to delete.\n" );
+        cgc_printf( "No messages to delete.\n" );
         return;
     }
 
-    printf( "@d messages available. Enter number to delete: ", pUser->GetMessageCount() );
+    cgc_printf( "@d messages available. Enter number to delete: ", pUser->cgc_GetMessageCount() );
 
-    String sAction;
+    cgc_String sAction;
 
-    int32_t messageNumber;
+    cgc_int32_t messageNumber;
 
-    ReadLine( sAction );
+    cgc_ReadLine( sAction );
 
-    if ( !sAction.ToInteger( messageNumber ) )
+    if ( !sAction.cgc_ToInteger( messageNumber ) )
     {
-        printf( "Invalid message number.\n" );
+        cgc_printf( "Invalid message number.\n" );
         return;
     }
 
-    if ( messageNumber < 0 || messageNumber >= pUser->GetMessageCount() )
+    if ( messageNumber < 0 || messageNumber >= pUser->cgc_GetMessageCount() )
     {
-        printf( "Invalid message number.\n" );
+        cgc_printf( "Invalid message number.\n" );
         return;
     }
 
-    CUserMessage *pCurMessage = pUser->GetMessageByIndex( messageNumber );
+    cgc_CUserMessage *pCurMessage = pUser->cgc_GetMessageByIndex( messageNumber );
 
-    if ( !pUser->DeleteMessage( pCurMessage ) )
-        printf( "Failed to delete message.\n" );
+    if ( !pUser->cgc_DeleteMessage( pCurMessage ) )
+        cgc_printf( "Failed to delete message.\n" );
     else
-        printf( "Message deleted.\n" );
+        cgc_printf( "Message deleted.\n" );
 }

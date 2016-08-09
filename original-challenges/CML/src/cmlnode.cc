@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,23 +22,23 @@
  */
 #include "cmlnode.h"
 
-static const String *NAMESPACE_ATTR = String::intern("namespace");
-static const String *SPEC_ATTR = String::intern("spec");
-static const String *VERSION_ATTR = String::intern("version");
+static const cgc_String *NAMESPACE_ATTR = cgc_String::cgc_intern("namespace");
+static const cgc_String *SPEC_ATTR = cgc_String::cgc_intern("cgc_spec");
+static const cgc_String *VERSION_ATTR = cgc_String::cgc_intern("cgc_version");
 
-CmlNode::CmlNode(const String *ns, const String *tag)
-    : Node(ns, tag, NodeClass::CMLNODE)
+cgc_CmlNode::cgc_CmlNode(const cgc_String *cgc_ns, const cgc_String *cgc_tag)
+    : cgc_Node(cgc_ns, cgc_tag, NodeClass::CMLNODE)
 {
-    d_spec = String::intern("");
-    d_version = String::intern("1.0");
-    d_childns = String::intern("");
+    d_spec = cgc_String::cgc_intern("");
+    d_version = cgc_String::cgc_intern("1.0");
+    d_childns = cgc_String::cgc_intern("");
 }
 
-void CmlNode::set_attr(const char *name, String *value)
+void cgc_CmlNode::cgc_set_attr(const char *cgc_name, cgc_String *value)
 {
-    Node::set_attr(name, value);
+    cgc_Node::cgc_set_attr(cgc_name, value);
 
-    const String *sname = String::intern(name);
+    const cgc_String *sname = cgc_String::cgc_intern(cgc_name);
     if (sname == NAMESPACE_ATTR)
     {
         d_childns = value;
@@ -51,11 +51,11 @@ void CmlNode::set_attr(const char *name, String *value)
     {
         char *end;
         unsigned int major, minor = 0;
-        major = strtoul(value->cstr(), &end, 10);
+        major = cgc_strtoul(value->cgc_cstr(), &end, 10);
         if (end != NULL)
         {
             end++;
-            minor = strtoul(end, &end, 10);
+            minor = cgc_strtoul(end, &end, 10);
         }
         d_version = value;
         d_version_code = ((unsigned long long)major << 32) | minor;

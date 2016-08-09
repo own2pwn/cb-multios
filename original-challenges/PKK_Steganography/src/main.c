@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -50,19 +50,19 @@
 typedef struct input {
   unsigned int total_size;
   unsigned int pkk_size;
-  pkk_t *pkk_data;
+  cgc_pkk_t *pkk_data;
   unsigned short mode;
   unsigned short text_size;
   char *text_data;
-} input_t;
+} cgc_input_t;
 
-int read_n(int fd, char *buf, size_t len)
+int cgc_read_n(int fd, char *buf, cgc_size_t len)
 {
-  size_t i;
+  cgc_size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       break;
     c++;
@@ -70,13 +70,13 @@ int read_n(int fd, char *buf, size_t len)
   return c - buf;
 }
 
-int readuntil(int fd, char *buf, size_t len, char delim)
+int cgc_readuntil(int fd, char *buf, cgc_size_t len, char delim)
 {
-  size_t i;
+  cgc_size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       break;
     if (*(c++) == delim)
@@ -86,64 +86,64 @@ int readuntil(int fd, char *buf, size_t len, char delim)
   return c - buf;
 }
 
-void cleanup_input(input_t *input)
+void cgc_cleanup_input(cgc_input_t *input)
 {
   if (input)
   {
     if (input->pkk_data)
-      free_pkk(input->pkk_data);
+      cgc_free_pkk(input->pkk_data);
     if (input->text_data)
-      free(input->text_data);
-    free(input);
+      cgc_free(input->text_data);
+    cgc_free(input);
   }
 }
 
-input_t* parse_input()
+cgc_input_t* cgc_parse_input()
 {
   unsigned int dword;
   unsigned short word;
-  input_t *input = NULL;
+  cgc_input_t *input = NULL;
   unsigned int total_bytes = 0;
 
-  input = (input_t *) malloc(sizeof(input_t));
+  input = (cgc_input_t *) cgc_malloc(sizeof(cgc_input_t));
   if (input == NULL)
     goto fail;
 
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != STEG_TAG)
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != STEG_TAG)
     goto fail;
   total_bytes += sizeof(dword);
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword))
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword))
     goto fail;
   total_bytes += sizeof(dword);
   input->total_size = dword;
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != PPM_TAG)
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != PPM_TAG)
     goto fail;
   total_bytes += sizeof(dword);
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword))
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword))
     goto fail;
   total_bytes += sizeof(dword);
   input->pkk_size = dword;
   if (input->pkk_size > 0 && input->pkk_size < MAX_PPM_SIZE)
   {
-    char *pkk_data = malloc(input->pkk_size);
-    if (read_n(STDIN, pkk_data, input->pkk_size) != input->pkk_size)
+    char *pkk_data = cgc_malloc(input->pkk_size);
+    if (cgc_read_n(STDIN, pkk_data, input->pkk_size) != input->pkk_size)
       goto fail;
-    input->pkk_data = parse_pkk(pkk_data, input->pkk_size);
+    input->pkk_data = cgc_parse_pkk(pkk_data, input->pkk_size);
     if (input->pkk_data == NULL)
       goto fail;
     total_bytes += input->pkk_size;
   }
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != MODE_TAG)
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != MODE_TAG)
     goto fail;
   total_bytes += sizeof(dword);
-  if (read_n(STDIN, (char *)&word, sizeof(word)) != sizeof(word))
+  if (cgc_read_n(STDIN, (char *)&word, sizeof(word)) != sizeof(word))
     goto fail;
   total_bytes += sizeof(word);
   input->mode = word;
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != TEXT_TAG)
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != TEXT_TAG)
     goto fail;
   total_bytes += sizeof(dword);
-  if (read_n(STDIN, (char *)&word, sizeof(word)) != sizeof(word))
+  if (cgc_read_n(STDIN, (char *)&word, sizeof(word)) != sizeof(word))
     goto fail;
   total_bytes += sizeof(word);
   input->text_size = word;
@@ -151,12 +151,12 @@ input_t* parse_input()
   {
     if (input->text_size > MAX_TEXT_LEN)
       goto fail;
-    input->text_data = malloc(input->text_size);
-    if (read_n(STDIN, (char *)input->text_data, input->text_size) != input->text_size)
+    input->text_data = cgc_malloc(input->text_size);
+    if (cgc_read_n(STDIN, (char *)input->text_data, input->text_size) != input->text_size)
       goto fail;
     total_bytes += input->text_size;
   }
-  if (read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != END_TAG)
+  if (cgc_read_n(STDIN, (char *)&dword, sizeof(dword)) != sizeof(dword) || dword != END_TAG)
     goto fail;
   total_bytes += sizeof(dword);
 
@@ -166,11 +166,11 @@ input_t* parse_input()
   return input;
 
 fail:
-  cleanup_input(input);
+  cgc_cleanup_input(input);
   return NULL;
 }
 
-int embed_text(pkk_t *pkk, char *text, unsigned short len)
+int cgc_embed_text(cgc_pkk_t *pkk, char *text, unsigned short len)
 {
   int size;
   char *message, *cur;
@@ -180,9 +180,9 @@ int embed_text(pkk_t *pkk, char *text, unsigned short len)
   {
     pixel = (char *) pkk->pixels;
     size = sizeof(int) * 2 + sizeof(short) + len;
-    if (pkk->width * pkk->height * sizeof(pixel_t) / 8 < size)
+    if (pkk->width * pkk->height * sizeof(cgc_pixel_t) / 8 < size)
       return -1;
-    message = malloc(size);
+    message = cgc_malloc(size);
     if (message == NULL)
       return -1;
     cur = message;
@@ -190,7 +190,7 @@ int embed_text(pkk_t *pkk, char *text, unsigned short len)
     cur += sizeof(int);
     *(short *)cur = len;
     cur += sizeof(short);
-    memcpy(cur, text, len);
+    cgc_memcpy(cur, text, len);
     cur += len;
     *(int *)cur = SECRET_END_TAG;
 
@@ -219,7 +219,7 @@ int embed_text(pkk_t *pkk, char *text, unsigned short len)
   return -1;
 }
 
-char recover_byte(char **pixel)
+char cgc_recover_byte(char **pixel)
 {
   int j;
   char c = '\0';
@@ -234,7 +234,7 @@ char recover_byte(char **pixel)
   return c;
 }
 
-int extract_text(pkk_t *pkk, char *buf)
+int cgc_extract_text(cgc_pkk_t *pkk, char *buf)
 {
   char c;
   char *pixel;
@@ -246,7 +246,7 @@ int extract_text(pkk_t *pkk, char *buf)
 
     for (i = 0; i < 4; ++i)
     {
-      c = recover_byte(&pixel);
+      c = cgc_recover_byte(&pixel);
       tag |= ((c << 8*i) & (0xFF << 8*i));
     }
     if (tag != SECRET_TAG)
@@ -254,7 +254,7 @@ int extract_text(pkk_t *pkk, char *buf)
 
     for (i = 0; i < 2; ++i)
     {
-      c = recover_byte(&pixel);
+      c = cgc_recover_byte(&pixel);
       text_size |= ((c << 8*i) & (0xFF << 8*i));
     }
 
@@ -265,14 +265,14 @@ int extract_text(pkk_t *pkk, char *buf)
     for (i = 0; i < text_size; ++i)
 #endif
     {
-      c = recover_byte(&pixel);
+      c = cgc_recover_byte(&pixel);
       buf[i] = c;
     }
 
     tag = 0;
     for (i = 0; i < 4; ++i)
     {
-      c = recover_byte(&pixel);
+      c = cgc_recover_byte(&pixel);
       tag |= ((c << 8*i) & (0xFF << 8*i));
     }
     if (tag != SECRET_END_TAG)
@@ -289,42 +289,42 @@ int main()
   char text[MAX_TEXT_LEN];
   int out_len;
   char *output;
-  input_t *input;
+  cgc_input_t *input;
 
-  if ((input = parse_input()) == NULL)
+  if ((input = cgc_parse_input()) == NULL)
   {
-    printf("[ERROR] Failed to parse input.\n");
+    cgc_printf("[ERROR] Failed to parse input.\n");
     return -1;
   }
 
   switch (input->mode)
   {
     case MODE_EM:
-      if (embed_text(input->pkk_data, input->text_data, input->text_size) != 0)
-        printf("[ERROR] Failed to embed your message.\n");
+      if (cgc_embed_text(input->pkk_data, input->text_data, input->text_size) != 0)
+        cgc_printf("[ERROR] Failed to embed your message.\n");
       else
       {
-        output = output_pkk(input->pkk_data, &out_len);
+        output = cgc_output_pkk(input->pkk_data, &out_len);
         if (output)
         {
           transmit(STDOUT, output, out_len, NULL);
-          free(output);
+          cgc_free(output);
         }
       }
       break;
     case MODE_EX:
-      if (extract_text(input->pkk_data, text) != 0)
-        printf("[ERROR] Failed to extract the message.\n");
+      if (cgc_extract_text(input->pkk_data, text) != 0)
+        cgc_printf("[ERROR] Failed to extract the message.\n");
       else
       {
-        printf("Secret Text: %s\n", text);
+        cgc_printf("Secret Text: %s\n", text);
       }
       break;
     default:
-      printf("[ERROR] Invalid mode.\n");
+      cgc_printf("[ERROR] Invalid mode.\n");
       break;
   }
 
-  cleanup_input(input);
+  cgc_cleanup_input(input);
   return 0;
 }

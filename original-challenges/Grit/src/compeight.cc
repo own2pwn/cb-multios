@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,19 +23,19 @@
 #include <cstdint.h>
 #include "compeight.h"
 
-unsigned int CompressionEight::getId() const
+unsigned int cgc_CompressionEight::cgc_getId() const
 {
     return COMPRESSION_8;
 }
 
-unsigned int CompressionEight::getMaxBufferSize(const AudioTrack &track) const
+unsigned int cgc_CompressionEight::cgc_getMaxBufferSize(const cgc_AudioTrack &track) const
 {
-    return (track.getStereo() ? 2 : 1) * track.getLength() * sizeof(int8_t);
+    return (track.cgc_getStereo() ? 2 : 1) * track.cgc_getLength() * sizeof(cgc_int8_t);
 }
 
-static uint8_t encodeSample(int32_t sample)
+static cgc_uint8_t cgc_encodeSample(cgc_int32_t sample)
 {
-    uint8_t value;
+    cgc_uint8_t value;
     sample >>= 18;
     if (sample >= 0)
     {
@@ -66,9 +66,9 @@ static uint8_t encodeSample(int32_t sample)
     return value;
 }
 
-static int32_t decodeSample(uint8_t value)
+static cgc_int32_t cgc_decodeSample(cgc_uint8_t value)
 {
-    int32_t sample;
+    cgc_int32_t sample;
     int interval = value & 0xf;
 
     if ((value & 0x70) == 0x00)
@@ -94,29 +94,29 @@ static int32_t decodeSample(uint8_t value)
         return (-sample - 1) << 18;
 }
 
-void CompressionEight::compress(const AudioTrack &track, uint8_t *dest) const
+void cgc_CompressionEight::cgc_compress(const cgc_AudioTrack &track, cgc_uint8_t *dest) const
 {
-    for (unsigned int i = 0; i < track.getLength(); i++)
+    for (unsigned int i = 0; i < track.cgc_getLength(); i++)
     {
-        int32_t sample;
-        sample = track.getChannel(0)->getSample(i);
-        *dest++ = encodeSample(sample);
-        if (track.getStereo())
+        cgc_int32_t sample;
+        sample = track.cgc_getChannel(0)->cgc_getSample(i);
+        *dest++ = cgc_encodeSample(sample);
+        if (track.cgc_getStereo())
         {
-            sample = track.getChannel(1)->getSample(i);
-            *dest++ = encodeSample(sample);
+            sample = track.cgc_getChannel(1)->cgc_getSample(i);
+            *dest++ = cgc_encodeSample(sample);
         }
     }
 }
 
-void CompressionEight::decompress(AudioTrack &track, uint8_t *src) const
+void cgc_CompressionEight::cgc_decompress(cgc_AudioTrack &track, cgc_uint8_t *src) const
 {
-    for (unsigned int i = 0; i < track.getLength(); i++)
+    for (unsigned int i = 0; i < track.cgc_getLength(); i++)
     {
-        track.getChannel(0)->setSample(i, decodeSample(*src++));
-        if (track.getStereo())
+        track.cgc_getChannel(0)->cgc_setSample(i, cgc_decodeSample(*src++));
+        if (track.cgc_getStereo())
         {
-            track.getChannel(1)->setSample(i, decodeSample(*src++));
+            track.cgc_getChannel(1)->cgc_setSample(i, cgc_decodeSample(*src++));
         }
     }
 }

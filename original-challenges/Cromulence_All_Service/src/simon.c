@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,10 +36,10 @@ THE SOFTWARE.
 enum colors {RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET, NUM_COLORS};
 char *color_names[NUM_COLORS] = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
-int keep_receiving_until(char *dst, char delim, size_t max) {
+int cgc_keep_receiving_until(char *dst, char delim, cgc_size_t max) {
   char c;
-  size_t rx;
-  size_t len = 0;
+  cgc_size_t rx;
+  cgc_size_t len = 0;
   do {
     if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
       len = 0;
@@ -62,7 +62,7 @@ int keep_receiving_until(char *dst, char delim, size_t max) {
 }
 
 
-void simon_command(char *t) {
+void cgc_simon_command(char *t) {
 #ifdef PATCHED
   char response[MAX_ROUNDS + 1];
 #else
@@ -74,54 +74,54 @@ void simon_command(char *t) {
     return;
   }
 
-  if (strlen(t) < 8) {
+  if (cgc_strlen(t) < 8) {
     return;
   }
 
-  uint64_t seed = *(uint64_t *)t;
-  sprng(seed);
+  cgc_uint64_t seed = *(cgc_uint64_t *)t;
+  cgc_sprng(seed);
 
   int rounds = 0;
 
   while (rounds < MAX_ROUNDS) {
 
     if (rounds == BREAK_ROUND) {
-      printf("You're doing great! Continue?(y/n):");
+      cgc_printf("You're doing great! Continue?(y/n):");
       char response;
-      if (keep_receiving_until(&response, '\n', 1) != 1) {
+      if (cgc_keep_receiving_until(&response, '\n', 1) != 1) {
         return;
       }
       if (!((response == 'y') || (response == 'Y'))) {
-        printf("Good game\n");
+        cgc_printf("Good game\n");
         return;
       }
     }
 
-    int new_color = random_in_range(0, NUM_COLORS - 1);
+    int new_color = cgc_random_in_range(0, NUM_COLORS - 1);
     sequence[rounds++] = new_color;
 
     // Print sequence
-    printf("Simon says: ");
+    cgc_printf("Simon says: ");
     for (int i = 0; i < rounds; i++) {
-      printf("@s ", color_names[sequence[i]]);
+      cgc_printf("@s ", color_names[sequence[i]]);
     }
-    printf(":\n");
+    cgc_printf(":\n");
     // Read response
-    if (keep_receiving_until(response, '\n', rounds + 1) != rounds) {
+    if (cgc_keep_receiving_until(response, '\n', rounds + 1) != rounds) {
       return;
     }
 
     // Check response
     for (int i = 0; i < rounds; i++) {
       if (sequence[i] != (response[i] - '0')) {
-        printf("Simon says no fuzzing\n");
+        cgc_printf("Simon says no fuzzing\n");
         if (rounds >= 8) {
-          seed = *(uint64_t *)(response + i - 8);
+          seed = *(cgc_uint64_t *)(response + i - 8);
         }
-        sprng(seed);
+        cgc_sprng(seed);
         rounds = 0;
       }
     }
   }
-  printf("You Win!\n");
+  cgc_printf("You Win!\n");
 }

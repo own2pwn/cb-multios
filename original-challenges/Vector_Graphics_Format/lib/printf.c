@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,9 +30,9 @@ THE SOFTWARE.
 
 #define INT_BUF_MAX         (32)
 
-int putc( int c )
+int cgc_putc( int c )
 {
-    size_t tx_count;
+    cgc_size_t tx_count;
 
     if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
         _terminate(2);
@@ -40,7 +40,7 @@ int putc( int c )
     return c;
 }
 
-int vprintf( const char *fmt, va_list arg )
+int cgc_vprintf( const char *fmt, cgc_va_list arg )
 {
     int i = 0;
 
@@ -59,7 +59,7 @@ int vprintf( const char *fmt, va_list arg )
             switch ( *fmt )
             {
             case '$':
-                putc( '$' );
+                cgc_putc( '$' );
                 break;
 
             case 's':
@@ -68,7 +68,7 @@ int vprintf( const char *fmt, va_list arg )
 
                     while ( *str1 )
                     {
-                        putc( *str1 );
+                        cgc_putc( *str1 );
                         i++;
 
                         str1++;
@@ -88,7 +88,7 @@ int vprintf( const char *fmt, va_list arg )
                     if ( int_arg < 0 )
                     {
                         int_arg = -int_arg;
-                        putc( '-' );
+                        cgc_putc( '-' );
                         i++;
                     }
                     else if ( int_arg == 0 )
@@ -108,7 +108,7 @@ int vprintf( const char *fmt, va_list arg )
 
                     while ( char_count-- > 0 )
                     {
-                        putc( temp[char_count] );
+                        cgc_putc( temp[char_count] );
                         i++;
                     }
                 }
@@ -143,7 +143,7 @@ int vprintf( const char *fmt, va_list arg )
 
                     while ( char_count-- > 0 )
                     {
-                        putc( temp[char_count] );
+                        cgc_putc( temp[char_count] );
                         i++;
                     }
                 }
@@ -161,7 +161,7 @@ int vprintf( const char *fmt, va_list arg )
         }
         else
         {
-            putc( *fmt );
+            cgc_putc( *fmt );
             fmt++;
 
             i++;
@@ -171,13 +171,13 @@ int vprintf( const char *fmt, va_list arg )
     return (i);
 }
 
-int printf( const char *fmt, ... )
+int cgc_printf( const char *fmt, ... )
 {
-    va_list arg;
+    cgc_va_list arg;
     int done;
 
     va_start( arg, fmt );
-    done = vprintf( fmt, arg );
+    done = cgc_vprintf( fmt, arg );
     va_end( arg );
 
     return done;

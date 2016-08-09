@@ -44,102 +44,102 @@ extern "C"
 namespace CUtil
 {
 	// Easy means of declaring linked list data structures
-#define DLL_LINK( T ) DoubleLink<T>
-#define DLL_LIST( T, link ) DoubleListDeclare<T, offsetof( T, link )>
-#define DLL_PTR( T ) DoubleList<T> *
+#define DLL_LINK( T ) cgc_DoubleLink<T>
+#define DLL_LIST( T, link ) cgc_DoubleListDeclare<T, offsetof( T, link )>
+#define DLL_PTR( T ) cgc_DoubleList<T> *
 
 	template<class T>
-	class DoubleLink
+	class cgc_DoubleLink
 	{
 	public:
-		DoubleLink();
-		~DoubleLink();
+		cgc_DoubleLink();
+		~cgc_DoubleLink();
 
-		DoubleLink *GetNext( void ) { return m_pNext; };
-		DoubleLink *GetPrev( void ) { return m_pPrev; };
+		cgc_DoubleLink *cgc_GetNext( void ) { return m_pNext; };
+		cgc_DoubleLink *cgc_GetPrev( void ) { return m_pPrev; };
 
-		const DoubleLink* GetNext( void ) const { return m_pNext; };
-		const DoubleLink* GetPrev( void ) const { return m_pPrev; };
+		const cgc_DoubleLink* cgc_GetNext( void ) const { return m_pNext; };
+		const cgc_DoubleLink* cgc_GetPrev( void ) const { return m_pPrev; };
 
-		void Unlink( void );
+		void cgc_Unlink( void );
 
 	private:
-		template<class U> friend class DoubleList;
+		template<class U> friend class cgc_DoubleList;
 
-		DoubleLink<T> *m_pNext;
-		DoubleLink<T> *m_pPrev;
+		cgc_DoubleLink<T> *m_pNext;
+		cgc_DoubleLink<T> *m_pPrev;
 	};
 
 	template<class T>
-	class DoubleList
+	class cgc_DoubleList
 	{
 	public:
-		DoubleList();
-		~DoubleList();
+		cgc_DoubleList();
+		~cgc_DoubleList();
 
-		void AddFirst( T *pItem );
-		void AddLast( T *pItem );
+		void cgc_AddFirst( T *pItem );
+		void cgc_AddLast( T *pItem );
 
-		void AddAfter( T *pBefore, T *pItem );
+		void cgc_AddAfter( T *pBefore, T *pItem );
 
-		T *GetFirst( void );
-		T *GetLast( void );
+		T *cgc_GetFirst( void );
+		T *cgc_GetLast( void );
 
-		T *RemoveFirst( void );
-		T *RemoveLast( void );
+		T *cgc_RemoveFirst( void );
+		T *cgc_RemoveLast( void );
 
-		T *GetNext( T *pCur );
-		T *GetPrev( T *pPrev );
+		T *cgc_GetNext( T *pCur );
+		T *cgc_GetPrev( T *pPrev );
 
-		bool IsEmpty();
+		bool cgc_IsEmpty();
 
 		// Delets all items (calls delete operator)
-		void DeleteAll( void );
+		void cgc_DeleteAll( void );
 
 		// Clears the list items -- unlinks them but does not delete the elements!
-		void ClearAll( void );
+		void cgc_ClearAll( void );
 
 	private:
-		DoubleList( uint32_t offset );
+		cgc_DoubleList( cgc_uint32_t offset );
 
-		template<class U, uint32_t linkOffset> friend class DoubleListDeclare;
+		template<class U, cgc_uint32_t linkOffset> friend class cgc_DoubleListDeclare;
 
-		uint32_t m_listLinkOffset;	// Contains the offset for the list link member variable in the item class
+		cgc_uint32_t m_listLinkOffset;	// Contains the offset for the list link member variable in the item class
 
-		DoubleLink<T> m_first;
-		DoubleLink<T> m_last;
+		cgc_DoubleLink<T> m_first;
+		cgc_DoubleLink<T> m_last;
 	};
 
-	template<class T, uint32_t linkOffset>
-	class DoubleListDeclare : public DoubleList<T>
+	template<class T, cgc_uint32_t linkOffset>
+	class cgc_DoubleListDeclare : public cgc_DoubleList<T>
 	{
 	public:
-		DoubleListDeclare();
+		cgc_DoubleListDeclare();
 	};
 
 	// Declare a double list class with the appropriate link offset
-	template<class T, uint32_t linkOffset>
-	DoubleListDeclare<T, linkOffset>::DoubleListDeclare()
-		: DoubleList<T>( linkOffset )
+	template<class T, cgc_uint32_t linkOffset>
+	cgc_DoubleListDeclare<T, linkOffset>::cgc_DoubleListDeclare()
+		: cgc_DoubleList<T>( linkOffset )
 	{
 
 	}
 
 	template<class T>
-	DoubleLink<T>::DoubleLink( )
+	cgc_DoubleLink<T>::cgc_DoubleLink( )
 	        : m_pNext( NULL ), m_pPrev( NULL )
 	{
 
 	}
 
 	template<class T>
-	DoubleLink<T>::~DoubleLink()
+	cgc_DoubleLink<T>::~cgc_DoubleLink()
 	{
-		Unlink();
+		cgc_Unlink();
 	}
 
 	template<class T>
-	void DoubleLink<T>::Unlink( void )
+	void cgc_DoubleLink<T>::cgc_Unlink( void )
 	{
 	        if ( m_pPrev )
 	                m_pPrev->m_pNext = m_pNext;
@@ -152,7 +152,7 @@ namespace CUtil
 	}
 
 	template<class T>
-	DoubleList<T>::DoubleList()
+	cgc_DoubleList<T>::cgc_DoubleList()
 		: m_listLinkOffset( -1 )
 	{
 		m_first.m_pNext = &m_last;
@@ -163,7 +163,7 @@ namespace CUtil
 	}
 
 	template<class T>
-	DoubleList<T>::DoubleList( uint32_t offset )
+	cgc_DoubleList<T>::cgc_DoubleList( cgc_uint32_t offset )
 		: m_listLinkOffset( offset )
 	{
 		m_first.m_pNext = &m_last;
@@ -174,24 +174,24 @@ namespace CUtil
 	}
 
 	template<class T>
-	DoubleList<T>::~DoubleList()
+	cgc_DoubleList<T>::~cgc_DoubleList()
 	{
-	        DeleteAll();
+	        cgc_DeleteAll();
 	}
 
 	template<class T>
-	bool DoubleList<T>::IsEmpty( void )
+	bool cgc_DoubleList<T>::cgc_IsEmpty( void )
 	{
 		return (m_first.m_pNext == &m_last);
 	}
 
 	template<class T>
-	void DoubleList<T>::AddFirst( T *pItem )
+	void cgc_DoubleList<T>::cgc_AddFirst( T *pItem )
 	{
 	        if ( !pItem )
 	        	return;
 
-		DoubleLink<T> *pItemLink = (DoubleLink<T> *)((uint8_t*)pItem + m_listLinkOffset);
+		cgc_DoubleLink<T> *pItemLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pItem + m_listLinkOffset);
 
 		pItemLink->m_pNext = m_first.m_pNext;
 		pItemLink->m_pPrev = &m_first;
@@ -201,12 +201,12 @@ namespace CUtil
 	}
 
 	template<class T>
-	void DoubleList<T>::AddLast( T *pItem )
+	void cgc_DoubleList<T>::cgc_AddLast( T *pItem )
 	{
 		if ( !pItem )
 	        	return;
 
-		DoubleLink<T> *pItemLink = (DoubleLink<T> *)((uint8_t*)pItem + m_listLinkOffset);
+		cgc_DoubleLink<T> *pItemLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pItem + m_listLinkOffset);
 
 		pItemLink->m_pNext = &m_last;
 		pItemLink->m_pPrev = m_last.m_pPrev;
@@ -216,19 +216,19 @@ namespace CUtil
 	}
 
 	template<class T>
-	void DoubleList<T>::AddAfter( T *pBefore, T *pItem )
+	void cgc_DoubleList<T>::cgc_AddAfter( T *pBefore, T *pItem )
 	{
 		if ( !pItem )
 			return;
 
 		if ( !pBefore )
 		{
-			AddFirst( pItem );
+			cgc_AddFirst( pItem );
 			return;
 		}
 
-		DoubleLink<T> *pBeforeLink = (DoubleLink<T> *)((uint8_t*)pBefore + m_listLinkOffset);
-		DoubleLink<T> *pItemLink = (DoubleLink<T> *)((uint8_t*)pItem + m_listLinkOffset);
+		cgc_DoubleLink<T> *pBeforeLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pBefore + m_listLinkOffset);
+		cgc_DoubleLink<T> *pItemLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pItem + m_listLinkOffset);
 
 		pItemLink->m_pNext = pBeforeLink->m_pNext;
 		pItemLink->m_pPrev = pBeforeLink;
@@ -240,78 +240,78 @@ namespace CUtil
 	}
 
 	template<class T>
-	T *DoubleList<T>::GetFirst( void )
+	T *cgc_DoubleList<T>::cgc_GetFirst( void )
 	{
 		if ( m_first.m_pNext == &m_last )
 			return (NULL);
 		else
-			return (T*)((uint8_t*)m_first.m_pNext - m_listLinkOffset);
+			return (T*)((cgc_uint8_t*)m_first.m_pNext - m_listLinkOffset);
 	}
 
 	template<class T>
-	T *DoubleList<T>::GetLast( void )
+	T *cgc_DoubleList<T>::cgc_GetLast( void )
 	{
 		if ( m_last.m_pPrev == &m_first )
 			return (NULL);
 		else
-			return (T*)((uint8_t*)m_last.m_pPrev - m_listLinkOffset);
+			return (T*)((cgc_uint8_t*)m_last.m_pPrev - m_listLinkOffset);
 	}
 
 	template<class T>
-	T *DoubleList<T>::GetNext( T *pCur )
+	T *cgc_DoubleList<T>::cgc_GetNext( T *pCur )
 	{
 		if ( pCur == NULL )
 			return (NULL);
 
-		DoubleLink<T> *pItemLink = (DoubleLink<T> *)((uint8_t*)pCur + m_listLinkOffset);
-		DoubleLink<T> *pLink = pItemLink->GetNext();
+		cgc_DoubleLink<T> *pItemLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pCur + m_listLinkOffset);
+		cgc_DoubleLink<T> *pLink = pItemLink->cgc_GetNext();
 
 		if ( pLink == &m_last )
 			return (NULL);
 		else
-			return (T*)((uint8_t*)pLink - m_listLinkOffset);
+			return (T*)((cgc_uint8_t*)pLink - m_listLinkOffset);
 	}
 
 	template<class T>
-	T *DoubleList<T>::GetPrev( T *pCur )
+	T *cgc_DoubleList<T>::cgc_GetPrev( T *pCur )
 	{
 		if ( pCur == NULL )
 			return (NULL);
 
-		DoubleLink<T> *pItemLink = (DoubleLink<T> *)((uint8_t*)pCur + m_listLinkOffset);
-		DoubleLink<T> *pLink = pItemLink->GetPrev();
+		cgc_DoubleLink<T> *pItemLink = (cgc_DoubleLink<T> *)((cgc_uint8_t*)pCur + m_listLinkOffset);
+		cgc_DoubleLink<T> *pLink = pItemLink->cgc_GetPrev();
 
 		if ( pLink == &m_first )
 			return (NULL);
 		else
-			return (T*)((uint8_t*)pLink - m_listLinkOffset);
+			return (T*)((cgc_uint8_t*)pLink - m_listLinkOffset);
 	}
 
 	template<class T>
-	T *DoubleList<T>::RemoveFirst( void )
+	T *cgc_DoubleList<T>::cgc_RemoveFirst( void )
 	{
 		if ( m_first.m_pNext == &m_last )
 			return (NULL);
 		else
 		{
-			T *pItem = (T*)((uint8_t*)m_first.m_pNext - m_listLinkOffset);
+			T *pItem = (T*)((cgc_uint8_t*)m_first.m_pNext - m_listLinkOffset);
 
-			m_first.m_pNext->Unlink();
+			m_first.m_pNext->cgc_Unlink();
 
 			return (pItem);
 		}
 	}
 
 	template<class T>
-	T *DoubleList<T>::RemoveLast( void )
+	T *cgc_DoubleList<T>::cgc_RemoveLast( void )
 	{
 		if ( m_last.m_pPrev == &m_first )
 			return (NULL);
 		else
 		{
-			T *pItem = (T*)((uint8_t*)m_last.m_pPrev - m_listLinkOffset);
+			T *pItem = (T*)((cgc_uint8_t*)m_last.m_pPrev - m_listLinkOffset);
 
-			m_last.m_pPrev->Unlink();
+			m_last.m_pPrev->cgc_Unlink();
 
 			return (pItem);
 		}
@@ -319,18 +319,18 @@ namespace CUtil
 				
 	//         // Delets all items (calls delete operator)
 	template<class T>
-	void DoubleList<T>::DeleteAll( void )
+	void cgc_DoubleList<T>::cgc_DeleteAll( void )
 	{
-		while ( !IsEmpty() )
-			delete GetFirst();
+		while ( !cgc_IsEmpty() )
+			delete cgc_GetFirst();
 	}
 
 	// Clears the list items -- unlinks them but does not delete the elements!
 	template<class T>
-	void DoubleList<T>::ClearAll( void )
+	void cgc_DoubleList<T>::cgc_ClearAll( void )
 	{
-		while ( !IsEmpty() )
-			m_first.m_pNext->Unlink();
+		while ( !cgc_IsEmpty() )
+			m_first.m_pNext->cgc_Unlink();
 	}
 }
 

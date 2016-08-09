@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,12 +23,12 @@
 #pragma once
 #include "audiotrack.h"
 
-class FxReverb
+class cgc_FxReverb
 {
 public:
-    FxReverb(unsigned int delay);
-    void apply(AudioTrack &) const;
+    cgc_FxReverb(unsigned int delay);
+    void cgc_apply(cgc_AudioTrack &) const;
 private:
-    void apply(AudioStream &) const;
+    void cgc_apply(cgc_AudioStream &) const;
     unsigned int delay;
 };

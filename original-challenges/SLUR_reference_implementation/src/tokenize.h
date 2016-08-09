@@ -5,6 +5,6 @@
 
 DEF_LIST(tok, char *);
 
-tok_list *tokenize(char *expr);
+cgc_tok_list *cgc_tokenize(char *expr);
 
 #endif /* __TOKENIZE_H_ */

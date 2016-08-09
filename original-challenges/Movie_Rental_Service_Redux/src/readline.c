@@ -23,9 +23,9 @@
 
 #include <libcgc.h>
 
-int readline(int fd, char *line, size_t size)
+int cgc_readline(int fd, char *line, cgc_size_t size)
 {
-    size_t i, rx;
+    cgc_size_t i, rx;
 
     for (i = 0; i < size; i++) {
         if (receive(fd, &line[i], 1, &rx) != 0 || rx == 0)

@@ -5,28 +5,28 @@
 #include "rng.h"
 
 typedef struct {
-    uint32_t *data;
+    cgc_uint32_t *data;
     unsigned int length;
-} bn_t;
+} cgc_bn_t;
 
-void bn_init(bn_t *bn);
-int bn_init_bits(bn_t *bn, unsigned int bits);
-void bn_destroy(bn_t *bn);
-unsigned int bn_length(const bn_t *bn);
+void cgc_bn_init(cgc_bn_t *bn);
+int cgc_bn_init_bits(cgc_bn_t *bn, unsigned int bits);
+void cgc_bn_destroy(cgc_bn_t *bn);
+unsigned int cgc_bn_length(const cgc_bn_t *bn);
 
-int bn_const(bn_t *bn, uint32_t c);
-int bn_copy(bn_t *bn, const bn_t *src);
-int bn_from_bytes(bn_t *bn, const unsigned char *bytes, unsigned int n);
-void bn_to_bytes(const bn_t *bn, unsigned char *bytes, unsigned int n);
-int bn_random(bn_t *bn, const bn_t *max, rng_t *rng);
+int cgc_bn_const(cgc_bn_t *bn, cgc_uint32_t c);
+int cgc_bn_copy(cgc_bn_t *bn, const cgc_bn_t *src);
+int cgc_bn_from_bytes(cgc_bn_t *bn, const unsigned char *bytes, unsigned int n);
+void cgc_bn_to_bytes(const cgc_bn_t *bn, unsigned char *bytes, unsigned int n);
+int cgc_bn_cgc_random(cgc_bn_t *bn, const cgc_bn_t *max, cgc_rng_t *rng);
 
-void bn_slr(bn_t *dst, unsigned int cnt);
-int bn_mul(bn_t *dst, const bn_t *a, const bn_t *b);
-int bn_div(bn_t *Q, bn_t *R, const bn_t *N, const bn_t *D);
-int bn_modexp(bn_t *dst, const bn_t *b, const bn_t *e, const bn_t *m);
+void cgc_bn_slr(cgc_bn_t *dst, unsigned int cnt);
+int cgc_bn_mul(cgc_bn_t *dst, const cgc_bn_t *a, const cgc_bn_t *b);
+int cgc_bn_div(cgc_bn_t *Q, cgc_bn_t *R, const cgc_bn_t *N, const cgc_bn_t *D);
+int cgc_bn_modexp(cgc_bn_t *dst, const cgc_bn_t *b, const cgc_bn_t *e, const cgc_bn_t *m);
 
-int bn_cmp(const bn_t *a, const bn_t *b);
+int cgc_bn_cmp(const cgc_bn_t *a, const cgc_bn_t *b);
 
-int bn_self_test();
+int cgc_bn_self_test();
 
 #endif

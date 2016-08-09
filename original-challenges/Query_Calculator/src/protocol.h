@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Bryce Kerley <bk@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,5 +29,5 @@ THE SOFTWARE.
 #include "types.h"
 
 
-void protocol_send_str(char* str);
-void protocol_with_recv_string(void (^block)(uint16 len, char* str));
+void cgc_protocol_send_str(char* str);
+void cgc_protocol_with_recv_string(void (^block)(cgc_uint16 cgc_len, char* str));

@@ -5,16 +5,16 @@
 #include "data.h"
 #include "block.h"
 
-uint32* sparkles = NULL;
-uint32 sparkle_count = 0;
+cgc_uint32* sparkles = NULL;
+cgc_uint32 sparkle_count = 0;
 
-void sparks(data_package data) {
-  uint32 candidate_count;
+void cgc_sparks(cgc_data_package data) {
+  cgc_uint32 candidate_count;
 
-  uint32 bar_buf[data.size];
-  __block uint32* bar_buf_ptr = (uint32*)bar_buf;
+  cgc_uint32 bar_buf[data.size];
+  __block cgc_uint32* bar_buf_ptr = (cgc_uint32*)bar_buf;
 
-  read(&candidate_count, sizeof(candidate_count));
+  cgc_read(&candidate_count, sizeof(candidate_count));
 
   if ((candidate_count == 0 && sparkle_count == 0) ||
    (candidate_count > MAX_ALLOCATE_SIZE)) {
@@ -36,48 +36,48 @@ void sparks(data_package data) {
 
     if (alloc_error) _terminate(-1);
 
-    for (uint32 cur = 0; cur < sparkle_count; cur++) {
-      uint32 sparkle;
-      read(&sparkle, sizeof(sparkle));
+    for (cgc_uint32 cur = 0; cur < sparkle_count; cur++) {
+      cgc_uint32 sparkle;
+      cgc_read(&sparkle, sizeof(sparkle));
       sparkles[cur] = sparkle;
     }
   }
 
-  __block uint32 min = UINT32_MAX;
-  __block uint32 max = 0;
+  __block cgc_uint32 min = UINT32_MAX;
+  __block cgc_uint32 max = 0;
 
-  each(data, ^(uint32 idx, uint32 datum){
+  cgc_each(data, ^(cgc_uint32 idx, cgc_uint32 datum){
       if (datum > max) max = datum;
       if (datum < min) min = datum;
     });
 
   if (min == max) {
-    each(data, ^(uint32 cur, uint32 datum) {
+    cgc_each(data, ^(cgc_uint32 cur, cgc_uint32 datum) {
         bar_buf_ptr[cur] = sparkles[sparkle_count - 1];
       });
   } else {
-    double div = spark_divisor(max, min, sparkle_count);
+    double div = cgc_spark_divisor(max, min, sparkle_count);
     
-    each(data, ^(uint32 cur, uint32 datum){
-        uint32 idx = spark_pick_index(datum, min, div);
+    cgc_each(data, ^(cgc_uint32 cur, cgc_uint32 datum){
+        cgc_uint32 idx = cgc_spark_pick_index(datum, min, div);
       
         bar_buf_ptr[cur] = sparkles[idx];
       });
   }
 
-  transmit_all(STDOUT, (char*)(bar_buf), data.size * sizeof(uint32));
+  cgc_transmit_all(STDOUT, (char*)(bar_buf), data.size * sizeof(cgc_uint32));
 
   return;  
 }
 
-double spark_divisor(uint32 max, 
-                     uint32 min, 
-                     uint32 sparkle_count) {
+double cgc_spark_divisor(cgc_uint32 max, 
+                     cgc_uint32 min, 
+                     cgc_uint32 sparkle_count) {
   return ((double)max - (double)min) / (sparkle_count - 1);
   }
 
-uint32 spark_pick_index(uint32 datum,
-                        uint32 min,
+cgc_uint32 cgc_spark_pick_index(cgc_uint32 datum,
+                        cgc_uint32 min,
                         double divisor) {
-  return (uint32)(((double)datum - min) / divisor);
+  return (cgc_uint32)(((double)datum - min) / divisor);
 }

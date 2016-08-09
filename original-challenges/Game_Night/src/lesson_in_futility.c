@@ -27,28 +27,28 @@
 #include "games.h"
 
 static void
-defcon_1(void)
+cgc_defcon_1(void)
 {
-    printf("A strange game. The only winning move is not to play.\n");
+    cgc_printf("A strange game. The only winning move is not to play.\n");
 }
 
 static void
-defcon_2(void)
+cgc_defcon_2(void)
 {
     char buf[40] = { 0 };
     unsigned int lat, lon;
     void __attribute__((regparm(1))) (*fnptr)(unsigned int);
 
-    printf("Enter target latitude:\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    cgc_printf("Enter target latitude:\n");
+    if (cgc_fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
         return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &lat) == EXIT_FAILURE)
+    if (cgc_strlen(buf) == 0 || cgc_strtou(buf, 16, &lat) == EXIT_FAILURE)
         return;
 
-    printf("Enter target longitude:\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    cgc_printf("Enter target longitude:\n");
+    if (cgc_fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
         return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &lon) == EXIT_FAILURE)
+    if (cgc_strlen(buf) == 0 || cgc_strtou(buf, 16, &lon) == EXIT_FAILURE)
         return;
 
     fnptr = (void *)(lat | 0xf0000000);
@@ -56,10 +56,10 @@ defcon_2(void)
 }
 
 int
-do_lesson_in_futility(void)
+cgc_do_lesson_in_futility(void)
 {
 #ifdef PATCHED_2
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
+    if (!cgc_check_cookie(game_state.games.gallon_challenge.cookie))
         return EXIT_FAILURE;
 #endif
 
@@ -67,9 +67,9 @@ do_lesson_in_futility(void)
         game_state.defcon_level = 1;
 
     if (game_state.defcon_level == 1)
-        defcon_1();
+        cgc_defcon_1();
     else if (game_state.defcon_level == 2)
-        defcon_2();
+        cgc_defcon_2();
     else
         return EXIT_FAILURE;
 

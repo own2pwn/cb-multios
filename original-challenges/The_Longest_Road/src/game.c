@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 char current_max_road_len = 0;
 
-int getNextPieceNum()
+int cgc_getNextPieceNum()
 {
 	if (game_stack.top_element == -1)
 		return 0;
@@ -38,22 +38,22 @@ int getNextPieceNum()
 }
 
 // returns a piece with road info in it
-int create_random_piece(Piece *piece)
+int cgc_create_random_piece(cgc_Piece *piece)
 {
 	// check if we've hit our max limit first
 	if (game_stack.top_element >= MAX_PIECES)
 		return 33;
 
 	// top piece must be placed before another piece is placed
-	if (isTopPiecePlaced() == FAIL && game_stack.top_element > 0)
+	if (cgc_isTopPiecePlaced() == FAIL && game_stack.top_element > 0)
 		return 22;
 
-	piece->piece_num = getNextPieceNum();
+	piece->piece_num = cgc_getNextPieceNum();
 
 	if (game_stack.top_element == -1)
 	{
 		// this is the first piece, it will only have one road off of it
-		int side = random_in_range(1,3);
+		int side = cgc_random_in_range(1,3);
 		for (int i = 0; i < 4; i++)
 		{
 			if (i == side)
@@ -64,12 +64,12 @@ int create_random_piece(Piece *piece)
 	}
 	else
 	{
-		int side1 = random_in_range(0,3);
+		int side1 = cgc_random_in_range(0,3);
 		int side2 = side1;
 
 		// get another, different side for a road
 		while (side2 == side1)
-			side2 = random_in_range(0,3);
+			side2 = cgc_random_in_range(0,3);
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -83,19 +83,19 @@ int create_random_piece(Piece *piece)
 	if (game_stack.top_element < 0)
 		current_max_road_len++;
 
-	push_piece(piece);
+	cgc_push_piece(piece);
 	return SUCCESS;
 }
 
 // discards the piece on top of the stack if it hasn't been placed already
-int discard_piece()
+int cgc_discard_piece()
 {
 	// stack is empty, no discarding allowed
 	if (game_stack.top_element < 0)
 		return FAIL;
 
 	// if top piece has been placed, return false (can't discard this piece)
-	if (isTopPiecePlaced() == SUCCESS)
+	if (cgc_isTopPiecePlaced() == SUCCESS)
 		return FAIL;
 
 	game_stack.top_element--;
@@ -103,20 +103,20 @@ int discard_piece()
 }
 
 // connect pieceA/sideA to pieceB,sideB
-int connect_pieces(Piece *pieceA, char sideA, Piece *pieceB, char sideB)
+int cgc_connect_pieces(cgc_Piece *pieceA, char sideA, cgc_Piece *pieceB, char sideB)
 {
 	// only allow road to road connections
 	if (pieceA->sides[sideA].target != ROAD ||
 		pieceB->sides[sideB].target != ROAD)
 	{
 		// can't connect pieces on non-road sides
-		printf("a: @d, b: @d...", pieceA->sides[sideA].target, pieceB->sides[sideB].target);
+		cgc_printf("a: @d, b: @d...", pieceA->sides[sideA].target, pieceB->sides[sideB].target);
 		
 		for (int i = 0; i < game_stack.top_element; i++)
 		{
 			char str[10];
-			piece_to_pkt(&game_stack.stack[i], str);
-			printf("piece @d: @s", i, str);
+			cgc_piece_to_pkt(&game_stack.stack[i], str);
+			cgc_printf("piece @d: @s", i, str);
 		}
 
 		return FAIL;
@@ -135,7 +135,7 @@ int connect_pieces(Piece *pieceA, char sideA, Piece *pieceB, char sideB)
 
 // Save the given piece's values to the stack
 // this is used when a new piece is created 
-void push_piece(Piece *piece)
+void cgc_push_piece(cgc_Piece *piece)
 {
 	if (game_stack.top_element >= MAX_PIECES)
 		return;
@@ -152,7 +152,7 @@ void push_piece(Piece *piece)
 	game_stack.stack[game_stack.top_element].sides[3].side = piece->sides[3].side;
 }
 
-int get_max_road_len()
+int cgc_get_max_road_len()
 {
 	return current_max_road_len;
 }
@@ -160,7 +160,7 @@ int get_max_road_len()
 // check the stack to see if the top piece has been placed
 // return TRUE if placed
 // return FALSE if not placed
-int isTopPiecePlaced()
+int cgc_isTopPiecePlaced()
 {
 	if (game_stack.top_element < 0)
 		return SUCCESS; // no pieces yet
@@ -181,7 +181,7 @@ int isTopPiecePlaced()
 // turn the piece's data into a format we can send in the packet
 // piece is the incoming packet data
 // str is an allocated string at least 9 chars long
-void piece_to_pkt(Piece *piece, char* str)
+void cgc_piece_to_pkt(cgc_Piece *piece, char* str)
 {
 	str[0] = piece->piece_num + '0';
 	if (piece->sides[0].target == ROAD)
@@ -227,7 +227,7 @@ void piece_to_pkt(Piece *piece, char* str)
 }
 
 // look up piece by number and return a pointer to the struct
-int get_piece(char pce_num)
+int cgc_get_piece(char pce_num)
 {
 	// iterate through each piece and find one that matches pce_num
 	for (int i = 0; i <= game_stack.top_element; i++)

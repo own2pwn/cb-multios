@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,13 +23,13 @@
 #include <cstdlib.h>
 #include <cstring.h>
 
-#define DBG(x) fprintf(stderr, x "\n")
+#define DBG(x) cgc_fprintf(stderr, x "\n")
 
 #include "parser.h"
 
-static Node emptyNode(TokenType::Ignore);
+static cgc_Node emptyNode(TokenType::Ignore);
 
-static const char *typeToString(TokenType type)
+static const char *cgc_typeToString(TokenType type)
 {
 #define T(t) case TokenType::t: return #t ; 
     switch (type)
@@ -67,47 +67,47 @@ static const char *typeToString(TokenType type)
 #undef T
 }
 
-Parser::Parser(const char *input_)
+cgc_Parser::cgc_Parser(const char *input_)
     : input(input_), root(nullptr)
 {
-    length = strlen(input);
+    cgc_length = cgc_strlen(input);
 }
 
-Parser::~Parser()
+cgc_Parser::~cgc_Parser()
 {
     if (root)
-        Node::deleteTree(root);
+        cgc_Node::cgc_deleteTree(root);
 }
 
-bool Parser::parse()
+bool cgc_Parser::cgc_parse()
 {
-    auto indent = Token(Token(" "_T ++, TokenType::Optional), TokenType::Indent);
+    auto indent = cgc_Token(cgc_Token(" "_T ++, TokenType::Optional), TokenType::Indent);
 
-    auto ws = Token((" "_T | "\t"_T) ++);
-    auto optws = Token(ws, TokenType::Optional);
+    auto ws = cgc_Token((" "_T | "\t"_T) ++);
+    auto optws = cgc_Token(ws, TokenType::Optional);
 
-    auto op = Token(("+"_T | "-"_T | "*"_T | "/"_T | "<"_T | ">"_T | "="_T | "@"_T | "$"_T | "~"_T | "&"_T | "%"_T | "!"_T | "^"_T | "|"_T) ++, TokenType::Operator);
+    auto op = cgc_Token(("+"_T | "-"_T | "*"_T | "/"_T | "<"_T | ">"_T | "="_T | "@"_T | "$"_T | "~"_T | "&"_T | "%"_T | "!"_T | "^"_T | "|"_T) ++, TokenType::Operator);
 
     auto digit = "0"_T | "1"_T | "2"_T | "3"_T | "4"_T | "5"_T | "6"_T | "7"_T | "8"_T | "9"_T;
     auto hexdigit = (digit | "a"_T | "b"_T | "c"_T | "d"_T | "e"_T | "f"_T | "A"_T | "B"_T | "C"_T | "D"_T | "E"_T | "F"_T);
-    auto number = Token(
+    auto number = cgc_Token(
             ("0x"_T + (hexdigit++)) |
             (digit++),
         TokenType::Number);
 
     auto lowercase = "a"_T | "b"_T | "c"_T | "d"_T | "e"_T | "f"_T | "g"_T | "h"_T | "i"_T | "j"_T | "k"_T | "l"_T | "m"_T | "n"_T | "o"_T | "p"_T | "q"_T | "r"_T | "s"_T | "t"_T | "u"_T | "v"_T | "w"_T | "x"_T | "y"_T | "z"_T;
     auto uppercase = "A"_T | "B"_T | "C"_T | "D"_T | "E"_T | "F"_T | "G"_T | "H"_T | "I"_T | "J"_T | "K"_T | "L"_T | "M"_T | "N"_T | "O"_T | "P"_T | "Q"_T | "R"_T | "S"_T | "T"_T | "U"_T | "V"_T | "W"_T | "X"_T | "Y"_T | "Z"_T;
-    auto identifier = Token(
+    auto identifier = cgc_Token(
             (lowercase | uppercase) +
-            Token((lowercase | uppercase | digit | "_") ++, TokenType::Optional),
+            cgc_Token((lowercase | uppercase | digit | "_") ++, TokenType::Optional),
         TokenType::Identifier);
 
-    auto string = Token("\""_T + Token((lowercase | uppercase | "_"_T | ","_T | "."_T | ws), TokenType::Optional) + "\""_T, TokenType::String);
+    auto string = cgc_Token("\""_T + cgc_Token((lowercase | uppercase | "_"_T | ","_T | "."_T | ws), TokenType::Optional) + "\""_T, TokenType::String);
 
-    auto assignment = Token(TokenType::Assign);
-    auto call = Token(TokenType::Call);
-    auto expression = Token(TokenType::Expr);
-    expression.set(
+    auto assignment = cgc_Token(TokenType::Assign);
+    auto call = cgc_Token(TokenType::Call);
+    auto expression = cgc_Token(TokenType::Expr);
+    expression.cgc_set(
         ("("_T + optws + &expression + optws + ")"_T) |
         (&assignment) |
         (op + optws + &expression) |
@@ -116,231 +116,231 @@ bool Parser::parse()
         (string) |
         (identifier)
     );
-    auto after_expression = Token(
+    auto after_expression = cgc_Token(
         (optws + op + optws + &expression) |
         (ws + "or"_T + ws + &expression) |
         (ws + "and"_T + ws + &expression), TokenType::BinOp);
-    expression.setAfter(after_expression);
+    expression.cgc_setAfter(after_expression);
 
-    assignment.set(identifier + ws + "="_T + ws + &expression);
+    assignment.cgc_set(identifier + ws + "="_T + ws + &expression);
 
-    auto callarguments_ = Token((optws + "," + optws + &expression)++, TokenType::Optional);
-    auto callarguments = Token(&expression + callarguments_, TokenType::Optional);
-    call.set(
+    auto callarguments_ = cgc_Token((optws + "," + optws + &expression)++, TokenType::Optional);
+    auto callarguments = cgc_Token(&expression + callarguments_, TokenType::Optional);
+    call.cgc_set(
         identifier + optws + "(" + optws + callarguments + optws + ")"
     );
 
-    auto procarguments_ = Token((optws + "," + optws + identifier)++, TokenType::Optional);
-    auto procarguments = Token(identifier + procarguments_, TokenType::Optional);
+    auto procarguments_ = cgc_Token((optws + "," + optws + identifier)++, TokenType::Optional);
+    auto procarguments = cgc_Token(identifier + procarguments_, TokenType::Optional);
     auto proc =
         identifier + optws + "(" + optws + procarguments + optws + ")";
 
-    auto block = Token(TokenType::Repeat);
-    auto statement = Token(
-        //Token("discard"_T + ws + &expression, TokenType::Discard) |
-        Token("var"_T + ws + &assignment, TokenType::DeclareAssign) |
-        Token("var"_T + ws + identifier, TokenType::Declare) |
-        Token("block:"_T, TokenType::Block) |
-        Token("while"_T + ws + &expression + optws + ":", TokenType::While) |
-        Token("if"_T + ws + &expression + optws + ":", TokenType::If) |
-        Token("elif"_T + ws + &expression + optws + ":", TokenType::Elif) |
-        Token("else:"_T, TokenType::Else) |
-        Token("proc"_T + ws + proc + optws + ":", TokenType::Proc) |
-        Token("break", TokenType::Break) |
-        Token("return"_T + optws + Token(&expression, TokenType::Optional), TokenType::Return) |
+    auto block = cgc_Token(TokenType::Repeat);
+    auto statement = cgc_Token(
+        //cgc_Token("discard"_T + ws + &expression, TokenType::Discard) |
+        cgc_Token("var"_T + ws + &assignment, TokenType::DeclareAssign) |
+        cgc_Token("var"_T + ws + identifier, TokenType::Declare) |
+        cgc_Token("block:"_T, TokenType::Block) |
+        cgc_Token("while"_T + ws + &expression + optws + ":", TokenType::While) |
+        cgc_Token("if"_T + ws + &expression + optws + ":", TokenType::If) |
+        cgc_Token("elif"_T + ws + &expression + optws + ":", TokenType::Elif) |
+        cgc_Token("else:"_T, TokenType::Else) |
+        cgc_Token("proc"_T + ws + proc + optws + ":", TokenType::Proc) |
+        cgc_Token("break", TokenType::Break) |
+        cgc_Token("return"_T + optws + cgc_Token(&expression, TokenType::Optional), TokenType::Return) |
         &expression);
 
-    auto line = Token(
-        (Token(indent + statement, TokenType::Stmt) + optws + "\n"_T) |
+    auto line = cgc_Token(
+        (cgc_Token(indent + statement, TokenType::Stmt) + optws + "\n"_T) |
         (optws + "\n"_T));
 
-    block.set(line);
+    block.cgc_set(line);
 
     parsedLength = 0;
     root = nullptr;
-    bool result = block.parse(input, length, &root, &parsedLength);
+    bool result = block.cgc_parse(input, cgc_length, &root, &parsedLength);
     if (result)
     {
-        if (parsedLength != length)
+        if (parsedLength != cgc_length)
         {
-            DBG("unable to parse entire file");
+            DBG("unable to cgc_parse entire file");
             result = false;
         }
     }
     else
     {
-        DBG("unable to parse file");
+        DBG("unable to cgc_parse file");
     }
     return result;
 }
 
-Token::Token()
-    : type(TokenType::Ignore), indirect(nullptr), after(nullptr), literal(nullptr), length(0)
+cgc_Token::cgc_Token()
+    : type(TokenType::Ignore), indirect(nullptr), after(nullptr), literal(nullptr), cgc_length(0)
 {
 }
 
-Token::Token(TokenType type_)
-    : Token()
+cgc_Token::cgc_Token(TokenType type_)
+    : cgc_Token()
 {
     type = type_;
 }
 
-Token::Token(const char *str)
-    : Token()
+cgc_Token::cgc_Token(const char *str)
+    : cgc_Token()
 {
     literal = str;
-    length = strlen(str);
+    cgc_length = cgc_strlen(str);
 }
 
-Token::Token(const char *str, TokenType type_)
-    : Token(type_)
+cgc_Token::cgc_Token(const char *str, TokenType type_)
+    : cgc_Token(type_)
 {
     literal = str;
-    length = strlen(str);
+    cgc_length = cgc_strlen(str);
 }
 
-Token::Token(const char *str, size_t len, TokenType type_)
-    : Token(type_)
+cgc_Token::cgc_Token(const char *str, cgc_size_t len, TokenType type_)
+    : cgc_Token(type_)
 {
     literal = str;
-    length = len;
+    cgc_length = len;
 }
 
-Token::Token(const Token &child_, TokenType type_)
-    : Token(type_)
+cgc_Token::cgc_Token(const cgc_Token &child_, TokenType type_)
+    : cgc_Token(type_)
 {
-    children.resize(1);
+    children.cgc_resize(1);
     children[0] = child_;
 }
 
-Token Token::operator++(int ignored)
+cgc_Token cgc_Token::operator++(int ignored)
 {
-    return Token(*this, TokenType::Repeat);
+    return cgc_Token(*this, TokenType::Repeat);
 }
 
-Token Token::operator+(Token rhs)
+cgc_Token cgc_Token::operator+(cgc_Token rhs)
 {
-    Token t(TokenType::And);
-    t.children.resize(2);
+    cgc_Token t(TokenType::And);
+    t.children.cgc_resize(2);
     t.children[0] = *this;
     t.children[1] = rhs;
     return t;
 }
 
-Token Token::operator|(Token rhs)
+cgc_Token cgc_Token::operator|(cgc_Token rhs)
 {
-    Token t(TokenType::Or);
+    cgc_Token t(TokenType::Or);
     if (this->type == TokenType::Or)
     {
-        t.children.resize(this->children.length() + 1);
-        for (unsigned int i = 0; i < this->children.length(); i++)
+        t.children.cgc_resize(this->children.cgc_length() + 1);
+        for (unsigned int i = 0; i < this->children.cgc_length(); i++)
             t.children[i] = this->children[i];
-        t.children[this->children.length()] = rhs;
+        t.children[this->children.cgc_length()] = rhs;
     }
     else
     {
-        t.children.resize(2);
+        t.children.cgc_resize(2);
         t.children[0] = *this;
         t.children[1] = rhs;
     }
     return t;
 }
 
-Token Token::operator&()
+cgc_Token cgc_Token::operator&()
 {
-    Token t;
+    cgc_Token t;
     t.indirect = this;
     return t;
 }
 
-Token operator "" _T(const char *str, std::size_t len)
+cgc_Token operator "" _T(const char *str, STD_SIZE_T len)
 {
-    return Token(str, len, TokenType::Ignore);
+    return cgc_Token(str, len, TokenType::Ignore);
 }
 
-void Token::after_(const char *input, size_t length, Node **pNode, size_t *pLength) const
+void cgc_Token::cgc_after_(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const
 {
-    Node *node;
+    cgc_Node *node;
 
     if (after == nullptr)
         return;
 
-    size_t actual = 0;
-    if (after->parse(input, length, &node, &actual))
+    cgc_size_t actual = 0;
+    if (after->cgc_parse(input, cgc_length, &node, &actual))
     {
         if ((*pNode)->next != nullptr)
         {
-            DBG("in after_, pNode already has next");
+            DBG("in cgc_after_, pNode already has next");
         }
         (*pNode)->next = node->child;
         node->child = *pNode;
         *pLength += actual;
         *pNode = node;
-        node->setLiteral(input - node->child->length, node->child->length + actual);
+        node->cgc_setLiteral(input - node->child->cgc_length, node->child->cgc_length + actual);
     }
 }
 
-bool Token::parse_(const char *input, size_t length, Node **pNode, size_t *pLength) const
+bool cgc_Token::cgc_parse_(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const
 {
     if (indirect != nullptr)
     {
-        return indirect->parse(input, length, pNode, pLength);
+        return indirect->cgc_parse(input, cgc_length, pNode, pLength);
     }
     else if (literal != nullptr)
     {
-        if (length < this->length)
+        if (cgc_length < this->cgc_length)
             return false;
-        if (memcmp(input, literal, this->length) != 0)
+        if (cgc_memcmp(input, literal, this->cgc_length) != 0)
             return false;
         if (type != TokenType::Ignore && type != TokenType::Optional && type != TokenType::Repeat)
         {
-            *pNode = new Node(type);
-            (*pNode)->setLiteral(input, this->length);
+            *pNode = new cgc_Node(type);
+            (*pNode)->cgc_setLiteral(input, this->cgc_length);
         }
         else
         {
             *pNode = nullptr;
         }
-        *pLength += this->length;
+        *pLength += this->cgc_length;
         return true;
     }
-    else if (children.length())
+    else if (children.cgc_length())
     {
         if (type == TokenType::Or)
         {
-            for (unsigned int i = 0; i < children.length(); i++)
+            for (unsigned int i = 0; i < children.cgc_length(); i++)
             {
-                if (children[i].parse(input, length, pNode, pLength))
+                if (children[i].cgc_parse(input, cgc_length, pNode, pLength))
                     return true;
             }
             return false;
         }
         else if (type == TokenType::And)
         {
-            size_t old = *pLength;
-            if (!children[0].parse(input, length, pNode, pLength))
+            cgc_size_t old = *pLength;
+            if (!children[0].cgc_parse(input, cgc_length, pNode, pLength))
                 return false;
             if (*pNode)
             {
-                Node *node = *pNode;
+                cgc_Node *node = *pNode;
                 while (node->next != nullptr) node = node->next;
-                return children[1].parse(input + *pLength - old, length - (*pLength - old), &node->next, pLength);
+                return children[1].cgc_parse(input + *pLength - old, cgc_length - (*pLength - old), &node->next, pLength);
             }
             else
-                return children[1].parse(input + *pLength - old, length - (*pLength - old), pNode, pLength);
+                return children[1].cgc_parse(input + *pLength - old, cgc_length - (*pLength - old), pNode, pLength);
         }
 
         if (type == TokenType::Ignore || type == TokenType::Optional || type == TokenType::Repeat)
-            return children[0].parse(input, length, pNode, pLength);
+            return children[0].cgc_parse(input, cgc_length, pNode, pLength);
 
-        Node *node;
-        size_t actual = 0;
-        if (!children[0].parse(input, length, &node, &actual))
+        cgc_Node *node;
+        cgc_size_t actual = 0;
+        if (!children[0].cgc_parse(input, cgc_length, &node, &actual))
             return false;
 
-        *pNode = new Node(type);
+        *pNode = new cgc_Node(type);
         (*pNode)->child = node;
-        (*pNode)->setLiteral(input, actual);
+        (*pNode)->cgc_setLiteral(input, actual);
         *pLength += actual;
         return true;
     }
@@ -351,37 +351,37 @@ bool Token::parse_(const char *input, size_t length, Node **pNode, size_t *pLeng
     }
 }
 
-bool Token::parse(const char *input, size_t length, Node **pNode, size_t *pLength) const
+bool cgc_Token::cgc_parse(const char *input, cgc_size_t cgc_length, cgc_Node **pNode, cgc_size_t *pLength) const
 {
     bool result;
-    size_t actual, old = *pLength;
-    Node *node;
+    cgc_size_t actual, old = *pLength;
+    cgc_Node *node;
 
     if (type == TokenType::Optional)
     {
         actual = 0;
-        result = parse_(input, length, &node, &actual);
+        result = cgc_parse_(input, cgc_length, &node, &actual);
         if (result)
         {
             *pNode = node;
             *pLength += actual;
             input += actual;
-            length -= actual;
+            cgc_length -= actual;
         }
         else
         {
             *pNode = nullptr;
         }
-        after_(input, length, pNode, pLength);
+        cgc_after_(input, cgc_length, pNode, pLength);
         return true;
     }
     else if (type == TokenType::Repeat)
     {
         bool success = false;
-        Node *head = nullptr, *tail = nullptr;
+        cgc_Node *head = nullptr, *tail = nullptr;
         do {
             actual = 0;
-            result = parse_(input, length, &node, &actual);
+            result = cgc_parse_(input, cgc_length, &node, &actual);
             if (result)
             {
                 if (node != nullptr)
@@ -392,7 +392,7 @@ bool Token::parse(const char *input, size_t length, Node **pNode, size_t *pLengt
                         tail = tail->next = node;
                 }
                 input += actual;
-                length -= actual;
+                cgc_length -= actual;
                 *pLength += actual;
                 success = true;
             }
@@ -400,14 +400,14 @@ bool Token::parse(const char *input, size_t length, Node **pNode, size_t *pLengt
 
         *pNode = head;
         if (success)
-            after_(input, length, pNode, pLength);
+            cgc_after_(input, cgc_length, pNode, pLength);
         return success;
     }
     else
     {
-        if (parse_(input, length, pNode, pLength))
+        if (cgc_parse_(input, cgc_length, pNode, pLength))
         {
-            after_(input + *pLength - old, length - (*pLength - old), pNode, pLength);
+            cgc_after_(input + *pLength - old, cgc_length - (*pLength - old), pNode, pLength);
             return true;
         }
         else
@@ -415,56 +415,56 @@ bool Token::parse(const char *input, size_t length, Node **pNode, size_t *pLengt
     }
 }
 
-void Token::set(const Token &child)
+void cgc_Token::cgc_set(const cgc_Token &child)
 {
-    children.resize(1);
+    children.cgc_resize(1);
     children[0] = child;
 }
 
-void Token::setAfter(Token &after)
+void cgc_Token::cgc_setAfter(cgc_Token &after)
 {
-    this->after = reinterpret_cast<Token *>(&reinterpret_cast<char&>(after));
+    this->after = reinterpret_cast<cgc_Token *>(&reinterpret_cast<char&>(after));
 }
 
-Node::Node(TokenType type_)
+cgc_Node::cgc_Node(TokenType type_)
     : literal(nullptr), type(type_), child(nullptr), next(nullptr)
 {
 }
 
-Node::~Node()
+cgc_Node::~cgc_Node()
 {
     if (literal)
         delete[] literal;
 }
 
-void Node::deleteTree(Node *root)
+void cgc_Node::cgc_deleteTree(cgc_Node *root)
 {
     if (root->child)
-        deleteTree(root->child);
+        cgc_deleteTree(root->child);
 
-    Node *next = root->next;
+    cgc_Node *next = root->next;
     delete root;
     if (next)
-        deleteTree(next);
+        cgc_deleteTree(next);
 }
 
-void Node::dump(unsigned int level)
+void cgc_Node::cgc_dump(unsigned int level)
 {
     for (unsigned int i = 0; i < level * 2; i++)
-        fprintf(stderr, " ");
-    fprintf(stderr, "%s - (%d) %s\n", typeToString(type), length, literal);
+        cgc_fprintf(stderr, " ");
+    cgc_fprintf(stderr, "%s - (%d) %s\n", cgc_typeToString(type), cgc_length, literal);
     if (child != nullptr)
-        child->dump(level + 1);
+        child->cgc_dump(level + 1);
     if (next != nullptr)
-        next->dump(level);
+        next->cgc_dump(level);
 }
 
-void Node::setLiteral(const char *start, size_t length)
+void cgc_Node::cgc_setLiteral(const char *start, cgc_size_t cgc_length)
 {
     if (literal)
         delete[] literal;
-    literal = new char [length + 1];
-    memcpy(literal, start, length);
-    literal[length] = 0;
-    this->length = length;
+    literal = new char [cgc_length + 1];
+    cgc_memcpy(literal, start, cgc_length);
+    literal[cgc_length] = 0;
+    this->cgc_length = cgc_length;
 }

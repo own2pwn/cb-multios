@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -48,30 +48,30 @@ THE SOFTWARE.
 #define MAX_FILESIZE      1024
 
 typedef struct file_s {
-  uint16_t fileID;
+  cgc_uint16_t fileID;
   char filename[MAX_FILENAME_LEN];
-  uint16_t numBytes;
-  uint8_t isOpen;
-  uint8_t *bytes;
-} fs_file;
+  cgc_uint16_t numBytes;
+  cgc_uint8_t isOpen;
+  cgc_uint8_t *bytes;
+} cgc_fs_file;
 
 typedef struct tree_s {
-  uint32_t treeID; 
+  cgc_uint32_t treeID; 
   char treeName[MAX_TREENAME_LEN];
   char serviceType[MAX_SERVICE_NAME];
-  fs_file *files[MAX_FILES_PER_TREE];
-} fs_tree;
+  cgc_fs_file *files[MAX_FILES_PER_TREE];
+} cgc_fs_tree;
 
-extern fs_tree allTrees[MAX_TREES];
+extern cgc_fs_tree allTrees[MAX_TREES];
 extern char serviceTypes[MAX_SERVICE_TYPES][MAX_SERVICE_NAME];
 
-void InitializeFileSystem();
-fs_file *CreateFile(fs_tree *tree, uint8_t *filename, uint32_t userID, uint32_t mode);
-void CloseFile(fs_file *file);
-fs_file *FindFileByName(fs_tree *tree, uint8_t *filename);
-int ReadFile(uint8_t *dest, fs_file *file, uint16_t offset, uint16_t length);
-int WriteFile(fs_file *file, uint8_t *source, uint16_t offset, uint16_t length);
-fs_tree *FindTreeByPath(uint32_t userID, uint8_t *path, uint8_t *service);
+void cgc_InitializeFileSystem();
+cgc_fs_file *cgc_CreateFile(cgc_fs_tree *tree, cgc_uint8_t *filename, cgc_uint32_t userID, cgc_uint32_t mode);
+void cgc_CloseFile(cgc_fs_file *file);
+cgc_fs_file *cgc_FindFileByName(cgc_fs_tree *tree, cgc_uint8_t *filename);
+int cgc_ReadFile(cgc_uint8_t *dest, cgc_fs_file *file, cgc_uint16_t offset, cgc_uint16_t length);
+int cgc_WriteFile(cgc_fs_file *file, cgc_uint8_t *source, cgc_uint16_t offset, cgc_uint16_t length);
+cgc_fs_tree *cgc_FindTreeByPath(cgc_uint32_t userID, cgc_uint8_t *path, cgc_uint8_t *service);
 
 #endif
 

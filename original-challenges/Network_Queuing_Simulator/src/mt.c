@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,7 +30,7 @@ unsigned int mt_state[624];
 int idx = 0;
 
 // seed the PRNG
-void init_mt(unsigned int seed) {
+void cgc_init_mt(unsigned int seed) {
 	int i;
 
 	mt_state[0] = seed & 0xffffffffUL;
@@ -39,8 +39,8 @@ void init_mt(unsigned int seed) {
 	}
 }
 
-// generate the state array (automatically called the first time rand_mt is called)
-void gen_mt_state(void) {
+// generate the state array (automatically called the first time cgc_rand_mt is called)
+void cgc_gen_mt_state(void) {
 	int i;
 	unsigned int t;
 
@@ -54,11 +54,11 @@ void gen_mt_state(void) {
 }
 
 // generate a random unsigned int
-unsigned int rand_mt(void) {
+unsigned int cgc_rand_mt(void) {
 	unsigned int ret;
 
 	if (idx == 0) {
-		gen_mt_state();
+		cgc_gen_mt_state();
 	}
 
 	ret = mt_state[idx];

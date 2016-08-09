@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,11 +23,11 @@
 #include <libcgc.h>
 #include "libc.h"
 
-ssize_t
-read_all(int fd, void *buf, size_t n)
+cgc_ssize_t
+cgc_read_all(int fd, void *buf, cgc_size_t n)
 {
-    ssize_t ret = 0;
-    size_t read;
+    cgc_ssize_t ret = 0;
+    cgc_size_t read;
 
     while (n) {
         if (receive(fd, (char *)(buf + ret), n, &read) != 0)
@@ -40,11 +40,11 @@ read_all(int fd, void *buf, size_t n)
     return ret;
 }
 
-ssize_t
-write_all(int fd, void *buf, size_t n)
+cgc_ssize_t
+cgc_write_all(int fd, void *buf, cgc_size_t n)
 {
-    ssize_t ret = 0;
-    size_t written;
+    cgc_ssize_t ret = 0;
+    cgc_size_t written;
 
     while (n) {
         if (transmit(fd, (char *)(buf + ret), n, &written) != 0)
@@ -57,15 +57,15 @@ write_all(int fd, void *buf, size_t n)
     return ret;
 }
 
-ssize_t
-read_line(int fd, char **buf)
+cgc_ssize_t
+cgc_read_line(int fd, char **buf)
 {
     // This should be placed in BSS
     static char scratch_page[PAGE_SIZE];
 
     char c = '\0';
-    ssize_t ret = 0;
-    size_t read;
+    cgc_ssize_t ret = 0;
+    cgc_size_t read;
 
     if (!buf)
         return -1;
@@ -78,15 +78,15 @@ read_line(int fd, char **buf)
     }
 
     // Null-terminate string
-    if ((*buf = calloc(ret + 1)) == NULL)
+    if ((*buf = cgc_calloc(ret + 1)) == NULL)
         return -1;
 
-    memcpy(*buf, scratch_page, ret);
+    cgc_memcpy(*buf, scratch_page, ret);
     return ret;
 }
 
 void *
-memset(void *ptr_, int val, size_t n)
+cgc_memset(void *ptr_, int val, cgc_size_t n)
 {
     unsigned char *ptr = ptr_;
     while (n--)
@@ -95,7 +95,7 @@ memset(void *ptr_, int val, size_t n)
 }
 
 void *
-memcpy(void *dst_, const void *src_, size_t n)
+cgc_memcpy(void *dst_, const void *src_, cgc_size_t n)
 {
     unsigned char *dst = dst_;
     const unsigned char *src = src_;
@@ -105,7 +105,7 @@ memcpy(void *dst_, const void *src_, size_t n)
 }
 
 void *
-memmove(void *dst_, const void *src_, size_t n)
+cgc_memmove(void *dst_, const void *src_, cgc_size_t n)
 {
     unsigned char *dst = dst_;
     const unsigned char *src = src_;
@@ -123,7 +123,7 @@ memmove(void *dst_, const void *src_, size_t n)
 }
 
 int
-memcmp(const void *a_, const void *b_, size_t n)
+cgc_memcmp(const void *a_, const void *b_, cgc_size_t n)
 {
     const unsigned char *a = a_;
     const unsigned char *b = b_;
@@ -135,25 +135,25 @@ memcmp(const void *a_, const void *b_, size_t n)
     return 0;
 }
 
-size_t
-strlen(const char *s) {
-    size_t ret = 0;
+cgc_size_t
+cgc_strlen(const char *s) {
+    cgc_size_t ret = 0;
     while (*s++)
         ret++;
     return ret;
 }
 
-size_t
-strnlen(const char *s, size_t n)
+cgc_size_t
+cgc_strnlen(const char *s, cgc_size_t n)
 {
-    size_t ret = 0;
+    cgc_size_t ret = 0;
     while (n-- && *s++)
         ret++;
     return ret;
 }
 
 int
-strcmp(const char *a, const char *b)
+cgc_strcmp(const char *a, const char *b)
 {
     for (; *a && *a == *b; a++, b++)
         ;
@@ -161,7 +161,7 @@ strcmp(const char *a, const char *b)
 }
 
 int
-strncmp(const char *a, const char *b, size_t n)
+cgc_strncmp(const char *a, const char *b, cgc_size_t n)
 {
     for (; --n && *a && *a == *b; a++, b++)
         ;
@@ -169,9 +169,9 @@ strncmp(const char *a, const char *b, size_t n)
 }
 
 char *
-strcpy(char *dst, const char *src)
+cgc_strcpy(char *dst, const char *src)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (; src[i]; i++)
         dst[i] = src[i];
     dst[i] = '\0';
@@ -179,9 +179,9 @@ strcpy(char *dst, const char *src)
 }
 
 char *
-strncpy(char *dst, const char *src, size_t n)
+cgc_strncpy(char *dst, const char *src, cgc_size_t n)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (; i < n && src[i]; i++)
         dst[i] = src[i];
     for (; i < n; i++)
@@ -191,26 +191,26 @@ strncpy(char *dst, const char *src, size_t n)
 }
 
 char *
-strcat(char *dst, const char *src)
+cgc_strcat(char *dst, const char *src)
 {
     char *ret = dst;
-    dst += strlen(dst);
-    strcpy(dst, src);
+    dst += cgc_strlen(dst);
+    cgc_strcpy(dst, src);
     return ret;
 }
 
 char *
-strncat(char *dst, const char *src, size_t n)
+cgc_strncat(char *dst, const char *src, cgc_size_t n)
 {
     char *ret = dst;
-    dst += strlen(dst);
-    strncpy(dst, src, n);
+    dst += cgc_strlen(dst);
+    cgc_strncpy(dst, src, n);
     dst[n] = '\0';
     return ret;
 }
 
 char *
-strchr(const char *s, char c)
+cgc_strchr(const char *s, char c)
 {
     for (; *s; s++)
         if (*s == c)
@@ -219,7 +219,7 @@ strchr(const char *s, char c)
 }
 
 char *
-strrchr(const char *s, char c)
+cgc_strrchr(const char *s, char c)
 {
     const char *orig_s = s;
     for (; *s; s++)
@@ -231,25 +231,25 @@ strrchr(const char *s, char c)
 }
 
 char *
-strtok(char *s, char d)
+cgc_strtok(char *s, char d)
 {
     static char *prev = NULL;
     char *token, *ret;
     
-    if (s == NULL && (prev == NULL || strlen(prev) == 0))
+    if (s == NULL && (prev == NULL || cgc_strlen(prev) == 0))
         return NULL;
 
-    if (prev == NULL || strlen(prev) == 0)
+    if (prev == NULL || cgc_strlen(prev) == 0)
         prev = s;
 
     while (*prev == d)
         prev++;
 
-    if (strlen(prev) == 0)
+    if (cgc_strlen(prev) == 0)
         return NULL;
 
     ret = prev;
-    if ((token = strchr(prev, d)) != NULL) {
+    if ((token = cgc_strchr(prev, d)) != NULL) {
         *token = '\0';
         prev = token + 1;
     } else {
@@ -260,7 +260,7 @@ strtok(char *s, char d)
 }
 
 char
-to_hex(unsigned char v)
+cgc_to_hex(unsigned char v)
 {
     if (v < 10)
         return '0' + v;
@@ -271,7 +271,7 @@ to_hex(unsigned char v)
 }
 
 unsigned char
-to_bin(char c)
+cgc_to_bin(char c)
 {
     if (c >= '0' && c <= '9')
         return c - '0';
@@ -284,42 +284,42 @@ to_bin(char c)
 }
 
 char *
-bin_to_hex(char *dst, const void *src_, size_t n)
+cgc_bin_to_hex(char *dst, const void *src_, cgc_size_t n)
 {
-    size_t i;
+    cgc_size_t i;
     const unsigned char *src = src_;
 
     for (i = 0; i < n; i++) {
-        *dst++ = to_hex(src[i] >> 4);
-        *dst++ = to_hex(src[i] & 0xf);
+        *dst++ = cgc_to_hex(src[i] >> 4);
+        *dst++ = cgc_to_hex(src[i] & 0xf);
     }
         
     return dst;
 }
 
 unsigned int
-hex_to_uint(char *s)
+cgc_hex_to_uint(char *s)
 {
     unsigned int ret = 0;
-    size_t i;
+    cgc_size_t i;
 
     for (i = 4; i > 0; i--) {
-        ret = (ret << 8) | (to_bin(s[2 * (i - 1)]) << 4);
-        ret |= to_bin(s[2 * (i - 1) + 1]);
+        ret = (ret << 8) | (cgc_to_bin(s[2 * (i - 1)]) << 4);
+        ret |= cgc_to_bin(s[2 * (i - 1) + 1]);
     }
 
     return ret;
 }
 
 char *
-itoa(int val, char *s)
+cgc_itoa(int val, char *s)
 {
     char tmp = '\0';
     char *t = s;
     char *ret = s;
 
     if (val == 0)
-        return strcpy(s, "0");
+        return cgc_strcpy(s, "0");
 
     if (val < 0) {
         s++;
@@ -1231,7 +1231,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user, con
                }
                case 's': {
                   const char *s_arg = (const char *)args[field_arg];
-                  int len = strlen(s_arg);
+                  int len = cgc_strlen(s_arg);
                   if (width_value == -1) {
                      //by default min length is the entire string
                      width_value = len;

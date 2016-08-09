@@ -26,5 +26,5 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-int receive_bytes ( char *buffer, size_t count);
-size_t receive_until( char *buffer, char delim, size_t limit );
+int receive_bytes ( char *buffer, cgc_size_t count);
+cgc_size_t receive_until( char *buffer, char delim, cgc_size_t limit );

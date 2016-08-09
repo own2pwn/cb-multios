@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,9 +30,9 @@
 
 int main(void) {
     int ret;
-    size_t size;
+    cgc_size_t size;
 
-    malloc_init();
+    cgc_malloc_init();
     
     
 
@@ -42,29 +42,29 @@ int main(void) {
 
 
     char * welcome = "Welcome to the new chemical discovery service!";
-    transmit_line_nl(welcome);
+    cgc_transmit_line_nl(welcome);
     while (1) {
 
 
 
-        char * cmd_buf = calloc(1, MAX_LINE_SZ);
+        char * cmd_buf = cgc_calloc(1, MAX_LINE_SZ);
         if(cmd_buf != NULL){
-            size_t line_sz = read_ascii_line(STDIN, cmd_buf, MAX_LINE_SZ);
+            cgc_size_t line_sz = cgc_read_ascii_line(STDIN, cmd_buf, MAX_LINE_SZ);
             if(line_sz < 3){
-                free(cmd_buf);
+                cgc_free(cmd_buf);
                 continue;
             }
             
             int (*cmd_func)(char *);
-            cmd_func = get_command_from_input(cmd_buf);
-            // strtok with NULL has 2nd argument
+            cmd_func = cgc_get_command_from_input(cmd_buf);
+            // cgc_strtok with NULL has 2nd argument
             // first arg is at the head of cmd buf...
 
 
             if(cmd_func == NULL)
                 _terminate(10);
             // after tokenized
-            int args_offset = strlen(cmd_buf);
+            int args_offset = cgc_strlen(cmd_buf);
             if(args_offset > MAX_LINE_SZ)
                 _terminate(14);
 
@@ -74,7 +74,7 @@ int main(void) {
                 _terminate(cmd_result);
             }
 
-            free(cmd_buf);
+            cgc_free(cmd_buf);
         }else{
             continue;
         }

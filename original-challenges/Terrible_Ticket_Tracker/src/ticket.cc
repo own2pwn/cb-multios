@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,100 +28,100 @@
 
 #define MAX_PRIORITY CRITICAL
 
-static uint32_t g_ticket_id = 1;
+static cgc_uint32_t g_ticket_id = 1;
 
-Ticket *Ticket::GetTicket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority)
+cgc_Ticket *cgc_Ticket::cgc_GetTicket(char *cgc_email, char *desc, cgc_uint32_t cgc_entry_time, cgc_uint32_t cgc_duration, cgc_PRIORITY cgc_priority)
 {
-    if (!email || !desc || !entry_time || !priority || priority > MAX_PRIORITY)
-        return (Ticket *)NULL;
+    if (!cgc_email || !desc || !cgc_entry_time || !cgc_priority || cgc_priority > MAX_PRIORITY)
+        return (cgc_Ticket *)NULL;
 
-    return new Ticket(email, desc, entry_time, duration, priority);
+    return new cgc_Ticket(cgc_email, desc, cgc_entry_time, cgc_duration, cgc_priority);
 }
 
-void Ticket::DeleteTicket(Ticket *ticket)
+void cgc_Ticket::cgc_DeleteTicket(cgc_Ticket *ticket)
 {
     if (ticket)
         delete ticket;
 }
 
-Ticket::Ticket(char *email, char *desc, uint32_t entry_time, uint32_t duration, PRIORITY priority)
+cgc_Ticket::cgc_Ticket(char *cgc_email, char *desc, cgc_uint32_t cgc_entry_time, cgc_uint32_t cgc_duration, cgc_PRIORITY cgc_priority)
 {
     id_ = g_ticket_id++;
-    uint32_t email_len = strlen(email) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(email);
-    uint32_t desc_len = strlen(desc) >= MAX_EMAIL ? MAX_EMAIL - 1 : strlen(desc);
-    memset(email_, 0, sizeof(email_));
-    memset(desc_, 0, sizeof(desc_));
-    memcpy(email_,  email, email_len);
-    memcpy(desc_,  desc, desc_len);
-    entry_time_ = entry_time;
+    cgc_uint32_t email_len = cgc_strlen(cgc_email) >= MAX_EMAIL ? MAX_EMAIL - 1 : cgc_strlen(cgc_email);
+    cgc_uint32_t desc_len = cgc_strlen(desc) >= MAX_EMAIL ? MAX_EMAIL - 1 : cgc_strlen(desc);
+    cgc_memset(email_, 0, sizeof(email_));
+    cgc_memset(desc_, 0, sizeof(desc_));
+    cgc_memcpy(email_,  cgc_email, email_len);
+    cgc_memcpy(desc_,  desc, desc_len);
+    entry_time_ = cgc_entry_time;
     status_ = OPEN;
-    duration_ = duration;
-    priority_ = priority;
+    duration_ = cgc_duration;
+    priority_ = cgc_priority;
 }
 
-Ticket::~Ticket()
+cgc_Ticket::~cgc_Ticket()
 {
 }
 
-void Ticket::UpdateStatus(STATUS status)
+void cgc_Ticket::cgc_UpdateStatus(cgc_STATUS cgc_status)
 {
-    status_ = status;
+    status_ = cgc_status;
 }
 
-void Ticket::WorkOn()
+void cgc_Ticket::cgc_WorkOn()
 {
   if (duration_ > 0)
     --duration_;
 }
 
-bool Ticket::CheckDone(void)
+bool cgc_Ticket::cgc_CheckDone(void)
 {
   return duration_ == 0;
 }
 
 
-void Ticket::Display()
+void cgc_Ticket::cgc_Display()
 {
-  printf("%d" EOL, id());
-  printf("%s" EOL, email());
-  printf("%s" EOL, description());
-  printf("%d" EOL, status());
-  printf("%d" EOL, priority());
-  printf("%d" EOL, entry_time());
-  printf("%d" EOL, duration());
+  cgc_printf("%d" EOL, cgc_id());
+  cgc_printf("%s" EOL, cgc_email());
+  cgc_printf("%s" EOL, cgc_description());
+  cgc_printf("%d" EOL, cgc_status());
+  cgc_printf("%d" EOL, cgc_priority());
+  cgc_printf("%d" EOL, cgc_entry_time());
+  cgc_printf("%d" EOL, cgc_duration());
 }
 
-uint32_t Ticket::id()
+cgc_uint32_t cgc_Ticket::cgc_id()
 {
     return id_;
 }
 
-char *Ticket::email()
+char *cgc_Ticket::cgc_email()
 {
     return email_;
 }
 
-char *Ticket::description()
+char *cgc_Ticket::cgc_description()
 {
     return desc_;
 }
 
-uint32_t Ticket::entry_time()
+cgc_uint32_t cgc_Ticket::cgc_entry_time()
 {
     return entry_time_;
 }
 
-PRIORITY Ticket::priority()
+cgc_PRIORITY cgc_Ticket::cgc_priority()
 {
     return priority_;
 }
 
-STATUS Ticket::status()
+cgc_STATUS cgc_Ticket::cgc_status()
 {
     return status_;
 }
 
-uint32_t Ticket::duration()
+cgc_uint32_t cgc_Ticket::cgc_duration()
 {
     return duration_;
 }

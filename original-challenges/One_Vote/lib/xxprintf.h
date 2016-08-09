@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@
 
 // VA defs for xxprintf functions
 #ifndef _VA_LIST
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define _VA_LIST 1
 #endif
 
@@ -69,7 +69,7 @@ typedef __builtin_va_list va_list;
 #define va_copy(d, s)       __builtin_va_copy(d, s)
 
 /**
- * A simple, non-standard vsnprintf.
+ * A simple, non-standard cgc_vsnprintf.
  *
  * Supported format specifiers:
  *  'I' for signed ints
@@ -80,7 +80,7 @@ typedef __builtin_va_list va_list;
  * Note: 
  *	 If L is replaced by the term char, then there will be a 
  *	term char in the middle of the string. So uses of the resulting
- *	string will cause issues if strlen, etc are used.
+ *	string will cause issues if cgc_strlen, etc are used.
  *   If I (itoan) contains term char, then the string will get 
  *	the decimal representation of the term char in it.
  *
@@ -92,7 +92,7 @@ typedef __builtin_va_list va_list;
  * For each format specifier, it will take a value from args
  *  and insert it at that location as that type.
  *
- * Note: vsnprintf does not call va_end, because it takes a va_list, 
+ * Note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, 
  *  caller does so.
  *
  * @param buf Output buffer
@@ -100,13 +100,13 @@ typedef __builtin_va_list va_list;
  * @param fsm Format string marker
  * @param term String termination char
  * @param fmt Null-terminated format string
- * @param args Ptr to va_list of arguments to insert into fmt
+ * @param args Ptr to cgc_va_list of arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, va_list args);
+int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char fsm, const char term, const char * fmt, cgc_va_list args);
 
 /**
- * A simple, non-standard snprintf.
+ * A simple, non-standard cgc_snprintf.
  *
  * Supported format specifiers:
  *  'I' for signed ints
@@ -117,7 +117,7 @@ int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, cons
  * Note: 
  *	 If L is replaced by the term char, then there will be a 
  *	term char in the middle of the string. So uses of the resulting
- *	string will cause issues if strlen, etc are used.
+ *	string will cause issues if cgc_strlen, etc are used.
  *   If I (itoan) contains term char, then the string will get 
  *	the decimal representation of the term char in it.
  *
@@ -137,6 +137,6 @@ int vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, cons
  * @param ... Optional arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int snprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, ...);
+int cgc_snprintf(char * buf, cgc_size_t buf_size, const char fsm, const char term, const char * fmt, ...);
 
 #endif

@@ -29,9 +29,9 @@ THE SOFTWARE.
 
 #define MAX_FRAME_SIZE 65536
 
-protocol_frame* allocate_frame(protocol_frame template) {
-  protocol_frame* candidate;
-  if (allocate(sizeof(protocol_frame), 0, (void**)(&candidate))) {
+cgc_protocol_frame* cgc_allocate_frame(cgc_protocol_frame template) {
+  cgc_protocol_frame* candidate;
+  if (allocate(sizeof(cgc_protocol_frame), 0, (void**)(&candidate))) {
     _terminate(-1);
   }
 
@@ -50,8 +50,8 @@ protocol_frame* allocate_frame(protocol_frame template) {
   return candidate;
 }
 
-protocol_frame* expect_frame(uint32 type) {
-  protocol_frame* candidate = receive_frame();
+cgc_protocol_frame* cgc_expect_frame(cgc_uint32 type) {
+  cgc_protocol_frame* candidate = cgc_receive_frame();
   if (candidate->type != type) {
     _terminate(-1);
   }
@@ -59,12 +59,12 @@ protocol_frame* expect_frame(uint32 type) {
   return candidate;
 }
 
-protocol_frame* receive_frame() {
-  protocol_frame candidate;
+cgc_protocol_frame* cgc_receive_frame() {
+  cgc_protocol_frame candidate;
   candidate.type = candidate.length = 0;
 
-  size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
-  size_t actual_received = 0;
+  cgc_size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
+  cgc_size_t actual_received = 0;
 
   if (receive(STDIN,
               &candidate,
@@ -75,7 +75,7 @@ protocol_frame* receive_frame() {
 
   if (actual_received != need_received) _terminate(-1);
 
-  protocol_frame* payload = allocate_frame(candidate);
+  cgc_protocol_frame* payload = cgc_allocate_frame(candidate);
 
   if (payload->length == 0) return payload;
 
@@ -91,8 +91,8 @@ protocol_frame* receive_frame() {
   return payload;
 }
 
-void send_frame(protocol_frame* payload) {
-  size_t sent_bytes;
+void cgc_send_frame(cgc_protocol_frame* payload) {
+  cgc_size_t sent_bytes;
 
   if ((payload->length != 0) && (payload->value == NULL)) {
     _terminate(-1);
@@ -115,20 +115,20 @@ void send_frame(protocol_frame* payload) {
   if (sent_bytes != payload->length) _terminate(-1);
 }
 
-void send_empty_frame(uint32 type) {
-  protocol_frame payload;
+void cgc_send_empty_frame(cgc_uint32 type) {
+  cgc_protocol_frame payload;
   payload.type = type;
   payload.length = 0;
   payload.value = NULL;
-  send_frame(&payload);
+  cgc_send_frame(&payload);
 };
 
-void expect_empty_frame(uint32 type) {
-  protocol_frame* payload = expect_frame(type);
-  free_frame(payload);
+void cgc_expect_empty_frame(cgc_uint32 type) {
+  cgc_protocol_frame* payload = cgc_expect_frame(type);
+  cgc_free_frame(payload);
 }
 
-void free_frame(protocol_frame* fr) {
+void cgc_free_frame(cgc_protocol_frame* fr) {
   if (fr->value != NULL) {
     if (deallocate(fr->value, fr->length)) {
       _terminate(-1);

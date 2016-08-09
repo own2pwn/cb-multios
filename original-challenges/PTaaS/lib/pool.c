@@ -25,16 +25,16 @@
 
 struct chunk {
     struct chunk *next;
-    size_t size;
+    cgc_size_t size;
     unsigned int num_free;
     unsigned char *data;
     struct bitset allocated;
 };
 
-static int pool_grow(struct pool *);
+static int cgc_pool_grow(struct pool *);
 
 int
-pool_init(struct pool *pool, size_t size)
+cgc_pool_init(struct pool *pool, cgc_size_t size)
 {
     if (size >= PAGE_SIZE - sizeof(struct chunk))
         return EXIT_FAILURE;
@@ -46,19 +46,19 @@ pool_init(struct pool *pool, size_t size)
 }
 
 void
-pool_destroy(struct pool *pool)
+cgc_pool_destroy(struct pool *pool)
 {
-    pool_free_all(pool);
+    cgc_pool_free_all(pool);
     pool->size = 0;
 }
 
 void *
-pool_alloc(struct pool *pool)
+cgc_pool_alloc(struct pool *pool)
 {
     struct chunk *chunk, *p;
     int index;
 
-    if (!pool->head && pool_grow(pool) != EXIT_SUCCESS)
+    if (!pool->head && cgc_pool_grow(pool) != EXIT_SUCCESS)
         return NULL;
 
     if (pool->head->num_free == 0) {
@@ -71,15 +71,15 @@ pool_alloc(struct pool *pool)
             chunk->next = pool->head;
             pool->head = chunk;
         } else {
-            if (pool_grow(pool) != EXIT_SUCCESS)
+            if (cgc_pool_grow(pool) != EXIT_SUCCESS)
                 return NULL;
         }
     }
 
-    if ((index = bitset_find_first(&pool->head->allocated, 0)) == EXIT_FAILURE)
+    if ((index = cgc_bitset_find_first(&pool->head->allocated, 0)) == EXIT_FAILURE)
         return NULL;
 
-    if (bitset_set_bit(&pool->head->allocated, index) == EXIT_FAILURE)
+    if (cgc_bitset_set_bit(&pool->head->allocated, index) == EXIT_FAILURE)
         return NULL;
 
     pool->head->num_free--;
@@ -87,7 +87,7 @@ pool_alloc(struct pool *pool)
 }
 
 void
-pool_free(struct pool *pool, void *ptr)
+cgc_pool_free(struct pool *pool, void *ptr)
 {
     struct chunk *chunk;
     unsigned int index;
@@ -97,11 +97,11 @@ pool_free(struct pool *pool, void *ptr)
         return;
 
     index = ((unsigned char *)ptr - chunk->data) / chunk->size;
-    bitset_clear_bit(&chunk->allocated, index);
+    cgc_bitset_clear_bit(&chunk->allocated, index);
 }
 
 void
-pool_free_all(struct pool *pool)
+cgc_pool_free_all(struct pool *pool)
 {
     struct chunk *chunk, *n;
 
@@ -114,7 +114,7 @@ pool_free_all(struct pool *pool)
 }
 
 static int
-pool_grow(struct pool *pool)
+cgc_pool_grow(struct pool *pool)
 {
     struct chunk *chunk;
 
@@ -128,7 +128,7 @@ pool_grow(struct pool *pool)
     while ((ALIGN(chunk->num_free, 8) / 8) > (PAGE_SIZE - sizeof(struct chunk) - (pool->size * chunk->num_free)))
         chunk->num_free--;
 
-    bitset_init(&chunk->allocated, chunk->num_free);
+    cgc_bitset_init(&chunk->allocated, chunk->num_free);
     chunk->data = (unsigned char *)chunk + sizeof(struct chunk) + (ALIGN(chunk->num_free, 8) / 8);
 
     pool->head = chunk;

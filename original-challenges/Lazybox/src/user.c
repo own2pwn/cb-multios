@@ -32,15 +32,15 @@ THE SOFTWARE.
 #include "fs.h"
 #include "io.h"
 
-extern environment ENV;
+extern cgc_environment ENV;
 
-void Login(void) {
-	strcpy(ENV.User, "crs");
-	strcpy(ENV.Group, "crs");
+void cgc_Login(void) {
+	cgc_strcpy(ENV.User, "crs");
+	cgc_strcpy(ENV.Group, "crs");
 }
 
-uint8_t ChUser(Command *pCmd) {
-	pFILE PasswdFile;
+cgc_uint8_t cgc_ChUser(cgc_Command *pCmd) {
+	cgc_pFILE PasswdFile;
 	char buf[128];
 	char password_buf[32];
 	char *user;
@@ -51,69 +51,69 @@ uint8_t ChUser(Command *pCmd) {
 		return(0);
 	}
 	if (pCmd->argc != 2) {
-		puts("Input error");
-		puts("Usage: chuser <username>");
+		cgc_puts("Input error");
+		cgc_puts("Usage: chuser <username>");
 		return(0);
 	}
 
-	if ((PasswdFile = fopen("passwd", "r", 1)) == NULL) {
-		puts("Unable to open passwd file");
+	if ((PasswdFile = cgc_fopen("passwd", "r", 1)) == NULL) {
+		cgc_puts("Unable to open passwd file");
 		return(0);
 	}
 
-	while (fgets(buf, 128, PasswdFile)) {
-		if ((password = strtok(buf, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
+	while (cgc_fgets(buf, 128, PasswdFile)) {
+		if ((password = cgc_strtok(buf, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
 			return(0);
 		}
-		if ((user = strtok(NULL, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
+		if ((user = cgc_strtok(NULL, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
 			return(0);
 		}
-		if (!strcmp(user, pCmd->argv[1])) {
-			if ((group = strtok(NULL, ":")) == NULL) {
-				fclose(PasswdFile);
-				puts("Passwd file is corrupted");
+		if (!cgc_strcmp(user, pCmd->argv[1])) {
+			if ((group = cgc_strtok(NULL, ":")) == NULL) {
+				cgc_fclose(PasswdFile);
+				cgc_puts("Passwd file is corrupted");
 				return(0);
 			}
 			// root always has su rights
-			if (!strcmp(ENV.User, "root")) {
-				strcpy(ENV.User, user);
-				strcpy(ENV.Group, group);
-				printf("Authentication success for user '$s'\n\r",ENV.User);
-				fclose(PasswdFile);
+			if (!cgc_strcmp(ENV.User, "root")) {
+				cgc_strcpy(ENV.User, user);
+				cgc_strcpy(ENV.Group, group);
+				cgc_printf("Authentication success for user '$s'\n\r",ENV.User);
+				cgc_fclose(PasswdFile);
 				return(1);
 			}
 				
-			printf("Password: ");
-			if (ReadUntilNewline(STDIN, password_buf, 32) == 0) {
-				fclose(PasswdFile);
+			cgc_printf("Password: ");
+			if (cgc_ReadUntilNewline(STDIN, password_buf, 32) == 0) {
+				cgc_fclose(PasswdFile);
 				return(0);
 			}
-			printf("\b\b  \b\b\n\r");
+			cgc_printf("\b\b  \b\b\n\r");
 			
-			if (!strcmp(password, password_buf)) {
+			if (!cgc_strcmp(password, password_buf)) {
 				// passwords match
-				strcpy(ENV.User, user);
-				strcpy(ENV.Group, group);
-				printf("Authentication success for user '$s'\n\r",ENV.User);
-				fclose(PasswdFile);
+				cgc_strcpy(ENV.User, user);
+				cgc_strcpy(ENV.Group, group);
+				cgc_printf("Authentication success for user '$s'\n\r",ENV.User);
+				cgc_fclose(PasswdFile);
 				return(1);
 			} else {
-				puts("Authentication failure");
+				cgc_puts("Authentication failure");
 				return(0);
 			}
 		}
 	}
-	printf("No passwd entry for user '$s'\n\r", pCmd->argv[1]);
-	fclose(PasswdFile);
+	cgc_printf("No passwd entry for user '$s'\n\r", pCmd->argv[1]);
+	cgc_fclose(PasswdFile);
 	return(0);
 }
 
-uint8_t ChPw(Command *pCmd) {
-	pFILE PasswdFile;
+cgc_uint8_t cgc_ChPw(cgc_Command *pCmd) {
+	cgc_pFILE PasswdFile;
 	char buf[128];
 	char password_buf[32];
 	char *user;
@@ -126,66 +126,66 @@ uint8_t ChPw(Command *pCmd) {
 	if (!pCmd) {
 		return(0);
 	}
-	if (!strcmp(ENV.User, "root")) {
+	if (!cgc_strcmp(ENV.User, "root")) {
 		if (pCmd->argc != 2) {
-			puts("Input error");
-			puts("Usage: chpw <username>");
+			cgc_puts("Input error");
+			cgc_puts("Usage: chpw <username>");
 			return(0);
 		}
-		strcpy(TargetUser, pCmd->argv[1]);
+		cgc_strcpy(TargetUser, pCmd->argv[1]);
 	} else {
 		if (pCmd->argc != 1) {
-			puts("Input error");
-			puts("Usage: chpw");
+			cgc_puts("Input error");
+			cgc_puts("Usage: chpw");
 			return(0);
 		}
-		strcpy(TargetUser, ENV.User);
+		cgc_strcpy(TargetUser, ENV.User);
 	}
 
-	if ((PasswdFile = fopen("passwd", "r", 1)) == NULL) {
-		puts("Unable to open passwd file");
+	if ((PasswdFile = cgc_fopen("passwd", "r", 1)) == NULL) {
+		cgc_puts("Unable to open passwd file");
 		return(0);
 	}
 
-	bzero(OutputBuf, MAX_FILE_SIZE);
+	cgc_bzero(OutputBuf, MAX_FILE_SIZE);
 
-	while (fgets(buf, 128, PasswdFile)) {
+	while (cgc_fgets(buf, 128, PasswdFile)) {
 		if (buf[0] == '\0') {
 			// empty line
 			continue;
 		}
-		if ((password = strtok(buf, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((password = cgc_strtok(buf, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if ((user = strtok(NULL, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((user = cgc_strtok(NULL, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if (!strcmp(user, TargetUser)) {
+		if (!cgc_strcmp(user, TargetUser)) {
 			// found the target user
-			if ((group = strtok(NULL, ":")) == NULL) {
-				fclose(PasswdFile);
-				puts("Passwd file is corrupted");
+			if ((group = cgc_strtok(NULL, ":")) == NULL) {
+				cgc_fclose(PasswdFile);
+				cgc_puts("Passwd file is corrupted");
 				return(0);
 			}
 
-			printf("New password: ");
-			if (ReadUntilNewline(STDIN, password_buf, 32) == 0) {
-				fclose(PasswdFile);
-	                	printf("\b\b  \b\b\n\r");
-				puts("Password not changed");
+			cgc_printf("New password: ");
+			if (cgc_ReadUntilNewline(STDIN, password_buf, 32) == 0) {
+				cgc_fclose(PasswdFile);
+	                	cgc_printf("\b\b  \b\b\n\r");
+				cgc_puts("Password not changed");
 				return(0);
 			}
-	                printf("\b\b  \b\b\n\r");
+	                cgc_printf("\b\b  \b\b\n\r");
 #ifdef PATCHED_1
-			if (strchr(password_buf, ':')) {
-				puts("Passwords may not contain ':' characters");
-				fclose(PasswdFile);
+			if (cgc_strchr(password_buf, ':')) {
+				cgc_puts("Passwords may not contain ':' characters");
+				cgc_fclose(PasswdFile);
 				return(0);
 			}
 #endif
@@ -193,65 +193,65 @@ uint8_t ChPw(Command *pCmd) {
 			// add the new passwd file line to the buffer we'll 
 			// eventually write back to the passwd file
 			// output_buffer += "user:group:password_buf"
-			sprintf(NewPasswdLine, "$s:$s:$s\n", password_buf, user, group);
-			if (strlen(OutputBuf) + strlen(NewPasswdLine) > MAX_FILE_SIZE) {
-				puts("Password file is too large");
-				fclose(PasswdFile);
+			cgc_sprintf(NewPasswdLine, "$s:$s:$s\n", password_buf, user, group);
+			if (cgc_strlen(OutputBuf) + cgc_strlen(NewPasswdLine) > MAX_FILE_SIZE) {
+				cgc_puts("Password file is too large");
+				cgc_fclose(PasswdFile);
 				return(0);
 			}
-			strcat(OutputBuf, NewPasswdLine);
+			cgc_strcat(OutputBuf, NewPasswdLine);
 			
 		} else {
 			// this is not the user you're looking for
 			// add it to the buffer we'll eventually
 			// write back to the passwd file
-			// but first put back the ':' delimiter the strtok removed
-			password[strlen(password)] = ':';
-			user[strlen(user)] = ':';
-			strcat(OutputBuf, buf);
-			strcat(OutputBuf, "\n");
+			// but first put back the ':' delimiter the cgc_strtok removed
+			password[cgc_strlen(password)] = ':';
+			user[cgc_strlen(user)] = ':';
+			cgc_strcat(OutputBuf, buf);
+			cgc_strcat(OutputBuf, "\n");
 		}
 	}
-	fclose(PasswdFile);
+	cgc_fclose(PasswdFile);
 
-	if (strlen(OutputBuf) > 0) {
-		if ((PasswdFile = fopen("passwd", "w", 1)) == NULL) {
-			puts("Unable to open passwd file");
+	if (cgc_strlen(OutputBuf) > 0) {
+		if ((PasswdFile = cgc_fopen("passwd", "w", 1)) == NULL) {
+			cgc_puts("Unable to open passwd file");
 			return(0);
 		}
 		// write the new password buf
-		if (fwrite(OutputBuf, strlen(OutputBuf)+1, 1, PasswdFile) != strlen(OutputBuf)+1) {
-			puts("Password file update failed\n\r");
-			fclose(PasswdFile);
+		if (cgc_fwrite(OutputBuf, cgc_strlen(OutputBuf)+1, 1, PasswdFile) != cgc_strlen(OutputBuf)+1) {
+			cgc_puts("Password file update failed\n\r");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
 
-		fclose(PasswdFile);
+		cgc_fclose(PasswdFile);
 	}
 
 	return(1);
 
 }
 
-uint8_t ID(Command *pCmd) {
+cgc_uint8_t cgc_ID(cgc_Command *pCmd) {
 
 	if (!pCmd) {
 		return(0);
 	}
 
 	if (pCmd->argc != 1) {
-		puts("Input error");
-		puts("Usage: id");
+		cgc_puts("Input error");
+		cgc_puts("Usage: id");
 		return(0);
 	}
 
-	printf("uid=$s gid=$s\n\r", ENV.User, ENV.Group);
+	cgc_printf("uid=$s gid=$s\n\r", ENV.User, ENV.Group);
 
 	return(1);
 }
 
-uint8_t NewUser(Command *pCmd) {
-	pFILE PasswdFile;
+cgc_uint8_t cgc_NewUser(cgc_Command *pCmd) {
+	cgc_pFILE PasswdFile;
 	char buf[128];
 	char password_buf[32];
 	char *user;
@@ -263,172 +263,172 @@ uint8_t NewUser(Command *pCmd) {
 		return(0);
 	}
 
-	if (strcmp(ENV.User, "root")) {
-		puts("Must be root");
+	if (cgc_strcmp(ENV.User, "root")) {
+		cgc_puts("Must be root");
 		return(0);
 	}
 
 	if (pCmd->argc != 3) {
-		puts("Input error");
-		puts("Usage: newuser <username> <group>");
+		cgc_puts("Input error");
+		cgc_puts("Usage: newuser <username> <group>");
 		return(0);
 	}
 
 	// see if the new user already exists
-	if ((PasswdFile = fopen("passwd", "r", 1)) == NULL) {
-		puts("Unable to open passwd file");
+	if ((PasswdFile = cgc_fopen("passwd", "r", 1)) == NULL) {
+		cgc_puts("Unable to open passwd file");
 		return(0);
 	}
-	bzero(OutputBuf, MAX_FILE_SIZE);
+	cgc_bzero(OutputBuf, MAX_FILE_SIZE);
 
-	while (fgets(buf, 128, PasswdFile)) {
+	while (cgc_fgets(buf, 128, PasswdFile)) {
 		if (buf[0] == '\0') {
 			// empty line
 			continue;
 		}
-		if ((passwd = strtok(buf, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((passwd = cgc_strtok(buf, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if ((user = strtok(NULL, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((user = cgc_strtok(NULL, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if (!strcmp(user, pCmd->argv[1])) {
-			printf("User '$s' already exists\n\r", pCmd->argv[1]);
-			fclose(PasswdFile);
+		if (!cgc_strcmp(user, pCmd->argv[1])) {
+			cgc_printf("User '$s' already exists\n\r", pCmd->argv[1]);
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
 
 		// add this line to the output buffer
-		passwd[strlen(passwd)] = ':';
-		user[strlen(user)] = ':';
-		strcat(OutputBuf, buf);
-		strcat(OutputBuf, "\n");
+		passwd[cgc_strlen(passwd)] = ':';
+		user[cgc_strlen(user)] = ':';
+		cgc_strcat(OutputBuf, buf);
+		cgc_strcat(OutputBuf, "\n");
 	}
-	fclose(PasswdFile);
+	cgc_fclose(PasswdFile);
 
 	// got to the end of the file and didn't find the user, so
 	// get a password for the new user
-	printf("New user password: ");
-	if (ReadUntilNewline(STDIN, password_buf, 32) == 0) {
-		fclose(PasswdFile);
+	cgc_printf("New user password: ");
+	if (cgc_ReadUntilNewline(STDIN, password_buf, 32) == 0) {
+		cgc_fclose(PasswdFile);
 		return(0);
 	}
-	printf("\b\b  \b\b\n\r");
+	cgc_printf("\b\b  \b\b\n\r");
 
 	// add the new user to the passwd file
-	sprintf(NewPasswdLine, "$s:$s:$s\n", password_buf, pCmd->argv[1], pCmd->argv[2]);
-	if (strlen(OutputBuf) + strlen(NewPasswdLine) > MAX_FILE_SIZE) {
-		puts("Password file is too large");
-		fclose(PasswdFile);
+	cgc_sprintf(NewPasswdLine, "$s:$s:$s\n", password_buf, pCmd->argv[1], pCmd->argv[2]);
+	if (cgc_strlen(OutputBuf) + cgc_strlen(NewPasswdLine) > MAX_FILE_SIZE) {
+		cgc_puts("Password file is too large");
+		cgc_fclose(PasswdFile);
 		return(0);
 	}
-	strcat(OutputBuf, NewPasswdLine);
+	cgc_strcat(OutputBuf, NewPasswdLine);
 
-	if (strlen(OutputBuf) > 0) {
-		if ((PasswdFile = fopen("passwd", "w", 1)) == NULL) {
-			puts("Unable to open passwd file");
+	if (cgc_strlen(OutputBuf) > 0) {
+		if ((PasswdFile = cgc_fopen("passwd", "w", 1)) == NULL) {
+			cgc_puts("Unable to open passwd file");
 			return(0);
 		}
 		// write the new password buf
-		if (fwrite(OutputBuf, strlen(OutputBuf)+1, 1, PasswdFile) != strlen(OutputBuf)+1) {
-			puts("Password file update failed\n\r");
-			fclose(PasswdFile);
+		if (cgc_fwrite(OutputBuf, cgc_strlen(OutputBuf)+1, 1, PasswdFile) != cgc_strlen(OutputBuf)+1) {
+			cgc_puts("Password file update failed\n\r");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
 
-		fclose(PasswdFile);
+		cgc_fclose(PasswdFile);
 	}
 
-	printf("User '$s' added\n\r", pCmd->argv[1]);
+	cgc_printf("User '$s' added\n\r", pCmd->argv[1]);
 	return(1);
 }
 
-uint8_t DelUser(Command *pCmd) {
-	pFILE PasswdFile;
+cgc_uint8_t cgc_DelUser(cgc_Command *pCmd) {
+	cgc_pFILE PasswdFile;
 	char buf[128];
 	char *user;
 	char *passwd;
 	char OutputBuf[MAX_FILE_SIZE];
-	uint8_t Found = 0;
+	cgc_uint8_t Found = 0;
 
 	if (!pCmd) {
 		return(0);
 	}
 
-	if (strcmp(ENV.User, "root")) {
-		puts("Must be root");
+	if (cgc_strcmp(ENV.User, "root")) {
+		cgc_puts("Must be root");
 		return(0);
 	}
 
 	if (pCmd->argc != 2) {
-		puts("Input error");
-		puts("Usage: deluser <username>");
+		cgc_puts("Input error");
+		cgc_puts("Usage: deluser <username>");
 		return(0);
 	}
 
 	// see if the user exists
-	if ((PasswdFile = fopen("passwd", "r", 1)) == NULL) {
-		puts("Unable to open passwd file");
+	if ((PasswdFile = cgc_fopen("passwd", "r", 1)) == NULL) {
+		cgc_puts("Unable to open passwd file");
 		return(0);
 	}
-	bzero(OutputBuf, MAX_FILE_SIZE);
+	cgc_bzero(OutputBuf, MAX_FILE_SIZE);
 
-	while (fgets(buf, 128, PasswdFile)) {
+	while (cgc_fgets(buf, 128, PasswdFile)) {
 		if (buf[0] == '\0') {
 			// empty line
 			continue;
 		}
-		if ((passwd = strtok(buf, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((passwd = cgc_strtok(buf, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if ((user = strtok(NULL, ":")) == NULL) {
-			fclose(PasswdFile);
-			puts("Passwd file is corrupted");
-			fclose(PasswdFile);
+		if ((user = cgc_strtok(NULL, ":")) == NULL) {
+			cgc_fclose(PasswdFile);
+			cgc_puts("Passwd file is corrupted");
+			cgc_fclose(PasswdFile);
 			return(0);
 		}
-		if (strcmp(user, pCmd->argv[1])) {
+		if (cgc_strcmp(user, pCmd->argv[1])) {
 			// not the target user, just add this user to the outputbuf
-			passwd[strlen(passwd)] = ':';
-			user[strlen(user)] = ':';
-			strcat(OutputBuf, buf);
-			strcat(OutputBuf, "\n");
+			passwd[cgc_strlen(passwd)] = ':';
+			user[cgc_strlen(user)] = ':';
+			cgc_strcat(OutputBuf, buf);
+			cgc_strcat(OutputBuf, "\n");
 		} else {
 			Found = 1;
 		}
 		
 	}
-	fclose(PasswdFile);
+	cgc_fclose(PasswdFile);
 
 	if (Found) {
-		if (strlen(OutputBuf) > 0) {
-			if ((PasswdFile = fopen("passwd", "w", 1)) == NULL) {
-				puts("Unable to open passwd file");
+		if (cgc_strlen(OutputBuf) > 0) {
+			if ((PasswdFile = cgc_fopen("passwd", "w", 1)) == NULL) {
+				cgc_puts("Unable to open passwd file");
 			return(0);
 			}
 			// write the new password buf
-			if (fwrite(OutputBuf, strlen(OutputBuf)+1, 1, PasswdFile) != strlen(OutputBuf)+1) {
-				puts("Password file update failed\n\r");
-				fclose(PasswdFile);
+			if (cgc_fwrite(OutputBuf, cgc_strlen(OutputBuf)+1, 1, PasswdFile) != cgc_strlen(OutputBuf)+1) {
+				cgc_puts("Password file update failed\n\r");
+				cgc_fclose(PasswdFile);
 				return(0);
 			}
 	
-			fclose(PasswdFile);
+			cgc_fclose(PasswdFile);
 		}
-		printf("User '$s' deleted\n\r", pCmd->argv[1]);
+		cgc_printf("User '$s' deleted\n\r", pCmd->argv[1]);
 		return(1);
 	}
 
-	printf("User '$s' not found\n\r", pCmd->argv[1]);
+	cgc_printf("User '$s' not found\n\r", pCmd->argv[1]);
 	return(0);
 
 }

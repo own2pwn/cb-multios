@@ -34,27 +34,27 @@ THE SOFTWARE.
 // State machine for the authenticated user
 
 // The command handler table
-tCommandHandlerTable g_cmdTable[] =
+cgc_tCommandHandlerTable g_cmdTable[] =
 {
-    { "insert", command_insert, CMD_FLAG_AUTH },
-    { "remove", command_remove, CMD_FLAG_AUTH },
-    { "update", command_update, CMD_FLAG_AUTH },
-    { "print", command_print, CMD_FLAG_AUTH },
-    { "find", command_find, CMD_FLAG_AUTH },
-    { "login", command_login, CMD_FLAG_NOAUTH },
-    { "logout", command_logout, CMD_FLAG_AUTH },
-    { "exit", command_exit, CMD_FLAG_NOAUTH | CMD_FLAG_EXIT },
+    { "insert", cgc_command_insert, CMD_FLAG_AUTH },
+    { "remove", cgc_command_remove, CMD_FLAG_AUTH },
+    { "update", cgc_command_update, CMD_FLAG_AUTH },
+    { "print", cgc_command_print, CMD_FLAG_AUTH },
+    { "find", cgc_command_find, CMD_FLAG_AUTH },
+    { "login", cgc_command_login, CMD_FLAG_NOAUTH },
+    { "logout", cgc_command_logout, CMD_FLAG_AUTH },
+    { "exit", cgc_command_exit, CMD_FLAG_NOAUTH | CMD_FLAG_EXIT },
     { "", NULL, 0 }
 };
 
-int32_t stringbeg( uint8_t *pszInString, uint8_t *pszMatchString )
+cgc_int32_t cgc_stringbeg( cgc_uint8_t *pszInString, cgc_uint8_t *pszMatchString )
 {
-    int32_t index;
+    cgc_int32_t index;
 
     index = 0;
     while ( *pszInString )
     {
-        if ( isspace( *pszInString ) )
+        if ( cgc_isspace( *pszInString ) )
         {
             pszInString++;
             index++;
@@ -66,7 +66,7 @@ int32_t stringbeg( uint8_t *pszInString, uint8_t *pszMatchString )
 
     while ( *pszInString && *pszMatchString )
     {
-        if ( tolower( *pszInString ) != tolower( *pszMatchString ) )
+        if ( cgc_tolower( *pszInString ) != cgc_tolower( *pszMatchString ) )
             return -1;
 
         pszInString++;
@@ -77,16 +77,16 @@ int32_t stringbeg( uint8_t *pszInString, uint8_t *pszMatchString )
     return index;
 }
 
-void init_user( tUserState *pState )
+void cgc_init_user( cgc_tUserState *pState )
 {
     pState->state = USER_STATE_NOAUTH;
 }
 
-int8_t parse_command( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_parse_command( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    uint32_t i;
-    int32_t index;
-    int8_t iRetVal = -1;
+    cgc_uint32_t i;
+    cgc_int32_t index;
+    cgc_int8_t iRetVal = -1;
 
     // Find command!
     for ( i = 0; ; i++ )
@@ -94,11 +94,11 @@ int8_t parse_command( uint8_t *pszCommandString, tUserState *pState )
         if ( g_cmdTable[i].pCmdHandler == NULL )
             break;
 
-        if ( (index = stringbeg( pszCommandString, g_cmdTable[i].szCommand )) > 0 )
+        if ( (index = cgc_stringbeg( pszCommandString, g_cmdTable[i].szCommand )) > 0 )
         {
             if ( (g_cmdTable[i].flags & CMD_FLAG_AUTH) && pState->state == USER_STATE_NOAUTH )
             {
-                printf( "Authentication required. Try login\n" );
+                cgc_printf( "Authentication required. Try login\n" );
                 return -1;
             }
 
@@ -107,235 +107,235 @@ int8_t parse_command( uint8_t *pszCommandString, tUserState *pState )
         }
     }
 
-    printf( "Command not found.\n" );
+    cgc_printf( "Command not found.\n" );
 
     return -1;
 }
 
-int8_t command_insert( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_insert( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    int32_t iRetVal;
-    tDateTime tempDate;
+    cgc_int32_t iRetVal;
+    cgc_tDateTime tempDate;
     char szFirstName[MAX_STRING_LENGTH+1];
     char szLastName[MAX_STRING_LENGTH+1];
     char szUserName[MAX_STRING_LENGTH+1];
     char szTemp[MAX_STRING_LENGTH+1];
-    uint32_t creationDate;
-    uint32_t newRecordNumber;
+    cgc_uint32_t creationDate;
+    cgc_uint32_t newRecordNumber;
 
-    printf( "First name: " );
+    cgc_printf( "First name: " );
 
-    iRetVal = readLine( STDIN, szFirstName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szFirstName, MAX_STRING_LENGTH );
 
-    sanitize_string( szFirstName );
+    cgc_sanitize_string( szFirstName );
 
-    printf( "Last name: " );
+    cgc_printf( "Last name: " );
 
-    iRetVal = readLine( STDIN, szLastName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szLastName, MAX_STRING_LENGTH );
 
-    sanitize_string( szLastName );
+    cgc_sanitize_string( szLastName );
 
-    printf( "User name: " );
+    cgc_printf( "User name: " );
 
-    iRetVal = readLine( STDIN, szUserName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szUserName, MAX_STRING_LENGTH );
 
-    sanitize_string( szUserName );
+    cgc_sanitize_string( szUserName );
 
-    printf( "Birthdate (mm/dd/yy hh:mm:ss): " );
+    cgc_printf( "Birthdate (mm/dd/yy hh:mm:ss): " );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
-    creationDate = parse_date( szTemp, &tempDate );
+    creationDate = cgc_parse_date( szTemp, &tempDate );
 
     if ( creationDate == 0 )
     {
-        printf( "Date parsing error.\n" );
+        cgc_printf( "Date parsing error.\n" );
         return 0;
     }
 
-    printf( "Date is: $d/$d/$d $d:$d:$d\n", tempDate.month, tempDate.day, GET_DB_YEAR(tempDate.year), tempDate.hour, tempDate.minute, tempDate.second );
+    cgc_printf( "Date is: $d/$d/$d $d:$d:$d\n", tempDate.month, tempDate.day, GET_DB_YEAR(tempDate.year), tempDate.hour, tempDate.minute, tempDate.second );
 
     // Insert into database
-    newRecordNumber = db_add_record( szUserName, szFirstName, szLastName, tempDate );
+    newRecordNumber = cgc_db_add_record( szUserName, szFirstName, szLastName, tempDate );
 
     if ( newRecordNumber == BAD_RECORD_ERROR )
     {
-        printf( "Database full.\n" );
+        cgc_printf( "Database full.\n" );
         return 0;
     }
 
-    printf( "Data added, record $d\n", newRecordNumber );
+    cgc_printf( "Data added, record $d\n", newRecordNumber );
     return 0;
 }
 
-int8_t command_remove( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_remove( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    int32_t iRetVal;
-    uint32_t index;
+    cgc_int32_t iRetVal;
+    cgc_uint32_t index;
     char szTemp[MAX_STRING_LENGTH+1];
 
-    printf( "Enter record number to remove: " );
+    cgc_printf( "Enter record number to remove: " );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
-    index = atoi( szTemp );
+    index = cgc_atoi( szTemp );
 
-    if ( db_remove_record( index ) )
-        printf( "Record $d removed.\n", index );
+    if ( cgc_db_remove_record( index ) )
+        cgc_printf( "Record $d removed.\n", index );
     else
-        printf( "Record not found.\n" );
+        cgc_printf( "Record not found.\n" );
 
     return 0;
 }
 
-int8_t command_update( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_update( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    int32_t iRetVal;
-    tDateTime tempDate;
+    cgc_int32_t iRetVal;
+    cgc_tDateTime tempDate;
     char szFirstName[MAX_STRING_LENGTH+1];
     char szLastName[MAX_STRING_LENGTH+1];
     char szUserName[MAX_STRING_LENGTH+1];
     char szTemp[MAX_STRING_LENGTH+1];
-    uint32_t creationDate;
-    uint32_t newRecordNumber;
-    uint32_t index;
-    tDDAPRecord *pCurrentRecordInfo;
+    cgc_uint32_t creationDate;
+    cgc_uint32_t newRecordNumber;
+    cgc_uint32_t index;
+    cgc_tDDAPRecord *pCurrentRecordInfo;
 
-    printf( "Enter record number to update: " );
+    cgc_printf( "Enter record number to update: " );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
-    index = atoi( szTemp );
+    index = cgc_atoi( szTemp );
 
-    pCurrentRecordInfo = db_search_index( index );
+    pCurrentRecordInfo = cgc_db_search_index( index );
 
     if ( pCurrentRecordInfo == NULL )
     {
-        printf( "Record not found.\n" );
+        cgc_printf( "Record not found.\n" );
         return 0;
     }
 
-    printf( "Update first name ($s): ", pCurrentRecordInfo->szFirstName  );
+    cgc_printf( "Update first name ($s): ", pCurrentRecordInfo->szFirstName  );
 
-    iRetVal = readLine( STDIN, szFirstName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szFirstName, MAX_STRING_LENGTH );
 
-    sanitize_string( szFirstName );
+    cgc_sanitize_string( szFirstName );
 
-    printf( "Update last name ($s): ", pCurrentRecordInfo->szLastName );
+    cgc_printf( "Update last name ($s): ", pCurrentRecordInfo->szLastName );
 
-    iRetVal = readLine( STDIN, szLastName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szLastName, MAX_STRING_LENGTH );
 
-    sanitize_string( szLastName );
+    cgc_sanitize_string( szLastName );
 
-    printf( "Update user name ($s): ", pCurrentRecordInfo->szUserName );
+    cgc_printf( "Update user name ($s): ", pCurrentRecordInfo->szUserName );
 
-    iRetVal = readLine( STDIN, szUserName, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szUserName, MAX_STRING_LENGTH );
 
-    sanitize_string( szUserName );
+    cgc_sanitize_string( szUserName );
 
-    printf( "Update birthdate ($d/$d/$d $d:$d:$d): ", pCurrentRecordInfo->birthDate.month, pCurrentRecordInfo->birthDate.day, GET_DB_YEAR(pCurrentRecordInfo->birthDate.year), pCurrentRecordInfo->birthDate.hour, pCurrentRecordInfo->birthDate.minute, pCurrentRecordInfo->birthDate.second );
+    cgc_printf( "Update birthdate ($d/$d/$d $d:$d:$d): ", pCurrentRecordInfo->birthDate.month, pCurrentRecordInfo->birthDate.day, GET_DB_YEAR(pCurrentRecordInfo->birthDate.year), pCurrentRecordInfo->birthDate.hour, pCurrentRecordInfo->birthDate.minute, pCurrentRecordInfo->birthDate.second );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
-    creationDate = parse_date( szTemp, &tempDate );
+    creationDate = cgc_parse_date( szTemp, &tempDate );
 
     if ( creationDate == 0 )
     {
-        printf( "Date parsing error.\n" );
+        cgc_printf( "Date parsing error.\n" );
         return 0;
     }
 
-    printf( "Date is: $d/$d/$d $d:$d:$d\n", tempDate.month, tempDate.day, GET_DB_YEAR(tempDate.year), tempDate.hour, tempDate.minute, tempDate.second );
+    cgc_printf( "Date is: $d/$d/$d $d:$d:$d\n", tempDate.month, tempDate.day, GET_DB_YEAR(tempDate.year), tempDate.hour, tempDate.minute, tempDate.second );
 
     // Insert into database
-    newRecordNumber = db_update_record( index, szUserName, szFirstName, szLastName, tempDate );
+    newRecordNumber = cgc_db_update_record( index, szUserName, szFirstName, szLastName, tempDate );
 
     if ( newRecordNumber == 0 )
     {
-        printf( "Record update failed.\n" );
+        cgc_printf( "Record update failed.\n" );
         return 0;
     }
 
-    printf( "Record $d updated.\n", index );
+    cgc_printf( "Record $d updated.\n", index );
     return 0;
 }
 
-int8_t command_print( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_print( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    int32_t iRetVal;
-    uint32_t index;
+    cgc_int32_t iRetVal;
+    cgc_uint32_t index;
     char szTemp[MAX_STRING_LENGTH+1];
-    tDDAPRecord *pCurrentRecordInfo;
+    cgc_tDDAPRecord *pCurrentRecordInfo;
 
-    printf( "Enter record number to print (or \"all\" for all records): " );
+    cgc_printf( "Enter record number to print (or \"all\" for all records): " );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
-    if ( strcmp( szTemp, "all" ) == 0 )
+    if ( cgc_strcmp( szTemp, "all" ) == 0 )
     {
-        printf( "Printing all $d records.\n", db_get_record_count() );
+        cgc_printf( "Printing all $d records.\n", cgc_db_get_record_count() );
 
-        for ( index = 0; index < db_get_record_count(); index++ )
+        for ( index = 0; index < cgc_db_get_record_count(); index++ )
         {
-            pCurrentRecordInfo = db_search_index( index );
+            pCurrentRecordInfo = cgc_db_search_index( index );
 
             if ( pCurrentRecordInfo == NULL )
                 return 0;
 
-            print_record_helper( pCurrentRecordInfo );
+            cgc_print_record_helper( pCurrentRecordInfo );
         }
     }
     else
     {
-        index = atoi( szTemp );
+        index = cgc_atoi( szTemp );
 
-        pCurrentRecordInfo = db_search_index( index );
+        pCurrentRecordInfo = cgc_db_search_index( index );
 
         if ( pCurrentRecordInfo == NULL )
         {
-            printf( "Record not found.\n" );
+            cgc_printf( "Record not found.\n" );
             return 0;
         }
 
-        print_record_helper( pCurrentRecordInfo );
+        cgc_print_record_helper( pCurrentRecordInfo );
     }
 
     return 0;
 }
 
-int8_t command_find( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_find( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    int32_t iRetVal;
-    uint32_t index;
+    cgc_int32_t iRetVal;
+    cgc_uint32_t index;
     char szTemp[MAX_STRING_LENGTH+1];
 
     // Check for empty database
-    if ( db_get_record_count() == 0 )
+    if ( cgc_db_get_record_count() == 0 )
     {
-        printf( "Database empty. No records to find.\n" );
+        cgc_printf( "Database empty. No records to find.\n" );
 
         return 0;
     }
 
-    printf( "Enter search express (firstname or fn, lastname or ln, username or un, birthdate or bd, operators ==, !=, >, <, AND and OR):\n" );
+    cgc_printf( "Enter search express (firstname or fn, lastname or ln, username or un, birthdate or bd, operators ==, !=, >, <, AND and OR):\n" );
 
-    iRetVal = readLine( STDIN, szTemp, MAX_STRING_LENGTH );
+    iRetVal = cgc_readLine( STDIN, szTemp, MAX_STRING_LENGTH );
 
     TRY
     {
-        parse_search_expression( szTemp );
+        cgc_parse_search_expression( szTemp );
     }
     CATCH( PARSER_EXCEPTION_INVALID_TOKEN )
     {
-        printf( "Invalid token\n" );
+        cgc_printf( "Invalid token\n" );
     }
     CATCH( PARSER_EXCEPTION_SYNTAX_ERROR )
     {
-        printf( "Syntax error\n" );
+        cgc_printf( "Syntax error\n" );
     }
     CATCH( PARSER_EXCEPTION_OVERFLOW )
     {
-        printf( "Parser overflow\n" );
+        cgc_printf( "Parser overflow\n" );
     }
     FINALLY
     {
@@ -346,31 +346,31 @@ int8_t command_find( uint8_t *pszCommandString, tUserState *pState )
     return 0;
 }
 
-int8_t command_login( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_login( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
     if ( pState->state == USER_STATE_AUTH )
     {
-        printf( "You are already logged in.\n" );
+        cgc_printf( "You are already logged in.\n" );
         return 0;
     }
 
     pState->state = USER_STATE_AUTH;
 
-    printf( "You logged in.\n" );
+    cgc_printf( "You logged in.\n" );
     return 0;
 }
 
-int8_t command_logout( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_logout( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
     pState->state = USER_STATE_NOAUTH;
 
-    printf ("You logged out.\n" );
+    cgc_printf ("You logged out.\n" );
     return 0;
 }
 
-int8_t command_exit( uint8_t *pszCommandString, tUserState *pState )
+cgc_int8_t cgc_command_exit( cgc_uint8_t *pszCommandString, cgc_tUserState *pState )
 {
-    printf( "Disconnecting.\n" );
+    cgc_printf( "Disconnecting.\n" );
 
     // Exit application
     _terminate( 0 );

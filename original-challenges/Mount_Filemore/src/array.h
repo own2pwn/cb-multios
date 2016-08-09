@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,26 +27,26 @@
 #include <cstdlib.h>
 
 template <typename T>
-class Array
+class cgc_Array
 {
   public:
-    Array();
-    void Append(const T &item);
-    void Pop();
-    unsigned int length() const;
+    cgc_Array();
+    void cgc_Append(const T &item);
+    void cgc_Pop();
+    unsigned int cgc_length() const;
     T& operator[] (unsigned int idx);
-    void Clear();
+    void cgc_Clear();
 
    private:
     T *data_;
     unsigned int length_;
     unsigned int size_;
 
-    void Init();
+    void cgc_Init();
 };
 
 template <typename T>
-Array<T>::Array()
+cgc_Array<T>::cgc_Array()
 {
     data_ = (T *)NULL;
     length_ = 0;
@@ -54,15 +54,15 @@ Array<T>::Array()
 }
 
 template <typename T>
-void Array<T>::Append(const T &item)
+void cgc_Array<T>::cgc_Append(const T &item)
 {
     if (!data_)
-        Init();
+        cgc_Init();
 
     if (length_ == size_) {
         size_ *= 2;
         T *data_copy = new T[size_];
-        memcpy(data_copy, data_, sizeof(T) * length_);
+        cgc_memcpy(data_copy, data_, sizeof(T) * length_);
         delete[] data_;
         data_ = data_copy;
     }
@@ -71,23 +71,23 @@ void Array<T>::Append(const T &item)
 }
 
 template <typename T>
-void Array<T>::Pop()
+void cgc_Array<T>::cgc_Pop()
 {
     if (length_)
         --length_;
 }
 
 template <typename T>
-unsigned int Array<T>::length() const
+unsigned int cgc_Array<T>::cgc_length() const
 {
     return length_;
 }
 
 template <typename T>
-T& Array<T>::operator[] (unsigned int idx)
+T& cgc_Array<T>::operator[] (unsigned int idx)
 {
     if (!data_)
-        Init();
+        cgc_Init();
 
     if (idx >= length_)
         return data_[0];
@@ -96,7 +96,7 @@ T& Array<T>::operator[] (unsigned int idx)
 }
 
 template <typename T>
-void Array<T>::Clear()
+void cgc_Array<T>::cgc_Clear()
 {
     if (data_)
         delete[] data_;
@@ -107,7 +107,7 @@ void Array<T>::Clear()
 }
 
 template <typename T>
-void Array<T>::Init()
+void cgc_Array<T>::cgc_Init()
 {
     if (!data_)
     {

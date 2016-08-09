@@ -34,7 +34,7 @@ THE SOFTWARE.
 #define 	FF	0x0c
 #define		CR	0x0d
 
-int isdigit( int c )
+int cgc_isdigit( int c )
 {
 	if ( c >= '0' && c <= '9' )
 		return 1;
@@ -42,7 +42,7 @@ int isdigit( int c )
 		return 0;
 }
 
-int isupper( int c )
+int cgc_isupper( int c )
 {
 	if ( c >= 'A' && c <= 'Z' )
 		return 1;
@@ -50,7 +50,7 @@ int isupper( int c )
 		return 0;
 }
 
-int islower( int c )
+int cgc_islower( int c )
 {
 	if ( c >= 'a' && c <= 'z' )
 		return 1;
@@ -58,23 +58,23 @@ int islower( int c )
 		return 0;
 }
 
-int isalpha( int c )
+int cgc_isalpha( int c )
 {
-	if ( isupper( c ) || islower( c ) )
+	if ( cgc_isupper( c ) || cgc_islower( c ) )
 		return 1;
 	else
 		return 0;
 }
 
-int isalnum( int c )
+int cgc_isalnum( int c )
 {
-	if ( isalpha( c ) || isdigit( c ) )
+	if ( cgc_isalpha( c ) || cgc_isdigit( c ) )
 		return 1;
 	else
 		return 0;
 }
 
-int isprint( int c )
+int cgc_isprint( int c )
 {
 	if ( c >= SPC && c != DEL )
 		return 1;
@@ -83,23 +83,23 @@ int isprint( int c )
 }
 
 
-int toupper( int c )
+int cgc_toupper( int c )
 {
-	if ( islower( c ) )
+	if ( cgc_islower( c ) )
 		return (c - 'a') + 'A';
 	else
 		return c;
 }
 
-int tolower( int c )
+int cgc_tolower( int c )
 {
-	if ( isupper( c ) )
+	if ( cgc_isupper( c ) )
 	       return (c - 'A') + 'a';
 	else
 		return c;	
 }
 
-int isspace( int c )
+int cgc_isspace( int c )
 {
 	if ( c == SPC ||
 	     c == TAB ||

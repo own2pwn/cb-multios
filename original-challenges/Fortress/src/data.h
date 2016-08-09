@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,21 +29,21 @@ typedef struct
 {
     const char *name;
     int group;
-} mission_t;
+} cgc_mission_t;
 
 typedef struct
 {
     const char *name;
-} explorer_t;
+} cgc_explorer_t;
 
 typedef struct
 {
     const char *name;
-    CRequirement::Type counter;
+    cgc_CRequirement::Type counter;
     int price;
-} skill_t;
+} cgc_skill_t;
 
-mission_t g_missions[20] = {
+cgc_mission_t g_missions[20] = {
     { "Pumping Oil!", 1 },
     { "Trash Collection", 2 },
     { "Leviathan", 2 },
@@ -66,7 +66,7 @@ mission_t g_missions[20] = {
     { "Fire Fighter", 2 }
 };
 
-explorer_t g_explorers[20] = {
+cgc_explorer_t g_explorers[20] = {
     { "Gurro Shiner" },
     { "Hallie Hope" },
     { "Jimmy Mcclanahan" },
@@ -89,11 +89,11 @@ explorer_t g_explorers[20] = {
     { "Mimi Strunk" }
 };
 
-skill_t g_skills[6] = {
-    { "Whirling Burst", CRequirement::Type::GROUND_OP, 24 },
-    { "Chaotic Blink", CRequirement::Type::SPECIAL_OP, 15 },
-    { "Aurum Surge", CRequirement::Type::NAVAL_OP, 13 },
-    { "Celestial Attack", CRequirement::Type::AERIAL_OP, 25 },
-    { "Dark Calamity", CRequirement::Type::INTEL_OP, 20 },
-    { "Nebula Cleave", CRequirement::Type::RESCUE_OP, 12 }
+cgc_skill_t g_skills[6] = {
+    { "Whirling Burst", cgc_CRequirement::Type::GROUND_OP, 24 },
+    { "Chaotic Blink", cgc_CRequirement::Type::SPECIAL_OP, 15 },
+    { "Aurum Surge", cgc_CRequirement::Type::NAVAL_OP, 13 },
+    { "Celestial Attack", cgc_CRequirement::Type::AERIAL_OP, 25 },
+    { "Dark Calamity", cgc_CRequirement::Type::INTEL_OP, 20 },
+    { "Nebula Cleave", cgc_CRequirement::Type::RESCUE_OP, 12 }
 };

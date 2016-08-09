@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -24,17 +24,17 @@
 #include "service.h"
 #include "map.h"
 
-void receiveInstruction(unsigned long *instruction) {
+void cgc_receiveInstruction(unsigned long *instruction) {
 	int bytes_read;
-	bytes_read = recv(STDIN, (char *)instruction, sizeof(unsigned long));
+	bytes_read = cgc_recv(STDIN, (char *)instruction, sizeof(unsigned long));
 	if(bytes_read < 0)
 		_terminate(RECEIVE_ERROR);
 }
 
-void receiveValue(int* value) {
+void cgc_receiveValue(int* value) {
 	int bytes_read;
 
-	bytes_read = recv(STDIN, (char *)value, sizeof(int));
+	bytes_read = cgc_recv(STDIN, (char *)value, sizeof(int));
 	if(bytes_read < 0)
 		_terminate(RECEIVE_ERROR);
 
@@ -42,53 +42,53 @@ void receiveValue(int* value) {
 
 // Possible Vuln 1: Reuse dynamic memory for new key
 // Possible Vuln 2: SHUFFLE Vuln
-void receiveKey(char* key) {
+void cgc_receiveKey(char* key) {
 	int bytes_read;
 
-	//tmpKey = (char *)malloc(MAX_KEY_SIZE+1);
-	memset(key, 0, MAX_KEY_SIZE+1);
-	bytes_read = recvline(STDIN, key, MAX_KEY_SIZE);
+	//tmpKey = (char *)cgc_malloc(MAX_KEY_SIZE+1);
+	cgc_memset(key, 0, MAX_KEY_SIZE+1);
+	bytes_read = cgc_recvline(STDIN, key, MAX_KEY_SIZE);
 	if(bytes_read < 0)
 		_terminate(RECEIVE_ERROR);
 
 }
 
-void sendReport(Map *map) {
+void cgc_sendReport(cgc_Map *map) {
 	uint32_t size;
 	char report_buf[40] = {0};
 	int totalBalance = 0;
-	Map *mapPtr;
+	cgc_Map *mapPtr;
 	int ret;
 
-	size = getSize(map);
+	size = cgc_getSize(map);
 	mapPtr = map;
 
 	while(size--) {
 		totalBalance += mapPtr->value;
-		ret = transmit_all(STDOUT, mapPtr->key, sizeof(mapPtr->key));
+		ret = cgc_transmit_all(STDOUT, mapPtr->key, sizeof(mapPtr->key));
 		if(ret != 0)
 			_terminate(TRANSMIT_ERROR);
-		ret = int2str(report_buf, sizeof(report_buf), mapPtr->value);
+		ret = cgc_int2str(report_buf, sizeof(report_buf), mapPtr->value);
 		if(ret != 0)
 			_terminate(CONVERSION_ERROR);
-		ret = transmit_all(STDOUT, report_buf, sizeof(report_buf));
+		ret = cgc_transmit_all(STDOUT, report_buf, sizeof(report_buf));
 		if(ret != 0)
 			_terminate(TRANSMIT_ERROR);
-		memset(report_buf, 0, sizeof(report_buf));
+		cgc_memset(report_buf, 0, sizeof(report_buf));
 		mapPtr = mapPtr->next;
 
 	}
 
-	ret = int2str(report_buf, sizeof(report_buf), totalBalance);
+	ret = cgc_int2str(report_buf, sizeof(report_buf), totalBalance);
 	if(ret != 0)
 		_terminate(CONVERSION_ERROR);
-	ret = transmit_all(STDOUT, report_buf, sizeof(report_buf));
+	ret = cgc_transmit_all(STDOUT, report_buf, sizeof(report_buf));
 	if(ret != 0)
 		_terminate(TRANSMIT_ERROR);
 }
 
 int main(void) {
-	Map* map=NULL;
+	cgc_Map* map=NULL;
 	unsigned long instruction;
 	char key[MAX_KEY_SIZE+1];
 	int value;
@@ -96,21 +96,21 @@ int main(void) {
 
 	while(1) {
 		
-		receiveInstruction(&instruction);
+		cgc_receiveInstruction(&instruction);
 
 		if(instruction == NEW_BUDGET_INSTR) {
-			receiveKey(key);
-			receiveValue(&value);
+			cgc_receiveKey(key);
+			cgc_receiveValue(&value);
 			if(value < 0)
 				continue;
-			ret = setMap(&map, key, value);
+			ret = cgc_setMap(&map, key, value);
 
 			if(ret == 1) {
-				ret = transmit_all(STDOUT, NEW_BUDGET_STR, sizeof(NEW_BUDGET_STR)-1);
+				ret = cgc_transmit_all(STDOUT, NEW_BUDGET_STR, sizeof(NEW_BUDGET_STR)-1);
 				if(ret != 0)
 					_terminate(TRANSMIT_ERROR);
 			} else {
-				ret = transmit_all(STDOUT, BUDGET_FULL_STR, sizeof(BUDGET_FULL_STR)-1);
+				ret = cgc_transmit_all(STDOUT, BUDGET_FULL_STR, sizeof(BUDGET_FULL_STR)-1);
 				if(ret != 0)
 					_terminate(TRANSMIT_ERROR);	
 			}
@@ -120,16 +120,16 @@ int main(void) {
 		if(instruction == TRANSACTION_INSTR) {
 			int budget;
 
-			receiveKey(key);
-			receiveValue(&value);
-			budget = getValue(map, key);
+			cgc_receiveKey(key);
+			cgc_receiveValue(&value);
+			budget = cgc_getValue(map, key);
 			budget -= value;
-			setMap(&map, key, budget);
+			cgc_setMap(&map, key, budget);
 			if(budget < 0) {
-				ret = transmit_all(STDOUT, key, strlen(key));
+				ret = cgc_transmit_all(STDOUT, key, cgc_strlen(key));
 				if(ret != 0)
 					_terminate(TRANSMIT_ERROR);	
-				ret = transmit_all(STDOUT, OVERBUDGET_STR, sizeof(OVERBUDGET_STR)-1);
+				ret = cgc_transmit_all(STDOUT, OVERBUDGET_STR, sizeof(OVERBUDGET_STR)-1);
 				if(ret != 0)
 					_terminate(TRANSMIT_ERROR);	
 			}
@@ -138,25 +138,25 @@ int main(void) {
 		if(instruction == GET_BUDGET_INSTR) {
 			int val; // Possible vuln. Re-use value that is still pointing to another value
 			char value_buf[40] = {0};
-			receiveKey(key);
-			val =  getValue(map, key);
+			cgc_receiveKey(key);
+			val =  cgc_getValue(map, key);
 
-			ret = int2str(value_buf, sizeof(value_buf), val);
+			ret = cgc_int2str(value_buf, sizeof(value_buf), val);
 			if(ret != 0)
 				_terminate(CONVERSION_ERROR);
-			ret = transmit_all(STDOUT, value_buf, sizeof(value_buf));
+			ret = cgc_transmit_all(STDOUT, value_buf, sizeof(value_buf));
 			if(ret != 0)
 				_terminate(TRANSMIT_ERROR);
 		}
 
 		if(instruction == DELETE_BUDGET_INSTR) {
-			receiveKey(key);
-			if(!strcmp(key, "BACON"))
-				removeMap(&map, key);
+			cgc_receiveKey(key);
+			if(!cgc_strcmp(key, "BACON"))
+				cgc_removeMap(&map, key);
 		}
 
 		if(instruction == REPORT_INSTR) {
-			sendReport(map);
+			cgc_sendReport(map);
 
 		}
 

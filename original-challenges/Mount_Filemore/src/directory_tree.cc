@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,21 +29,21 @@
 
 namespace {
 
-void PrintFile(const fs_file *file_metadata, unsigned char num_tabs)
+void cgc_PrintFile(const cgc_fs_file *file_metadata, unsigned char num_tabs)
 {
     for (int i = 0; i < num_tabs; i++)
-        printf("    ");
-    printf("File Name: ");
+        cgc_printf("    ");
+    cgc_printf("File Name: ");
     PRINT_ARR_CHARS(file_metadata->name, sizeof(file_metadata->name));
 }
-void PrintSubdirectory(const fs_file *file_metadata, unsigned char num_tabs)
+void cgc_PrintSubdirectory(const cgc_fs_file *file_metadata, unsigned char num_tabs)
 {
     for (int i = 0; i < num_tabs; i++)
-        printf("    ");
-    printf("Subdirectory Name: ");
+        cgc_printf("    ");
+    cgc_printf("Subdirectory Name: ");
     PRINT_ARR_CHARS(file_metadata->name, sizeof(file_metadata->name));
 }
-void PrintDirectory(const fs_file *file_metadata, char *dirname, int *namelen, bool skip_path_update)
+void cgc_PrintDirectory(const cgc_fs_file *file_metadata, char *dirname, int *namelen, bool skip_path_update)
 {
 
     char *pname = &dirname[*namelen];
@@ -62,127 +62,127 @@ void PrintDirectory(const fs_file *file_metadata, char *dirname, int *namelen, b
         ++*namelen;
     }
 
-    printf("Directory Name: ");
+    cgc_printf("Directory Name: ");
     PRINT_ARR_CHARS(dirname, *namelen);
 }
 
 }
 
-DirectoryTree::DirectoryTree()
+cgc_DirectoryTree::cgc_DirectoryTree()
 {
-    directory_entry_ = (fs_file *)NULL;
+    directory_entry_ = (cgc_fs_file *)NULL;
 }
 
-DirectoryTree::DirectoryTree(fs_file *directory)
+cgc_DirectoryTree::cgc_DirectoryTree(cgc_fs_file *directory)
 {
     directory_entry_ = directory;
 }
 
-void DirectoryTree::AddEntry(fs_file *file_info)
+void cgc_DirectoryTree::cgc_AddEntry(cgc_fs_file *file_info)
 {
     if (!file_info)
         return;
 
-    if (CgFsFile::IsDirectory(file_info))
-        subdirectories_.Append(DirectoryTree(file_info));
+    if (CgFsFile::cgc_IsDirectory(file_info))
+        subdirectories_.cgc_Append(cgc_DirectoryTree(file_info));
     else
-        file_list_.Append(file_info);
+        file_list_.cgc_Append(file_info);
 }
 
 
-fs_file *DirectoryTree::FindFile(const char *path)
+cgc_fs_file *cgc_DirectoryTree::cgc_FindFile(const char *path)
 {
     if (!path)
-        return (fs_file *)NULL;
-    if (strcmp("/", path) == 0)
+        return (cgc_fs_file *)NULL;
+    if (cgc_strcmp("/", path) == 0)
         return directory_entry_;
 
-    DirectoryTree *dir_tree;
-    fs_file *file_meta;
+    cgc_DirectoryTree *dir_tree;
+    cgc_fs_file *file_meta;
 
-    if (FindFileHelper(this, path, &dir_tree, &file_meta))
+    if (cgc_FindFileHelper(this, path, &dir_tree, &file_meta))
     {
         if (dir_tree)
-            return dir_tree->directory_entry();
+            return dir_tree->cgc_directory_entry();
         else if(file_meta)
             return file_meta;
     }
 
-    return (fs_file *)NULL;
+    return (cgc_fs_file *)NULL;
 }
 
-DirectoryTree *DirectoryTree::FindDirectory(const char *path)
+cgc_DirectoryTree *cgc_DirectoryTree::cgc_FindDirectory(const char *path)
 {
     if (!path)
-        return (DirectoryTree *)NULL;
-    if (strcmp("/", path) == 0)
+        return (cgc_DirectoryTree *)NULL;
+    if (cgc_strcmp("/", path) == 0)
         return this;
 
-    DirectoryTree *dir_tree;
-    fs_file *file_meta;
+    cgc_DirectoryTree *dir_tree;
+    cgc_fs_file *file_meta;
 
-    if (FindFileHelper(this, path, &dir_tree, &file_meta))
+    if (cgc_FindFileHelper(this, path, &dir_tree, &file_meta))
     {
         if (dir_tree)
             return dir_tree;
     }
 
-    return (DirectoryTree *)NULL;
+    return (cgc_DirectoryTree *)NULL;
 }
 
-void DirectoryTree::ListFiles(const char *path, bool recursive)
+void cgc_DirectoryTree::cgc_ListFiles(const char *path, bool recursive)
 {
-    DirectoryTree *dir_tree;
-    fs_file *file_meta;
-    if (!path || strcmp("/", path) == 0)
+    cgc_DirectoryTree *dir_tree;
+    cgc_fs_file *file_meta;
+    if (!path || cgc_strcmp("/", path) == 0)
     {
         char rootdir[] = "";
-        ListFileHelper(this, (fs_file *)NULL, recursive, rootdir, strlen(rootdir), false);
+        cgc_ListFileHelper(this, (cgc_fs_file *)NULL, recursive, rootdir, cgc_strlen(rootdir), false);
         return;
     }
     else
     {
-        if (FindFileHelper(this, path, &dir_tree, &file_meta))
-            ListFileHelper(dir_tree, file_meta, recursive, path, strlen(path), true);
+        if (cgc_FindFileHelper(this, path, &dir_tree, &file_meta))
+            cgc_ListFileHelper(dir_tree, file_meta, recursive, path, cgc_strlen(path), true);
     }
 }
 
-void DirectoryTree::ClearTree(bool delete_root)
+void cgc_DirectoryTree::cgc_ClearTree(bool delete_root)
 {
-    fs_file *root_entry;
+    cgc_fs_file *root_entry;
     if (delete_root)
     {
         delete directory_entry_;
-        root_entry = (fs_file *)NULL;
+        root_entry = (cgc_fs_file *)NULL;
     }
     else
     {
         root_entry = directory_entry_;
     }
 
-    ClearTreeHelper(this);
+    cgc_ClearTreeHelper(this);
     directory_entry_ = root_entry;
 }
 
-fs_file *DirectoryTree::directory_entry()
+cgc_fs_file *cgc_DirectoryTree::cgc_directory_entry()
 {
     return directory_entry_;
 }
 
-Array<DirectoryTree> DirectoryTree::subdirectories()
+cgc_Array<cgc_DirectoryTree> cgc_DirectoryTree::cgc_subdirectories()
 {
     return subdirectories_;
 }
 
-Array<fs_file *> DirectoryTree::file_list()
+cgc_Array<cgc_fs_file *> cgc_DirectoryTree::cgc_file_list()
 {
     return file_list_;
 }
 
-bool DirectoryTree::FindFileHelper(DirectoryTree *dirnode, const char *path, DirectoryTree **found_dir, fs_file **found_file)
+bool cgc_DirectoryTree::cgc_FindFileHelper(cgc_DirectoryTree *dirnode, const char *path, cgc_DirectoryTree **found_dir, cgc_fs_file **found_file)
 {
-    *found_dir = (DirectoryTree *)NULL;
-    *found_file = (fs_file *)NULL;
+    *found_dir = (cgc_DirectoryTree *)NULL;
+    *found_file = (cgc_fs_file *)NULL;
 
     bool end_of_path = false;
     char *dir_path = (char *)path;
@@ -197,12 +197,12 @@ bool DirectoryTree::FindFileHelper(DirectoryTree *dirnode, const char *path, Dir
     if (!*dir_path)
         end_of_path = true;
 
-    if (name_len > sizeof(((fs_file *)0)->name))
-        return (fs_file *)NULL;
+    if (name_len > sizeof(((cgc_fs_file *)0)->name))
+        return (cgc_fs_file *)NULL;
 
-    for (int i = 0; i < dirnode->subdirectories_.length(); i++)
+    for (int i = 0; i < dirnode->subdirectories_.cgc_length(); i++)
     {
-        if (CgFsFile::NameEquals(dirnode->subdirectories_[i].directory_entry_, filename, name_len))
+        if (CgFsFile::cgc_NameEquals(dirnode->subdirectories_[i].directory_entry_, filename, name_len))
         {
 
             if (filename[name_len] == '\0' || (filename[name_len] == '/' && filename[name_len + 1] == '\0'))
@@ -212,16 +212,16 @@ bool DirectoryTree::FindFileHelper(DirectoryTree *dirnode, const char *path, Dir
             }
             else
             {
-                return FindFileHelper(&dirnode->subdirectories_[i], filename + name_len, found_dir, found_file);
+                return cgc_FindFileHelper(&dirnode->subdirectories_[i], filename + name_len, found_dir, found_file);
             }
         }
     }
 
     if (end_of_path)
     {
-        for (int i = 0; i < dirnode->file_list_.length(); i++)
+        for (int i = 0; i < dirnode->file_list_.cgc_length(); i++)
         {
-            if (CgFsFile::NameEquals(dirnode->file_list_[i], filename, name_len))
+            if (CgFsFile::cgc_NameEquals(dirnode->file_list_[i], filename, name_len))
             {
                 *found_file = dirnode->file_list_[i];
                 return true;
@@ -232,39 +232,39 @@ bool DirectoryTree::FindFileHelper(DirectoryTree *dirnode, const char *path, Dir
     return false;
 }
 
-void DirectoryTree::ListFileHelper(DirectoryTree *dirnode, const fs_file *file_info, bool recursive, const char *dirname, int namelen,
+void cgc_DirectoryTree::cgc_ListFileHelper(cgc_DirectoryTree *dirnode, const cgc_fs_file *file_info, bool recursive, const char *dirname, int namelen,
                                     bool skip_path_update)
 {
     char *cur_dir = (char *)NULL;
     int cur_namelen = 0;
     if (dirnode)
     {
-        cur_dir = new char[namelen + sizeof(((fs_file *)0)->name) + 1];
+        cur_dir = new char[namelen + sizeof(((cgc_fs_file *)0)->name) + 1];
         cur_namelen = namelen;
-        memcpy(cur_dir, dirname, namelen);
+        cgc_memcpy(cur_dir, dirname, namelen);
 
-        PrintDirectory(dirnode->directory_entry_, cur_dir, &cur_namelen, skip_path_update);
-        if (!dirnode->subdirectories_.length() && !dirnode->file_list_.length())
+        cgc_PrintDirectory(dirnode->directory_entry_, cur_dir, &cur_namelen, skip_path_update);
+        if (!dirnode->subdirectories_.cgc_length() && !dirnode->file_list_.cgc_length())
         {
-            printf("    --Empty Directory--" NL NL);
+            cgc_printf("    --Empty Directory--" NL NL);
             return;
         }
 
-        for (int i = 0; i < dirnode->subdirectories_.length(); i++)
-            PrintSubdirectory(dirnode->subdirectories_[i].directory_entry(), 1);
-        for (int i = 0; i < dirnode->file_list_.length(); i++)
-            PrintFile(dirnode->file_list_[i], 1);
-        printf(NL);
+        for (int i = 0; i < dirnode->subdirectories_.cgc_length(); i++)
+            cgc_PrintSubdirectory(dirnode->subdirectories_[i].cgc_directory_entry(), 1);
+        for (int i = 0; i < dirnode->file_list_.cgc_length(); i++)
+            cgc_PrintFile(dirnode->file_list_[i], 1);
+        cgc_printf(NL);
 
         if (recursive)
         {
-            for (int i = 0; i < dirnode->subdirectories_.length(); i++)
-                ListFileHelper(&dirnode->subdirectories_[i], (fs_file *)NULL, recursive, cur_dir, cur_namelen, false);
+            for (int i = 0; i < dirnode->subdirectories_.cgc_length(); i++)
+                cgc_ListFileHelper(&dirnode->subdirectories_[i], (cgc_fs_file *)NULL, recursive, cur_dir, cur_namelen, false);
         }
     }
     else if (file_info)
     {
-        PrintFile(file_info, 0);
+        cgc_PrintFile(file_info, 0);
     }
 
     if (cur_dir)
@@ -272,16 +272,16 @@ void DirectoryTree::ListFileHelper(DirectoryTree *dirnode, const fs_file *file_i
 
 }
 
-void DirectoryTree::ClearTreeHelper(DirectoryTree *dirnode)
+void cgc_DirectoryTree::cgc_ClearTreeHelper(cgc_DirectoryTree *dirnode)
 {
     if (!dirnode)
         return;
 
-    for (int i = 0; i < dirnode->subdirectories_.length(); i++)
-        ClearTreeHelper(&dirnode->subdirectories_[i]);
+    for (int i = 0; i < dirnode->subdirectories_.cgc_length(); i++)
+        cgc_ClearTreeHelper(&dirnode->subdirectories_[i]);
 
     directory_entry_ = NULL;
-    dirnode->subdirectories_.Clear();
-    dirnode->file_list_.Clear();
+    dirnode->subdirectories_.cgc_Clear();
+    dirnode->file_list_.cgc_Clear();
 }
 

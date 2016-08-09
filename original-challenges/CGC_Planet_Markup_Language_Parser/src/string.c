@@ -27,11 +27,11 @@ THE SOFTWARE.
 #include "string.h"
 
 /**
- * Frees a string and its buffer. The calling function does not need to free the structure
- * @param str Pointer to a string structure
+ * Frees a cgc_string and its buffer. The calling function does not need to free the structure
+ * @param str Pointer to a cgc_string structure
  * @return Returns nothing
  **/ 
-void freeString( pstring str )
+void cgc_freeString( cgc_pstring str )
 {
 	if ( str == NULL ) {
 		return;
@@ -42,7 +42,7 @@ void freeString( pstring str )
 		deallocate( str->buffer, str->maxlength );
 	}
 
-	deallocate(str, sizeof(string));
+	deallocate(str, sizeof(cgc_string));
 
 	return;
 }
@@ -50,10 +50,10 @@ void freeString( pstring str )
 /**
  * Skips any characters associated with a url:
  *	alphanumeric, '.', '/', and ':'
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @return Returns the final index after the URL or -1 on failure
  **/
-int skipUrl( pstring str )
+int cgc_skipUrl( cgc_pstring str )
 {
 	int retval = -1;
 	int index = 0;
@@ -70,7 +70,7 @@ int skipUrl( pstring str )
 	while ( index < str->maxlength ) {
 		c = str->buffer[index];
 
-		if ( !isalnum(c) && c != '.' && c != '/' && c != ':' ) {
+		if ( !cgc_isalnum(c) && c != '.' && c != '/' && c != ':' ) {
 			/// Set the new index past to the invalid character
 			str->index = index;
 
@@ -88,11 +88,11 @@ end:
 
 /**
  * Returns the current index
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param outIndex Pointer to an integer to store the value
- * @return Returns the current index into the string
+ * @return Returns the current index into the cgc_string
  **/
-int getIndex( pstring str, int *outIndex )
+int cgc_getIndex( cgc_pstring str, int *outIndex )
 {
 	if ( str == NULL ) {
 		return -1;
@@ -105,10 +105,10 @@ int getIndex( pstring str, int *outIndex )
 
 /**
  * Skip digits, '+' or '-'
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @return The final index after any integer data or -1 on error
  **/
-int skipInt( pstring str ) 
+int cgc_skipInt( cgc_pstring str ) 
 {
 	int retval = -1;
 	int index = 0;
@@ -123,7 +123,7 @@ int skipInt( pstring str )
 	while( index < str->maxlength ) {
 		c = str->buffer[index];
 
-		if ( c == '+' || c == '-' || isdigit(c) ) {
+		if ( c == '+' || c == '-' || cgc_isdigit(c) ) {
 			index++;
 			continue;
 		} else {
@@ -138,10 +138,10 @@ int skipInt( pstring str )
 
 /**
  * Skip digits, '+', '-', or '.'
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @return The final index after any float data or -1 on error
  **/
-int skipFloat( pstring str ) 
+int cgc_skipFloat( cgc_pstring str ) 
 {
 	int retval = -1;
 	int index = 0;
@@ -156,7 +156,7 @@ int skipFloat( pstring str )
 	while( index < str->maxlength ) {
 		c = str->buffer[index];
 
-		if ( c == '.' || c == '+' || c == '-' || isdigit(c) ) {
+		if ( c == '.' || c == '+' || c == '-' || cgc_isdigit(c) ) {
 			index++;
 		} else {
 			str->index = index;
@@ -169,14 +169,14 @@ int skipFloat( pstring str )
 }
 
 /**
- * Copy a segment of the string out
- * @param str Pointer to the string structure
+ * Copy a segment of the cgc_string out
+ * @param str Pointer to the cgc_string structure
  * @param start Start index for the copy
  * @param end End index for the copy
  * @return Returns a pointer to the requested data or NULL on failure.
  *	This buffer needs to be freed by the caller.
  **/
-char *copyData( pstring str, int start, int end )
+char *cgc_copyData( cgc_pstring str, int start, int end )
 {
 	char *data = NULL;
 	int length = 0;
@@ -205,7 +205,7 @@ char *copyData( pstring str, int start, int end )
 		return data;
 	}
 
-	/// Calculate string length
+	/// Calculate cgc_string length
 	length = end - start;
 
 	if ( allocate( length+1, 0, (void**)&data) != 0 ) {
@@ -213,19 +213,19 @@ char *copyData( pstring str, int start, int end )
 		return data;
 	}
 
-	bzero( data, length + 1 );
+	cgc_bzero( data, length + 1 );
 
-	memcpy( data, str->buffer + start, length );
+	cgc_memcpy( data, str->buffer + start, length );
 
 	return data;
 }
 
 /**
  * Skip to non-alpha characters
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipAlpha( pstring str )
+int cgc_skipAlpha( cgc_pstring str )
 {
 	int retval = -1;
 	int index = 0;
@@ -237,7 +237,7 @@ int skipAlpha( pstring str )
 	index = str->index;
 
 	while ( index < str->maxlength ) {
-		if ( !isalpha( str->buffer[index] ) ) {
+		if ( !cgc_isalpha( str->buffer[index] ) ) {
 			str->index = index;
 			retval = str->index;
 			return retval;
@@ -251,10 +251,10 @@ int skipAlpha( pstring str )
 
 /**
  * Skip to non alphanumeric or spacecharacters
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipToNonAlphaNumSpace( pstring str )
+int cgc_skipToNonAlphaNumSpace( cgc_pstring str )
 {
 	int retval = -1;
 	int index = 0;
@@ -265,7 +265,7 @@ int skipToNonAlphaNumSpace( pstring str )
 
 	index = str->index;
 	while ( index < str->maxlength ) {
-		if ( !isalnum( str->buffer[index] ) && str->buffer[index] != ' ') {
+		if ( !cgc_isalnum( str->buffer[index] ) && str->buffer[index] != ' ') {
 			str->index = index;
 			retval = str->index;
 			return retval;
@@ -279,10 +279,10 @@ int skipToNonAlphaNumSpace( pstring str )
 
 /**
  * Skip to non alphanumeric characters
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param Returns the final index or -1 on failure
  **/
-int skipToNonAlphaNum( pstring str )
+int cgc_skipToNonAlphaNum( cgc_pstring str )
 {
 	int retval = -1;
 	int index = 0;
@@ -293,7 +293,7 @@ int skipToNonAlphaNum( pstring str )
 
 	index = str->index;
 	while ( index < str->maxlength ) {
-		if ( !isalnum( str->buffer[index] ) ) {
+		if ( !cgc_isalnum( str->buffer[index] ) ) {
 			str->index = index;
 			retval = str->index;
 			return retval;
@@ -306,11 +306,11 @@ int skipToNonAlphaNum( pstring str )
 }
 
 /**
- * Increment the string by a one 
- * @param str Pointer to the string structure
+ * Increment the cgc_string by a one 
+ * @param str Pointer to the cgc_string structure
  * @return Returns the index skipped to or -1 on failure
  **/
-int incChar( pstring str )
+int cgc_incChar( cgc_pstring str )
 {
 	int retval = -1;
 
@@ -329,12 +329,12 @@ end:
 }
 
 /**
- * Increment the string by a certain length
- * @param str Pointer to the string structure
+ * Increment the cgc_string by a certain length
+ * @param str Pointer to the cgc_string structure
  * @param count Amount by which to increase the index
  * @return Returns the index skipped to or -1 on failure
  **/
-int skipLength( pstring str, int count )
+int cgc_skipLength( cgc_pstring str, int count )
 {
 	int retval = -1;
 
@@ -354,11 +354,11 @@ end:
 
 /**
  * Check if the next character to be parsed is the same as the argument
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param c Character to test for
  * @return Returns 1 if true, 0 if false
  **/
-int atChar( pstring str, char c )
+int cgc_atChar( cgc_pstring str, char c )
 {
 	if ( str == NULL ) {
 		return 0;
@@ -373,11 +373,11 @@ int atChar( pstring str, char c )
 
 /**
  * Skip to the next character as specified by the argument
- * @param str Pointer to the string structure
+ * @param str Pointer to the cgc_string structure
  * @param c Character to locate
  * @return Returns the index of the next instance or -1 on failure
  **/
-int skipTo( pstring str, char c )
+int cgc_skipTo( cgc_pstring str, char c )
 {
 	int index = 0;
 	int retval = -1;
@@ -403,33 +403,33 @@ end:
 }
 
 /**
- * Initialize a new string with an existing buffer
+ * Initialize a new cgc_string with an existing buffer
  * @param data Pointer to the data this structure will manage
- * @return Returns a pointer to a string structure or NULL on failure
+ * @return Returns a pointer to a cgc_string structure or NULL on failure
  **/
-pstring initString( char *data )
+cgc_pstring cgc_initString( char *data )
 {
-	pstring newString = NULL;
+	cgc_pstring newString = NULL;
 	int length = 0;
 
 	if (data == NULL ) {
 		goto end;
 	}	
 
-	length = strlen(data)+1;
+	length = cgc_strlen(data)+1;
 
-	if ( allocate( sizeof(string), 0, (void**)&newString) != 0 ) {
+	if ( allocate( sizeof(cgc_string), 0, (void**)&newString) != 0 ) {
 		newString = NULL;
 		goto end;
 	}
 
 	if ( allocate( length, 0, (void**)&(newString->buffer)) != 0 ) {
-		deallocate( newString, sizeof(string) );
+		deallocate( newString, sizeof(cgc_string) );
 		newString = NULL;
 	}
 
-	bzero( newString->buffer, length );
-	memcpy( newString->buffer, data, length-1 );
+	cgc_bzero( newString->buffer, length );
+	cgc_memcpy( newString->buffer, data, length-1 );
 
 	newString->maxlength = length;
 	newString->index = 0;
@@ -443,7 +443,7 @@ end:
  * @param st String structure containing the data to skip
  * @return Returns the new index
  **/
-int skipWhiteSpace( pstring st )
+int cgc_skipWhiteSpace( cgc_pstring st )
 {
         int retval = -1;
         int si = 0;

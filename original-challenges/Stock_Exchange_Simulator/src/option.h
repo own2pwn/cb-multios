@@ -39,7 +39,7 @@ typedef enum {
 	ERR = 0xFFFF,
 
 
-} OP_TYPE;
+} cgc_OP_TYPE;
 
 typedef enum {
 	OK = 0,
@@ -57,62 +57,62 @@ typedef enum {
 	ORDERS_FULL = 0xFFFFFF,
 	ORDERFILL = 0xFF0000,
 
-} OP_ERR;
+} cgc_OP_ERR;
 
 typedef enum {
 	REQUEST = 0,
 	RESPONSE
-} R_TYPE;
+} cgc_R_TYPE;
 
 typedef struct packet {
-	R_TYPE rt;
-	OP_TYPE ot;
-	uint32_t acct_id;
-	uint32_t data_l;
-	uint32_t bank_id;
+	cgc_R_TYPE rt;
+	cgc_OP_TYPE ot;
+	cgc_uint32_t acct_id;
+	cgc_uint32_t data_l;
+	cgc_uint32_t bank_id;
 	void * op_data;
 
-} packet_t;
+} cgc_packet_t;
 
 typedef struct option_quote {
 	float ask;
 	char symbol[SYM_SIZE];
 
-} option_quote_t;
+} cgc_option_quote_t;
 
 
 typedef struct orderfill {
 	char symbol[SYM_SIZE];
-	uint32_t qty;
+	cgc_uint32_t qty;
 
-} orderfill_t;
+} cgc_orderfill_t;
 
 
 typedef struct option_order {
 
 	float price;
-	uint32_t qty;
+	cgc_uint32_t qty;
 	char symbol[SYM_SIZE];
 	char sig[KEY_LEN];
-} option_order_t;
+} cgc_option_order_t;
 
 
 typedef struct orderbook_order{
-	uint32_t acct_id;
-	option_order_t contract;
-	uint32_t order_id;
-	OP_TYPE direction;
+	cgc_uint32_t acct_id;
+	cgc_option_order_t contract;
+	cgc_uint32_t order_id;
+	cgc_OP_TYPE direction;
 
 	
 
 	
-} orderbook_order_t;
+} cgc_orderbook_order_t;
 
-orderbook_order_t ORDERBOOK[NUM_ORDERS];
+cgc_orderbook_order_t ORDERBOOK[NUM_ORDERS];
 
-OP_ERR run_option_transaction(uint32_t acct_id, option_order_t *order, OP_TYPE ot);
-size_t gen_order_fill_msg(packet_t *resp, OP_TYPE ot, char * sym, uint32_t qty, uint32_t acct_id);
-float get_current_ask(char * sym);
+cgc_OP_ERR cgc_run_option_transaction(cgc_uint32_t acct_id, cgc_option_order_t *order, cgc_OP_TYPE ot);
+cgc_size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id);
+float cgc_get_current_ask(char * sym);
 
 
 #endif

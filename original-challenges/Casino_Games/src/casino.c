@@ -51,10 +51,10 @@ int payouts[NUMBER_OF_PAYOUTS] = {
 };
 
 // Searches player list for matching player number. 
-// Returns pointer to player_info struct or 0 if not found.
-player_info *lookup_by_number(int number, player_info *root_player)
+// Returns pointer to cgc_player_info struct or 0 if not found.
+cgc_player_info *cgc_lookup_by_number(int number, cgc_player_info *root_player)
 {
-    player_info *player = root_player;
+    cgc_player_info *player = root_player;
     while (player != 0)
     {
         if (player->number == number)
@@ -70,86 +70,86 @@ player_info *lookup_by_number(int number, player_info *root_player)
 }
 
 // Requests a player number from the user and returns the associated player info struct.
-player_info *login_player_by_number(player_info *root_player)
+cgc_player_info *cgc_login_player_by_number(cgc_player_info *root_player)
 {
-    printf("Enter Player Number:");
+    cgc_printf("Enter Player Number:");
     char numbuf[12] = "";
-    receive_fixed_input(numbuf, '\n', sizeof(numbuf) - 1);
-    int number = atoi(numbuf);
-    player_info *player = lookup_by_number(number, root_player);
+    cgc_receive_fixed_input(numbuf, '\n', sizeof(numbuf) - 1);
+    int number = cgc_atoi(numbuf);
+    cgc_player_info *player = cgc_lookup_by_number(number, root_player);
     if (player == 0)
     {
-        printf("Player not found\n");
+        cgc_printf("Player not found\n");
     }
     else
     {
-        printf("Hello, @s!\n", player->name);
+        cgc_printf("Hello, @s!\n", player->name);
     }
     return player;
 }
 
 // Prints info about a player
-void print_player_info(player_info *player)
+void cgc_print_player_info(cgc_player_info *player)
 {
     if (player == 0)
     {
-        printf("Player does not exist\n");
+        cgc_printf("Player does not exist\n");
         return;
     }
-    printf("Player Name: @s\n", player->name);
-    printf("Player Number: @d\n", player->number);
-    printf("Blackjack Score: @d\n", player->blackjack_score);
-    printf("Poker Score: @d\n", player->poker_score);
-    printf("Slots Score: @d\n", player->slots_score);
-    printf("Player Wallet Balance: @d\n", player->wallet);
-    printf("\n");
+    cgc_printf("Player Name: @s\n", player->name);
+    cgc_printf("Player Number: @d\n", player->number);
+    cgc_printf("Blackjack Score: @d\n", player->blackjack_score);
+    cgc_printf("Poker Score: @d\n", player->poker_score);
+    cgc_printf("Slots Score: @d\n", player->slots_score);
+    cgc_printf("Player Wallet Balance: @d\n", player->wallet);
+    cgc_printf("\n");
 }
 
 // Registers a new player and adds new player to the beginning of the linked list of players. 
 // Returns the new root_player node. 
-player_info *register_player(player_info *root_player)
+cgc_player_info *cgc_register_player(cgc_player_info *root_player)
 {
-    player_info *new_player;
-    if (allocate(sizeof(player_info), 0, (void **)&new_player) != 0)
+    cgc_player_info *new_player;
+    if (allocate(sizeof(cgc_player_info), 0, (void **)&new_player) != 0)
     {
-        printf("Error allocating memory for new player\n");
+        cgc_printf("Error allocating memory for new player\n");
         return root_player;
     }
-    memset(new_player, 0, sizeof(player_info));
+    cgc_memset(new_player, 0, sizeof(cgc_player_info));
     do
     {
-        new_player->number = prng() & 0x7fffffff; // positive numbers only
-    } while (lookup_by_number(new_player->number, root_player) != 0);
+        new_player->number = cgc_prng() & 0x7fffffff; // positive numbers only
+    } while (cgc_lookup_by_number(new_player->number, root_player) != 0);
     
-    printf("Enter your name:");
-    receive_fixed_input(new_player->name, '\n', sizeof(new_player->name) - 1);
-    printf("How much cash do you want to spend?:");
+    cgc_printf("Enter your name:");
+    cgc_receive_fixed_input(new_player->name, '\n', sizeof(new_player->name) - 1);
+    cgc_printf("How much cash do you want to spend?:");
     char input[12] = "";
-    receive_fixed_input(input, '\n', sizeof(input) - 1);
-    new_player->wallet = atoi(input);
+    cgc_receive_fixed_input(input, '\n', sizeof(input) - 1);
+    new_player->wallet = cgc_atoi(input);
     if ((new_player->wallet > 1000) || (new_player->wallet < 0))
     {
         new_player->wallet = 1000;
     }
-    print_player_info(new_player);
+    cgc_print_player_info(new_player);
 
     new_player->next = root_player;
     return new_player;
 }
 
 
-void print_all_players(player_info *player)
+void cgc_print_all_players(cgc_player_info *player)
 {
     while( player)
     {
-        print_player_info(player);
+        cgc_print_player_info(player);
         player = player->next;
     }
 }
 
 // Decodes one character into 4 bits of data.
 // Invaid input terminates the program.
-int lookup(char byte)
+int cgc_lookup(char byte)
 {
      switch(byte)
     {
@@ -192,8 +192,8 @@ int lookup(char byte)
 
 // Decodes a string of ascii characters into binary data.
 // Invalid input will terminate the program. 
-// Can write up to size bytes to *decoded.
-void decode(char *encoded, char *decoded, size_t size)
+// Can cgc_write up to size bytes to *decoded.
+void cgc_decode(char *encoded, char *decoded, cgc_size_t size)
 {
     char *inp = encoded;
     char *outp = decoded;
@@ -207,18 +207,18 @@ void decode(char *encoded, char *decoded, size_t size)
         }
         else
         {
-            byte = lookup(*inp++);
-            byte = lookup(*inp++) << 4 | byte;
+            byte = cgc_lookup(*inp++);
+            byte = cgc_lookup(*inp++) << 4 | byte;
         }
         *outp++ = byte;
     }
 }
 
 // Runs the programming interface
-void programming_interface()
+void cgc_programming_interface()
 {
     int ret;
-    size_t bytes_read;
+    cgc_size_t bytes_read;
     int config_size;
     char *config_data;
 
@@ -262,10 +262,10 @@ void programming_interface()
     int new_payouts[NUMBER_OF_PAYOUTS];
 #endif
 
-    decode(config_data, (char *)new_payouts, config_size);
+    cgc_decode(config_data, (char *)new_payouts, config_size);
 
     // Update payouts
-    memcpy(&payouts, &new_payouts, sizeof(payouts));
+    cgc_memcpy(&payouts, &new_payouts, sizeof(payouts));
 
     deallocate(config_data, config_size);
 }
@@ -280,115 +280,115 @@ int main(void) {
 
     // Get player name
     int ret;
-    size_t bytes_read;
-    printf("Enter your name:");
+    cgc_size_t bytes_read;
+    cgc_printf("Enter your name:");
     ret = receive(STDIN, name, 83, &bytes_read);
     if ((ret != 0) || (bytes_read == 0))
     {
         _terminate(2);
     }
     name[bytes_read] = 0;
-    if (name[strlen(name)-1] == '\n')
+    if (name[cgc_strlen(name)-1] == '\n')
     {
-        name[strlen(name)-1] = '\0';
+        name[cgc_strlen(name)-1] = '\0';
     }
-    printf("Hello, @s!\n", name);
+    cgc_printf("Hello, @s!\n", name);
 
     // Seed the PRNG
-    uint64_t seed = 0;
-    for (int i = 0; i<strlen(name); i++)
+    cgc_uint64_t seed = 0;
+    for (int i = 0; i<cgc_strlen(name); i++)
     {
         seed = (seed << 8) | (((seed >> 56) ^ name[i]));
     }
-    sprng(seed);
+    cgc_sprng(seed);
 
     // Grant access to programming interface when name is "71db10261c"
     if (seed == 0x6462313032360652LL)
     {
-        printf("Access Granted\n");
-        programming_interface();
+        cgc_printf("Access Granted\n");
+        cgc_programming_interface();
     }
 
     // Setup player info
-    player_info *current_player = 0;
-    player_info *root_player = 0;
+    cgc_player_info *current_player = 0;
+    cgc_player_info *root_player = 0;
 
     // Play the game
     while( (current_player == 0) || 
         (current_player->wallet <= BREAK_THE_BANK) )
     {
-        printf("\n");
-        printf("1. Play Blackjack\n");
-        printf("2. Play Poker\n");
-        printf("3. Play Slots\n");
-        printf("4. Enter a Players Club Number\n");
-        printf("5. Register a new Player\n");
-        printf("6. Show Player Status\n");
-        printf("7. Show All Players\n");
-        printf("8. Exit\n");
-        printf("Select a number:");
+        cgc_printf("\n");
+        cgc_printf("1. Play Blackjack\n");
+        cgc_printf("2. Play Poker\n");
+        cgc_printf("3. Play Slots\n");
+        cgc_printf("4. Enter a Players Club Number\n");
+        cgc_printf("5. Register a new Player\n");
+        cgc_printf("6. Show Player Status\n");
+        cgc_printf("7. Show All Players\n");
+        cgc_printf("8. Exit\n");
+        cgc_printf("Select a number:");
 
         char input;
-        receive_fixed_input(&input, '\n', sizeof(input));
+        cgc_receive_fixed_input(&input, '\n', sizeof(input));
         
         switch(input)
         {
             case '1':
-                printf("Play Blackjack\n");
-                blackjack(current_player);
+                cgc_printf("Play Blackjack\n");
+                cgc_blackjack(current_player);
                 break;
             case '2':
-                printf("Play Poker\n");
-                poker(current_player);
+                cgc_printf("Play Poker\n");
+                cgc_poker(current_player);
                 break;
             case '3':
-                printf("Play Slots\n");
-                slots(current_player);
+                cgc_printf("Play Slots\n");
+                cgc_slots(current_player);
                 break;
             case '4':
                 // Enter Player Number
-                current_player = login_player_by_number(root_player);
+                current_player = cgc_login_player_by_number(root_player);
                 break;
             case '5':
-                printf("Register a new Player\n");
-                root_player = register_player(root_player);
+                cgc_printf("Register a new Player\n");
+                root_player = cgc_register_player(root_player);
                 break;
             case '6':
                 // Check player_status
-                print_player_info(current_player);
+                cgc_print_player_info(current_player);
                 break;
             case '7':
-                printf("Show All Players\n");
-                print_all_players(root_player);
+                cgc_printf("Show All Players\n");
+                cgc_print_all_players(root_player);
                 break;
             case '8':
-                printf("you don't really want to leave do you?\n");
-                receive_fixed_input(&input, '\n', sizeof(input));
+                cgc_printf("you don't really want to leave do you?\n");
+                cgc_receive_fixed_input(&input, '\n', sizeof(input));
                 if (input == 'y')
                 {
                     if (current_player == 0)
                     {
-                        printf("Goodbye, stranger\n");
+                        cgc_printf("Goodbye, stranger\n");
                         _terminate(0);
                     }
                     if (current_player->blackjack_score == 0)
                     {
-                        printf("But you didn't even play blackjack :(\n");
+                        cgc_printf("But you didn't even play cgc_blackjack :(\n");
                         _terminate(0);
                     }
                     else if (current_player->poker_score == 0)
                     {
-                        printf("But you didn't even play poker :(\n");
+                        cgc_printf("But you didn't even play cgc_poker :(\n");
                         _terminate(0);
                     }
                     else if (current_player->slots_score == 0)
                     {
-                        printf("But you didn't even play slots :(\n");
+                        cgc_printf("But you didn't even play cgc_slots :(\n");
                         _terminate(0);
                     }
                     else
                     {
-                        printf("Okay, you've had enough ;)\n");
+                        cgc_printf("Okay, you've had enough ;)\n");
                         goto finish;
                     }
                 }
@@ -399,10 +399,10 @@ int main(void) {
 
     }
 
-    printf("You broke the bank!\n");
+    cgc_printf("You broke the bank!\n");
 
     // End of game
     finish:
-        printf("Goodbye\n");
+        cgc_printf("Goodbye\n");
 
 }

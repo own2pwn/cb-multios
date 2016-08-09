@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,46 +35,46 @@ extern "C" {
 #include "file_manager.h"
 #include "llist.h"
 
-CommandManager *cmdMan;
-FileManager *fileMan;
+cgc_CommandManager *cmdMan;
+cgc_FileManager *fileMan;
 
-void call_inits(void);
+void cgc_call_inits(void);
 
-void init_commands()
+void cgc_init_commands()
 {
   /* Create commands */
-  cmdMan = new CommandManager(fileMan);
-  ListCmd *list = new ListCmd();
-  CreateCmd *create = new CreateCmd();
-  OpenCmd *open = new OpenCmd();
-  CloseCmd *close = new CloseCmd();
-  CloseAllCmd *closeAll = new CloseAllCmd();
-  ReadCmd *read = new ReadCmd();
-  ModifyCmd *modify = new ModifyCmd();
-  DeleteCmd *del = new DeleteCmd();
-  CreateDirCmd *createDir = new CreateDirCmd();
-  DeleteDirCmd *deleteDir = new DeleteDirCmd();
-  ChangeDirCmd *changeDir = new ChangeDirCmd();
-  QuitCmd *quit = new QuitCmd();
-  HelpCmd *help = new HelpCmd();
+  cmdMan = new cgc_CommandManager(fileMan);
+  cgc_ListCmd *list = new cgc_ListCmd();
+  cgc_CreateCmd *create = new cgc_CreateCmd();
+  cgc_OpenCmd *open = new cgc_OpenCmd();
+  cgc_CloseCmd *close = new cgc_CloseCmd();
+  cgc_CloseAllCmd *closeAll = new cgc_CloseAllCmd();
+  cgc_ReadCmd *read = new cgc_ReadCmd();
+  cgc_ModifyCmd *modify = new cgc_ModifyCmd();
+  cgc_DeleteCmd *del = new cgc_DeleteCmd();
+  cgc_CreateDirCmd *createDir = new cgc_CreateDirCmd();
+  cgc_DeleteDirCmd *deleteDir = new cgc_DeleteDirCmd();
+  cgc_ChangeDirCmd *changeDir = new cgc_ChangeDirCmd();
+  cgc_QuitCmd *quit = new cgc_QuitCmd();
+  cgc_HelpCmd *help = new cgc_HelpCmd();
 
   /* Install commands */
-  cmdMan->InstallCommand(list);
-  cmdMan->InstallCommand(create);
-  cmdMan->InstallCommand(open);
-  cmdMan->InstallCommand(close);
-  cmdMan->InstallCommand(closeAll);
-  cmdMan->InstallCommand(read);
-  cmdMan->InstallCommand(modify);
-  cmdMan->InstallCommand(del);
-  cmdMan->InstallCommand(createDir);
-  cmdMan->InstallCommand(deleteDir);
-  cmdMan->InstallCommand(changeDir);
-  cmdMan->InstallCommand(quit);
-  cmdMan->InstallCommand(help);
+  cmdMan->cgc_InstallCommand(list);
+  cmdMan->cgc_InstallCommand(create);
+  cmdMan->cgc_InstallCommand(open);
+  cmdMan->cgc_InstallCommand(close);
+  cmdMan->cgc_InstallCommand(closeAll);
+  cmdMan->cgc_InstallCommand(read);
+  cmdMan->cgc_InstallCommand(modify);
+  cmdMan->cgc_InstallCommand(del);
+  cmdMan->cgc_InstallCommand(createDir);
+  cmdMan->cgc_InstallCommand(deleteDir);
+  cmdMan->cgc_InstallCommand(changeDir);
+  cmdMan->cgc_InstallCommand(quit);
+  cmdMan->cgc_InstallCommand(help);
 }
 
-char** parse_args(char *s, int *argc)
+char** cgc_parse_args(char *s, int *argc)
 {
   char **argv = 0, *p;
   int i = 0;
@@ -85,24 +85,24 @@ char** parse_args(char *s, int *argc)
   p = s;
   while (*p)
   {
-    while (isspace(*p)) p++;
+    while (cgc_isspace(*p)) p++;
     if (!*p) break;
-    while (*p && !isspace(*p)) p++;
+    while (*p && !cgc_isspace(*p)) p++;
     (*argc)++;
   }
   if (*argc > 0)
   {
     p = s;
-    argv = (char **) calloc((*argc + 1), sizeof(char *));
-    while (isspace(*p)) p++;
+    argv = (char **) cgc_calloc((*argc + 1), sizeof(char *));
+    while (cgc_isspace(*p)) p++;
     while (*p)
     {
       argv[i] = p;
-      while (*p && !isspace(*p)) p++;
+      while (*p && !cgc_isspace(*p)) p++;
       if (!*p) break;
       *p = '\0';
       p++;
-      while (*p && isspace(*p)) p++;
+      while (*p && cgc_isspace(*p)) p++;
       i++;
     }
   }
@@ -113,23 +113,23 @@ int main()
 {
   int argc;
   char buf[2048], **argv = 0;
-  fileMan = new FileManager();
+  fileMan = new cgc_FileManager();
 
   /* init */
-  call_inits();
-  init_commands();
+  
+  cgc_init_commands();
 
   while (1)
   {
     printf("$ ");
-    if (read_until(STDIN, buf, sizeof(buf), '\n') < 0)
+    if (cgc_read_until(STDIN, buf, sizeof(buf), '\n') < 0)
       return -1;
-    argv = parse_args(buf, &argc);
+    argv = cgc_parse_args(buf, &argc);
     if (argc)
     {
-      if (cmdMan->ExecuteCommand(argv[0], --argc, &argv[1]) < 0)
+      if (cmdMan->cgc_ExecuteCommand(argv[0], --argc, &argv[1]) < 0)
         printf("Unknown command [%s]\n", argv[0]);
-      free(argv);
+      cgc_free(argv);
     }
   }
   return 0;

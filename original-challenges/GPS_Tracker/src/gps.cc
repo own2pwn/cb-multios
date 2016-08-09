@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,44 +35,44 @@ extern "C"
 
 #define PI	(3.1415926536)
 
-CGPSCoordinates::CGPSCoordinates( )
+cgc_CGPSCoordinates::cgc_CGPSCoordinates( )
 	: m_latDegrees( 0 ), m_latMinutes( 0 ), m_latSeconds( 0 ), m_longDegrees( 0 ), m_longMinutes( 0 ), m_longSeconds( 0 )
 {
 
 }
 	
-CGPSCoordinates::CGPSCoordinates( uint16_t latDegrees, uint8_t latMinutes, uint8_t latSeconds, uint16_t longDegrees, uint8_t longMinutes, uint8_t longSeconds )
+cgc_CGPSCoordinates::cgc_CGPSCoordinates( cgc_uint16_t latDegrees, cgc_uint8_t latMinutes, cgc_uint8_t latSeconds, cgc_uint16_t longDegrees, cgc_uint8_t longMinutes, cgc_uint8_t longSeconds )
 	: m_latDegrees( latDegrees ), m_latMinutes( latMinutes ), m_latSeconds( latSeconds ), m_longDegrees( longDegrees ), m_longMinutes( longMinutes ), m_longSeconds( longSeconds )
 {
 
 }
 
-CGPSCoordinates::~CGPSCoordinates( )
+cgc_CGPSCoordinates::~cgc_CGPSCoordinates( )
 {
 
 }
 
-uint32_t CGPSCoordinates::GetSerializedSize( void )
+cgc_uint32_t cgc_CGPSCoordinates::cgc_GetSerializedSize( void )
 {
 	return (6);
 }
 
-uint32_t CGPSCoordinates::Serialize( uint8_t *pDest, uint32_t destLen )
+cgc_uint32_t cgc_CGPSCoordinates::cgc_Serialize( cgc_uint8_t *pDest, cgc_uint32_t destLen )
 {
 	if ( !pDest )
 		return (0);
 
-	if ( destLen < GetSerializedSize() )
+	if ( destLen < cgc_GetSerializedSize() )
 		return (0);	// Not enough data
 
 	// Pack into 24-bits each
-	uint32_t packedLat = 0;
+	cgc_uint32_t packedLat = 0;
 	packedLat = (m_latDegrees * (60*60)) + (m_latMinutes * 60) + m_latSeconds;
 	
-	uint32_t packedLong = 0;
+	cgc_uint32_t packedLong = 0;
 	packedLong = (m_longDegrees * (60*60)) + (m_longMinutes * 60) + m_longSeconds;
 
-	// Serialize
+	// cgc_Serialize
 	pDest[0] = (packedLat >> 16) & 0xFF;
 	pDest[1] = (packedLat >> 8) & 0xFF;
 	pDest[2] = (packedLat) & 0xFF;
@@ -81,19 +81,19 @@ uint32_t CGPSCoordinates::Serialize( uint8_t *pDest, uint32_t destLen )
 	pDest[4] = (packedLong >> 8) & 0xFF;
 	pDest[5] = (packedLong) & 0xFF; 
 
-	return (GetSerializedSize());	
+	return (cgc_GetSerializedSize());	
 }
 
-uint32_t CGPSCoordinates::Deserialize( uint8_t *pSource, uint32_t sourceLen )
+cgc_uint32_t cgc_CGPSCoordinates::cgc_Deserialize( cgc_uint8_t *pSource, cgc_uint32_t sourceLen )
 {
 	if ( !pSource )
 		return (0);
 
-	if ( sourceLen < GetSerializedSize() )
+	if ( sourceLen < cgc_GetSerializedSize() )
 		return (0);
 
-	uint32_t packedLat = 0;
-	uint32_t packedLong = 0;
+	cgc_uint32_t packedLat = 0;
+	cgc_uint32_t packedLong = 0;
 
 	packedLat = (pSource[0] << 16) | (pSource[1] << 8) | pSource[2];
 	packedLong = (pSource[3] << 16) | (pSource[4] << 8) | pSource[5];
@@ -114,53 +114,53 @@ uint32_t CGPSCoordinates::Deserialize( uint8_t *pSource, uint32_t sourceLen )
 
 	m_longSeconds = packedLong;
 
-	return (GetSerializedSize()); 
+	return (cgc_GetSerializedSize()); 
 }
 
-double CGPSCoordinates::GetLatRadians( void )
+double cgc_CGPSCoordinates::cgc_GetLatRadians( void )
 {
 	double radians = 0.0;
 
-	uint16_t latDegrees = GetLatitudeDegrees();
+	cgc_uint16_t latDegrees = cgc_GetLatitudeDegrees();
 	if ( latDegrees < 90 )
 		radians = -(90 - latDegrees);
 	else
 		radians = (latDegrees - 90);
 
-	radians += (GetLatitudeMinutes() / 60.0);
-	radians += (GetLatitudeSeconds() / 3600.0);
+	radians += (cgc_GetLatitudeMinutes() / 60.0);
+	radians += (cgc_GetLatitudeSeconds() / 3600.0);
 
 	return ((radians * PI) / 180.0);
 }
 
-double CGPSCoordinates::GetLongRadians( void )
+double cgc_CGPSCoordinates::cgc_GetLongRadians( void )
 {
 	double radians = 0.0;
 
-	uint16_t longDegrees = GetLongitudeDegrees();
+	cgc_uint16_t longDegrees = cgc_GetLongitudeDegrees();
 	if ( longDegrees < 180 )
 		radians = -(180 - longDegrees);
 	else
 		radians = (longDegrees - 180);
 
-	radians += (GetLongitudeMinutes() / 60.0);
-	radians += (GetLongitudeSeconds() / 3600.0);
+	radians += (cgc_GetLongitudeMinutes() / 60.0);
+	radians += (cgc_GetLongitudeSeconds() / 3600.0);
 
 	return ((radians * PI) / 180.0);
 }
 
-CGPS::CGPS( )
+cgc_CGPS::cgc_CGPS( )
 	: m_bLocked( false ), m_lastCoordinates( 0, 0, 0, 0, 0, 0 )
 {
 
 }
 
-CGPS::~CGPS( )
+cgc_CGPS::~cgc_CGPS( )
 {
 
 }
 
-bool CGPS::SetCoordinates( CGPSCoordinates &newCoords )
+bool cgc_CGPS::cgc_SetCoordinates( cgc_CGPSCoordinates &newCoords )
 {
 	m_bLocked = true;
 
@@ -169,15 +169,15 @@ bool CGPS::SetCoordinates( CGPSCoordinates &newCoords )
 	return (true);	
 }
 
-uint32_t CGPS::GetDistanceMeters( CGPSCoordinates &coord1, CGPSCoordinates &coord2 )
+cgc_uint32_t cgc_CGPS::cgc_GetDistanceMeters( cgc_CGPSCoordinates &coord1, cgc_CGPSCoordinates &coord2 )
 {
 	// Spherical earth model
 	double R = 6371000.0;
-	double lat1Radians = coord1.GetLatRadians();
-	double lat2Radians = coord2.GetLatRadians();
+	double lat1Radians = coord1.cgc_GetLatRadians();
+	double lat2Radians = coord2.cgc_GetLatRadians();
 
-	double long1Radians = coord1.GetLongRadians();
-	double long2Radians = coord2.GetLongRadians();
+	double long1Radians = coord1.cgc_GetLongRadians();
+	double long2Radians = coord2.cgc_GetLongRadians();
 
 	double deltaLat = lat2Radians - lat1Radians;
 	double deltaLong = long2Radians - long1Radians;

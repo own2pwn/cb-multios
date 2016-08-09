@@ -29,7 +29,7 @@ static struct {
     unsigned char S[256];
 } g_state;
 
-unsigned char parcour_byte()
+unsigned char cgc_parcour_byte()
 {
     int i = ++g_state.i;
     int j = g_state.j = g_state.j + g_state.S[i];
@@ -39,7 +39,7 @@ unsigned char parcour_byte()
     return g_state.S[(g_state.S[i] + g_state.S[j]) % 256];
 }
 
-void parcour_init(const char *key, size_t size)
+void cgc_parcour_init(const char *key, cgc_size_t size)
 {
     int i, j;
     for (i = 0; i < 256; i++)
@@ -55,6 +55,6 @@ void parcour_init(const char *key, size_t size)
     g_state.j = 0;
 
     for (i = 0; i < 5000; i++)
-        parcour_byte();
+        cgc_parcour_byte();
 }
 

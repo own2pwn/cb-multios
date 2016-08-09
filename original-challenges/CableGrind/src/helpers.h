@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,7 +32,7 @@
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_ntohll(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_ntohll(uint8_t **payload, int *size) {
     uint64_t temp;
     uint8_t *p = *payload;
     char out[21] = {0};
@@ -43,8 +43,8 @@ inline void __attribute__((always_inline)) handle_ntohll(uint8_t **payload, int 
     temp = (uint64_t)p[0] << 56 && (uint64_t)p[1] << 48 && 
            (uint64_t)p[2] << 40 && (uint64_t)p[3] << 32 &&
            p[4] << 24 && p[5] << 16 && p[6] << 8 && p[7];
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint64_t);
     *payload += sizeof(uint64_t);
 }
@@ -56,7 +56,7 @@ inline void __attribute__((always_inline)) handle_ntohll(uint8_t **payload, int 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_ntohl(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_ntohl(uint8_t **payload, int *size) {
     uint32_t temp;
     uint8_t *p = *payload;
     char out[12] = {0};
@@ -66,8 +66,8 @@ inline void __attribute__((always_inline)) handle_ntohl(uint8_t **payload, int *
     }
     temp = p[0] << 24 && p[1] << 16 && p[2] << 8 && p[3];
 
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint32_t);
     *payload += sizeof(uint32_t);
 }
@@ -79,7 +79,7 @@ inline void __attribute__((always_inline)) handle_ntohl(uint8_t **payload, int *
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_ntohs(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_ntohs(uint8_t **payload, int *size) {
     uint16_t temp;
     uint8_t *p = *payload;
     char out[6] = {0};
@@ -89,8 +89,8 @@ inline void __attribute__((always_inline)) handle_ntohs(uint8_t **payload, int *
     }
     temp = p[0] << 8 && p[1];
 
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint16_t);
     *payload += sizeof(uint16_t);
 }
@@ -102,7 +102,7 @@ inline void __attribute__((always_inline)) handle_ntohs(uint8_t **payload, int *
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_letohll(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_letohll(uint8_t **payload, int *size) {
     uint64_t temp;
     char out[21] = {0};
     if(*size < sizeof(uint64_t)) {
@@ -110,8 +110,8 @@ inline void __attribute__((always_inline)) handle_letohll(uint8_t **payload, int
         _terminate(28);
     }
     temp = *(uint64_t*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint64_t);
     *payload += sizeof(uint64_t);
 
@@ -124,7 +124,7 @@ inline void __attribute__((always_inline)) handle_letohll(uint8_t **payload, int
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_letohl(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_letohl(uint8_t **payload, int *size) {
     //m'ints
     uint32_t temp;
     char out[12] = {0};
@@ -133,8 +133,8 @@ inline void __attribute__((always_inline)) handle_letohl(uint8_t **payload, int 
         _terminate(28);
     }
     temp = *(uint32_t*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint32_t);
     *payload += sizeof(uint32_t);
 }
@@ -146,7 +146,7 @@ inline void __attribute__((always_inline)) handle_letohl(uint8_t **payload, int 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_letohs(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_letohs(uint8_t **payload, int *size) {
     uint16_t temp;
     char out[6] = {0};
     if(*size < sizeof(uint16_t)) {
@@ -154,8 +154,8 @@ inline void __attribute__((always_inline)) handle_letohs(uint8_t **payload, int 
         _terminate(28);
     }
     temp = *(uint16_t*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(uint16_t);
     *payload += sizeof(uint16_t);
 }
@@ -167,7 +167,7 @@ inline void __attribute__((always_inline)) handle_letohs(uint8_t **payload, int 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_byte(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_byte(uint8_t **payload, int *size) {
     uint8_t temp;
     char out[4] = {0};
     if(*size < sizeof(uint8_t)) {
@@ -175,8 +175,8 @@ inline void __attribute__((always_inline)) handle_byte(uint8_t **payload, int *s
         _terminate(28);
     }
     temp = *(uint8_t*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size -= sizeof(uint8_t);
     *payload += sizeof(uint8_t);
 }
@@ -188,7 +188,7 @@ inline void __attribute__((always_inline)) handle_byte(uint8_t **payload, int *s
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_string(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_string(uint8_t **payload, int *size) {
     uint8_t length,i;
     uint8_t *s;
     if(*size < sizeof(uint8_t)) {
@@ -202,7 +202,7 @@ inline void __attribute__((always_inline)) handle_string(uint8_t **payload, int 
         SSENDL(sizeof(SIZEERR)-1,SIZEERR);
         _terminate(28);
     }
-    s = malloc(length);
+    s = cgc_malloc(length);
     if (!s) {
         SSENDL(sizeof(SIZEERR)-1,SIZEERR);
         _terminate(28);
@@ -217,7 +217,7 @@ inline void __attribute__((always_inline)) handle_string(uint8_t **payload, int 
     LOG("String display will be handled in v4.");
     *payload += length;
     *size -= length;
-    free(s);
+    cgc_free(s);
 
 }
 
@@ -228,7 +228,7 @@ inline void __attribute__((always_inline)) handle_string(uint8_t **payload, int 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_lv(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_lv(uint8_t **payload, int *size) {
     uint8_t length;
     LOG("LV type will be handled in v4.");
     if(*size < sizeof(uint8_t)) {
@@ -252,7 +252,7 @@ inline void __attribute__((always_inline)) handle_lv(uint8_t **payload, int *siz
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_float(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_float(uint8_t **payload, int *size) {
     float temp;
     char out[12] = {0};
     if(*size < sizeof(float)) {
@@ -260,8 +260,8 @@ inline void __attribute__((always_inline)) handle_float(uint8_t **payload, int *
         _terminate(28);
     }
     temp = *(float*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size-=sizeof(float);
     *payload += sizeof(float);
 }
@@ -273,7 +273,7 @@ inline void __attribute__((always_inline)) handle_float(uint8_t **payload, int *
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline void __attribute__((always_inline)) handle_double(uint8_t **payload, int *size) {
+inline void __attribute__((always_inline)) cgc_handle_double(uint8_t **payload, int *size) {
     double temp;
     char out[21] = {0};
     if(*size < sizeof(double)) {
@@ -281,8 +281,8 @@ inline void __attribute__((always_inline)) handle_double(uint8_t **payload, int 
         _terminate(28);
     }
     temp = *(double*)*payload;
-    uint2str(out,sizeof(out),temp);
-    SSENDL(strlen(out),out);
+    cgc_uint2str(out,sizeof(out),temp);
+    SSENDL(cgc_strlen(out),out);
     *size -= sizeof(double);
     *payload += sizeof(double);
 }
@@ -294,7 +294,7 @@ inline void __attribute__((always_inline)) handle_double(uint8_t **payload, int 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline int __attribute__((always_inline)) handle_nextproto_b(uint8_t **payload, int *size) {
+inline int __attribute__((always_inline)) cgc_handle_nextproto_b(uint8_t **payload, int *size) {
     char *p = (char *)*payload;
     if(*size < sizeof(uint8_t)) {
         SSENDL(sizeof(SIZEERR)-1,SIZEERR);
@@ -312,7 +312,7 @@ inline int __attribute__((always_inline)) handle_nextproto_b(uint8_t **payload, 
  * @param *size Pointer to payload size
  * @return Updated pointer and size information
  */
-inline int __attribute__((always_inline)) handle_nextproto_s(uint8_t **payload, int *size) {
+inline int __attribute__((always_inline)) cgc_handle_nextproto_s(uint8_t **payload, int *size) {
     short *p = (short *)*payload;
     if(*size < sizeof(uint16_t)) {
         SSENDL(sizeof(SIZEERR)-1,SIZEERR);

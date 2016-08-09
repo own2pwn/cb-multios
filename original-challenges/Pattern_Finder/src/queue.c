@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,34 +30,34 @@
 #include "safe.h"
 #include "queue.h"
 
-void InitializeQueue(queue* Queue)
+void cgc_InitializeQueue(cgc_queue* Queue)
 {
 #define INITIAL_QUEUE_SIZE 2
   Queue->Size = 0;
   Queue->Capacity = INITIAL_QUEUE_SIZE;
-  Queue->Elements = xcalloc(sizeof(void *), INITIAL_QUEUE_SIZE);
+  Queue->Elements = cgc_xcalloc(sizeof(void *), INITIAL_QUEUE_SIZE);
   Queue->KnownHead = -1;
 }
 
-void FreeQueue(queue* Queue)
+void cgc_FreeQueue(cgc_queue* Queue)
 {
   if (Queue)
   {
     if (Queue->Elements)
     {
-      free(Queue->Elements);
+      cgc_free(Queue->Elements);
     }
 
-    free(Queue);
+    cgc_free(Queue);
   }
 }
 
 // This maintains relative ordering
-void ShiftQueueElementsToFront(queue* Queue)
+void cgc_ShiftQueueElementsToFront(cgc_queue* Queue)
 {
-  size_t QueueIndex;
-  size_t SwapSrcIndex;
-  size_t SwapDstIndex;
+  cgc_size_t QueueIndex;
+  cgc_size_t SwapSrcIndex;
+  cgc_size_t SwapDstIndex;
 
   if (!Queue)
     return;
@@ -85,33 +85,33 @@ void ShiftQueueElementsToFront(queue* Queue)
   }
 }
 
-void Enqueue(queue* Queue, void* Element)
+void cgc_Enqueue(cgc_queue* Queue, void* Element)
 {
   Assert(Queue->Elements[Queue->Size] == NULL, "E1");
   Queue->Elements[Queue->Size++] = Element;
 
   Queue->KnownHead = -1;
 
-  // Double queue capacity
+  // Double cgc_queue capacity
   if (Queue->Size == Queue->Capacity)
   {
-    size_t NewCapacity = Queue->Capacity * 2;
+    cgc_size_t NewCapacity = Queue->Capacity * 2;
     Assert(NewCapacity > Queue->Capacity, "E2");
 
-    void** NewElements = xcalloc(sizeof(void *), NewCapacity);
-    memcpy(NewElements, Queue->Elements, sizeof(void *) * Queue->Size);
+    void** NewElements = cgc_xcalloc(sizeof(void *), NewCapacity);
+    cgc_memcpy(NewElements, Queue->Elements, sizeof(void *) * Queue->Size);
 
-    free(Queue->Elements);
+    cgc_free(Queue->Elements);
     Queue->Elements = NewElements;
     Queue->Capacity = NewCapacity;
   }
 
 }
 
-void* Dequeue(queue* Queue)
+void* cgc_Dequeue(cgc_queue* Queue)
 {
   void* Result = NULL;
-  size_t QueueIndex;
+  cgc_size_t QueueIndex;
 
   Queue->KnownHead = -1;
 
@@ -129,14 +129,14 @@ void* Dequeue(queue* Queue)
   }
 
   if ((QueueIndex & 0xFF) == 0xFF)
-    ShiftQueueElementsToFront(Queue);
+    cgc_ShiftQueueElementsToFront(Queue);
 
   return Result;
 }
 
-void* Peek(queue* Queue)
+void* cgc_Peek(cgc_queue* Queue)
 {
-  size_t QueueIndex;
+  cgc_size_t QueueIndex;
   if (!Queue)
     return NULL;
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,21 +35,21 @@
 #define SCORE_MAX  10000000
 
 const int INITIAL_MAX_DEPTH = 3;
-const bboard_t INITIAL_WHITE_PAWNS = 0x000000000000FF00ULL;
-const bboard_t INITIAL_WHITE_ROOKS = 0x0000000000000081ULL;
-const bboard_t INITIAL_WHITE_KNIGHTS = 0x0000000000000042ULL;
-const bboard_t INITIAL_WHITE_BISHOPS = 0x0000000000000024ULL;
-const bboard_t INITIAL_WHITE_QUEENS = 0x0000000000000008ULL;
-const bboard_t INITIAL_WHITE_KINGS = 0x0000000000000010ULL;
-const bboard_t INITIAL_BLACK_PAWNS = 0x00FF000000000000ULL;
-const bboard_t INITIAL_BLACK_ROOKS = 0x8100000000000000ULL;
-const bboard_t INITIAL_BLACK_KNIGHTS = 0x4200000000000000ULL;
-const bboard_t INITIAL_BLACK_BISHOPS = 0x2400000000000000ULL;
-const bboard_t INITIAL_BLACK_QUEENS = 0x0800000000000000ULL;
-const bboard_t INITIAL_BLACK_KINGS = 0x1000000000000000ULL;
-bboard_t KING_MOVES[64];
-bboard_t KNIGHT_MOVES[64];
-bboard_t BISHOP_MOVES[64];
+const cgc_bboard_t INITIAL_WHITE_PAWNS = 0x000000000000FF00ULL;
+const cgc_bboard_t INITIAL_WHITE_ROOKS = 0x0000000000000081ULL;
+const cgc_bboard_t INITIAL_WHITE_KNIGHTS = 0x0000000000000042ULL;
+const cgc_bboard_t INITIAL_WHITE_BISHOPS = 0x0000000000000024ULL;
+const cgc_bboard_t INITIAL_WHITE_QUEENS = 0x0000000000000008ULL;
+const cgc_bboard_t INITIAL_WHITE_KINGS = 0x0000000000000010ULL;
+const cgc_bboard_t INITIAL_BLACK_PAWNS = 0x00FF000000000000ULL;
+const cgc_bboard_t INITIAL_BLACK_ROOKS = 0x8100000000000000ULL;
+const cgc_bboard_t INITIAL_BLACK_KNIGHTS = 0x4200000000000000ULL;
+const cgc_bboard_t INITIAL_BLACK_BISHOPS = 0x2400000000000000ULL;
+const cgc_bboard_t INITIAL_BLACK_QUEENS = 0x0800000000000000ULL;
+const cgc_bboard_t INITIAL_BLACK_KINGS = 0x1000000000000000ULL;
+cgc_bboard_t KING_MOVES[64];
+cgc_bboard_t KNIGHT_MOVES[64];
+cgc_bboard_t BISHOP_MOVES[64];
 const int PIECE_SCORES[NUM_PIECES] = {
     [PAWN] = 100,
     [KNIGHT] = 300,
@@ -67,23 +67,23 @@ typedef struct {
     int go;
     int max_depth;
     int random;
-    move_t last_move;
-    uint8_t num_moves[64]; /* number of moves from a position, used for castling */
-    move_t moves[64];
-    move_t *moves_buf;
+    cgc_move_t last_move;
+    cgc_uint8_t num_moves[64]; /* number of moves from a position, used for castling */
+    cgc_move_t moves[64];
+    cgc_move_t *moves_buf;
     int accept_draw;
     int current_move;
 
     /* board representations */
-    uint8_t mailbox[64];
-    bboard_t all_pieces;
-    bboard_t color_pieces[2];
-    bboard_t pieces[NUM_PIECES][2];
-} engine_t;
-static engine_t *engine;
+    cgc_uint8_t mailbox[64];
+    cgc_bboard_t all_pieces;
+    cgc_bboard_t color_pieces[2];
+    cgc_bboard_t pieces[NUM_PIECES][2];
+} cgc_engine_t;
+static cgc_engine_t *engine;
 
 #ifdef DEBUG
-static char piece_to_char(uint8_t p)
+static char piece_to_char(cgc_uint8_t p)
 {
     int color = PIECE_COLOR(p) * 0x20;
     switch (p & PIECE_MASK)
@@ -120,7 +120,7 @@ static void print_board()
     fprintf(stderr, "  abcdefgh\n");
 }
 
-static void print_bboard(bboard_t b)
+static void print_bboard(cgc_bboard_t b)
 {
     int r, c;
     fprintf(stderr, "  abcdefgh\n");
@@ -143,7 +143,7 @@ static void sanity_check_board()
     for (r = 0; r < 8; r++)
     for (c = 0; c < 8; c++)
     {
-        uint8_t p;
+        cgc_uint8_t p;
         for (p = 0; p < NUM_PIECES; p++)
         {
             if (engine->pieces[p][WHITE] & BIT(r, c))
@@ -190,30 +190,30 @@ static void sanity_check_board()
 }
 #endif
 
-void engine_destroy()
+void cgc_engine_destroy()
 {
     if (engine)
     {
-        free(engine->moves_buf);
-        free(engine);
+        cgc_free(engine->moves_buf);
+        cgc_free(engine);
         engine = NULL;
     }
 }
 
-int engine_init()
+int cgc_engine_init()
 {
     int r, c;
 
-    engine = malloc(sizeof(engine_t));
+    engine = cgc_malloc(sizeof(cgc_engine_t));
     if (engine == NULL)
         return 0;
-    memset(engine, 0, sizeof(engine_t));
-    memset(engine->mailbox, EMPTY, 64);
+    cgc_memset(engine, 0, sizeof(cgc_engine_t));
+    cgc_memset(engine->mailbox, EMPTY, 64);
 
     for (r = 0; r < 8; r++)
     for (c = 0; c < 8; c++)
     {
-        bboard_t moves = 0;
+        cgc_bboard_t moves = 0;
         
         moves |= BIT_IF_VALID(r-2, c-1);
         moves |= BIT_IF_VALID(r-1, c-2);
@@ -243,7 +243,7 @@ int engine_init()
     for (c = 0; c < 8; c++)
     {
         int i;
-        bboard_t moves = 0;
+        cgc_bboard_t moves = 0;
         
         for (i = 0; i < 8; i++)
         {
@@ -254,19 +254,19 @@ int engine_init()
         BISHOP_MOVES[r * 8 + c] = moves;
     }
 
-    engine->moves_buf = malloc(MAX_DEPTH * MAX_MOVES_PER_DEPTH * sizeof(move_t));
+    engine->moves_buf = cgc_malloc(MAX_DEPTH * MAX_MOVES_PER_DEPTH * sizeof(cgc_move_t));
     if (engine->moves_buf == NULL)
     {
-        free(engine);
+        cgc_free(engine);
         return 0;
     }
 
     return 1;
 }
 
-void engine_new()
+void cgc_engine_new()
 {
-    uint8_t r, c;
+    cgc_uint8_t r, c;
     engine->current_color = WHITE;
     engine->max_depth = INITIAL_MAX_DEPTH;
     engine->go = 1;
@@ -294,11 +294,11 @@ void engine_new()
     /* setup mailbox representation */
     engine->scores[WHITE] = 0;
     engine->scores[BLACK] = 0;
-    memset(engine->mailbox, EMPTY, 64);
+    cgc_memset(engine->mailbox, EMPTY, 64);
     for (r = 0; r < 8; r++)
     for (c = 0; c < 8; c++)
     {
-        uint8_t p;
+        cgc_uint8_t p;
         for (p = 0; p < NUM_PIECES; p++)
         {
             if (engine->pieces[p][WHITE] & BIT(r, c))
@@ -317,26 +317,26 @@ void engine_new()
     }
 
     engine->last_move.op = EMPTY;
-    memset(engine->num_moves, 0, 64);
+    cgc_memset(engine->num_moves, 0, 64);
     engine->current_move = 0;
     engine->accept_draw = 0;
 }
 
-static inline bboard_t test_file(uint8_t column, uint8_t min_y, uint8_t abs_dy)
+static inline cgc_bboard_t cgc_test_file(cgc_uint8_t column, cgc_uint8_t min_y, cgc_uint8_t abs_dy)
 {
     return (0x0101010101010100ULL << (column + 8 * (8 - abs_dy))) >> (8 * (8 - abs_dy - min_y));
 }
 
-static inline bboard_t test_rank(uint8_t row, uint8_t min_x, uint8_t abs_dx)
+static inline cgc_bboard_t cgc_test_rank(cgc_uint8_t row, cgc_uint8_t min_x, cgc_uint8_t abs_dx)
 {
-    return (bboard_t)(0x7F >> (8 - abs_dx)) << (min_x + 1 + 8 * row);
+    return (cgc_bboard_t)(0x7F >> (8 - abs_dx)) << (min_x + 1 + 8 * row);
 }
 
 /* return squares that color is attacking */
-static bboard_t calculate_attacks(int color)
+static cgc_bboard_t cgc_calculate_attacks(int color)
 {
     int i, p;
-    bboard_t b, result = 0;
+    cgc_bboard_t b, result = 0;
 
     /* pawns */
     if (color == WHITE)
@@ -361,7 +361,7 @@ static bboard_t calculate_attacks(int color)
     /* rooks / queens */
     for (p = -1, b = engine->pieces[ROOK][color] | engine->pieces[QUEEN][color]; b != 0 && p < 63; b >>= i + 1)
     {
-        bboard_t bit;
+        cgc_bboard_t bit;
         int r, c, j;
 
         i = __builtin_ctzll(b);
@@ -399,7 +399,7 @@ static bboard_t calculate_attacks(int color)
     /* bishops / queens */
     for (p = -1, b = engine->pieces[BISHOP][color] | engine->pieces[QUEEN][color]; b != 0 && p < 63; b >>= i + 1)
     {
-        bboard_t bit;
+        cgc_bboard_t bit;
         int r, c;
 
         i = __builtin_ctzll(b);
@@ -448,7 +448,7 @@ static bboard_t calculate_attacks(int color)
     return result;
 }
 
-static int valid_move(move_t move, piece_t piece)
+static int cgc_valid_move(cgc_move_t move, cgc_piece_t piece)
 {
     unsigned int abs_dy = ABS(move.dr - move.sr),
         abs_dx = ABS(move.dc - move.sc),
@@ -510,7 +510,7 @@ static int valid_move(move_t move, piece_t piece)
             return 0;
         if (neg_dx == neg_dy)
         {
-            bboard_t mask = (0x0040201008040201ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 - (7 - (abs_dx + min_x)));
+            cgc_bboard_t mask = (0x0040201008040201ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 - (7 - (abs_dx + min_x)));
             if (engine->all_pieces & mask)
                 return 0;
             else
@@ -518,7 +518,7 @@ static int valid_move(move_t move, piece_t piece)
         }
         else
         {
-            bboard_t mask = (0x0002040810204080ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 + min_x);
+            cgc_bboard_t mask = (0x0002040810204080ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 + min_x);
             if (engine->all_pieces & mask)
                 return 0;
             else
@@ -531,7 +531,7 @@ static int valid_move(move_t move, piece_t piece)
             /* ensure file between sr and dr is empty */
             //if (min_y == move.dr)
             //    min_y++;
-            if (engine->all_pieces & test_file(move.sc, min_y, abs_dy))
+            if (engine->all_pieces & cgc_test_file(move.sc, min_y, abs_dy))
                 return 0;
             else
                 return 1;
@@ -541,7 +541,7 @@ static int valid_move(move_t move, piece_t piece)
             /* ensure rank between sc and dc is empty */
             //if (min_x == move.dc)
             //    min_x++;
-            if (engine->all_pieces & test_rank(move.sr, min_x, abs_dx))
+            if (engine->all_pieces & cgc_test_rank(move.sr, min_x, abs_dx))
                 return 0;
             else
                 return 1;
@@ -552,7 +552,7 @@ static int valid_move(move_t move, piece_t piece)
         if (abs_dx == 0)
         {
             /* ensure file between sr and dr is empty */
-            if (engine->all_pieces & test_file(move.sc, min_y, abs_dy))
+            if (engine->all_pieces & cgc_test_file(move.sc, min_y, abs_dy))
                 return 0;
             else
                 return 1;
@@ -560,7 +560,7 @@ static int valid_move(move_t move, piece_t piece)
         else if (abs_dy == 0)
         {
             /* ensure rank between sc and dc is empty */
-            if (engine->all_pieces & test_rank(move.sr, min_x, abs_dx))
+            if (engine->all_pieces & cgc_test_rank(move.sr, min_x, abs_dx))
                 return 0;
             else
                 return 1;
@@ -569,7 +569,7 @@ static int valid_move(move_t move, piece_t piece)
         {
             if (neg_dx == neg_dy)
             {
-                bboard_t mask = (0x0040201008040201ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 - (7 - (abs_dx + min_x)));
+                cgc_bboard_t mask = (0x0040201008040201ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 - (7 - (abs_dx + min_x)));
                 if (engine->all_pieces & mask)
                     return 0;
                 else
@@ -577,7 +577,7 @@ static int valid_move(move_t move, piece_t piece)
             }
             else
             {
-                bboard_t mask = (0x0002040810204080ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 + min_x);
+                cgc_bboard_t mask = (0x0002040810204080ULL >> ((8 - abs_dy) * 8)) << ((1 + min_y) * 8 + min_x);
                 if (engine->all_pieces & mask)
                     return 0;
                 else
@@ -593,10 +593,10 @@ static int valid_move(move_t move, piece_t piece)
         /* castling */
         if (abs_dx == 2 && abs_dy == 0 && move.sc == 4 && ((color == WHITE && move.sr == 0) || (color == BLACK && move.sr == 7)))
         {
-            bboard_t attacks;
+            cgc_bboard_t attacks;
             int rook;
             /* check if under attack */
-            attacks = calculate_attacks(!color);
+            attacks = cgc_calculate_attacks(!color);
             /* no pieces between rook and king */
             if (move.dc == 2)
             {
@@ -626,25 +626,25 @@ static int valid_move(move_t move, piece_t piece)
     }
 }
 
-/* check outcome of apply_move:
+/* check outcome of cgc_apply_move:
  *  - !current_color is not in check
  */
-static int valid_board()
+static int cgc_valid_board()
 {
-    bboard_t attacks;
+    cgc_bboard_t attacks;
     int prev_color = !engine->current_color;
 
     /* check if in check */
-    attacks = calculate_attacks(engine->current_color);
+    attacks = cgc_calculate_attacks(engine->current_color);
     if (attacks & engine->pieces[KING][prev_color])
         return 0;
     
     return 1;
 }
 
-static void apply_move(move_t move, piece_t piece)
+static void cgc_apply_move(cgc_move_t move, cgc_piece_t piece)
 {
-    bboard_t bit_d = BIT(move.dr, move.dc),
+    cgc_bboard_t bit_d = BIT(move.dr, move.dc),
         bit_s = BIT(move.sr, move.sc);
     int color = PIECE_COLOR(piece), p = PIECE_MASK & piece;
 
@@ -670,7 +670,7 @@ static void apply_move(move_t move, piece_t piece)
         if (p == PAWN && ABS(move.dc - move.sc) == 1)
         {
             /* capture */
-            bboard_t enemy_d = BIT(engine->last_move.dr, engine->last_move.dc);
+            cgc_bboard_t enemy_d = BIT(engine->last_move.dr, engine->last_move.dc);
             engine->pieces[PAWN][!color] &= ~enemy_d;
             engine->color_pieces[!color] &= ~enemy_d;
             engine->all_pieces &= ~enemy_d;
@@ -726,11 +726,11 @@ static void apply_move(move_t move, piece_t piece)
     engine->current_color = !engine->current_color;
 }
 
-static void undo_move()
+static void cgc_undo_move()
 {
-    move_t move = engine->last_move;
-    piece_t piece = engine->mailbox[move.dr * 8 + move.dc];
-    bboard_t bit_d = BIT(move.dr, move.dc),
+    cgc_move_t move = engine->last_move;
+    cgc_piece_t piece = engine->mailbox[move.dr * 8 + move.dc];
+    cgc_bboard_t bit_d = BIT(move.dr, move.dc),
         bit_s = BIT(move.sr, move.sc);
     int color = PIECE_COLOR(piece), p = PIECE_MASK & piece;
 
@@ -804,25 +804,25 @@ static void undo_move()
     engine->current_color = !engine->current_color;
 }
 
-void engine_move(move_t move)
+void cgc_engine_move(cgc_move_t move)
 {
-    piece_t piece;
+    cgc_piece_t piece;
 
     if (!engine->active)
         return;
 
     piece = engine->mailbox[move.sr * 8 + move.sc];
-    if (!valid_move(move, piece))
+    if (!cgc_valid_move(move, piece))
     {
-        send_illegal("invalid move", move);
+        cgc_send_illegal("invalid move", move);
         return;
     }
 
-    apply_move(move, piece);
-    if (!valid_board())
+    cgc_apply_move(move, piece);
+    if (!cgc_valid_board())
     {
-        undo_move();
-        send_illegal("illegal move", move);
+        cgc_undo_move();
+        cgc_send_illegal("illegal move", move);
         return;
     }
 
@@ -832,10 +832,10 @@ void engine_move(move_t move)
 #endif
 
     if (engine->go)
-        engine_go();
+        cgc_engine_go();
 }
 
-void engine_set_color(int color)
+void cgc_engine_set_color(int color)
 {
     if (!engine->active)
         return;
@@ -843,7 +843,7 @@ void engine_set_color(int color)
     engine->current_color = color;
 }
 
-void engine_set_go(int go)
+void cgc_engine_set_go(int go)
 {
     if (!engine->active)
         return;
@@ -851,25 +851,25 @@ void engine_set_go(int go)
     engine->go = go;
 }
 
-void engine_set_depth(int depth)
+void cgc_engine_set_depth(int depth)
 {
     if (!engine->active)
         return;
 
     if (depth <= 0)
     {
-        send_error("depth too small", "sd");
+        cgc_send_error("depth too small", "sd");
         return;
     }
     if (depth > MAX_DEPTH)
     {
-        send_error("depth too large", "sd");
+        cgc_send_error("depth too large", "sd");
         return;
     }
     engine->max_depth = depth;
 }
 
-void engine_set_random(int random)
+void cgc_engine_set_cgc_random(int random)
 {
     if (!engine->active)
         return;
@@ -877,9 +877,9 @@ void engine_set_random(int random)
     engine->random = random;
 }
 
-static void generate_moves(unsigned int *num_results, move_t *results)
+static void cgc_generate_moves(unsigned int *num_results, cgc_move_t *results)
 {
-    bboard_t b, invalid, valid_captures;
+    cgc_bboard_t b, invalid, valid_captures;
     int color = engine->current_color,
         num_moves = 0,
         i, p, r, c;
@@ -976,7 +976,7 @@ static void generate_moves(unsigned int *num_results, move_t *results)
     /* rooks / queens */
     for (p = -1, b = engine->pieces[ROOK][color] | engine->pieces[QUEEN][color]; b != 0 && p < 63; b >>= i + 1)
     {
-        bboard_t bit;
+        cgc_bboard_t bit;
         int j;
         i = __builtin_ctzll(b);
         p += i + 1;
@@ -1025,7 +1025,7 @@ static void generate_moves(unsigned int *num_results, move_t *results)
     for (p = -1, b = engine->pieces[BISHOP][color] | engine->pieces[QUEEN][color]; b != 0 && p < 63; b >>= i + 1)
     {
         int or, oc;
-        bboard_t bit;
+        cgc_bboard_t bit;
 
         i = __builtin_ctzll(b);
         p += i + 1;
@@ -1100,16 +1100,16 @@ static void generate_moves(unsigned int *num_results, move_t *results)
 }
 
 /* returns positive if WHITE winning, negative if BLACK winning */
-static int evaluate()
+static int cgc_evaluate()
 {
-    bboard_t attacks;
+    cgc_bboard_t attacks;
     int raw_score = engine->scores[WHITE] - engine->scores[BLACK];
 
-    attacks = calculate_attacks(WHITE);
+    attacks = cgc_calculate_attacks(WHITE);
     raw_score += __builtin_popcountll(attacks & 0x0000007e7e000000ULL);
     raw_score += __builtin_popcountll(attacks & ~engine->color_pieces[WHITE]) * 2;
     raw_score += __builtin_popcountll(attacks & engine->color_pieces[WHITE]);
-    attacks = calculate_attacks(BLACK);
+    attacks = cgc_calculate_attacks(BLACK);
     raw_score -= __builtin_popcountll(attacks & 0x0000007e7e000000ULL);
     raw_score -= __builtin_popcountll(attacks & ~engine->color_pieces[BLACK]) * 2;
     raw_score -= __builtin_popcountll(attacks & engine->color_pieces[BLACK]);
@@ -1117,14 +1117,14 @@ static int evaluate()
     return raw_score;
 }
 
-static int quiesce(int depth, int alpha, int beta)
+static int cgc_quiesce(int depth, int alpha, int beta)
 {
     int score, tmp;
     unsigned int i, num_moves = 0;
-    bboard_t attacks, captures;
-    move_t *moves = &engine->moves_buf[depth * MAX_MOVES_PER_DEPTH];
+    cgc_bboard_t attacks, captures;
+    cgc_move_t *moves = &engine->moves_buf[depth * MAX_MOVES_PER_DEPTH];
 
-    score = evaluate();
+    score = cgc_evaluate();
     if (engine->current_color == BLACK)
         score = -score;
 
@@ -1133,7 +1133,7 @@ static int quiesce(int depth, int alpha, int beta)
     if (alpha >= beta)
         return beta;
 
-    attacks = calculate_attacks(engine->current_color);
+    attacks = cgc_calculate_attacks(engine->current_color);
     captures = attacks & engine->color_pieces[!engine->current_color];
     if (!captures || depth >= MAX_DEPTH)
         return score;
@@ -1144,10 +1144,10 @@ static int quiesce(int depth, int alpha, int beta)
         return score + PIECE_SCORES[KING];
 #endif 
 
-    generate_moves(&num_moves, moves);
+    cgc_generate_moves(&num_moves, moves);
     for (i = 0; i < num_moves; i++)
     {
-        move_t move = moves[i];
+        cgc_move_t move = moves[i];
         /* ignore non-capturing moves */
         if (!(captures & BIT(move.dr, move.dc)))
             continue;
@@ -1155,9 +1155,9 @@ static int quiesce(int depth, int alpha, int beta)
         if ((engine->mailbox[move.dr * 8 + move.dc] & PIECE_MASK) == KING)
             return SCORE_MAX;
 
-        apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
-        tmp = -quiesce(depth + 1, -beta, -alpha);
-        undo_move();
+        cgc_apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
+        tmp = -cgc_quiesce(depth + 1, -beta, -alpha);
+        cgc_undo_move();
 
         /* update best score */
         if (tmp > score)
@@ -1173,43 +1173,43 @@ static int quiesce(int depth, int alpha, int beta)
     return score;
 }
 
-static int randint(unsigned int max)
+static int cgc_randint(unsigned int max)
 {
-    uint32_t x;
-    size_t bytes;
-    random(&x, sizeof(x), &bytes);
+    cgc_uint32_t x;
+    cgc_size_t bytes;
+    cgc_random(&x, sizeof(x), &bytes);
     return x % max;
 }
 
-static int search(int depth, int alpha, int beta, move_t *best_move)
+static int cgc_search(int depth, int alpha, int beta, cgc_move_t *best_move)
 {
     int score = SCORE_MIN, tmp;
     unsigned int i, num_moves = 0;
-    move_t *moves = &engine->moves_buf[depth * MAX_MOVES_PER_DEPTH];
+    cgc_move_t *moves = &engine->moves_buf[depth * MAX_MOVES_PER_DEPTH];
 
-    generate_moves(&num_moves, moves);
+    cgc_generate_moves(&num_moves, moves);
     for (i = 0; i < num_moves; i++)
     {
-        move_t move = moves[i];
+        cgc_move_t move = moves[i];
 
         if ((engine->mailbox[move.dr * 8 + move.dc] & PIECE_MASK) == KING)
             return SCORE_MAX;
 
-        apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
+        cgc_apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
 
         if (depth == engine->max_depth)
-            tmp = -quiesce(depth + 1, -beta, -alpha);
+            tmp = -cgc_quiesce(depth + 1, -beta, -alpha);
         else
-            tmp = -search(depth + 1, -beta, -alpha, NULL);
+            tmp = -cgc_search(depth + 1, -beta, -alpha, NULL);
 
-        undo_move();
+        cgc_undo_move();
 
 #ifdef DEBUG
         sanity_check_board();
 #endif
 
         if (depth == 0 && engine->random)
-            tmp += randint(5) - 2;
+            tmp += cgc_randint(5) - 2;
 
         /* update best score */
         if (tmp > score)
@@ -1229,22 +1229,22 @@ static int search(int depth, int alpha, int beta, move_t *best_move)
     return score;
 }
 
-void engine_go()
+void cgc_engine_go()
 {
     int score;
-    move_t move;
+    cgc_move_t move;
 
     if (!engine->active)
         return;
 
-    score = search(0, SCORE_MIN, SCORE_MAX, &move);
+    score = cgc_search(0, SCORE_MIN, SCORE_MAX, &move);
     engine->accept_draw = score <= DRAW_THRESHOLD;
     if (score == SCORE_MIN)
-        send_resign();
+        cgc_send_resign();
     else
     {
-        send_move(move);
-        apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
+        cgc_send_move(move);
+        cgc_apply_move(move, engine->mailbox[move.sr * 8 + move.sc]);
 #ifdef DEBUG
         print_board();
         sanity_check_board();
@@ -1252,31 +1252,31 @@ void engine_go()
     }
 }
 
-void engine_result()
+void cgc_engine_result()
 {
     engine->active = 0;
 }
 
-void engine_offer_draw()
+void cgc_engine_offer_draw()
 {
     if (!engine->active)
         return;
 
     if (engine->accept_draw)
     {
-        send_draw();
+        cgc_send_draw();
     }
 }
 
-void engine_undo()
+void cgc_engine_undo()
 {
     if (!engine->active)
         return;
 
-    undo_move();
+    cgc_undo_move();
 }
 
-int engine_get_random()
+int cgc_engine_get_cgc_random()
 {
     return engine->random;
 }

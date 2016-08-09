@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -23,279 +23,279 @@
 #include "eval.h"
 
 #include <cstdio.h>
-#define DBG(x) fprintf(stderr, x "\n");
+#define DBG(x) cgc_fprintf(stderr, x "\n");
 
-Var::Var(VarType type)
+cgc_Var::cgc_Var(VarType type)
 {
     this->type = type;
 }
 
-Var::~Var()
+cgc_Var::~cgc_Var()
 {
 }
 
-Scope::Scope(Scope *parent)
+cgc_Scope::cgc_Scope(cgc_Scope *parent)
     : breaking(false), returning(false)
 {
     this->parent = parent;
 }
 
-Scope::~Scope()
+cgc_Scope::~cgc_Scope()
 {
 }
 
-unique_ptr<Var>* Scope::findName(const CString& name)
+cgc_unique_ptr<cgc_Var>* cgc_Scope::cgc_findName(const cgc_CString& name)
 {
-    if (names.has(name))
+    if (names.cgc_has(name))
         return &names[name];
     else 
-        return parent == nullptr ? nullptr : parent->findName(name);
+        return parent == nullptr ? nullptr : parent->cgc_findName(name);
 }
 
-Evaluator::Evaluator(Node *root_)
+cgc_Evaluator::cgc_Evaluator(cgc_Node *root_)
     : root(root_)
 {
-    StringVar::registerOps(*this);
-    NumberVar::registerOps(*this);
+    cgc_StringVar::cgc_registerOps(*this);
+    cgc_NumberVar::cgc_registerOps(*this);
 }
 
-Evaluator::~Evaluator()
+cgc_Evaluator::~cgc_Evaluator()
 {
-    Node::deleteTree(root);
+    cgc_Node::cgc_deleteTree(root);
 }
 
-void Evaluator::addExternal(const char *identifier, External func, void *arg)
+void cgc_Evaluator::cgc_addExternal(const char *identifier, cgc_External func, void *arg)
 {
-    externals[identifier] = pair<External, void *>(func, arg);
+    externals[identifier] = cgc_pair<cgc_External, void *>(func, arg);
 }
 
-void Evaluator::addOp(const CString& op, VarType a, VarType b, OpFunc func)
+void cgc_Evaluator::cgc_addOp(const cgc_CString& op, VarType a, VarType b, cgc_OpFunc func)
 {
-    _Op _op = { .a = a, .b = b, .fn = func };
-    operators[op].push_back(_op);
+    cgc__Op _op = { .a = a, .b = b, .fn = func };
+    operators[op].cgc_push_back(_op);
 }
 
-bool Evaluator::run()
+bool cgc_Evaluator::cgc_run()
 {
-    Scope scope(nullptr);
+    cgc_Scope scope(nullptr);
     scope.procScope = &scope;
-    // root->dump(0);
-    return eval_block(scope, root, 0);
+    // root->cgc_dump(0);
+    return cgc_eval_block(scope, root, 0);
 }
 
-bool Evaluator::eval_expr(Scope& scope, Node *node, unique_ptr<Var>& outresult)
+bool cgc_Evaluator::cgc_eval_expr(cgc_Scope& scope, cgc_Node *node, cgc_unique_ptr<cgc_Var>& outresult)
 {
-    while (node->getType() == TokenType::Expr)
-        node = node->getChild();
-    switch (node->getType())
+    while (node->cgc_getType() == TokenType::Expr)
+        node = node->cgc_getChild();
+    switch (node->cgc_getType())
     {
     case TokenType::Operator:
     {
-        unique_ptr<Var> rhs;
-        CString op;
+        cgc_unique_ptr<cgc_Var> rhs;
+        cgc_CString op;
 
-        op = node->getLiteral();
-        if (!eval_expr(scope, node->getNext(), rhs))
+        op = node->cgc_getLiteral();
+        if (!cgc_eval_expr(scope, node->cgc_getNext(), rhs))
             return false;
-        if (!eval_op(op, rhs.get(), nullptr, outresult))
+        if (!cgc_eval_op(op, rhs.cgc_get(), nullptr, outresult))
             return false;
         break;
     }
     case TokenType::BinOp:
     {
-        unique_ptr<Var> lhs, rhs;
-        CString op;
+        cgc_unique_ptr<cgc_Var> lhs, rhs;
+        cgc_CString op;
 
-        Node *child = node->getChild();
-        if (!eval_expr(scope, child, lhs))
+        cgc_Node *child = node->cgc_getChild();
+        if (!cgc_eval_expr(scope, child, lhs))
             return false;
-        child = child->getNext();
-        op = child->getLiteral();
-        child = child->getNext();
-        if (!eval_expr(scope, child, rhs))
+        child = child->cgc_getNext();
+        op = child->cgc_getLiteral();
+        child = child->cgc_getNext();
+        if (!cgc_eval_expr(scope, child, rhs))
             return false;
-        if (!eval_op(op, lhs.get(), rhs.get(), outresult))
+        if (!cgc_eval_op(op, lhs.cgc_get(), rhs.cgc_get(), outresult))
             return false;
         break;
     }
     case TokenType::Assign:
     {
-        Node *child = node->getChild();
-        unique_ptr<Var>* var = scope.findName(child->getLiteral());
+        cgc_Node *child = node->cgc_getChild();
+        cgc_unique_ptr<cgc_Var>* var = scope.cgc_findName(child->cgc_getLiteral());
         if (var == nullptr)
         {
             DBG("undefined identifier");
             return false;
         }
-        if (!eval_expr(scope, child->getNext(), *var))
+        if (!cgc_eval_expr(scope, child->cgc_getNext(), *var))
             return false;
-        outresult = var->get()->copy();
+        outresult = var->cgc_get()->cgc_copy();
         break;
     }
     case TokenType::Identifier:
     {
-        unique_ptr<Var>* var = scope.findName(node->getLiteral());
+        cgc_unique_ptr<cgc_Var>* var = scope.cgc_findName(node->cgc_getLiteral());
         if (var == nullptr)
         {
             DBG("undefined identifier");
             return false;
         }
-        outresult = var->get()->copy();
+        outresult = var->cgc_get()->cgc_copy();
         break;
     }
     case TokenType::Number:
     {
-        outresult.reset(new NumberVar(strtoul(node->getLiteral(), 0, 0)));
+        outresult.cgc_reset(new cgc_NumberVar(cgc_strtoul(node->cgc_getLiteral(), 0, 0)));
         break;
     }
     case TokenType::Call:
     {
-        Node *child = node->getChild();
-        unique_ptr<Var>* var = scope.findName(child->getLiteral());
+        cgc_Node *child = node->cgc_getChild();
+        cgc_unique_ptr<cgc_Var>* var = scope.cgc_findName(child->cgc_getLiteral());
         if (var != nullptr)
         {
-            if (var->get()->getType() != VarType::Proc)
+            if (var->cgc_get()->cgc_getType() != VarType::Proc)
             {
-                DBG("Procedure has wrong type.");
+                DBG("cgc_Procedure cgc_has wrong type.");
                 return false;
             }
-            child = child->getNext();
+            child = child->cgc_getNext();
 
-            Procedure *proc = static_cast<Procedure *>(var->get());
-            Scope calleeScope(&proc->getScope());
+            cgc_Procedure *proc = static_cast<cgc_Procedure *>(var->cgc_get());
+            cgc_Scope calleeScope(&proc->cgc_getScope());
             calleeScope.procScope = &calleeScope;
-            auto args = proc->getArguments();
-            for (unsigned int i = 0; i < args.length(); i++)
+            auto args = proc->cgc_getArguments();
+            for (unsigned int i = 0; i < args.cgc_length(); i++)
             {
-                unique_ptr<Var> result;
-                if (child == nullptr || !eval_expr(scope, child, result))
+                cgc_unique_ptr<cgc_Var> result;
+                if (child == nullptr || !cgc_eval_expr(scope, child, result))
                 {
                     DBG("Bad expression in call");
                     return false;
                 }
-                calleeScope.names[args[i]].reset(result.release());
-                child = child->getNext();
+                calleeScope.names[args[i]].cgc_reset(result.cgc_release());
+                child = child->cgc_getNext();
             }
-            if (!eval_block(calleeScope, proc->getBlock(), proc->getIndent()))
+            if (!cgc_eval_block(calleeScope, proc->cgc_getBlock(), proc->cgc_getIndent()))
                 return false;
             if (calleeScope.retval)
-                outresult = calleeScope.retval.release();
+                outresult = calleeScope.retval.cgc_release();
             else
-                outresult.reset(nullptr);
+                outresult.cgc_reset(nullptr);
         }
-        else if (externals.has(child->getLiteral()))
+        else if (externals.cgc_has(child->cgc_getLiteral()))
         {
-            auto external = externals[child->getLiteral()];
-            child = child->getNext();
+            auto external = externals[child->cgc_getLiteral()];
+            child = child->cgc_getNext();
             unsigned int nargs = 0;
-            for (Node *node = child; node != nullptr; node = node->getNext())
+            for (cgc_Node *node = child; node != nullptr; node = node->cgc_getNext())
                 nargs++;
-            vector<unique_ptr<Var>> args;
-            args.resize(nargs);
+            cgc_vector<cgc_unique_ptr<cgc_Var>> args;
+            args.cgc_resize(nargs);
             unsigned int i = 0;
-            for (Node *node = child; node != nullptr; node = node->getNext(), i++)
+            for (cgc_Node *node = child; node != nullptr; node = node->cgc_getNext(), i++)
             {
-                unique_ptr<Var> result;
-                if (!eval_expr(scope, node, result))
+                cgc_unique_ptr<cgc_Var> result;
+                if (!cgc_eval_expr(scope, node, result))
                 {
                     DBG("Bad expression in extern call");
                     return false;
                 }
-                args[i].reset(result.release());
+                args[i].cgc_reset(result.cgc_release());
             }
             if (!external.left(external.right, *this, args, outresult))
                 return false;
         }
         else
         {
-            fprintf(stderr, "Undefined procedure: %s\n", child->getLiteral());
+            cgc_fprintf(stderr, "Undefined procedure: %s\n", child->cgc_getLiteral());
             return false;
         }
         break;
     }
     default:
         DBG("Unknown expression.");
-        node->dump(0);
+        node->cgc_dump(0);
         return false;
     }
     return true;
 }
 
-bool Evaluator::eval_block(Scope& scope, Node *node, unsigned int indent)
+bool cgc_Evaluator::cgc_eval_block(cgc_Scope& scope, cgc_Node *node, unsigned int indent)
 {
     bool retval = true, inIf = false, skipElse = false;
 
     while (node != nullptr && !scope.procScope->breaking && !scope.procScope->returning)
     {
-        Node *child;
-        if (node->getType() != TokenType::Stmt)
+        cgc_Node *child;
+        if (node->cgc_getType() != TokenType::Stmt)
         {
-            DBG("wrong type in eval_block");
+            DBG("wrong type in cgc_eval_block");
             return false;
         }
-        child = node->getChild();
-        if (child->getType() != TokenType::Indent)
+        child = node->cgc_getChild();
+        if (child->cgc_getType() != TokenType::Indent)
         {
-            DBG("wrong indent type in eval_block");
+            DBG("wrong indent type in cgc_eval_block");
             return false;
         }
-        if (child->getLength() != indent)
+        if (child->cgc_getLength() != indent)
             break;
-        child = child->getNext();
+        child = child->cgc_getNext();
 
-        if (child->getType() != TokenType::Else && child->getType() != TokenType::Elif)
+        if (child->cgc_getType() != TokenType::Else && child->cgc_getType() != TokenType::Elif)
             inIf = false;
 
-        switch (child->getType())
+        switch (child->cgc_getType())
         {
         case TokenType::Declare:
         {
-            child = child->getChild();
-            if (scope.names.has(child->getLiteral()))
+            child = child->cgc_getChild();
+            if (scope.names.cgc_has(child->cgc_getLiteral()))
             {
                 DBG("Warning: redefining name");
-                scope.names.remove(child->getLiteral());
+                scope.names.cgc_remove(child->cgc_getLiteral());
             }
-            scope.names[child->getLiteral()] = nullptr;
+            scope.names[child->cgc_getLiteral()] = nullptr;
 
-            node = node->getNext();
+            node = node->cgc_getNext();
             break;
         }
         case TokenType::DeclareAssign:
         {
-            child = child->getChild();
-            Node *name = child->getChild();
-            if (scope.names.has(name->getLiteral()))
+            child = child->cgc_getChild();
+            cgc_Node *name = child->cgc_getChild();
+            if (scope.names.cgc_has(name->cgc_getLiteral()))
             {
                 DBG("Warning: redefining name");
-                scope.names.remove(name->getLiteral());
+                scope.names.cgc_remove(name->cgc_getLiteral());
             }
-            scope.names[name->getLiteral()] = nullptr;
+            scope.names[name->cgc_getLiteral()] = nullptr;
 
-            unique_ptr<Var> result;
-            if (!eval_expr(scope, child, result))
+            cgc_unique_ptr<cgc_Var> result;
+            if (!cgc_eval_expr(scope, child, result))
                 return false;
 
-            node = node->getNext();
+            node = node->cgc_getNext();
             break;
         }
         case TokenType::BinOp:
         case TokenType::Expr:
         {
-            unique_ptr<Var> result;
+            cgc_unique_ptr<cgc_Var> result;
 
-            if (!eval_expr(scope, child, result))
+            if (!cgc_eval_expr(scope, child, result))
             {
                 retval = false;
                 goto error;
             }
 
-            node = node->getNext();
+            node = node->cgc_getNext();
             break;
         }
         case TokenType::Return:
         {
-            if (!eval_expr(scope, child->getChild(), scope.retval))
+            if (!cgc_eval_expr(scope, child->cgc_getChild(), scope.retval))
             {
                 retval = false;
                 goto error;
@@ -313,8 +313,8 @@ bool Evaluator::eval_block(Scope& scope, Node *node, unsigned int indent)
             if (!inIf)
                 return false;
 
-            Node *block = node->getNext();
-            unsigned int blockIndent = block->getChild()->getLength();
+            cgc_Node *block = node->cgc_getNext();
+            unsigned int blockIndent = block->cgc_getChild()->cgc_getLength();
             if (blockIndent <= indent)
             {
                 DBG("Error: block indent incorrect");
@@ -323,104 +323,104 @@ bool Evaluator::eval_block(Scope& scope, Node *node, unsigned int indent)
 
             if (!skipElse)
             {
-                Scope blockScope(&scope);
+                cgc_Scope blockScope(&scope);
                 blockScope.procScope = scope.procScope;
 
-                if (!eval_block(blockScope, block, blockIndent))
+                if (!cgc_eval_block(blockScope, block, blockIndent))
                     return false;
             }
 
             inIf = false;
 
-            node = node->getNext(); // skip else
-            while (node != nullptr && node->getChild()->getLength() >= blockIndent)
-                node = node->getNext();
+            node = node->cgc_getNext(); // skip else
+            while (node != nullptr && node->cgc_getChild()->cgc_getLength() >= blockIndent)
+                node = node->cgc_getNext();
             break;
         }
         case TokenType::If:
         case TokenType::Elif:
         case TokenType::While:
         {
-            unique_ptr<Var> cond;
-            Node *condExpr = child->getChild();
+            cgc_unique_ptr<cgc_Var> cond;
+            cgc_Node *condExpr = child->cgc_getChild();
 
-            if (child->getType() == TokenType::If)
+            if (child->cgc_getType() == TokenType::If)
             {
                 inIf = true;
                 skipElse = false;
             }
-            else if (child->getType() == TokenType::Elif && !inIf)
+            else if (child->cgc_getType() == TokenType::Elif && !inIf)
             {
                 return false;
             }
 
-            Node *block = node->getNext();
-            unsigned int blockIndent = block->getChild()->getLength();
+            cgc_Node *block = node->cgc_getNext();
+            unsigned int blockIndent = block->cgc_getChild()->cgc_getLength();
             if (blockIndent <= indent)
             {
                 DBG("Error: block indent incorrect");
                 return false;
             }
 
-            if (child->getType() != TokenType::Elif || !skipElse)
+            if (child->cgc_getType() != TokenType::Elif || !skipElse)
             {
                 do
                 {
-                    if (!eval_expr(scope, condExpr, cond))
+                    if (!cgc_eval_expr(scope, condExpr, cond))
                         return false;
 
-                    if (cond->getType() != VarType::Number)
+                    if (cond->cgc_getType() != VarType::Number)
                         return false;
 
-                    if (!static_cast<NumberVar*>(cond.get())->getValue())
+                    if (!static_cast<cgc_NumberVar*>(cond.cgc_get())->cgc_getValue())
                         break;
 
-                    Scope blockScope(&scope);
+                    cgc_Scope blockScope(&scope);
                     blockScope.procScope = scope.procScope;
 
                     skipElse = true;
 
-                    if (!eval_block(blockScope, block, blockIndent))
+                    if (!cgc_eval_block(blockScope, block, blockIndent))
                         return false;
 
                     if (scope.procScope->breaking || scope.procScope->returning)
                         break;
-                } while (child->getType() == TokenType::While);
+                } while (child->cgc_getType() == TokenType::While);
             }
 
-            if (child->getType() == TokenType::While)
+            if (child->cgc_getType() == TokenType::While)
                 scope.procScope->breaking = false;
 
-            node = node->getNext(); // skip if/elif/while
-            while (node != nullptr && node->getChild()->getLength() >= blockIndent)
-                node = node->getNext();
+            node = node->cgc_getNext(); // skip if/elif/while
+            while (node != nullptr && node->cgc_getChild()->cgc_getLength() >= blockIndent)
+                node = node->cgc_getNext();
             break;
         }
         case TokenType::Proc:
         {
-            child = child->getChild();
-            if (scope.names.has(child->getLiteral()))
+            child = child->cgc_getChild();
+            if (scope.names.cgc_has(child->cgc_getLiteral()))
             {
                 DBG("Warning: redefining name");
-                scope.names.remove(child->getLiteral());
+                scope.names.cgc_remove(child->cgc_getLiteral());
             }
-            node = node->getNext();
-            unsigned int procIndent = node->getChild()->getLength();
+            node = node->cgc_getNext();
+            unsigned int procIndent = node->cgc_getChild()->cgc_getLength();
             if (procIndent <= indent)
             {
                 DBG("Error: procedure indent incorrect");
                 retval = false;
                 goto error;
             }
-            Var *var = new Procedure(scope, child->getNext(), node, procIndent);
-            scope.names[CString(child->getLiteral()).ensure()] = var;
-            while (node != nullptr && node->getChild()->getLength() >= procIndent)
-                node = node->getNext();
+            cgc_Var *var = new cgc_Procedure(scope, child->cgc_getNext(), node, procIndent);
+            scope.names[cgc_CString(child->cgc_getLiteral()).cgc_ensure()] = var;
+            while (node != nullptr && node->cgc_getChild()->cgc_getLength() >= procIndent)
+                node = node->cgc_getNext();
             break;
         }
         default:
             DBG("Unknown statement type.");
-            node->dump(0);
+            node->cgc_dump(0);
             retval = false;
             goto error;
         }
@@ -430,92 +430,92 @@ error:
     return retval;
 }
 
-bool Evaluator::eval_op(const CString& op, Var* a, Var* b, unique_ptr<Var>& outresult)
+bool cgc_Evaluator::cgc_eval_op(const cgc_CString& op, cgc_Var* a, cgc_Var* b, cgc_unique_ptr<cgc_Var>& outresult)
 {
-    if (!operators.has(op))
+    if (!operators.cgc_has(op))
     {
-        DBG("missing operator");
+        DBG("missing cgc_operator");
         return false;
     }
     auto ops = operators[op];
-    for (unsigned int i = 0; i < ops.length(); i++)
+    for (unsigned int i = 0; i < ops.cgc_length(); i++)
     {
         auto _op = ops[i];
         if (b == nullptr)
         {
-            if (_op.a == a->getType() && _op.b == VarType::Nil)
+            if (_op.a == a->cgc_getType() && _op.b == VarType::Nil)
                 return _op.fn(op, a, b, outresult);
         }
         else
         {
-            if (_op.a == a->getType() && _op.b == b->getType())
+            if (_op.a == a->cgc_getType() && _op.b == b->cgc_getType())
                 return _op.fn(op, a, b, outresult);
         }
     }
 
-    DBG("missing compatible operator");
+    DBG("missing compatible cgc_operator");
     return false;
 }
 
-Procedure::Procedure(Scope &scope_, Node *arglist, Node *block, unsigned int indent)
-    : Var(VarType::Proc), scope(scope_)
+cgc_Procedure::cgc_Procedure(cgc_Scope &scope_, cgc_Node *arglist, cgc_Node *block, unsigned int indent)
+    : cgc_Var(VarType::Proc), scope(scope_)
 {
-    for (Node *node = arglist; node != nullptr; node = node->getNext())
-        args.push_back(node->getLiteral());
+    for (cgc_Node *node = arglist; node != nullptr; node = node->cgc_getNext())
+        args.cgc_push_back(node->cgc_getLiteral());
 
     this->block = block;
     this->indent = indent;
 }
 
-Procedure::~Procedure()
+cgc_Procedure::~cgc_Procedure()
 {
 }
 
-Var* Procedure::copy()
+cgc_Var* cgc_Procedure::cgc_copy()
 {
-    return new Procedure(*this);
+    return new cgc_Procedure(*this);
 }
 
-NumberVar::NumberVar(unsigned int val)
-    : Var(VarType::Number), value(val)
-{
-}
-
-NumberVar::~NumberVar()
+cgc_NumberVar::cgc_NumberVar(unsigned int val)
+    : cgc_Var(VarType::Number), value(val)
 {
 }
 
-Var* NumberVar::copy()
-{
-    return new NumberVar(*this);
-}
-
-StringVar::StringVar()
-    : Var(VarType::String)
+cgc_NumberVar::~cgc_NumberVar()
 {
 }
 
-StringVar::~StringVar()
+cgc_Var* cgc_NumberVar::cgc_copy()
+{
+    return new cgc_NumberVar(*this);
+}
+
+cgc_StringVar::cgc_StringVar()
+    : cgc_Var(VarType::String)
 {
 }
 
-Var* StringVar::copy()
+cgc_StringVar::~cgc_StringVar()
 {
-    return new StringVar(*this);
+}
+
+cgc_Var* cgc_StringVar::cgc_copy()
+{
+    return new cgc_StringVar(*this);
 }
 
 #define OP(name, t1, t2) \
-    eval.addOp(name, VarType::t1, VarType::t2, \
-        [] (const CString& op, Var *a, Var *b, unique_ptr<Var>& result) -> bool {
+    eval.cgc_addOp(name, VarType::t1, VarType::t2, \
+        [] (const cgc_CString& op, cgc_Var *a, cgc_Var *b, cgc_unique_ptr<cgc_Var>& result) -> bool {
 #define OP_END });
-void NumberVar::registerOps(Evaluator &eval)
+void cgc_NumberVar::cgc_registerOps(cgc_Evaluator &eval)
 {
 #define NUMOP(_op) \
-    eval.addOp(#_op, VarType::Number, VarType::Number, \
-        [] (const CString& op, Var *a, Var *b, unique_ptr<Var>& result) -> bool { \
-            const NumberVar *na = static_cast<NumberVar*>(a); \
-            const NumberVar *nb = static_cast<NumberVar*>(b); \
-            result.reset(new NumberVar(na->value _op nb->value)); \
+    eval.cgc_addOp(#_op, VarType::Number, VarType::Number, \
+        [] (const cgc_CString& op, cgc_Var *a, cgc_Var *b, cgc_unique_ptr<cgc_Var>& result) -> bool { \
+            const cgc_NumberVar *na = static_cast<cgc_NumberVar*>(a); \
+            const cgc_NumberVar *nb = static_cast<cgc_NumberVar*>(b); \
+            result.cgc_reset(new cgc_NumberVar(na->value _op nb->value)); \
             return true; \
     });
     NUMOP(>>)
@@ -536,10 +536,10 @@ void NumberVar::registerOps(Evaluator &eval)
     NUMOP(&&) // "and" is currently broken
 #undef NUMOP
 #define NUMOP(_op) \
-    eval.addOp(#_op, VarType::Number, VarType::Nil, \
-        [] (const CString& op, Var *a, Var *b, unique_ptr<Var>& result) -> bool { \
-            const NumberVar *na = static_cast<NumberVar*>(a); \
-            result.reset(new NumberVar(_op na->value)); \
+    eval.cgc_addOp(#_op, VarType::Number, VarType::Nil, \
+        [] (const cgc_CString& op, cgc_Var *a, cgc_Var *b, cgc_unique_ptr<cgc_Var>& result) -> bool { \
+            const cgc_NumberVar *na = static_cast<cgc_NumberVar*>(a); \
+            result.cgc_reset(new cgc_NumberVar(_op na->value)); \
             return true; \
     });
     NUMOP(-)
@@ -547,21 +547,21 @@ void NumberVar::registerOps(Evaluator &eval)
 #undef NUMOP
 }
 
-void StringVar::registerOps(Evaluator &eval)
+void cgc_StringVar::cgc_registerOps(cgc_Evaluator &eval)
 {
     OP("+", String, String)
-        const StringVar *sa = static_cast<StringVar*>(a);
-        const StringVar *sb = static_cast<StringVar*>(b);
+        const cgc_StringVar *sa = static_cast<cgc_StringVar*>(a);
+        const cgc_StringVar *sb = static_cast<cgc_StringVar*>(b);
 
-        StringVar *out = new StringVar();
-        out->resize(sa->data.length() + sb->data.length());
+        cgc_StringVar *out = new cgc_StringVar();
+        out->cgc_resize(sa->data.cgc_length() + sb->data.cgc_length());
 
         unsigned int i, j;
-        for (i = 0; i < sa->data.length(); i++)
+        for (i = 0; i < sa->data.cgc_length(); i++)
             out->data[i] = sa->data[i];
-        for (j = 0; j < sb->data.length(); j++)
+        for (j = 0; j < sb->data.cgc_length(); j++)
             out->data[i + j] = sb->data[j];
-        result.reset(out);
+        result.cgc_reset(out);
 
         return true;
     OP_END

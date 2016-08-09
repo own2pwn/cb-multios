@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,15 +23,15 @@
 #include <string.h>
 #include "stdio_private.h"
 
-ssize_t fwrite(const void *ptr, size_t size, FILE *stream)
+cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream)
 {
     const char *buf = ptr;
-    size_t idx = 0, tx;
+    cgc_size_t idx = 0, tx;
 
     if (stream->idx == INVALID_IDX)
     {
 unbuffered:
-        if (transmit_all(stream->fd, ptr, size) != 0)
+        if (cgc_transmit_all(stream->fd, ptr, size) != 0)
             return -1;
         return size;
     }
@@ -39,24 +39,24 @@ unbuffered:
     {
         if (size >= sizeof(stream->buffer))
         {
-            fflush(stream);
+            cgc_fflush(stream);
             goto unbuffered;
         }
 
         if (stream->length + size >= sizeof(stream->buffer))
         {
             tx = sizeof(stream->buffer) - stream->length;
-            memcpy(stream->buffer + stream->length, buf, tx);
+            cgc_memcpy(stream->buffer + stream->length, buf, tx);
             stream->length += tx;
             idx += tx;
 
-            fflush(stream);
+            cgc_fflush(stream);
         }
 
         if (idx < size)
         {
             tx = size - idx;
-            memcpy(stream->buffer + stream->length, buf + idx, tx);
+            cgc_memcpy(stream->buffer + stream->length, buf + idx, tx);
             stream->length += tx;
             idx += tx;
         }

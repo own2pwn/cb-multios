@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,9 +27,9 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
-void bzero( void *buff, size_t len )
+void cgc_bzero( void *buff, cgc_size_t len )
 {
-    size_t index = 0;
+    cgc_size_t index = 0;
     unsigned char *c = buff;
 
     if ( buff == NULL ) {
@@ -48,7 +48,7 @@ end:
     return;
 }
 
-char *strchr(const char *s, int c) {
+char *cgc_strchr(const char *s, int c) {
     while (*s != '\0') {
         if (*s == c) {
             return((char *)s);
@@ -61,7 +61,7 @@ char *strchr(const char *s, int c) {
     return(NULL);
 }
 
-char *strdup(char *s) 
+char *cgc_strdup(char *s) 
 {
         char *retval;
 
@@ -69,12 +69,12 @@ char *strdup(char *s)
                 return(NULL);
         }
 
-        if (allocate(strlen(s)+1, 0, (void *)&retval)) {
+        if (allocate(cgc_strlen(s)+1, 0, (void *)&retval)) {
                 return(NULL);
         }
 
-        bzero(retval, strlen(s)+1);
-        strcpy(retval, s);
+        cgc_bzero(retval, cgc_strlen(s)+1);
+        cgc_strcpy(retval, s);
 
         return(retval);
 }
@@ -83,7 +83,7 @@ char *token = NULL;
 char *prev_str = NULL;
 unsigned int prev_str_len = 0;
 char *prev_str_ptr = NULL;
-char *strtok(char *str, const char *delim) {
+char *cgc_strtok(char *str, const char *delim) {
     char *start;
     char *end;
     char *t;
@@ -104,7 +104,7 @@ char *strtok(char *str, const char *delim) {
             return(NULL);
         }
     } else {
-        // called with new string, so free the old one
+        // called with new string, so cgc_free the old one
         if (prev_str) {
             deallocate(prev_str, prev_str_len);
             prev_str = NULL;
@@ -115,22 +115,22 @@ char *strtok(char *str, const char *delim) {
 
     // not been called before, so make a copy of the string
     if (prev_str == NULL) {
-        if (strlen(str) > 4096) {
+        if (cgc_strlen(str) > 4096) {
             // too big
             return(NULL);
         } 
-        prev_str_len = strlen(str);
+        prev_str_len = cgc_strlen(str);
         if (allocate(prev_str_len, 0, (void *)&prev_str)) {
             return(NULL);
         }
-        strcpy(prev_str, str);
+        cgc_strcpy(prev_str, str);
         prev_str_ptr = prev_str;
     }
 
     str = prev_str_ptr;
 
     // make sure the string isn't starting with a delimeter
-    while (strchr(delim, str[0]) && str < prev_str+prev_str_len) {
+    while (cgc_strchr(delim, str[0]) && str < prev_str+prev_str_len) {
         str++;
     }
     if (str >= prev_str+prev_str_len) {
@@ -139,9 +139,9 @@ char *strtok(char *str, const char *delim) {
 
     // find the earliest next delimiter
     start = str;
-    end = str+strlen(str);
-    for (i = 0; i < strlen((char *)delim); i++) {
-        if ((t = strchr(start, delim[i]))) {
+    end = str+cgc_strlen(str);
+    for (i = 0; i < cgc_strlen((char *)delim); i++) {
+        if ((t = cgc_strchr(start, delim[i]))) {
             if (t != NULL && t < end) {
                 end = t;
             }
@@ -157,14 +157,14 @@ char *strtok(char *str, const char *delim) {
     return(token);
 }
 
-void puts( char *t )
+void cgc_puts( char *t )
 {
-    size_t size;
-    transmit(STDOUT, t, strlen(t), &size);
+    cgc_size_t size;
+    transmit(STDOUT, t, cgc_strlen(t), &size);
     transmit(STDOUT, "\n", 1, &size);
 }
 
-int isspace( int c )
+int cgc_isspace( int c )
 {
     if ( c == ' ' ||
          c == '\t' ||
@@ -177,7 +177,7 @@ int isspace( int c )
         return 0;
 }
 
-int isdigit( int c )
+int cgc_isdigit( int c )
 {
     if ( c >= '0' && c <= '9' )
         return 1;
@@ -185,17 +185,17 @@ int isdigit( int c )
         return 0;
 }
 
-int isnan( double val )
+int cgc_isnan( double val )
 {
     return __builtin_isnan( val );
 }
 
-int isinf( double val )
+int cgc_isinf( double val )
 {
     return __builtin_isinf( val );
 }
 
-int tolower( int c )
+int cgc_tolower( int c )
 {
     if ( c >= 'A' && c <= 'Z' )
         return (c - 'A') + 'a';
@@ -203,7 +203,7 @@ int tolower( int c )
         return c;
 }
 
-int toupper( int c )
+int cgc_toupper( int c )
 {
     if ( c >= 'a' && c <= 'z' )
         return (c - 'a') + 'A';
@@ -211,9 +211,9 @@ int toupper( int c )
         return c;
 }
 
-int strcmp( char *str1, char *str2 )
+int cgc_strcmp( char *str1, char *str2 )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -236,9 +236,9 @@ int strcmp( char *str1, char *str2 )
     return 0;
 }
 
-char *strcpy( char *dest, char *src )
+char *cgc_strcpy( char *dest, char *src )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -252,9 +252,9 @@ char *strcpy( char *dest, char *src )
     return (dest);
 }
 
-char *strncpy( char *dest, const char *src, size_t num )
+char *cgc_strncpy( char *dest, const char *src, cgc_size_t num )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; i < num; i++ )
     {
@@ -268,24 +268,24 @@ char *strncpy( char *dest, const char *src, size_t num )
     return (dest);
 }
 
-int flush_input( int fd )
+int cgc_flush_input( int fd )
 {
-    fd_set read_fds;
+    cgc_fd_set read_fds;
     int err;
     int ready_fd;
-    struct timeval tv;
+    struct cgc_timeval tv;
     char buffer[1024];
-    size_t rcv_cnt;
+    cgc_size_t rcv_cnt;
 
     while (1)
     {
-        memset( (void *)&read_fds, 0, sizeof(read_fds) );
+        cgc_memset( (void *)&read_fds, 0, sizeof(read_fds) );
         FD_SET( fd, &read_fds );
 
         tv.tv_sec = 0;
         tv.tv_usec = 10;
 
-        err = fdwait( fd+1, &read_fds, NULL, &tv, &ready_fd );
+        err = cgc_fdwait( fd+1, &read_fds, NULL, &tv, &ready_fd );
         if ( err != 0 )
             return err;
 
@@ -298,11 +298,11 @@ int flush_input( int fd )
     return (0);
 }
 
-size_t getline( char *buffer, size_t len )
+cgc_size_t cgc_getline( char *buffer, cgc_size_t len )
 {
     int count;
 
-    count = receive_until( buffer, '\n', len );
+    count = cgc_receive_until( buffer, '\n', len );
 
     if ( count == len )
         buffer[len-1] = '\0';
@@ -312,10 +312,10 @@ size_t getline( char *buffer, size_t len )
     return (count);
 }
 
-size_t receive_until( char *dst, char delim, size_t max )
+cgc_size_t cgc_receive_until( char *dst, char delim, cgc_size_t max )
 {
-    size_t len = 0;
-    size_t rx = 0;
+    cgc_size_t len = 0;
+    cgc_size_t rx = 0;
     char c = 0;
 
     while ( len < max )
@@ -336,47 +336,47 @@ size_t receive_until( char *dst, char delim, size_t max )
     }
 end:
     if ( len == max )
-        flush_input( STDIN );
+        cgc_flush_input( STDIN );
 
     return (len);
 }
 
 
-void *memcpy( void *dest, void *src, size_t numbytes )
+void *cgc_memcpy( void *dest, void *src, cgc_size_t numbytes )
 {
-    size_t bytes_copied = 0;
+    cgc_size_t bytes_copied = 0;
     if ( numbytes >= 4 )
     {
         for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = *((uint32_t*)(src+bytes_copied));
+            *((cgc_uint32_t*)(dest+bytes_copied)) = *((cgc_uint32_t*)(src+bytes_copied));
     }
 
     for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = *((uint8_t*)(src+bytes_copied));
+        *((cgc_uint8_t*)(dest+bytes_copied)) = *((cgc_uint8_t*)(src+bytes_copied));
 
     return dest;
 }
 
-void *memset( void *dest, int value, size_t numbytes )
+void *cgc_memset( void *dest, int value, cgc_size_t numbytes )
 {
-    size_t bytes_copied = 0;
-    uint8_t byte_set_value = (uint8_t)value;
+    cgc_size_t bytes_copied = 0;
+    cgc_uint8_t byte_set_value = (cgc_uint8_t)value;
 
     if ( numbytes >= 4 )
     {
-        uint32_t dword_set_value = (byte_set_value << 24) | (byte_set_value << 16) | (byte_set_value << 8) | byte_set_value;
+        cgc_uint32_t dword_set_value = (byte_set_value << 24) | (byte_set_value << 16) | (byte_set_value << 8) | byte_set_value;
 
         for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = dword_set_value;
+            *((cgc_uint32_t*)(dest+bytes_copied)) = dword_set_value;
     }
 
     for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = byte_set_value;
+        *((cgc_uint8_t*)(dest+bytes_copied)) = byte_set_value;
 
     return dest;
 }
 
-int atoi(const char* str)
+int cgc_atoi(const char* str)
 {
     if ( str == NULL )
         return 0;
@@ -387,7 +387,7 @@ int atoi(const char* str)
     int digit_count = 0;
 
     // Skip whitespace
-    while ( isspace( str[0] ) )
+    while ( cgc_isspace( str[0] ) )
         str++;
 
     part = 0; // First part (+/-/number is acceptable)
@@ -409,7 +409,7 @@ int atoi(const char* str)
 
             part++;
         }
-        else if ( isdigit( *str ) )
+        else if ( cgc_isdigit( *str ) )
         {
             if ( part == 0 || part == 1 )
             {
@@ -437,9 +437,9 @@ int atoi(const char* str)
     return (sign * integer_part);
 }
 
-size_t strlen( const char *str )
+cgc_size_t cgc_strlen( const char *str )
 {
-    size_t length = 0;
+    cgc_size_t length = 0;
 
     while ( str[length] != '\0' )
         length++;
@@ -447,7 +447,7 @@ size_t strlen( const char *str )
     return length;
 }
 
-int abs( int val )
+int cgc_abs( int val )
 {
     if ( val < 0 )
         return -val;

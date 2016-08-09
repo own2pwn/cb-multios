@@ -32,14 +32,14 @@ THE SOFTWARE.
 #define CHURN_INITIALIZER_COUNT 4
 
 typedef union {
-  uint64 i;
-  float64 f;
-} churn_item;
+  cgc_uint64 i;
+  cgc_float64 f;
+} cgc_churn_item;
 
-void churn_initialize(churn_item* start);
+void cgc_churn_initialize(cgc_churn_item* start);
 
-uint8 churn_rand_uint8();
-uint32 churn_rand_uint32();
-uint64 churn_rand_uint64();
-float64 churn_rand_float64();
-churn_item churn_rand_item();
+cgc_uint8 cgc_churn_rand_uint8();
+cgc_uint32 cgc_churn_rand_uint32();
+cgc_uint64 cgc_churn_rand_uint64();
+cgc_float64 cgc_churn_rand_float64();
+cgc_churn_item cgc_churn_rand_item();

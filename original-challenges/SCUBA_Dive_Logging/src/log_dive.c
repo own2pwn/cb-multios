@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,16 +30,16 @@ THE SOFTWARE.
 #include "dates.h"
 
 
-int log_dives(logbook_type *Info)  {
+int cgc_log_dives(cgc_logbook_type *Info)  {
 
-	dive_log_type *next_dive;
+	cgc_dive_log_type *next_dive;
 	char buffer[1024];
 	char buffer2[1024];
-	size_t count;
+	cgc_size_t count;
 
 	// if this is the first entry, assign it to the head of the list
 	if (Info->dives == 0)  {
-		Info->dives=calloc(1, sizeof(dive_log_type));
+		Info->dives=cgc_calloc(1, sizeof(cgc_dive_log_type));
 
 		if (Info->dives==0)
 			_terminate(-1);
@@ -53,7 +53,7 @@ int log_dives(logbook_type *Info)  {
 		while (next_dive->next != 0)
 			next_dive = next_dive->next;
 
-		next_dive->next = calloc(1, sizeof(dive_log_type));
+		next_dive->next = cgc_calloc(1, sizeof(cgc_dive_log_type));
 
 		if (next_dive->next==0)
 			_terminate(-1);
@@ -64,135 +64,135 @@ int log_dives(logbook_type *Info)  {
 
 	// now gather all the dive meta data
 
-	printf("Dive Site");
+	cgc_printf("Dive Site");
 
 	if (next_dive->dive_site_name[0]!= 0)
-		printf(" (@s)", next_dive->dive_site_name);
+		cgc_printf(" (@s)", next_dive->dive_site_name);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, sizeof(next_dive->dive_site_name));
+	count=cgc_getline(buffer, sizeof(next_dive->dive_site_name));
 
 	if (count > 0)
-		strncpy(next_dive->dive_site_name, buffer, sizeof(next_dive->dive_site_name));
+		cgc_strncpy(next_dive->dive_site_name, buffer, sizeof(next_dive->dive_site_name));
 
 
-	printf("Date");
+	cgc_printf("Date");
 
 	if (next_dive->dive_date[0]!= 0)
-		printf(" (@s)", next_dive->dive_date);
+		cgc_printf(" (@s)", next_dive->dive_date);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, sizeof(next_dive->dive_date));
+	count=cgc_getline(buffer, sizeof(next_dive->dive_date));
 
 	if (count > 0)
-		strncpy(next_dive->dive_date, buffer, count);
+		cgc_strncpy(next_dive->dive_date, buffer, count);
 
 
-	printf("Time");
+	cgc_printf("Time");
 
 	if (next_dive->dive_time[0]!= 0)
-		printf(" (@s)", next_dive->dive_time);
+		cgc_printf(" (@s)", next_dive->dive_time);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer2, sizeof(next_dive->dive_time));
+	count=cgc_getline(buffer2, sizeof(next_dive->dive_time));
 
 	if (count > 0)
-		strncpy(next_dive->dive_time, buffer2, count);
+		cgc_strncpy(next_dive->dive_time, buffer2, count);
 
-	strncat(buffer, " ", 1);
-	strncat(buffer, buffer2, strlen(buffer2));
+	cgc_strncat(buffer, " ", 1);
+	cgc_strncat(buffer, buffer2, cgc_strlen(buffer2));
 
-	datetime_struct_type tm;
-	next_dive->timestamp =  str2datetime(buffer, &tm);
+	cgc_datetime_struct_type tm;
+	next_dive->timestamp =  cgc_str2datetime(buffer, &tm);
 
-	printf("Location (area/city)");
+	cgc_printf("Location (area/city)");
 
 	if (next_dive->location[0]!= 0)
-		printf(" (@s)", next_dive->location);
+		cgc_printf(" (@s)", next_dive->location);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, sizeof(next_dive->location));
+	count=cgc_getline(buffer, sizeof(next_dive->location));
 
 	if (count > 0)
-		strncpy(next_dive->location, buffer, count);
+		cgc_strncpy(next_dive->location, buffer, count);
 
-		printf("Max Depth in ft");
+		cgc_printf("Max Depth in ft");
 
 	if (next_dive->max_depth!= 0)
-		printf(" (@d)", next_dive->max_depth);
+		cgc_printf(" (@d)", next_dive->max_depth);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, sizeof(buffer));
+	count=cgc_getline(buffer, sizeof(buffer));
 
 	if (count > 0)
-		next_dive->max_depth= atoi(buffer);
+		next_dive->max_depth= cgc_atoi(buffer);
 
-		printf("Avg Depth in ft");
+		cgc_printf("Avg Depth in ft");
 
 	if (next_dive->avg_depth!= 0)
-		printf(" (@d)", next_dive->avg_depth);
+		cgc_printf(" (@d)", next_dive->avg_depth);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, sizeof(buffer));
+	count=cgc_getline(buffer, sizeof(buffer));
 
 	if (count > 0)
-		next_dive->avg_depth=atoi(buffer);
+		next_dive->avg_depth=cgc_atoi(buffer);
 
-	printf("Dive Duration (mins)");
+	cgc_printf("Dive Duration (mins)");
 
 	if (next_dive->dive_length!= 0)
-		printf(" (@d)", next_dive->dive_length);
+		cgc_printf(" (@d)", next_dive->dive_length);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, 13);
+	count=cgc_getline(buffer, 13);
 
 	if (count > 0)
-		next_dive->dive_length = atoi(buffer);
+		next_dive->dive_length = cgc_atoi(buffer);
 
 
-	printf("O2 Percentage");
+	cgc_printf("O2 Percentage");
 
 	if (next_dive->O2_percent!= 0)
-		printf(" (@d)", next_dive->O2_percent);
+		cgc_printf(" (@d)", next_dive->O2_percent);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, 11);
+	count=cgc_getline(buffer, 11);
 
 	if (count > 0)
-		next_dive->O2_percent=atoi(buffer);
+		next_dive->O2_percent=cgc_atoi(buffer);
 
 	
-	printf("Pressure In (psi)");
+	cgc_printf("Pressure In (psi)");
 
 	if (next_dive->pressure_in!= 0)
-		printf(" (@d)", next_dive->pressure_in);
+		cgc_printf(" (@d)", next_dive->pressure_in);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, 20);
+	count=cgc_getline(buffer, 20);
 
 	if (count > 0)
-		next_dive->pressure_in=atoi(buffer);
+		next_dive->pressure_in=cgc_atoi(buffer);
 
-	printf("Pressure Out (psi)");
+	cgc_printf("Pressure Out (psi)");
 
 	if (next_dive->pressure_out!= 0)
-		printf(" (@d)", next_dive->pressure_out);
+		cgc_printf(" (@d)", next_dive->pressure_out);
 
-	printf(": ");
+	cgc_printf(": ");
 
-	count=getline(buffer, 11);
+	count=cgc_getline(buffer, 11);
 
 	if (count > 0)
-		next_dive->pressure_out=atoi(buffer);
+		next_dive->pressure_out=cgc_atoi(buffer);
 
 	next_dive->next=0;
 

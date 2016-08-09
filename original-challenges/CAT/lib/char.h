@@ -30,7 +30,7 @@
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_digit(const unsigned char ch);
+unsigned char cgc_is_digit(const unsigned char ch);
 
 /**
  * Is the char a letter.
@@ -39,7 +39,7 @@ unsigned char is_digit(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_letter(const unsigned char ch);
+unsigned char cgc_is_letter(const unsigned char ch);
 
 /**
  * Is the char an ASCII printable symbol
@@ -48,7 +48,7 @@ unsigned char is_letter(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_symbol(const unsigned char ch);
+unsigned char cgc_is_symbol(const unsigned char ch);
 
 /**
  * Is the char an upper case letter.
@@ -57,7 +57,7 @@ unsigned char is_symbol(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_upper(const unsigned char ch);
+unsigned char cgc_is_upper(const unsigned char ch);
 
 /**
  * Is the char a lower case letter.
@@ -66,7 +66,7 @@ unsigned char is_upper(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_lower(const unsigned char ch);
+unsigned char cgc_is_lower(const unsigned char ch);
 
 /**
  * Is the char non-printable
@@ -75,7 +75,7 @@ unsigned char is_lower(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_non_printable(const unsigned char ch);
+unsigned char cgc_is_non_printable(const unsigned char ch);
 
 /**
  * Is the char ASCII printable
@@ -84,6 +84,6 @@ unsigned char is_non_printable(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_printable(const unsigned char ch);
+unsigned char cgc_is_printable(const unsigned char ch);
 
 #endif

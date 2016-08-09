@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -41,40 +41,40 @@
 #define MAX_NUM_PW 512
 #define MAX_PW_LEN 512
 
-#define NOUN(o,t,r,c) t = nouns_list[r](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define VERB(o,t,r,c) t = verbs_list[r](); strcat(o, t);  c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define ADJ(o,t,r,c) t = adjectives_list[r](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define ADV(o,t,r,c) t = adverbs_list[r](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
+#define NOUN(o,t,r,c) t = nouns_list[r](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define VERB(o,t,r,c) t = verbs_list[r](); cgc_strcat(o, t);  c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define ADJ(o,t,r,c) t = adjectives_list[r](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define ADV(o,t,r,c) t = adverbs_list[r](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
 
-#define NOUNS(o,t,r,c) t = nouns_list[r%4096](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define VERBS(o,t,r,c) t = verbs_list[r%4096](); strcat(o, t);  c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define ADJS(o,t,r,c) t = adjectives_list[r%4096](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
-#define ADVS(o,t,r,c) t = adverbs_list[r%4096](); strcat(o, t); c = (crc32(t,strlen(t))&0xff<<24)|(c>>8); free(t);
+#define NOUNS(o,t,r,c) t = nouns_list[r%4096](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define VERBS(o,t,r,c) t = verbs_list[r%4096](); cgc_strcat(o, t);  c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define ADJS(o,t,r,c) t = adjectives_list[r%4096](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
+#define ADVS(o,t,r,c) t = adverbs_list[r%4096](); cgc_strcat(o, t); c = (cgc_crc32(t,cgc_strlen(t))&0xff<<24)|(c>>8); cgc_free(t);
 
 unsigned int seed;
 unsigned int sseeds[4];
 unsigned int (*custom_prng)(unsigned int, unsigned int);
 
-unsigned int prng(unsigned int crc, unsigned int last) {
+unsigned int cgc_prng(unsigned int crc, unsigned int last) {
     //super secure PRNG
     last ^= crc;
     return last;
 }
 
-unsigned int another_prng(unsigned int crc, unsigned int last) {
+unsigned int cgc_another_prng(unsigned int crc, unsigned int last) {
     last ^= crc+0x41414141;
     return last;
 }
 
-char *gen_rand_pass() {
+char *cgc_gen_rand_pass() {
     unsigned int rand = 0, choice = 0, crc = 0;
     char *temp;
-    unsigned int (*get_next)(unsigned int, unsigned int) = prng;
-    char *out = calloc(MAX_PW_LEN);
+    unsigned int (*get_next)(unsigned int, unsigned int) = cgc_prng;
+    char *out = cgc_calloc(MAX_PW_LEN);
     #ifndef PATCHED_1
     if (custom_prng)
     #else
-    if (custom_prng && (custom_prng == prng || custom_prng == another_prng))
+    if (custom_prng && (custom_prng == cgc_prng || custom_prng == cgc_another_prng))
     #endif
         get_next = custom_prng;
 
@@ -118,16 +118,16 @@ char *gen_rand_pass() {
     return out;
 }
 
-char *gen_rand_pass_secure() {
+char *cgc_gen_rand_pass_secure() {
     unsigned int rand = 0, choice = 0, crc = 0;
     char *temp;
     int i;
-    unsigned int (*get_next)(unsigned int, unsigned int) = prng;
-    char *out = calloc(MAX_PW_LEN);
+    unsigned int (*get_next)(unsigned int, unsigned int) = cgc_prng;
+    char *out = cgc_calloc(MAX_PW_LEN);
     #ifndef PATCHED_2
     if (custom_prng)
     #else
-    if (custom_prng && (custom_prng == prng || custom_prng == another_prng))
+    if (custom_prng && (custom_prng == cgc_prng || custom_prng == cgc_another_prng))
     #endif
         get_next = custom_prng;
 
@@ -174,9 +174,9 @@ char *gen_rand_pass_secure() {
     return out;
 }
 
-void rc4init(unsigned char *s, unsigned char *k) {
+void cgc_rc4init(unsigned char *s, unsigned char *k) {
     int i, j = 0, t = 0;
-    int len = strlen((char*)k);
+    int len = cgc_strlen((char*)k);
 
     for (i = 0; i < 256; i++)
         s[i] = i;
@@ -189,10 +189,10 @@ void rc4init(unsigned char *s, unsigned char *k) {
     }
 }
 
-void rc4crypt(unsigned char *s, unsigned char *d, int len) {
+void cgc_rc4crypt(unsigned char *s, unsigned char *d, int len) {
     int i, t, j = 0, k = 0;
     char xor[len];
-    memset(xor, 0, len);
+    cgc_memset(xor, 0, len);
 
     for (i=0; i < len; i++) {
         j = (j+1) % 256;
@@ -222,17 +222,17 @@ int main(void) {
     if (!SENDSTR(WELCOME))
         return 1;
 
-    if (fread_until(masterpw, '\n', sizeof(masterpw), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(masterpw, '\n', sizeof(masterpw), stdin) == EXIT_FAILURE)
         return 2;
 
     if (!SENDSTR(HOWMANY))
         return 3;
 
-    if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
         return 4;
 
-    count = atoi(temp);
-    fdprintf(STDERR, "count = @b\n", temp);
+    count = cgc_atoi(temp);
+    cgc_fdprintf(STDERR, "count = @b\n", temp);
 
     if (!count)
         count = 1;
@@ -243,10 +243,10 @@ int main(void) {
     if (!SENDSTR(SEED))
         return 6;
 
-    if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
         return 7;
 
-    seed = atoi(temp);
+    seed = cgc_atoi(temp);
 
     if (!seed)
         RANDOM(sizeof(seed),&seed);
@@ -254,10 +254,10 @@ int main(void) {
     if (!SENDSTR(PRNG))
         return 8;
 
-    if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
         return 9;
 
-    custom_prng = (unsigned int (*)(unsigned int, unsigned int))atoi(temp);
+    custom_prng = (unsigned int (*)(unsigned int, unsigned int))cgc_atoi(temp);
 
     if (custom_prng && (unsigned int)custom_prng < 0x08000000)
         return 10;
@@ -265,34 +265,34 @@ int main(void) {
     if (!SENDSTR(SECUREMODE))
         return 11;
 
-    if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
         return 12;
 
-    if (atoi(temp) == 1) {
-        genpass = gen_rand_pass_secure;
+    if (cgc_atoi(temp) == 1) {
+        genpass = cgc_gen_rand_pass_secure;
 
         if (!SENDSTR(SECUREMODESEEDS))
             return 13;
 
         for (i = 0; i < 4; i++) {
-            if (fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
+            if (cgc_fread_until(temp, '\n', sizeof(temp), stdin) == EXIT_FAILURE)
                 return 14;
             
-            sseeds[i] = atoi(temp);
+            sseeds[i] = cgc_atoi(temp);
         }
 
     } else {
-        genpass = gen_rand_pass;
+        genpass = cgc_gen_rand_pass;
     }
 
 
     if (!SENDSTR(PLZWAIT))
         return 15;
 
-    pwstore = calloc(count*MAX_PW_LEN);
+    pwstore = cgc_calloc(count*MAX_PW_LEN);
     out = pwstore;
 
-    rc4init(rc4state, masterpw);
+    cgc_rc4init(rc4state, masterpw);
 
     for (i=0; i < count; i++) {
         int len;
@@ -304,13 +304,13 @@ int main(void) {
         if (!SENDLINE(pw))
             return 17;
 
-        len = strlen(pw);
+        len = cgc_strlen(pw);
 
-        rc4crypt(rc4state, (unsigned char*)pw, len);
+        cgc_rc4crypt(rc4state, (unsigned char*)pw, len);
 
-        memcpy(out, pw, len);
+        cgc_memcpy(out, pw, len);
 
-        free(pw);
+        cgc_free(pw);
 
         out += len;
         total_len += len;
@@ -319,10 +319,10 @@ int main(void) {
     if (!SENDSTR(HEREITIS))
         return 18;
 
-    if (sendall(STDOUT,(char*)&total_len,sizeof(total_len)) != sizeof(total_len))
+    if (cgc_sendall(STDOUT,(char*)&total_len,sizeof(total_len)) != sizeof(total_len))
         return 19;
 
-    if (sendall(STDOUT,(char*)pwstore,total_len) != total_len)
+    if (cgc_sendall(STDOUT,(char*)pwstore,total_len) != total_len)
         return 20;
 
     return 0;

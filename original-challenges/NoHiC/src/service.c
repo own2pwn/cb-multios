@@ -27,20 +27,20 @@
 
 int main(void) {
 
-    uint8_t command[1];
+    cgc_uint8_t command[1];
     int ret = 0;
 
     while (1) {
-        if ((ret = do_nonce()) == 0) {
+        if ((ret = cgc_do_nonce()) == 0) {
             
-            RECV(command, sizeof(uint8_t));
+            RECV(command, sizeof(cgc_uint8_t));
 
             switch (command[0]) {
                 case 0: // create
-                    ret = do_create();
+                    ret = cgc_do_create();
                     break;
                 case 1: // eval
-                    ret = do_eval();
+                    ret = cgc_do_eval();
                     break;
                 default:
                     // bad command input

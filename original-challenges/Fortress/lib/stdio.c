@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation cgc_files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,25 +22,25 @@
  */
 #include "stdio_private.h"
 
-FILE _stdin = {
+cgc_FILE _stdin = {
     .fd = STDIN,
     .rw = F_READ,
     .idx = 0,
     .length = 0
 };
-FILE _stdout = {
+cgc_FILE _stdout = {
     .fd = STDOUT,
     .rw = F_WRITE,
     .idx = -1,
     .length = 0
 };
-FILE _stderr = {
+cgc_FILE _stderr = {
     .fd = STDERR,
     .rw = F_WRITE,
     .idx = -1,
     .length = 0
 };
 
-FILE * const stdin = &_stdin;
-FILE * const stdout = &_stdout;
-FILE * const stderr = &_stderr;
+cgc_FILE * const stdin = &_stdin;
+cgc_FILE * const stdout = &_stdout;
+cgc_FILE * const stderr = &_stderr;

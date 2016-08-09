@@ -23,13 +23,13 @@
 #include <errno.h>
 #include "send_bytes.h"
 
-int send_bytes(int fd, const char *buf, unsigned int size) {
+int cgc_send_bytes(int fd, const char *buf, unsigned int size) {
 
 	if ((NULL == buf) || (0 == size)) {
 		return ERRNO_SEND;
 	}
 
-	size_t bytes_sent_iter = 0;
+	cgc_size_t bytes_sent_iter = 0;
 	unsigned int bytes_sent_total = 0;
 	const char *p_buf = buf;
 

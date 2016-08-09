@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,45 +26,45 @@ THE SOFTWARE.
 #ifndef __DOUBLE_LIST_H__
 #define __DOUBLE_LIST_H__
 
-class CDoubleList;
+class cgc_CDoubleList;
 
-class CDoubleListElement
+class cgc_CDoubleListElement
 {
 public:
-    CDoubleListElement( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
-    ~CDoubleListElement( ) { };
+    cgc_CDoubleListElement( ) : m_pNext( NULL ), m_pPrev( NULL ) { };
+    ~cgc_CDoubleListElement( ) { };
 
-    CDoubleListElement *GetNext( void ) const { return m_pNext; };
-    CDoubleListElement *GetPrev( void ) const { return m_pPrev; };
+    cgc_CDoubleListElement *cgc_GetNext( void ) const { return m_pNext; };
+    cgc_CDoubleListElement *cgc_GetPrev( void ) const { return m_pPrev; };
 
 public:
-    friend class CDoubleList;
+    friend class cgc_CDoubleList;
 
 private:
-    CDoubleListElement *m_pNext;
-    CDoubleListElement *m_pPrev;
+    cgc_CDoubleListElement *m_pNext;
+    cgc_CDoubleListElement *m_pPrev;
 };
 
-class CDoubleList
+class cgc_CDoubleList
 {
 public:
-    CDoubleList( );
-    ~CDoubleList( );
+    cgc_CDoubleList( );
+    ~cgc_CDoubleList( );
 
-    void DeleteAll( void );
+    void cgc_DeleteAll( void );
 
-    void InsertHead( CDoubleListElement *pItem );
-    void InsertTail( CDoubleListElement *pItem );
-    void InsertAfter( CDoubleListElement *pPrev, CDoubleListElement *pItem );
+    void cgc_InsertHead( cgc_CDoubleListElement *pItem );
+    void cgc_InsertTail( cgc_CDoubleListElement *pItem );
+    void cgc_InsertAfter( cgc_CDoubleListElement *pPrev, cgc_CDoubleListElement *pItem );
 
-    CDoubleListElement *GetFirst( void ) const { return m_pFirst; };
-    CDoubleListElement *GetLast( void ) const { return m_pFirst; };
+    cgc_CDoubleListElement *cgc_GetFirst( void ) const { return m_pFirst; };
+    cgc_CDoubleListElement *cgc_GetLast( void ) const { return m_pFirst; };
 
-    void Unlink( CDoubleListElement *pItem );
+    void cgc_Unlink( cgc_CDoubleListElement *pItem );
 
 private:
-    CDoubleListElement *m_pFirst;
-    CDoubleListElement *m_pLast;
+    cgc_CDoubleListElement *m_pFirst;
+    cgc_CDoubleListElement *m_pLast;
 };
 
 #endif // __DOUBLE_LIST_H__

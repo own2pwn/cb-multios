@@ -27,8 +27,8 @@
 
 #include "stdlib.h"
 
-typedef struct FILE FILE;
-extern FILE *stdin, *stdout, *stderr;
+typedef struct cgc_FILE cgc_FILE;
+extern cgc_FILE *stdin, *stdout, *stderr;
 
 /** Is this file in read or write mode, mutually exclusive */
 enum mode {
@@ -46,7 +46,7 @@ enum mode {
  * @param size The size to read
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t read_all(int fd, void *ptr, size_t size);
+cgc_ssize_t cgc_read_all(int fd, void *ptr, cgc_size_t size);
 
 /**
  * Read at most size bytes from fd into ptr, stopping on delim.
@@ -57,7 +57,7 @@ ssize_t read_all(int fd, void *ptr, size_t size);
  * @param size The size to read
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t read_until(int fd, void *ptr, unsigned char delim, size_t size);
+cgc_ssize_t cgc_read_until(int fd, void *ptr, unsigned char delim, cgc_size_t size);
 
 /**
  * Write exactly size bytes from ptr to fd.
@@ -67,172 +67,172 @@ ssize_t read_until(int fd, void *ptr, unsigned char delim, size_t size);
  * @param size The size to write
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t write_all(int fd, const void *ptr, size_t size);
+cgc_ssize_t cgc_write_all(int fd, const void *ptr, cgc_size_t size);
 
 /**
- * Open a FILE given a file descriptor and a mode.
+ * Open a cgc_FILE given a file descriptor and a mode.
  *
  * @param fd The file descriptor to open
- * @param mode The mode of the FILE
- * @return A pointer to a FILE or NULL on failure
+ * @param mode The mode of the cgc_FILE
+ * @return A pointer to a cgc_FILE or NULL on failure
  */
-FILE *fdopen(int fd, enum mode mode);
+cgc_FILE *cgc_fdopen(int fd, enum mode mode);
 
 /**
- * Close a FILE opened with fdopen.
+ * Close a cgc_FILE opened with cgc_fdopen.
  *
- * @param stream The FILE to close
+ * @param stream The cgc_FILE to close
  */
-void fclose(FILE *stream);
+void cgc_fclose(cgc_FILE *stream);
 
 /**
- * Flush buffer from FILE pointer to its fd.
+ * Flush buffer from cgc_FILE pointer to its fd.
  *
- * @param stream The FILE to flush
+ * @param stream The cgc_FILE to flush
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int fflush(FILE *stream);
+int cgc_fflush(cgc_FILE *stream);
 
 /**
- * Read exactly size bytes from FILE pointer into ptr, buffered.
+ * Read exactly size bytes from cgc_FILE pointer into ptr, buffered.
  *
  * @param ptr The output buffer
  * @param size The size to read
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t fread(void *ptr, size_t size, FILE *stream);
+cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
 
 /**
- * Read at most size bytes from FILE pointer into ptr, stopping on delim, buffered.
+ * Read at most size bytes from cgc_FILE pointer into ptr, stopping on delim, buffered.
  *
  * @param ptr The output buffer
  * @param delim The byte to stop on
  * @param size The size to read
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream);
+cgc_ssize_t cgc_fread_until(void *ptr, unsigned char delim, cgc_size_t size, cgc_FILE *stream);
 
 /**
- * Write size bytes from ptr into FILE pointer, buffered.
+ * Write size bytes from ptr into cgc_FILE pointer, buffered.
  *
  * @param ptr The input buffer
  * @param size The size to write
- * @param stream The FILE pointer to write to
+ * @param stream The cgc_FILE pointer to write to
  * @return size on success, else EXIT_FAILURE
  */
-ssize_t fwrite(const void *ptr, size_t size, FILE *stream);
+cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream);
 
 /**
- * Get a character from FILE pointer, buffered.
+ * Get a character from cgc_FILE pointer, buffered.
  *
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @return The value of the character read, or EXIT_FAILURE
  */
-int fgetc(FILE *stream);
+int cgc_fgetc(cgc_FILE *stream);
 
 /**
- * Write a character to FILE pointer, buffered.
+ * Write a character to cgc_FILE pointer, buffered.
  *
- * @param stream The FILE pointer to write to
+ * @param stream The cgc_FILE pointer to write to
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int fputc(int character, FILE *stream);
+int cgc_fputc(int character, cgc_FILE *stream);
 
 /**
  * Get a character from stdin, buffered.
  *
  * @return The value of the character read, or EXIT_FAILURE
  */
-#define getc() fgetc(stdin)
+#define getc() cgc_fgetc(stdin)
 
 /**
  * Write a character to stdout, buffered.
  *
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-#define putc(character) fputc(character, stdout)
+#define putc(character) cgc_fputc(character, stdout)
 
 /**
- * Print a formatted string to stdout, taking parameters from a va_list,
+ * Print a formatted string to stdout, taking parameters from a cgc_va_list,
  *      buffered.
  *
  * @param format The format string to use
- * @param arg The va_list to retrieve values from
+ * @param arg The cgc_va_list to retrieve values from
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int vprintf(const char *format, va_list arg);
+int cgc_vprintf(const char *format, cgc_va_list arg);
 
 /**
- * Print a formatted string to a FILE pointer, taking parameters from a va_list,
+ * Print a formatted string to a cgc_FILE pointer, taking parameters from a cgc_va_list,
  *      buffered.
  *
- * @param stream The FILE pointer to write to
+ * @param stream The cgc_FILE pointer to write to
  * @param format The format string to use
- * @param arg The va_list to retrieve values from
+ * @param arg The cgc_va_list to retrieve values from
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int vfprintf(FILE *stream, const char *format, va_list arg);
+int cgc_vfprintf(cgc_FILE *stream, const char *format, cgc_va_list arg);
 
 /**
- * Write a formatted string to a buffer, taking parameters from a va_list.
+ * Write a formatted string to a buffer, taking parameters from a cgc_va_list.
  *
  * @param s The buffer to write to
  * @param format The format string to use
- * @param arg The va_list to retrieve values from
+ * @param arg The cgc_va_list to retrieve values from
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int vsprintf(char *s, const char *format, va_list arg);
+int cgc_vsprintf(char *s, const char *format, cgc_va_list arg);
 
 /**
  * Write a formatted string to a buffer, writing at most num bytes, taking
- *      parameters from a va_list.
+ *      parameters from a cgc_va_list.
  *
  * @param s The buffer to write to
  * @param num The maximum number of bytes to write
  * @param format The format string to use
- * @param arg The va_list to retrieve values from
+ * @param arg The cgc_va_list to retrieve values from
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int vsnprintf(char *s, size_t num, const char *format, va_list arg);
+int cgc_vsnprintf(char *s, cgc_size_t num, const char *format, cgc_va_list arg);
 
 /**
- * Read formatted input from stdin, taking parameters from a va_list,
+ * Read formatted input from stdin, taking parameters from a cgc_va_list,
  *      buffered.
  *
  * UNIMPLEMENTED
  *
  * @param format The format string to use
- * @param arg The va_list to write values to
+ * @param arg The cgc_va_list to write values to
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int vscanf(const char *format, va_list arg);
+int cgc_vscanf(const char *format, cgc_va_list arg);
 
 /**
- * Read formatted input from a FILE pointer, taking parameters from a va_list,
+ * Read formatted input from a cgc_FILE pointer, taking parameters from a cgc_va_list,
  *      buffered.
  *
  * UNIMPLEMENTED
  *
  * @param stream The file pointer to read from
  * @param format The format string to use
- * @param arg The va_list to write values to
+ * @param arg The cgc_va_list to write values to
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int vfscanf(FILE *stream, const char *format, va_list arg);
+int cgc_vfscanf(cgc_FILE *stream, const char *format, cgc_va_list arg);
 
 /**
- * Read formatted input from a string, taking parameters from a va_list.
+ * Read formatted input from a string, taking parameters from a cgc_va_list.
  *
  * UNIMPLEMENTED
  *
  * @param s The string to read from
  * @param format The format string to use
- * @param arg The va_list to write values to
+ * @param arg The cgc_va_list to write values to
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int vsscanf(char *s, const char *format, va_list arg);
+int cgc_vsscanf(char *s, const char *format, cgc_va_list arg);
 
 /**
  * Print a formatted string to stdout, buffered.
@@ -240,16 +240,16 @@ int vsscanf(char *s, const char *format, va_list arg);
  * @param format The format string to use
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int printf(const char *format, ...);
+int cgc_printf(const char *format, ...);
 
 /**
- * Print a formatted string to a FILE pointer, buffered.
+ * Print a formatted string to a cgc_FILE pointer, buffered.
  *
- * @param stream The FILE pointer to write to
+ * @param stream The cgc_FILE pointer to write to
  * @param format The format string to use
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int fprintf(FILE *stream, const char *format, ...);
+int cgc_fprintf(cgc_FILE *stream, const char *format, ...);
 
 /**
  * Write a formatted string to a buffer.
@@ -258,7 +258,7 @@ int fprintf(FILE *stream, const char *format, ...);
  * @param format The format string to use
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int sprintf(char *s, const char *format, ...);
+int cgc_sprintf(char *s, const char *format, ...);
 
 /**
  * Write a formatted string to a buffer, writing at most num bytes.
@@ -268,7 +268,7 @@ int sprintf(char *s, const char *format, ...);
  * @param format The format string to use
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int snprintf(char *s, size_t num, const char *format, ...);
+int cgc_snprintf(char *s, cgc_size_t num, const char *format, ...);
 
 /**
  * Read formatted input from stdin, buffered.
@@ -278,18 +278,18 @@ int snprintf(char *s, size_t num, const char *format, ...);
  * @param format The format string to use
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int scanf(const char *format, ...);
+int cgc_scanf(const char *format, ...);
 
 /**
- * Read formatted input from a FILE pointer, buffered.
+ * Read formatted input from a cgc_FILE pointer, buffered.
  *
  * UNIMPLEMENTED
  *
- * @param stream The FILE pointer to read from
+ * @param stream The cgc_FILE pointer to read from
  * @param format The format string to use
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int fscanf(const char *format, ...);
+int cgc_fscanf(const char *format, ...);
 
 /**
  * Read formatted input from a string.
@@ -300,7 +300,7 @@ int fscanf(const char *format, ...);
  * @param format The format string to use
  * @return The number of bytes read on success, else EXIT_FAILURE
  */
-int sscanf(char *s, const char *format, ...);
+int cgc_sscanf(char *s, const char *format, ...);
 
 #endif /* STDIO_H_ */
 

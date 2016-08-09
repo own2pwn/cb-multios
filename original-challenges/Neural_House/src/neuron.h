@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,28 +24,28 @@
 
 #include "vector.h"
 
-unsigned int g_prng(void);
+unsigned int cgc_g_prng(void);
 
-struct Edge
+struct cgc_Edge
 {
     double weight;
     double delta;
 };
 
-class Neuron
+class cgc_Neuron
 {
   public:
-    Neuron() {};
-    Neuron(unsigned int n, unsigned int outLen);
-    void setValue(double v) { m_value = v; }
-    double getValue() { return m_value; }
-    void feedForward(vector<Neuron> &prev);
-    void computeOutGrad(double target);
-    void computeHiddenGrad(vector<Neuron> &next);
-    void updateWeights(vector<Neuron> &prev);
+    cgc_Neuron() {};
+    cgc_Neuron(unsigned int n, unsigned int outLen);
+    void cgc_setValue(double v) { m_value = v; }
+    double cgc_getValue() { return m_value; }
+    void cgc_feedForward(cgc_vector<cgc_Neuron> &prev);
+    void cgc_computeOutGrad(double target);
+    void cgc_computeHiddenGrad(cgc_vector<cgc_Neuron> &next);
+    void cgc_updateWeights(cgc_vector<cgc_Neuron> &prev);
 
-    double sigmoid(double x);
-    double dsigmoid(double x);
+    double cgc_sigmoid(double x);
+    double cgc_dsigmoid(double x);
 
   private:
     static double k_eta;
@@ -53,5 +53,5 @@ class Neuron
     double m_value;
     double m_gradient;
     unsigned int m_n;
-    vector<Edge> m_weights;
+    cgc_vector<cgc_Edge> m_weights;
 };

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,16 +36,16 @@ static char *admin_username = "root";
 static char *admin_password = NULL; //jlCLrhQ
 
 static unsigned int a=123848, b=12384812, c=84813, d=9837149;
-static unsigned int rng()
+static unsigned int cgc_rng()
 {
     unsigned int temp = a ^  (a << 7);
     a = b; b = c; c = d;
     return d = (d ^ (d >> 8)) ^ (temp ^ (temp >> 19));
 }
 
-static char *random_password()
+static char *cgc_random_password()
 {
-    char *pw = malloc(8);
+    char *pw = cgc_malloc(8);
     if (!pw) {
         pw = admin_username;
         return pw;
@@ -53,29 +53,29 @@ static char *random_password()
     pw[7] = '\0';
     int i = 0;
     for (i = 0; i < 7; i++) {
-        if(rng() % 5) {
-            if (rng()  % 2)
-                pw[i] = rng() % 26 + 'A';
+        if(cgc_rng() % 5) {
+            if (cgc_rng()  % 2)
+                pw[i] = cgc_rng() % 26 + 'A';
             else
-                pw[i] = rng() % 26 + 'a';
+                pw[i] = cgc_rng() % 26 + 'a';
         } else {
-            pw[i] = rng() % 17 + '0';
+            pw[i] = cgc_rng() % 17 + '0';
         }
     }
 
     return pw;
 }
 
-static void list_movies()
+static void cgc_list_movies()
 {
-    list_all_movies();
+    cgc_list_all_movies();
 }
 
-static void user_rent_movie()
+static void cgc_user_rent_movie()
 {
-    size_t id = 0, num_movies = get_num_owned_movies();
+    cgc_size_t id = 0, num_movies = cgc_get_num_owned_movies();
     char line[LINE_SIZE];
-    list_owned_movies();
+    cgc_list_owned_movies();
 
     if (num_movies == 0) {
         printf("[ERROR] Movie list is empty. Please try again later.\n");
@@ -84,20 +84,20 @@ static void user_rent_movie()
 
     while(id == 0 || id > num_movies) {
         printf("Enter movie id: ");
-        readline(STDIN, line, LINE_SIZE);
-        id = strtol(line, NULL, 10);
+        cgc_readline(STDIN, line, LINE_SIZE);
+        id = cgc_strtol(line, NULL, 10);
         if (id == 0 || id > num_movies)
             printf("[ERROR] Invalid movie id. Try again.\n");
     }
 
-    rent_movie(id);
+    cgc_rent_movie(id);
 }
 
-static void user_return_movie()
+static void cgc_user_return_movie()
 {
-    size_t id = 0, num_rented = get_num_rented_movies();
+    cgc_size_t id = 0, num_rented = cgc_get_num_rented_movies();
     char line[LINE_SIZE];
-    list_rented_movies();
+    cgc_list_rented_movies();
 
     if (num_rented == 0) {
         printf("[ERROR] All the movies are in our inventory.\n");
@@ -106,28 +106,28 @@ static void user_return_movie()
 
     while(id == 0 || id > num_rented) {
         printf("Enter movie id: ");
-        readline(STDIN, line, LINE_SIZE);
-        id = strtol(line, NULL, 10);
+        cgc_readline(STDIN, line, LINE_SIZE);
+        id = cgc_strtol(line, NULL, 10);
         if (id == 0 || id > num_rented)
             printf("[ERROR] Invalid movie id. Try again.\n");
     }
 
-    return_movie(id);
+    cgc_return_movie(id);
 }
 
-static int admin_login()
+static int cgc_admin_login()
 {
     char line[LINE_SIZE];
     printf("username: ");
-    readline(STDIN, line, LINE_SIZE);
-    if (strcmp(line, admin_username) != 0) {
+    cgc_readline(STDIN, line, LINE_SIZE);
+    if (cgc_strcmp(line, admin_username) != 0) {
         printf("[ERROR] Permission Denied: Wrong credentials\n");
         return -1;
     }
 
     printf("password: ");
-    readline(STDIN, line, LINE_SIZE);
-    if (strcmp(line, admin_password) != 0) {
+    cgc_readline(STDIN, line, LINE_SIZE);
+    if (cgc_strcmp(line, admin_password) != 0) {
         printf("[ERROR] Permission Denied: Wrong credentials\n");
         return -1;
     }
@@ -135,10 +135,10 @@ static int admin_login()
     return 0;
 }
 
-int run_user_mode(int *user)
+int cgc_run_user_mode(int *user)
 {
     if (admin_password == NULL)
-        admin_password = random_password();
+        admin_password = cgc_random_password();
 
     char line[LINE_SIZE];
     int choice;
@@ -150,21 +150,21 @@ int run_user_mode(int *user)
     printf("5. Exit\n\n");
     printf("Choice: ");
 
-    readline(STDIN, line, LINE_SIZE);
-    choice = strtol(line, NULL, 10);
+    cgc_readline(STDIN, line, LINE_SIZE);
+    choice = cgc_strtol(line, NULL, 10);
 
     switch(choice) {
     case 1:
-        list_movies();
+        cgc_list_movies();
         break;
     case 2:
-        user_rent_movie();
+        cgc_user_rent_movie();
         break;
     case 3:
-        user_return_movie();
+        cgc_user_return_movie();
         break;
     case 4:
-        if (admin_login() == 0)
+        if (cgc_admin_login() == 0)
             *user = ADMIN;
         break;
     case 5:

@@ -32,9 +32,9 @@
 
 #define FLAG_PAGE 0x4347C000
 
-#define SEND(f,b,s) if(s != send_bytes(f,b,s)) _terminate(ERRNO_SEND)
+#define SEND(f,b,s) if(s != cgc_send_bytes(f,b,s)) _terminate(ERRNO_SEND)
 
-#define RECV(f,b,s) if(0 > recv_bytes(f,b,s)) _terminate(ERRNO_RECV)
+#define RECV(f,b,s) if(0 > cgc_recv_bytes(f,b,s)) _terminate(ERRNO_RECV)
 
 #define FAIL_BAIL_RET(e) if (SUCCESS != (ret = e)) return ret;
 #define NEG_BAIL_RET(e) if (0 > (ret = e)) return ret

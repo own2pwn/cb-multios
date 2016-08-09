@@ -46,11 +46,11 @@ THE SOFTWARE.
 #define APPLICATION_LAYER 4
 
 typedef struct SystemState_s {
-  uint8_t mode;
-  uint16_t display_flags;
-  uint8_t num_filters;
+  cgc_uint8_t mode;
+  cgc_uint16_t display_flags;
+  cgc_uint8_t num_filters;
   struct PacketFilter_s *filters[MAX_FILTERS];
   struct Statistics_s *stats;
-} SystemState;
+} cgc_SystemState;
 
 #endif

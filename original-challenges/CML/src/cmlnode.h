@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,21 +24,21 @@
 
 #include "node.h"
 
-class CmlNode : public Node
+class cgc_CmlNode : public cgc_Node
 {
-    friend class Node;
+    friend class cgc_Node;
 private:
-    CmlNode(const String *ns, const String *tag);
+    cgc_CmlNode(const cgc_String *cgc_ns, const cgc_String *cgc_tag);
 public:
-    virtual void set_attr(const char *name, String *value);
+    virtual void cgc_set_attr(const char *cgc_name, cgc_String *value);
 
-    inline const String *childns() { return d_childns; }
-    inline const String *spec() { return d_spec; }
-    inline const String *version() { return d_version; }
-    inline unsigned long long version_code() { return d_version_code; }
+    inline const cgc_String *cgc_childns() { return d_childns; }
+    inline const cgc_String *cgc_spec() { return d_spec; }
+    inline const cgc_String *cgc_version() { return d_version; }
+    inline unsigned long long cgc_version_code() { return d_version_code; }
 private:
-    const String *d_spec;
-    const String *d_version;
+    const cgc_String *d_spec;
+    const cgc_String *d_version;
     unsigned long long d_version_code;
-    const String *d_childns;
+    const cgc_String *d_childns;
 };

@@ -46,40 +46,40 @@ extern "C"
 #define MAX_SENSORS_PER_USER 3
 #define MAX_USERS 7
 
-class SensorManager
+class cgc_SensorManager
 {
 private:
-	CUtil::DLL_LIST( FitnessSensor, m_sensorLink ) m_sensorList;
+	CUtil::DLL_LIST( cgc_FitnessSensor, m_sensorLink ) m_sensorList;
 
-	uint16_t m_currentUser;
-	CUtil::DLL_LIST( User, m_userLink ) m_userList;
+	cgc_uint16_t m_currentUser;
+	CUtil::DLL_LIST( cgc_User, m_userLink ) m_userList;
 	
 	//
 	// Is this a proper fitness sensor?
 	//
-	bool Validate ( FitnessSensor );
+	bool cgc_Validate ( cgc_FitnessSensor );
 
 public:
-	SensorManager() {}
-	~SensorManager();
+	cgc_SensorManager() {}
+	~cgc_SensorManager();
 
 	// SENSOR management
-	int AddSensor( FitnessSensor *sensor );
-	FitnessSensor* GetSensor( uint16_t id );
+	int cgc_AddSensor( cgc_FitnessSensor *sensor );
+	cgc_FitnessSensor* cgc_GetSensor( cgc_uint16_t id );
 
-	bool RemoveSensor( uint16_t id, uint16_t user );
-	bool VerifySensor( uint16_t id );
-	void PrintSensors(); // TEST ONLY
-	uint8_t *ListSensors( uint16_t &len );
-	bool ListHwIds( uint16_t &len, uint8_t* buff );
+	bool cgc_RemoveSensor( cgc_uint16_t id, cgc_uint16_t user );
+	bool cgc_VerifySensor( cgc_uint16_t id );
+	void cgc_PrintSensors(); // TEST ONLY
+	cgc_uint8_t *cgc_ListSensors( cgc_uint16_t &len );
+	bool cgc_ListHwIds( cgc_uint16_t &len, cgc_uint8_t* buff );
 
 
 	// USER management
-	uint16_t GetCurrentUser() { return m_currentUser; }
-	uint8_t SetCurrentUser( uint16_t user );
-	uint8_t AddUser( User* new_user );
+	cgc_uint16_t cgc_GetCurrentUser() { return m_currentUser; }
+	cgc_uint8_t cgc_SetCurrentUser( cgc_uint16_t user );
+	cgc_uint8_t cgc_AddUser( cgc_User* new_user );
 
-	bool AddDistance( uint16_t new_dist, uint16_t user );
+	bool cgc_AddDistance( cgc_uint16_t new_dist, cgc_uint16_t user );
 };
 
 #endif

@@ -34,13 +34,13 @@ THE SOFTWARE.
 #include "helper.h"
 #include "genericParsers.h"
 
-int cityMenu( pCity ci);
-void initCity( pCity ci );
-void freeCity( pCity ci );
-void printCityInfo( pCity ci );
-pCity cityTopLevel( pstring str);
-char *extractUrl( pstring str );
-char *extractMayor( pstring str );
+int cgc_cityMenu( cgc_pCity ci);
+void cgc_initCity( cgc_pCity ci );
+void cgc_freeCity( cgc_pCity ci );
+void cgc_printCityInfo( cgc_pCity ci );
+cgc_pCity cgc_cityTopLevel( cgc_pstring str);
+char *cgc_extractUrl( cgc_pstring str );
+char *cgc_extractMayor( cgc_pstring str );
 
 #endif
 

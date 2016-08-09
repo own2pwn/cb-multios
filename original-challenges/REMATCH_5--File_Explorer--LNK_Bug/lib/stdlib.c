@@ -33,12 +33,12 @@ THE SOFTWARE.
 
 
 
-int atoi( const char *pStr )
+int cgc_atoi( const char *pStr )
 {
 	int value = 0;
 	int negative = 0;
 
-	while ( isspace( *pStr ) )
+	while ( cgc_isspace( *pStr ) )
 		pStr++;
 
 	if ( *pStr == '\0' )
@@ -51,7 +51,7 @@ int atoi( const char *pStr )
 	}
 
 	// Read in string
-	while ( isdigit( *pStr ) )
+	while ( cgc_isdigit( *pStr ) )
 		value = (value * 10) + (*pStr++ - '0');
 
 	if ( negative )
@@ -60,7 +60,7 @@ int atoi( const char *pStr )
 		return value;	
 }
 
-double atof( char *pStr )
+double cgc_atof( char *pStr )
 {
 	double whole;
 	double fraction = 0.0;
@@ -81,12 +81,12 @@ double atof( char *pStr )
 	}
 	
 	// convert the whole part
-	whole = atoi(pWhole);
+	whole = cgc_atoi(pWhole);
 
 	// convert the fractional part
 	if (*pFraction != '\0') {
-		fraction = atoi(pFraction);
-		while ( pFraction != '\0' && isdigit( *pFraction ) ) {
+		fraction = cgc_atoi(pFraction);
+		while ( pFraction != '\0' && cgc_isdigit( *pFraction ) ) {
 			fraction /= 10.0;
 			pFraction++;
 		}
@@ -97,7 +97,7 @@ double atof( char *pStr )
 }
 	
 
-char *strcpy( char *pDest, const char *pSrc )
+char *cgc_strcpy( char *pDest, const char *pSrc )
 {
 	char *pDestReturn = pDest;
 
@@ -109,9 +109,9 @@ char *strcpy( char *pDest, const char *pSrc )
 	return (pDestReturn);
 }
 
-char *strncpy( char *pDest, const char *pSrc, size_t maxlen )
+char *cgc_strncpy( char *pDest, const char *pSrc, cgc_size_t maxlen )
 {
-	size_t n;
+	cgc_size_t n;
 
 	for ( n = 0; n < maxlen; n++ )
 	{
@@ -127,13 +127,13 @@ char *strncpy( char *pDest, const char *pSrc, size_t maxlen )
 	return (pDest);
 }
 
-void *memcpy( void *pDest, const void *pSource, size_t nbytes )
+void *cgc_memcpy( void *pDest, const void *pSource, cgc_size_t nbytes )
 {
 	void *pDestReturn = pDest;
 
 	while ( nbytes >= 4 )
 	{
-		*((uint32_t*)pDest) = *((uint32_t*)pSource);
+		*((cgc_uint32_t*)pDest) = *((cgc_uint32_t*)pSource);
 
 		pDest += 4;
 		pSource += 4;
@@ -142,7 +142,7 @@ void *memcpy( void *pDest, const void *pSource, size_t nbytes )
 
 	while ( nbytes > 0 )
 	{
-		*((uint8_t*)pDest) = *((uint8_t*)pSource);
+		*((cgc_uint8_t*)pDest) = *((cgc_uint8_t*)pSource);
 
 		pDest++;
 		pSource++;
@@ -152,7 +152,7 @@ void *memcpy( void *pDest, const void *pSource, size_t nbytes )
 	return (pDestReturn);
 }
 
-long int strtol( const char *str, char **endptr, int base )
+long int cgc_strtol( const char *str, char **endptr, int base )
 {
 	long int value = 0;
 	int neg = 0;
@@ -164,7 +164,7 @@ long int strtol( const char *str, char **endptr, int base )
 		base = 16;
 
 	// Skip whitespace	
-	while ( isspace( *str ) )
+	while ( cgc_isspace( *str ) )
 		str++;
 
 	if ( *str == '-' )
@@ -209,11 +209,11 @@ long int strtol( const char *str, char **endptr, int base )
 	{
 		int c = *str;
 
-		if ( isdigit( c ) )
+		if ( cgc_isdigit( c ) )
 			c -= '0';
-		else if ( isalpha(c) )
+		else if ( cgc_isalpha(c) )
 		{
-			if ( isupper(c) )
+			if ( cgc_isupper(c) )
 				c -= ('A' - 10);
 			else
 				c -= ('a' - 10);

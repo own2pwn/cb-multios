@@ -29,17 +29,17 @@ enum {
 };
 #undef DEFINE_STATE
 
-void init_states();
-int read_all(char *buf, size_t n);
-int read_keyword(char *input, size_t n);
-void write_string(const char *str);
-void send_move(move_t move);
-void send_result(int result);
-void send_draw();
-void send_resign();
-void send_illegal(const char *reason, move_t move);
-void send_error(const char *error, const char *command);
-int sink_error(const char *buf);
-move_t str_to_move(const char *str);
+void cgc_init_states();
+int cgc_read_all(char *buf, cgc_size_t n);
+int cgc_read_keyword(char *input, cgc_size_t n);
+void cgc_write_string(const char *str);
+void cgc_send_move(cgc_move_t move);
+void cgc_send_result(int result);
+void cgc_send_draw();
+void cgc_send_resign();
+void cgc_send_illegal(const char *reason, cgc_move_t move);
+void cgc_send_error(const char *error, const char *command);
+int cgc_sink_error(const char *buf);
+cgc_move_t cgc_str_to_move(const char *str);
 
 #endif

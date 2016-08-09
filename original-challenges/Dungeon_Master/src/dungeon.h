@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -70,22 +70,22 @@
 #define HIGHSCORE_MSG "Please enter your name: "
 #define NO_SCORES_MSG "NO HIGH SCORES!\n"
 #define HIGHSCORE_HDR "\n-------------------\n moves   |   name  \n-------------------\n"
-#define MASTER_MSG "Dungeon conquered in !U moves !X"
+#define MASTER_MSG "cgc_Dungeon conquered in !U moves !X"
 
 #define FLAG_PAGE 0x4347C000
 
 typedef struct {
 	unsigned int x;
 	unsigned int y;
-} Coordinate;
+} cgc_Coordinate;
 
 typedef struct {
 	char symbol;
 	unsigned int id;
-	Coordinate* position;
-	Coordinate* direction;
+	cgc_Coordinate* position;
+	cgc_Coordinate* direction;
 	unsigned int moves;
-} Object;
+} cgc_Object;
 
 typedef struct {
 	char quit;
@@ -98,34 +98,34 @@ typedef struct {
 	char play;
 	char instructions;
 	char scores;
-} Moves;
+} cgc_Moves;
 
 typedef struct {
-	Object* contents[ROOM_HEIGHT][ROOM_WIDTH];
+	cgc_Object* contents[ROOM_HEIGHT][ROOM_WIDTH];
 	void* next;
-} Room;
+} cgc_Room;
 
 typedef struct {
 	char* name;
 	unsigned int score;
 	void* next;
-} Score;
+} cgc_Score;
 
 typedef struct {
-	Moves moveTypes;
-	Room* start;
+	cgc_Moves moveTypes;
+	cgc_Room* start;
 	char* moveList;
-	Score* highScores;
-} Dungeon;
+	cgc_Score* highScores;
+} cgc_Dungeon;
 
-void buildDungeon(Dungeon* dungeon);
-void destroyDungeon(Dungeon* dungeon);
-void sendCurrentDungeonView(Room* start);
-int isValidMove(Moves moves, char move);
-int makeMove(Dungeon* dungeon, char move);
-void playerWon(Dungeon* dungeon);
-void playerDied(Dungeon dungeon);
-Score* insertNewScore(Score* highScores, Score* newScore);
+void cgc_buildDungeon(cgc_Dungeon* dungeon);
+void cgc_destroyDungeon(cgc_Dungeon* dungeon);
+void cgc_sendCurrentDungeonView(cgc_Room* start);
+int cgc_isValidMove(cgc_Moves moves, char move);
+int cgc_makeMove(cgc_Dungeon* dungeon, char move);
+void cgc_playerWon(cgc_Dungeon* dungeon);
+void cgc_playerDied(cgc_Dungeon dungeon);
+cgc_Score* cgc_insertNewScore(cgc_Score* highScores, cgc_Score* newScore);
 
 
 static const char first_room_string[ROOM_HEIGHT][ROOM_WIDTH] = 

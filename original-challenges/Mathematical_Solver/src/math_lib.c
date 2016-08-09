@@ -39,10 +39,10 @@ char operator_list[] = {'+','-','*','/'};
 char acceptable_char[] = {"1234567890()*-+/"};
 
 // receives an integer
-int get_user_answer(int *answer)
+int cgc_get_user_answer(int *answer)
 {
 	char buf[15];
-	bzero(buf, 15);
+	cgc_bzero(buf, 15);
 
 	int status;
 	status = receive(STDIN, buf, sizeof(buf) - 1, NULL);
@@ -51,27 +51,27 @@ int get_user_answer(int *answer)
 		// Error on receive
 		return FAIL;
 	}
-	int str_len = strlen(buf);
+	int str_len = cgc_strlen(buf);
 	if (buf[str_len-1] == '\n')
 	{
 		str_len -= 1;
 	}
 	for (int i = 0; i < str_len; i++) 
 	{
-		if (!isdigit(buf[i])&&!(buf[i]=='-'))
+		if (!cgc_isdigit(buf[i])&&!(buf[i]=='-'))
 		{
-			printf("incorrect item entered\n");
+			cgc_printf("incorrect item entered\n");
 			return FAIL;
 		}
 	}
-	*answer = atoi(buf);
+	*answer = cgc_atoi(buf);
 	return SUCCESS;
 }
 
-int get_user_equation(char *equation)
+int cgc_get_user_equation(char *equation)
 {
 	char buf[256];
-	bzero(buf, sizeof(buf));
+	cgc_bzero(buf, sizeof(buf));
 
 	int status;
 	status = receive(STDIN, buf, sizeof(buf) - 1, NULL);
@@ -81,13 +81,13 @@ int get_user_equation(char *equation)
 		return FAIL;
 	}
 
-	if (buf[strlen(buf)-1]=='\n')
+	if (buf[cgc_strlen(buf)-1]=='\n')
 	{
-		strncpy(equation, buf, strlen(buf) - 1);
+		cgc_strncpy(equation, buf, cgc_strlen(buf) - 1);
 	}
 	else
 	{
-		strncpy(equation, buf, strlen(buf));
+		cgc_strncpy(equation, buf, cgc_strlen(buf));
 	}
 	return SUCCESS;
 
@@ -95,7 +95,7 @@ int get_user_equation(char *equation)
 
 // return SUCCESS or FAIL
 // checks char c against acceptable_char list
-int isValidChar(char c)
+int cgc_isValidChar(char c)
 {
 	int i;
 	for (i = 0; i < sizeof(acceptable_char); i++)
@@ -107,14 +107,14 @@ int isValidChar(char c)
 }
 
 // return whether user input is formatted correctly
-int parse_input(char *input)
+int cgc_parse_input(char *input)
 {
 	// iterate over string and ensure that they are valid numbers and operators
-	int str_len = get_str_end(input);
+	int str_len = cgc_get_str_end(input);
 
 	for (int i = 0; i < str_len; i++)
 	{
-		if (!isValidChar(input[i]))
+		if (!cgc_isValidChar(input[i]))
 			return FAIL;
 	}
 
@@ -124,7 +124,7 @@ int parse_input(char *input)
 
 // Generate a single equation that will pass validity checks
 // Returns answer to that equation
-int generate_one_equation(char *equation)
+int cgc_generate_one_equation(char *equation)
 {
 	int success, answer;
 	do
@@ -134,13 +134,13 @@ int generate_one_equation(char *equation)
 		int eq_it = 0; // iterator for the equation
 
 		// number of operands
-		int num_ops = random_in_range(4,15);
+		int num_ops = cgc_random_in_range(4,15);
 
 		// number of numbers in this equation
 		int num_nums = num_ops + 1; 
 
 		// number of parens
-		int num_parens = random_in_range(0,num_ops); 
+		int num_parens = cgc_random_in_range(0,num_ops); 
 		// simplest way to add parens is to put all opening parens in the first half of the equation
 		//  and the closing parens in the second half of the equation
 
@@ -172,16 +172,16 @@ int generate_one_equation(char *equation)
 				}
 
 				// insert number here
-				int num = random_in_range(1,256);
+				int num = cgc_random_in_range(1,256);
 				if (last_op == '/')
 				{
-					num = random_in_range(1,last_num);
+					num = cgc_random_in_range(1,last_num);
 				}
 				last_num = num;
 				char s_num[15]; 
-				itos(num, s_num);
+				cgc_itos(num, s_num);
 	
-				int len = get_str_end(s_num);
+				int len = cgc_get_str_end(s_num);
 				for (int z = 0; z < len; z++)
 				{
 					equation[eq_it++] = s_num[z];
@@ -204,7 +204,7 @@ int generate_one_equation(char *equation)
 			else
 			{
 				// insert random operator here from operator_list
-				int sel = random_in_range(0,3);
+				int sel = cgc_random_in_range(0,3);
 				char op = operator_list[sel];
 				last_op = op;
 				equation[eq_it++] = op;
@@ -225,7 +225,7 @@ int generate_one_equation(char *equation)
 		debug_print("Equation: @s\n", equation);
 
 		answer = 0;
-		success = solve_equation(equation, &answer);
+		success = cgc_solve_equation(equation, &answer);
 		if (success != SUCCESS)
 		{
 			debug_print("Invalid equation generated, trying again...\n", 0);
@@ -239,42 +239,42 @@ int generate_one_equation(char *equation)
 // and verifies user answer. 
 // returns SUCCESS if the user answers correctly
 // returns FAIL if the user doesn't
-int generate_equation()
+int cgc_generate_equation()
 {
 	// create equation
 	char equation[256];
-	int answer = generate_one_equation(equation);
+	int answer = cgc_generate_one_equation(equation);
 	int user_answer = 0;
-	printf("Equation: @s\n", equation);
-	printf("gimme answer: ");
-	if (get_user_answer(&user_answer) != SUCCESS)
+	cgc_printf("Equation: @s\n", equation);
+	cgc_printf("gimme answer: ");
+	if (cgc_get_user_answer(&user_answer) != SUCCESS)
 	{
-		printf("Bad input\n");
+		cgc_printf("Bad input\n");
 		return FAIL;
 	}
 
 	if (user_answer == answer)
 	{
-		printf("success!!\n");
+		cgc_printf("success!!\n");
 		return SUCCESS;
 	}
 	else
 	{
-		printf("Incorrect answer\n");
+		cgc_printf("Incorrect answer\n");
 		return FAIL;
 	}
 
 	return FAIL;
 }
 
-// Accepts user input to seed the prng
-int seed_prng()
+// Accepts user input to seed the cgc_prng
+int cgc_seed_prng()
 {
 	char buf[256];
-	bzero(buf, sizeof(buf));
+	cgc_bzero(buf, sizeof(buf));
  	int status;
- 	size_t bytes_received;
- 	printf("Enter some data\n");
+ 	cgc_size_t bytes_received;
+ 	cgc_printf("Enter some data\n");
 
 	status = receive(STDIN, buf, sizeof(buf) - 1, &bytes_received);
 	if (status != 0)
@@ -284,49 +284,49 @@ int seed_prng()
 	}
 
 	// create the seed number here
-	uint64_t seed = -1;
+	cgc_uint64_t seed = -1;
 	for (int p = 0; p<bytes_received; p++)
 	{
 		seed = ((seed << 4) | (seed >> 60)) ^ buf[p];
 	}
-	sprng(seed);
+	cgc_sprng(seed);
 
 	return SUCCESS;
 }
 
 // prompt user to enter an equation that satisfies the given parameters
-int prompt_for_equation()
+int cgc_prompt_for_equation()
 {
 	char str[256]; 
 	int ret = 0;
-	bzero(str, sizeof(str));
+	cgc_bzero(str, sizeof(str));
 	
-	int goal_parens = random_in_range(0, 5);
-	int goal_answer = random_in_range(0, 32768);
-	char goal_operator = operator_list[random_in_range(0,3)];
+	int goal_parens = cgc_random_in_range(0, 5);
+	int goal_answer = cgc_random_in_range(0, 32768);
+	char goal_operator = operator_list[cgc_random_in_range(0,3)];
 	int goal_num_list[4];
 	for (int i=0; i<4; i++)
 	{
-		goal_num_list[i] = random_in_range(1, 256);
+		goal_num_list[i] = cgc_random_in_range(1, 256);
 	}
 
-	printf("Enter an equation that has @d sets of parenthesis\n", goal_parens);
-	printf("It must evaluate to @d and contain the @c operator\n", goal_answer, goal_operator);
-	printf("and must use the numbers: @d @d @d and @d\n", goal_num_list[0], goal_num_list[1], goal_num_list[2], goal_num_list[3]);
+	cgc_printf("Enter an equation that has @d sets of parenthesis\n", goal_parens);
+	cgc_printf("It must cgc_evaluate to @d and contain the @c operator\n", goal_answer, goal_operator);
+	cgc_printf("and must use the numbers: @d @d @d and @d\n", goal_num_list[0], goal_num_list[1], goal_num_list[2], goal_num_list[3]);
 
 	// this is where we parse their answer and make sure it passes our requirements
 	int num_parens_found = 0; 
 	int goal_operator_found = 0; 
 	int goal_nums_found[4] = {0,0,0,0};
 
-	if (get_user_equation(str) != SUCCESS)
+	if (cgc_get_user_equation(str) != SUCCESS)
 		return FAIL;
 
-	ret = parse_input(str);
-	printf("string is formatted @s\n", (ret == 1 ? "correct":"incorrect"));
+	ret = cgc_parse_input(str);
+	cgc_printf("string is formatted @s\n", (ret == 1 ? "correct":"incorrect"));
 
 	// scan the user's string and check for each requirement
-	for (int i = 0; i < strlen(str); i++)
+	for (int i = 0; i < cgc_strlen(str); i++)
 	{
 		if (str[i] == '(')
 			num_parens_found++;
@@ -337,7 +337,7 @@ int prompt_for_equation()
 			int val;
 			// extract number
 			int moved = 0;
-			val = stoi(&str[i], &moved);
+			val = cgc_stoi(&str[i], &moved);
 			for (int j = 0; j<4; j++)
 			{
 				if (val == goal_num_list[j])
@@ -351,39 +351,39 @@ int prompt_for_equation()
 
 	if (num_parens_found != goal_parens)
 	{
-		printf("Incorrect number of parenthesis\n");
+		cgc_printf("Incorrect number of parenthesis\n");
 		return FAIL;
 	}
 	if (goal_operator_found == 0)
 	{
-		printf("Did not use @c operator\n", goal_operator);
+		cgc_printf("Did not use @c operator\n", goal_operator);
 		return FAIL;
 	}
 	for (int j = 0; j<4; j++)
 	{
 		if (goal_nums_found[j] == 0)
 		{
-			printf("Did not use number @d\n", goal_num_list[j]);
+			cgc_printf("Did not use number @d\n", goal_num_list[j]);
 			return FAIL;
 		}
 	}
 
 	// try to solve equation and see if it matches
 	int answer = 0;
-	int success = solve_equation(str, &answer);
+	int success = cgc_solve_equation(str, &answer);
 	if (success != SUCCESS)
 	{
-		printf("Invalid equation format\n");
+		cgc_printf("Invalid equation format\n");
 		return FAIL;
 	}
 
 	if (answer != goal_answer)
 	{
-		printf("incorrect answer: @d\n", answer);
+		cgc_printf("incorrect answer: @d\n", answer);
 		return FAIL;
 	}
 
-	printf("@s does resolve to @d, good!\n", str, answer);
+	cgc_printf("@s does resolve to @d, good!\n", str, answer);
 	return SUCCESS;
 	
 }

@@ -34,10 +34,10 @@
 #define REMOVED "Creation is an act of sheer will. Next time it'll be flawless."
 #define FINISHED "PLAYBACK FINISHED" 
 
-video *get_video_by_name(char *buf) {
-    video *cur = vhead;
+cgc_video *cgc_get_video_by_name(char *buf) {
+    cgc_video *cur = vhead;
     while (cur) {
-        if (streq(cur->name,buf))
+        if (cgc_streq(cur->name,buf))
             return cur;
         cur = cur->next;
     }
@@ -45,31 +45,31 @@ video *get_video_by_name(char *buf) {
 }
 
 
-void list(char *buf){
+void cgc_list(char *buf){
     uint32_t i = 1;
     char tmp[11] = {0};
-    video *cur = vhead;
+    cgc_video *cur = vhead;
 
     while(cur) {
-        int2str(tmp,sizeof(tmp),i++);
-        SSEND(strlen(tmp),tmp);
+        cgc_int2str(tmp,sizeof(tmp),i++);
+        SSEND(cgc_strlen(tmp),tmp);
         SSEND(3,".) ")
-        SSENDL(strlen(cur->name),cur->name);
+        SSENDL(cgc_strlen(cur->name),cur->name);
         cur = cur->next;
     }
 }
 
-void play(char *buf){
+void cgc_play(char *buf){
     char *key;
-    video *toplay;
+    cgc_video *toplay;
 
-    if (streq(buf,"trolololo A")) {
-        ALLOC(0, (void**)&toplay, sizeof(video));
+    if (cgc_streq(buf,"trolololo A")) {
+        ALLOC(0, (void**)&toplay, sizeof(cgc_video));
         toplay->key = 'A';
         toplay->encbuf = r_bin;
         toplay->elen = r_bin_len-4;
         toplay->csum = *(uint32_t*)(r_bin+r_bin_len-4);
-        decode(toplay,'A');
+        cgc_decode(toplay,'A');
 
         if(toplay->decbuf){
             SSENDL(toplay->dlen,(char *)toplay->decbuf);
@@ -79,11 +79,11 @@ void play(char *buf){
             SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
         }
 
-        DEALLOC((void*)toplay, sizeof(video));
+        DEALLOC((void*)toplay, sizeof(cgc_video));
         return;
     }
 
-    key = strchr(buf,' ');
+    key = cgc_strchr(buf,' ');
 
     if(!key) {
         SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
@@ -99,13 +99,13 @@ void play(char *buf){
 
     key += 1;
 
-    toplay = get_video_by_name(buf);
+    toplay = cgc_get_video_by_name(buf);
     if(!toplay) {
         SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
         return;
     }
 
-    decode(toplay,*key);
+    cgc_decode(toplay,*key);
 
     if(toplay->decbuf){
         SSENDL(toplay->dlen,(char *)toplay->decbuf);
@@ -115,19 +115,19 @@ void play(char *buf){
     }
 }
 
-void add(char *buf){
-    video *vlast = NULL, *new = NULL, *cur = NULL;
+void cgc_add(char *buf){
+    cgc_video *vlast = NULL, *new = NULL, *cur = NULL;
     char recvbuf[11] = {0};
     char keyascii[3] = {0};
     cur = vhead;
-    size_t total, rndbytes;
+    cgc_size_t total, rndbytes;
 
-    if(strlen(buf) > MAX_NAME_SIZE || strlen(buf) == 0) {
+    if(cgc_strlen(buf) > MAX_NAME_SIZE || cgc_strlen(buf) == 0) {
         SSENDL(sizeof(MAGICWORD)-1,MAGICWORD);
         _terminate(14);
     }
 
-    if(get_video_by_name(buf) || strchr(buf,' ')) {
+    if(cgc_get_video_by_name(buf) || cgc_strchr(buf,' ')) {
         SSENDL(sizeof(VIDEXISTS)-1,VIDEXISTS);
         return;
     }
@@ -135,7 +135,7 @@ void add(char *buf){
     SSEND(sizeof("Length: ")-1,"Length: ");
     SRECV(sizeof(recvbuf)-1,recvbuf);
 
-    total = str2uint(recvbuf);
+    total = cgc_str2uint(recvbuf);
 
     #ifndef PATCHED
     if (total > 129*1024 || total < 8 || total%4 != 0) { 
@@ -146,23 +146,23 @@ void add(char *buf){
         _terminate(13);
     }
 
-    ALLOC(0, (void**)&new, sizeof(video)+total);
+    ALLOC(0, (void**)&new, sizeof(cgc_video)+total);
 
     //RAND(&(new->key), 1, &rndbytes);
     new->key = 0x42; //cause we can't handle random data in poller
 
-    b2hex(new->key,keyascii);
+    cgc_b2hex(new->key,keyascii);
 
     SSEND(sizeof(ACCKEY)-1,ACCKEY);
     SSENDL(2,keyascii);
 
     
     new->can_delete = 1;
-    strcpy(new->name,buf);
+    cgc_strcpy(new->name,buf);
     
-    RECV(total,((char*)new)+sizeof(video));
+    RECV(total,((char*)new)+sizeof(cgc_video));
     new->elen = total-4;
-    new->encbuf = ((uint8_t*)new)+sizeof(video);
+    new->encbuf = ((uint8_t*)new)+sizeof(cgc_video);
     new->csum = *((uint32_t*)(new->encbuf+total-4));
 
     while (cur) {
@@ -183,10 +183,10 @@ void add(char *buf){
 
 }
 
-void remove(char *buf){
-    video *toremove;
+void cgc_remove(char *buf){
+    cgc_video *toremove;
     
-    toremove = get_video_by_name(buf);
+    toremove = cgc_get_video_by_name(buf);
 
     if(!toremove) {
         SSENDL(sizeof(NOSUCHVID)-1,NOSUCHVID);
@@ -210,12 +210,12 @@ void remove(char *buf){
     if (toremove->decbuf)
         DEALLOC((void*)toremove->decbuf, toremove->dlen);
 
-    DEALLOC((void*)toremove, sizeof(video)+toremove->elen);
+    DEALLOC((void*)toremove, sizeof(cgc_video)+toremove->elen);
     SSENDL(sizeof(REMOVED)-1,REMOVED);
 
 }
 
-void quit(char *buf){
+void cgc_quit(char *buf){
     SSENDL(sizeof(GOODBYE)-1,GOODBYE);
     _terminate(0);
 }

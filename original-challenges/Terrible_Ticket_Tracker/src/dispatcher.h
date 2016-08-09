@@ -7,22 +7,22 @@
 
 #define NUM_DEQUES 5
 
-class Dispatcher
+class cgc_Dispatcher
 {
   public:
-    Dispatcher(List *pworkers, uint32_t *secret_page);
-    void AddTicket(Ticket *ticket);
-    void CancelTicket(uint32_t id);
-    void ViewTicket(uint32_t id);
-    void ViewTickets(STATUS status);
-    Ticket *GetTicket(PRIORITY max_priority);
-    void RecordFinished(Support* t);
+    cgc_Dispatcher(cgc_List *pworkers, cgc_uint32_t *secret_page);
+    void cgc_AddTicket(cgc_Ticket *ticket);
+    void cgc_CancelTicket(cgc_uint32_t cgc_id);
+    void cgc_ViewTicket(cgc_uint32_t cgc_id);
+    void cgc_ViewTickets(cgc_STATUS cgc_status);
+    cgc_Ticket *cgc_GetTicket(cgc_PRIORITY cgc_max_priority);
+    void cgc_RecordFinished(cgc_Support* t);
 
-    uint32_t GetRandomTicks(uint32_t modval=1000);
+    cgc_uint32_t cgc_GetRandomTicks(cgc_uint32_t modval=1000);
   private:
-    Support *FindSupportByTicketId(uint32_t id);
+    cgc_Support *cgc_FindSupportByTicketId(cgc_uint32_t cgc_id);
 
-    Deque ticket_lists_[5];
-    List *pworkers_;
-    uint32_t *secret_;
+    cgc_Deque ticket_lists_[5];
+    cgc_List *pworkers_;
+    cgc_uint32_t *secret_;
 };

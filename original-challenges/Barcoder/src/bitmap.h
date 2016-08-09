@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ typedef struct {
     unsigned int file_size;
     unsigned int reserved;
     unsigned int data_offset;
-} bmp_header_t;
+} cgc_bmp_header_t;
 #pragma pack(pop)
 
 typedef struct {
@@ -44,18 +44,18 @@ typedef struct {
     int vres;
     unsigned int num_colors;
     unsigned int imp_colors;
-} bmp_info_t;
+} cgc_bmp_info_t;
 
 #pragma pack(push, 1)
 typedef struct {
-    bmp_header_t header;
-    bmp_info_t info;
+    cgc_bmp_header_t header;
+    cgc_bmp_info_t info;
     unsigned char data[];
-} barcode_bmp_t;
+} cgc_barcode_bmp_t;
 #pragma pack(pop)
 
-int validate_bmp_headers(bmp_header_t *bheader, bmp_info_t *binfo);
-barcode_bmp_t *create_barcode_bmp(barcode_128_t *barcode);
-barcode_128_t *create_barcode_from_bmp(barcode_bmp_t *barcode_bmp);
+int cgc_validate_bmp_headers(cgc_bmp_header_t *bheader, cgc_bmp_info_t *binfo);
+cgc_barcode_bmp_t *cgc_create_barcode_bmp(cgc_barcode_128_t *barcode);
+cgc_barcode_128_t *cgc_create_barcode_from_bmp(cgc_barcode_bmp_t *barcode_bmp);
 
 #endif

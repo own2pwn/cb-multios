@@ -45,60 +45,60 @@ enum
 
 typedef struct
 {
-	uint8_t Type;
-	uint8_t Val_1;
-	uint8_t Val_2;
-	uint8_t Val_3;
-} SensorMacFormat;
+	cgc_uint8_t Type;
+	cgc_uint8_t Val_1;
+	cgc_uint8_t Val_2;
+	cgc_uint8_t Val_3;
+} cgc_SensorMacFormat;
 
-class FitnessSensor
+class cgc_FitnessSensor
 {
 
 private:
-	uint16_t m_sensorID;
-	uint8_t m_sensorType; // pulled from MAC
-	SensorMacFormat m_sensorMAC;
-	uint8_t *data;
+	cgc_uint16_t m_sensorID;
+	cgc_uint8_t m_sensorType; // pulled from MAC
+	cgc_SensorMacFormat m_sensorMAC;
+	cgc_uint8_t *data;
 	bool m_invalid;
 
-	uint16_t m_owner; // user this sensor is registered for
+	cgc_uint16_t m_owner; // user this sensor is registered for
 
 
 public:
-	FitnessSensor() {}
-	FitnessSensor( uint16_t, uint32_t, uint8_t *, uint32_t);
+	cgc_FitnessSensor() {}
+	cgc_FitnessSensor( cgc_uint16_t, cgc_uint32_t, cgc_uint8_t *, cgc_uint32_t);
 
-	uint16_t GetID() { return m_sensorID; }
-	SensorMacFormat GetMAC() { return m_sensorMAC; }
-	uint32_t GetMacAsInt();
-	uint8_t GetType() { return m_sensorType; }
+	cgc_uint16_t cgc_GetID() { return m_sensorID; }
+	cgc_SensorMacFormat cgc_GetMAC() { return m_sensorMAC; }
+	cgc_uint32_t cgc_GetMacAsInt();
+	cgc_uint8_t cgc_GetType() { return m_sensorType; }
 
-	void SetID(uint16_t id) { m_sensorID = id; }
-	bool SetMAC(uint32_t mac);
+	void cgc_SetID(cgc_uint16_t id) { m_sensorID = id; }
+	bool cgc_SetMAC(cgc_uint32_t mac);
 
-	bool IsInvalid() { return m_invalid; }
+	bool cgc_IsInvalid() { return m_invalid; }
 
-	uint8_t SetUser( uint16_t user );
-	uint16_t GetUser() { return m_owner; }
+	cgc_uint8_t cgc_SetUser( cgc_uint16_t user );
+	cgc_uint16_t cgc_GetUser() { return m_owner; }
 
-	uint8_t *GetData() { return data; }
+	cgc_uint8_t *cgc_GetData() { return data; }
 
-	static uint8_t m_sensorArray[ MAX_SENSOR_VALUE ];
-	static bool GenerateTypeValues();
-	static bool GetSensorTypeValue( uint8_t lookup, uint8_t &val );
+	static cgc_uint8_t m_sensorArray[ MAX_SENSOR_VALUE ];
+	static bool cgc_GenerateTypeValues();
+	static bool cgc_GetSensorTypeValue( cgc_uint8_t lookup, cgc_uint8_t &val );
 
-	static uint16_t HandleBikeSensor( uint16_t );
-	static uint16_t HandleHeartSensor( uint16_t );
-	static uint16_t HandleScaleSensor( uint16_t );
-	static uint16_t HandleStepSensor( uint16_t );
-	static uint16_t HandleRunSensor( uint16_t );
+	static cgc_uint16_t cgc_HandleBikeSensor( cgc_uint16_t );
+	static cgc_uint16_t cgc_HandleHeartSensor( cgc_uint16_t );
+	static cgc_uint16_t cgc_HandleScaleSensor( cgc_uint16_t );
+	static cgc_uint16_t cgc_HandleStepSensor( cgc_uint16_t );
+	static cgc_uint16_t cgc_HandleRunSensor( cgc_uint16_t );
 
 	
 	// Test only
-	void Print();
+	void cgc_Print();
 
-	// used for linked list in SensorManager
-	CUtil::DLL_LINK( FitnessSensor ) m_sensorLink; 
+	// used for linked list in cgc_SensorManager
+	CUtil::DLL_LINK( cgc_FitnessSensor ) m_sensorLink; 
 };
 
 #endif

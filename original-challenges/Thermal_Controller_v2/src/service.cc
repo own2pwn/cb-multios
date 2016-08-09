@@ -52,108 +52,108 @@ extern "C"
 //
 int main( void )
 {
-	uint8_t *magic_page = ( uint8_t* )MAGIC_PAGE;
+	cgc_uint8_t *magic_page = ( cgc_uint8_t* )MAGIC_PAGE;
 
-	Controller ctlr;
+	cgc_Controller ctlr;
 
-	ctlr.GetMsgOut()->SetVersion(ctlr.GetVersion());
+	ctlr.cgc_GetMsgOut()->cgc_SetVersion(ctlr.cgc_GetVersion());
 
 	while ( 1 ) 
 	{
-		ctlr.GetMsgIn()->ReadInput();
+		ctlr.cgc_GetMsgIn()->cgc_ReadInput();
 
 		// if given length is longer than the string, NO
-		if ( ctlr.GetMsgIn()->GetLenValue() != ctlr.GetMsgIn()->GetMessage().GetLength()/2 - HEADER_NUM_BYTES)
+		if ( ctlr.cgc_GetMsgIn()->cgc_GetLenValue() != ctlr.cgc_GetMsgIn()->cgc_GetMessage().cgc_GetLength()/2 - HEADER_NUM_BYTES)
 		{
-			printf("Error: length is too long\n");
+			cgc_printf("Error: length is too long\n");
 			continue;
 		}
 
 		//
 		// PARSE BODY
 		//
-		switch ( ctlr.GetMsgIn()->GetType() )
+		switch ( ctlr.cgc_GetMsgIn()->cgc_GetType() )
 		{
 			case POWER_ON_OFF:
 			{
-				int val = ctlr.GetMsgIn()->GetValue();
+				int val = ctlr.cgc_GetMsgIn()->cgc_GetValue();
 				
-				ctlr.setPowerOn( ( val == 1 ) ? true : false );
+				ctlr.cgc_setPowerOn( ( val == 1 ) ? true : false );
 
-				ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-				ctlr.GetMsgOut()->SendAsBasic();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 
 				break;
 			}
 			case TEMP_SET:
 			{
-				int val = ctlr.GetMsgIn()->GetValue();
+				int val = ctlr.cgc_GetMsgIn()->cgc_GetValue();
 				
-				if ( ctlr.setSetTemp( val ) == false )
+				if ( ctlr.cgc_setSetTemp( val ) == false )
 				{
 					// failed to set temp
-					ctlr.GetMsgOut()->SetResponse( ERROR_TEMP_RANGE );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_TEMP_RANGE );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 				}
 				else
 				{
-					ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 				}
 
 				break;
 			}
 			case SENSOR_ADD:
 			{
-				if ( ctlr.IsSensorInList( ctlr.GetMsgIn()->GetSensorId() ) )
+				if ( ctlr.cgc_IsSensorInList( ctlr.cgc_GetMsgIn()->cgc_GetSensorId() ) )
 				{
-					ctlr.GetMsgOut()->SetResponse( ERROR_ID_INUSE );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_ID_INUSE );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 					break;
 				}
 
-				if ( ctlr.GetSensorCount() >= MAX_SENSORS )
+				if ( ctlr.cgc_GetSensorCount() >= MAX_SENSORS )
 				{
-					ctlr.GetMsgOut()->SetResponse( ERROR_SENSORS_FULL );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_SENSORS_FULL );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 					break;
 				}
   
-  				uint16_t a = ctlr.GetMsgIn()->GetSensorId();
-  				uint32_t b = ctlr.GetMsgIn()->GetSensorAddress();
-  				uint32_t c = ctlr.GetMsgIn()->GetSensorCoefficient();
+  				cgc_uint16_t a = ctlr.cgc_GetMsgIn()->cgc_GetSensorId();
+  				cgc_uint32_t b = ctlr.cgc_GetMsgIn()->cgc_GetSensorAddress();
+  				cgc_uint32_t c = ctlr.cgc_GetMsgIn()->cgc_GetSensorCoefficient();
 
-				ctlr.AddSensor( new Sensor( a, b, c, true ) );
+				ctlr.cgc_AddSensor( new cgc_Sensor( a, b, c, true ) );
 				
-				ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-				ctlr.GetMsgOut()->SendAsBasic();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 
 				break;
 			}
 			case SENSOR_REMOVE:
 			{
-				int val = ctlr.GetMsgIn()->GetValue();
+				int val = ctlr.cgc_GetMsgIn()->cgc_GetValue();
 
-				if ( ctlr.IsSensorInList( val ) == false)
+				if ( ctlr.cgc_IsSensorInList( val ) == false)
 				{
-					ctlr.GetMsgOut()->SetResponse( ERROR_BAD_ID );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_BAD_ID );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 					break;
 				}
-				ctlr.RemoveSensor( val );
-				ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-				ctlr.GetMsgOut()->SendAsBasic();
+				ctlr.cgc_RemoveSensor( val );
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 				break;
 			}
 			case SENSOR_SMOKE:
 			{
-				if ( ctlr.GetMsgIn()->GetValue() )
-					ctlr.EnableSmokeSensor();
+				if ( ctlr.cgc_GetMsgIn()->cgc_GetValue() )
+					ctlr.cgc_EnableSmokeSensor();
 				else
-					ctlr.DisableSmokeSensor();
+					ctlr.cgc_DisableSmokeSensor();
 
-				ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-				ctlr.GetMsgOut()->SendAsBasic();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 				break;
 			}
 			case PROGRAM_UPDATE:
@@ -161,13 +161,13 @@ int main( void )
 				// update our program with one sent by the CRS
 
 				// use ctlr.m_controllerProgram from incoming message
-				int num_program_steps = ctlr.GetMsgIn()->GetValue();
+				int num_program_steps = ctlr.cgc_GetMsgIn()->cgc_GetValue();
 
 				if ( num_program_steps > MAX_PROGRAM_STEPS )
 				{
 					// Too many steps. Return error
-					ctlr.GetMsgOut()->SetResponse( ERROR_BAD_PROGRAM );
-					ctlr.GetMsgOut()->SendAsBasic();
+					ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_BAD_PROGRAM );
+					ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 					break;
 				}
 
@@ -178,28 +178,28 @@ int main( void )
 
 
 				// keep original copy in the backup
-				// write all new values to the main program
+				// cgc_write all new values to the main program
 				// clear backup when done
 
-				ctlr.BackupProgram();
-				ctlr.ClearProgram();
+				ctlr.cgc_BackupProgram();
+				ctlr.cgc_ClearProgram();
 
 				int j = 0;
 				for ( int i = 0; i < num_program_steps; i++ )
 				{
-					uint32_t a, b, c;
+					cgc_uint32_t a, b, c;
 					int offset = num_nibbles_to_start + ( i * num_nibbles_for_each_program );
 
-					ctlr.GetMsgIn()->GetProgramValues( offset, a, b, c );
+					ctlr.cgc_GetMsgIn()->cgc_GetProgramValues( offset, a, b, c );
 
 					// verify values here
 					if ( a == 0 ) 
 					{
-						if ( ctlr.IsSensorInList( b ) == false && b != 0 )
+						if ( ctlr.cgc_IsSensorInList( b ) == false && b != 0 )
 						{
-							ctlr.GetMsgOut()->SetResponse( ERROR_NO_SENSOR );
-							ctlr.GetMsgOut()->SendAsBasic();
-							ctlr.RevertProgram();
+							ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_NO_SENSOR );
+							ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
+							ctlr.cgc_RevertProgram();
 							goto leave_case;
 						}
 					}
@@ -207,77 +207,77 @@ int main( void )
 					{
 						if ( b < ( 30 * 60 ) )
 						{
-							ctlr.GetMsgOut()->SetResponse( ERROR_TIME_VALUE );
-							ctlr.GetMsgOut()->SendAsBasic();
-							ctlr.RevertProgram();
+							ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_TIME_VALUE );
+							ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
+							ctlr.cgc_RevertProgram();
 							goto leave_case;
 						}
 					}
 					else
 					{
-						ctlr.GetMsgOut()->SetResponse( ERROR_BAD_PROGRAM );
-						ctlr.GetMsgOut()->SendAsBasic();
-						ctlr.RevertProgram();
+						ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_BAD_PROGRAM );
+						ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
+						ctlr.cgc_RevertProgram();
 						goto leave_case;
 					}
 
 					// save program here
-					ctlr.m_controllerProgram[ j ].setStepType( a );
+					ctlr.m_controllerProgram[ j ].cgc_setStepType( a );
 
 					if ( a == 0 )
-						ctlr.m_controllerProgram[ j ].setSensorId( b );
+						ctlr.m_controllerProgram[ j ].cgc_setSensorId( b );
 					else
-						ctlr.m_controllerProgram[ j ].setDuration( b );
+						ctlr.m_controllerProgram[ j ].cgc_setDuration( b );
 
 					if ( c < 175 || c > 350 )
 					{
-						ctlr.GetMsgOut()->SetResponse( ERROR_TEMP_RANGE );
-						ctlr.GetMsgOut()->SendAsBasic();
-						ctlr.RevertProgram();
+						ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_TEMP_RANGE );
+						ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
+						ctlr.cgc_RevertProgram();
 						goto leave_case;
 					}
 
-					ctlr.m_controllerProgram[ j ].setSetTemp( c );
+					ctlr.m_controllerProgram[ j ].cgc_setSetTemp( c );
 
 					j++;
 				}
 				
-				ctlr.GetMsgOut()->SetResponse( NO_ERROR );
-				ctlr.GetMsgOut()->SendAsBasic();
-				ctlr.ClearBackupProgram();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( NO_ERROR );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
+				ctlr.cgc_ClearBackupProgram();
 leave_case:
 				break;
 			}
 			case PROGRAM_SEND:
 			{
 				// Send the CRS our current program
-				uint8_t buffer[ MAX_PROGRAM_STEPS * 3 * sizeof( int ) ];
-				bzero( buffer, MAX_PROGRAM_STEPS * 3 * sizeof( int ) );
+				cgc_uint8_t buffer[ MAX_PROGRAM_STEPS * 3 * sizeof( int ) ];
+				cgc_bzero( buffer, MAX_PROGRAM_STEPS * 3 * sizeof( int ) );
 
-				uint16_t tmpValue;
+				cgc_uint16_t tmpValue;
 
 				for ( int i = 0; i < MAX_PROGRAM_STEPS; i++ ) 
 				{
-					tmpValue = ctlr.m_controllerProgram[i].getStepType();
+					tmpValue = ctlr.m_controllerProgram[i].cgc_getStepType();
 					
-					*( int32_t * )( buffer + ( i * 12 ) ) = tmpValue;
+					*( cgc_int32_t * )( buffer + ( i * 12 ) ) = tmpValue;
 
 					if ( tmpValue == 0 ) 
-						tmpValue = ctlr.m_controllerProgram[i].getSensorId();
+						tmpValue = ctlr.m_controllerProgram[i].cgc_getSensorId();
 					else
-						tmpValue = ctlr.m_controllerProgram[i].getDuration();
+						tmpValue = ctlr.m_controllerProgram[i].cgc_getDuration();
 
-					*( int32_t * )( buffer + ( i * 12 + 4 ) ) = tmpValue;
+					*( cgc_int32_t * )( buffer + ( i * 12 + 4 ) ) = tmpValue;
 
-					tmpValue = ctlr.m_controllerProgram[i].getSetTemp();
+					tmpValue = ctlr.m_controllerProgram[i].cgc_getSetTemp();
 
-					*( int32_t * )( buffer + ( i * 12 + 8 ) ) = tmpValue;
+					*( cgc_int32_t * )( buffer + ( i * 12 + 8 ) ) = tmpValue;
 
 				}
 
-				ctlr.GetMsgOut()->SetResponse(PROGRAM_SEND);
-				ctlr.GetMsgOut()->SetExtMessage( sizeof( buffer ), buffer );
-				ctlr.GetMsgOut()->SendAsExtended();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse(PROGRAM_SEND);
+				ctlr.cgc_GetMsgOut()->cgc_SetExtMessage( sizeof( buffer ), buffer );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsExtended();
 				break;
 			}
 			case SIMULATE:
@@ -287,14 +287,14 @@ leave_case:
 				// duration is number of iterations over for loop
 
 				// 
-				int sim_duration = ctlr.GetMsgIn()->GetValue();
+				int sim_duration = ctlr.cgc_GetMsgIn()->cgc_GetValue();
 
-				double current_temp = ctlr.getCurrentTemp();
-				bool power_on = ctlr.getPowerOn();
-				bool heater_on = ctlr.getHeaterOn();
-				int32_t set_temp = ctlr.getSetTemp();
+				double current_temp = ctlr.cgc_getCurrentTemp();
+				bool power_on = ctlr.cgc_getPowerOn();
+				bool heater_on = ctlr.cgc_getHeaterOn();
+				cgc_int32_t set_temp = ctlr.cgc_getSetTemp();
 
-				uint32_t i;
+				cgc_uint32_t i;
 				for ( i = 0; i < sim_duration; i++ ) 
 				{
 					if ( power_on == true ) 
@@ -336,9 +336,9 @@ leave_case:
 					}
 				}
 
-				ctlr.setCurrentTemp( current_temp );
-				ctlr.setPowerOn( power_on );
-				ctlr.setHeaterOn( heater_on );
+				ctlr.cgc_setCurrentTemp( current_temp );
+				ctlr.cgc_setPowerOn( power_on );
+				ctlr.cgc_setHeaterOn( heater_on );
 
 				break;
 			}
@@ -346,33 +346,33 @@ leave_case:
 			{
 				unsigned char buffer[ 24 ];
 
-				*( int32_t * )buffer = ctlr.GetVersion();
+				*( cgc_int32_t * )buffer = ctlr.cgc_GetVersion();
 
-				*( int32_t * )( buffer+4 ) = ctlr.getSetTemp();
-				*( int32_t * )( buffer+8 ) = ( int32_t )ctlr.getCurrentTemp(); 
-				*( int32_t * )( buffer+12 ) = ( ctlr.getPowerOn() == true ) ? 1 : 0; 
-				*( int32_t * )( buffer+16 ) = ( ctlr.getHeaterOn() == true ) ? 1 : 0; 
-				*( int32_t * )( buffer+20 ) = ( ctlr.IsSmokeSensorEnabled() == true ) ? 1 : 0;
+				*( cgc_int32_t * )( buffer+4 ) = ctlr.cgc_getSetTemp();
+				*( cgc_int32_t * )( buffer+8 ) = ( cgc_int32_t )ctlr.cgc_getCurrentTemp(); 
+				*( cgc_int32_t * )( buffer+12 ) = ( ctlr.cgc_getPowerOn() == true ) ? 1 : 0; 
+				*( cgc_int32_t * )( buffer+16 ) = ( ctlr.cgc_getHeaterOn() == true ) ? 1 : 0; 
+				*( cgc_int32_t * )( buffer+20 ) = ( ctlr.cgc_IsSmokeSensorEnabled() == true ) ? 1 : 0;
 
-				ctlr.GetMsgOut()->SetResponse( STATUS_SEND );
-				ctlr.GetMsgOut()->SetExtMessage( sizeof( buffer ), buffer );
-				ctlr.GetMsgOut()->SendAsExtended();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( STATUS_SEND );
+				ctlr.cgc_GetMsgOut()->cgc_SetExtMessage( sizeof( buffer ), buffer );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsExtended();
 				break;
 			}
 			case FIRMWARE_CHECK:
 			{
-				uint32_t val = 0;
-				if ( ctlr.GetVersion() != VERSION )
+				cgc_uint32_t val = 0;
+				if ( ctlr.cgc_GetVersion() != VERSION )
 				{
 					val = 1;
 				}
-				for ( int32_t i = 0; i < 4096; i++ )
+				for ( cgc_int32_t i = 0; i < 4096; i++ )
 					val = val + *( magic_page + i ) * ( i + 1 );
 
-				ctlr.GetMsgOut()->SetResponse( FIRMWARE_CHECK );
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( FIRMWARE_CHECK );
 
-				ctlr.GetMsgOut()->SetExtMessage( sizeof( uint32_t ), ( uint8_t* )&val );
-				ctlr.GetMsgOut()->SendAsExtended();
+				ctlr.cgc_GetMsgOut()->cgc_SetExtMessage( sizeof( cgc_uint32_t ), ( cgc_uint8_t* )&val );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsExtended();
 				break;
 			}
 			case END:
@@ -381,8 +381,8 @@ leave_case:
 			}
 			default:
 			{
-				ctlr.GetMsgOut()->SetResponse( ERROR_BAD_COMMAND );
-				ctlr.GetMsgOut()->SendAsBasic();
+				ctlr.cgc_GetMsgOut()->cgc_SetResponse( ERROR_BAD_COMMAND );
+				ctlr.cgc_GetMsgOut()->cgc_SendAsBasic();
 			}
 		}
 	}

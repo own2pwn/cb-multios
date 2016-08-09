@@ -31,26 +31,26 @@ THE SOFTWARE.
 #include "string.h"
 #include "output_strings.h"
 
-char *obf_strings(char *input_string);
+char *cgc_obf_strings(char *input_string);
 
 extern char test[];
 
 int main(void) {
 
 	unsigned int databaseCheck;
-	productDefType *productDatabase;
+	cgc_productDefType *productDatabase;
 
 	productDatabase = 0; 
 
-	databaseCheck = calc_version();
+	databaseCheck = cgc_calc_version();
 
-	printf(obf_strings(Tool_Title), databaseCheck);
+	cgc_printf(cgc_obf_strings(Tool_Title), databaseCheck);
 
 	// wait for commands
- 	receive_commands(&productDatabase); 
+ 	cgc_receive_commands(&productDatabase); 
 
 	// clean up the data structures
-   destroy_database( &productDatabase );
+   cgc_destroy_database( &productDatabase );
 
     _terminate(0);
 

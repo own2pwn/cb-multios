@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-ssize_t read_until(char *, char *, size_t);
-int32_t StoreTemp(double *, uint32_t, uint32_t, uint32_t, char *);
-int8_t read_temps(double *grid);
-int flush_stdin(void);
-int32_t kbhit(void);
+cgc_ssize_t cgc_read_until(char *, char *, cgc_size_t);
+cgc_int32_t cgc_StoreTemp(double *, cgc_uint32_t, cgc_uint32_t, cgc_uint32_t, char *);
+cgc_int8_t cgc_read_temps(double *grid);
+int cgc_flush_stdin(void);
+cgc_int32_t cgc_kbhit(void);

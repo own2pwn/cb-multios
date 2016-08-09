@@ -28,7 +28,7 @@ char PLAYERS[2] = {'P', 'Q'};
 // fill a clean game board char array with current row values
 // board must be a char buff[(17 * 8) + 1] = char buf[137]
 // 136 chars and 1 '\0'
-void make_board(tt_data * data, char * board) {
+void cgc_make_board(cgc_tt_data * data, char * board) {
 
 	// row buffers are 18 chars: 16 + \n + \0
 	char *TOP_NUMBERS = "     0   1   2  \n";  // top numbers
@@ -40,36 +40,36 @@ void make_board(tt_data * data, char * board) {
 	char *bottom_row =  " 2 | ~o | ~o | ~o |\n";  // bottom row
 					 // "   +---+---+---+\n"
 
-	strncpy( board + 17 * 0, TOP_NUMBERS, 17);
-	strncpy( board + 17 * 1, ROW_DIVIDER, 17);
-	snprintf(board + 17 * 2, 18, top_row, 
+	cgc_strncpy( board + 17 * 0, TOP_NUMBERS, 17);
+	cgc_strncpy( board + 17 * 1, ROW_DIVIDER, 17);
+	cgc_snprintf(board + 17 * 2, 18, top_row, 
 			 data->top[0], 
 			 data->top[1], 
 			 data->top[2]);
-	strncpy( board + 17 * 3, ROW_DIVIDER, 17);
-	snprintf(board + 17 * 4, 18, middle_row, 
+	cgc_strncpy( board + 17 * 3, ROW_DIVIDER, 17);
+	cgc_snprintf(board + 17 * 4, 18, middle_row, 
 			 data->middle[0], 
 			 data->middle[1], 
 			 data->middle[2]);
-	strncpy( board + 17 * 5, ROW_DIVIDER, 17);
-	snprintf(board + 17 * 6, 18, bottom_row, 
+	cgc_strncpy( board + 17 * 5, ROW_DIVIDER, 17);
+	cgc_snprintf(board + 17 * 6, 18, bottom_row, 
 			 data->bottom[0], 
 			 data->bottom[1], 
 			 data->bottom[2]);
-	strncpy( board + 17 * 7, ROW_DIVIDER, 17);
+	cgc_strncpy( board + 17 * 7, ROW_DIVIDER, 17);
 	board[17 * 8] = '\0';
 }
 
 // initialize game data
-void init_game_data(tt_data * data) {
-	memset(data->top, EMPTY, 3);
-	memset(data->middle, EMPTY, 3);
-	memset(data->bottom, EMPTY, 3);
+void cgc_init_game_data(cgc_tt_data * data) {
+	cgc_memset(data->top, EMPTY, 3);
+	cgc_memset(data->middle, EMPTY, 3);
+	cgc_memset(data->bottom, EMPTY, 3);
 	data->moves = 0;
 	data->winner = EMPTY;
 }
 
-void set_player_chars(tt_data * data, char player_char) {
+void cgc_set_player_chars(cgc_tt_data * data, char player_char) {
 	if(player_char == PLAYERS[0]) {
 		data->player_char = PLAYERS[0];
 		data->comp_char = PLAYERS[1];
@@ -79,7 +79,7 @@ void set_player_chars(tt_data * data, char player_char) {
 	}
 }
 
-void reset_scores(tt_scores * scores) {
+void cgc_reset_scores(cgc_tt_scores * scores) {
 	scores->player = 0;
 	scores->computer = 0;
 }
@@ -87,7 +87,7 @@ void reset_scores(tt_scores * scores) {
 // test to determine if coordinates are within the game board
 // if yes, return 1
 // if no, return 0
-int has_valid_coords(tt_move_coords * move) {
+int cgc_has_valid_coords(cgc_tt_move_coords * move) {
 	// don't have to check if row/col >= 0, because they are uint's
 	return (move->row <= 2 && move->col <= 2);
 }
@@ -95,12 +95,12 @@ int has_valid_coords(tt_move_coords * move) {
 // test to determine if coordinates are unoccupied
 // if yes, return 1
 // if no, return 0
-int coords_unoccupied(tt_data * data, tt_move_coords * move) {
-	return (game_board_get_at_coord(data, move) == EMPTY);
+int cgc_coords_unoccupied(cgc_tt_data * data, cgc_tt_move_coords * move) {
+	return (cgc_game_board_get_at_coord(data, move) == EMPTY);
 }
 
 // set letter of current player at coords in game board
-void game_board_set_at_coord(tt_data * data, tt_move_coords * move) {
+void cgc_game_board_set_at_coord(cgc_tt_data * data, cgc_tt_move_coords * move) {
 	int row = move->row;
 	int col = move->col;
 	switch(row) {
@@ -117,7 +117,7 @@ void game_board_set_at_coord(tt_data * data, tt_move_coords * move) {
 }
 
 // get letter at coords in game board
-char game_board_get_at_coord(tt_data * data, tt_move_coords * move) {
+char cgc_game_board_get_at_coord(cgc_tt_data * data, cgc_tt_move_coords * move) {
 	int row = move->row;
 	int col = move->col;
 	char ch;
@@ -140,18 +140,18 @@ char game_board_get_at_coord(tt_data * data, tt_move_coords * move) {
 // - coordinate is an available play
 // if yes, return 1
 // if no, return 0
-int is_valid_move(tt_data * data, tt_move_coords * move) {
-	return (has_valid_coords(move) && coords_unoccupied(data, move));
+int cgc_is_valid_move(cgc_tt_data * data, cgc_tt_move_coords * move) {
+	return (cgc_has_valid_coords(move) && cgc_coords_unoccupied(data, move));
 }
 
 // attempt to update board with players move
 // return 0 on success, 1 on failure.
-int update_board(tt_data * data, tt_move_coords * move) {
+int cgc_update_board(cgc_tt_data * data, cgc_tt_move_coords * move) {
 
 	int result = 0;
 
-	if(is_valid_move(data, move)) {
-		game_board_set_at_coord(data, move);
+	if(cgc_is_valid_move(data, move)) {
+		cgc_game_board_set_at_coord(data, move);
 	} else {
 		result = 1;
 	}
@@ -161,7 +161,7 @@ int update_board(tt_data * data, tt_move_coords * move) {
 
 // check to see if a player has won.
 // return 1, if yes. return 0 if no.
-int have_winner(tt_data * data) {
+int cgc_have_winner(cgc_tt_data * data) {
 
 	int result = 1;
 
@@ -226,7 +226,7 @@ int have_winner(tt_data * data) {
 // Determine if there are any more moves remaining.
 // if yes, return 1. if no, return 0.
 // There are 9 moves in the game.
-int have_moves_remaining(tt_data * data) {
+int cgc_have_moves_remaining(cgc_tt_data * data) {
 	int result = 0;
 	if (data->moves < 9) {
 		result = 1;
@@ -237,30 +237,30 @@ int have_moves_remaining(tt_data * data) {
 // Determine if player won
 // if yes, return 1
 // if no, return 0
-char is_player_winner(tt_data * data) {
+char cgc_is_player_winner(cgc_tt_data * data) {
 	return (data->winner == data->player_char);
 }
 
 // Determine if it is the client/player's turn
 // if yes, return 1
 // if no, return 0
-int is_players_turn(tt_data * data) {
+int cgc_is_players_turn(cgc_tt_data * data) {
 	return (data->player_char == PLAYERS[data->moves % 2]);
 }
 
 // Change to next player
-void move_complete(tt_data * data) {
+void cgc_move_complete(cgc_tt_data * data) {
 	data->moves++;
 }
 
 // select a randomly generated valid move for the computer
-void computer_move(tt_data * data, tt_move_coords * move) {
-	tt_move_coords tmp_move;
-	tmp_move.row = prng_get_next() % 3;
-	tmp_move.col = prng_get_next() % 3;
-	while(!is_valid_move(data, &tmp_move)) {
-		tmp_move.row = prng_get_next() % 3;
-		tmp_move.col = prng_get_next() % 3;
+void cgc_computer_move(cgc_tt_data * data, cgc_tt_move_coords * move) {
+	cgc_tt_move_coords tmp_move;
+	tmp_move.row = cgc_prng_get_next() % 3;
+	tmp_move.col = cgc_prng_get_next() % 3;
+	while(!cgc_is_valid_move(data, &tmp_move)) {
+		tmp_move.row = cgc_prng_get_next() % 3;
+		tmp_move.col = cgc_prng_get_next() % 3;
 	}
 
 	move->row = tmp_move.row;
@@ -268,7 +268,7 @@ void computer_move(tt_data * data, tt_move_coords * move) {
 }
 
 // should be called when there are no more moves or a player has won.
-void update_score(tt_game * game) {
+void cgc_update_score(cgc_tt_game * game) {
 
 	if(game->data->winner == game->data->player_char) {
 		game->scores->player++;

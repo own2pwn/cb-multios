@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,14 +24,14 @@
 
 #include "node.h"
 
-class TextNode : public Node
+class cgc_TextNode : public cgc_Node
 {
-    friend class Node;
+    friend class cgc_Node;
 private:
-    TextNode(const String *ns, const String *tag);
+    cgc_TextNode(const cgc_String *cgc_ns, const cgc_String *cgc_tag);
 public:
-    const String *text();
-    void set_text(String *text);
+    const cgc_String *cgc_text();
+    void cgc_set_text(cgc_String *cgc_text);
 private:
-    String *d_text;
+    cgc_String *d_text;
 };

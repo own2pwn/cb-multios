@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -36,10 +36,10 @@ enum {
 };
 
 struct tankset {
-	uint8_t count;
-	uint8_t unk;
-	uint8_t unk1;
-	uint8_t unk2;
+	cgc_uint8_t count;
+	cgc_uint8_t unk;
+	cgc_uint8_t unk1;
+	cgc_uint8_t unk2;
 	struct tank *tanks[]; 
 };
 
@@ -50,7 +50,7 @@ struct tankset {
  * @param qty Quantity of tanks to create in the tank set
  * @return SUCCESS or ERR_INVALID_QTY on error.
  */
-extern int create_tanks(struct tankset **t, uint8_t qty);
+extern int cgc_create_tanks(struct tankset **t, cgc_uint8_t qty);
 
 /**
  * Generate and update the drain factor for each tank in the tankset.
@@ -58,7 +58,7 @@ extern int create_tanks(struct tankset **t, uint8_t qty);
  * @param t Tank set to initialize
  * @return SUCCESS or ERR_UNINITIALIZED_TANK on error.
  */
-extern int update_drain_factors(struct tankset *t);
+extern int cgc_update_drain_factors(struct tankset *t);
 
 /**
  * Process the drain and fill rates to update the water level
@@ -67,7 +67,7 @@ extern int update_drain_factors(struct tankset *t);
  * @param t Tank set
  * @return SUCCESS or ERR_UNINITIALIZED_TANK on error
  */
-extern int update_water_levels(struct tankset *t);
+extern int cgc_update_water_levels(struct tankset *t);
 
 /**
  * Check the level of each tank in the tank set for a
@@ -76,17 +76,17 @@ extern int update_water_levels(struct tankset *t);
  * @param t Tank set
  * @return SUCCESS or ERR_UNINITIALIZED_TANK on error.
  */
-extern int check_levels(struct tankset *t);
+extern int cgc_check_levels(struct tankset *t);
 
 /**
- * For each tank in the tank set, send the status and recv
+ * For each tank in the tank set, cgc_send the status and recv
  *	the next valve position.
  *
  * @param t Tank set
  * @return SUCCESS or ERR_UNINITIALIZED_TANK, ERR_INVALID_VALVE_POS,
  *	ERR_END_OF_FILE, ERR_END_OF_LIFE on error.
  */
-extern int rxtx(struct tankset *t);
+extern int cgc_rxtx(struct tankset *t);
 
 #endif
  

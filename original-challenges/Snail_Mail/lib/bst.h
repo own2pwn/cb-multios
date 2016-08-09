@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -42,8 +42,8 @@ struct bst {
 	unsigned char iter_asc;
 };
 
-typedef struct bst_node bst_node_t;
-typedef struct bst 		bst_t;
+typedef struct bst_node cgc_bst_node_t;
+typedef struct bst 		cgc_bst_t;
 
 
 /**
@@ -52,21 +52,21 @@ typedef struct bst 		bst_t;
  * @param key Int value to store in node
  * @return Pointer to new node.
  */
-bst_node_t *bst_create_node(int key);
+cgc_bst_node_t *cgc_bst_create_node(int key);
 
 /**
  * Delete a node (assume node already been removed from BST)
  *
  * @param node 	Pointer to node pointer
  */
-void bst_delete_node(bst_node_t **node);
+void cgc_bst_delete_node(cgc_bst_node_t **node);
 
 /**
  * Initialize an empty binary search tree.
  *
  * @param bst 	Pointer to BST
  */
-void bst_init(bst_t *bst);
+void cgc_bst_init(cgc_bst_t *bst);
 
 /**
  * Search binary search tree for node containing key.
@@ -75,7 +75,7 @@ void bst_init(bst_t *bst);
  * @param key 	Key to find in the BST
  * @return Pointer to node in BST containing key, else NULL_NODE.
  */
-bst_node_t *bst_search(bst_t *bst, int key);
+cgc_bst_node_t *cgc_bst_search(cgc_bst_t *bst, int key);
 
 /**
  * Find node containing key having max value in subtree rooted at node.
@@ -83,7 +83,7 @@ bst_node_t *bst_search(bst_t *bst, int key);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Node with maximum key in subtree rooted at node.
  */
-bst_node_t *bst_max_node_subtree(bst_node_t *node);
+cgc_bst_node_t *cgc_bst_max_node_subtree(cgc_bst_node_t *node);
 
 /**
  * Find key having max value in subtree rooted at node.
@@ -91,7 +91,7 @@ bst_node_t *bst_max_node_subtree(bst_node_t *node);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Maximum key in subtree rooted at node.
  */
-int bst_max_subtree(bst_node_t *node);
+int cgc_bst_max_subtree(cgc_bst_node_t *node);
 
 /**
  * Find node containing key having max value.
@@ -99,7 +99,7 @@ int bst_max_subtree(bst_node_t *node);
  * @param bst 	Pointer to a Binary Search Tree
  * @return Node with maximum key in bst.
  */
-bst_node_t *bst_max_node(bst_t *bst);
+cgc_bst_node_t *cgc_bst_max_node(cgc_bst_t *bst);
 
 /**
  * Find key having max value.
@@ -107,7 +107,7 @@ bst_node_t *bst_max_node(bst_t *bst);
  * @param bst 	Pointer to a Binary Search Tree
  * @return Maximum key in bst.
  */
-int bst_max(bst_t *bst);
+int cgc_bst_max(cgc_bst_t *bst);
 
 /**
  * Find node containing key having min value in subtree rooted at node.
@@ -115,7 +115,7 @@ int bst_max(bst_t *bst);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Node having minimum key in subtree rooted at node.
  */
-bst_node_t *bst_min_node_subtree(bst_node_t *node);
+cgc_bst_node_t *cgc_bst_min_node_subtree(cgc_bst_node_t *node);
 
 /**
  * Find key having min value in subtree rooted at node.
@@ -123,7 +123,7 @@ bst_node_t *bst_min_node_subtree(bst_node_t *node);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Minimum key in subtree rooted at node.
  */
-int bst_min_subtree(bst_node_t *node);
+int cgc_bst_min_subtree(cgc_bst_node_t *node);
 
 /**
  * Find node containing key having min value.
@@ -131,7 +131,7 @@ int bst_min_subtree(bst_node_t *node);
  * @param bst 	Pointer to a Binary Search Tree
  * @return Node with minimum key in bst.
  */
-bst_node_t *bst_min_node(bst_t *bst);
+cgc_bst_node_t *cgc_bst_min_node(cgc_bst_t *bst);
 
 /**
  * Find key having min value.
@@ -139,7 +139,7 @@ bst_node_t *bst_min_node(bst_t *bst);
  * @param bst 	Pointer to a Binary Search Tree
  * @return Minimum key in bst.
  */
-int bst_min(bst_t *bst);
+int cgc_bst_min(cgc_bst_t *bst);
 
 /**
  * Find node having key with the next lower value.
@@ -147,7 +147,7 @@ int bst_min(bst_t *bst);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Pointer to node in BST containing lower key, else NULL_NODE.
  */
-bst_node_t *bst_predecessor(bst_node_t *node);
+cgc_bst_node_t *cgc_bst_predecessor(cgc_bst_node_t *node);
 
 /**
  * Find node having key with the next higher value.
@@ -155,7 +155,7 @@ bst_node_t *bst_predecessor(bst_node_t *node);
  * @param node 	Pointer to a Binary Search Tree node
  * @return Pointer to node in BST containing higher key, else NULL_NODE.
  */
-bst_node_t *bst_successor(bst_node_t *node);
+cgc_bst_node_t *cgc_bst_successor(cgc_bst_node_t *node);
 
 /**
  * Find first/last node in bst when sorted ascending or descending.
@@ -164,7 +164,7 @@ bst_node_t *bst_successor(bst_node_t *node);
  * @param ascending 	TRUE if want to iterated ascending, else FALSE.
  * @return Pointer to node in BST containing highest/lowest key, else NULL_NODE if empty.
  */
-bst_node_t *bst_iter_start(bst_t *bst, unsigned char ascending);
+cgc_bst_node_t *cgc_bst_iter_start(cgc_bst_t *bst, unsigned char ascending);
 
 /**
  * Find next node in bst when sorted ascending or descending.
@@ -172,7 +172,7 @@ bst_node_t *bst_iter_start(bst_t *bst, unsigned char ascending);
  * @param bst	Pointer to a Binary Search Tree
  * @return Pointer to node in BST containing next highest/lowest key, else NULL_NODE if done.
  */
-bst_node_t *bst_iter_next(bst_t *bst);
+cgc_bst_node_t *cgc_bst_iter_next(cgc_bst_t *bst);
 
 /**
  * Indicate if bst_iter has reached the end.
@@ -180,7 +180,7 @@ bst_node_t *bst_iter_next(bst_t *bst);
  * @param bst	Pointer to a Binary Search Tree
  * @return TRUE if at the end, else FALSE.
  */
-int bst_iter_end(bst_t *bst);
+int cgc_bst_iter_end(cgc_bst_t *bst);
 
 /**
  * Insert new node into binary search tree.
@@ -188,7 +188,7 @@ int bst_iter_end(bst_t *bst);
  * @param bst 	Pointer to a Binary Search Tree
  * @param node 	Node to insert into the BST
  */
-void bst_insert_node(bst_t *bst, bst_node_t *node);
+void cgc_bst_insert_node(cgc_bst_t *bst, cgc_bst_node_t *node);
 
 /**
  * Insert new key into binary search tree.
@@ -196,16 +196,16 @@ void bst_insert_node(bst_t *bst, bst_node_t *node);
  * @param bst 	Pointer to a Binary Search Tree
  * @param key 	Key to insert into the BST
  */
-void bst_insert(bst_t *bst, int key);
+void cgc_bst_insert(cgc_bst_t *bst, int key);
 
 /**
  * Remove node from binary search tree.
  *
  * @param bst 	Pointer to a Binary Search Tree
  * @param node 	Node to remove from the BST
- * @return Pointer to removed node (caller should free this).
+ * @return Pointer to removed node (caller should cgc_free this).
  */
-bst_node_t *bst_remove_node(bst_t *bst, bst_node_t *node);
+cgc_bst_node_t *cgc_bst_remove_node(cgc_bst_t *bst, cgc_bst_node_t *node);
 
 /**
  * Remove node with key from binary search tree.
@@ -214,7 +214,7 @@ bst_node_t *bst_remove_node(bst_t *bst, bst_node_t *node);
  * @param key 	Key to remove from the BST
  * @return Pointer to removed node, if key is found, else NULL_NODE.
  */
-bst_node_t *bst_remove(bst_t *bst, int key);
+cgc_bst_node_t *cgc_bst_remove(cgc_bst_t *bst, int key);
 
 
 /**
@@ -223,6 +223,6 @@ bst_node_t *bst_remove(bst_t *bst, int key);
  * @param bst 	Pointer to a Binary Search Tree
  * @return TRUE if empty, else FALSE.
  */
-int bst_is_empty(bst_t *bst);
+int cgc_bst_is_empty(cgc_bst_t *bst);
 
 #endif

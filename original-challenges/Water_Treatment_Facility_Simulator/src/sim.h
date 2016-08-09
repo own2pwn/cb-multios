@@ -27,7 +27,7 @@ THE SOFTWARE.
 #define SIM_H
 
 #define HOURS_PER_SIM_STEP (1)
-uint8_t RunSimStep(void);
-void SimulateEffluent(void);
+cgc_uint8_t cgc_RunSimStep(void);
+void cgc_SimulateEffluent(void);
 
 #endif

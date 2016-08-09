@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,19 +31,19 @@
 
 #define EOC 0x00
 
-typedef uint8_t bool;
+typedef cgc_uint8_t cgc_bool;
 
-typedef struct element {
-  uint8_t cls;
-  uint8_t tag;
-  bool primitive;
-  uint8_t *data;
+typedef struct cgc_element {
+  cgc_uint8_t cls;
+  cgc_uint8_t tag;
+  cgc_bool primitive;
+  cgc_uint8_t *data;
   unsigned length;
   unsigned depth;
   unsigned sub_cap;
   unsigned nsubs;
-  struct element **subs;
-} element;
+  struct cgc_element **subs;
+} cgc_element;
 
 typedef enum {
   UNIVERSAL,
@@ -51,7 +51,7 @@ typedef enum {
   CONTEXT,
   PRIVATE,
   CLASS_UNKNOWN
-} tag_class;
+} cgc_tag_class;
 
 typedef enum {
   TAG_UNKNOWN = 0,
@@ -84,8 +84,8 @@ typedef enum {
   UNISTR = 28,
   CHRSTR = 29,
   BMPSTR = 30
-} utag;
+} cgc_utag;
 
-element *decode(uint8_t *b, unsigned max);
-void pprint(element *e);
+cgc_element *cgc_decode(cgc_uint8_t *b, unsigned max);
+void cgc_pprint(cgc_element *e);
 #endif /* __ASL6_H__ */

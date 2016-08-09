@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,29 +25,29 @@
 #include <cstring.h>
 #include <cstdio.h>
 
-Deque::Deque()
+cgc_Deque::cgc_Deque()
 {
     idx_0_ = 0;
     size_ = 0;
     cap_ = 8;
-    tickets_ = new Ticket*[cap_];
+    tickets_ = new cgc_Ticket*[cap_];
 }
 
-Deque::~Deque()
+cgc_Deque::~cgc_Deque()
 {
     for (int i = 0; i < size_; i++)
     {
         int idx = (idx_0_ + i) % cap_;
-        Ticket::DeleteTicket(tickets_[idx]);
+        cgc_Ticket::cgc_DeleteTicket(tickets_[idx]);
     }
     delete tickets_;
 }
 
-Ticket* Deque::Find(uint32_t ID)
+cgc_Ticket* cgc_Deque::cgc_Find(cgc_uint32_t ID)
 {
-  for (size_t i = 0; i < cap_; i++)
+  for (cgc_size_t i = 0; i < cap_; i++)
   {
-    if (tickets_[i] && tickets_[i]->id() == ID)
+    if (tickets_[i] && tickets_[i]->cgc_id() == ID)
     {
       return tickets_[i];
     }
@@ -56,78 +56,78 @@ Ticket* Deque::Find(uint32_t ID)
   return nullptr;
 }
 
-bool Deque::Remove(Ticket* ticket)
+bool cgc_Deque::cgc_Remove(cgc_Ticket* ticket)
 {
   return false;
 }
 
-void Deque::Append(Ticket *ticket)
+void cgc_Deque::cgc_Append(cgc_Ticket *ticket)
 {
     if (!ticket)
         return;
 
     if (size_ == cap_)
-        Expand();
+        cgc_Expand();
 
-    uint32_t idx_f = (idx_0_ + size_) % cap_;
+    cgc_uint32_t idx_f = (idx_0_ + size_) % cap_;
     tickets_[idx_f] = ticket;
     ++size_;
 }
 
-void Deque::AppendLeft(Ticket *ticket)
+void cgc_Deque::cgc_AppendLeft(cgc_Ticket *ticket)
 {
     if (!ticket)
         return;
 
     if (size_ == cap_)
-        Expand();
+        cgc_Expand();
 
     idx_0_ = (idx_0_ + (cap_ - 1)) % cap_;
     tickets_[idx_0_] = ticket;
     ++size_;
 }
 
-Ticket *Deque::Pop()
+cgc_Ticket *cgc_Deque::cgc_Pop()
 {
     if (!size_)
         return nullptr;
 
-    uint32_t idx_f = (idx_0_ + (size_ - 1)) % cap_;
-    Ticket *ticket = tickets_[idx_f];
+    cgc_uint32_t idx_f = (idx_0_ + (size_ - 1)) % cap_;
+    cgc_Ticket *ticket = tickets_[idx_f];
     --size_;
-    TryShrink();
+    cgc_TryShrink();
     return ticket;
 }
 
-Ticket *Deque::PopLeft()
+cgc_Ticket *cgc_Deque::cgc_PopLeft()
 {
     if (!size_)
       return nullptr;
-    Ticket *ticket = tickets_[idx_0_];
+    cgc_Ticket *ticket = tickets_[idx_0_];
     idx_0_ = (idx_0_ + 1) % cap_;
     --size_;
-    TryShrink();
+    cgc_TryShrink();
     return ticket;
 }
 
-uint32_t Deque::Count()
+cgc_uint32_t cgc_Deque::cgc_Count()
 {
     return size_;
 }
 
-void Deque::Expand()
+void cgc_Deque::cgc_Expand()
 {
-    uint32_t new_cap = cap_ << 1;
-    Ticket **new_array = new Ticket*[new_cap];
+    cgc_uint32_t new_cap = cap_ << 1;
+    cgc_Ticket **new_array = new cgc_Ticket*[new_cap];
 
     if (idx_0_ + size_ > cap_)
     {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
-        memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
+        cgc_memcpy(new_array, &tickets_[idx_0_], sizeof(cgc_Ticket *) * (cap_ - idx_0_));
+        cgc_memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(cgc_Ticket *) * (size_ - (cap_ - idx_0_)));
     }
     else
     {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
+        cgc_memcpy(new_array, &tickets_[idx_0_], sizeof(cgc_Ticket *) * size_);
     }
     delete tickets_;
     tickets_ = new_array;
@@ -135,22 +135,22 @@ void Deque::Expand()
     cap_ = new_cap;
 }
 
-void Deque::TryShrink()
+void cgc_Deque::cgc_TryShrink()
 {
     if (size_ >= (cap_ >> 1) || cap_ <= 8)
         return;
 
-    uint32_t new_cap = cap_ >> 1;
-    Ticket **new_array = new Ticket*[new_cap];
+    cgc_uint32_t new_cap = cap_ >> 1;
+    cgc_Ticket **new_array = new cgc_Ticket*[new_cap];
 
     if (idx_0_ + size_ > cap_)
     {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * (cap_ - idx_0_));
-        memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(Ticket *) * (size_ - (cap_ - idx_0_)));
+        cgc_memcpy(new_array, &tickets_[idx_0_], sizeof(cgc_Ticket *) * (cap_ - idx_0_));
+        cgc_memcpy(&new_array[cap_ - idx_0_], tickets_, sizeof(cgc_Ticket *) * (size_ - (cap_ - idx_0_)));
     }
     else
     {
-        memcpy(new_array, &tickets_[idx_0_], sizeof(Ticket *) * size_);
+        cgc_memcpy(new_array, &tickets_[idx_0_], sizeof(cgc_Ticket *) * size_);
     }
 
     delete tickets_;

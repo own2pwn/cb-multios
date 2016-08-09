@@ -35,7 +35,7 @@
  * @param size Number of bytes to copy
  * @returns VA of dest
  */
-extern char *strncpy(char* dest, const char* src, size_t size);
+extern char *cgc_strncpy(char* dest, const char* src, cgc_size_t size);
 
 
 #endif

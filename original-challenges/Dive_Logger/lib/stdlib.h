@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,68 +34,68 @@ THE SOFTWARE.
 
 
 typedef struct _heap_block_header {
-	size_t remaining_size;
+	cgc_size_t remaining_size;
 	struct _heap_block_header *next;
 	char data[1];
-} heap_block_header;
+} cgc_heap_block_header;
 
 
 typedef struct _heap_header {
-	size_t size;
+	cgc_size_t size;
 	char flags;
-} heap_header;
+} cgc_heap_header;
 
 typedef struct _heap_metadata {
-	size_t mem_commit;
-	size_t mem_free;
-	size_t mem_inuse;
-	heap_block_header *blocks;
-} heap_metadata;
+	cgc_size_t mem_commit;
+	cgc_size_t mem_free;
+	cgc_size_t mem_inuse;
+	cgc_heap_block_header *blocks;
+} cgc_heap_metadata;
 
-//void *calloc(size_t count, size_t size);
-//void free(void *ptr);
-//void *malloc(size_t size);
+//void *cgc_calloc(cgc_size_t count, cgc_size_t size);
+//void cgc_free(void *ptr);
+//void *cgc_malloc(cgc_size_t size);
 
 
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
-double atof(const char *str);
-int atoi(const char *str);
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isalnum( int c );
-int memcpy( void *dest, void *src, size_t n);
+int cgc_isspace( int c );
+int cgc_isdigit( int c );
+int cgc_isnan( double val );
+int cgc_isinf( double val );
+double cgc_atof(const char *str);
+int cgc_atoi(const char *str);
+int cgc_islower( int c );
+int cgc_isupper( int c );
+int cgc_isalpha( int c );
+int cgc_isalnum( int c );
+int cgc_memcpy( void *dest, void *src, cgc_size_t n);
 
-char *strcpy( char *dest, char *src );
-char *strncpy( char *, const char *, size_t );
-int putc( int );
-//int printf( const char *fmt, ... );
-void bzero( void *, size_t );
-void *memset(void *, int, size_t);
-int strcmp( const char *, const char * );
-char *strncat( char *, const char *, size_t );
-size_t receive_until( char *, char, size_t );
-size_t receive_until_flush( char *, char , size_t);
-size_t strcat( char *, char* );
-size_t strlen( char * );
-size_t itoa( char *, size_t, size_t );
-void puts( char *t );
-char *strchr(const char *, int);
-char *strtok(char *, const char *);
-ssize_t write( const void *, size_t );
-char *strdup( char * );
+char *cgc_strcpy( char *dest, char *src );
+char *cgc_strncpy( char *, const char *, cgc_size_t );
+int cgc_putc( int );
+//int cgc_printf( const char *fmt, ... );
+void cgc_bzero( void *, cgc_size_t );
+void *cgc_memset(void *, int, cgc_size_t);
+int cgc_strcmp( const char *, const char * );
+char *cgc_strncat( char *, const char *, cgc_size_t );
+cgc_size_t cgc_receive_until( char *, char, cgc_size_t );
+cgc_size_t cgc_receive_until_flush( char *, char , cgc_size_t);
+cgc_size_t cgc_strcat( char *, char* );
+cgc_size_t cgc_strlen( char * );
+cgc_size_t cgc_itoa( char *, cgc_size_t, cgc_size_t );
+void cgc_puts( char *t );
+char *cgc_strchr(const char *, int);
+char *cgc_strtok(char *, const char *);
+cgc_ssize_t cgc_write( const void *, cgc_size_t );
+char *cgc_strdup( char * );
 
-int putc( int c );
+int cgc_putc( int c );
 
-void int_to_str( int val, char *buf );
-void int_to_hex( unsigned int val, char *buf );
-void float_to_str( double val, char *buf, int precision );
-int vprintf( const char *fmt, va_list arg );
-int vsprintf( char *str, const char *fmt, va_list arg );
-int printf( const char *fmt, ... );
-int sprintf( char *str, const char *fmt, ... );
+void cgc_int_to_str( int val, char *buf );
+void cgc_int_to_hex( unsigned int val, char *buf );
+void cgc_float_to_str( double val, char *buf, int precision );
+int cgc_vprintf( const char *fmt, cgc_va_list arg );
+int cgc_vsprintf( char *str, const char *fmt, cgc_va_list arg );
+int cgc_printf( const char *fmt, ... );
+int cgc_sprintf( char *str, const char *fmt, ... );
 #endif // __STDLIB_H__

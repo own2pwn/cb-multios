@@ -28,7 +28,7 @@ uint32_t md5table[64] = {0};
 uint8_t calcd = 0;
 
 
-uint64_t additive(uint8_t* data, uint32_t s) {
+uint64_t cgc_additive(uint8_t* data, uint32_t s) {
     uint32_t i;
     uint64_t csum = 0xDEADBEEFC0FFEE;
 
@@ -40,7 +40,7 @@ uint64_t additive(uint8_t* data, uint32_t s) {
     return csum;
 }
 
-uint64_t addxoradd(uint8_t *data, uint32_t s) {
+uint64_t cgc_addxoradd(uint8_t *data, uint32_t s) {
     uint32_t i;
     uint64_t csum = 0x31337157C0FFEE;
 
@@ -55,7 +55,7 @@ uint64_t addxoradd(uint8_t *data, uint32_t s) {
     return csum;
 }
 
-static void compute_me_crc(){
+static void cgc_compute_me_crc(){
     uint32_t i, j, k;
     for (i = 0; i < 256; i++) {
         k = i;
@@ -70,20 +70,20 @@ static void compute_me_crc(){
     calcd = 1;
 }
 
-uint32_t updatecrc(uint8_t *data, uint32_t s, uint32_t crc) {
+uint32_t cgc_updatecrc(uint8_t *data, uint32_t s, uint32_t crc) {
     uint32_t i,j = crc;
     if(!calcd)
-        compute_me_crc();
+        cgc_compute_me_crc();
     for (i = 0; i < s; i++) 
         j = crctable[(j&0xff)^*(data+i)] ^ ( j >> 8);
     return j;
 }
 
-uint32_t crc32(uint8_t *data, uint32_t s) {
-    return updatecrc(data, s, ~0x50C0FFEE)^0xffffffff;
+uint32_t cgc_crc32(uint8_t *data, uint32_t s) {
+    return cgc_updatecrc(data, s, ~0x50C0FFEE)^0xffffffff;
 }
 
-double fpadditive(uint8_t *data, uint32_t s) {
+double cgc_fpadditive(uint8_t *data, uint32_t s) {
     uint32_t i;
     double csum = 3.141592;
 
@@ -96,31 +96,31 @@ double fpadditive(uint8_t *data, uint32_t s) {
     return csum;
 }
 
-static uint32_t F(uint32_t x, uint32_t y, uint32_t z) {
+static uint32_t cgc_F(uint32_t x, uint32_t y, uint32_t z) {
     return (((x) & (y)) | ((~x) & (z)));
 }
-static uint32_t G(uint32_t x, uint32_t y, uint32_t z) { 
+static uint32_t cgc_G(uint32_t x, uint32_t y, uint32_t z) { 
     return (((x) & (z)) | ((y) & (~z)));
 }
-static uint32_t H(uint32_t x, uint32_t y, uint32_t z) { 
+static uint32_t cgc_H(uint32_t x, uint32_t y, uint32_t z) { 
     return ((x) ^ (y) ^ (z));
 }
-static uint32_t I(uint32_t x, uint32_t y, uint32_t z) {
+static uint32_t cgc_I(uint32_t x, uint32_t y, uint32_t z) {
     return ((y) ^ ((x) | (~z)));
 }
 
 #define ROL(x, n) (((x) << (n)) | ((x) >> (32-(n))))
 
 
-void calc_me_md5() {
+void cgc_calc_me_md5() {
     uint32_t i;
 
     for (i=0; i < 64; i++)
         md5table[i] = (uint32_t)(fabs(sin(i+1))*pow(2,32));
 }
 
-void md5(uint8_t *data, size_t s, uint32_t* out) {
-    size_t len;
+void cgc_md5(uint8_t *data, cgc_size_t s, uint32_t* out) {
+    cgc_size_t len;
     uint32_t i,j,n,b;
     uint16_t k,l,m;
     //uint32_t d[16] = {0};
@@ -128,7 +128,7 @@ void md5(uint8_t *data, size_t s, uint32_t* out) {
     uint32_t curb[16] = {0};
     uint32_t block[4] = {0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476}; 
     uint32_t final[4] = {0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476};
-    uint32_t (*funcs[])(uint32_t,uint32_t,uint32_t) = {&F,&G,&H,&I};
+    uint32_t (*funcs[])(uint32_t,uint32_t,uint32_t) = {&cgc_F,&cgc_G,&cgc_H,&cgc_I};
     uint16_t rot[6][4] = { 
                             {7,12,17,22},
                             {5,9,14,20},
@@ -138,21 +138,21 @@ void md5(uint8_t *data, size_t s, uint32_t* out) {
                             {0,1,5,0}
     };
 
-    calc_me_md5();
+    cgc_calc_me_md5();
 
     //alloc our temp buffer
     len = (((s+8)/64)+1)*64;
     ALLOC(0, (void**)&d, len);
-    memset(d, '\x00', len);
-    memcpy(d, data, s);
+    cgc_memset(d, '\x00', len);
+    cgc_memcpy(d, data, s);
 
     //pad appropriately
     d[s] = 0x80;
     i = 8*s;
-    memcpy(&d[len-8], &i, 4);
+    cgc_memcpy(&d[len-8], &i, 4);
 
     for (b=0; b < len/64; b++) {
-        memcpy(curb, d+(b*64), 64);
+        cgc_memcpy(curb, d+(b*64), 64);
         for (i=0; i< 4; i++) {
             k = rot[4][i];
             l = rot[5][i];
@@ -171,5 +171,5 @@ void md5(uint8_t *data, size_t s, uint32_t* out) {
             block[i] = final[i];
         }
     }
-    memcpy(out,final,16);
+    cgc_memcpy(out,final,16);
 }

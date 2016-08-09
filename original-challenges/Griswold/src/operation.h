@@ -25,11 +25,11 @@
 #define OPERATION_H
 #include "libc.h"
 
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
-#define SENDSI(v) send((char *)&v, sizeof(int32_t));
-#define SENDUI(v) send((char *)&v, sizeof(uint32_t));
-#define SENDD(v) send((char *)&v, sizeof(double));
-#define SENDLL(v) send((char *)&v, sizeof(long long));
+#define RECV(v,s) if(s != cgc_recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
+#define SENDSI(v) cgc_send((char *)&v, sizeof(cgc_int32_t));
+#define SENDUI(v) cgc_send((char *)&v, sizeof(cgc_uint32_t));
+#define SENDD(v) cgc_send((char *)&v, sizeof(double));
+#define SENDLL(v) cgc_send((char *)&v, sizeof(long long));
 
 enum {
 	ERR_INVALID_MODE = -80,
@@ -39,8 +39,8 @@ enum {
 	ERR_RECV_FAILED = -84,
 };
 
-extern int do_build();
-extern int do_examine();
-extern int do_nonce();
+extern int cgc_do_build();
+extern int cgc_do_examine();
+extern int cgc_do_nonce();
 
 #endif

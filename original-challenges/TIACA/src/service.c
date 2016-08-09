@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "libc.h"
 #include "string.h"
 
-int recvUntil(int fd, char *buf, int size, char delim) {
+int cgc_recvUntil(int fd, char *buf, int size, char delim) {
 	char tmp;
 	int count = 0;
 	int got;
@@ -43,30 +43,30 @@ int recvUntil(int fd, char *buf, int size, char delim) {
 		got = receive(fd, &tmp, 1, NULL);
 		if(got >= 0) {
 			if(tmp == delim){
-				validateRet();
+				cgc_validateRet();
 				return count;
 			}
 		} else {
-			validateRet();
+			cgc_validateRet();
 			return -1;
 		}
 		count++;
-		validatePtr(bufPtr);
+		cgc_validatePtr(bufPtr);
 		*bufPtr = tmp;
 		bufPtr++;
 	}
-	validateRet();
+	cgc_validateRet();
 }
 
-void bookKeeping(carstate *drive)
+void cgc_bookKeeping(cgc_carstate *drive)
 {
 	int tmpAmount;
 	
-	validatePtr(drive);
+	cgc_validatePtr(drive);
 	if(drive->rpm > 6000)
 	{
 		//car explodes.  Just exit.
-		transmit_all(STDOUT, "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff", 10);
+		cgc_transmit_all(STDOUT, "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff", 10);
 		_terminate(0);
 	}
 
@@ -86,19 +86,19 @@ void bookKeeping(carstate *drive)
 		}
 	}
 
-	validateRet();
+	cgc_validateRet();
 	return;
 }
 
-void raiseAlarm() {
+void cgc_raiseAlarm() {
 	char a;
-	memcpy(&a, "AAAAAAAAAAAAAAAA", 16);
-	validateRet();
+	cgc_memcpy(&a, "AAAAAAAAAAAAAAAA", 16);
+	cgc_validateRet();
 }
 
-void handleShift(carstate *drive, char shiftmode)
+void cgc_handleShift(cgc_carstate *drive, char shiftmode)
 {
-	validatePtr(drive);
+	cgc_validatePtr(drive);
 	if(shiftmode == GEARS_SHIFTUP)
 	{
 		if(drive->gear < GEARS_FIFTH && drive->rpm > 500) {
@@ -106,7 +106,7 @@ void handleShift(carstate *drive, char shiftmode)
 				if(drive->speed > ((drive->gear / 0x10) * 10))
 					drive->gear += 0x10;
 				else {
-					validateRet();
+					cgc_validateRet();
 					return;
 				}
 			} else {
@@ -123,14 +123,14 @@ void handleShift(carstate *drive, char shiftmode)
 			drive->rpm += 750;
 		}
 	}
-	validateRet();
+	cgc_validateRet();
 }
 
-void updateBTMetadata(carstate *drive, char *userbuf) {
+void cgc_updateBTMetadata(cgc_carstate *drive, char *userbuf) {
 	char *tmp;
 	char len;
-	validatePtr(drive);
-	validatePtr(userbuf);
+	cgc_validatePtr(drive);
+	cgc_validatePtr(userbuf);
 	tmp = userbuf+1;
 	len = *tmp;
 	tmp++;
@@ -138,15 +138,15 @@ void updateBTMetadata(carstate *drive, char *userbuf) {
 	if(len > 31)
 		len = 31;
 	#endif
-	memcpy(drive->bt_metadata, tmp, len);
-	validateRet();
+	cgc_memcpy(drive->bt_metadata, tmp, len);
+	cgc_validateRet();
 }
 
-void handleTrunk(carstate *drive, char *buf)
+void cgc_handleTrunk(cgc_carstate *drive, char *buf)
 {
 	char *tmp;
-	validatePtr(drive);
-	validatePtr(buf);
+	cgc_validatePtr(drive);
+	cgc_validatePtr(buf);
 	tmp = buf;
 	if(*tmp == TRUNK_LOAD) {
 		drive->trunk_load += *(buf+1);
@@ -156,12 +156,12 @@ void handleTrunk(carstate *drive, char *buf)
 		else
 			drive->trunk_load -= *(buf+1);
 	}
-	validateRet();
+	cgc_validateRet();
 }
 
-void initCar(carstate *drive)
+void cgc_initCar(cgc_carstate *drive)
 {
-	validatePtr(drive);
+	cgc_validatePtr(drive);
 	drive->gear = GEARS_PARK;
 	drive->car_power = CAR_OFF;
 	drive->trunk_state = TRUNK_CLOSED;
@@ -170,15 +170,15 @@ void initCar(carstate *drive)
 	drive->alarm_state = ALARM_UNSET;
 	drive->gear_state = GEARS_UNCLUTCH;
 	drive->fuel = 65535;
-	validateRet();
+	cgc_validateRet();
 }
 
 int main() {
-	serviceLoop();
-	validateRet();
+	cgc_serviceLoop();
+	cgc_validateRet();
 }
 
-void serviceLoop() {
+void cgc_serviceLoop() {
 
 	typedef struct _locals {
 #ifdef PATCHED
@@ -186,36 +186,36 @@ void serviceLoop() {
 #else
 		char ibuf[256];
 #endif
-		carstate _drive;
-		carstate *drive;
-	} locals;
-	locals drivestuff;
+		cgc_carstate _drive;
+		cgc_carstate *drive;
+	} cgc_locals;
+	cgc_locals drivestuff;
 	drivestuff.drive = &drivestuff._drive;
 	char *ptr;
-	validatePtr(drivestuff.drive);
-	memset(drivestuff.drive, 0, sizeof(carstate));
-	validatePtr(drivestuff.drive);
-	initCar(drivestuff.drive);
+	cgc_validatePtr(drivestuff.drive);
+	cgc_memset(drivestuff.drive, 0, sizeof(cgc_carstate));
+	cgc_validatePtr(drivestuff.drive);
+	cgc_initCar(drivestuff.drive);
 
 	while(1) {
-		memset(drivestuff.ibuf, 0, sizeof(drivestuff.ibuf));
+		cgc_memset(drivestuff.ibuf, 0, sizeof(drivestuff.ibuf));
 		int got;
-		got = recvUntil(0, drivestuff.ibuf, 255, '\n');
+		got = cgc_recvUntil(0, drivestuff.ibuf, 255, '\n');
 		if(got <= 0)
 			_terminate(0);
 		ptr=drivestuff.ibuf;
-		bookKeeping(drivestuff.drive);
-		validatePtr(ptr);
+		cgc_bookKeeping(drivestuff.drive);
+		cgc_validatePtr(ptr);
 		for(;ptr<drivestuff.ibuf+256;ptr++) {
 			switch(*ptr) {
 				//car power state stuff.
 				case CAR_END:
-					validatePtr(drivestuff.drive);
-					transmit_all(STDOUT, (const char *)drivestuff.drive, sizeof(carstate));
+					cgc_validatePtr(drivestuff.drive);
+					cgc_transmit_all(STDOUT, (const char *)drivestuff.drive, sizeof(cgc_carstate));
 					_terminate(0);
 				case CAR_OFF:
 					//make sure car is in park.
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->gear == GEARS_PARK) {
 						drivestuff.drive->car_power = CAR_OFF;
 					} else {
@@ -223,14 +223,14 @@ void serviceLoop() {
 					}
 					break;
 				case CAR_ON:
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->car_power == CAR_OFF || drivestuff.drive->car_power == CAR_ACC)
 					{
 						drivestuff.drive->car_power = CAR_ON;
 					}
 					break;
 				case CAR_ACC:
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->car_power == CAR_OFF || (drivestuff.drive->car_power == CAR_ON && drivestuff.drive->gear == GEARS_PARK)) {
 						drivestuff.drive->car_power = CAR_ACC;
 					}
@@ -240,53 +240,53 @@ void serviceLoop() {
 				case TRUNK_OPEN:
 					//if you try to open the trunk and the alarm is on, set off the alarm.
 					//we don't have an alarm though, so just smash the stack.
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->alarm_state == ALARM_SET)
-						raiseAlarm();
+						cgc_raiseAlarm();
 
 				case TRUNK_CLOSED:
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->gear == GEARS_PARK)
 						drivestuff.drive->trunk_state = *ptr;
 					break;
 
 				case ALARM_SET:
 				case ALARM_UNSET:
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					drivestuff.drive->alarm_state = *ptr;
 					break;
 
 				case TRUNK_LOAD:
 				case TRUNK_UNLOAD:
-					validatePtr(drivestuff.drive);
+					cgc_validatePtr(drivestuff.drive);
 					if(drivestuff.drive->gear == GEARS_PARK && drivestuff.drive->trunk_state == TRUNK_OPEN) {
-						handleTrunk(drivestuff.drive, ptr);
+						cgc_handleTrunk(drivestuff.drive, ptr);
 					}
 					ptr++;
 					break;
 				default:
-					validatePtr(drivestuff.drive);
-					while(validatePtr(drivestuff.drive) && (drivestuff.drive->car_power != CAR_OFF) && ptr < drivestuff.ibuf+256) {
-						validatePtr(ptr);
+					cgc_validatePtr(drivestuff.drive);
+					while(cgc_validatePtr(drivestuff.drive) && (drivestuff.drive->car_power != CAR_OFF) && ptr < drivestuff.ibuf+256) {
+						cgc_validatePtr(ptr);
 						switch(*ptr) {
 							//windows can only be manipulated while the car is powered.
 							case WINDOWS_DOWN:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->window_state != WINDOWS_DOWN)
 									drivestuff.drive->window_state = WINDOWS_DOWN;
 								break;
 							case WINDOWS_UP:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->window_state != WINDOWS_UP)
 									drivestuff.drive->window_state = WINDOWS_UP;
 								break;
 							case MOONROOF_OPEN:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->moonroof_state != MOONROOF_OPEN)
 									drivestuff.drive->moonroof_state = MOONROOF_OPEN;
 								break;
 							case MOONROOF_CLOSED:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->moonroof_state != MOONROOF_CLOSED)
 									drivestuff.drive->moonroof_state = MOONROOF_CLOSED;
 								break;
@@ -300,20 +300,20 @@ void serviceLoop() {
 							case INFO_AUX:
 							//we don't let you change the radio until you're cruising.
 							//who listens to the radio while idled, anyway?
-								validatePtr(drivestuff.drive);
-								validatePtr(ptr);
+								cgc_validatePtr(drivestuff.drive);
+								cgc_validatePtr(ptr);
 								if(drivestuff.drive->gear > GEARS_THIRD)
 									drivestuff.drive->info_state = *ptr;
 								break;
 							case INFO_BT:
 								//bluetooth has some metadata
 								//track list and whatnot.
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								char tmplen;
-								validatePtr(ptr);
+								cgc_validatePtr(ptr);
 								if(drivestuff.drive->gear > GEARS_SECOND){
 									drivestuff.drive->info_state = INFO_BT;
-									updateBTMetadata(drivestuff.drive, ptr);
+									cgc_updateBTMetadata(drivestuff.drive, ptr);
 								}
 								ptr++;
 								tmplen = *ptr;
@@ -322,11 +322,11 @@ void serviceLoop() {
 
 							case INFO_VOLUP:
 							case INFO_VOLDOWN:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->info_state != INFO_OFF) {
 									int sign = 1;
 									short amount;
-									validatePtr(ptr);
+									cgc_validatePtr(ptr);
 									if(*ptr == INFO_VOLDOWN)
 										sign = -1;
 									amount = *(ptr+1);
@@ -345,7 +345,7 @@ void serviceLoop() {
 								break;
 
 							case CAR_OFF:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->gear == GEARS_PARK)
 									drivestuff.drive->car_power = CAR_OFF;
 								break;
@@ -354,7 +354,7 @@ void serviceLoop() {
 							case GEARS_ACCEL:
 								//accel doesn't impact speed until clutch is re-engaged.  It will spike RPMs
 								//though...
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->gear_state == GEARS_UNCLUTCH) {
 									drivestuff.drive->speed++;
 									drivestuff.drive->rpm += 25;
@@ -363,24 +363,24 @@ void serviceLoop() {
 								}
 								break;
 							case GEARS_SLOWDOWN:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								drivestuff.drive->speed--;
 								drivestuff.drive->rpm-=25;
 								break;
 							case GEARS_SHIFTUP:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->gear_state == GEARS_CLUTCH)
-									handleShift(drivestuff.drive, GEARS_SHIFTUP);
+									cgc_handleShift(drivestuff.drive, GEARS_SHIFTUP);
 								break;
 							case GEARS_SHIFTDOWN:
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(drivestuff.drive);
 								if(drivestuff.drive->gear_state == GEARS_CLUTCH)
-									handleShift(drivestuff.drive, GEARS_SHIFTDOWN);
+									cgc_handleShift(drivestuff.drive, GEARS_SHIFTDOWN);
 								break;
 							case GEARS_CLUTCH:
 							case GEARS_UNCLUTCH:
-								validatePtr(ptr);
-								validatePtr(drivestuff.drive);
+								cgc_validatePtr(ptr);
+								cgc_validatePtr(drivestuff.drive);
 								drivestuff.drive->gear_state = *ptr;
 								break;
 					}

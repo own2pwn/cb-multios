@@ -27,14 +27,14 @@ THE SOFTWARE.
 #include "genericParsers.h"
 
 /**
- * Parse the Border element and return a structure containing the data
- * @param str Pointer to a string structure
+ * Parse the cgc_Border cgc_element and return a structure containing the data
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to a border structure or NULL on failure
  **/
-Border *extractBorder( pstring str )
+cgc_Border *cgc_extractBorder( cgc_pstring str )
 {
 	char *temp = NULL;
-	pBorder bor = NULL;
+	cgc_pBorder bor = NULL;
 	int start = 0;
 	int end = 0;
 
@@ -43,36 +43,36 @@ Border *extractBorder( pstring str )
 	}
 
 	/// Allocate a new border structure
-	if ( allocate( sizeof(Border), 0, (void**)&bor) != 0 ) {
+	if ( allocate( sizeof(cgc_Border), 0, (void**)&bor) != 0 ) {
 		bor = NULL;
 		return bor;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If it does not open with a '{' then it is invalid.
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		goto error;
 	}
 
 	/// Skip any additional whitespace
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// Save the index
 	start = str->index;
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		goto error;
 	}
 
@@ -81,186 +81,186 @@ Border *extractBorder( pstring str )
 		goto error;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		goto error;
 	}
 
-	/// If the element id is not "Border" then this is the wrong function
-	if ( strcmp( temp, "Border") != 0 ) {
-		printf("!!Element id is not \"Border\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "cgc_Border" then this is the wrong function
+	if ( cgc_strcmp( temp, "cgc_Border") != 0 ) {
+		cgc_printf("!!Element id is not \"cgc_Border\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		goto error;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		goto error;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		goto error;
 	}
 
-	start = skipWhiteSpace( str );
+	start = cgc_skipWhiteSpace( str );
 
 	/// The border data must be a float
-	end = skipFloat( str );
+	end = cgc_skipFloat( str );
 
 	if ( start == end ) {
-		printf("!!Failed to locate first lat\n");
+		cgc_printf("!!Failed to locate first lat\n");
 		goto error;
 	}
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the first latitude float\n");
+		cgc_printf("!!Failed to locate the end of the first latitude float\n");
 		goto error;
 	}
 
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 	if (temp == NULL ) {
-		printf("!!Failed to copy first latitude float\n");
+		cgc_printf("!!Failed to copy first latitude float\n");
 		goto error;
 	}
 
 	/// Convert the first value
-	bor->latStart = atof( temp );
+	bor->latStart = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
 	/// Skip to the next value
-	start = skipWhiteSpace( str );
+	start = cgc_skipWhiteSpace( str );
 
-	end = skipFloat(str);
+	end = cgc_skipFloat(str);
 
 	if ( start == end ) {
-		printf("!!Failed to locate first long\n");
+		cgc_printf("!!Failed to locate first long\n");
 		goto error;
 	}
 
 	if ( start == -1 || end == -1 ) {
-		printf("!!Failed to locate first longitude float\n");
+		cgc_printf("!!Failed to locate first longitude float\n");
 		goto error;
 	}
 
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy first longitude float\n");
+		cgc_printf("!!Failed to copy first longitude float\n");
 		goto error;
 	}
 
 	/// Convert the first long
-	bor->lngStart = atof( temp );
+	bor->lngStart = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
 	/// Skip to the next value
-	start = skipWhiteSpace( str );
+	start = cgc_skipWhiteSpace( str );
 
-	end = skipFloat(str);
+	end = cgc_skipFloat(str);
 
 	if ( start == end ) {
-		printf("!!Failed to locate second lat\n");
+		cgc_printf("!!Failed to locate second lat\n");
 		goto error;
 	}
 
 	if ( start == -1 || end == -1 ) {
-		printf("!!Failed to locate second latitude float\n");
+		cgc_printf("!!Failed to locate second latitude float\n");
 		goto error;
 	}
 
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy second latitude float\n");
+		cgc_printf("!!Failed to copy second latitude float\n");
 		goto error;
 	}
 
 	/// Convert the second lat
-	bor->latEnd = atof( temp );
+	bor->latEnd = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
 	/// Skip to the next value
-	start = skipWhiteSpace( str );
+	start = cgc_skipWhiteSpace( str );
 
-	end = skipFloat(str);
+	end = cgc_skipFloat(str);
 
 	if ( start == end ) {
-		printf("!!Failed to locate second long\n");
+		cgc_printf("!!Failed to locate second long\n");
 		goto error;
 	}
 
 	if ( start == -1 || end == -1 ) {
-		printf("!!Failed to locate second longitude float\n");
+		cgc_printf("!!Failed to locate second longitude float\n");
 		goto error;
 	}
 
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy second longitude float\n");
+		cgc_printf("!!Failed to copy second longitude float\n");
 		goto error;
 	}
 
 	/// Convert the second long
-	bor->lngEnd = atof( temp );
+	bor->lngEnd = cgc_atof( temp );
 
 	deallocate( temp, (end-start) + 1 );
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		goto error;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		goto error;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		goto error;
 	}
 
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		goto error;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -268,30 +268,30 @@ Border *extractBorder( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Border") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "cgc_Border") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		goto error;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto error;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 
 	/// Everything succeeded, skip error
 	goto fin;
 		
 error:
-	deallocate( bor, sizeof(Border) );
+	deallocate( bor, sizeof(cgc_Border) );
 	bor = NULL;
 
 fin:
@@ -299,11 +299,11 @@ fin:
 }
 
 /**
- * Parse the Population element and return the stored value
- * @param str Pointer to a string structure
+ * Parse the Population cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
  * @return Returns the integer value or -1 on failure. Population should never be negative.
  **/
-int extractPopulation( pstring str )
+int cgc_extractPopulation( cgc_pstring str )
 {
 	char *temp = NULL;
 	int pop = -1;
@@ -318,119 +318,119 @@ int extractPopulation( pstring str )
 		return -1;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return -1;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return -1;
 	}
 
 	/// Skip any additional whitespace
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// Save the index
 	start = str->index;
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return -1;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return -1;
 	}
 
-	/// If the element id is not "Population" then this is the wrong function
-	if ( strcmp( temp, "Population") != 0 ) {
-		printf("!!Element id is not \"Population\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Population" then this is the wrong function
+	if ( cgc_strcmp( temp, "Population") != 0 ) {
+		cgc_printf("!!Element id is not \"Population\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return -1;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return -1;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return -1;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
 	ps = str->index;
 
 	/// The population data must be an integer
-	pe = skipInt( str );
+	pe = cgc_skipInt( str );
 
 	if ( pe == -1 ) {
-		printf("!!Failed to locate the end of the population data\n");
+		cgc_printf("!!Failed to locate the end of the population data\n");
 		return end;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return -1;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return -1;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return -1;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return start;
 	}
 
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return end;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -438,47 +438,47 @@ int extractPopulation( pstring str )
 	}
 #endif 
 
-	if ( strcmp( temp, "Population") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Population") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return -1;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return -1;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	temp = copyData( str, ps, pe );
+	/// Copy the name cgc_element data
+	temp = cgc_copyData( str, ps, pe );
 
 	if ( temp == NULL ) {
-		printf("!!Failed to copy population data\n");
+		cgc_printf("!!Failed to copy population data\n");
 		return -1;
 	}
 
-	pop = atoi( temp );
+	pop = cgc_atoi( temp );
 
-	deallocate( temp, strlen(temp) + 1 );
+	deallocate( temp, cgc_strlen(temp) + 1 );
 
 	return pop;
 }
 
 /**
- * Extracts the data from the Name element
- * @param str Pointer to a string structure
+ * Extracts the data from the Name cgc_element
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to the name data or NULL on failure
  *	The calling function must free the name pointer
  **/
-char *extractName( pstring str )
+char *cgc_extractName( cgc_pstring str )
 {
 	char *temp = NULL;
 	char *name = NULL;
@@ -493,35 +493,35 @@ char *extractName( pstring str )
 		return name;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return name;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return name;
 	}
 
 	/// Skip any additional whitespace
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// Save the index
 	start = str->index;
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return NULL;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -530,88 +530,88 @@ char *extractName( pstring str )
 #endif
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return NULL;
 	}
 
-	/// If the element id is not "Name" then this is the wrong function
-	if ( strcmp( temp, "Name") != 0 ) {
-		printf("!!Element id is not \"Name\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Name" then this is the wrong function
+	if ( cgc_strcmp( temp, "Name") != 0 ) {
+		cgc_printf("!!Element id is not \"Name\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return NULL;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return NULL;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return NULL;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Copy the start index to store the data
 	ns = str->index;
 
 	/// The name data must be alphanumeric
-	ne = skipToNonAlphaNum( str );
+	ne = cgc_skipToNonAlphaNum( str );
 
 	if ( ne == -1 ) {
-		printf("!!Failed to locate the end of the name data\n");
+		cgc_printf("!!Failed to locate the end of the name data\n");
 		return NULL;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		return NULL;
 	}
 
 	/// Skip past the brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		return NULL;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		return NULL;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		return NULL;
 	}
 
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		return NULL;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -619,27 +619,27 @@ char *extractName( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Name") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Name") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		return NULL;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		return NULL;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
-	/// Copy the name element data
-	name = copyData( str, ns, ne );
+	/// Copy the name cgc_element data
+	name = cgc_copyData( str, ns, ne );
 
 	return name;
 }

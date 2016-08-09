@@ -27,18 +27,18 @@ extern "C"
     #include <string.h>
 };
 
-Topping::~Topping()
+cgc_Topping::~cgc_Topping()
 {
 }
 
-bool Topping::operator==(const Topping &rhs) const
+bool cgc_Topping::operator==(const cgc_Topping &rhs) const
 {
-    return (strcasecmp(name, rhs.name) == 0);
+    return (cgc_strcasecmp(name, rhs.name) == 0);
 }
 
 
-bool Topping::operator!=(const Topping &rhs) const
+bool cgc_Topping::operator!=(const cgc_Topping &rhs) const
 {
-    return (strcasecmp(name, rhs.name) != 0);
+    return (cgc_strcasecmp(name, rhs.name) != 0);
 }
 

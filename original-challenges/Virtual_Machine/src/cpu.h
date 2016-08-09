@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <cutil_string.h>
 
-class CDMA;
-class CMMU;
-class CVM;
+class cgc_CDMA;
+class cgc_CMMU;
+class cgc_CVM;
 
 #define MAX_INSTRUCTION_COUNT	(400)
 
@@ -38,87 +38,87 @@ class CVM;
 #define REG_PC			15
 #define REG_SP			14
 
-class CCPU
+class cgc_CCPU
 {
 public:
-	CCPU( void *pMagicPage );
-	~CCPU( );
+	cgc_CCPU( void *pMagicPage );
+	~cgc_CCPU( );
 
-	bool Init( CMMU *pMMU, CVM *pVM, CDMA *pDMA, uint16_t entryAddress );
-	bool Run( void );
+	bool cgc_Init( cgc_CMMU *pMMU, cgc_CVM *pVM, cgc_CDMA *pDMA, cgc_uint16_t entryAddress );
+	bool cgc_Run( void );
 
-	bool HasException( void ) { return m_bException; };
-	CUtil::String GetExceptionText( void ) { return m_sExceptionText; };
+	bool cgc_HasException( void ) { return m_bException; };
+	CUtil::cgc_String cgc_GetExceptionText( void ) { return m_sExceptionText; };
 
-	CUtil::String DumpRegisters( void );
+	CUtil::cgc_String cgc_DumpRegisters( void );
 
 protected:
-	bool RunSingleInstruction( void );
+	bool cgc_RunSingleInstruction( void );
 
-	uint16_t FetchNextInstruction( void );
+	cgc_uint16_t cgc_FetchNextInstruction( void );
 #if 0	
-	uint16_t Read16( uint16_t address );
-	void Write16( uint16_t address, uint16_t value );
+	cgc_uint16_t cgc_Read16( cgc_uint16_t address );
+	void cgc_Write16( cgc_uint16_t address, cgc_uint16_t value );
 #endif
 
-	void LoadImmediateHI( uint8_t reg, uint8_t immediate );
-	void LoadImmediateLO( uint8_t reg, uint8_t immediate );
+	void cgc_LoadImmediateHI( cgc_uint8_t reg, cgc_uint8_t immediate );
+	void cgc_LoadImmediateLO( cgc_uint8_t reg, cgc_uint8_t immediate );
 
-	void AddReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void SubReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void MulReg( uint8_t regD, uint8_t regL, uint8_t regR );
-	void DivReg( uint8_t regD, uint8_t regL, uint8_t regR );
+	void cgc_AddReg( cgc_uint8_t regD, cgc_uint8_t regL, cgc_uint8_t regR );
+	void cgc_SubReg( cgc_uint8_t regD, cgc_uint8_t regL, cgc_uint8_t regR );
+	void cgc_MulReg( cgc_uint8_t regD, cgc_uint8_t regL, cgc_uint8_t regR );
+	void cgc_DivReg( cgc_uint8_t regD, cgc_uint8_t regL, cgc_uint8_t regR );
 
-	void AddImm( uint8_t reg, uint8_t immediate );
-	void SubImm( uint8_t reg, uint8_t immediate );
-	void MulImm( uint8_t reg, uint8_t immediate );
-	void DivImm( uint8_t reg, uint8_t immediate );
+	void cgc_AddImm( cgc_uint8_t reg, cgc_uint8_t immediate );
+	void cgc_SubImm( cgc_uint8_t reg, cgc_uint8_t immediate );
+	void cgc_MulImm( cgc_uint8_t reg, cgc_uint8_t immediate );
+	void cgc_DivImm( cgc_uint8_t reg, cgc_uint8_t immediate );
 
-	void MovReg( uint8_t regL, uint8_t regR );
-	void SwapReg( uint8_t regL, uint8_t regR );
+	void cgc_MovReg( cgc_uint8_t regL, cgc_uint8_t regR );
+	void cgc_SwapReg( cgc_uint8_t regL, cgc_uint8_t regR );
 
-	void JumpOffsetZero( uint8_t reg, uint8_t sign, uint8_t imm );
-	void JumpOffsetNotZero( uint8_t reg, uint8_t sign, uint8_t imm );
+	void cgc_JumpOffsetZero( cgc_uint8_t reg, cgc_uint8_t sign, cgc_uint8_t imm );
+	void cgc_JumpOffsetNotZero( cgc_uint8_t reg, cgc_uint8_t sign, cgc_uint8_t imm );
 
-	void JumpLTReg( uint8_t regL, uint8_t regR, uint8_t offsetReg );
-	void JumpGTReg( uint8_t regL, uint8_t regR, uint8_t offsetReg );
+	void cgc_JumpLTReg( cgc_uint8_t regL, cgc_uint8_t regR, cgc_uint8_t offsetReg );
+	void cgc_JumpGTReg( cgc_uint8_t regL, cgc_uint8_t regR, cgc_uint8_t offsetReg );
 
-	void JumpReg( uint8_t offsetReg );
-	void JumpOffset( uint8_t sign, uint16_t offset );
+	void cgc_JumpReg( cgc_uint8_t offsetReg );
+	void cgc_JumpOffset( cgc_uint8_t sign, cgc_uint16_t offset );
 
-	void JumpRegZero( uint8_t reg, uint8_t offsetReg );
-	void JumpRegNotZero( uint8_t reg, uint8_t offsetReg );
+	void cgc_JumpRegZero( cgc_uint8_t reg, cgc_uint8_t offsetReg );
+	void cgc_JumpRegNotZero( cgc_uint8_t reg, cgc_uint8_t offsetReg );
 
-	void DMAInit( uint8_t deviceID );
-	void DMARead( uint8_t regFrom, uint8_t regLen );
-	void DMAWrite( uint8_t regFrom, uint8_t regLen );
+	void cgc_DMAInit( cgc_uint8_t deviceID );
+	void cgc_DMARead( cgc_uint8_t regFrom, cgc_uint8_t regLen );
+	void cgc_DMAWrite( cgc_uint8_t regFrom, cgc_uint8_t regLen );
 
-	void GetInstructionCount( uint8_t regL, uint8_t regR );
+	void cgc_GetInstructionCount( cgc_uint8_t regL, cgc_uint8_t regR );
 
-	void GetRand( uint8_t reg );
-	void GetSeedMaterial( uint8_t reg );
+	void cgc_GetRand( cgc_uint8_t reg );
+	void cgc_GetSeedMaterial( cgc_uint8_t reg );
 
-	void LoadRegister( uint8_t regD, uint8_t regAddr );
-	void StoreRegister( uint8_t regD, uint8_t regAddr );
-
-private:
-	uint16_t GetMagicPageSeed( void );
+	void cgc_LoadRegister( cgc_uint8_t regD, cgc_uint8_t regAddr );
+	void cgc_StoreRegister( cgc_uint8_t regD, cgc_uint8_t regAddr );
 
 private:
-	CDMA *m_pDMA;
-	CMMU *m_pMMU;
-	CVM *m_pVM;
+	cgc_uint16_t cgc_GetMagicPageSeed( void );
 
-	uint16_t m_regs[MAX_CPU_REGISTERS];
+private:
+	cgc_CDMA *m_pDMA;
+	cgc_CMMU *m_pMMU;
+	cgc_CVM *m_pVM;
 
-	uint32_t m_instrCount;	// Counts number of instructions executed
+	cgc_uint16_t m_regs[MAX_CPU_REGISTERS];
+
+	cgc_uint32_t m_instrCount;	// Counts number of instructions executed
 	bool m_bException;
 
-	CUtil::String m_sExceptionText;	// Exception text
+	CUtil::cgc_String m_sExceptionText;	// Exception text
 
 	void *m_pMagicPage;
 
-	uint8_t m_dmaDeviceID;
+	cgc_uint8_t m_dmaDeviceID;
 };
 
 #endif // _CPU_H__

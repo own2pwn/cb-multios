@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,15 +29,15 @@
 
 #include "malloc_internal.h"
 
-void *calloc(size_t nmemb, size_t size)
+void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size)
 {
-    uint64_t total = (uint64_t)nmemb * size;
+    cgc_uint64_t total = (cgc_uint64_t)nmemb * size;
     if (total > UINT32_MAX)
         return NULL;
 
-    void *ret = malloc((size_t)total);
+    void *ret = cgc_malloc((cgc_size_t)total);
     if (ret == NULL)
         return NULL;
-    memset(ret, 0, (size_t)total);
+    cgc_memset(ret, 0, (cgc_size_t)total);
     return ret;
 }

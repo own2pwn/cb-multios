@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -58,25 +58,25 @@ typedef struct date {
   int year;
   int month;
   int date;
-} date_t;
+} cgc_date_t;
 
-typedef struct memo memo_t;
-typedef enum mresult_t (*memo_fn) (memo_t *);
+typedef struct memo cgc_memo_t;
+typedef enum mresult_t (*cgc_memo_fn) (cgc_memo_t *);
 
 struct memo {
   int id;
   char subject[MAX_MEMO_SUBJECT];
-  date_t date;
+  cgc_date_t date;
   enum priority_t priority;
   char *body;
-  memo_fn mfuns[3];
+  cgc_memo_fn mfuns[3];
 };
 
-memo_t* new_memo(memo_fn view_fn, memo_fn update_fn, memo_fn delete_fn);
-enum mresult_t default_view_memo(memo_t *memo);
-enum mresult_t default_update_memo(memo_t *memo);
-enum mresult_t default_delete_memo(memo_t *memo);
+cgc_memo_t* cgc_new_memo(cgc_memo_fn view_fn, cgc_memo_fn update_fn, cgc_memo_fn delete_fn);
+enum mresult_t cgc_default_view_memo(cgc_memo_t *memo);
+enum mresult_t cgc_default_update_memo(cgc_memo_t *memo);
+enum mresult_t cgc_default_delete_memo(cgc_memo_t *memo);
 
-enum mresult_t validate_memo(memo_t *memo);
+enum mresult_t cgc_validate_memo(cgc_memo_t *memo);
 
 #endif

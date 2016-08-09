@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,11 +35,11 @@
 typedef struct autocorrect {
   char typo[MAX_AC_LEN];
   char correct[MAX_AC_LEN];
-} ac_t;
+} cgc_ac_t;
 
-void ac_init();
-void ac_add_custom(char *, char *);
-void ac_process(void *);
-char *ac_read(int fd, char term);
+void cgc_ac_init();
+void cgc_ac_add_custom(char *, char *);
+void cgc_ac_process(void *);
+char *cgc_ac_read(int fd, char term);
 
 #endif

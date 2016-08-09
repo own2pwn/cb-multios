@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -88,7 +88,7 @@
 //     NEW = 2,
 //     OPEN = 4,
 //     CLOSED = 8,
-// } e_states;
+// } cgc_e_states;
 
 // second byte encodes the state for when it is a valid operation
 enum {
@@ -112,11 +112,11 @@ enum {
 	C_MENU_QUIT 				= 0x5F,
 };
 
-election_t e;
+cgc_election_t e;
 
 
 /**
- * Print login entry into menu.
+ * Print cgc_login entry into menu.
  *
  *  Login when election is in any state except INIT, and no user is auth'd
  *  Goto Main Menu when election is in any state except INIT, and user is auth'd
@@ -124,7 +124,7 @@ election_t e;
  * @param s 	Election state
  * @param cred 	Auth credential id
  */
-static void print_login_menu(e_states s, auth_t cred) {
+static void cgc_print_login_menu(cgc_e_states s, cgc_auth_t cred) {
 
 	if ((INIT != s) && 
 		(NO_AUTH == cred)) {
@@ -146,7 +146,7 @@ static void print_login_menu(e_states s, auth_t cred) {
  * @param s 	Election state
  * @param cred 	Auth credential id
  */
-static void print_admin_menu(e_states s, auth_t cred) {
+static void cgc_print_admin_menu(cgc_e_states s, cgc_auth_t cred) {
 	if ((INIT == s) && 
 		(NO_AUTH == cred)) {
 		SEND(STDOUT, MENU_CREATE_ELECTION, sizeof(MENU_CREATE_ELECTION));
@@ -178,7 +178,7 @@ static void print_admin_menu(e_states s, auth_t cred) {
  * @param s 	Election state
  * @param cred 	Auth credential id
  */
-static void print_voting_menu(e_states s, auth_t cred) {
+static void cgc_print_voting_menu(cgc_e_states s, cgc_auth_t cred) {
 
 	if ((OPEN == s) && 
 		(VOTER == cred)) {
@@ -193,7 +193,7 @@ static void print_voting_menu(e_states s, auth_t cred) {
 	if ((OPEN == s) || (NEW == s)) {
 		if ((E_MGR == cred) || 
 			((VOTER == cred) && (1 == e.conf.write_in_ok))) {
-			if (list_length(e.candidates) < e.conf.max_candidates) {
+			if (cgc_list_length(e.candidates) < e.conf.max_candidates) {
 				SEND(STDOUT, MENU_ADD_CANDIDATE, sizeof(MENU_ADD_CANDIDATE));
 			}
 		}
@@ -211,7 +211,7 @@ static void print_voting_menu(e_states s, auth_t cred) {
  * @param s 	Election state
  * @param cred 	Auth credential id
  */
-static void print_results_menu(e_states s, auth_t cred) {
+static void cgc_print_results_menu(cgc_e_states s, cgc_auth_t cred) {
 
 	if (CLOSED == s) {
 		if ((E_MGR == cred) || (VOTER == cred)) {
@@ -229,7 +229,7 @@ static void print_results_menu(e_states s, auth_t cred) {
  *
  * @param l 	Pointer to char
  */
-static void receive_letter(char *l) {
+static void cgc_receive_letter(char *l) {
     char buf[2];
 
     RECV_DELIM(STDIN, DELIM, buf, 2);
@@ -242,18 +242,18 @@ static void receive_letter(char *l) {
  * @param n 	Pointer to uint to store number
  * @return number of bytes stored in n, or ERRNO_CONV on error
  */
-static int receive_number(unsigned int *n) {
+static int cgc_receive_number(unsigned int *n) {
     char buf[15];
 
     RECV_DELIM(STDIN, DELIM, buf, 15);
     *n = 0;
-    return strtou(buf, 10, n);
+    return cgc_strtou(buf, 10, n);
 }
 
 /**
  * Prompt for and store the first and last name of the person.
  */
-static void set_first_last_name(person_t *person) {
+static void cgc_set_first_last_name(cgc_person_t *person) {
 
 	// TODO: ensure only valid chars are entered for the name ;)
 	SEND(STDOUT, F_NAME, sizeof(F_NAME));
@@ -264,17 +264,17 @@ static void set_first_last_name(person_t *person) {
 }
 
 /**
- * Function to validate the content of a vote struct
+ * Function to validate the content of a cgc_vote struct
  *
  * Validation Checks:
  * - ??
  *
- * @param v 	A vote
+ * @param v 	A cgc_vote
  * @return 	TRUE if pass validation, else FALSE
  */
-static unsigned char validate_vote(void *v) {
+static unsigned char cgc_validate_vote(void *v) {
 
-	vote_t *vote = (vote_t *)v;
+	cgc_vote_t *cgc_vote = (cgc_vote_t *)v;
 
 	return TRUE;
 }
@@ -289,13 +289,13 @@ static unsigned char validate_vote(void *v) {
  * @param v 	A voter
  * @return 	TRUE if pass validation, else FALSE
  */
-static unsigned char validate_voter(void *v) {
+static unsigned char cgc_validate_voter(void *v) {
 
-	voter_t *voter = (voter_t *)v;
+	cgc_voter_t *voter = (cgc_voter_t *)v;
 
 	// check: first and last name have at least 1 letter; reject empty names
-	if ((0 == strlen(voter->person.f_name, TERM)) ||
-		(0 == strlen(voter->person.l_name, TERM))) {
+	if ((0 == cgc_strlen(voter->person.f_name, TERM)) ||
+		(0 == cgc_strlen(voter->person.l_name, TERM))) {
 		return FALSE;
 	}
 
@@ -312,36 +312,36 @@ static unsigned char validate_voter(void *v) {
  * @param c_new 	A new candidate
  * @return 	TRUE if pass validation, else FALSE
  */
-static unsigned char validate_candidate(void *c_new) {
+static unsigned char cgc_validate_candidate(void *c_new) {
 
-	candidate_t *candidate = (candidate_t *)c_new;
+	cgc_candidate_t *candidate = (cgc_candidate_t *)c_new;
 
 	// check: first and last name have at least 1 letter; reject empty names
-	if ((0 == strlen(candidate->person.f_name, TERM)) ||
-		(0 == strlen(candidate->person.l_name, TERM))) {
+	if ((0 == cgc_strlen(candidate->person.f_name, TERM)) ||
+		(0 == cgc_strlen(candidate->person.l_name, TERM))) {
 		return FALSE;
 	}
 
 
-	struct node *end = list_end_marker(e.candidates);
-	struct node *cur = list_head_node(e.candidates);
-	candidate_t *c = NULL;
+	struct node *end = cgc_list_end_marker(e.candidates);
+	struct node *cur = cgc_list_head_node(e.candidates);
+	cgc_candidate_t *c = NULL;
 
 	// do we have any other candidates?
-	if (0 == list_length(e.candidates)) {
+	if (0 == cgc_list_length(e.candidates)) {
 		return TRUE;
 	}
 
 	// the following assume there is at least 1 other candidate
 	// check: is there an existing candidate with the same name; reject duplicate names
 	while (cur != end) {
-		c = (candidate_t *)cur->data;
+		c = (cgc_candidate_t *)cur->data;
 
-		if ((0 == streq(c->person.f_name, candidate->person.f_name, TERM)) &&
-			(0 == streq(c->person.l_name, candidate->person.l_name, TERM))) {
+		if ((0 == cgc_streq(c->person.f_name, candidate->person.f_name, TERM)) &&
+			(0 == cgc_streq(c->person.l_name, candidate->person.l_name, TERM))) {
 			return FALSE;
 		}
-		cur = list_next_node(cur);
+		cur = cgc_list_next_node(cur);
 	}
 	return TRUE;
 }
@@ -355,13 +355,13 @@ static unsigned char validate_candidate(void *c_new) {
  * @param e 	The election manager
  * @return 	TRUE if pass validation, else FALSE
  */
-static unsigned char validate_emgr(void *e) {
+static unsigned char cgc_validate_emgr(void *e) {
 
-	e_mgr_t *e_mgr = (e_mgr_t *)e;
+	cgc_e_mgr_t *e_mgr = (cgc_e_mgr_t *)e;
 
 	// check: first and last name have at least 1 letter; reject empty names
-	if ((0 == strlen(e_mgr->person.f_name, TERM)) ||
-		(0 == strlen(e_mgr->person.l_name, TERM))) {
+	if ((0 == cgc_strlen(e_mgr->person.f_name, TERM)) ||
+		(0 == cgc_strlen(e_mgr->person.l_name, TERM))) {
 		return FALSE;
 	}
 
@@ -373,7 +373,7 @@ static unsigned char validate_emgr(void *e) {
  *
  * @return SUCCESS on success, else -1
  */
-static int create_election_mgr(void) {
+static int cgc_create_election_mgr(void) {
 	int ret = SUCCESS;
 	char outbuf[2 * (12 + sizeof(NEW_AUTH_KEY) + 4)];
 	char *fmt = "%S%U\n%S%U\n";
@@ -381,20 +381,20 @@ static int create_election_mgr(void) {
 
 	SEND(STDOUT, CREATE_E_MGR, sizeof(CREATE_E_MGR));
 
-	e.manager = malloc(sizeof(e_mgr_t));
+	e.manager = cgc_malloc(sizeof(cgc_e_mgr_t));
 	MALLOC_OK(e.manager);
 
 	e.manager->person.id = e.conf.e_mgr_id;
-	set_first_last_name(&(e.manager->person));
-	e.manager->validate = &validate_emgr;
-	rand(&(e.manager->auth_key), 4);
+	cgc_set_first_last_name(&(e.manager->person));
+	e.manager->validate = &cgc_validate_emgr;
+	cgc_rand(&(e.manager->auth_key), 4);
 
 	if (FALSE == e.manager->validate(e.manager)) {
 		return -1;
 	}
 
 	// send user id and auth_key
-	bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
+	bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
 							NEW_UID,
 							e.manager->person.id,
 							NEW_AUTH_KEY,
@@ -408,7 +408,7 @@ static int create_election_mgr(void) {
 /**
  * Prompt for and store election name.
  */
-static void get_election_name(void) {
+static void cgc_get_election_name(void) {
 	SEND(STDOUT, ELECTION_NAME, sizeof(ELECTION_NAME));
     RECV_DELIM_TRIM(STDIN, DELIM, e.e_name, sizeof(e.e_name));
 }
@@ -418,22 +418,22 @@ static void get_election_name(void) {
  *
  * @return SUCCESS on success, else ERRNO_CONV on error
  */
-static int set_election_conf(void) {
+static int cgc_set_election_conf(void) {
 	int ret = SUCCESS;
 	unsigned int ans = 0;
 	char letter = '\0';
 
 	// define election conf
 	SEND(STDOUT, NUM_WINNERS_Q, sizeof(NUM_WINNERS_Q));
-	NEG_BAIL_RET(receive_number(&ans));
+	NEG_BAIL_RET(cgc_receive_number(&ans));
 	e.conf.num_winners = ans & 0xFF;
 
 	SEND(STDOUT, MAX_CANDIDATES_Q, sizeof(MAX_CANDIDATES_Q));
-	NEG_BAIL_RET(receive_number(&ans));
+	NEG_BAIL_RET(cgc_receive_number(&ans));
 	e.conf.max_candidates = ans & 0xFF;
 
 	SEND(STDOUT, WRITE_IN_OK_Q, sizeof(WRITE_IN_OK_Q));
-	receive_letter(&letter);
+	cgc_receive_letter(&letter);
 	if (('Y' == letter) || ('y' == letter)) {
 		e.conf.write_in_ok = 1;
 	} else {
@@ -448,7 +448,7 @@ static int set_election_conf(void) {
  *
  * @return next voter ID number
  */
-static unsigned int get_next_voter_id(void) {
+static unsigned int cgc_get_next_voter_id(void) {
 	unsigned int vid = e.conf.next_voter_id++;
 	return vid;
 }
@@ -458,18 +458,18 @@ static unsigned int get_next_voter_id(void) {
  *
  * @return next candidate ID number
  */
-static unsigned int get_next_candidate_id(void) {
+static unsigned int cgc_get_next_candidate_id(void) {
 	unsigned int cid = e.conf.next_candidate_id++;
 	return cid;
 }
 
 /**
- * Return the vote ID number
+ * Return the cgc_vote ID number
  *
  * @param v 	Pointer to a voter
- * @return vote ID number
+ * @return cgc_vote ID number
  */
-static unsigned int get_next_vote_id(voter_t *v) {
+static unsigned int cgc_get_next_vote_id(cgc_voter_t *v) {
 	unsigned int vote_id = 0;
 #ifdef PATCHED_1
 	vote_id = v->person.id ^ 0xC0C0CAFE;
@@ -486,8 +486,8 @@ static unsigned int get_next_vote_id(voter_t *v) {
  * @param candidate_id 	A void * to a candidate ID
  * @return TRUE if matches, else FALSE
  */
-static unsigned char is_candidate(const void *candidate, void *candidate_id) {
-	return ((candidate_t *)candidate)->person.id == *(unsigned int *)candidate_id;
+static unsigned char cgc_is_candidate(const void *candidate, void *candidate_id) {
+	return ((cgc_candidate_t *)candidate)->person.id == *(unsigned int *)candidate_id;
 }
 
 /**
@@ -495,18 +495,18 @@ static unsigned char is_candidate(const void *candidate, void *candidate_id) {
  *
  * @return SUCCESS on success, else -1
  */
-static int print_select_candidate_list(void) {
+static int cgc_print_select_candidate_list(void) {
 
 	int ret = 0;
 	char outbuf[1 + 12 + 2 + 2*NAME_FIELD_SZ + 1 + 1];
 	char *fmt = "\t%U: %S %S\n";
-	struct node *end = list_end_marker(e.candidates);
-	struct node *cur = list_head_node(e.candidates);
-	candidate_t *c = NULL;
+	struct node *end = cgc_list_end_marker(e.candidates);
+	struct node *cur = cgc_list_head_node(e.candidates);
+	cgc_candidate_t *c = NULL;
 	unsigned int bytes_used = 0;
 
-	// do we have a candidate to vote for?
-	if (0 == list_length(e.candidates)) {
+	// do we have a candidate to cgc_vote for?
+	if (0 == cgc_list_length(e.candidates)) {
 		SEND(STDOUT, EMPTY_CANDIDATES, sizeof(EMPTY_CANDIDATES));
 		return SUCCESS;
 	}
@@ -515,11 +515,11 @@ static int print_select_candidate_list(void) {
 	// "\tID: Fname Lname\n"
 	SEND(STDOUT, SELECT_CANDIDATE, sizeof(SELECT_CANDIDATE));
 	while (cur != end) {
-		memset(outbuf, '\0', sizeof(outbuf));
+		cgc_memset(outbuf, '\0', sizeof(outbuf));
 		bytes_used = 0;
 
-		c = (candidate_t *)cur->data;
-		bytes_used = snprintf(outbuf, 
+		c = (cgc_candidate_t *)cur->data;
+		bytes_used = cgc_snprintf(outbuf, 
 							 sizeof(outbuf),
 							 '%', TERM, fmt,
 							 c->person.id,
@@ -527,14 +527,14 @@ static int print_select_candidate_list(void) {
 							 c->person.l_name);
 		SEND(STDOUT, outbuf, bytes_used);
 
-		cur = list_next_node(cur);
+		cur = cgc_list_next_node(cur);
 	}
 
 	return SUCCESS;
 }
 
 /*
- * Prints a voting receipt for a successful vote
+ * Prints a voting receipt for a successful cgc_vote
  *
  * (conf#, candidate f/l name)
  *
@@ -542,13 +542,13 @@ static int print_select_candidate_list(void) {
  * @param c 	Pointer to candidate
  * @return SUCCESS on success, else -1
  */
-static int send_voting_receipt(unsigned int conf, candidate_t *c) {
+static int cgc_send_voting_receipt(unsigned int conf, cgc_candidate_t *c) {
 	int ret = 0;
 	char outbuf[14 + 12 + 31 + 2*NAME_FIELD_SZ + 3];
 	char *fmt = "Confirmation #%U. Vote recorded for candidate: %S %S.\n";
 	unsigned int bytes_used = 0;
 
-	bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
+	bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
 							conf,
 							c->person.f_name,
 							c->person.l_name);
@@ -563,94 +563,94 @@ static int send_voting_receipt(unsigned int conf, candidate_t *c) {
  * @param c 	Pointer to store candidate pointer.
  * @return 	SUCCESS if found, else -1
  */
-static int get_candidate_by_id(unsigned int c_id, candidate_t **c) {
+static int cgc_get_candidate_by_id(unsigned int c_id, cgc_candidate_t **c) {
 	struct node *cur = NULL;
-	cur = list_find_node_with_data(e.candidates, &is_candidate, &c_id);
+	cur = cgc_list_find_node_with_data(e.candidates, &cgc_is_candidate, &c_id);
 	if (NULL == cur) {
 		SEND(STDOUT, INVALID_CANDIDATE, sizeof(INVALID_CANDIDATE));
 		return -1;
 	}
-	*c = (candidate_t *)cur->data;
+	*c = (cgc_candidate_t *)cur->data;
 	return SUCCESS;
 }
 
 /**
- * Create and populate the vote struct, then insert it into votes hash table.
+ * Create and populate the cgc_vote struct, then insert it into votes hash table.
  *
  * @param c 		Candidate being voted for
- * @param vote_id 	Pointer to store vote ID number
+ * @param vote_id 	Pointer to store cgc_vote ID number
  * @return 	SUCCESS on success, else -1
  */
-static unsigned int create_and_insert_vote(candidate_t *c, unsigned int *vote_id) {
+static unsigned int cgc_create_and_insert_vote(cgc_candidate_t *c, unsigned int *vote_id) {
 #ifdef PATCHED_2
 #else
 	char local_key[MAX_SIZE];
 #endif
 	int ret = 0;
-	vote_t *vote = NULL;
+	cgc_vote_t *cgc_vote = NULL;
 	char *key = NULL;
 	unsigned key_buf_len = 0;
-	str_voidp_pair_t *pair = NULL;
-	voter_t *voter = (voter_t *)e.conf.authd_user;
+	cgc_str_voidp_pair_t *pair = NULL;
+	cgc_voter_t *voter = (cgc_voter_t *)e.conf.authd_user;
 	unsigned int bytes_written = 0;
 
-	// create vote struct
-	vote = malloc(sizeof(vote_t));
-	MALLOC_OK(vote);
+	// create cgc_vote struct
+	cgc_vote = cgc_malloc(sizeof(cgc_vote_t));
+	MALLOC_OK(cgc_vote);
 
-	vote->id = get_next_vote_id(voter);
-	vote->validate = &validate_vote;
+	cgc_vote->id = cgc_get_next_vote_id(voter);
+	cgc_vote->validate = &cgc_validate_vote;
 
-	*vote_id = vote->id;
-	voter->vote_id = vote->id;
+	*vote_id = cgc_vote->id;
+	voter->vote_id = cgc_vote->id;
 
-	// save voter and candidate into vote struct
-	if ((sizeof(voter_t) != memcpy(&vote->v, voter, sizeof(voter_t))) ||
-		(sizeof(candidate_t) != memcpy(&vote->c, c, sizeof(candidate_t))))
+	// save voter and candidate into cgc_vote struct
+	if ((sizeof(cgc_voter_t) != cgc_memcpy(&cgc_vote->v, voter, sizeof(cgc_voter_t))) ||
+		(sizeof(cgc_candidate_t) != cgc_memcpy(&cgc_vote->c, c, sizeof(cgc_candidate_t))))
 		_terminate(ERRNO_COPY);
 
-	if (FALSE == vote->validate(vote)) {
+	if (FALSE == cgc_vote->validate(cgc_vote)) {
 		return -1;
 	}
 
-	// insert vote using key "<first name> <last name>"
-	key_buf_len = strlen(voter->person.f_name, TERM) +
-				  strlen(voter->person.l_name, TERM) + 2; 
-	key = malloc(key_buf_len);
+	// insert cgc_vote using key "<first name> <last name>"
+	key_buf_len = cgc_strlen(voter->person.f_name, TERM) +
+				  cgc_strlen(voter->person.l_name, TERM) + 2; 
+	key = cgc_malloc(key_buf_len);
 	MALLOC_OK(key);
 
 #ifdef PATCHED_2
-	bytes_written = snprintf(key, key_buf_len, '%', TERM, "%S %S",
+	bytes_written = cgc_snprintf(key, key_buf_len, '%', TERM, "%S %S",
 							voter->person.f_name, voter->person.l_name);
 
 	if ((key_buf_len -1) != bytes_written) {
 		_terminate(ERRNO_COPY);
 	}
 #else
-	bytes_written = snprintf(local_key, key_buf_len, '%', TERM, 
+	bytes_written = cgc_snprintf(local_key, key_buf_len, '%', TERM, 
 							voter->person.f_name, voter->person.l_name);
-	memcpy(key, local_key, bytes_written + 1);
+	cgc_memcpy(key, local_key, bytes_written + 1);
 #endif
 
 
-	pair = malloc(sizeof(str_voidp_pair_t));
+	pair = cgc_malloc(sizeof(cgc_str_voidp_pair_t));
 	MALLOC_OK(pair);
 
 	pair->key = key;
-	pair->value = vote;
-	pair = ht_pair_insert(e.votes, pair);
+	pair->value = cgc_vote;
+	pair = cgc_ht_pair_insert(e.votes, pair);
 
-	// check to see if this vote replaced a previous one, if so, free previous one
+	// check to see if this cgc_vote replaced a previous one, if so, cgc_free previous one
 	if (NULL != pair) {
-		free(pair->key);
-		free(pair->value);
-		free(pair);
+		cgc_free(pair->key);
+		cgc_free(pair->value);
+		cgc_free(pair);
 		pair = NULL;
 	}
 
 	// Test votes hash table to see if it needs to grow
-	if (TRUE == ht_is_re_hash_needed(e.votes)) {
-		e.votes = ht_re_hash(e.votes);
+	if (TRUE == cgc_ht_is_re_hash_needed(e.votes)) {
+		e.votes = cgc_ht_re_hash(e.votes);
 	}
 
 	return SUCCESS;
@@ -663,74 +663,74 @@ static unsigned int create_and_insert_vote(candidate_t *c, unsigned int *vote_id
  * @param c2 	Candidate 2
  * @return TRUE if equal, else FALSE
  */
-static int is_candidate_eq(candidate_t *c1, candidate_t *c2) {
+static int cgc_is_candidate_eq(cgc_candidate_t *c1, cgc_candidate_t *c2) {
 	return ((c1->person.id == c2->person.id) &&
-			(0 == streq(c1->person.f_name, c2->person.f_name, TERM)) &&
-			(0 == streq(c1->person.l_name, c2->person.l_name, TERM)));
+			(0 == cgc_streq(c1->person.f_name, c2->person.f_name, TERM)) &&
+			(0 == cgc_streq(c1->person.l_name, c2->person.l_name, TERM)));
 }
 
 /**
- * Predicate function to determine if vote count of first pair
+ * Predicate function to determine if cgc_vote count of first pair
  * 	is greater than or equal to second pair
  *
- * @param p1 	Pair 1 (uint vote count, void *candidate)
- * @param p2 	Pair 2 (uint vote count, void *candidate)
+ * @param p1 	Pair 1 (uint cgc_vote count, void *candidate)
+ * @param p2 	Pair 2 (uint cgc_vote count, void *candidate)
  * @return TRUE if p1 >= p2, else FALSE
  */
-static unsigned char is_pair_vote_cnt_gteq(const void *p1, void *p2) {
-	uint_voidp_pair_t *pair1 = (uint_voidp_pair_t *)p1;
-	uint_voidp_pair_t *pair2 = (uint_voidp_pair_t *)p2;
+static unsigned char cgc_is_pair_vote_cnt_gteq(const void *p1, void *p2) {
+	cgc_uint_voidp_pair_t *pair1 = (cgc_uint_voidp_pair_t *)p1;
+	cgc_uint_voidp_pair_t *pair2 = (cgc_uint_voidp_pair_t *)p2;
 
 	return pair1->key >= pair2->key;
 }
 
 /**
- * Free function for results_list tuple (vote count, p_candidate)
+ * Free function for results_list tuple (cgc_vote count, p_candidate)
  *
- * @param pair 	Tuple (vote count, p_candidate)
+ * @param pair 	Tuple (cgc_vote count, p_candidate)
  */
-static void free_results_list_pair(void *pair) {
-	free(pair);
+static void cgc_free_results_list_pair(void *pair) {
+	cgc_free(pair);
 }
 
 /**
  * Process votes to calculate voting results and store result tuples in results_list
  *
- * @param results_list 	Empty linked list to store result tuples (vote count, p_candidate)
+ * @param results_list 	Empty linked list to store result tuples (cgc_vote count, p_candidate)
  * @return SUCCESS on success, else -1
  */
-static int calculate_voting_results(struct list *results_list) {
+static int cgc_calculate_voting_results(struct list *results_list) {
 
-	uint_voidp_pair_t *pair = NULL;
+	cgc_uint_voidp_pair_t *pair = NULL;
 	unsigned int vote_count = 0;
-	candidate_t *c = NULL;
-	vote_t *v = NULL;
-	struct node *cur = list_head_node(e.candidates);
-	struct node *end = list_end_marker(e.candidates);
+	cgc_candidate_t *c = NULL;
+	cgc_vote_t *v = NULL;
+	struct node *cur = cgc_list_head_node(e.candidates);
+	struct node *end = cgc_list_end_marker(e.candidates);
 	while ((NULL != cur) && (cur != end)) {
-		c = (candidate_t *)cur->data;
+		c = (cgc_candidate_t *)cur->data;
 		vote_count = 0;
-		pair = (uint_voidp_pair_t *)ht_pair_iter_start(e.votes);
+		pair = (cgc_uint_voidp_pair_t *)cgc_ht_pair_iter_start(e.votes);
 		v = pair->value;
 		while (NULL != v) {
-			if (TRUE == is_candidate_eq(c, &v->c)) {
+			if (TRUE == cgc_is_candidate_eq(c, &v->c)) {
 				vote_count++;
 			}
-			pair = (uint_voidp_pair_t *)ht_pair_iter_next(e.votes);
+			pair = (cgc_uint_voidp_pair_t *)cgc_ht_pair_iter_next(e.votes);
 			if (NULL == pair) {
 				v = NULL;
 			} else {
 				v = pair->value;
 			}
 		}
-		pair = malloc(sizeof(uint_voidp_pair_t));
+		pair = cgc_malloc(sizeof(cgc_uint_voidp_pair_t));
 		MALLOC_OK(pair);
 
 		pair->key = vote_count;
 		pair->value = c;
-		list_insert_sorted(results_list, (void *)pair, &is_pair_vote_cnt_gteq, TRUE);
+		cgc_list_insert_sorted(results_list, (void *)pair, &cgc_is_pair_vote_cnt_gteq, TRUE);
 
-		cur = list_next_node(cur);
+		cur = cgc_list_next_node(cur);
 	}
 
 	return SUCCESS;
@@ -741,41 +741,41 @@ static int calculate_voting_results(struct list *results_list) {
  *
  * 	<Rank>.	<Votes> 	<Candidate_Name>
  *
- * @param results_list 	Linked list containing result tuples (vote count, candidate)
+ * @param results_list 	Linked list containing result tuples (cgc_vote count, candidate)
  * @param full 			TRUE -> send results for all candidates, 
  * 						FALSE -> send results for top num_winners candidates.
  * @return SUCCESS on success, else -1
  */
-static int send_voting_results(struct list *results_list, unsigned char full) {
+static int cgc_send_voting_results(struct list *results_list, unsigned char full) {
 	char outbuf[6 + 2*12 + 2*NAME_FIELD_SZ + 1];
 	char *fmt = "\t%U.\t%U\t%S %S\n";
 	struct node *cur = NULL;
-	candidate_t *c = NULL;
+	cgc_candidate_t *c = NULL;
 	unsigned int bytes_used = 0;
 	unsigned int order_count = 0;
-	uint_voidp_pair_t *pair = NULL;
+	cgc_uint_voidp_pair_t *pair = NULL;
 
 	// do we have candidates?
-	if (0 == list_length(e.candidates)) {
+	if (0 == cgc_list_length(e.candidates)) {
 		SEND(STDOUT, ZERO_CANDIDATES, sizeof(ZERO_CANDIDATES));
 		return SUCCESS;
 	}
 
 	// print list of candidates as:
-	// "\t<rank #>: <vote cnt> <Fname> <Lname>\n"
+	// "\t<rank #>: <cgc_vote cnt> <Fname> <Lname>\n"
 	SEND(STDOUT, CANDIDATE_ORDER, sizeof(CANDIDATE_ORDER));
 
-	cur = list_head_node(results_list);
-	while ((NULL != cur) && (cur != list_end_marker(results_list))) {
-		pair = (uint_voidp_pair_t *)cur->data;
+	cur = cgc_list_head_node(results_list);
+	while ((NULL != cur) && (cur != cgc_list_end_marker(results_list))) {
+		pair = (cgc_uint_voidp_pair_t *)cur->data;
 
 		if ((++order_count <= e.conf.num_winners) || (TRUE == full)) {
 
-			memset(outbuf, '\0', sizeof(outbuf));
+			cgc_memset(outbuf, '\0', sizeof(outbuf));
 			bytes_used = 0;
 
-			c = (candidate_t *)pair->value;
-			bytes_used = snprintf(outbuf, 
+			c = (cgc_candidate_t *)pair->value;
+			bytes_used = cgc_snprintf(outbuf, 
 								 sizeof(outbuf),
 								 '%', TERM, fmt,
 								 order_count,
@@ -784,7 +784,7 @@ static int send_voting_results(struct list *results_list, unsigned char full) {
 								 c->person.l_name);
 			SEND(STDOUT, outbuf, bytes_used);
 		}
-		cur = list_next_node(cur);
+		cur = cgc_list_next_node(cur);
 	}
 	return SUCCESS;
 }
@@ -794,15 +794,15 @@ static int send_voting_results(struct list *results_list, unsigned char full) {
  *
  * @return SUCCESS on success, else -1
  */
-static int send_voter_results(void) {
+static int cgc_send_voter_results(void) {
 	char outbuf[4 +3 + 2*NAME_FIELD_SZ + 1];
 	char *fmt = "\t%S\t%S %S\n";
-	voter_t *v = NULL;
-	uint_voidp_pair_t *cur = NULL;
+	cgc_voter_t *v = NULL;
+	cgc_uint_voidp_pair_t *cur = NULL;
 	unsigned int bytes_used = 0;
 
 	// do we have voters?
-	if (0 == ht_length(e.voters)) {
+	if (0 == cgc_ht_length(e.voters)) {
 		SEND(STDOUT, ZERO_VOTERS, sizeof(ZERO_VOTERS));
 		return SUCCESS;
 	}
@@ -811,22 +811,22 @@ static int send_voter_results(void) {
 	// "\t<voted?>\t<Fname> <Lname>\n"
 	SEND(STDOUT, VOTER_ORDER, sizeof(VOTER_ORDER));
 
-	cur = (uint_voidp_pair_t *)ht_pair_iter_start(e.voters);
+	cur = (cgc_uint_voidp_pair_t *)cgc_ht_pair_iter_start(e.voters);
 	while (NULL != cur) {
-		v = (voter_t *)cur->value;
+		v = (cgc_voter_t *)cur->value;
 
-		memset(outbuf, '\0', sizeof(outbuf));
+		cgc_memset(outbuf, '\0', sizeof(outbuf));
 		bytes_used = 0;
 
 		if (0 == v->vote_id) {
-			bytes_used = snprintf(outbuf, 
+			bytes_used = cgc_snprintf(outbuf, 
 								 sizeof(outbuf),
 								 '%', TERM, fmt,
 								 " NO",
 								 v->person.f_name,
 								 v->person.l_name);
 		} else {
-			bytes_used = snprintf(outbuf, 
+			bytes_used = cgc_snprintf(outbuf, 
 								 sizeof(outbuf),
 								 '%', TERM, fmt,
 								 " YES",
@@ -836,7 +836,7 @@ static int send_voter_results(void) {
 
 		SEND(STDOUT, outbuf, bytes_used);
 
-		cur = (uint_voidp_pair_t *)ht_pair_iter_next(e.voters);
+		cur = (cgc_uint_voidp_pair_t *)cgc_ht_pair_iter_next(e.voters);
 	}
 	return SUCCESS;
 }
@@ -847,7 +847,7 @@ static int send_voter_results(void) {
  * @return 	TRUE if no user is logged in, 
  *			FALSE if any user is logged in
  */
-static int is_nobody_logged_in(void) {
+static int cgc_is_nobody_logged_in(void) {
 	return NULL == e.conf.authd_user;
 }
 
@@ -857,7 +857,7 @@ static int is_nobody_logged_in(void) {
  * @return 	TRUE if e-mgr is logged in,
  * 			FALSE if e-mgr is not logged in
  */
-static int is_emgr_logged_in(void) {
+static int cgc_is_emgr_logged_in(void) {
 	return e.manager == e.conf.authd_user;
 }
 
@@ -867,7 +867,7 @@ static int is_emgr_logged_in(void) {
  * @return 	TRUE if a voter is logged in,
  * 			FALSE if no voter is logged in
  */
-static int is_voter_logged_in(void) {
+static int cgc_is_voter_logged_in(void) {
 	return ((NULL != e.conf.authd_user) && (e.manager != e.conf.authd_user));
 }
 
@@ -879,36 +879,36 @@ static int is_voter_logged_in(void) {
  *			E_MGR for valid election manager creds,
  *			NO_AUTH for invalid creds
  */
-auth_t login(void) {
+cgc_auth_t cgc_login(void) {
 	unsigned int id_num;
 	char last_name[NAME_FIELD_SZ];
-	voter_t *v = NULL;
+	cgc_voter_t *v = NULL;
 
-	if (FALSE == is_nobody_logged_in()) return NO_AUTH;
+	if (FALSE == cgc_is_nobody_logged_in()) return NO_AUTH;
 
-	e.conf.authd_user = NULL; // successful login -> point to voter or e_mgr
+	e.conf.authd_user = NULL; // successful cgc_login -> point to voter or e_mgr
 
 	SEND(STDOUT, ENTER_ID, sizeof(ENTER_ID));
-	if (0 >= receive_number(&id_num)) return NO_AUTH;
+	if (0 >= cgc_receive_number(&id_num)) return NO_AUTH;
 
 	SEND(STDOUT, L_NAME, sizeof(L_NAME));
     RECV_DELIM_TRIM(STDIN, DELIM, last_name, sizeof(last_name));
 
     if ((id_num == E_MGR_ID) &&
-    	(0 == streq(last_name, e.manager->person.l_name, TERM))) {
+    	(0 == cgc_streq(last_name, e.manager->person.l_name, TERM))) {
 			SEND(STDOUT, ENTER_AUTH_KEY, sizeof(ENTER_AUTH_KEY));
 			id_num = 0; // re-using for auth_key
-			if (0 >= receive_number(&id_num)) return NO_AUTH;
+			if (0 >= cgc_receive_number(&id_num)) return NO_AUTH;
 
 			if (id_num == e.manager->auth_key) {
 	    		e.conf.authd_user = e.manager;
 	    		return E_MGR;
 			}
-    } else if (0 < ht_length(e.voters)) {
+    } else if (0 < cgc_ht_length(e.voters)) {
     	// search for voter with id == id_num and l_name == last_name
-    	v = (voter_t *)ht_value_as_voidp(e.voters, &id_num);
+    	v = (cgc_voter_t *)cgc_ht_value_as_voidp(e.voters, &id_num);
     	if ((NULL != v) && 
-    		(0 == streq(last_name, v->person.l_name, TERM))) {
+    		(0 == cgc_streq(last_name, v->person.l_name, TERM))) {
 	    		e.conf.authd_user = v;
 	    		return VOTER;
 		}
@@ -922,12 +922,12 @@ auth_t login(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int create_election(void) {
+int cgc_create_election(void) {
 	int ret = SUCCESS;
 
-	FAIL_BAIL_RET(create_election_mgr());
-	get_election_name();
-	FAIL_BAIL_RET(set_election_conf());
+	FAIL_BAIL_RET(cgc_create_election_mgr());
+	cgc_get_election_name();
+	FAIL_BAIL_RET(cgc_set_election_conf());
 
 	e.state = NEW;
 
@@ -941,8 +941,8 @@ int create_election(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int open_voting(void) {
-	if (FALSE == is_emgr_logged_in()) {
+int cgc_open_voting(void) {
+	if (FALSE == cgc_is_emgr_logged_in()) {
 		return -1;
 	}
 
@@ -956,8 +956,8 @@ int open_voting(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int close_voting(void) {
-	if (FALSE == is_emgr_logged_in()) {
+int cgc_close_voting(void) {
+	if (FALSE == cgc_is_emgr_logged_in()) {
 		return -1;
 	}
 
@@ -976,8 +976,8 @@ int close_voting(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int election_status(void) {
-	if (FALSE == is_emgr_logged_in()) {
+int cgc_election_status(void) {
+	if (FALSE == cgc_is_emgr_logged_in()) {
 		return -1;
 	}
 
@@ -985,51 +985,51 @@ int election_status(void) {
 	char outbuf[3*12 + 19 + 19 + 24 + 2];
 	unsigned int bytes_used = 0;
 
-	bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
-							ht_length(e.voters),
-							ht_length(e.votes),
-							list_length(e.candidates));
+	bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
+							cgc_ht_length(e.voters),
+							cgc_ht_length(e.votes),
+							cgc_list_length(e.candidates));
 	SEND(STDOUT, outbuf, bytes_used);
 
 	return SUCCESS;
 }
 
 /**
- * Allow the voter to record a vote.
- *  If they have already voted, the new vote will replace the previous vote.
+ * Allow the voter to record a cgc_vote.
+ *  If they have already voted, the new cgc_vote will replace the previous cgc_vote.
  *
  * @return 	SUCCESS on success, else -1
  */
-int vote(void) {
+int cgc_vote(void) {
 
-	if (FALSE == is_voter_logged_in()) {
+	if (FALSE == cgc_is_voter_logged_in()) {
 		return -1;
 	}
 
 	int ret = 0;
-	candidate_t *c = NULL;
+	cgc_candidate_t *c = NULL;
 	unsigned int choice = 0;
 	unsigned int vote_id = 0;
 
-	// do we have a candidate to vote for?
-	if (0 == list_length(e.candidates)) {
+	// do we have a candidate to cgc_vote for?
+	if (0 == cgc_list_length(e.candidates)) {
 		SEND(STDOUT, EMPTY_CANDIDATES, sizeof(EMPTY_CANDIDATES));
 		return SUCCESS;
 	}
 
 	// print list of candidates as:
 	// "\tID: Fname Lname\n"
-	FAIL_BAIL_RET(print_select_candidate_list());
+	FAIL_BAIL_RET(cgc_print_select_candidate_list());
 
 	// recv candidate ID choice
-	NEG_BAIL_RET(get_choice(&choice));
+	NEG_BAIL_RET(cgc_get_choice(&choice));
 
 	// find candidate with ID == choice
-	FAIL_BAIL_RET(get_candidate_by_id(choice, &c));
+	FAIL_BAIL_RET(cgc_get_candidate_by_id(choice, &c));
 
-	FAIL_BAIL_RET(create_and_insert_vote(c, &vote_id));
+	FAIL_BAIL_RET(cgc_create_and_insert_vote(c, &vote_id));
 
-	FAIL_BAIL_RET(send_voting_receipt(vote_id, c));
+	FAIL_BAIL_RET(cgc_send_voting_receipt(vote_id, c));
 
 	return SUCCESS;
 }
@@ -1039,50 +1039,50 @@ int vote(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int register_voter(void) {
+int cgc_register_voter(void) {
 
-	if (FALSE == is_nobody_logged_in()) {
+	if (FALSE == cgc_is_nobody_logged_in()) {
 		return -1;
 	}
 
 	char outbuf[12 + sizeof(NEW_UID) + 2];
-	voter_t *v = NULL;
-	uint_voidp_pair_t *ret_p = NULL;
-	uint_voidp_pair_t *pair = NULL;
+	cgc_voter_t *v = NULL;
+	cgc_uint_voidp_pair_t *ret_p = NULL;
+	cgc_uint_voidp_pair_t *pair = NULL;
 	char *fmt = "%S%U\n";
 	unsigned int bytes_used = 0;
 
 	SEND(STDOUT, CREATE_VOTER, sizeof(CREATE_VOTER));
 
-	v = malloc(sizeof(voter_t));
+	v = cgc_malloc(sizeof(cgc_voter_t));
 	MALLOC_OK(v);
 
-	v->person.id = get_next_voter_id();
+	v->person.id = cgc_get_next_voter_id();
 	v->vote_id = 0;
-	v->validate = &validate_voter;
-	set_first_last_name(&(v->person));
+	v->validate = &cgc_validate_voter;
+	cgc_set_first_last_name(&(v->person));
 
 	if (FALSE == v->validate(v)) return -1;
 
 	// add voter to voters hash table
-	pair = malloc(sizeof(uint_voidp_pair_t));
+	pair = cgc_malloc(sizeof(cgc_uint_voidp_pair_t));
 	MALLOC_OK(pair);
 
 	pair->key = v->person.id;
 	pair->value = v;
-	ret_p = (uint_voidp_pair_t *)ht_pair_insert(e.voters, pair);
+	ret_p = (cgc_uint_voidp_pair_t *)cgc_ht_pair_insert(e.voters, pair);
 	if (NULL != ret_p) {
-		free(ret_p->value);
-		free(ret_p);
+		cgc_free(ret_p->value);
+		cgc_free(ret_p);
 	}
 
 	// send user id
-	bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt, NEW_UID, v->person.id);
+	bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt, NEW_UID, v->person.id);
 	SEND(STDOUT, outbuf, bytes_used);
 
 	// Test voters hash table to see if it needs to grow
-	if (TRUE == ht_is_re_hash_needed(e.voters)) {
-		e.voters = ht_re_hash(e.voters);
+	if (TRUE == cgc_ht_is_re_hash_needed(e.voters)) {
+		e.voters = cgc_ht_re_hash(e.voters);
 	}
 
 	return SUCCESS;
@@ -1093,40 +1093,40 @@ int register_voter(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int add_candidate(void) {
+int cgc_add_candidate(void) {
 
-	if ((TRUE == is_nobody_logged_in()) ||
-		((TRUE == is_voter_logged_in()) && (FALSE == e.conf.write_in_ok))) {
+	if ((TRUE == cgc_is_nobody_logged_in()) ||
+		((TRUE == cgc_is_voter_logged_in()) && (FALSE == e.conf.write_in_ok))) {
 		return -1;
 	}
 
-	if (list_length(e.candidates) >= e.conf.max_candidates) {
+	if (cgc_list_length(e.candidates) >= e.conf.max_candidates) {
 		SEND(STDOUT, FULL_CANDIDATES, sizeof(FULL_CANDIDATES));
 		return SUCCESS;
 	}
 
 	char outbuf[12];
-	candidate_t *c = NULL;
+	cgc_candidate_t *c = NULL;
 
 	SEND(STDOUT, CREATE_CANDIDATE, sizeof(CREATE_CANDIDATE));
 
-	c = malloc(sizeof(candidate_t));
+	c = cgc_malloc(sizeof(cgc_candidate_t));
 	MALLOC_OK(c);
 
-	set_first_last_name(&(c->person));
-	c->validate = &validate_candidate;
+	cgc_set_first_last_name(&(c->person));
+	c->validate = &cgc_validate_candidate;
 
 	if (FALSE == c->validate(c)) {
-		free(c);
+		cgc_free(c);
 		SEND(STDOUT, CANDIDATE_INVALID, sizeof(CANDIDATE_INVALID));
 		return SUCCESS;
 	}
 
 	// set ID - do after validate, so don't have to revert the next ID if fail validate
-	c->person.id = get_next_candidate_id();
+	c->person.id = cgc_get_next_candidate_id();
 
 	// add candidate to candidates list
-	list_insert_at_end(e.candidates, c);
+	cgc_list_insert_at_end(e.candidates, c);
 
 	SEND(STDOUT, CANDIDATE_ADDED, sizeof(CANDIDATE_ADDED));
 
@@ -1134,31 +1134,31 @@ int add_candidate(void) {
 }
 
 /**
- * List winning candidate(s) along with vote count.
- * 	Ordered from highest to lowest vote count.
+ * List winning candidate(s) along with cgc_vote count.
+ * 	Ordered from highest to lowest cgc_vote count.
  *
  * @return 	SUCCESS on success, else -1
  */
-int voting_results(void) {
-	if (TRUE == is_nobody_logged_in()) {
+int cgc_voting_results(void) {
+	if (TRUE == cgc_is_nobody_logged_in()) {
 		return -1;
 	}
 
 	SEND(STDOUT, VOTING_RESULTS, sizeof(VOTING_RESULTS));
 
-	if (0 == list_length(e.candidates)) {
+	if (0 == cgc_list_length(e.candidates)) {
 		SEND(STDOUT, ZERO_CANDIDATES, sizeof(ZERO_CANDIDATES));
 		return SUCCESS;
 	}
 
 	int ret = 0;
 	struct list results;
-	list_init(&results, &free_results_list_pair);
+	cgc_list_init(&results, &cgc_free_results_list_pair);
 
-	FAIL_BAIL_RET(calculate_voting_results(&results)); // populate results with tuples (vote count, candidate)
+	FAIL_BAIL_RET(cgc_calculate_voting_results(&results)); // populate results with tuples (cgc_vote count, candidate)
 
-	FAIL_BAIL_RET(send_voting_results(&results, FALSE));
-	list_destroy(&results);
+	FAIL_BAIL_RET(cgc_send_voting_results(&results, FALSE));
+	cgc_list_destroy(&results);
 
 	return SUCCESS;
 }
@@ -1168,8 +1168,8 @@ int voting_results(void) {
  *
  * @return 	SUCCESS on success, else -1
  */
-int voter_turnout(void) {
-	if (FALSE == is_emgr_logged_in()) {
+int cgc_voter_turnout(void) {
+	if (FALSE == cgc_is_emgr_logged_in()) {
 		return -1;
 	}
 
@@ -1180,35 +1180,35 @@ int voter_turnout(void) {
 	char outbuf[3*12 + 19 + 19 + 2];
 	unsigned int bytes_used = 0;
 
-	if (0 == ht_length(e.voters)) {
+	if (0 == cgc_ht_length(e.voters)) {
 		SEND(STDOUT, ZERO_VOTERS, sizeof(ZERO_VOTERS));
 		return SUCCESS;
 	} else {
-		bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
-								ht_length(e.voters),
-								ht_length(e.votes));
+		bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
+								cgc_ht_length(e.voters),
+								cgc_ht_length(e.votes));
 		SEND(STDOUT, outbuf, bytes_used);
 	}
 
-	FAIL_BAIL_RET(send_voter_results());
+	FAIL_BAIL_RET(cgc_send_voter_results());
 
 	return SUCCESS;
 }
 
 /**
  * List number of candidates, names of all candidates and 
- *	the associated vote counts.
+ *	the associated cgc_vote counts.
  *
  * @return 	SUCCESS on success, else -1
  */
-int candidate_summary(void) {
-	if (FALSE == is_emgr_logged_in()) {
+int cgc_candidate_summary(void) {
+	if (FALSE == cgc_is_emgr_logged_in()) {
 		return -1;
 	}
 
 	SEND(STDOUT, CANDIDATE_SUMMARY, sizeof(CANDIDATE_SUMMARY));
 
-	unsigned int candidate_count = list_length(e.candidates);
+	unsigned int candidate_count = cgc_list_length(e.candidates);
 	char *fmt = "\tNumber of candidates: %U\n";
 	char outbuf[12 + 25 + 2];
 	unsigned int bytes_used = 0;
@@ -1217,24 +1217,24 @@ int candidate_summary(void) {
 		SEND(STDOUT, ZERO_CANDIDATES, sizeof(ZERO_CANDIDATES));
 		return SUCCESS;
 	} else {
-		bytes_used = snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
-							  list_length(e.candidates));
+		bytes_used = cgc_snprintf(outbuf, sizeof(outbuf), '%', TERM, fmt,
+							  cgc_list_length(e.candidates));
 		SEND(STDOUT, outbuf, bytes_used);
 	}
 
 	int ret = 0;
 	struct list results;
-	list_init(&results, &free_results_list_pair);
+	cgc_list_init(&results, &cgc_free_results_list_pair);
 
-	FAIL_BAIL_RET(calculate_voting_results(&results)); // populate results with tuples (vote count, candidate)
+	FAIL_BAIL_RET(cgc_calculate_voting_results(&results)); // populate results with tuples (cgc_vote count, candidate)
 
-	FAIL_BAIL_RET(send_voting_results(&results, TRUE));
-	list_destroy(&results);
+	FAIL_BAIL_RET(cgc_send_voting_results(&results, TRUE));
+	cgc_list_destroy(&results);
 
 	return SUCCESS;
 }
 
-int decider(unsigned char choice) {
+int cgc_decider(unsigned char choice) {
 	int ret = SUCCESS;
 
 	// ensure a choice is only accepted if it is valid for the current state
@@ -1243,48 +1243,48 @@ int decider(unsigned char choice) {
 
 	switch (choice) {
 	case C_MENU_LOGIN:
-		ret = login();
+		ret = cgc_login();
 		break;
 	case C_MENU_CREATE_ELECTION:
-		ret = create_election();
+		ret = cgc_create_election();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_OPEN_VOTING:
-		ret = open_voting();
+		ret = cgc_open_voting();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_CLOSE_VOTING:
-		ret = close_voting();
+		ret = cgc_close_voting();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_ELECTION_STATUS:
-		ret = election_status();
+		ret = cgc_election_status();
 		e.conf.authd_user = NULL;
 		break;
 
 	case C_MENU_VOTE:
-		ret = vote();
+		ret = cgc_vote();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_REGISTER_VOTER:
-		ret = register_voter();
+		ret = cgc_register_voter();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_ADD_CANDIDATE:
-		ret = add_candidate();
+		ret = cgc_add_candidate();
 		e.conf.authd_user = NULL;
 		break;
 
 	case C_MENU_VOTING_RESULTS:
-		ret = voting_results();
+		ret = cgc_voting_results();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_VOTER_TURNOUT:
-		ret = voter_turnout();
+		ret = cgc_voter_turnout();
 		e.conf.authd_user = NULL;
 		break;
 	case C_MENU_CANDIDATE_SUMMARY:
-		ret = candidate_summary();
+		ret = cgc_candidate_summary();
 		e.conf.authd_user = NULL;
 		break;
 
@@ -1304,7 +1304,7 @@ int decider(unsigned char choice) {
 	return ret;
 }
 
-void init_election(void) {
+void cgc_init_election(void) {
 	e.state = INIT;
 
 	e.conf.e_mgr_id = E_MGR_ID;
@@ -1314,34 +1314,34 @@ void init_election(void) {
 
 	// store candidates in linked list (have to iterate often)
 	// init candidate list
-	e.candidates = malloc(sizeof(struct list));
+	e.candidates = cgc_malloc(sizeof(struct list));
 	MALLOC_OK(e.candidates);
-	list_init(e.candidates, NULL);
+	cgc_list_init(e.candidates, NULL);
 
 	// store voters in hash table, key is voter.id (have to look up often)
 	// init voters hash table
-	e.voters = ht_int_init(50);
+	e.voters = cgc_ht_int_init(50);
 
-	// store votes in hash table, key is voter's name "<first name> <last name>". (want easy lookup by voter's name if they want to change their vote)
+	// store votes in hash table, key is voter's name "<first name> <last name>". (want easy lookup by voter's name if they want to change their cgc_vote)
 	// init votes hash table
-	e.votes = ht_str_init(50);
+	e.votes = cgc_ht_str_init(50);
 }
 
-void print_menu(auth_t cred) {
+void cgc_print_menu(cgc_auth_t cred) {
 
-	print_login_menu(e.state, cred);
+	cgc_print_login_menu(e.state, cred);
 
-	print_admin_menu(e.state, cred);
+	cgc_print_admin_menu(e.state, cred);
 
-	print_voting_menu(e.state, cred);
+	cgc_print_voting_menu(e.state, cred);
 
-	print_results_menu(e.state, cred);
+	cgc_print_results_menu(e.state, cred);
 
 	SEND(STDOUT, MENU_QUIT, sizeof(MENU_QUIT));
 }
 
-int get_choice(unsigned int *choice) {
+int cgc_get_choice(unsigned int *choice) {
     SEND(STDOUT, CHOOSE, sizeof(CHOOSE));
-	return receive_number(choice);
+	return cgc_receive_number(choice);
 }
 

@@ -32,26 +32,26 @@ THE SOFTWARE.
 #include "mmu.h"
 #include "cpu.h"
 
-class CCLF;
+class cgc_CCLF;
 
-class CVM
+class cgc_CVM
 {
 public:
-	CVM( void *secret_page );
-	~CVM( );
+	cgc_CVM( void *secret_page );
+	~cgc_CVM( );
 
-	bool Init( CCLF *pFile );
+	bool cgc_Init( cgc_CCLF *pFile );
 
-	bool Run( void );
+	bool cgc_Run( void );
 
 private:
-	CMMU	m_oMMU;
-	CCPU	m_oCPU;
-	CDMA 	m_oDMA;
+	cgc_CMMU	m_oMMU;
+	cgc_CCPU	m_oCPU;
+	cgc_CDMA 	m_oDMA;
 
 	void *m_pMagicPage;
 
-	CUtil::DLL_LIST( CPeripheral, m_peripheralListLink ) m_oPeripheralList;
+	CUtil::DLL_LIST( cgc_CPeripheral, m_peripheralListLink ) m_oPeripheralList;
 };
 
 #endif // __VM_H__

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,7 +31,7 @@ struct md5_ctx {
 };
 
 static inline unsigned int
-s(unsigned int i)
+cgc_s(unsigned int i)
 {
     unsigned int shifts[][4] = {
         { 7, 12, 17, 22 },
@@ -44,19 +44,19 @@ s(unsigned int i)
 }
 
 static inline unsigned int
-rotateleft(unsigned int v, unsigned int s)
+cgc_rotateleft(unsigned int v, unsigned int cgc_s)
 {
-    return (v << s) | (v >> (32 - s));
+    return (v << cgc_s) | (v >> (32 - cgc_s));
 }
 
 static inline unsigned int
-T(unsigned int i)
+cgc_T(unsigned int i)
 {
     return fabs(sin(i + 1)) * pow(2, 32);
 }
 
 static inline unsigned int
-k(unsigned int i)
+cgc_k(unsigned int i)
 {
     switch (i / 16) {
     case 0: return i;
@@ -69,31 +69,31 @@ k(unsigned int i)
 }
 
 static inline unsigned int
-F(unsigned int X, unsigned int Y, unsigned int Z)
+cgc_F(unsigned int X, unsigned int Y, unsigned int Z)
 {
     return (X & Y) | (~X & Z);
 }
 
 static inline unsigned int
-G(unsigned int X, unsigned int Y, unsigned int Z)
+cgc_G(unsigned int X, unsigned int Y, unsigned int Z)
 {
     return (X & Z) | (Y & ~Z);
 }
     
 static inline unsigned int
-H(unsigned int X, unsigned int Y, unsigned int Z)
+cgc_H(unsigned int X, unsigned int Y, unsigned int Z)
 {
     return X ^ Y ^ Z;
 }
 
 static inline unsigned int
-I(unsigned int X, unsigned int Y, unsigned int Z)
+cgc_I(unsigned int X, unsigned int Y, unsigned int Z)
 {
     return Y ^ (X | ~Z);
 }
 
 static void
-md5_chunk(unsigned char *X_, struct md5_ctx *ctx)
+cgc_md5_chunk(unsigned char *X_, struct md5_ctx *ctx)
 {
     unsigned int *X = (unsigned int *)X_;
 
@@ -104,9 +104,9 @@ md5_chunk(unsigned char *X_, struct md5_ctx *ctx)
     unsigned int x, tmp;
 
     unsigned int (*round_ops[])(unsigned int, unsigned int, unsigned int) =
-            { F, G, H, I };
+            { cgc_F, cgc_G, cgc_H, cgc_I };
 
-    size_t i;
+    cgc_size_t i;
 
     for (i = 0; i < 64; i++) {
         x = round_ops[i / 16](B, C, D);
@@ -114,7 +114,7 @@ md5_chunk(unsigned char *X_, struct md5_ctx *ctx)
         tmp = D;
         D = C;
         C = B;
-        B = B + rotateleft(A + x + X[k(i)] + T(i), s(i));
+        B = B + cgc_rotateleft(A + x + X[cgc_k(i)] + cgc_T(i), cgc_s(i));
         A = tmp;
     }
 
@@ -125,18 +125,18 @@ md5_chunk(unsigned char *X_, struct md5_ctx *ctx)
 }
 
 static int
-md5_pad(unsigned char *dst, const unsigned char *src, size_t n,
+cgc_md5_pad(unsigned char *dst, const unsigned char *src, cgc_size_t n,
         unsigned long long total, int is_extra)
 {
-    size_t to_pad;
+    cgc_size_t to_pad;
 
     if (n >= 64) {
-        memcpy(dst, src, 64);
+        cgc_memcpy(dst, src, 64);
         return n == 64;
     } else {
         to_pad = 64 - n;
 
-        memcpy(dst, src, n);
+        cgc_memcpy(dst, src, n);
         dst += n;
 
 #ifndef PATCHED
@@ -144,7 +144,7 @@ md5_pad(unsigned char *dst, const unsigned char *src, size_t n,
         (void)(total);
         (void)(is_extra);
 
-        memset(dst, '\x80', to_pad);
+        cgc_memset(dst, '\x80', to_pad);
         return 0;
 #else
         if (!is_extra) {
@@ -152,7 +152,7 @@ md5_pad(unsigned char *dst, const unsigned char *src, size_t n,
             to_pad--;
         }
 
-        memset(dst, '\x00', to_pad >= 8 ? to_pad - 8 : to_pad);
+        cgc_memset(dst, '\x00', to_pad >= 8 ? to_pad - 8 : to_pad);
         if (to_pad < 8)
             return 1;
 
@@ -164,36 +164,36 @@ md5_pad(unsigned char *dst, const unsigned char *src, size_t n,
 }
 
 static void
-md5_update(const unsigned char *msg, size_t n, unsigned int total, struct md5_ctx *ctx)
+cgc_md5_update(const unsigned char *msg, cgc_size_t n, unsigned int total, struct md5_ctx *ctx)
 {
     unsigned char block[64];
     int extra_block_needed;
 
     while (n > 64) {
-        md5_pad(block, msg, n, total, 0);
-        md5_chunk(block, ctx);
+        cgc_md5_pad(block, msg, n, total, 0);
+        cgc_md5_chunk(block, ctx);
 
         msg += 64;
         n -= 64;
     }
 
     // Do the last block
-    extra_block_needed = md5_pad(block, msg, n, total, 0);
-    md5_chunk(block, ctx);
+    extra_block_needed = cgc_md5_pad(block, msg, n, total, 0);
+    cgc_md5_chunk(block, ctx);
 
     // If we needed to add a whole block of padding, do it now
     if (extra_block_needed) {
-        md5_pad(block, NULL, 0, total, n != 64);
-        md5_chunk(block, ctx);
+        cgc_md5_pad(block, NULL, 0, total, n != 64);
+        cgc_md5_chunk(block, ctx);
     }
 
     // This may be optimized out but make a token effort to c=ear this info
-    memset(block, '\x00', sizeof(block));
+    cgc_memset(block, '\x00', sizeof(block));
     total = extra_block_needed = 0;
 }
 
 void
-md5(const unsigned char *msg, size_t n, unsigned char *digest)
+cgc_md5(const unsigned char *msg, cgc_size_t n, unsigned char *digest)
 {
     struct md5_ctx ctx;
 
@@ -202,7 +202,7 @@ md5(const unsigned char *msg, size_t n, unsigned char *digest)
     ctx.CC = 0x98badcfe;
     ctx.DD = 0x10325476;
 
-    md5_update(msg, n, n, &ctx);
+    cgc_md5_update(msg, n, n, &ctx);
 
     *(unsigned int *)digest = ctx.AA;
     *(unsigned int *)(digest + 4) = ctx.BB;
@@ -210,24 +210,24 @@ md5(const unsigned char *msg, size_t n, unsigned char *digest)
     *(unsigned int *)(digest + 12) = ctx.DD;
 
     // This may be optimized out but make a token effort to clear this info
-    memset(&ctx, '\x00', sizeof(ctx));
+    cgc_memset(&ctx, '\x00', sizeof(ctx));
 }
 
 void
-md5_hmac(const unsigned char *key, size_t key_len, const unsigned char *msg,
-        size_t msg_len, unsigned char *mac)
+cgc_md5_hmac(const unsigned char *key, cgc_size_t key_len, const unsigned char *msg,
+        cgc_size_t msg_len, unsigned char *mac)
 {
     struct md5_ctx o_ctx, i_ctx;
     unsigned char key_block[64], o_key_pad[64], i_key_pad[64];
-    size_t i;
+    cgc_size_t i;
 
-    memset(key_block, '\x00', 64);
+    cgc_memset(key_block, '\x00', 64);
 
     if (key_len > 64)
-        md5(key, key_len, key_block);
+        cgc_md5(key, key_len, key_block);
 
     if (key_len < 64)
-        memcpy(key_block, key, key_len);
+        cgc_memcpy(key_block, key, key_len);
 
     for (i = 0; i < 64; i++) {
         o_key_pad[i] = 0x5c ^ key_block[i];
@@ -239,11 +239,11 @@ md5_hmac(const unsigned char *key, size_t key_len, const unsigned char *msg,
     o_ctx.CC = i_ctx.CC = 0x98badcfe;
     o_ctx.DD = i_ctx.DD = 0x10325476;
 
-    md5_chunk(i_key_pad, &i_ctx);
-    md5_update(msg, msg_len, 64 + msg_len, &i_ctx);
+    cgc_md5_chunk(i_key_pad, &i_ctx);
+    cgc_md5_update(msg, msg_len, 64 + msg_len, &i_ctx);
 
-    md5_chunk(o_key_pad, &o_ctx);
-    md5_update((unsigned char *)(&i_ctx), sizeof(i_ctx), 64 + sizeof(i_ctx), &o_ctx);
+    cgc_md5_chunk(o_key_pad, &o_ctx);
+    cgc_md5_update((unsigned char *)(&i_ctx), sizeof(i_ctx), 64 + sizeof(i_ctx), &o_ctx);
 
     *(unsigned int *)mac = o_ctx.AA;
     *(unsigned int *)(mac + 4) = o_ctx.BB;
@@ -251,10 +251,10 @@ md5_hmac(const unsigned char *key, size_t key_len, const unsigned char *msg,
     *(unsigned int *)(mac + 12) = o_ctx.DD;
 
     // This may be optimized out but make a token effort to clear this info
-    memset(&o_ctx, '\x00', sizeof(o_ctx));
-    memset(&i_ctx, '\x00', sizeof(i_ctx));
-    memset(key_block, '\x00', sizeof(key_block));
-    memset(o_key_pad, '\x00', sizeof(o_key_pad));
-    memset(i_key_pad, '\x00', sizeof(i_key_pad));
+    cgc_memset(&o_ctx, '\x00', sizeof(o_ctx));
+    cgc_memset(&i_ctx, '\x00', sizeof(i_ctx));
+    cgc_memset(key_block, '\x00', sizeof(key_block));
+    cgc_memset(o_key_pad, '\x00', sizeof(o_key_pad));
+    cgc_memset(i_key_pad, '\x00', sizeof(i_key_pad));
 }
 

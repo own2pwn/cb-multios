@@ -26,5 +26,5 @@
 
 #ifndef RLE_H
 #define RLE_H
-void decode(video *vid, char key); 
+void cgc_decode(cgc_video *vid, char key); 
 #endif

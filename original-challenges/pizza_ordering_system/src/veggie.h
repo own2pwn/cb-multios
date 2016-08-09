@@ -2,16 +2,16 @@
 #define VEGGIE_H_
 #include "topping.h"
 
-class Veggie : public Topping
+class cgc_Veggie : public cgc_Topping
 {
 private:
-    Veggie(const char *_name, int _calories, int _carbs);
+    cgc_Veggie(const char *_name, int _calories, int _carbs);
 public:
-    virtual ~Veggie();
-    static Veggie *pick_veggie(const char *veggie_name);
-    static void list_options();
-    virtual bool is_vegetarian() { return true; }
-    virtual bool contains_pork() { return false; }
+    virtual ~cgc_Veggie();
+    static cgc_Veggie *cgc_pick_veggie(const char *veggie_name);
+    static void cgc_list_options();
+    virtual bool cgc_is_vegetarian() { return true; }
+    virtual bool cgc_contains_pork() { return false; }
 };
 
 #endif

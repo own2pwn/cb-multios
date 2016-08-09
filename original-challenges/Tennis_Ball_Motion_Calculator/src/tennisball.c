@@ -4,12 +4,12 @@
 #include "mylibc.h"
 
 //minlen is used for leading 0's in the fractional part
-int snprintdecimal(char* str, size_t len, uint32_t num, int minlen)
+int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num, int minlen)
 {
   int i = 0;
   int j = 0;
-  uint32_t rem = 0;
-  char temp[24]; //the maximum uint64_t value is 2^64 - 1
+  cgc_uint32_t rem = 0;
+  char temp[24]; //the maximum cgc_uint64_t value is 2^64 - 1
                  // which is approx 10^20 so 24 characters should be good
   temp[0] = '0';
   temp[0] = '\0';
@@ -59,11 +59,11 @@ int snprintdecimal(char* str, size_t len, uint32_t num, int minlen)
   return (-1); 
 }
 
-int snprintfloat(char* str, size_t len, float num)
+int cgc_snprintfloat(char* str, cgc_size_t len, float num)
 {
   char tempStr[24];
-  uint32_t iNum = 0;
-  iNum = (uint32_t)num;
+  cgc_uint32_t iNum = 0;
+  iNum = (cgc_uint32_t)num;
   int ret = 0;
 
   tempStr[0] = '0';
@@ -71,7 +71,7 @@ int snprintfloat(char* str, size_t len, float num)
   //it seems that casting is the FLOOR function by default
   // do we need to enforce this?
 
-  ret = snprintdecimal(str, len, iNum, 0);
+  ret = cgc_snprintdecimal(str, len, iNum, 0);
   if (ret < 0)
   {
     return (ret);
@@ -82,8 +82,8 @@ int snprintfloat(char* str, size_t len, float num)
     str[ret] = '.';
     str[ret + 1] = '\0';
 
-    iNum = (uint32_t)((num - (float)iNum) * (float)1000000.0);//get the next 6 numbers
-    return (snprintdecimal(str+ret+1, len - ret - 1, iNum, 6)); 
+    iNum = (cgc_uint32_t)((num - (float)iNum) * (float)1000000.0);//get the next 6 numbers
+    return (cgc_snprintdecimal(str+ret+1, len - ret - 1, iNum, 6)); 
   }
   return (-1);
 }
@@ -92,19 +92,19 @@ int snprintfloat(char* str, size_t len, float num)
 /**
  * The maximum unsigned value is 4294967295 which is 0xFFFFFFFF
  * So the idea is to read in up to 9 digits and then convert that
- * into a uint64_t. We need a uint64_t because 9999999999 will overflow
- * uint32_t. 
+ * into a cgc_uint64_t. We need a cgc_uint64_t because 9999999999 will overflow
+ * cgc_uint32_t. 
  *
  * A 0 is returned - either because that is the actual number or because
  * the first 9 characters are not digits (NULL, '.' and ',' are all
  * terminal characters). Any subsequent characters are
  * simply ignored.
 */
-uint32_t strToUint32(const char* str)
+cgc_uint32_t cgc_strToUint32(const char* str)
 {
   int i = 0; 
-  uint64_t val = 0; 
-  uint32_t temp = 0;
+  cgc_uint64_t val = 0; 
+  cgc_uint32_t temp = 0;
 
   if (str == NULL)
   {
@@ -133,33 +133,33 @@ uint32_t strToUint32(const char* str)
     return (0);
   }
 
-  return ((uint32_t)val); //just cast it and return
+  return ((cgc_uint32_t)val); //just cast it and return
 }
 
 /**
  * To convert a string into a double - we will do the following
  * go through the array to find the first '.' or ','
- * everything before the '.' will be converted into a uint32_t
- * and everything after the '.' will be converted into a uint32_t
+ * everything before the '.' will be converted into a cgc_uint32_t
+ * and everything after the '.' will be converted into a cgc_uint32_t
  * We will then just calculate the double value by first converting
  * them into double and then using floating point
  * division and addition. Note that, there is indeed some funny
  * behavior since the number before the '.' or ',' can indeed
- * be over uint32_t. In that case, it is treated as 0xFFFFFFFF
+ * be over cgc_uint32_t. In that case, it is treated as 0xFFFFFFFF
  * same applies to the fractional part.
  * -0.0 is returned on error
 **/
-double strToDouble(const char* str)
+double cgc_strToDouble(const char* str)
 {
-  size_t i = 0;
-  size_t fracStart = 0; 
+  cgc_size_t i = 0;
+  cgc_size_t fracStart = 0; 
 
   int bWhole = 1; //yes whole part
 
-  uint32_t whole = 0;
-  uint32_t frac = 0;
-  uint32_t val = 0;
-  uint32_t temp = 0;
+  cgc_uint32_t whole = 0;
+  cgc_uint32_t frac = 0;
+  cgc_uint32_t val = 0;
+  cgc_uint32_t temp = 0;
 
 
   if (str == NULL)
@@ -238,7 +238,7 @@ double strToDouble(const char* str)
  *  will fit into a page.
  *
 **/
-void fillPage(float v0_x, float v0_y, Coords* aData, int* pCount, int countsPerSecond)
+void cgc_fillPage(float v0_x, float v0_y, cgc_Coords* aData, int* pCount, int countsPerSecond)
 {
   if ( (aData == NULL) || (pCount == NULL) )
   {
@@ -260,7 +260,7 @@ void fillPage(float v0_x, float v0_y, Coords* aData, int* pCount, int countsPerS
   //timeStart is in milliseconds - 
   //now calculate the x and y components for the number of counts
   // that will fit into a page
-  for (i = 0; i < (PAGE_SIZE / sizeof(Coords) / countsPerSecond); i++)
+  for (i = 0; i < (PAGE_SIZE / sizeof(cgc_Coords) / countsPerSecond); i++)
   {
     tempTime = (float)(*pCount) / (float)countsPerSecond;
 
@@ -295,12 +295,12 @@ int main(void)
   int i = 0;
   float vx;
   float vy;
-  DoubleInt dTemp;
+  cgc_DoubleInt dTemp;
   int count = 0;
   char temp[100];
   char tempStr[24];
-  ssize_t ret = 0;
-  Coords* c = NULL;
+  cgc_ssize_t ret = 0;
+  cgc_Coords* c = NULL;
   ret = allocate(PAGE_SIZE, 0, (void**)(&c));
   if (ret != 0)
   {
@@ -310,13 +310,13 @@ int main(void)
   do
   {
     printfstr(STDOUT, "Initial Velocity X: ");
-    ret = readLine(STDIN, temp, 100);
+    ret = cgc_readLine(STDIN, temp, 100);
     if (ret < 0)
     {
       return (-1);
     }
 
-    dTemp.d = strToDouble(temp);
+    dTemp.d = cgc_strToDouble(temp);
   } while (dTemp.u == NAN.u);
 
   vx = (float)dTemp.d;
@@ -324,29 +324,29 @@ int main(void)
   do
   {
     printfstr(STDOUT, "Initial Velocity Y: ");
-    ret = readLine(STDIN, temp, 100);
+    ret = cgc_readLine(STDIN, temp, 100);
     if (ret < 0)
     {
       return (-1);
     }
    
-    dTemp.d = strToDouble(temp);
+    dTemp.d = cgc_strToDouble(temp);
   } while (dTemp.u == NAN.u);
 
   vy = (float)dTemp.d;
 
   printfstr(STDOUT, "Initial Count: ");
-  ret = readLine(STDIN, temp, 100);
+  ret = cgc_readLine(STDIN, temp, 100);
   if (ret < 0)
   {
     return (-1);
   }
-  count = strToUint32(temp);
+  count = cgc_strToUint32(temp);
 
   do
   {
-    fillPage(vx, vy, c, &count, 10);
-    ret = readLine(STDIN, temp, 100);
+    cgc_fillPage(vx, vy, c, &count, 10);
+    ret = cgc_readLine(STDIN, temp, 100);
     if (ret < 0)
     {
       return (-1);
@@ -358,13 +358,13 @@ int main(void)
         tempStr[0] = 'x';
         tempStr[1] = '=';
         tempStr[2] = '\0';
-        snprintfloat(tempStr+2, 24, c[i].x);
+        cgc_snprintfloat(tempStr+2, 24, c[i].x);
         printfstr(STDOUT, tempStr);
         printfstr(STDOUT, ", ");
         tempStr[0] = 'y';
         tempStr[1] = '=';
         tempStr[2] = '\0';
-        snprintfloat(tempStr+2, 24, c[i].y);
+        cgc_snprintfloat(tempStr+2, 24, c[i].y);
         printfstr(STDOUT, tempStr);
         printfstr(STDOUT, "\n");
       }

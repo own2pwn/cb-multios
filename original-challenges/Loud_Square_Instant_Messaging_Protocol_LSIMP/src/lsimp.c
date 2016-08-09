@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,7 +27,7 @@
 
 #include "lsimp.h"
 
-int compute_guard(unsigned char *buf, unsigned int buf_len)
+int cgc_compute_guard(unsigned char *buf, unsigned int buf_len)
 {
   unsigned int i, guard = 0;
   for (i = 0; i < buf_len; ++i)
@@ -35,7 +35,7 @@ int compute_guard(unsigned char *buf, unsigned int buf_len)
   return guard;
 }
 
-int decode_data(lsimp_keyx_t *keyx, lsimp_data_t *data)
+int cgc_decode_data(cgc_lsimp_keyx_t *keyx, cgc_lsimp_data_t *data)
 {
   int i;
 
@@ -43,7 +43,7 @@ int decode_data(lsimp_keyx_t *keyx, lsimp_data_t *data)
     return 0;
 
   if ((keyx->option & 0x0F) == 0x07)
-    memmove(data->data, data->data + 4, data->data_len);
+    cgc_memmove(data->data, data->data + 4, data->data_len);
   data->data_len -= 4;
 
   for (i = 0; i < data->data_len; ++i)
@@ -54,20 +54,20 @@ int decode_data(lsimp_keyx_t *keyx, lsimp_data_t *data)
   return 1;
 }
 
-lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len)
+cgc_lsimp_msg_t* cgc_parse_msg(char *buf, unsigned int buf_len)
 {
   int dword;
   unsigned int obl = buf_len;
   char *pos = buf;
-  lsimp_msg_t *msg = NULL;
+  cgc_lsimp_msg_t *msg = NULL;
 
   if (buf_len < 4)
     goto fail;
 
-  msg = (lsimp_msg_t *)malloc(sizeof(lsimp_msg_t));
+  msg = (cgc_lsimp_msg_t *)cgc_malloc(sizeof(cgc_lsimp_msg_t));
   if (msg == NULL)
     goto fail;
-  memset(msg, 0, sizeof(lsimp_msg_t));
+  cgc_memset(msg, 0, sizeof(cgc_lsimp_msg_t));
 
   while (buf_len >= 4)
   {
@@ -116,10 +116,10 @@ lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len)
           goto fail;
         if (msg->keyx.key_len > 0)
         {
-          msg->keyx.key = malloc(msg->keyx.key_len);
+          msg->keyx.key = cgc_malloc(msg->keyx.key_len);
           if (msg->keyx.key == NULL)
             goto fail;
-          memmove(msg->keyx.key, pos, msg->keyx.key_len);
+          cgc_memmove(msg->keyx.key, pos, msg->keyx.key_len);
           pos += msg->keyx.key_len;
           buf_len -= msg->keyx.key_len;
         }
@@ -144,11 +144,11 @@ lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len)
           goto fail;
         if (msg->data.data_len > 0)
         {
-          msg->data.data = malloc(msg->data.data_len + 1);
+          msg->data.data = cgc_malloc(msg->data.data_len + 1);
           if (msg->data.data == NULL)
             goto fail;
-          memset(msg->data.data, 0, msg->data.data_len + 1);
-          memmove(msg->data.data, pos, msg->data.data_len);
+          cgc_memset(msg->data.data, 0, msg->data.data_len + 1);
+          cgc_memmove(msg->data.data, pos, msg->data.data_len);
           pos += msg->data.data_len;
           buf_len -= msg->data.data_len;
         }
@@ -165,11 +165,11 @@ lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len)
           goto fail;
         if (msg->text.msg_len > 0)
         {
-          msg->text.msg = malloc(msg->text.msg_len + 1);
+          msg->text.msg = cgc_malloc(msg->text.msg_len + 1);
           if (msg->text.msg == NULL)
             goto fail;
-          memset(msg->text.msg, 0, msg->text.msg_len + 1);
-          memmove(msg->text.msg, pos, msg->text.msg_len);
+          cgc_memset(msg->text.msg, 0, msg->text.msg_len + 1);
+          cgc_memmove(msg->text.msg, pos, msg->text.msg_len);
           pos += msg->text.msg_len;
           buf_len -= msg->text.msg_len;
         }
@@ -182,13 +182,13 @@ lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len)
   if (buf_len < 4)
     goto fail;
   int guard = *(int *)(pos);
-  if (guard != compute_guard((unsigned char *)buf, obl - sizeof(int)))
+  if (guard != cgc_compute_guard((unsigned char *)buf, obl - sizeof(int)))
     goto fail;
 
   return msg;
 
 fail:
   if (msg)
-    free(msg);
+    cgc_free(msg);
   return NULL;
 }

@@ -31,25 +31,25 @@ THE SOFTWARE.
 #include "menu.h"
 #include "sim.h"
 
-extern PlantSystem Influent;
-extern PlantSystem Headworks;
-extern PlantSystem HeadworksOutputValve;
-extern uint8_t NumAsp;
-extern PlantSystem Asp[5];
-extern PlantSystem AspOutputValve;
-extern uint8_t NumFilters;
-extern PlantSystem Filter[5];
-extern PlantSystem FilterOutputValve;
-extern uint8_t NumDisinfection;
-extern PlantSystem Disinfection[5];
-extern PlantSystem DisinfectionOutputValve;
-extern PlantSystem Effluent;
+extern cgc_PlantSystem Influent;
+extern cgc_PlantSystem Headworks;
+extern cgc_PlantSystem HeadworksOutputValve;
+extern cgc_uint8_t NumAsp;
+extern cgc_PlantSystem Asp[5];
+extern cgc_PlantSystem AspOutputValve;
+extern cgc_uint8_t NumFilters;
+extern cgc_PlantSystem Filter[5];
+extern cgc_PlantSystem FilterOutputValve;
+extern cgc_uint8_t NumDisinfection;
+extern cgc_PlantSystem Disinfection[5];
+extern cgc_PlantSystem DisinfectionOutputValve;
+extern cgc_PlantSystem Effluent;
 
 //
 // Find the valve output that feeds the specified downstream system
 //
-int8_t FindValveOutput(pPlantSystem pValve, pPlantSystem pOutputSystem) {
-	int8_t i;
+cgc_int8_t cgc_FindValveOutput(cgc_pPlantSystem pValve, cgc_pPlantSystem pOutputSystem) {
+	cgc_int8_t i;
 
 	if (pValve == NULL || pValve->Type != VALVE || pOutputSystem == NULL) {
 		return -1;
@@ -67,10 +67,10 @@ int8_t FindValveOutput(pPlantSystem pValve, pPlantSystem pOutputSystem) {
 //
 // Simulate the Valve operation
 //
-void SimulateValve(pPlantSystem pValve) {
-	pPlantSystem pInputSystem;
-	pPlantSystem pOutputSystem;
-	uint8_t i;
+void cgc_SimulateValve(cgc_pPlantSystem pValve) {
+	cgc_pPlantSystem pInputSystem;
+	cgc_pPlantSystem pOutputSystem;
+	cgc_uint8_t i;
 
 	// Calculate Flow, CBOD, TSS, Tn and Tp coming into the valve
 	pValve->Flow = 0.0;
@@ -101,9 +101,9 @@ void SimulateValve(pPlantSystem pValve) {
 // More is ok since we calculate the flows based on the PctOpen/Total.
 // Less is not ok because it could mean flows would back up in the system.
 //
-uint8_t CheckValveOutputs(void) {
+cgc_uint8_t cgc_CheckValveOutputs(void) {
 	double OutputSum;
-	uint8_t i;
+	cgc_uint8_t i;
 
 	// HeadworksOutputValve
 	OutputSum = 0.0;
@@ -151,9 +151,9 @@ uint8_t CheckValveOutputs(void) {
 //
 // Simulate the Activated Sludge Process operation
 //
-void SimulateAsp(void) {
-	pPlantSystem pInputSystem;
-	uint8_t i;
+void cgc_SimulateAsp(void) {
+	cgc_pPlantSystem pInputSystem;
+	cgc_uint8_t i;
 	double AorProvided;
 	double CbodDemand;
 	double TnDemand;
@@ -176,11 +176,11 @@ void SimulateAsp(void) {
 		}
 		
 		// See how much we're getting from the upstream valve
-		Asp[i].Flow = pInputSystem->Flow * GetValvePctFlow(pInputSystem, i);
-		Asp[i].Cbod = pInputSystem->Cbod * GetValvePctFlow(pInputSystem, i);
-		Asp[i].Tss = pInputSystem->Tss * GetValvePctFlow(pInputSystem, i);
-		Asp[i].Tn = pInputSystem->Tn * GetValvePctFlow(pInputSystem, i);
-		Asp[i].Tp = pInputSystem->Tp * GetValvePctFlow(pInputSystem, i);
+		Asp[i].Flow = pInputSystem->Flow * cgc_GetValvePctFlow(pInputSystem, i);
+		Asp[i].Cbod = pInputSystem->Cbod * cgc_GetValvePctFlow(pInputSystem, i);
+		Asp[i].Tss = pInputSystem->Tss * cgc_GetValvePctFlow(pInputSystem, i);
+		Asp[i].Tn = pInputSystem->Tn * cgc_GetValvePctFlow(pInputSystem, i);
+		Asp[i].Tp = pInputSystem->Tp * cgc_GetValvePctFlow(pInputSystem, i);
 
 		// Asp Reduces Tss by 90%
 		Asp[i].Tss *= 0.1;
@@ -262,9 +262,9 @@ void SimulateAsp(void) {
 //
 // Simulate the Filter operation
 //
-void SimulateFilter(void) {
-	pPlantSystem pInputSystem;
-	uint8_t i;
+void cgc_SimulateFilter(void) {
+	cgc_pPlantSystem pInputSystem;
+	cgc_uint8_t i;
 	double FlowGpm;
 	double FilterSqft;
 	double Loading;
@@ -282,11 +282,11 @@ void SimulateFilter(void) {
 		}
 		
 		// See how much we're getting from the upstream valve
-		Filter[i].Flow = pInputSystem->Flow * GetValvePctFlow(pInputSystem, i);
-		Filter[i].Cbod = pInputSystem->Cbod * GetValvePctFlow(pInputSystem, i);
-		Filter[i].Tss = pInputSystem->Tss * GetValvePctFlow(pInputSystem, i);
-		Filter[i].Tn = pInputSystem->Tn * GetValvePctFlow(pInputSystem, i);
-		Filter[i].Tp = pInputSystem->Tp * GetValvePctFlow(pInputSystem, i);
+		Filter[i].Flow = pInputSystem->Flow * cgc_GetValvePctFlow(pInputSystem, i);
+		Filter[i].Cbod = pInputSystem->Cbod * cgc_GetValvePctFlow(pInputSystem, i);
+		Filter[i].Tss = pInputSystem->Tss * cgc_GetValvePctFlow(pInputSystem, i);
+		Filter[i].Tn = pInputSystem->Tn * cgc_GetValvePctFlow(pInputSystem, i);
+		Filter[i].Tp = pInputSystem->Tp * cgc_GetValvePctFlow(pInputSystem, i);
 
 		// convert from MGD to GPM
 		FlowGpm = Filter[i].Flow * 1000000.0 / 1440.0;
@@ -324,9 +324,9 @@ void SimulateFilter(void) {
 //
 // Simulate the Disinfection operation
 //
-void SimulateDisinfection(void) {
-	pPlantSystem pInputSystem;
-	uint8_t i;
+void cgc_SimulateDisinfection(void) {
+	cgc_pPlantSystem pInputSystem;
+	cgc_uint8_t i;
 	double FlowGpm;
 	double ContactTime;
 	double ChlorineMass;
@@ -345,11 +345,11 @@ void SimulateDisinfection(void) {
 		}
 		
 		// See how much we're getting from the upstream valve
-		Disinfection[i].Flow = pInputSystem->Flow * GetValvePctFlow(pInputSystem, i);
-		Disinfection[i].Cbod = pInputSystem->Cbod * GetValvePctFlow(pInputSystem, i);
-		Disinfection[i].Tss = pInputSystem->Tss * GetValvePctFlow(pInputSystem, i);
-		Disinfection[i].Tn = pInputSystem->Tn * GetValvePctFlow(pInputSystem, i);
-		Disinfection[i].Tp = pInputSystem->Tp * GetValvePctFlow(pInputSystem, i);
+		Disinfection[i].Flow = pInputSystem->Flow * cgc_GetValvePctFlow(pInputSystem, i);
+		Disinfection[i].Cbod = pInputSystem->Cbod * cgc_GetValvePctFlow(pInputSystem, i);
+		Disinfection[i].Tss = pInputSystem->Tss * cgc_GetValvePctFlow(pInputSystem, i);
+		Disinfection[i].Tn = pInputSystem->Tn * cgc_GetValvePctFlow(pInputSystem, i);
+		Disinfection[i].Tp = pInputSystem->Tp * cgc_GetValvePctFlow(pInputSystem, i);
 
 		// First check Contact Time, given a 20,000 gallon disinfection tank
 		FlowGpm = Disinfection[i].Flow * 1000000 / 1440;
@@ -395,8 +395,8 @@ void SimulateDisinfection(void) {
 }
 
 #ifdef PATCHED_1
-void SimulateEffluent(void) {
-	pPlantSystem pInputSystem;
+void cgc_SimulateEffluent(void) {
+	cgc_pPlantSystem pInputSystem;
 
 	pInputSystem = Effluent.Input[0];
 	if (!pInputSystem) {
@@ -408,39 +408,39 @@ void SimulateEffluent(void) {
 		return;
 	}
 	
-	Effluent.Flow = pInputSystem->Flow * GetValvePctFlow(pInputSystem, 0);
-	Effluent.Cbod = pInputSystem->Cbod * GetValvePctFlow(pInputSystem, 0);
-	Effluent.Tss = pInputSystem->Tss * GetValvePctFlow(pInputSystem, 0);
-	Effluent.Tn = pInputSystem->Tn * GetValvePctFlow(pInputSystem, 0);
-	Effluent.Tp = pInputSystem->Tp * GetValvePctFlow(pInputSystem, 0);
-	Effluent.ChlorineResidual = pInputSystem->ChlorineResidual * GetValvePctFlow(pInputSystem, 0);
+	Effluent.Flow = pInputSystem->Flow * cgc_GetValvePctFlow(pInputSystem, 0);
+	Effluent.Cbod = pInputSystem->Cbod * cgc_GetValvePctFlow(pInputSystem, 0);
+	Effluent.Tss = pInputSystem->Tss * cgc_GetValvePctFlow(pInputSystem, 0);
+	Effluent.Tn = pInputSystem->Tn * cgc_GetValvePctFlow(pInputSystem, 0);
+	Effluent.Tp = pInputSystem->Tp * cgc_GetValvePctFlow(pInputSystem, 0);
+	Effluent.ChlorineResidual = pInputSystem->ChlorineResidual * cgc_GetValvePctFlow(pInputSystem, 0);
 	Effluent.SuccessfulDisinfection = pInputSystem->SuccessfulDisinfection;
 
 }
 #else
-void SimulateEffluent(void) {
+void cgc_SimulateEffluent(void) {
 	char buf[1024];
-	pPlantSystem pEffluent;
+	cgc_pPlantSystem pEffluent;
 
 	pEffluent = DisinfectionOutputValve.Output[0];
 	if (pEffluent == NULL) {
 		return;
 	}
 
-	pEffluent->Flow = DisinfectionOutputValve.Flow * GetValvePctFlow(&DisinfectionOutputValve, 0);
-	pEffluent->Cbod = DisinfectionOutputValve.Cbod * GetValvePctFlow(&DisinfectionOutputValve, 0);
-	pEffluent->Tss = DisinfectionOutputValve.Tss * GetValvePctFlow(&DisinfectionOutputValve, 0);
-	pEffluent->Tn = DisinfectionOutputValve.Tn * GetValvePctFlow(&DisinfectionOutputValve, 0);
-	pEffluent->Tp = DisinfectionOutputValve.Tp * GetValvePctFlow(&DisinfectionOutputValve, 0);
-	pEffluent->ChlorineResidual = DisinfectionOutputValve.ChlorineResidual * GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->Flow = DisinfectionOutputValve.Flow * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->Cbod = DisinfectionOutputValve.Cbod * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->Tss = DisinfectionOutputValve.Tss * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->Tn = DisinfectionOutputValve.Tn * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->Tp = DisinfectionOutputValve.Tp * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
+	pEffluent->ChlorineResidual = DisinfectionOutputValve.ChlorineResidual * cgc_GetValvePctFlow(&DisinfectionOutputValve, 0);
 	pEffluent->SuccessfulDisinfection = DisinfectionOutputValve.SuccessfulDisinfection;
 
 }
 #endif
 
-void SimulateHeadworks(void) {
-	pPlantSystem pInputSystem;
-	uint8_t i;
+void cgc_SimulateHeadworks(void) {
+	cgc_pPlantSystem pInputSystem;
+	cgc_uint8_t i;
 
 	pInputSystem = Headworks.Input[0];
 	if (!pInputSystem) {
@@ -455,39 +455,39 @@ void SimulateHeadworks(void) {
 
 }
 
-uint8_t RunSimStep(void) {
+cgc_uint8_t cgc_RunSimStep(void) {
 
 	// Check the valves before we start
-	if (!CheckValveOutputs()) {
+	if (!cgc_CheckValveOutputs()) {
 		return(0);
 	}
 
         // Simulate Headworks
-        SimulateHeadworks();
+        cgc_SimulateHeadworks();
 
         // Simulate valve between Headworks and Activated Sludge Process
-        SimulateValve(&HeadworksOutputValve);
+        cgc_SimulateValve(&HeadworksOutputValve);
 
         // Simulate Activated Sludge Process
-        SimulateAsp();
+        cgc_SimulateAsp();
 
         // Simulate valve between Activated Sludge Process and Filters
-        SimulateValve(&AspOutputValve);
+        cgc_SimulateValve(&AspOutputValve);
 
         // Simulate Filters
-        SimulateFilter();
+        cgc_SimulateFilter();
 
         // Simulate valve between Filters and Disinfection
-        SimulateValve(&FilterOutputValve);
+        cgc_SimulateValve(&FilterOutputValve);
 
         // Simulate Disinfection
-        SimulateDisinfection();
+        cgc_SimulateDisinfection();
 
         // Simulate valve to Discharge 
-        SimulateValve(&DisinfectionOutputValve);
+        cgc_SimulateValve(&DisinfectionOutputValve);
 
         // Simulate Effluent
-        SimulateEffluent();
+        cgc_SimulateEffluent();
 
 	return(1);
 }

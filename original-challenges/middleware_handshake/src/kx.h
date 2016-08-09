@@ -5,13 +5,13 @@
 #include "rng.h"
 
 typedef struct {
-    bn_t P;
-    bn_t Q;
-    bn_t G;
-    bn_t a;
-    bn_t b;
-    bn_t S;
-} kx_t;
+    cgc_bn_t P;
+    cgc_bn_t Q;
+    cgc_bn_t G;
+    cgc_bn_t a;
+    cgc_bn_t b;
+    cgc_bn_t S;
+} cgc_kx_t;
 
 enum {
     KX_GROUP_1024_160,
@@ -21,14 +21,14 @@ enum {
     KX_GROUP_END
 };
 
-int kx_init_std(kx_t *kx, unsigned int group);
-int kx_init(kx_t *kx, bn_t *P, bn_t *Q, bn_t *G);
-void kx_destroy(kx_t *kx);
-int kx_gen_a(kx_t *kx, rng_t *rng);
-int kx_get_A(kx_t *kx, bn_t *A);
-int kx_set_b(kx_t *kx, bn_t *b);
-int kx_get_sk(kx_t *kx, unsigned char *out, unsigned int n);
+int cgc_kx_init_std(cgc_kx_t *kx, unsigned int group);
+int cgc_kx_init(cgc_kx_t *kx, cgc_bn_t *P, cgc_bn_t *Q, cgc_bn_t *G);
+void cgc_kx_destroy(cgc_kx_t *kx);
+int cgc_kx_gen_a(cgc_kx_t *kx, cgc_rng_t *rng);
+int cgc_kx_get_A(cgc_kx_t *kx, cgc_bn_t *A);
+int cgc_kx_set_b(cgc_kx_t *kx, cgc_bn_t *b);
+int cgc_kx_get_sk(cgc_kx_t *kx, unsigned char *out, unsigned int n);
 
-int kx_self_test();
+int cgc_kx_self_test();
 
 #endif

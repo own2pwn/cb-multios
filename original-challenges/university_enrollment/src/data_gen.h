@@ -1,6 +1,6 @@
 #ifndef DATA_GEN_H_
 #define DATA_GEN_H_
 
-void generate_data();
+void cgc_generate_data();
 
 #endif

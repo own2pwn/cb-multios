@@ -59,7 +59,7 @@
 	bit 0: do the other 7 bits represent fragment count?
 		the bit is set:
 			bit 1-7: # of fragments, call it X
-			triggers recursion into defrag(X)
+			triggers recursion into cgc_defrag(X)
 				next X bytes are looped over, appended to ct[] if not 
 				fragmented or further recursed if fragmented
 		not fragmented:
@@ -78,8 +78,8 @@
 
 	example1 (empty fragment):
 	1000 0000 | 0AAA AAAA | 0BBB BBBB | ...
-	- 1000 0000: 0 frags, recurse defrag(0)
-		(return from defrag)
+	- 1000 0000: 0 frags, recurse cgc_defrag(0)
+		(return from cgc_defrag)
 	- 0AAA AAAA: not fragmented, ct[ct_index++] = 0AAA AAAA; rx_index++
 	- 0BBB BBBB: not fragmented, ct[ct_index++] = 0BBB BBBB; rx_index++
 	end ct[] = 0AAA AAAA 0BBB BBBB ...
@@ -88,39 +88,39 @@
 	1000 0001 | 0AAA AAAA | 0BBB BBBB | ...
 	- 1000 0001: 1 frags, recurse degrag(1)
 		1) 0AAA AAAA: not fragmented ct[ct_index++] = 0AAA AAAA; rx_index++
-		(return from defrag)
+		(return from cgc_defrag)
 	- 0BBB BBBB: not fragmented, ct[ct_index++] = 0BBB BBBB; rx_index++
 	end ct[] = 0AAA AAAA 0BBB BBBB ...
 
 	example3 (breadth fragment):
 	1000 0011 | 0AAA AAAA | 0BBB BBBB | 0CCC CCCC | ...
-	- 1000 0011: 3 frags, recurse into defrag(3)
+	- 1000 0011: 3 frags, recurse into cgc_defrag(3)
 		1) 0AAA AAAA: not fragmented, ct[ct_index++] = 0AAA AAAA; rx_index++
 		2) 0BBB BBBB: not fragmented, ct[ct_index++] = 0BBB BBBB; rx_index++
 		3) 0CCC CCCC: not fragmented, ct[ct_index++] = 0CCC CCCC; rx_index++
-		(return from defrag)
+		(return from cgc_defrag)
 	end ct[]: 0AAA AAAA 0BBB BBBB 0CCC CCCC ...
 
 	example4 (nested fragment):
 	1000 0010 | 1000 0001 | 0AAA AAAA | 0BBB BBBB
-	- 1000 0010: 2 frags, recurse into defrag(2)
-		1) 1000 0001: 1 frags, recurse into defrag(1) 
+	- 1000 0010: 2 frags, recurse into cgc_defrag(2)
+		1) 1000 0001: 1 frags, recurse into cgc_defrag(1) 
 			1) 0AAA AAAA: not fragmented, append 0AAA AAAA to ct[]; rx_index++
-			(return from defrag)
+			(return from cgc_defrag)
 		2) 0BBB BBBB: not fragmented, append 0BBB BBBB to ct[]; rx_index++
-		(return from defrag)
+		(return from cgc_defrag)
 	end ct[] = 0AAA AAAA 0BBB BBBB ...
 
 	example5 (nested, more complex):
 	1000 0010 | 0AAA AAAA | 1000 0001 | 1000 0001 | 0BBB BBBB
-	- 1000 0010: 2 frags, recurse into defrag(2)
+	- 1000 0010: 2 frags, recurse into cgc_defrag(2)
 		1) 0AAA AAAA: not fragmented; append 0AAA AAAA to ct[]; rx_index++
-		2) 1000 0001: 1 frags, recurse defrag(1)
-			1) 1000 0001: 1 frags, recurse defrag(1)
+		2) 1000 0001: 1 frags, recurse cgc_defrag(1)
+			1) 1000 0001: 1 frags, recurse cgc_defrag(1)
 				1) 0BBB BBBB: not fragmented, append 0BBB BBBB to ct[]; rx_index++
-				(return from defrag)
-			(return from defrag)
-		(return from defrag)
+				(return from cgc_defrag)
+			(return from cgc_defrag)
+		(return from cgc_defrag)
 	end ct[] = 0AAA AAAA 0BBB BBBB ...
  */
 	
@@ -134,11 +134,11 @@ static inline unsigned int getesp() {
 #endif
 // ^ DEBUG
 
-int defrag(size_t fragments) {
+int cgc_defrag(cgc_size_t fragments) {
 
 	int ret = SUCCESS;
 	unsigned char byte;
-	size_t i = 0;
+	cgc_size_t i = 0;
 
 	depth++;
 
@@ -146,7 +146,7 @@ int defrag(size_t fragments) {
 	if (MAX_DEPTH < depth) {
 #ifdef DEBUG
 	    fprintf(stderr, 
-	    	"[D] defrag(%03d) | exceeded MAX_DEPTH (%03d); depth = %03d\n", 
+	    	"[D] cgc_defrag(%03d) | exceeded MAX_DEPTH (%03d); depth = %03d\n", 
 	    	fragments, MAX_DEPTH, depth);
 #endif
 	    ret = ERRNO_EXCEEDED_MAX_DEPTH;
@@ -174,7 +174,7 @@ int defrag(size_t fragments) {
 
 #ifdef DEBUG
     fprintf(stderr, 
-    	"[D] ENTER: defrag(%03d) | (depth, esp) = (%03d, 0x%08x) | rx_index = %03d; ct_index = %03d\n", 
+    	"[D] ENTER: cgc_defrag(%03d) | (depth, esp) = (%03d, 0x%08x) | rx_index = %03d; ct_index = %03d\n", 
     	fragments, depth, esp, rx_index, ct_index);
 #endif
 
@@ -185,7 +185,7 @@ int defrag(size_t fragments) {
 		if (BUF_RX_SZ <= rx_index) {
 #ifdef DEBUG
 	    	fprintf(stderr, 
-	    		"[D] defrag(%03d) | exhausted RX_BUF; bailing...\n", 
+	    		"[D] cgc_defrag(%03d) | exhausted RX_BUF; bailing...\n", 
 	    		fragments);
 #endif
 			ret = ERRNO_EXHAUSTED_RX;
@@ -199,7 +199,7 @@ int defrag(size_t fragments) {
 
 			// If it's fragmented, we recurse, passing in the number of 
 			// fragments as argument.
-			if (SUCCESS != (ret = defrag(GET_DATA(byte)))) {		
+			if (SUCCESS != (ret = cgc_defrag(GET_DATA(byte)))) {		
 				goto bail_defrag;
 			}
 			
@@ -210,7 +210,7 @@ int defrag(size_t fragments) {
 
 #ifdef DEBUG
 		    fprintf(stderr, 
-		    	"[D] defrag(%03d) | not fragged; (before XOR) ct[%03d] = 0x%02x\n", 
+		    	"[D] cgc_defrag(%03d) | not fragged; (before XOR) ct[%03d] = 0x%02x\n", 
 		    	fragments, ct_index, byte);
 #endif
 
@@ -229,7 +229,7 @@ bail_defrag:
 	return ret;
 }
 
-void exercise_stack(void){
+void cgc_exercise_stack(void){
 	// We need to force mapping of the entirety (or most) of the stack space
 	// because the kernel is lazy and near the bottom of the stack probably 
 	// isn't accessible without this.
@@ -240,15 +240,15 @@ void exercise_stack(void){
 int main(void) {
 
     int ret = SUCCESS;
-    size_t state = STATE_CONNTERM;
-    size_t expected_rx_bytes = CONNTERM_SZ; 
-    size_t i = 0;
+    cgc_size_t state = STATE_CONNTERM;
+    cgc_size_t expected_rx_bytes = CONNTERM_SZ; 
+    cgc_size_t i = 0;
 
 #ifdef DEBUG
 	fprintf(stderr, "[D] main | --------------- new run ---------------\n");
 #endif
 
-	exercise_stack();
+	cgc_exercise_stack();
 
 	// From the README, we store a pointer to the OTP at a low stack address.
 	void *ppotp = (void *)(STACK_LIMIT + 0x10000);
@@ -265,8 +265,8 @@ int main(void) {
     	////
 
         rx_bytes = 0;
-        memset(rx_buf, 0, BUF_RX_SZ);
-        if (SUCCESS != (ret = receive_all(STDIN, (void *)&rx_buf, BUF_RX_SZ, &rx_bytes))) { 
+        cgc_memset(rx_buf, 0, BUF_RX_SZ);
+        if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&rx_buf, BUF_RX_SZ, &rx_bytes))) { 
 #ifdef DEBUG
             fprintf(stderr, "[E] main | failed pkt receive\n");
 #endif
@@ -276,9 +276,9 @@ int main(void) {
 
         // If we got the EXIT packet, bail gracefully.
         if (sizeof(PKT_EXIT)-1 == rx_bytes && 
-        	0 == memcmp((const char *)&rx_buf, (const char *)&PKT_EXIT, sizeof(PKT_EXIT)-1)) {
+        	0 == cgc_memcmp((const char *)&rx_buf, (const char *)&PKT_EXIT, sizeof(PKT_EXIT)-1)) {
 
-        	if (SUCCESS != (ret = transmit_all(STDOUT, &PKT_EXIT_ACK, sizeof(PKT_EXIT_ACK)-1, NULL))) { 
+        	if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &PKT_EXIT_ACK, sizeof(PKT_EXIT_ACK)-1, NULL))) { 
 #ifdef DEBUG
 	            fprintf(stderr, "[E] main | failed transmitting PKT_EXIT_ACK\n");
 #endif
@@ -302,7 +302,7 @@ int main(void) {
 	        	"[D] main | rx_bytes == %d != %d; transmit ()ing PKT_INVALID_SZ...\n", 
 	        	rx_bytes, expected_rx_bytes);
 #endif
-	        if (SUCCESS != (ret = transmit_all(STDOUT, &PKT_INVALID_SZ, sizeof(PKT_INVALID_SZ)-1, NULL))) { 
+	        if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &PKT_INVALID_SZ, sizeof(PKT_INVALID_SZ)-1, NULL))) { 
 #ifdef DEBUG
 	            fprintf(stderr, "[E] main | failed transmitting PKT_INVALID_SZ\n");
 #endif
@@ -335,9 +335,9 @@ int main(void) {
 
         		// We DON'T get CONNTERM, then send error packet, listen for 
         		// next packet.
-	            if (0 != memcmp((const char *)&rx_buf, (const char *)&PKT_CONNTERM, sizeof(PKT_CONNTERM)-1)) {
+	            if (0 != cgc_memcmp((const char *)&rx_buf, (const char *)&PKT_CONNTERM, sizeof(PKT_CONNTERM)-1)) {
 
-	                if (SUCCESS != (ret = transmit_all(STDOUT, &PKT_CONNTERM_ERR, sizeof(PKT_CONNTERM_ERR)-1, NULL))) { 
+	                if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &PKT_CONNTERM_ERR, sizeof(PKT_CONNTERM_ERR)-1, NULL))) { 
 #ifdef DEBUG
 	                    fprintf(stderr, "[E] main | failed transmitting PKT_CONNTERM_ERR\n");
 #endif
@@ -357,7 +357,7 @@ int main(void) {
 	        	}
 
 	        	// If we haven't continued, we got CONNTERM; we need to ACK.
-				if (SUCCESS != (ret = transmit_all(STDOUT, &PKT_CONNTERM_ACK, sizeof(PKT_CONNTERM_ACK)-1, NULL))) { 
+				if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &PKT_CONNTERM_ACK, sizeof(PKT_CONNTERM_ACK)-1, NULL))) { 
 #ifdef DEBUG
                     fprintf(stderr, "[E] main | failed transmitting PKT_CONNTERM_ACK\n");
 #endif
@@ -386,16 +386,16 @@ int main(void) {
         	// STATE_OTP simply copies buffer into OTP, advances to STATE_MSG.
         	case STATE_OTP:
 
-	            memcpy(((unsigned char **)ppotp)[0], rx_buf, sizeof(otp));
+	            cgc_memcpy(((unsigned char **)ppotp)[0], rx_buf, sizeof(otp));
 	            state = STATE_MSG;
 	            expected_rx_bytes = MSG_SZ;
 
 #ifdef DEBUG
 	            fprintf(stderr, 
-	            	"[D] main | STATE_OTP: memcpy()ed into OTP; advanced to STATE_MSG\n");
+	            	"[D] main | STATE_OTP: cgc_memcpy()ed into OTP; advanced to STATE_MSG\n");
 #endif 
 
-				if (SUCCESS != (ret = transmit_all(STDOUT, &PKT_OTP_ACK, sizeof(PKT_OTP_ACK)-1, NULL))) { 
+				if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &PKT_OTP_ACK, sizeof(PKT_OTP_ACK)-1, NULL))) { 
 #ifdef DEBUG
                     fprintf(stderr, "[E] main | failed transmitting PKT_OTP_ACK; ret = %d\n", ret);
 #endif
@@ -418,7 +418,7 @@ int main(void) {
         	case STATE_MSG:
 
         		// If we get the CONNTERM message, reset state to OTP.
-        		if (0 == memcmp((const char *)&rx_buf, (const char *)&PKT_CONNTERM, sizeof(PKT_CONNTERM)-1)) {
+        		if (0 == cgc_memcmp((const char *)&rx_buf, (const char *)&PKT_CONNTERM, sizeof(PKT_CONNTERM)-1)) {
 #ifdef DEBUG
 	            	fprintf(stderr, 
 	            		"[D] main | STATE_MSG: got CONNTERM; resetting to STATE_OTP\n");
@@ -435,7 +435,7 @@ int main(void) {
 #ifdef DEBUG
             		fprintf(stderr, "[D] main | got error msg; reflecting...\n");
 #endif    			
-            		if (SUCCESS != (ret = transmit_all(STDOUT, &rx_buf, sizeof(rx_buf)-1, NULL))) { 
+            		if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &rx_buf, sizeof(rx_buf)-1, NULL))) { 
 #ifdef DEBUG
 	                    fprintf(stderr, "[E] main | during error reflection transmit ()\n");
 #endif
@@ -454,11 +454,11 @@ int main(void) {
         		// We actually have to handle this one.
 	        	rx_index = 0;
 	        	ct_index = 0;
-	        	memset(ct, 0, sizeof(ct));
+	        	cgc_memset(ct, 0, sizeof(ct));
 	        	// Base condition: entire message is treated as fragments.
-	        	defrag(BUF_RX_SZ); 
+	        	cgc_defrag(BUF_RX_SZ); 
 
-	        	// defrag() will have the affect of dropping all bytes with 
+	        	// cgc_defrag() will have the affect of dropping all bytes with 
 	        	// fragment flags.  A discussion on the implications of this 
 	        	// algorithmic reduction can be found at the top of this file.
 
@@ -468,7 +468,7 @@ int main(void) {
 	        	}
 
 	        	tx_bytes = 0;
-	            if (SUCCESS != (ret = transmit_all(STDOUT, &ct, ct_index, &tx_bytes))) { 
+	            if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &ct, ct_index, &tx_bytes))) { 
 #ifdef DEBUG
                     fprintf(stderr, "[E] main | failed transmitting response to MSG\n");
 #endif

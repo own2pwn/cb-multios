@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,137 +24,137 @@
 #include "cstdio.h"
 #include "cstring.h"
 
-uint32_t g_rand_idx = 0;
+cgc_uint32_t g_rand_idx = 0;
 
-Dispatcher::Dispatcher(List *pworkers, uint32_t *secret_page)
+cgc_Dispatcher::cgc_Dispatcher(cgc_List *pworkers, cgc_uint32_t *secret_page)
 {
   pworkers_ = pworkers;
   secret_ = secret_page;
 }
 
-void Dispatcher::AddTicket(Ticket *ticket)
+void cgc_Dispatcher::cgc_AddTicket(cgc_Ticket *ticket)
 {
   if(!ticket)
     return;
 
-  if (ticket->status() == OPEN)
-    ticket_lists_[ticket->priority() - 1].Append(ticket);
+  if (ticket->cgc_status() == OPEN)
+    ticket_lists_[ticket->cgc_priority() - 1].cgc_Append(ticket);
   else
-    ticket_lists_[ticket->priority() - 1].AppendLeft(ticket);
+    ticket_lists_[ticket->cgc_priority() - 1].cgc_AppendLeft(ticket);
 }
 
-void Dispatcher::CancelTicket(uint32_t id)
+void cgc_Dispatcher::cgc_CancelTicket(cgc_uint32_t cgc_id)
 {
   for (int i = 0; i < NUM_DEQUES; i++)
   {
-    Deque *ptickets = &ticket_lists_[i];
-    uint32_t count = ptickets->Count();
+    cgc_Deque *ptickets = &ticket_lists_[i];
+    cgc_uint32_t count = ptickets->cgc_Count();
     for (int j = 0; j < count; j++)
     {
-      Ticket *ticket = ptickets->PopLeft();
-      if (ticket->id() == id) {
-        Ticket::DeleteTicket(ticket);
+      cgc_Ticket *ticket = ptickets->cgc_PopLeft();
+      if (ticket->cgc_id() == cgc_id) {
+        cgc_Ticket::cgc_DeleteTicket(ticket);
         continue;
       }
-      ptickets->Append(ticket);
+      ptickets->cgc_Append(ticket);
     }
   }
 
-  Support *worker = FindSupportByTicketId(id);
+  cgc_Support *worker = cgc_FindSupportByTicketId(cgc_id);
   if (worker)
   {
-    Ticket *ticket = worker->RemoveTicket();
+    cgc_Ticket *ticket = worker->cgc_RemoveTicket();
     if (ticket)
-      Ticket::DeleteTicket(ticket);
+      cgc_Ticket::cgc_DeleteTicket(ticket);
   }
 }
 
-void Dispatcher::ViewTicket(uint32_t id)
+void cgc_Dispatcher::cgc_ViewTicket(cgc_uint32_t cgc_id)
 {
   for (int i = 0; i < NUM_DEQUES; i++)
   {
-    Deque *ptickets = &ticket_lists_[i];
-    for (int j = 0; j < ptickets->Count(); j++)
+    cgc_Deque *ptickets = &ticket_lists_[i];
+    for (int j = 0; j < ptickets->cgc_Count(); j++)
     {
-      Ticket *ticket = ptickets->PopLeft();
-      if (ticket->id() == id)
+      cgc_Ticket *ticket = ptickets->cgc_PopLeft();
+      if (ticket->cgc_id() == cgc_id)
       {
-        ticket->Display();
+        ticket->cgc_Display();
       }
-      ptickets->Append(ticket);
+      ptickets->cgc_Append(ticket);
     }
   }
 
-  Support *worker = FindSupportByTicketId(id);
+  cgc_Support *worker = cgc_FindSupportByTicketId(cgc_id);
   if (worker)
-    worker->CurrentTicket()->Display();
+    worker->cgc_CurrentTicket()->cgc_Display();
 }
 
-void Dispatcher::ViewTickets(STATUS status)
+void cgc_Dispatcher::cgc_ViewTickets(cgc_STATUS cgc_status)
 {
   for (int i = 0; i < NUM_DEQUES; i++)
   {
-    Deque *ptickets = &ticket_lists_[i];
-    for (int j = 0; j < ptickets->Count(); j++)
+    cgc_Deque *ptickets = &ticket_lists_[i];
+    for (int j = 0; j < ptickets->cgc_Count(); j++)
     {
-      Ticket *ticket = ptickets->PopLeft();
-      if (ticket->status() == status)
-        ticket->Display();
-      ptickets->Append(ticket);
+      cgc_Ticket *ticket = ptickets->cgc_PopLeft();
+      if (ticket->cgc_status() == cgc_status)
+        ticket->cgc_Display();
+      ptickets->cgc_Append(ticket);
     }
   }
 
-  for (int i = 0; i < pworkers_->Length(); i++)
+  for (int i = 0; i < pworkers_->cgc_Length(); i++)
   {
-    Support *worker = pworkers_->Get(i);
-    Ticket *current_ticket = worker->CurrentTicket();
-    if (current_ticket && current_ticket->status() == status)
-      current_ticket->Display();
+    cgc_Support *worker = pworkers_->cgc_Get(i);
+    cgc_Ticket *current_ticket = worker->cgc_CurrentTicket();
+    if (current_ticket && current_ticket->cgc_status() == cgc_status)
+      current_ticket->cgc_Display();
   }
 
 }
 
-void Dispatcher::RecordFinished(Support* worker)
+void cgc_Dispatcher::cgc_RecordFinished(cgc_Support* worker)
 {
   char buf[MAX_DESC + 1];
-  memcpy(buf, worker->CurrentTicket()->description(), MAX_DESC);
-  Ticket::DeleteTicket(worker->RemoveTicket());
+  cgc_memcpy(buf, worker->cgc_CurrentTicket()->cgc_description(), MAX_DESC);
+  cgc_Ticket::cgc_DeleteTicket(worker->cgc_RemoveTicket());
 
-  printf("Ticket Finished\n");
-  printf("%d\n", worker->id());
+  cgc_printf("cgc_Ticket Finished\n");
+  cgc_printf("%d\n", worker->cgc_id());
 #ifdef PATCHED_1
-  printf("%s", buf);
+  cgc_printf("%s", buf);
 #else
-  printf(buf);
+  cgc_printf(buf);
 #endif
 }
 
-Ticket *Dispatcher::GetTicket(PRIORITY max_priority)
+cgc_Ticket *cgc_Dispatcher::cgc_GetTicket(cgc_PRIORITY cgc_max_priority)
 {
-  for (int i = max_priority; i >= LOW; i--)
+  for (int i = cgc_max_priority; i >= LOW; i--)
   {
-    Deque *ptickets = &ticket_lists_[i - 1];
-    if (ptickets->Count())
-      return ptickets->PopLeft();
+    cgc_Deque *ptickets = &ticket_lists_[i - 1];
+    if (ptickets->cgc_Count())
+      return ptickets->cgc_PopLeft();
   }
 
   return nullptr;
 }
 
-uint32_t Dispatcher::GetRandomTicks(uint32_t modval)
+cgc_uint32_t cgc_Dispatcher::cgc_GetRandomTicks(cgc_uint32_t modval)
 {
-  uint32_t v =  secret_[g_rand_idx] % modval;
-  g_rand_idx = (g_rand_idx + 1) % (0x1000 / sizeof(uint32_t));
+  cgc_uint32_t v =  secret_[g_rand_idx] % modval;
+  g_rand_idx = (g_rand_idx + 1) % (0x1000 / sizeof(cgc_uint32_t));
   return v;
 }
 
-Support *Dispatcher::FindSupportByTicketId(uint32_t id)
+cgc_Support *cgc_Dispatcher::cgc_FindSupportByTicketId(cgc_uint32_t cgc_id)
 {
-  for (int i = 0; i < pworkers_->Length(); i++)
+  for (int i = 0; i < pworkers_->cgc_Length(); i++)
   {
-    Support *worker = pworkers_->Get(i);
-    Ticket *current_ticket = worker->CurrentTicket();
-    if (current_ticket && current_ticket->id() == id)
+    cgc_Support *worker = pworkers_->cgc_Get(i);
+    cgc_Ticket *current_ticket = worker->cgc_CurrentTicket();
+    if (current_ticket && current_ticket->cgc_id() == cgc_id)
       return worker;
   }
 

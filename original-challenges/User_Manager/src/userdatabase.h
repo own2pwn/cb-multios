@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,74 +26,74 @@ THE SOFTWARE.
 #ifndef __USER_DATABASE_H__
 #define __USER_DATABASE_H__
 
-class CUserEntry
+class cgc_CUserEntry
 {
 public:
-    CUserEntry( const String &sUserName, const String &sPassword );
-    ~CUserEntry( );
+    cgc_CUserEntry( const cgc_String &sUserName, const cgc_String &sPassword );
+    ~cgc_CUserEntry( );
 
-    const String &GetPassword( void ) const
+    const cgc_String &cgc_GetPassword( void ) const
     {
         return m_sPassword;
     }
 
-    const String &GetUserName( void ) const
+    const cgc_String &cgc_GetUserName( void ) const
     {
         return m_sUserName;
     }
 
-    void SetPassword( String sPassword )
+    void cgc_SetPassword( cgc_String sPassword )
     {
         m_sPassword = sPassword;
     }
 
-    bool AddMessage( CUserMessage *pNewMessage );
+    bool cgc_AddMessage( cgc_CUserMessage *pNewMessage );
 
-    bool DeleteMessage( CUserMessage *pMessage );
+    bool cgc_DeleteMessage( cgc_CUserMessage *pMessage );
 
-    uint32_t GetMessageCount( void );
-    uint32_t GetUnreadMessageCount( void );
+    cgc_uint32_t cgc_GetMessageCount( void );
+    cgc_uint32_t cgc_GetUnreadMessageCount( void );
 
-    CUserMessage *GetFirstMessage( void );
-    CUserMessage *GetNextMessage( CUserMessage *pCur );
+    cgc_CUserMessage *cgc_GetFirstMessage( void );
+    cgc_CUserMessage *cgc_GetNextMessage( cgc_CUserMessage *pCur );
 
-    CUserMessage *GetFirstUnreadMessage( void );
-    CUserMessage *GetLastUnreadMessage( void );
-    CUserMessage *GetNextUnreadMessage( CUserMessage *pCur );
+    cgc_CUserMessage *cgc_GetFirstUnreadMessage( void );
+    cgc_CUserMessage *cgc_GetLastUnreadMessage( void );
+    cgc_CUserMessage *cgc_GetNextUnreadMessage( cgc_CUserMessage *pCur );
 
-    CUserMessage *GetMessageByIndex( uint32_t index );
+    cgc_CUserMessage *cgc_GetMessageByIndex( cgc_uint32_t index );
 
-    void ClearUnreadMessages( void );
+    void cgc_ClearUnreadMessages( void );
 
 private:
-    String m_sUserName;
-    String m_sPassword;
+    cgc_String m_sUserName;
+    cgc_String m_sPassword;
 
-    CUserMessage *m_pLastUnreadMessage;
-    CDoubleQueue m_oMessageQueue;
+    cgc_CUserMessage *m_pLastUnreadMessage;
+    cgc_CDoubleQueue m_oMessageQueue;
 };
 
-class CUserDatabase
+class cgc_CUserDatabase
 {
 public:
-    static const uint32_t MAX_USER_ENTRIES = 64;
+    static const cgc_uint32_t MAX_USER_ENTRIES = 64;
 
 public:
-    CUserDatabase();
-    ~CUserDatabase();
+    cgc_CUserDatabase();
+    ~cgc_CUserDatabase();
 
-    bool CreateUser( const String &sUserName, const String &sPassword );
+    bool cgc_CreateUser( const cgc_String &sUserName, const cgc_String &sPassword );
 
-    CUserEntry *FindUserByName( const String &sUserName ) const;
-    CUserEntry *GetUserForIndex( uint32_t idx ) const;
+    cgc_CUserEntry *cgc_FindUserByName( const cgc_String &sUserName ) const;
+    cgc_CUserEntry *cgc_GetUserForIndex( cgc_uint32_t idx ) const;
 
-    bool DeleteUserByName( const String &sUserName );
+    bool cgc_DeleteUserByName( const cgc_String &sUserName );
 
-    uint32_t GetUserCount( void ) const;
+    cgc_uint32_t cgc_GetUserCount( void ) const;
 
 
 private:
-    CUserEntry *m_userTable[MAX_USER_ENTRIES];
+    cgc_CUserEntry *m_userTable[MAX_USER_ENTRIES];
 };
 
 #endif // __USER_DATABASE_H__

@@ -5,14 +5,14 @@
 #define RANDOM_PAGE_ADDRESS 0x4347C000
 #define RANDOM_PAGE_LENGTH 0x1000
 
-void monte_initialize();
-float64 monte_initialize_step(float64 first, uint64 second);
+void cgc_monte_initialize();
+cgc_float64 cgc_monte_initialize_step(cgc_float64 first, cgc_uint64 second);
 
-void monte_adjust(float64 new_splatter, float64 new_scaler);
+void cgc_monte_adjust(cgc_float64 new_splatter, cgc_float64 new_scaler);
 
-uint8 monte_happy();
+cgc_uint8 cgc_monte_happy();
 
-float64 monte_state();
-float64 monte_state_step(float64 running, float64 cur);
+cgc_float64 cgc_monte_state();
+cgc_float64 cgc_monte_state_step(cgc_float64 running, cgc_float64 cur);
 
-float64 monte_gen();
+cgc_float64 cgc_monte_gen();

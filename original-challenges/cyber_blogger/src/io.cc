@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,14 +34,14 @@ extern "C" {
 
 static char iobuf[IO::MAX_IO_SIZE];
 
-char *IO::buf()
+char *IO::cgc_buf()
 {
     return iobuf;
 }
 
-bool IO::readline(size_t max_size)
+bool IO::cgc_readline(cgc_size_t max_size)
 {
-    size_t rx, i = 0;
+    cgc_size_t rx, i = 0;
     if (max_size > MAX_IO_SIZE || max_size < 2)
         return false;
 
@@ -51,7 +51,7 @@ bool IO::readline(size_t max_size)
             break;
         }
 
-        if(!isprint(iobuf[i]))
+        if(!cgc_isprint(iobuf[i]))
             return false;
 
         i++;
@@ -63,9 +63,9 @@ bool IO::readline(size_t max_size)
     return true;
 }
 
-int IO::readnum(size_t max_size)
+int IO::cgc_readnum(cgc_size_t max_size)
 {
-    size_t rx, i = 0;
+    cgc_size_t rx, i = 0;
     max_size = max_size ? max_size : MAX_IO_SIZE;
 
     while (receive(STDIN, &iobuf[i], 1, &rx) == 0 && rx == 1 && i < max_size) {
@@ -80,13 +80,13 @@ int IO::readnum(size_t max_size)
     if (i == max_size || i == 0)
         return 0;
 
-    return strtol(&iobuf[0], NULL, 10);
+    return cgc_strtol(&iobuf[0], NULL, 10);
 }
 
-char *IO::iotextdup(size_t max_size)
+char *IO::cgc_iotextdup(cgc_size_t max_size)
 {
-    size_t rx, i = 0, multiplier = 0;
-    size_t tilde_count = 0; //``` = exit str
+    cgc_size_t rx, i = 0, multiplier = 0;
+    cgc_size_t tilde_count = 0; //``` = cgc_exit str
     char *strbuf;
     if (max_size < 3)
         return NULL;
@@ -111,7 +111,7 @@ char *IO::iotextdup(size_t max_size)
                 return NULL;
             }
 
-            memcpy(temp, strbuf, MAX_IO_SIZE << multiplier);
+            cgc_memcpy(temp, strbuf, MAX_IO_SIZE << multiplier);
             delete[] strbuf;
             strbuf = temp;
         }
@@ -126,9 +126,9 @@ char *IO::iotextdup(size_t max_size)
     return strbuf;
 }
 
-bool IO::readnbytes(size_t nbytes, char *data)
+bool IO::cgc_readnbytes(cgc_size_t nbytes, char *data)
 {
-    size_t rx, i = 0;
+    cgc_size_t rx, i = 0;
     if (!nbytes)
         return false;
 
@@ -139,59 +139,59 @@ bool IO::readnbytes(size_t nbytes, char *data)
     return true;
 }
 
-File *IO::upload_file()
+cgc_File *IO::cgc_upload_file()
 {
-    size_t rx, i = 0;
+    cgc_size_t rx, i = 0;
     char file_name[64];
-    char header[File::MAX_HEADER_SIZE];
+    char header[cgc_File::MAX_HEADER_SIZE];
     char *data = NULL;
     unsigned int file_type, magic;
     unsigned int data_size = 0;
     const filetype *ft = NULL;
-    File *new_file = NULL;
+    cgc_File *new_file = NULL;
 
 
-    memset(file_name, 0, sizeof(file_name));
+    cgc_memset(file_name, 0, sizeof(file_name));
     printf("Enter Filename: ");
-    if (IO::readline()) {
-        if (strlen(IO::buf()) > 2 && strlen(IO::buf()) < 64) {
-            memcpy(file_name, IO::buf(), strlen(IO::buf()));
+    if (IO::cgc_readline()) {
+        if (cgc_strlen(IO::cgc_buf()) > 2 && cgc_strlen(IO::cgc_buf()) < 64) {
+            cgc_memcpy(file_name, IO::cgc_buf(), cgc_strlen(IO::cgc_buf()));
         }
         else {
-            memcpy(file_name, IO::buf(), sizeof(file_name) - 1);
+            cgc_memcpy(file_name, IO::cgc_buf(), sizeof(file_name) - 1);
         }
     }
 
-    printf("--Begin Uploading File--\n");
-    if (!IO::readnbytes(sizeof(unsigned int), header)) {
+    printf("--Begin Uploading cgc_File--\n");
+    if (!IO::cgc_readnbytes(sizeof(unsigned int), header)) {
         printf("Could not read magic num\n");
         return NULL;
     }
 
     magic = ((unsigned int *)header)[0];
 
-    ft = get_filetype_m(magic);
+    ft = cgc_get_filetype_m(magic);
     if (!ft) {
         printf("Unsupported file\n");
         return NULL;
     }
 
     if (ft->type == ASCIIART) {
-        if (!IO::readnbytes(AsciiArt::find_header_size() - sizeof(magic), &header[sizeof(magic)])){
+        if (!IO::cgc_readnbytes(cgc_AsciiArt::cgc_find_header_size() - sizeof(magic), &header[sizeof(magic)])){
             printf("Could not read header\n");
             return NULL;
         }
 
-        data_size = AsciiArt::find_data_size(header);
+        data_size = cgc_AsciiArt::cgc_find_data_size(header);
         data = new char[data_size];
-        if (!IO::readnbytes(data_size, data)) {
+        if (!IO::cgc_readnbytes(data_size, data)) {
             printf("Could not read data\n");
             delete[] data;
             return NULL;
         }
 
-        new_file = new AsciiArt(header, data, file_name);
-        if (!new_file->get_data_size()) {
+        new_file = new cgc_AsciiArt(header, data, file_name);
+        if (!new_file->cgc_get_data_size()) {
             printf("Malformed Data\n");
             delete[] data;
             delete new_file;
@@ -200,22 +200,22 @@ File *IO::upload_file()
 
         return new_file;
     } else if (ft->type == PICTURE) {
-        if (!IO::readnbytes(Picture::find_header_size() - sizeof(magic), &header[sizeof(magic)])){
+        if (!IO::cgc_readnbytes(cgc_Picture::cgc_find_header_size() - sizeof(magic), &header[sizeof(magic)])){
             printf("Could not read header\n");
             return NULL;
         }
 
-        data_size = Picture::find_data_size(header);
+        data_size = cgc_Picture::cgc_find_data_size(header);
 
         data = new char[data_size];
-        if (!IO::readnbytes(data_size, data)) {
+        if (!IO::cgc_readnbytes(data_size, data)) {
             printf("Could not read data\n");
             delete[] data;
             return NULL;
         }
 
-        new_file = new Picture(header, data, file_name);
-        if (!new_file->get_data_size()) {
+        new_file = new cgc_Picture(header, data, file_name);
+        if (!new_file->cgc_get_data_size()) {
             printf("Malformed Data\n");
             delete[] data;
             delete new_file;

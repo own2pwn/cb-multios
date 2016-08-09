@@ -36,28 +36,28 @@ THE SOFTWARE.
 
 typedef struct __DDAP_RECORD_ENTRY
 {
-    uint32_t index;
+    cgc_uint32_t index;
     char szFirstName[MAX_STRING_LENGTH+1];
     char szLastName[MAX_STRING_LENGTH+1];
     char szUserName[MAX_STRING_LENGTH+1];
-    tDateTime birthDate;
-} tDDAPRecord;
+    cgc_tDateTime birthDate;
+} cgc_tDDAPRecord;
 
 #define GET_DB_YEAR( year ) ( year + 1900 )
 
-void init_database( void );
+void cgc_init_database( void );
 
-uint32_t db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate );
-uint32_t db_update_record( uint32_t index, char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate );
-uint32_t db_remove_record( uint32_t index );
-uint32_t db_get_record_count( void );
+cgc_uint32_t cgc_db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName, cgc_tDateTime birthDate );
+cgc_uint32_t cgc_db_update_record( cgc_uint32_t index, char *pszUserName, char *pszFirstName, char *pszLastName, cgc_tDateTime birthDate );
+cgc_uint32_t cgc_db_remove_record( cgc_uint32_t index );
+cgc_uint32_t cgc_db_get_record_count( void );
 
-tDDAPRecord *db_search_first_name( char *pszFirstName );
-tDDAPRecord *db_search_last_name( char *pszLastName );
-tDDAPRecord *db_search_index( uint32_t index );
-tDDAPRecord *db_search_user_name( char *pszUserName );
-tDDAPRecord *db_search_birth_date( tDateTime date  );
+cgc_tDDAPRecord *cgc_db_search_first_name( char *pszFirstName );
+cgc_tDDAPRecord *cgc_db_search_last_name( char *pszLastName );
+cgc_tDDAPRecord *cgc_db_search_index( cgc_uint32_t index );
+cgc_tDDAPRecord *cgc_db_search_user_name( char *pszUserName );
+cgc_tDDAPRecord *cgc_db_search_birth_date( cgc_tDateTime date  );
 
-void print_record_helper( tDDAPRecord * );
+void cgc_print_record_helper( cgc_tDDAPRecord * );
 
 #endif // __DATABASE_H__

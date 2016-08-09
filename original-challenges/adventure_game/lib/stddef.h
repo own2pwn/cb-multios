@@ -6,8 +6,8 @@
 typedef long int ptrdiff_t;
 
 #ifndef _LIBCGC_H
-    typedef long unsigned int size_t;
-    typedef long int ssize_t;
+    typedef long unsigned int cgc_size_t;
+    typedef long int cgc_ssize_t;
 
     #define NULL 0
 #endif

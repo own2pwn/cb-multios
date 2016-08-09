@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,106 +35,106 @@ THE SOFTWARE.
 
 
 /*
-graph traversal service that emulates a street map.  
+graph traversal service that emulates a street cgc_map.  
 provides routing from point to point 
-map can be created/edited by adding streets, intersections, 
+cgc_map can be created/edited by adding streets, intersections, 
 and addresses
 */
 
 
-pmap init_map(char mapName[32]){
-	pmap thisMap;
-	if (  allocate( sizeof(map), 0, (void**)&thisMap ) != 0  ){
-	puts("\n**Allocate returned an error.\n");
+cgc_pmap cgc_init_map(char mapName[32]){
+	cgc_pmap thisMap;
+	if (  allocate( sizeof(cgc_map), 0, (void**)&thisMap ) != 0  ){
+	cgc_puts("\n**Allocate returned an error.\n");
 	_terminate(1);
 	}
-	strcpy(thisMap->name, mapName);
+	cgc_strcpy(thisMap->name, mapName);
 	thisMap->name[31] = 0;
-	thisMap->roadList = create_double_list();
+	thisMap->roadList = cgc_create_double_list();
 	return thisMap;
 }
 
 
-proad add_road(pmap thisMap, char roadName[32], double roadLength){
-	proad thisRoad = NULL;
-	pdListNode thisNode = NULL;
-	pdListNode lastRoadNode = get_last_element_d(thisMap->roadList);
-	thisNode = insert_double_list_node(thisMap->roadList, lastRoadNode);
-	thisRoad = (proad)thisNode->data;
-	strcpy(thisRoad->name, roadName);
-	thisRoad->name[strlen(roadName)] = 0;
+cgc_proad cgc_add_road(cgc_pmap thisMap, char roadName[32], double roadLength){
+	cgc_proad thisRoad = NULL;
+	cgc_pdListNode thisNode = NULL;
+	cgc_pdListNode lastRoadNode = cgc_get_last_element_d(thisMap->roadList);
+	thisNode = cgc_insert_double_list_node(thisMap->roadList, lastRoadNode);
+	thisRoad = (cgc_proad)thisNode->data;
+	cgc_strcpy(thisRoad->name, roadName);
+	thisRoad->name[cgc_strlen(roadName)] = 0;
 	thisRoad->length = roadLength;
-	thisRoad->addressList = create_double_list();
-	thisRoad->intersectionList = create_double_list();
+	thisRoad->addressList = cgc_create_double_list();
+	thisRoad->intersectionList = cgc_create_double_list();
 	thisRoad->self = thisNode;
 	return thisRoad;
 
 }
 
-void print_roads(pmap thisMap){
-	proad thisRoad;
-	//check for empty map
+void cgc_print_roads(cgc_pmap thisMap){
+	cgc_proad thisRoad;
+	//check for empty cgc_map
 	if (thisMap->roadList->listRoot != NULL){
-		thisRoad = (proad)thisMap->roadList->listRoot->data;
+		thisRoad = (cgc_proad)thisMap->roadList->listRoot->data;
 	}else{
 		thisRoad = NULL;
 	}
-	printf("The map @s contains @d roads.\n", thisMap->name, thisMap->roadList->count);
+	cgc_printf("The cgc_map @s contains @d roads.\n", thisMap->name, thisMap->roadList->count);
 	int i = 1;
 	while (thisRoad != NULL){
-		printf("(@d) @s is @f units long\n", i, thisRoad->name, thisRoad->length);
+		cgc_printf("(@d) @s is @f units long\n", i, thisRoad->name, thisRoad->length);
 		i++;
 		if (thisRoad->self->next != NULL){
-			thisRoad = (proad)thisRoad->self->next->data;
+			thisRoad = (cgc_proad)thisRoad->self->next->data;
 		}else{
 			thisRoad = NULL;
 		}
 	}
 
-	//print all road names and length for map
+	//print all cgc_road names and length for cgc_map
 	return;
 }
 //returns null if not found
 
-//insert address in list after last address in list with lower or equal number, if equal numbers new is inserted after last. 
-paddress add_address ( int number, char resident[32], proad thisRoad, pintersection prevIntersection,
- 						double distance_to_prev, pintersection nextIntersection, double distance_to_next ){
-	address tempAddress;
-	paddress thisAddress = &tempAddress;
-	pdListNode thisNode = NULL;
-	pdListNode prevNode = NULL;
-	paddress nextAddress = NULL;
-	paddress prevAddress = NULL;
-	bzero(thisAddress, sizeof(address));
+//insert cgc_address in list after last cgc_address in list with lower or equal number, if equal numbers new is inserted after last. 
+cgc_paddress cgc_add_address ( int number, char resident[32], cgc_proad thisRoad, cgc_pintersection prevIntersection,
+ 						double distance_to_prev, cgc_pintersection nextIntersection, double distance_to_next ){
+	cgc_address tempAddress;
+	cgc_paddress thisAddress = &tempAddress;
+	cgc_pdListNode thisNode = NULL;
+	cgc_pdListNode prevNode = NULL;
+	cgc_paddress nextAddress = NULL;
+	cgc_paddress prevAddress = NULL;
+	cgc_bzero(thisAddress, sizeof(cgc_address));
 	//if empty addressList or first entry is higher number, insert at begining(prevAddress = NULL)
 	if (thisRoad->addressList->listRoot != NULL){
-		nextAddress = (paddress)thisRoad->addressList->listRoot->data;
+		nextAddress = (cgc_paddress)thisRoad->addressList->listRoot->data;
 	}
-	//find where to insert new address in list
+	//find where to insert new cgc_address in list
 	while(nextAddress != NULL){
-		//if next address number is higher, break, prevaddress will be set to NULL or prev.
+		//if next cgc_address number is higher, break, prevaddress will be set to NULL or prev.
 		if (nextAddress->number > number){
 			 nextAddress = NULL;
 		//else set prevaddress to nextaddress and if there is a next loop, else break	 
 		}else{
 			prevAddress = nextAddress;
 			if (nextAddress->self->next != NULL){
-				nextAddress = (paddress)nextAddress->self->next->data;
+				nextAddress = (cgc_paddress)nextAddress->self->next->data;
 			} else{nextAddress = NULL;}
 		}
 	}
-	// at this point prevaddress is either NULL (insert at begining), or an address pointer
+	// at this point prevaddress is either NULL (insert at begining), or an cgc_address pointer
 	if (prevAddress != NULL){
 		prevNode = prevAddress->self;
 	}
 
-	thisNode = insert_double_list_node(thisRoad->addressList, prevNode);
+	thisNode = cgc_insert_double_list_node(thisRoad->addressList, prevNode);
 	if (thisNode == NULL){
-		puts("**insert_double_list_node failed");
+		cgc_puts("**cgc_insert_double_list_node failed");
 		return NULL;
 	}
 	thisAddress->number = number;
-	strcpy(thisAddress->resident, resident);
+	cgc_strcpy(thisAddress->resident, resident);
 	thisAddress->resident[31] = 0;
 	thisAddress->thisRoad = thisRoad;
 	thisAddress->prevIntersection = prevIntersection;
@@ -142,58 +142,58 @@ paddress add_address ( int number, char resident[32], proad thisRoad, pintersect
 	thisAddress->nextIntersection = nextIntersection;
 	thisAddress->distance_to_next = distance_to_next;
 	thisAddress->self = thisNode;
-	memcpy( thisNode->data, thisAddress, sizeof(address) );
-	return (paddress)thisNode->data;
+	cgc_memcpy( thisNode->data, thisAddress, sizeof(cgc_address) );
+	return (cgc_paddress)thisNode->data;
 }
 
-void print_addresses(proad thisRoad){
-	paddress thisAddress;
-	//check for empty map
+void cgc_print_addresses(cgc_proad thisRoad){
+	cgc_paddress thisAddress;
+	//check for empty cgc_map
 	if (thisRoad->addressList->listRoot != NULL){
-		thisAddress = (paddress)thisRoad->addressList->listRoot->data;
+		thisAddress = (cgc_paddress)thisRoad->addressList->listRoot->data;
 	}else{
 		thisAddress = NULL;
 	}
-	printf("The road @s contains @d addresses.\n", thisRoad->name, thisRoad->addressList->count);
+	cgc_printf("The cgc_road @s contains @d addresses.\n", thisRoad->name, thisRoad->addressList->count);
 	int i = 1;
 	while (thisAddress != NULL){
-		printf("(@d)\t@s\n\t@d @s\n", i, thisAddress->resident, thisAddress->number, thisRoad->name);
+		cgc_printf("(@d)\t@s\n\t@d @s\n", i, thisAddress->resident, thisAddress->number, thisRoad->name);
 		i++;
 		if (thisAddress->self->next != NULL){
-			thisAddress = (paddress)thisAddress->self->next->data;
+			thisAddress = (cgc_paddress)thisAddress->self->next->data;
 		}else{
 			thisAddress = NULL;
 		}
 	}
 
-	//print all road names and length for map
+	//print all cgc_road names and length for cgc_map
 	return;
 }
 
 //on insert, have update prev and next for prevIntersection and nexIntersection, or you have a problem. data inside data is ugly
 //if prevInterseciton is NULL, insert at begining, else insert at prevIntersection.
-pintersection add_intersection ( proad thisRoad, proad other_road, pintersection prevIntersection, double distance_to_prev, double distance_to_next ){
-	intersection tempIntersection;
-	pintersection newIntersection = NULL;
-	pdListNode newNode;
-	pdListNode prevIntersectionNode = NULL;
-	pintersection nextIntersection = NULL;
+cgc_pintersection cgc_add_intersection ( cgc_proad thisRoad, cgc_proad other_road, cgc_pintersection prevIntersection, double distance_to_prev, double distance_to_next ){
+	cgc_intersection tempIntersection;
+	cgc_pintersection newIntersection = NULL;
+	cgc_pdListNode newNode;
+	cgc_pdListNode prevIntersectionNode = NULL;
+	cgc_pintersection nextIntersection = NULL;
 	if (prevIntersection != NULL){
 		prevIntersectionNode = prevIntersection->self;
 	}
 
-	newNode = insert_double_list_node(thisRoad->intersectionList, prevIntersectionNode);
+	newNode = cgc_insert_double_list_node(thisRoad->intersectionList, prevIntersectionNode);
 	if (newNode == NULL){
-		puts("Failed to insert node");
+		cgc_puts("Failed to insert node");
 		return NULL;
 	} 
-	newIntersection = (pintersection)newNode->data;
+	newIntersection = (cgc_pintersection)newNode->data;
 
 	if (prevIntersection != NULL){
-		prevIntersection->nextIntersection = (pintersection)newNode->data;
+		prevIntersection->nextIntersection = (cgc_pintersection)newNode->data;
 	}
 	if (newNode->next != NULL){
-		nextIntersection = (pintersection)newNode->next->data;
+		nextIntersection = (cgc_pintersection)newNode->next->data;
 		nextIntersection->prevIntersection = newIntersection;
 	}
 
@@ -206,41 +206,41 @@ pintersection add_intersection ( proad thisRoad, proad other_road, pintersection
 	return newIntersection;
 }
 
-void print_intersections(proad thisRoad){
-	pintersection thisIntersection = NULL;
+void cgc_print_intersections(cgc_proad thisRoad){
+	cgc_pintersection thisIntersection = NULL;
 	if (thisRoad->intersectionList->listRoot != NULL){
-		thisIntersection = (pintersection)thisRoad->intersectionList->listRoot->data;
+		thisIntersection = (cgc_pintersection)thisRoad->intersectionList->listRoot->data;
 	}
-	printf("The road @s contains @d intersections.\n", thisRoad->name, thisRoad->intersectionList->count);
+	cgc_printf("The cgc_road @s contains @d intersections.\n", thisRoad->name, thisRoad->intersectionList->count);
 	int i = 1;
 	while (thisIntersection != NULL){
-		printf("(@d)\t@s intersects @s\n", i, thisRoad->name, thisIntersection->other_road->name );
+		cgc_printf("(@d)\t@s intersects @s\n", i, thisRoad->name, thisIntersection->other_road->name );
 		i++;
 		if (thisIntersection->prevIntersection != NULL){
-			printf("\t\t@f units after the intersection of @s\n",thisIntersection->distance_to_prev, 
+			cgc_printf("\t\t@f units after the cgc_intersection of @s\n",thisIntersection->distance_to_prev, 
 					thisIntersection->prevIntersection->other_road->name);
 		}
 		if (thisIntersection->nextIntersection != NULL){
-			printf("\t\t@f units before the intersection of @s\n", thisIntersection->distance_to_next, 
+			cgc_printf("\t\t@f units before the cgc_intersection of @s\n", thisIntersection->distance_to_next, 
 					thisIntersection->nextIntersection->other_road->name);
 		}
 		if (thisIntersection->self->next != NULL){
-			thisIntersection = (pintersection)thisIntersection->self->next->data;
+			thisIntersection = (cgc_pintersection)thisIntersection->self->next->data;
 		}else {thisIntersection = NULL;}
 	}
 	return;
 }
 
-//returns pintersection which contains reference to searchpIntersection
-//finding next for findall is (pintersection)pintersectionReturned->self->next->data
-pintersection find_pintersection(proad thisRoad, pintersection searchpIntersection, pintersection startIntersection){
-	pintersection tempIntersection = NULL;
+//returns cgc_pintersection which contains reference to searchpIntersection
+//finding next for findall is (cgc_pintersection)pintersectionReturned->self->next->data
+cgc_pintersection cgc_find_pintersection(cgc_proad thisRoad, cgc_pintersection searchpIntersection, cgc_pintersection startIntersection){
+	cgc_pintersection tempIntersection = NULL;
 	if (thisRoad->intersectionList->count == 0){
-		puts("intersection list is empty");
-		return (pintersection)NULL;
+		cgc_puts("cgc_intersection list is empty");
+		return (cgc_pintersection)NULL;
 	}
 	if (startIntersection == NULL){
-		tempIntersection = (pintersection)thisRoad->intersectionList->listRoot->data;
+		tempIntersection = (cgc_pintersection)thisRoad->intersectionList->listRoot->data;
 	}else{
 		tempIntersection = startIntersection;
 	}
@@ -250,7 +250,7 @@ pintersection find_pintersection(proad thisRoad, pintersection searchpIntersecti
 			return tempIntersection;
 		}
 		if (tempIntersection->self->next != NULL){
-			tempIntersection = (pintersection)tempIntersection->self->next->data;
+			tempIntersection = (cgc_pintersection)tempIntersection->self->next->data;
 		}else{
 			tempIntersection = NULL;
 		}
@@ -258,14 +258,14 @@ pintersection find_pintersection(proad thisRoad, pintersection searchpIntersecti
 	return NULL;
 }
 
-paddress find_pintersection_addresses(proad thisRoad, pintersection searchpIntersection, paddress startAddress){
-	paddress tempAddress = NULL;
+cgc_paddress cgc_find_pintersection_addresses(cgc_proad thisRoad, cgc_pintersection searchpIntersection, cgc_paddress startAddress){
+	cgc_paddress tempAddress = NULL;
 	if (startAddress == NULL){
 		if(thisRoad->addressList->count == 0){
-			puts("addresss list is empty");
-			return (paddress)NULL;
+			cgc_puts("addresss list is empty");
+			return (cgc_paddress)NULL;
 		}
-		tempAddress = (paddress) thisRoad->addressList->listRoot->data;
+		tempAddress = (cgc_paddress) thisRoad->addressList->listRoot->data;
 	}else{
 		tempAddress = startAddress;
 	}
@@ -275,7 +275,7 @@ paddress find_pintersection_addresses(proad thisRoad, pintersection searchpInter
 			return tempAddress;
 		}
 		if (tempAddress->self->next != NULL){
-			tempAddress = (paddress)tempAddress->self->next->data;
+			tempAddress = (cgc_paddress)tempAddress->self->next->data;
 		}else{
 			tempAddress = NULL;
 		}
@@ -283,90 +283,90 @@ paddress find_pintersection_addresses(proad thisRoad, pintersection searchpInter
 
 	return NULL;
 }
-//deletes intersection and set any reference to pintersection to prev or next or null
-pintersection delete_intersection(proad thisRoad, pintersection deletedIntersection){
-	pintersection tempIntersection =  NULL;
-	pintersection thisIntersection = NULL;
-	pdListNode thisNode = NULL;
-	//check for pointers to the deleted intersection 
-	pintersection refIntersection = find_pintersection(thisRoad, deletedIntersection, NULL);
+//deletes cgc_intersection and set any reference to cgc_pintersection to prev or next or null
+cgc_pintersection cgc_delete_intersection(cgc_proad thisRoad, cgc_pintersection deletedIntersection){
+	cgc_pintersection tempIntersection =  NULL;
+	cgc_pintersection thisIntersection = NULL;
+	cgc_pdListNode thisNode = NULL;
+	//check for pointers to the deleted cgc_intersection 
+	cgc_pintersection refIntersection = cgc_find_pintersection(thisRoad, deletedIntersection, NULL);
 	while (refIntersection != NULL){
 		// if prevIntersection is the match, replace with deleted->prev or NULL
 		if (refIntersection->prevIntersection == deletedIntersection){
 			if (deletedIntersection->self->prev != NULL){
-				refIntersection->prevIntersection = (pintersection)deletedIntersection->self->prev->data;
+				refIntersection->prevIntersection = (cgc_pintersection)deletedIntersection->self->prev->data;
 			}else{ 
 				refIntersection->prevIntersection = NULL;
 			}
 		// if nextIntersection is the match, replace with deleted->next or NULL
 		}else {
 			if (deletedIntersection->self->next != NULL){
-				refIntersection->nextIntersection = (pintersection)deletedIntersection->self->next->data;
+				refIntersection->nextIntersection = (cgc_pintersection)deletedIntersection->self->next->data;
 			}else{ 
 				refIntersection->nextIntersection = NULL;
 			}
 		}
-		refIntersection = find_pintersection(thisRoad, deletedIntersection, refIntersection);
+		refIntersection = cgc_find_pintersection(thisRoad, deletedIntersection, refIntersection);
 	}
-	//check for pointers to deleted intersection in addresses
-	paddress refAddress = find_pintersection_addresses(thisRoad, deletedIntersection, NULL);
+	//check for pointers to deleted cgc_intersection in addresses
+	cgc_paddress refAddress = cgc_find_pintersection_addresses(thisRoad, deletedIntersection, NULL);
 	while (refAddress != NULL){
 		//if prevIntersection is the match, replace with deleted->next or NULL
 		if (refAddress->prevIntersection == deletedIntersection){
 			if (deletedIntersection->self->prev != NULL){
-				refAddress->prevIntersection = (pintersection)deletedIntersection->self->prev->data;
+				refAddress->prevIntersection = (cgc_pintersection)deletedIntersection->self->prev->data;
 			}else{
 				refAddress->prevIntersection = NULL;
 			}
 	// if nextIntersection is the match, replace with deleted->next or NULL			
 		}else {
 			if (deletedIntersection->self->next != NULL){
-				refAddress->nextIntersection = (pintersection)deletedIntersection->self->next->data;
+				refAddress->nextIntersection = (cgc_pintersection)deletedIntersection->self->next->data;
 			}else{
 				refAddress->nextIntersection = NULL;
 			}
 		}
-		refAddress = find_pintersection_addresses(thisRoad,deletedIntersection, refAddress);
+		refAddress = cgc_find_pintersection_addresses(thisRoad,deletedIntersection, refAddress);
 	}
-	thisNode = delete_double_list_node(thisRoad->intersectionList, deletedIntersection->self);
+	thisNode = cgc_delete_double_list_node(thisRoad->intersectionList, deletedIntersection->self);
 	if (thisNode == NULL){
 		return NULL;
 	}
-	return (pintersection)thisNode->data;
+	return (cgc_pintersection)thisNode->data;
 }
 
 
-int is_in_turn_list(psList turnList, proad thisRoad){
+int cgc_is_in_turn_list(cgc_psList turnList, cgc_proad thisRoad){
 	unsigned int i = 0;
-	prouteList thisRouteList = NULL;
+	cgc_prouteList thisRouteList = NULL;
 	if (turnList->listRoot == NULL){
 		return 0;
 	}
-	thisRouteList = (prouteList)turnList->listRoot->data;
+	thisRouteList = (cgc_prouteList)turnList->listRoot->data;
 	while(thisRouteList->thisRoad != NULL){
 		if (thisRouteList->thisRoad == thisRoad){
 			return 1;
 		}
-		thisRouteList = (prouteList)(  (unsigned)turnList->listRoot->data + (unsigned int)( sizeof(routeList) * (i) )  );
+		thisRouteList = (cgc_prouteList)(  (unsigned)turnList->listRoot->data + (unsigned int)( sizeof(cgc_routeList) * (i) )  );
 		i++;
 	}
 	return 0;
 }
 
-psList init_turnList(){
-	psList thisList = NULL;
-	thisList = create_single_list();
-	insert_single_list_node(thisList, NULL);
+cgc_psList cgc_init_turnList(){
+	cgc_psList thisList = NULL;
+	thisList = cgc_create_single_list();
+	cgc_insert_single_list_node(thisList, NULL);
 	return thisList;
 }
 
-prouteList push_to_turn_list(pmap thisMap, psList turnList, proad thisRoad, prouteList parent){
-	prouteList thisRouteList = NULL;
+cgc_prouteList cgc_push_to_turn_list(cgc_pmap thisMap, cgc_psList turnList, cgc_proad thisRoad, cgc_prouteList parent){
+	cgc_prouteList thisRouteList = NULL;
 
 
 #ifdef PATCHED
 	//32
-	if (  (turnList->listRoot->count) > ( 3800/(sizeof(routeList)) )  ){
+	if (  (turnList->listRoot->count) > ( 3800/(sizeof(cgc_routeList)) )  ){
 		return NULL;
 	}
 #endif
@@ -374,41 +374,41 @@ prouteList push_to_turn_list(pmap thisMap, psList turnList, proad thisRoad, prou
 #ifndef PATCHED
 	//CWE-467 use of sizeof() on pointer type
 	//1020
-	if (  (turnList->listRoot->count) > ( 3800/(sizeof(prouteList)) )  ){
+	if (  (turnList->listRoot->count) > ( 3800/(sizeof(cgc_prouteList)) )  ){
 		return NULL;
 	}
 #endif	
-	thisRouteList = (prouteList)(  (unsigned)turnList->listRoot->data + (unsigned int)( sizeof(routeList) * (unsigned int)(turnList->listRoot->count) )  );
-	bzero(thisRouteList, sizeof(routeList));
+	thisRouteList = (cgc_prouteList)(  (unsigned)turnList->listRoot->data + (unsigned int)( sizeof(cgc_routeList) * (unsigned int)(turnList->listRoot->count) )  );
+	cgc_bzero(thisRouteList, sizeof(cgc_routeList));
 	thisRouteList->thisRoad = thisRoad;
 	thisRouteList->parent = parent;
 	turnList->listRoot->count++;
 	return thisRouteList;
 }
 
-psList get_route(pmap thisMap, psList turnList, proad targetRoad, proad startRoad){
+cgc_psList cgc_get_route(cgc_pmap thisMap, cgc_psList turnList, cgc_proad targetRoad, cgc_proad startRoad){
 
 	unsigned int curRouteListCount = 0;
 //	turnList->count--;
 //	turnList->count = 0;
 	turnList->listRoot->count = 0;
-	bzero(turnList->listRoot->data, 4080);
+	cgc_bzero(turnList->listRoot->data, 4080);
 //
-//	bzero(turnList->listRoot->count, sizeof(int));
+//	cgc_bzero(turnList->listRoot->count, sizeof(int));
 //	
-	prouteList curRouteList = push_to_turn_list(thisMap, turnList, startRoad, NULL);
-	proad curRoad = NULL; 
-	proad intersectionOtherRoad = NULL;
-	pintersection thisIntersection = NULL;
+	cgc_prouteList curRouteList = cgc_push_to_turn_list(thisMap, turnList, startRoad, NULL);
+	cgc_proad curRoad = NULL; 
+	cgc_proad intersectionOtherRoad = NULL;
+	cgc_pintersection thisIntersection = NULL;
 	while (curRouteList->thisRoad != NULL){
 		curRoad = curRouteList->thisRoad;
 		if (curRoad->intersectionList->listRoot != NULL){
-			thisIntersection = (pintersection)curRoad->intersectionList->listRoot->data;
+			thisIntersection = (cgc_pintersection)curRoad->intersectionList->listRoot->data;
 		}else{thisIntersection = NULL;}
 		while (thisIntersection != NULL){
 			intersectionOtherRoad = thisIntersection->other_road;
-			if ( !(is_in_turn_list(turnList, intersectionOtherRoad)) ){
-				prouteList result = push_to_turn_list(thisMap, turnList, intersectionOtherRoad, curRouteList);
+			if ( !(cgc_is_in_turn_list(turnList, intersectionOtherRoad)) ){
+				cgc_prouteList result = cgc_push_to_turn_list(thisMap, turnList, intersectionOtherRoad, curRouteList);
 				if (result == NULL){
 					return NULL; 
 				}
@@ -416,14 +416,14 @@ psList get_route(pmap thisMap, psList turnList, proad targetRoad, proad startRoa
 					return turnList;
 				}
 			}
-			//move to next intersection if there is another
+			//move to next cgc_intersection if there is another
 			if (thisIntersection->self->next != NULL){
-				thisIntersection = (pintersection)thisIntersection->self->next->data;
+				thisIntersection = (cgc_pintersection)thisIntersection->self->next->data;
 			}else {thisIntersection = NULL;}
 			//end while(curIntersection != NULL)
 			}
 		curRouteListCount++;
-		curRouteList = (prouteList) (  (unsigned int)curRouteList  +  (unsigned int)(sizeof(routeList))  );
+		curRouteList = (cgc_prouteList) (  (unsigned int)curRouteList  +  (unsigned int)(sizeof(cgc_routeList))  );
 	}
 	return NULL;
 }

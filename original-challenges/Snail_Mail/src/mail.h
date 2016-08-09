@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,26 +32,26 @@ typedef struct __attribute__((packed))  {
 	unsigned short recipient;
 	char subject[MAX_SUBJ_LEN];
 	char body[MAX_BODY_LEN];
-} mail_t;
+} cgc_mail_t;
 
 /**
  * Initialize the postage and mailboxes.
  */
-void setup(void);
+void cgc_setup(void);
 
 /**
  * Process a user's command.
  *
  * @return SUCCESS on success, else -1
  */
-short process_cmd(void);
+short cgc_process_cmd(void);
 
 /**
  * Send resulting status of command processing to client
  *
  * @param status_code  The 2 status code bytes to send.
  */
-void send_status(char *status_code);
+void cgc_send_status(char *status_code);
 
 
 #endif

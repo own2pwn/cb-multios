@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,14 +26,14 @@
 #include "safe.h"
 #include "trie.h"
 
-static size_t TrieCount = ROOT_IDENTIFIER;
+static cgc_size_t TrieCount = ROOT_IDENTIFIER;
 
-void AllocateAndInitializeTrieRoot(trie** Trie)
+void cgc_AllocateAndInitializeTrieRoot(cgc_trie** Trie)
 {
   if (!Trie)
     return;
 
-  *Trie = xcalloc(sizeof(trie), 1);
+  *Trie = cgc_xcalloc(sizeof(cgc_trie), 1);
   (*Trie)->Data = 0;
   (*Trie)->Parent = NULL;
   (*Trie)->Terminal = 0;
@@ -41,11 +41,11 @@ void AllocateAndInitializeTrieRoot(trie** Trie)
   TrieCount++;
 }
 
-trie* InitializeTrieChild(trie_unit Data)
+cgc_trie* cgc_InitializeTrieChild(cgc_trie_unit Data)
 {
-  trie* Child;
+  cgc_trie* Child;
 
-  Child = xcalloc(sizeof(trie), 1);
+  Child = cgc_xcalloc(sizeof(cgc_trie), 1);
   Child->Data = Data;
   Child->Terminal = 0;
   Child->Parent = NULL;
@@ -54,35 +54,35 @@ trie* InitializeTrieChild(trie_unit Data)
   return Child;
 }
 
-void FreeTrie(trie* Trie)
+void cgc_FreeTrie(cgc_trie* Trie)
 {
   if (Trie)
   {
-    for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex)
+    for (cgc_size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex)
     {
       if (Trie->Children[ChildIndex])
       {
-        FreeTrie(Trie->Children[ChildIndex]);
+        cgc_FreeTrie(Trie->Children[ChildIndex]);
         Trie->Children[ChildIndex] = NULL;
       }
     }
 
-    free(Trie);
+    cgc_free(Trie);
   }
 }
 
-void InsertIntoTrie(trie* Trie, trie_unit* Data, size_t DataSize)
+void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize)
 {
   if (!Trie)
     return;
 
-  for (size_t DataIndex = 0; DataIndex < DataSize / sizeof(trie_unit); ++DataIndex)
+  for (cgc_size_t DataIndex = 0; DataIndex < DataSize / sizeof(cgc_trie_unit); ++DataIndex)
   {
-    trie* Child;
+    cgc_trie* Child;
 
     if (!Trie->Children[Data[DataIndex]])
     {
-      Child = InitializeTrieChild(Data[DataIndex]);
+      Child = cgc_InitializeTrieChild(Data[DataIndex]);
       Trie->Children[Data[DataIndex]] = Child;
     }
     else
@@ -97,9 +97,9 @@ void InsertIntoTrie(trie* Trie, trie_unit* Data, size_t DataSize)
   Trie->Terminal = 1;
 }
 
-trie* FindInTrie(trie* Trie, trie_unit* Data, size_t DataSize)
+cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize)
 {
-  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
+  for (cgc_size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
   {
     if (Trie->Children[Data[DataIndex]])
       Trie = Trie->Children[Data[DataIndex]];
@@ -110,9 +110,9 @@ trie* FindInTrie(trie* Trie, trie_unit* Data, size_t DataSize)
   return Trie->Terminal ? Trie : NULL;
 }
 
-trie* FindInTrieByIdentifier(trie* Trie, size_t Identifier)
+cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, cgc_size_t Identifier)
 {
-  trie* Found = NULL;
+  cgc_trie* Found = NULL;
 
   if (Trie->Identifier == Identifier)
     return Trie;
@@ -120,11 +120,11 @@ trie* FindInTrieByIdentifier(trie* Trie, size_t Identifier)
   if (!Trie)
     return NULL;
 
-  for (size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex)
+  for (cgc_size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex)
   {
     if (Trie->Children[UnitIndex])
     {
-      Found = FindInTrieByIdentifier(Trie->Children[UnitIndex], Identifier);
+      Found = cgc_FindInTrieByIdentifier(Trie->Children[UnitIndex], Identifier);
       if (Found)
         return Found;
     }
@@ -133,12 +133,12 @@ trie* FindInTrieByIdentifier(trie* Trie, size_t Identifier)
   return NULL;
 }
 
-size_t GetTrieCount(void)
+cgc_size_t cgc_GetTrieCount(void)
 {
   return TrieCount;
 }
 
-static int _GatherTerminals(trie* Trie, trie*** Terminals, size_t* TerminalCount, size_t* TerminalMax)
+static int cgc__GatherTerminals(cgc_trie* Trie, cgc_trie*** Terminals, cgc_size_t* TerminalCount, cgc_size_t* TerminalMax)
 {
   if (Trie->Terminal)
   {
@@ -147,45 +147,45 @@ static int _GatherTerminals(trie* Trie, trie*** Terminals, size_t* TerminalCount
 
     if (*TerminalCount == *TerminalMax)
     {
-      trie** NewTerminals = xcalloc(sizeof(trie*), 2 * *TerminalMax);
-      memcpy(NewTerminals, *Terminals, *TerminalMax * sizeof(trie *));
+      cgc_trie** NewTerminals = cgc_xcalloc(sizeof(cgc_trie*), 2 * *TerminalMax);
+      cgc_memcpy(NewTerminals, *Terminals, *TerminalMax * sizeof(cgc_trie *));
       *TerminalMax = *TerminalMax * 2;
-      free(*Terminals);
+      cgc_free(*Terminals);
       *Terminals = NewTerminals;
     }
   }
 
-  for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++)
+  for (cgc_size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++)
   {
     if (Trie->Children[ChildIndex])
     {
-      _GatherTerminals(Trie->Children[ChildIndex], Terminals, TerminalCount, TerminalMax);
+      cgc__GatherTerminals(Trie->Children[ChildIndex], Terminals, TerminalCount, TerminalMax);
     }
   }
 
   return 0;
 }
 
-trie** GatherTerminals(trie* Trie, size_t* TerminalCount)
+cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, cgc_size_t* TerminalCount)
 {
 #define TERMINAL_START_MAX 4
-  trie** Terminals = xcalloc(sizeof(trie*), TERMINAL_START_MAX);
-  size_t TerminalMax = TERMINAL_START_MAX;
+  cgc_trie** Terminals = cgc_xcalloc(sizeof(cgc_trie*), TERMINAL_START_MAX);
+  cgc_size_t TerminalMax = TERMINAL_START_MAX;
 
   *TerminalCount = 0;
 
-  _GatherTerminals(Trie, &Terminals, TerminalCount, &TerminalMax);
+  cgc__GatherTerminals(Trie, &Terminals, TerminalCount, &TerminalMax);
 
   return Terminals;
 }
 
-int ReverseArray(trie_unit* String, size_t ArraySize)
+int cgc_ReverseArray(cgc_trie_unit* String, cgc_size_t ArraySize)
 {
   if (!String || !ArraySize)
     return -1;
 
-  trie_unit Temp;
-  size_t Index = 0;
+  cgc_trie_unit Temp;
+  cgc_size_t Index = 0;
 
   while (Index < ArraySize / 2)
   {
@@ -198,21 +198,21 @@ int ReverseArray(trie_unit* String, size_t ArraySize)
   return 0;
 }
 
-trie_unit* GetDataString(trie* Trie, size_t* DataLength)
+cgc_trie_unit* cgc_GetDataString(cgc_trie* Trie, cgc_size_t* DataLength)
 {
   if (!Trie)
     return NULL;
 
-  size_t StringLength = 64;
-  size_t StringIndex = 0;
-  trie_unit* String = xcalloc(sizeof(trie_unit), 64);
+  cgc_size_t StringLength = 64;
+  cgc_size_t StringIndex = 0;
+  cgc_trie_unit* String = cgc_xcalloc(sizeof(cgc_trie_unit), 64);
 
   while (Trie)
   {
     String[StringIndex++] = Trie->Data;
     if (StringIndex == StringLength)
     {
-      String = realloc(String, StringLength * 2);
+      String = cgc_realloc(String, StringLength * 2);
       StringLength *= 2;
     }
 
@@ -220,7 +220,7 @@ trie_unit* GetDataString(trie* Trie, size_t* DataLength)
   }
 
   // -1 for NULL;
-  if (ReverseArray(String, StringIndex - 1) == 0)
+  if (cgc_ReverseArray(String, StringIndex - 1) == 0)
   {
     *DataLength = StringIndex;
     return String;

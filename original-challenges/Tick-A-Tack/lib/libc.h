@@ -23,10 +23,10 @@
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
 
-typedef unsigned int uint32_t;
-typedef unsigned char uint8_t;
+typedef unsigned int cgc_uint32_t;
+typedef unsigned char cgc_uint8_t;
 #ifndef _VA_LIST
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define _VA_LIST
 #endif
 #define va_start(al, lp)  __builtin_va_start(al, lp)
@@ -37,7 +37,7 @@ typedef __builtin_va_list va_list;
 
 #define isdigit(c)  ((c) >= '0' && (c) <= '9')
 
-// syslog priorities
+// cgc_syslog priorities
 #define LOG_DEBUG 7		// debug-level message
 #define LOG_INFO 6		// informational message
 #define LOG_NOTICE 5	// normal, but interesting condition
@@ -49,26 +49,26 @@ typedef __builtin_va_list va_list;
 
 #define LOGLEVEL LOG_INFO
 
-int prng_get_next();
-int send(const char * buf, const size_t size);
-int recv(char * res_buf, size_t res_buf_size, char * err_msg);
-int prompt_user(char * prompt_str, char* res_buf, size_t res_buf_size, char * err_msg);
-int recvline(int fd, char * buf, size_t size);
-int syslog(int priority, const char *format, ...);
-int vsnprintf(char * buf, size_t buf_size, const char * fmt, va_list args);
-int snprintf(char * buf, size_t buf_size, const char * fmt, ...);
-int sendall(int fd, const char * buf, const size_t size);
-int streq(const char * str1, const char * str2);
-unsigned int strlen(const char * str);
-char * strncpy(char * dest, const char * src, size_t size);
-char * strchr(char * str, char ch);
-void * memset(void * str, int ch, size_t n);
-void * memcpy(void * dst, const void * src, size_t cnt);
-uint32_t str2uint32(const char * str_buf);
-int str2int(const char * str_buf);
-int int2str(char * str_buf, int buf_size, int i);
-int is_numeric(const char * str);
-void strip(char * str);
-int rand(uint32_t *res);
+int cgc_prng_get_next();
+int cgc_send(const char * buf, const cgc_size_t size);
+int cgc_recv(char * res_buf, cgc_size_t res_buf_size, char * err_msg);
+int cgc_prompt_user(char * prompt_str, char* res_buf, cgc_size_t res_buf_size, char * err_msg);
+int cgc_recvline(int fd, char * buf, cgc_size_t size);
+int cgc_syslog(int priority, const char *format, ...);
+int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char * fmt, cgc_va_list args);
+int cgc_snprintf(char * buf, cgc_size_t buf_size, const char * fmt, ...);
+int cgc_sendall(int fd, const char * buf, const cgc_size_t size);
+int cgc_streq(const char * str1, const char * str2);
+unsigned int cgc_strlen(const char * str);
+char * cgc_strncpy(char * dest, const char * src, cgc_size_t size);
+char * cgc_strchr(char * str, char ch);
+void * cgc_memset(void * str, int ch, cgc_size_t n);
+void * cgc_memcpy(void * dst, const void * src, cgc_size_t cnt);
+cgc_uint32_t cgc_str2uint32(const char * str_buf);
+int cgc_str2int(const char * str_buf);
+int cgc_int2str(char * str_buf, int buf_size, int i);
+int cgc_is_numeric(const char * str);
+void cgc_strip(char * str);
+int cgc_rand(cgc_uint32_t *res);
 
 #endif

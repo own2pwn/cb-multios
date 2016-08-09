@@ -27,7 +27,7 @@
 #include "games.h"
 
 int
-do_gallon_challenge(void)
+cgc_do_gallon_challenge(void)
 {
     char buf[40] = { 0 };
     unsigned int countdown;
@@ -36,24 +36,24 @@ do_gallon_challenge(void)
     if (game_state.games.gallon_challenge.tank_size == 0)
         game_state.games.gallon_challenge.tank_size = 100;
 
-    printf("Give me a countdown!\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    cgc_printf("Give me a countdown!\n");
+    if (cgc_fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
         return EXIT_FAILURE;
-    if (strlen(buf) == 0 || strtou(buf, 16, &countdown) == EXIT_FAILURE)
+    if (cgc_strlen(buf) == 0 || cgc_strtou(buf, 16, &countdown) == EXIT_FAILURE)
         return EXIT_FAILURE;
 
     for (i = 0; i < game_state.games.gallon_challenge.tank_size; i++) {
         if (i < 100)
-            printf("CHUG! ");
+            cgc_printf("CHUG! ");
 
         *(unsigned int *)&game_state.spew[i & ~(sizeof(unsigned int) - 1)] = countdown;
     }
-    printf("\n");
+    cgc_printf("\n");
 
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
-        printf("Woah... bleh.\n");
+    if (!cgc_check_cookie(game_state.games.gallon_challenge.cookie))
+        cgc_printf("Woah... bleh.\n");
     else
-        printf("Nice!\n");
+        cgc_printf("Nice!\n");
 
     return EXIT_SUCCESS;
 }

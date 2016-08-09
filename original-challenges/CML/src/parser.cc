@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,7 +24,7 @@
 #include "textnode.h"
 #include "parser.h"
 
-// LEFT SEP* type [SEP+ name ASSIGN data]* SEP* RIGHT
+// LEFT SEP* type [SEP+ cgc_name ASSIGN data]* SEP* RIGHT
 // LEFT CLOSE SEP* type SEP* RIGHT
 
 enum class State
@@ -41,20 +41,20 @@ enum class State
     Eof,
 };
 
-Parser::Parser(char left, char right, char sep, char assign, char close, char escape)
+cgc_Parser::cgc_Parser(char left, char right, char sep, char assign, char close, char escape)
     : d_left(left), d_right(right), d_sep(sep), d_assign(assign),
       d_close(close), d_escape(escape)
 {
 }
 
-Node *Parser::parse(const char *ns, const char *input)
+cgc_Node *cgc_Parser::cgc_parse(const char *cgc_ns, const char *input)
 {
     bool escape = false, close_tag = false;
     const char *ptr = input;
     char *buf = d_buf;
-    Node *root = nullptr, *node = nullptr, *new_node = nullptr;
+    cgc_Node *root = nullptr, *node = nullptr, *new_node = nullptr;
     State st = State::Begin;
-    const String *name;
+    const cgc_String *cgc_name;
 
 #define COPY_CHAR { \
     if (!escape && *ptr == d_escape) \
@@ -78,12 +78,12 @@ Node *Parser::parse(const char *ns, const char *input)
             }
             if (buf != d_buf)
             {
-                // create text node
+                // cgc_create cgc_text node
                 *buf = 0;
-                new_node = Node::create(nullptr, "");
-                static_cast<TextNode*>(new_node)->set_text(String::create(d_buf));
+                new_node = cgc_Node::cgc_create(nullptr, "");
+                static_cast<cgc_TextNode*>(new_node)->cgc_set_text(cgc_String::cgc_create(d_buf));
                 if (node)
-                    node->insert_after(nullptr, new_node);
+                    node->cgc_insert_after(nullptr, new_node);
                 RESET_BUF
             }
             st = State::Begin;
@@ -124,26 +124,26 @@ Node *Parser::parse(const char *ns, const char *input)
                 goto error;
             if (close_tag)
             {
-                if (node == nullptr || strcmp(d_buf, node->tag()->cstr()) != 0)
+                if (node == nullptr || cgc_strcmp(d_buf, node->cgc_tag()->cgc_cstr()) != 0)
                     goto error;
                 RESET_BUF
-                node = node->parent();
+                node = node->cgc_parent();
                 if (node == nullptr)
                     st = State::Eof;
                 break;
             }
 #ifdef PATCHED_1
-            if (node && node->cls() == NodeClass::CMLNODE)
+            if (node && node->cgc_cls() == NodeClass::CMLNODE)
 #else
-            if (node && node->tag() == CML_TAG)
+            if (node && node->cgc_tag() == CML_TAG)
 #endif
-                new_node = Node::create(static_cast<CmlNode*>(node)->childns()->cstr(), d_buf);
+                new_node = cgc_Node::cgc_create(static_cast<cgc_CmlNode*>(node)->cgc_childns()->cgc_cstr(), d_buf);
             else if (node)
-                new_node = Node::create(node->ns()->cstr(), d_buf);
+                new_node = cgc_Node::cgc_create(node->cgc_ns()->cgc_cstr(), d_buf);
             else
-                new_node = Node::create(ns, d_buf);
+                new_node = cgc_Node::cgc_create(cgc_ns, d_buf);
             if (node)
-                node->insert_after(nullptr, new_node);
+                node->cgc_insert_after(nullptr, new_node);
             if (root == nullptr)
                 root = new_node;
             node = new_node;
@@ -178,7 +178,7 @@ Node *Parser::parse(const char *ns, const char *input)
                 {
                     st = State::ValueOrSep;
                     *buf = 0;
-                    name = String::intern(d_buf);
+                    cgc_name = cgc_String::cgc_intern(d_buf);
                     RESET_BUF
                     break;
                 }
@@ -192,7 +192,7 @@ Node *Parser::parse(const char *ns, const char *input)
                 goto error;
             st = State::ValueOrSep;
             *buf = 0;
-            name = String::intern(d_buf);
+            cgc_name = cgc_String::cgc_intern(d_buf);
             RESET_BUF
             break;
         case State::ValueOrSep:
@@ -215,7 +215,7 @@ Node *Parser::parse(const char *ns, const char *input)
                 {
                     st = State::RightOrAttrName;
                     *buf = 0;
-                    node->set_attr(name->cstr(), String::create(d_buf));
+                    node->cgc_set_attr(cgc_name->cgc_cstr(), cgc_String::cgc_create(d_buf));
                     RESET_BUF
                     break;
                 }
@@ -223,7 +223,7 @@ Node *Parser::parse(const char *ns, const char *input)
                 {
                     st = State::TextOrBegin;
                     *buf = 0;
-                    node->set_attr(name->cstr(), String::create(d_buf));
+                    node->cgc_set_attr(cgc_name->cgc_cstr(), cgc_String::cgc_create(d_buf));
                     RESET_BUF
                     break;
                 }
@@ -241,7 +241,7 @@ Node *Parser::parse(const char *ns, const char *input)
     {
 error:
         if (root != nullptr)
-            Node::delete_tree(root);
+            cgc_Node::cgc_delete_tree(root);
         return nullptr;
     }
     return root;

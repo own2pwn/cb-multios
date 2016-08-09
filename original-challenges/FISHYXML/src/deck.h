@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -27,10 +27,10 @@
 #include "card.h"
 
 struct deck {
-	uint8_t count;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
-	uint8_t unk3; // push size to mult of 4 bytes
+	cgc_uint8_t count;
+	cgc_uint8_t unk1; // push size to mult of 4 bytes
+	cgc_uint8_t unk2; // push size to mult of 4 bytes
+	cgc_uint8_t unk3; // push size to mult of 4 bytes
 	struct card *cards[52];
 };
 
@@ -39,7 +39,7 @@ struct deck {
  *
  * @return VA of new deck
  */
-extern struct deck *create_deck();
+extern struct deck *cgc_create_deck();
 
 /**
  * Shuffle the deck.
@@ -52,7 +52,7 @@ extern struct deck *create_deck();
  * @param seed Seed to use in random generator in shuffle
  * @return SUCCESS or ERR_UNINITIALIZED_DECK on error
  */
-extern int shuffle_deck(struct deck *d, uint8_t seed);
+extern int cgc_shuffle_deck(struct deck *d, cgc_uint8_t seed);
 
 /**
  * Get a new deck that is shuffled.
@@ -60,7 +60,7 @@ extern int shuffle_deck(struct deck *d, uint8_t seed);
  * @param seed Seed to use in random generator in shuffle
  * @return VA of new deck.
  */
-extern struct deck *get_shuffled_deck(uint8_t seed);
+extern struct deck *cgc_get_shuffled_deck(cgc_uint8_t seed);
 
 /**
  * Pop the top card off of the deck.
@@ -69,14 +69,14 @@ extern struct deck *get_shuffled_deck(uint8_t seed);
  * @return VA of card if there is at least one card in the deck.
  *  NULL if deck is empty or uninitialized.
  */
-extern struct card *pop(struct deck *d);
+extern struct card *cgc_pop(struct deck *d);
 
 /**
  * Check to see if the deck is empty
  *
  * @return TRUE if yes, FALSE if no or ERR_UNINITIALIZED_DECK on error
  */
-extern int is_deck_empty(struct deck *d);
+extern int cgc_is_deck_empty(struct deck *d);
 
 
 #endif

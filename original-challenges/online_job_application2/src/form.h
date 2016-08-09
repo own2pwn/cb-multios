@@ -11,14 +11,14 @@ typedef struct question {
   char optional;
   struct question *prev, *next;
   int (*validator) (char *input);
-} question_t;
+} cgc_question_t;
 
 typedef struct page {
   const char *title;
   struct page *prev, *next;
-  question_t *questions;
+  cgc_question_t *questions;
   char completed;
-} page_t;
+} cgc_page_t;
 
 typedef struct form {
   const char *greeting;
@@ -26,22 +26,22 @@ typedef struct form {
   const char *help;
   void (*init) (void);
   int (*handlers[NUM_CMDS]) (struct form *_form, char *arg);
-  page_t *pages;
-  page_t *cur_page;
-  question_t *cur_question;
-} form_t;
+  cgc_page_t *pages;
+  cgc_page_t *cur_page;
+  cgc_question_t *cur_question;
+} cgc_form_t;
 
-int handle_exit(form_t *form, char *arg);
-int handle_help(form_t *form, char *arg);
-int handle_next(form_t *form, char *arg);
-int handle_prev(form_t *form, char *arg);
-int handle_update(form_t *form, char *arg);
-int handle_line(form_t *form, char *arg);
-void print_prompt(form_t *form, int with_page, int done);
-void print_greeting(form_t *form);
+int cgc_handle_exit(cgc_form_t *form, char *arg);
+int cgc_handle_help(cgc_form_t *form, char *arg);
+int cgc_handle_next(cgc_form_t *form, char *arg);
+int cgc_handle_prev(cgc_form_t *form, char *arg);
+int cgc_handle_update(cgc_form_t *form, char *arg);
+int cgc_handle_line(cgc_form_t *form, char *arg);
+void cgc_print_prompt(cgc_form_t *form, int with_page, int done);
+void cgc_print_greeting(cgc_form_t *form);
 
 #define DEC_Q(_name, _title, _hint, _optional, _validator)  \
-  static question_t _name = {                               \
+  static cgc_question_t _name = {                               \
     .title = _title,                                        \
     .hint = _hint,                                          \
     .answer = NULL,                                         \
@@ -52,7 +52,7 @@ void print_greeting(form_t *form);
   }
 
 #define DEC_P(_name, _title)  \
-  static page_t _name = {     \
+  static cgc_page_t _name = {     \
     .title = _title,          \
     .prev = NULL,             \
     .next = NULL,             \

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -42,14 +42,14 @@ struct command {
     char command;           /**< The command's letter */
     int start;              /**< The start of the operating region */
     int end;                /**< The end of the operating region */
-    size_t size;            /**< The size of the command's data */
+    cgc_size_t size;            /**< The size of the command's data */
     char buf[0];            /**< The command's data */
 } __attribute__((packed));
 
 /** Holds the results of a command when output is produced. */
 struct result {
     int result;             /**< The integer return code from the command */
-    size_t size;            /**< The size of the output */
+    cgc_size_t size;            /**< The size of the output */
     unsigned int csum;      /**< A checksum, set by the caller */
     char buf[0];            /**< The output of the command */
 } __attribute__((packed));
@@ -57,13 +57,13 @@ struct result {
 /**
  * Run a command specified by the command structure and return either an integer
  * return code or a result structure containing output. Result is allocated on
- * the heap and it is the caller's responsibility to free.
+ * the heap and it is the caller's responsibility to cgc_free.
  *
  * @param command The command to execute
  * @param result A pointer to hold the allocated result
  * @return EXIT_SUCCESS or EXIT_FAILURE
  */
-int run_command(struct command *command, struct result **result);
+int cgc_run_command(struct command *command, struct result **result);
 
 #endif /* EDITOR_H_ */
 

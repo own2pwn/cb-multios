@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -43,53 +43,53 @@ THE SOFTWARE.
 // CGCRPC Commands
 
 /*  Generic Command Format
-  uint16_t command
+  cgc_uint16_t command
   ...command specific options
 
   Generic Response Format
-  uint16_t command
+  cgc_uint16_t command
   ...command specific options
 */
 #define CGCRPC_BIND             0xa0
 /*
-  uint16_t nameLength
-  uint8_t name[nameLength]
-  uint16_t version
+  cgc_uint16_t nameLength
+  cgc_uint8_t name[nameLength]
+  cgc_uint16_t version
 */
 #define CGCRPC_BIND_RESPONSE    0x0a
 /*
-  uint8_t responseCode
-  uint32_t  bindID
+  cgc_uint8_t responseCode
+  cgc_uint32_t  bindID
 */
 #define CGCRPC_WRITE_TO_PIPE    0xa1
 /*
-  uint32_t bindID 
-  uint16_t opCode
-  uint16_t requestLength
-  uint8_t *requestData
+  cgc_uint32_t bindID 
+  cgc_uint16_t opCode
+  cgc_uint16_t requestLength
+  cgc_uint8_t *requestData
 */
 #define CGCRPC_WRITE_TO_PIPE_RESPONSE 0x1a
 /*
-  uint32_t bindID
-  uint16_t responseLength
-  uint8_t *responseBytes
+  cgc_uint32_t bindID
+  cgc_uint16_t responseLength
+  cgc_uint8_t *responseBytes
 */
 
 typedef struct CGCRPC_Endpoint_s {
   char      name[64];
-  uint16_t  version;
-  void      (*handler)(uint16_t, uint8_t *, uint32_t, uint8_t **, uint16_t *);
-} CGCRPC_Endpoint;
+  cgc_uint16_t  version;
+  void      (*handler)(cgc_uint16_t, cgc_uint8_t *, cgc_uint32_t, cgc_uint8_t **, cgc_uint16_t *);
+} cgc_CGCRPC_Endpoint;
 
 typedef struct CGCRPC_Connection_s {
-  uint32_t bindID;
-  CGCRPC_Endpoint *endpoint;
-} CGCRPC_Connection;
+  cgc_uint32_t bindID;
+  cgc_CGCRPC_Endpoint *endpoint;
+} cgc_CGCRPC_Connection;
 
-extern CGCRPC_Endpoint endpoints[MAX_CGCRPC_ENDPOINTS];
-extern CGCRPC_Connection connections[MAX_CGCRPC_CONNECTIONS];
+extern cgc_CGCRPC_Endpoint endpoints[MAX_CGCRPC_ENDPOINTS];
+extern cgc_CGCRPC_Connection connections[MAX_CGCRPC_CONNECTIONS];
 
-uint32_t HandleCGCRPCMessage(void *data, uint32_t dataLength, void **output, uint32_t *outputLength);
-void InitializeCGCRPC();
+cgc_uint32_t cgc_HandleCGCRPCMessage(void *data, cgc_uint32_t dataLength, void **output, cgc_uint32_t *outputLength);
+void cgc_InitializeCGCRPC();
 
 #endif

@@ -3,24 +3,24 @@
 #include <cstdint.h>
 #include "ticket.h"
 
-class Support
+class cgc_Support
 {
   public:
-    Support(uint32_t contact_info, PRIORITY max_priority = HIGH);
-    ~Support();
+    cgc_Support(cgc_uint32_t cgc_contact_info, cgc_PRIORITY cgc_max_priority = HIGH);
+    ~cgc_Support();
 
-    bool AssignTicket(Ticket *ticket);
-    bool UpdateTicket(STATUS status);
-    Ticket *CurrentTicket();
-    Ticket *RemoveTicket();
-    void Display(void);
+    bool cgc_AssignTicket(cgc_Ticket *ticket);
+    bool cgc_UpdateTicket(cgc_STATUS cgc_status);
+    cgc_Ticket *cgc_CurrentTicket();
+    cgc_Ticket *cgc_RemoveTicket();
+    void cgc_Display(void);
 
-    uint32_t id();
-    uint32_t contact_info();
-    PRIORITY max_priority();
+    cgc_uint32_t cgc_id();
+    cgc_uint32_t cgc_contact_info();
+    cgc_PRIORITY cgc_max_priority();
   private:
-    Ticket *ticket_;
-    uint32_t support_id_;
-    uint32_t contact_info_;
-    PRIORITY max_priority_;
+    cgc_Ticket *ticket_;
+    cgc_uint32_t support_id_;
+    cgc_uint32_t contact_info_;
+    cgc_PRIORITY max_priority_;
 };

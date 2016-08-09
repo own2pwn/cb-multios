@@ -28,9 +28,9 @@
 #define DEALLOC(p, sz) if(SUCCESS != deallocate((void *)p, sz)) {_terminate(ERRNO_ALLOC);}
 
 
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
-#define SENDSI(v) send((char *)&v, sizeof(int32_t))
-#define SENDUI(v) send((char *)&v, sizeof(uint32_t))
+#define RECV(v,s) if(s != cgc_recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
+#define SENDSI(v) cgc_send((char *)&v, sizeof(cgc_int32_t))
+#define SENDUI(v) cgc_send((char *)&v, sizeof(cgc_uint32_t))
 
 #define INIT_HAIKU_ID 424242
 #define MAX_HAIKU_LINE_LEN 1362 // 3 * 1362 == 4086
@@ -40,8 +40,8 @@
 #define EGG_HAIKU " from within HIGHCOO\x07 new Haiku every login\x07 a warm thought engulfs\x07"
 
 struct haiku {
-	uint32_t id;
-	uint32_t length;
+	cgc_uint32_t id;
+	cgc_uint32_t length;
 	char content[];
 };
 
@@ -57,10 +57,10 @@ enum {
 	ERR_INVALID_HAIKU = -4568,
 };
 
-extern int add_haiku();
-extern int get_haiku_by_id();
-extern int get_haiku_random();
-extern int get_haiku_count();
-extern int get_haiku_ids();
+extern int cgc_add_haiku();
+extern int cgc_get_haiku_by_id();
+extern int cgc_get_haiku_cgc_random();
+extern int cgc_get_haiku_count();
+extern int cgc_get_haiku_ids();
 
 #endif

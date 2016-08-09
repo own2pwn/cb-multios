@@ -32,19 +32,19 @@ THE SOFTWARE.
 #include "string.h"
 #include "protocol.h"
 
-#define POP_POP second = stack_pop_sint32(stk); first = stack_pop_sint32(stk)
-#define POP_POP_OP(op) POP_POP; stack_push_sint32(stk, first op second); break;
+#define POP_POP second = cgc_stack_pop_sint32(stk); first = cgc_stack_pop_sint32(stk)
+#define POP_POP_OP(op) POP_POP; cgc_stack_push_sint32(stk, first op second); break;
 
-sint32 eval(compiler* clr) {
-  operation* op = clr->find_list;
-  stack_elem* stk = stack_create();
+cgc_sint32 cgc_eval(cgc_compiler* clr) {
+  cgc_operation* op = clr->find_list;
+  cgc_stack_elem* stk = cgc_stack_create();
 
   do {
-    sint32 first, second;
+    cgc_sint32 first, second;
     
     switch (op->type) {
     case OP_PUSH_SINT32:
-      stack_push_sint32(stk, op->sint32_value);
+      cgc_stack_push_sint32(stk, op->sint32_value);
       break;
     case OP_ADD:
       POP_POP_OP(+);
@@ -55,55 +55,55 @@ sint32 eval(compiler* clr) {
     case OP_DIVIDE:
       POP_POP_OP(/);
     case OP_PUSH_CHARACTER_LITERAL:
-      stack_push_str(stk, op->character_literal_value);
+      cgc_stack_push_str(stk, op->character_literal_value);
       break;
     case OP_FUNCALL:
-      func_dispatch(stk, op->function_name);
+      cgc_func_dispatch(stk, op->function_name);
       break;
     case OP_NOP:
       break;
     default:
-      protocol_send_str("eval error, unrecognized operation");
+      cgc_protocol_send_str("cgc_eval error, unrecognized cgc_operation");
       _terminate(-1);
     }
 
     op = op->next;
   } while (NULL != op);
 
-  sint32 final_result = stack_pop_sint32(stk);
+  cgc_sint32 final_result = cgc_stack_pop_sint32(stk);
 
-  if (!stack_empty(stk)) {
-    protocol_send_str("eval error, left over stack entries");
+  if (!cgc_stack_empty(stk)) {
+    cgc_protocol_send_str("cgc_eval error, left over stack entries");
     _terminate(-1);
   }
 
   return final_result;
 }
 
-sint32 eval_string(char* str) {
-  lexer_list* ll = lex_string(strlen(str), str);
-  compiler* clr = compile(ll);
-  return eval(clr);
+cgc_sint32 cgc_eval_string(char* str) {
+  cgc_lexer_list* ll = cgc_lex_string(cgc_strlen(str), str);
+  cgc_compiler* clr = cgc_compile(ll);
+  return cgc_eval(clr);
 }
 
-void assert_eval(sint32 expected, char* qry) {
-  sint32 actual = eval_string(qry);
+void cgc_assert_eval(cgc_sint32 expected, char* qry) {
+  cgc_sint32 actual = cgc_eval_string(qry);
   if (expected != actual) _terminate(-1);
 }
 
-void eval_test() {
-  assert_eval(0, "FIND 1 - 1 FROM dual");
-  assert_eval(6, "FIND 1 + 2 + 3 FROM dual");
-  assert_eval(3, "FIND 1 + 2 * 3 - 4 FROM dual");
-  assert_eval(7, "FIND 1 + 2 * 3 FROM dual");
-  assert_eval(0x41, "FIND ord('ABC', 1) FROM dual");
-  assert_eval(0x42, "FIND ord('ABC', 2) FROM dual");
-  assert_eval(0x43, "FIND ord('ABC', 3) FROM dual");
-  assert_eval(0x41, "FIND ord(upcase('abc'), 1) FROM dual");
-  assert_eval(0x61, "FIND ord(downcase('ABC'), 1) FROM dual");
-  assert_eval(5, "FIND len('abcde') FROM dual");
-  assert_eval(3, "FIND idx('abcde', 'c') FROM udal");
-  assert_eval(3, "FIND ridx('abaco', 'a') FROM dual");
-  assert_eval(2, "FIND eval('FIND 1 + 1 FROM dual') FROM dual");
-  assert_eval(0x41, "FIND ord(chomp(' ABC'), 1) FROM dual");
+void cgc_eval_test() {
+  cgc_assert_eval(0, "FIND 1 - 1 FROM dual");
+  cgc_assert_eval(6, "FIND 1 + 2 + 3 FROM dual");
+  cgc_assert_eval(3, "FIND 1 + 2 * 3 - 4 FROM dual");
+  cgc_assert_eval(7, "FIND 1 + 2 * 3 FROM dual");
+  cgc_assert_eval(0x41, "FIND ord('ABC', 1) FROM dual");
+  cgc_assert_eval(0x42, "FIND ord('ABC', 2) FROM dual");
+  cgc_assert_eval(0x43, "FIND ord('ABC', 3) FROM dual");
+  cgc_assert_eval(0x41, "FIND ord(upcase('abc'), 1) FROM dual");
+  cgc_assert_eval(0x61, "FIND ord(downcase('ABC'), 1) FROM dual");
+  cgc_assert_eval(5, "FIND len('abcde') FROM dual");
+  cgc_assert_eval(3, "FIND idx('abcde', 'c') FROM udal");
+  cgc_assert_eval(3, "FIND ridx('abaco', 'a') FROM dual");
+  cgc_assert_eval(2, "FIND cgc_eval('FIND 1 + 1 FROM dual') FROM dual");
+  cgc_assert_eval(0x41, "FIND ord(chomp(' ABC'), 1) FROM dual");
 }

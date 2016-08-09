@@ -52,7 +52,7 @@ struct shape {
  * @param color The color of the new shape
  * @param emission The emission of the new shape
  */
-void shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
+void cgc_shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
         struct vector position, struct vector color, struct vector emission);
 
 #endif /* SHAPE_H_ */

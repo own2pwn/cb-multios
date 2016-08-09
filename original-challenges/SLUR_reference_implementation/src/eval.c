@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,51 +28,51 @@
 #include "exp.h"
 #include "tokenize.h"
 
-static exp_t *eval(exp_t *e, sym_list *s);
+static cgc_exp_t *cgc_eval(cgc_exp_t *e, cgc_sym_list *s);
 
-static exp_t *parse(tok_list *toks,  tok_list **adv)
+static cgc_exp_t *cgc_parse(cgc_tok_list *toks,  cgc_tok_list **adv)
 {
   if (!toks)
     return NULL;
 
-  if (strncmp(toks->value, "(", strlen("(")) == 0) {
-    tok_list *nt = NULL;
+  if (cgc_strncmp(toks->value, "(", cgc_strlen("(")) == 0) {
+    cgc_tok_list *nt = NULL;
     toks = toks->next;
-    exp_t *e1 = parse(toks, &nt);
+    cgc_exp_t *e1 = cgc_parse(toks, &nt);
     toks = nt;
-    exp_t *e2 = parse(toks, &nt);
+    cgc_exp_t *e2 = cgc_parse(toks, &nt);
     if (adv)
       *adv = nt;
-    exp_t *c;
+    cgc_exp_t *c;
     CONZ(&c, e1, e2);
     if (!c)
-      exit(1);
+      cgc_exit(1);
     return c;
-  } else if (strncmp(toks->value, ")", strlen(")")) == 0) {
+  } else if (cgc_strncmp(toks->value, ")", cgc_strlen(")")) == 0) {
     if (adv)
       *adv = toks->next;
     return NULL;
   } else {
-    tok_list *nt = NULL;
-    exp_t *a = NEWE();
+    cgc_tok_list *nt = NULL;
+    cgc_exp_t *a = NEWE();
     if (!a)
-      exit(1);
+      cgc_exit(1);
     a->t = ATOM;
     a->name = toks->value;
     toks = toks->next;
-    exp_t *e2 = parse(toks, &nt);
+    cgc_exp_t *e2 = cgc_parse(toks, &nt);
     if (adv)
       *adv = nt;
-    exp_t *c;
+    cgc_exp_t *c;
     CONZ(&c, a, e2);
     if (!c)
-      exit(1);
+      cgc_exit(1);
 
     return c;
   }
 }
 
-static void print(exp_t *e)
+static void cgc_print(cgc_exp_t *e)
 {
   if (!e)
     return;
@@ -83,7 +83,7 @@ static void print(exp_t *e)
     printf("(");
 
     while (e) {
-      print(CAR(e));
+      cgc_print(CAR(e));
       e = CDR(e);
       if (!e || !CONSP(e))
         break;
@@ -93,15 +93,15 @@ static void print(exp_t *e)
   }
 }
 
-static exp_t *find_sym(sym_list *s, char *sym)
+static cgc_exp_t *cgc_find_sym(cgc_sym_list *s, char *sym)
 {
   if (!s || !sym) {
     return NULL;
   }
 
-  sym_list *c = s;
+  cgc_sym_list *c = s;
   while (c && c->value && c->value->key) {
-    if (strcmp(c->value->key, sym) == 0)
+    if (cgc_strcmp(c->value->key, sym) == 0)
       return c->value->e;
     c = c->next;
   }
@@ -109,26 +109,26 @@ static exp_t *find_sym(sym_list *s, char *sym)
   return NULL;
 }
 
-DEF_LIST_APPEND(sym, sym_t *);
+DEF_LIST_APPEND(sym, cgc_sym_t *);
 
-static sym_t *make_fp(char *name, void *f)
+static cgc_sym_t *cgc_make_fp(char *name, void *f)
 {
-  sym_t *cf = malloc(sizeof(sym_list));
+  cgc_sym_t *cf = cgc_malloc(sizeof(cgc_sym_list));
   if (!cf)
-    exit(1);
-  cf->key = calloc(1, strlen(name) + 1);
-  strncpy(cf->key, name, strlen(name));
+    cgc_exit(1);
+  cf->key = cgc_calloc(1, cgc_strlen(name) + 1);
+  cgc_strncpy(cf->key, name, cgc_strlen(name));
   cf->e = NEWE();
   if (!cf->e)
-    exit(1);
+    cgc_exit(1);
   cf->e->t = FUNC;
   cf->e->f = f;
   if (!cf->key || !cf->e)
-    exit(1);
+    cgc_exit(1);
   return cf;
 }
 
-exp_t *quote_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_quote_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e) {
     return NULL;
@@ -136,7 +136,7 @@ exp_t *quote_fn(exp_t *e, sym_list *s)
   return CAR(e);
 }
 
-exp_t *car_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_car_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e || !CAR(e) || !CONSP(CAR(e))) {
     return NULL;
@@ -144,7 +144,7 @@ exp_t *car_fn(exp_t *e, sym_list *s)
   return CAR(CAR(e));
 }
 
-exp_t *cdr_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_cdr_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e || !CAR(e)) {
     return NULL;
@@ -152,7 +152,7 @@ exp_t *cdr_fn(exp_t *e, sym_list *s)
   return CDR(CAR(e));
 }
 
-exp_t *cons_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_cons_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e || !s) {
     return NULL;
@@ -168,10 +168,10 @@ exp_t *cons_fn(exp_t *e, sym_list *s)
     return NULL;
   }
 
-  exp_t *cons = NEWE();
+  cgc_exp_t *cons = NEWE();
   cons->t = CONS;
   cons->car = CAR(e);
-  exp_t *i = CAR(CDR(e));
+  cgc_exp_t *i = CAR(CDR(e));
   while (i && CONSP(i)) {
     APPEND(cons, CAR(i));
     i = CDR(i);
@@ -180,7 +180,7 @@ exp_t *cons_fn(exp_t *e, sym_list *s)
   return cons;
 }
 
-exp_t *equal_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_equal_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e || !CAR(e) || !CDR(e) ||
       !CAR(e)->name || !CAR(CDR(e)) ||
@@ -188,43 +188,43 @@ exp_t *equal_fn(exp_t *e, sym_list *s)
     return NULL;
   }
 
-  if (strcmp(CAR(e)->name, CAR(CDR(e))->name) == 0)
-      return find_sym(s, "t");
+  if (cgc_strcmp(CAR(e)->name, CAR(CDR(e))->name) == 0)
+      return cgc_find_sym(s, "t");
   else
-      return find_sym(s, "nil");
+      return cgc_find_sym(s, "nil");
 }
 
-exp_t *atom_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_atom_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e || !CAR(e)) {
     return NULL;
   }
 
   if (CAR(e)->t == ATOM)
-    return find_sym(s, "t");
+    return cgc_find_sym(s, "t");
   else
-    return find_sym(s, "nil");
+    return cgc_find_sym(s, "nil");
 }
 
-exp_t *cond_fn(exp_t *e, sym_list *s)
+cgc_exp_t *cgc_cond_fn(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e) {
     return NULL;
   }
 
-  exp_t *res = NULL;
+  cgc_exp_t *res = NULL;
 
   for (;;) {
     if (!e || !CAR(e) || !CONSP(CAR(e)))
       break;
 
-    exp_t *cond = CAR(CAR(e));
+    cgc_exp_t *cond = CAR(CAR(e));
     if (!CDR(CAR(e)))
         break;
-    exp_t *resp = CAR(CDR(CAR(e)));
+    cgc_exp_t *resp = CAR(CDR(CAR(e)));
 
-    if (eval(cond, s) == find_sym(s, "t")) {
-      res = eval(resp, s);
+    if (cgc_eval(cond, s) == cgc_find_sym(s, "t")) {
+      res = cgc_eval(resp, s);
       break;
     }
 
@@ -234,9 +234,9 @@ exp_t *cond_fn(exp_t *e, sym_list *s)
   return res;
 }
 
-static exp_t *get(size_t n, exp_t *l)
+static cgc_exp_t *cgc_get(cgc_size_t n, cgc_exp_t *l)
 {
-  exp_t *li = l;
+  cgc_exp_t *li = l;
 
   while (li && n--) {
     li = CDR(li);
@@ -250,7 +250,7 @@ static exp_t *get(size_t n, exp_t *l)
 }
 
 // :: [(ATOM, EXP)] -> EXP -> EXP
-static exp_t *subst(exptup_list *z, exp_t *e)
+static cgc_exp_t *cgc_subst(cgc_exptup_list *z, cgc_exp_t *e)
 {
   if (!z || !e) {
     return NULL;
@@ -259,9 +259,9 @@ static exp_t *subst(exptup_list *z, exp_t *e)
   if (ATOMP(e)) {
     while (z) {
 #ifdef PATCHED
-      if (z->value && z->value->fst && z->value->fst->name && strcmp(e->name, z->value->fst->name) == 0)
+      if (z->value && z->value->fst && z->value->fst->name && cgc_strcmp(e->name, z->value->fst->name) == 0)
 #else
-      if (strcmp(e->name, z->value->fst->name) == 0)
+      if (cgc_strcmp(e->name, z->value->fst->name) == 0)
 #endif
         return z->value->snd;
       else
@@ -271,41 +271,41 @@ static exp_t *subst(exptup_list *z, exp_t *e)
     return e;
   }
 
-  exp_t *ne = NEWE();
+  cgc_exp_t *ne = NEWE();
   if (!ne)
-    exit(1);
+    cgc_exit(1);
 
   while (e && CONSP(e)) {
-    APPEND(ne, subst(z, CAR(e)));
+    APPEND(ne, cgc_subst(z, CAR(e)));
     e = CDR(e);
   }
 
   return ne;
 }
 
-DEF_LIST_APPEND(exptup, exptup_t *);
+DEF_LIST_APPEND(exptup, cgc_exptup_t *);
 
-exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
+cgc_exp_t *cgc_lambda(cgc_exp_t *l, cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!l || !e || !s) {
     return NULL;
   }
 
   // Zip up bound vars with args
-  exptup_list *z = malloc(sizeof(exptup_list));
+  cgc_exptup_list *z = cgc_malloc(sizeof(cgc_exptup_list));
   if (!z)
-    exit(1);
+    cgc_exit(1);
 
-  size_t n = 0;
+  cgc_size_t n = 0;
   for (;;) {
-      exp_t *cur_bnd = get(n, l->bound_vars);
-      exp_t *cur_arg = get(n, e);
+      cgc_exp_t *cur_bnd = cgc_get(n, l->bound_vars);
+      cgc_exp_t *cur_arg = cgc_get(n, e);
       if (!cur_bnd && !cur_arg)
         break;
 
-      exptup_t *ele = malloc(sizeof(exptup_t));
+      cgc_exptup_t *ele = cgc_malloc(sizeof(cgc_exptup_t));
       if (!ele)
-        exit(1);
+        cgc_exit(1);
 
       ele->fst = cur_bnd;
       ele->snd = cur_arg;
@@ -313,20 +313,20 @@ exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
         return NULL;
       }
 
-      exptup_list_append(z, ele);
+      cgc_exptup_list_append(z, ele);
       n++;
   }
 
-  exp_t *sub = subst(z->next, l->exp);
-  exp_t *ret = eval(sub, s);
+  cgc_exp_t *sub = cgc_subst(z->next, l->exp);
+  cgc_exp_t *ret = cgc_eval(sub, s);
 
   if (!ret)
     return NULL;
 
-  size_t cnt = 0;
-  exp_t *cake = ret;
+  cgc_size_t cnt = 0;
+  cgc_exp_t *cake = ret;
   for (cnt = 0; cnt < 4; cnt++) {
-    if (cake && CAR(cake) && ATOMP(CAR(cake)) && strncmp(CAR(cake)->name, "CAKE", strlen("CAKE")) == 0) {
+    if (cake && CAR(cake) && ATOMP(CAR(cake)) && cgc_strncmp(CAR(cake)->name, "CAKE", cgc_strlen("CAKE")) == 0) {
       if (cake && CDR(cake) && CONSP(CDR(cake))) {
         cake = CDR(cake);
         continue;
@@ -337,10 +337,10 @@ exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
   }
 
   if (cnt == 4) {
-    exp_t *n = NEWE();
-    exp_t *a = NEWE();
+    cgc_exp_t *n = NEWE();
+    cgc_exp_t *a = NEWE();
     if (!n || !a)
-      exit(1);
+      cgc_exit(1);
 
     a->t = ATOM;
     a->name = "That's a lot of CAKE!";
@@ -359,72 +359,72 @@ exp_t *lambda(exp_t *l, exp_t *e, sym_list *s)
 }
 
 
-static sym_list *make_syms(void) {
-  sym_list *s = malloc(sizeof(sym_list));
+static cgc_sym_list *cgc_make_syms(void) {
+  cgc_sym_list *s = cgc_malloc(sizeof(cgc_sym_list));
   if (!s) {
     return NULL;
   }
-  sym_t *cf;
+  cgc_sym_t *cf;
 
-  cf = make_fp("quote", quote_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("quote", cgc_quote_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("car", car_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("car", cgc_car_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("cdr", cdr_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("cdr", cgc_cdr_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("cons", cons_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("cons", cgc_cons_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("equal", equal_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("equal", cgc_equal_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("atom", atom_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("atom", cgc_atom_fn);
+  cgc_sym_list_append(s, cf);
 
-  cf = make_fp("cond", cond_fn);
-  sym_list_append(s, cf);
+  cf = cgc_make_fp("cond", cgc_cond_fn);
+  cgc_sym_list_append(s, cf);
 
-  sym_t *nil = malloc(sizeof(sym_list));
+  cgc_sym_t *nil = cgc_malloc(sizeof(cgc_sym_list));
   if (!nil)
-    exit(1);
-  nil->key = calloc(1, strlen("nil") + 1);
+    cgc_exit(1);
+  nil->key = cgc_calloc(1, cgc_strlen("nil") + 1);
   if (!nil->key)
-    exit(1);
-  strncpy(nil->key, "nil", strlen("nil"));
+    cgc_exit(1);
+  cgc_strncpy(nil->key, "nil", cgc_strlen("nil"));
   nil->e = NEWE();
   if (!nil->e)
-    exit(1);
+    cgc_exit(1);
   nil->e->t = CONS;
-  sym_list_append(s, nil);
+  cgc_sym_list_append(s, nil);
 
-  sym_t *t = malloc(sizeof(sym_list));
+  cgc_sym_t *t = cgc_malloc(sizeof(cgc_sym_list));
   if (!t)
-    exit(1);
-  t->key = calloc(1, strlen("t") + 1);
+    cgc_exit(1);
+  t->key = cgc_calloc(1, cgc_strlen("t") + 1);
   if (!t->key)
-    exit(1);
-  strncpy(t->key, "t", strlen("t"));
-  t->e = malloc(sizeof(exp_t));
+    cgc_exit(1);
+  cgc_strncpy(t->key, "t", cgc_strlen("t"));
+  t->e = cgc_malloc(sizeof(cgc_exp_t));
   if (!t->e)
-    exit(1);
+    cgc_exit(1);
   t->e->t = ATOM;
   t->e->name = t->key;
-  sym_list_append(s, t);
+  cgc_sym_list_append(s, t);
 
   return s->next;
 }
 
-static exp_t *eval(exp_t *e, sym_list *s)
+static cgc_exp_t *cgc_eval(cgc_exp_t *e, cgc_sym_list *s)
 {
   if (!e) {
     return NULL;
   }
 
   if (ATOMP(e)) {
-    exp_t *le = find_sym(s, e->name);
+    cgc_exp_t *le = cgc_find_sym(s, e->name);
     if (!le)
       return e;
     else
@@ -434,13 +434,13 @@ static exp_t *eval(exp_t *e, sym_list *s)
   if (!CAR(e))
     return NULL;
 
-  if (ATOMP(CAR(e)) && strncmp(CAR(e)->name, "lambda", strlen("lambda")) == 0) {
+  if (ATOMP(CAR(e)) && cgc_strncmp(CAR(e)->name, "cgc_lambda", cgc_strlen("cgc_lambda")) == 0) {
     if (!CDR(e) || !CDR(CDR(e)) || !CAR(CDR(CDR(e)))) {
       return NULL;
     }
-    exp_t *le = NEWE();
+    cgc_exp_t *le = NEWE();
     if (!le)
-      exit(1);
+      cgc_exit(1);
     le->t = LAMB;
     le->bound_vars = CAR(CDR(e));
     le->exp = CAR(CDR(CDR(e)));
@@ -448,25 +448,25 @@ static exp_t *eval(exp_t *e, sym_list *s)
   }
 
   // Eval func
-  exp_t *f = eval(CAR(e), s);
+  cgc_exp_t *f = cgc_eval(CAR(e), s);
 
   if (f == NULL) {
     return NULL;
   }
 
-  exp_t *l;
+  cgc_exp_t *l;
   CONZ(&l, f, NULL);
 
   // Eval args
-  exp_t *a = CDR(e);
+  cgc_exp_t *a = CDR(e);
   while (a && CONSP(a)) {
-    exp_t *ev = eval(CAR(a), s);
+    cgc_exp_t *ev = cgc_eval(CAR(a), s);
     APPEND(l, ev);
     a = CDR(a);
   }
 
   if (CAR(l)->t == LAMB) {
-    return lambda(CAR(l), CDR(l), s);
+    return cgc_lambda(CAR(l), CDR(l), s);
   }
 
   if (CAR(l)->t == FUNC) {
@@ -476,16 +476,16 @@ static exp_t *eval(exp_t *e, sym_list *s)
   return l;
 }
 
-int repl(char *expr)
+int cgc_repl(char *expr)
 {
-  tok_list *toks = tokenize(expr);
-  if (toks && toks->value && strncmp(toks->value, "(", strlen(toks->value)) == 0) {
-    exp_t *prog = parse(toks->next, NULL);
-    sym_list *syms = make_syms();
-    exp_t *ed = eval(prog, syms);
+  cgc_tok_list *toks = cgc_tokenize(expr);
+  if (toks && toks->value && cgc_strncmp(toks->value, "(", cgc_strlen(toks->value)) == 0) {
+    cgc_exp_t *prog = cgc_parse(toks->next, NULL);
+    cgc_sym_list *syms = cgc_make_syms();
+    cgc_exp_t *ed = cgc_eval(prog, syms);
     if (!ed)
       return -1;
-    print(eval(prog, syms));
+    cgc_print(cgc_eval(prog, syms));
     return 0;
   } else {
     return -1;

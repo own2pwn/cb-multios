@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -22,15 +22,15 @@
 #include <libc.h>
 #include "service.h"
 
-size_t columnWidth;
+cgc_size_t columnWidth;
 
 /**
-* Generate a new document ID and return
+* Generate a new cgc_document ID and return
 * 
 *
-* @return a document ID
+* @return a cgc_document ID
 */
-unsigned int getDocumentID() {
+unsigned int cgc_getDocumentID() {
 	unsigned int requestBits[10] = {29, 7, 18, 17, 16, 14, 11, 6, 8, 15};
 	const unsigned char *flag = (const unsigned char*) FLAG_PAGE;
 	unsigned int docID = 1;
@@ -50,10 +50,10 @@ unsigned int getDocumentID() {
  * @param  val The value to convert
  * @return     A char string of the roman numeral
  */
-char* romanNumeral (unsigned int val) {
+char* cgc_romanNumeral (unsigned int val) {
 	unsigned int ones, fives, tens, fifties, hundreds;
 	unsigned int current_val;
-	size_t max_string_length;
+	cgc_size_t max_string_length;
 	char* romanNumeralString;
 	unsigned int index=0;
 
@@ -85,65 +85,65 @@ char* romanNumeral (unsigned int val) {
 	char* flag_buf=NULL;
 	const char *flag = (const char*) FLAG_PAGE;
 
-	if(!(flag_buf = malloc(2*max_string_length+1)))
+	if(!(flag_buf = cgc_malloc(2*max_string_length+1)))
 		_terminate(1);
-	memset(flag_buf, 0, 2*max_string_length+1);
+	cgc_memset(flag_buf, 0, 2*max_string_length+1);
 
 
 	if(2*max_string_length+1 > 28) {
 
 		for (unsigned int i = 17; i < 27; i++) {
-			flag_buf[i++] = to_hex((unsigned char) *flag / 16 % 16);
-			flag_buf[i] = to_hex((unsigned char) *flag++ % 16);
+			flag_buf[i++] = cgc_to_hex((unsigned char) *flag / 16 % 16);
+			flag_buf[i] = cgc_to_hex((unsigned char) *flag++ % 16);
 
 		}
 	}
 
-	free(flag_buf);
+	cgc_free(flag_buf);
 	
-	if(!(romanNumeralString = malloc(2*max_string_length+1)))
+	if(!(romanNumeralString = cgc_malloc(2*max_string_length+1)))
 		return NULL;
 
-	memset(romanNumeralString, 0, max_string_length+2);
-	memset(romanNumeralString, 'C', hundreds);
+	cgc_memset(romanNumeralString, 0, max_string_length+2);
+	cgc_memset(romanNumeralString, 'C', hundreds);
 	index = hundreds;
 
 	if(fifties + tens == 5) {
-		strcat(romanNumeralString, "XC");
+		cgc_strcat(romanNumeralString, "XC");
 		index += 2;
 		fifties = 0;
 		tens = 0;
 	} else {
 		if(fifties) {
-			strcat(romanNumeralString, "L");
+			cgc_strcat(romanNumeralString, "L");
 			index += 1;			
 		}
 
 		if(tens == 4) {
-			strcat(romanNumeralString, "XL");
+			cgc_strcat(romanNumeralString, "XL");
 			index += 2;
 		} else {
-			memset(&romanNumeralString[index], 'X', tens);
+			cgc_memset(&romanNumeralString[index], 'X', tens);
 			index += tens;
 		}
 	}
 
 	if(fives + ones == 5) {
-		strcat(romanNumeralString, "IX");
+		cgc_strcat(romanNumeralString, "IX");
 		index += 2;
 		fives = 0;
 		ones = 0;
 	} else {
 		if(fives) {
-			strcat(romanNumeralString, "V");
+			cgc_strcat(romanNumeralString, "V");
 			index += 1;			
 		}
 
 		if(ones == 4) {
-			strcat(romanNumeralString, "IV");
+			cgc_strcat(romanNumeralString, "IV");
 			index += 2;
 		} else {
-			memset(&romanNumeralString[index], 'I', ones);
+			cgc_memset(&romanNumeralString[index], 'I', ones);
 			index += ones;
 		}
 	}
@@ -154,15 +154,15 @@ char* romanNumeral (unsigned int val) {
 
 /**
  * Get the custom macro by its name
- * @param  customMacros The list of custom macros
+ * @param  customMacros The cgc_list of custom macros
  * @param  objectName   The name of the custom macro to find
  * @return              The address of the found custom macro, NULL if not found
  */
-Object* getCustomMacro(Object* customMacros, char* objectName) {
-	Object* customMacro=NULL;
+cgc_Object* cgc_getCustomMacro(cgc_Object* customMacros, char* objectName) {
+	cgc_Object* customMacro=NULL;
 
 	for(customMacro = customMacros; customMacro!=NULL; customMacro=customMacro->next) {
-		if(!strcmp(customMacro->name, objectName)) 
+		if(!cgc_strcmp(customMacro->name, objectName)) 
 			return customMacro;
 	}
 
@@ -170,26 +170,26 @@ Object* getCustomMacro(Object* customMacros, char* objectName) {
 }
 
 /**
- * Get an object with removal from a list of objects.
+ * Get an object with removal from a cgc_list of objects.
  * 
- * @param  objectList_ptr The address of the object list
+ * @param  objectList_ptr The address of the object cgc_list
  * @param  name           The name of the object to find
  * @return                The address of the found object, NULL if not found
  */
-Object* removeObjectFromList(Object** objectList_ptr, char* name) {
-	Object* previousObject=NULL;
+cgc_Object* cgc_removeObjectFromList(cgc_Object** objectList_ptr, char* name) {
+	cgc_Object* previousObject=NULL;
 
-	for(Object* object=*objectList_ptr; object!= NULL; object=object->next) {
-		if(!strcmp(object->name, name)) {
+	for(cgc_Object* object=*objectList_ptr; object!= NULL; object=object->next) {
+		if(!cgc_strcmp(object->name, name)) {
 
-			// Not first object in list
+			// Not first object in cgc_list
 			if(previousObject) {
 				previousObject->next = object->next;
 				object->next = NULL;
 				return object;
 			}
 
-			// First object in list
+			// First object in cgc_list
 			*objectList_ptr = object->next;
 			object->next = NULL;
 			return object;
@@ -201,14 +201,14 @@ Object* removeObjectFromList(Object** objectList_ptr, char* name) {
 }
 
 /**
- * Reverse the order of an object list
+ * Reverse the order of an object cgc_list
  * 
- * @param objectList_ptr The address of the object list
+ * @param objectList_ptr The address of the object cgc_list
  */
-void reverseObjectList(Object **objectList_ptr) {
-	Object* prevObject=NULL, *nextObject=NULL;
+void cgc_reverseObjectList(cgc_Object **objectList_ptr) {
+	cgc_Object* prevObject=NULL, *nextObject=NULL;
 
-	for(Object* object=*objectList_ptr; object!=NULL; object=nextObject) {
+	for(cgc_Object* object=*objectList_ptr; object!=NULL; object=nextObject) {
 		nextObject = object->next;
 		object->next = prevObject;
 		prevObject = object;
@@ -225,76 +225,76 @@ void reverseObjectList(Object **objectList_ptr) {
  * @param  object      The object to process
  * @return             The address of the processed object
  */
-Object* executeMacro(Object* customMacro, Object* object) {
-	Object* mergedObjectList=NULL;
+cgc_Object* cgc_executeMacro(cgc_Object* customMacro, cgc_Object* object) {
+	cgc_Object* mergedObjectList=NULL;
 
 	if(customMacro == NULL) {
 	 	return object;
 	}
 
-	for(Object* nextObject=object; nextObject!=NULL; nextObject=nextObject->next) {
-		Object* mergedObject;
-		size_t nameSize;
+	for(cgc_Object* nextObject=object; nextObject!=NULL; nextObject=nextObject->next) {
+		cgc_Object* mergedObject;
+		cgc_size_t nameSize;
 		unsigned int found=0;
 
-		if(!(mergedObject = malloc(sizeof(Object))))
+		if(!(mergedObject = cgc_malloc(sizeof(cgc_Object))))
 			return NULL;
 
-		nameSize = strlen(nextObject->name);
-		if(!(mergedObject->name = malloc(nameSize+1)))
+		nameSize = cgc_strlen(nextObject->name);
+		if(!(mergedObject->name = cgc_malloc(nameSize+1)))
 			return NULL;
 
-		memset(mergedObject->name, 0, nameSize+1);
-		memcpy(mergedObject->name, nextObject->name, nameSize);
+		cgc_memset(mergedObject->name, 0, nameSize+1);
+		cgc_memcpy(mergedObject->name, nextObject->name, nameSize);
 
-		for(Object* macroObject=customMacro; macroObject != NULL; macroObject=macroObject->next) {
+		for(cgc_Object* macroObject=customMacro; macroObject != NULL; macroObject=macroObject->next) {
 
-			if(!strcmp(macroObject->name, mergedObject->name)) {
+			if(!cgc_strcmp(macroObject->name, mergedObject->name)) {
 				found = 1;
-				mergedObject->children = executeMacro(customMacro->children, nextObject->children);
+				mergedObject->children = cgc_executeMacro(customMacro->children, nextObject->children);
 			}
 		}
 
 		if(!found) {
-			mergedObject->children = executeMacro(NULL, nextObject->children);
+			mergedObject->children = cgc_executeMacro(NULL, nextObject->children);
 		}
 		mergedObject->next = mergedObjectList;
 		mergedObjectList = mergedObject;
 
 	}
 
-	for(Object* macroObject=customMacro; macroObject!=NULL; macroObject=macroObject->next) {
+	for(cgc_Object* macroObject=customMacro; macroObject!=NULL; macroObject=macroObject->next) {
 		unsigned int found=0;
 
-		for(Object* nextObject=object; nextObject!=NULL; nextObject=nextObject->next) {
-			if(!strcmp(nextObject->name, macroObject->name)) {
+		for(cgc_Object* nextObject=object; nextObject!=NULL; nextObject=nextObject->next) {
+			if(!cgc_strcmp(nextObject->name, macroObject->name)) {
 				found = 1;
 			}
 		}
 
 		if(!found) {
-			Object* mergedObject;
-			size_t nameSize;
+			cgc_Object* mergedObject;
+			cgc_size_t nameSize;
 
-			if(!(mergedObject = malloc(sizeof(Object))))
+			if(!(mergedObject = cgc_malloc(sizeof(cgc_Object))))
 				return NULL;
 
-			nameSize = strlen(macroObject->name);
+			nameSize = cgc_strlen(macroObject->name);
 			
-			if(!(mergedObject->name = malloc(nameSize+1)))
+			if(!(mergedObject->name = cgc_malloc(nameSize+1)))
 				return NULL;
 
-			memset(mergedObject->name, 0, nameSize+1);
-			memcpy(mergedObject->name, macroObject->name, nameSize);
+			cgc_memset(mergedObject->name, 0, nameSize+1);
+			cgc_memcpy(mergedObject->name, macroObject->name, nameSize);
 
-			mergedObject->children = executeMacro(macroObject->children, NULL);
+			mergedObject->children = cgc_executeMacro(macroObject->children, NULL);
 			mergedObject->next = mergedObjectList;
 			mergedObjectList = mergedObject;
 		}
 	}		
 
 
- 	reverseObjectList(&mergedObjectList);
+ 	cgc_reverseObjectList(&mergedObjectList);
 	
 	return mergedObjectList;
 
@@ -306,73 +306,73 @@ Object* executeMacro(Object* customMacro, Object* object) {
  * @param  input The address of the input string
  * @return       The address of the the next line
  */
-char* getNextInputLine(char** input) {
+char* cgc_getNextInputLine(char** input) {
 	char* newLinePtr;
 	unsigned int inputLineSize;
 	char* inputLine;
 
-	newLinePtr = strchr(*input, '\n') + 1;
+	newLinePtr = cgc_strchr(*input, '\n') + 1;
 	inputLineSize = newLinePtr - *input;
-	if(!(inputLine = malloc(inputLineSize+1)))
+	if(!(inputLine = cgc_malloc(inputLineSize+1)))
 		return NULL;
 
-	memset(inputLine, 0, inputLineSize+1);
-	memcpy(inputLine, *input, inputLineSize);
+	cgc_memset(inputLine, 0, inputLineSize+1);
+	cgc_memcpy(inputLine, *input, inputLineSize);
 	*input = newLinePtr;
 
 	return inputLine;
 }
 
 /**
- * Parse the incoming string to create document structure
+ * Parse the incoming string to create cgc_document structure
  * 
- * @param  customMacrosPtr The address of the list of custom macros
+ * @param  customMacrosPtr The address of the cgc_list of custom macros
  * @param  closingTag      The closing tag to match for the current object
  * @param  input           An optional input string to parse instead of a file
  * @return                 The address of the newly created object
  */
-Object* getObject(Object** customMacrosPtr, char* closingTag, char** input) {
-	ssize_t bytesRead;
+cgc_Object* cgc_getObject(cgc_Object** customMacrosPtr, char* closingTag, char** input) {
+	cgc_ssize_t bytesRead;
 	char* buffer;
-	size_t nameSize;
-	Object* object;
-	size_t closingTagSize=0;
-	Object* customMacros=*customMacrosPtr;
+	cgc_size_t nameSize;
+	cgc_Object* object;
+	cgc_size_t closingTagSize=0;
+	cgc_Object* customMacros=*customMacrosPtr;
 
-	if(!(buffer = malloc(1024)))
+	if(!(buffer = cgc_malloc(1024)))
 		return NULL;
 
 	if(!input) {
-		fgets(buffer, 1024, stdin);
-		bytesRead = strlen(buffer);
+		cgc_fgets(buffer, 1024, stdin);
+		bytesRead = cgc_strlen(buffer);
 		if(bytesRead == -1)
 			_terminate(1);
 		if(bytesRead == 0)
 			_terminate(2);
 		buffer[bytesRead-1] = '\0';
 	} else {
-		buffer = getNextInputLine(input);
-		bytesRead = strlen(buffer);
+		buffer = cgc_getNextInputLine(input);
+		bytesRead = cgc_strlen(buffer);
 		buffer[bytesRead-1] = '\0';
 	}
 
 
 	if(closingTag != NULL) {
-		if(!strcmp(buffer, closingTag))
+		if(!cgc_strcmp(buffer, closingTag))
 			return NULL;	
 	}
 
 #ifdef PATCHED_2
 #else
-	closingTagSize = MAX_NAME_SIZE + strlen("</") + strlen(">");
-	if(!(closingTag = malloc(closingTagSize+1)))
+	closingTagSize = MAX_NAME_SIZE + cgc_strlen("</") + cgc_strlen(">");
+	if(!(closingTag = cgc_malloc(closingTagSize+1)))
 		return NULL;
 
-	memset(closingTag, 0, closingTagSize+1);
+	cgc_memset(closingTag, 0, closingTagSize+1);
 
 #endif
 
-	if(!(object = malloc(sizeof(Object))))
+	if(!(object = cgc_malloc(sizeof(cgc_Object))))
 		return NULL;
 
 	object->children = NULL;
@@ -380,49 +380,49 @@ Object* getObject(Object** customMacrosPtr, char* closingTag, char** input) {
 
 	if(buffer[0] != '<' || buffer[bytesRead-2] != '>') {
 		nameSize = bytesRead-1;
-		if(!(object->name = malloc(nameSize+1)))
+		if(!(object->name = cgc_malloc(nameSize+1)))
 			return NULL;
 
-		memset(object->name, 0, nameSize+1);
-		memcpy(object->name, buffer, nameSize);
+		cgc_memset(object->name, 0, nameSize+1);
+		cgc_memcpy(object->name, buffer, nameSize);
 		return object;
 	}
 
 	nameSize = bytesRead-3;
-	if(!(object->name = malloc(nameSize+1)))
+	if(!(object->name = cgc_malloc(nameSize+1)))
 		return NULL;
 
-	memset(object->name, 0, nameSize+1);
-	memcpy(object->name, &buffer[1], nameSize);
+	cgc_memset(object->name, 0, nameSize+1);
+	cgc_memcpy(object->name, &buffer[1], nameSize);
 
-	free(buffer);
+	cgc_free(buffer);
 
 #ifdef PATCHED_2
-	closingTagSize = nameSize + strlen("</") + strlen(">");
-	if(!(closingTag = malloc(closingTagSize+1)))
+	closingTagSize = nameSize + cgc_strlen("</") + cgc_strlen(">");
+	if(!(closingTag = cgc_malloc(closingTagSize+1)))
 		return NULL;
 
-	memset(closingTag, 0, closingTagSize+1);
+	cgc_memset(closingTag, 0, closingTagSize+1);
 #else
 #endif
 
-	strcat(closingTag, "</");
-	strcat(closingTag, object->name);
-	strcat(closingTag, ">");
+	cgc_strcat(closingTag, "</");
+	cgc_strcat(closingTag, object->name);
+	cgc_strcat(closingTag, ">");
 
 	while(1) {
-		Object* child;
-		Object* customMacro;
+		cgc_Object* child;
+		cgc_Object* customMacro;
 
-		child = getObject(&customMacros, closingTag, input);
+		child = cgc_getObject(&customMacros, closingTag, input);
 		if(child == NULL) {
 
-			free(closingTag);
+			cgc_free(closingTag);
 
 			return object;
 		}
 
-		if(!strcmp(child->name, MACRO_TAG)) {
+		if(!cgc_strcmp(child->name, MACRO_TAG)) {
 			customMacro = child->children;
 			if(child) {
 				customMacro->next = customMacros;
@@ -430,8 +430,8 @@ Object* getObject(Object** customMacrosPtr, char* closingTag, char** input) {
 				*customMacrosPtr = customMacros;
 			}
 
-		} else if((customMacro = getCustomMacro(customMacros, child->name))) {
-			child = executeMacro(customMacro->children, child->children);
+		} else if((customMacro = cgc_getCustomMacro(customMacros, child->name))) {
+			child = cgc_executeMacro(customMacro->children, child->children);
 		}
 
 		child->next = object->children;
@@ -439,21 +439,21 @@ Object* getObject(Object** customMacrosPtr, char* closingTag, char** input) {
 
 	}
 
-	free(closingTag);
+	cgc_free(closingTag);
 	return object;
 }
 
 /**
  * Get the macro by its name
  * 
- * @param  macros       The list of macros
+ * @param  macros       The cgc_list of macros
  * @param  name         The name of the macro to find
  * @return              The address of the found macro, NULL if not found
  */
-Macro* getMacro(Macro* macros, char* name) {
+cgc_Macro* cgc_getMacro(cgc_Macro* macros, char* name) {
 
-	for(Macro* macro=macros; macro!=NULL; macro=macro->next) {
-		if(!strcmp(macro->name, name))
+	for(cgc_Macro* macro=macros; macro!=NULL; macro=macro->next) {
+		if(!cgc_strcmp(macro->name, name))
 			return macro;
 	}
 
@@ -461,59 +461,59 @@ Macro* getMacro(Macro* macros, char* name) {
 }
 
 /**
- * Render a table string from the table object
+ * Render a cgc_table string from the cgc_table object
  * 
- * @param  macro_ptr The address of the macro list
- * @param  table     The table object
- * @return           The string representation of the table
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_table     The cgc_table object
+ * @return           The string representation of the cgc_table
  */
-char* table(void* macro_ptr, Object* table) {
+char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 	char *tableString=NULL;
-	Macro *textMacro, *paragraphMacro, *macros;
-	size_t tableStringSize=0;
-	Object* rows=NULL, *nextChild, *row;
+	cgc_Macro *textMacro, *paragraphMacro, *macros;
+	cgc_size_t tableStringSize=0;
+	cgc_Object* rows=NULL, *nextChild, *row;
 	unsigned int rowNum=0, fieldNum=0;
-	size_t fieldWidth;
+	cgc_size_t fieldWidth;
 	char** lineBuffer, **oldLineBuffer;
-	size_t tableLength = 0;
+	cgc_size_t tableLength = 0;
 	unsigned int rowIndex=0;
-	size_t tableWidth;
+	cgc_size_t tableWidth;
 	unsigned int borderType=LINE_BORDER_TYPE;
 
-	macros = (Macro*) macro_ptr;
-	textMacro = getMacro(macros, TEXT_TAG);
-	paragraphMacro = getMacro(macros, PARAGRAPH_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	textMacro = cgc_getMacro(macros, TEXT_TAG);
+	paragraphMacro = cgc_getMacro(macros, PARAGRAPH_TAG);
 
-	for(Object* child=table->children; child!=NULL; child=nextChild) {
+	for(cgc_Object* child=cgc_table->children; child!=NULL; child=nextChild) {
 		nextChild = child->next;
 
-		if(!strcmp(child->name, ROWS_TAG)) {
+		if(!cgc_strcmp(child->name, ROWS_TAG)) {
 			child = child->children;
 			if(child)
-				rowNum = atoi(child->name);
+				rowNum = cgc_atoi(child->name);
 			continue;
 		}
 
-		if(!strcmp(child->name, FIELDS_TAG)) {
+		if(!cgc_strcmp(child->name, FIELDS_TAG)) {
 			child = child->children;
 			if(child)
-				fieldNum = atoi(child->name);
+				fieldNum = cgc_atoi(child->name);
 			continue;
 		}
 
-		if(!strcmp(child->name, BORDER_TAG)) {
+		if(!cgc_strcmp(child->name, BORDER_TAG)) {
 			child = child->children;
 
 			if(child) {
-				if(!strcmp(child->name, LINE_BORDER_STR))
+				if(!cgc_strcmp(child->name, LINE_BORDER_STR))
 					borderType = LINE_BORDER_TYPE;
-				else if(!strcmp(child->name, STAR_BORDER_STR))
+				else if(!cgc_strcmp(child->name, STAR_BORDER_STR))
 					borderType = STAR_BORDER_TYPE;
 			}
 			continue;
 		}
 
-		if(!strcmp(child->name, ROW_TAG)) {
+		if(!cgc_strcmp(child->name, ROW_TAG)) {
 			child->next = rows;
 			rows = child;
 			continue;
@@ -526,64 +526,64 @@ char* table(void* macro_ptr, Object* table) {
 	fieldWidth = (columnWidth - 1) / fieldNum - 3;
 	tableWidth = (fieldWidth + 3) * fieldNum + 1;
 	tableLength = rowNum * 2 + 1;
-	if(!(lineBuffer = malloc(tableLength * sizeof(char *))))
+	if(!(lineBuffer = cgc_malloc(tableLength * sizeof(char *))))
 		return NULL;
 
 	for (int i=0; i < tableLength; i++) {
-		if(!(lineBuffer[i] = (char *)malloc(tableWidth + 3)))
+		if(!(lineBuffer[i] = (char *)cgc_malloc(tableWidth + 3)))
 			return NULL;
 
-		memset(lineBuffer[i], 0, tableWidth + 3);
+		cgc_memset(lineBuffer[i], 0, tableWidth + 3);
 	}
 	oldLineBuffer = lineBuffer;
 
 	row = rows;
 	for(int r=0; r<rowNum; r++) {
-		Object* field;
-		size_t fieldHeight = 1;
+		cgc_Object* field;
+		cgc_size_t fieldHeight = 1;
 
 		if(row == NULL)
 			field = NULL;
 		else {
-			reverseObjectList((Object **)&row->children);
+			cgc_reverseObjectList((cgc_Object **)&row->children);
 			field = row->children;
 		}
 
 		if(borderType == LINE_BORDER_TYPE) {
 			for(int fieldIndex=0; fieldIndex<fieldNum ;fieldIndex++) {
-				strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
-				memset(&lineBuffer[rowIndex][fieldIndex*(fieldWidth + 3) + 1], HORIZONTAL_LINE_BORDER, fieldWidth+2);
+				cgc_strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
+				cgc_memset(&lineBuffer[rowIndex][fieldIndex*(fieldWidth + 3) + 1], HORIZONTAL_LINE_BORDER, fieldWidth+2);
 			}
-			strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
+			cgc_strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
 			rowIndex++;
 		} else if(borderType == STAR_BORDER_TYPE)
-			memset(lineBuffer[rowIndex++], HORIZONTAL_STAR_BORDER, tableWidth);
+			cgc_memset(lineBuffer[rowIndex++], HORIZONTAL_STAR_BORDER, tableWidth);
 
 		for(int fieldIndex=0; fieldIndex<fieldNum; fieldIndex++) {
 			char* fieldString=NULL;
 			char* elementString=NULL;
-			size_t fieldStringSize;
-			size_t elementStringSize;
+			cgc_size_t fieldStringSize;
+			cgc_size_t elementStringSize;
 			unsigned int lines=0;
-			size_t fieldRowIndex=rowIndex;
+			cgc_size_t fieldRowIndex=rowIndex;
 			unsigned int newLines=0;
 
 			if(field == NULL) {
-				if(!(fieldString = malloc(fieldWidth + 1)))
+				if(!(fieldString = cgc_malloc(fieldWidth + 1)))
 					return NULL;
 
-				memset(fieldString, ' ', fieldWidth);
+				cgc_memset(fieldString, ' ', fieldWidth);
 				fieldString[fieldWidth] = '\0';
-			} else if(!strcmp(field->name, HEADER_TAG)) {
+			} else if(!cgc_strcmp(field->name, HEADER_TAG)) {
 				fieldString = textMacro->body(macros, field->children);
-			} else if(!strcmp(field->name, FIELD_TAG)) {
+			} else if(!cgc_strcmp(field->name, FIELD_TAG)) {
 				fieldString = paragraphMacro->body(macros, field->children);
 			} 
 
-			elementString = strtok(fieldString, '\n');
+			elementString = cgc_strtok(fieldString, '\n');
 			while(elementString != NULL) {
 
-				elementStringSize = strlen(elementString);
+				elementStringSize = cgc_strlen(elementString);
 				if(elementStringSize % fieldWidth > 0)
 					lines += 1;
 
@@ -593,31 +593,31 @@ char* table(void* macro_ptr, Object* table) {
 					newLines = lines - fieldHeight;
 					fieldHeight += newLines;
 					tableLength += newLines;
-					if(!(lineBuffer = malloc(tableLength * sizeof(char *))))
+					if(!(lineBuffer = cgc_malloc(tableLength * sizeof(char *))))
 						return NULL;
 
 					for (int i=0; i < tableLength; i++) {
 						if(i < tableLength - newLines) {
 							lineBuffer[i] = oldLineBuffer[i];
 						} else {
-							if(!(lineBuffer[i] = (char *)malloc(tableWidth + 3)))
+							if(!(lineBuffer[i] = (char *)cgc_malloc(tableWidth + 3)))
 								return NULL;
 
-							memset(lineBuffer[i], 0, tableWidth + 3);
+							cgc_memset(lineBuffer[i], 0, tableWidth + 3);
 						}
 						if(i >= rowIndex + fieldHeight - newLines && i < rowIndex + fieldHeight) {
 							for(int fieldIndex2=0; fieldIndex2<fieldIndex; fieldIndex2++) {
-								size_t existing=0;
+								cgc_size_t existing=0;
 								
 								if(borderType == LINE_BORDER_TYPE)
-									strcat(lineBuffer[i], VERTICAL_LINE_BORDER);
+									cgc_strcat(lineBuffer[i], VERTICAL_LINE_BORDER);
 								else if(borderType == STAR_BORDER_TYPE)
-									strcat(lineBuffer[i], VERTICAL_STAR_BORDER);
-								strcat(lineBuffer[i], " ");
+									cgc_strcat(lineBuffer[i], VERTICAL_STAR_BORDER);
+								cgc_strcat(lineBuffer[i], " ");
 								
-								existing = strlen(lineBuffer[i]);
-								memset(&lineBuffer[i][existing], ' ', fieldWidth);
-								strcat(lineBuffer[i], " ");						
+								existing = cgc_strlen(lineBuffer[i]);
+								cgc_memset(&lineBuffer[i][existing], ' ', fieldWidth);
+								cgc_strcat(lineBuffer[i], " ");						
 							}
 						}
 					}
@@ -626,63 +626,63 @@ char* table(void* macro_ptr, Object* table) {
 				}
 
 				for(int l=fieldRowIndex; l<rowIndex + lines;l++) {
-					size_t remaining=0;
+					cgc_size_t remaining=0;
 				
-					remaining = strlen(elementString);
+					remaining = cgc_strlen(elementString);
 
 					if(borderType == LINE_BORDER_TYPE)
-						strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
+						cgc_strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
 					else if(borderType == STAR_BORDER_TYPE)
-						strcat(lineBuffer[l], VERTICAL_STAR_BORDER);
-					strcat(lineBuffer[l], " ");
+						cgc_strcat(lineBuffer[l], VERTICAL_STAR_BORDER);
+					cgc_strcat(lineBuffer[l], " ");
 					
 					if(remaining >= fieldWidth) {
-						strncat(lineBuffer[l], elementString, fieldWidth);
+						cgc_strncat(lineBuffer[l], elementString, fieldWidth);
 						elementString += fieldWidth;
 					} else if(remaining < fieldWidth) {
-						size_t existing=0;
+						cgc_size_t existing=0;
 
-						strcat(lineBuffer[l], elementString);
-						existing = strlen(lineBuffer[l]);
-						memset(&lineBuffer[l][existing], ' ', fieldWidth - remaining);
+						cgc_strcat(lineBuffer[l], elementString);
+						existing = cgc_strlen(lineBuffer[l]);
+						cgc_memset(&lineBuffer[l][existing], ' ', fieldWidth - remaining);
 						elementString += remaining;
 					}
 
 					if(fieldIndex == fieldNum - 1) {
-						strcat(lineBuffer[l], " ");						
+						cgc_strcat(lineBuffer[l], " ");						
 						if(borderType == LINE_BORDER_TYPE)
-							strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
+							cgc_strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
 						else if(borderType == STAR_BORDER_TYPE)
-							strcat(lineBuffer[l], VERTICAL_STAR_BORDER);						
+							cgc_strcat(lineBuffer[l], VERTICAL_STAR_BORDER);						
 					} else 
-						strcat(lineBuffer[l], " ");					
+						cgc_strcat(lineBuffer[l], " ");					
 				}
 
 				fieldRowIndex = rowIndex + lines;
-				elementString = strtok(NULL, '\n');
+				elementString = cgc_strtok(NULL, '\n');
 
 			}
 
 			for(int l=fieldRowIndex; l<rowIndex + fieldHeight; l++) {
-				size_t existing;
+				cgc_size_t existing;
 
 				if(borderType == LINE_BORDER_TYPE)
-					strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
+					cgc_strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
 				else if(borderType == STAR_BORDER_TYPE)
-					strcat(lineBuffer[l], VERTICAL_STAR_BORDER);
-				strcat(lineBuffer[l], " ");
+					cgc_strcat(lineBuffer[l], VERTICAL_STAR_BORDER);
+				cgc_strcat(lineBuffer[l], " ");
 
-				existing = strlen(lineBuffer[l]);
-				memset(&lineBuffer[l][existing], ' ', fieldWidth);
+				existing = cgc_strlen(lineBuffer[l]);
+				cgc_memset(&lineBuffer[l][existing], ' ', fieldWidth);
 
 				if(fieldIndex == fieldNum - 1) {
-					strcat(lineBuffer[l], " ");	
+					cgc_strcat(lineBuffer[l], " ");	
 					if(borderType == LINE_BORDER_TYPE)
-						strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
+						cgc_strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
 					else if(borderType == STAR_BORDER_TYPE)
-						strcat(lineBuffer[l], VERTICAL_STAR_BORDER);				
+						cgc_strcat(lineBuffer[l], VERTICAL_STAR_BORDER);				
 				} else 
-					strcat(lineBuffer[l], " ");	
+					cgc_strcat(lineBuffer[l], " ");	
 
 			}
 
@@ -697,84 +697,84 @@ char* table(void* macro_ptr, Object* table) {
 
 	if(borderType == LINE_BORDER_TYPE) {
 			for(int fieldIndex=0; fieldIndex<fieldNum ;fieldIndex++) {
-				strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
-				memset(&lineBuffer[rowIndex][fieldIndex*(fieldWidth + 3) + 1], HORIZONTAL_LINE_BORDER, fieldWidth+2);
+				cgc_strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
+				cgc_memset(&lineBuffer[rowIndex][fieldIndex*(fieldWidth + 3) + 1], HORIZONTAL_LINE_BORDER, fieldWidth+2);
 			}
-			strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
+			cgc_strcat(lineBuffer[rowIndex], INTERSECT_LINE_BORDER);
 
 	} else if(borderType == STAR_BORDER_TYPE)
-		memset(lineBuffer[rowIndex], HORIZONTAL_STAR_BORDER, tableWidth);
+		cgc_memset(lineBuffer[rowIndex], HORIZONTAL_STAR_BORDER, tableWidth);
 
-	if(!(tableString = malloc(tableLength * (tableWidth + 2) + 1)))
+	if(!(tableString = cgc_malloc(tableLength * (tableWidth + 2) + 1)))
 		return NULL;
 
-	memset(tableString, 0, tableLength * (tableWidth + 2) + 1);
+	cgc_memset(tableString, 0, tableLength * (tableWidth + 2) + 1);
 	for(int l=0; l<tableLength; l++) {
-		strcat(tableString, lineBuffer[l]);
-		strcat(tableString, "\n");
+		cgc_strcat(tableString, lineBuffer[l]);
+		cgc_strcat(tableString, "\n");
 	}
 
 	return tableString;
 }
 
 /**
- * Render a element string from the element object
+ * Render a cgc_element string from the cgc_element object
  * 
- * @param  macro_ptr The address of the macro list
- * @param  element     The element object
- * @return           The string representation of the element
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_element     The cgc_element object
+ * @return           The string representation of the cgc_element
  */
-char* element(void* macro_ptr, Object* element) {
-	Macro *textMacro, *listMacro, *macros;
+char* cgc_element(void* macro_ptr, cgc_Object* cgc_element) {
+	cgc_Macro *textMacro, *listMacro, *macros;
 	char* newElementString=NULL, *oldElementString=NULL, *textString=NULL, *listString=NULL;
-	size_t elementStringSize=0;
+	cgc_size_t elementStringSize=0;
 
-	macros = (Macro*) macro_ptr;
-	textMacro = getMacro(macros, TEXT_TAG);
-	listMacro = getMacro(macros, LIST_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	textMacro = cgc_getMacro(macros, TEXT_TAG);
+	listMacro = cgc_getMacro(macros, LIST_TAG);
 
-	for(Object* child=element->children; child!=NULL; child=child->next) {
-		if(!strcmp(child->name, TEXT_TAG)) {
+	for(cgc_Object* child=cgc_element->children; child!=NULL; child=child->next) {
+		if(!cgc_strcmp(child->name, TEXT_TAG)) {
 			textString = textMacro->body(macros, child);
-			elementStringSize += strlen(textString) + strlen("\n");
-		} else if(!strcmp(child->name, LIST_TAG)) {
+			elementStringSize += cgc_strlen(textString) + cgc_strlen("\n");
+		} else if(!cgc_strcmp(child->name, LIST_TAG)) {
 			listString = listMacro->body(macros, child);
 		}
 	}
 
 	if(elementStringSize>0) {
-		if(!(newElementString = malloc(elementStringSize+1)))
+		if(!(newElementString = cgc_malloc(elementStringSize+1)))
 			return NULL;
 
-		memset(newElementString, 0, elementStringSize+1);
+		cgc_memset(newElementString, 0, elementStringSize+1);
 		oldElementString = newElementString;
 
 		if(textString) {
-			strcat(newElementString, textString);
+			cgc_strcat(newElementString, textString);
 		}
 
 		if(listString) {
 			char* subElementString;
-			size_t subElementStringSize=0;
+			cgc_size_t subElementStringSize=0;
 
-			strcat(newElementString, "\n");
-			subElementString = strtok(listString, '\n');
+			cgc_strcat(newElementString, "\n");
+			subElementString = cgc_strtok(listString, '\n');
 			while(subElementString != NULL) {
-				subElementStringSize = strlen(subElementString);
-				elementStringSize += subElementStringSize + strlen(LIST_INDENT) + strlen("\n");
-				if(!(newElementString = malloc(elementStringSize+1)))
+				subElementStringSize = cgc_strlen(subElementString);
+				elementStringSize += subElementStringSize + cgc_strlen(LIST_INDENT) + cgc_strlen("\n");
+				if(!(newElementString = cgc_malloc(elementStringSize+1)))
 					return NULL;
 
-				memset(newElementString, 0, elementStringSize+1);
-				memcpy(newElementString, oldElementString, strlen(oldElementString));
-				free(oldElementString);
+				cgc_memset(newElementString, 0, elementStringSize+1);
+				cgc_memcpy(newElementString, oldElementString, cgc_strlen(oldElementString));
+				cgc_free(oldElementString);
 				oldElementString = newElementString;
 
-				strcat(newElementString, LIST_INDENT);
-				strcat(newElementString, subElementString);
-				strcat(newElementString, "\n");
+				cgc_strcat(newElementString, LIST_INDENT);
+				cgc_strcat(newElementString, subElementString);
+				cgc_strcat(newElementString, "\n");
 				
-				subElementString = strtok(NULL, '\n');
+				subElementString = cgc_strtok(NULL, '\n');
 
 			}
 
@@ -786,86 +786,86 @@ char* element(void* macro_ptr, Object* element) {
 }
 
 /**
- * Render a list string from the list object
+ * Render a cgc_list string from the cgc_list object
  * 
- * @param  macro_ptr The address of the macro list
- * @param  list      The list object
- * @return           The string representation of the list
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_list      The cgc_list object
+ * @return           The string representation of the cgc_list
  */
-char* list(void* macro_ptr, Object* list) {
+char* cgc_list(void* macro_ptr, cgc_Object* cgc_list) {
 	char *newList=NULL, *oldList=NULL;
-	Macro *macros;
+	cgc_Macro *macros;
 	char customNumString[4];
-	Macro *elementMacro;
-	size_t listStringSize=0;
-	Object* elements=NULL, *nextChild;
+	cgc_Macro *elementMacro;
+	cgc_size_t listStringSize=0;
+	cgc_Object* elements=NULL, *nextChild;
 	unsigned int totalElementNum=0;
 	unsigned int listType = '*';
 
-	macros = (Macro*) macro_ptr;
-	elementMacro = getMacro(macros, ELEMENT_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	elementMacro = cgc_getMacro(macros, ELEMENT_TAG);
 
-	memset(customNumString, 0, 4);
+	cgc_memset(customNumString, 0, 4);
 
-	for(Object* child=list->children; child!=NULL; child=nextChild) {
+	for(cgc_Object* child=cgc_list->children; child!=NULL; child=nextChild) {
 		nextChild = child->next;
 
-		if(!strcmp(child->name, TYPE_TAG)) {
-			Object* grandchild;
+		if(!cgc_strcmp(child->name, TYPE_TAG)) {
+			cgc_Object* grandchild;
 
 			grandchild = child->children;
 			if(!child)
 				continue;
-			if(!strcmp(grandchild->name, NUMERAL_STR)) {
+			if(!cgc_strcmp(grandchild->name, NUMERAL_STR)) {
 				listType = NUMERAL;
-			} else if(!strcmp(grandchild->name, UPPER_ALPHA_STR)) {
+			} else if(!cgc_strcmp(grandchild->name, UPPER_ALPHA_STR)) {
 				listType = UPPER_ALPHA;
-			} else if(!strcmp(grandchild->name, LOWER_ALPHA_STR)) {
+			} else if(!cgc_strcmp(grandchild->name, LOWER_ALPHA_STR)) {
 				listType = LOWER_ALPHA;
-			} else if(!strcmp(grandchild->name, ROMAN_STR)) {
+			} else if(!cgc_strcmp(grandchild->name, ROMAN_STR)) {
 				listType = ROMAN;
 			} else {
 #ifdef PATCHED_2
-				strncat(customNumString, grandchild->name, 3);
+				cgc_strncat(customNumString, grandchild->name, 3);
 #else
-				strncat(customNumString, grandchild->name, 8);
+				cgc_strncat(customNumString, grandchild->name, 8);
 #endif
 
 			}
-		} else if(!strcmp(child->name, ELEMENT_TAG)) {
+		} else if(!cgc_strcmp(child->name, ELEMENT_TAG)) {
 			child->next = elements;
 			elements = child;
 			continue;
 		}
 	}
 
-	for(Object* element=elements; element!=NULL; element=element->next) {
+	for(cgc_Object* cgc_element=elements; cgc_element!=NULL; cgc_element=cgc_element->next) {
 		char* elementString=NULL;
-		size_t elementStringSize=0;
+		cgc_size_t elementStringSize=0;
 		char* elementNumString;
-		size_t elementNumStringSize=0;
+		cgc_size_t elementNumStringSize=0;
 
-		if(!strcmp(element->name, ELEMENT_TAG)) {
-			elementString = elementMacro->body(macros, element);
+		if(!cgc_strcmp(cgc_element->name, ELEMENT_TAG)) {
+			elementString = elementMacro->body(macros, cgc_element);
 			if(!elementString)
 				continue;
 
-			elementStringSize = strlen(elementString);
+			elementStringSize = cgc_strlen(elementString);
 
 			totalElementNum++;
-			if(!(elementNumString = malloc(12)))
+			if(!(elementNumString = cgc_malloc(12)))
 				return NULL;
 
-			memset(elementNumString, 0, 12);
+			cgc_memset(elementNumString, 0, 12);
 			if(listType == NUMERAL) {
-				elementNumString = itoa(totalElementNum, elementNumString);
+				elementNumString = cgc_itoa(totalElementNum, elementNumString);
 			} else if(listType == UPPER_ALPHA) {
 				elementNumString[0] = 0x40 + totalElementNum;
 			} else if(listType == LOWER_ALPHA) {
 				elementNumString[0] = 0x60 + totalElementNum;
 			} else if(listType == ROMAN) {
-				free(elementNumString);
-				elementNumString = romanNumeral(totalElementNum);
+				cgc_free(elementNumString);
+				elementNumString = cgc_romanNumeral(totalElementNum);
 			} else {
 				elementNumString[0] = (char) listType;
 			}
@@ -873,27 +873,27 @@ char* list(void* macro_ptr, Object* list) {
 			if(!elementNumString)
 				return NULL;
 
-			elementNumStringSize = strlen(elementNumString);
+			elementNumStringSize = cgc_strlen(elementNumString);
 
-			listStringSize += elementNumStringSize + elementStringSize + strlen(". ") + strlen("\n");
+			listStringSize += elementNumStringSize + elementStringSize + cgc_strlen(". ") + cgc_strlen("\n");
 
-			if(!(newList = malloc(listStringSize+1)))
+			if(!(newList = cgc_malloc(listStringSize+1)))
 				return NULL;
 
-			memset(newList, 0, listStringSize+1);
+			cgc_memset(newList, 0, listStringSize+1);
 			if(oldList != NULL) {
-				memcpy(newList, oldList, strlen(oldList));
-				free(oldList);
+				cgc_memcpy(newList, oldList, cgc_strlen(oldList));
+				cgc_free(oldList);
 			}
 			oldList = newList;
 
-			strcat(newList, elementNumString);
+			cgc_strcat(newList, elementNumString);
 			if(listType < 4)
-				strcat(newList, ".");
-			strcat(newList, " ");
-			strcat(newList, elementString);
-			strcat(newList, "\n");
-			free(elementString);
+				cgc_strcat(newList, ".");
+			cgc_strcat(newList, " ");
+			cgc_strcat(newList, elementString);
+			cgc_strcat(newList, "\n");
+			cgc_free(elementString);
 		} 
 	}
 
@@ -901,16 +901,16 @@ char* list(void* macro_ptr, Object* list) {
 }
 
 /**
- * Render a text string from the text object
+ * Render a cgc_text string from the cgc_text object
  * 
- * @param  macro_ptr The address of the macro list
- * @param  text      The text object
- * @return           The string representation of the text
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_text      The cgc_text object
+ * @return           The string representation of the cgc_text
  */
-char* text(void* macro_ptr, Object* text) {
-	Object* child;
+char* cgc_text(void* macro_ptr, cgc_Object* cgc_text) {
+	cgc_Object* child;
 
-	child = text->children;
+	child = cgc_text->children;
 
 	if(child)
 		return child->name;
@@ -919,97 +919,97 @@ char* text(void* macro_ptr, Object* text) {
 }
 
 /**
- * Render a paragraph string from the paragraph object
+ * Render a cgc_paragraph string from the cgc_paragraph object
  * 
- * @param  macro_ptr The address of the macro list
- * @param  paragraph The paragraph object
- * @return           The string representation of the paragraph
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_paragraph The cgc_paragraph object
+ * @return           The string representation of the cgc_paragraph
  */
-char* paragraph(void* macro_ptr, Object* paragraph) {
+char* cgc_paragraph(void* macro_ptr, cgc_Object* cgc_paragraph) {
 	char *paragraphString=NULL, *childString=NULL;
-	Macro *textMacro, *listMacro, *tableMacro, *macros;
-	size_t paragraphSize=0;
-	Object* child=NULL;
+	cgc_Macro *textMacro, *listMacro, *tableMacro, *macros;
+	cgc_size_t paragraphSize=0;
+	cgc_Object* child=NULL;
 
-	macros = (Macro*) macro_ptr;
-	textMacro = getMacro(macros, TEXT_TAG);
-	listMacro = getMacro(macros, LIST_TAG);
-	tableMacro = getMacro(macros, TABLE_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	textMacro = cgc_getMacro(macros, TEXT_TAG);
+	listMacro = cgc_getMacro(macros, LIST_TAG);
+	tableMacro = cgc_getMacro(macros, TABLE_TAG);
 
-	child = paragraph->children;
+	child = cgc_paragraph->children;
 	if(!child)
 		return NULL;
 
-	if(!strcmp(child->name, TEXT_TAG)) {
+	if(!cgc_strcmp(child->name, TEXT_TAG)) {
 		childString = textMacro->body(macros, child);
 		if(!childString)
 			return NULL;
 
-		paragraphSize = strlen(childString) + strlen(INDENT);
-		if(!(paragraphString = malloc(paragraphSize+1)))
+		paragraphSize = cgc_strlen(childString) + cgc_strlen(INDENT);
+		if(!(paragraphString = cgc_malloc(paragraphSize+1)))
 			return NULL;
 
-		memset(paragraphString, 0, paragraphSize+1);
-		strcat(paragraphString, INDENT);
-		strcat(paragraphString, childString);
-		free(childString);
-	} else if(!strcmp(child->name, LIST_TAG)) {
+		cgc_memset(paragraphString, 0, paragraphSize+1);
+		cgc_strcat(paragraphString, INDENT);
+		cgc_strcat(paragraphString, childString);
+		cgc_free(childString);
+	} else if(!cgc_strcmp(child->name, LIST_TAG)) {
 		childString = listMacro->body(macros, child);
 		if(!childString)
 			return NULL;
 
-		paragraphSize = strlen(childString);
-		if(!(paragraphString = malloc(paragraphSize+1)))
+		paragraphSize = cgc_strlen(childString);
+		if(!(paragraphString = cgc_malloc(paragraphSize+1)))
 			return NULL;
 
-		memset(paragraphString, 0, paragraphSize+1);
-		strcat(paragraphString, childString);
-		free(childString);
-	} else if(!strcmp(child->name, TABLE_TAG)) {
+		cgc_memset(paragraphString, 0, paragraphSize+1);
+		cgc_strcat(paragraphString, childString);
+		cgc_free(childString);
+	} else if(!cgc_strcmp(child->name, TABLE_TAG)) {
 		childString = tableMacro->body(macros, child);
 		if(!childString)
 			return NULL;
 
-		paragraphSize = strlen(childString);
-		if(!(paragraphString = malloc(paragraphSize+1)))
+		paragraphSize = cgc_strlen(childString);
+		if(!(paragraphString = cgc_malloc(paragraphSize+1)))
 			return NULL;
 
-		memset(paragraphString, 0, paragraphSize+1);
-		strcat(paragraphString, childString);
-		free(childString);		
+		cgc_memset(paragraphString, 0, paragraphSize+1);
+		cgc_strcat(paragraphString, childString);
+		cgc_free(childString);		
 	}
 
 	return paragraphString;
 }
 
 /**
- * Render a page string from the page object
- * @param  macro_ptr The address of the macro list
- * @param  page      The page object
- * @return           The string representation of the page
+ * Render a cgc_page string from the cgc_page object
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_page      The cgc_page object
+ * @return           The string representation of the cgc_page
  */
-char* page(void* macro_ptr, Object* page) {
+char* cgc_page(void* macro_ptr, cgc_Object* cgc_page) {
 	char *newPage=NULL, *oldPage=NULL;
-	Macro *paragraphMacro, *macros;
-	size_t pageSize=0;
-	Object *children=NULL, *nextChild;
+	cgc_Macro *paragraphMacro, *macros;
+	cgc_size_t pageSize=0;
+	cgc_Object *children=NULL, *nextChild;
 
-	macros = (Macro*) macro_ptr;
-	paragraphMacro = getMacro(macros, PARAGRAPH_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	paragraphMacro = cgc_getMacro(macros, PARAGRAPH_TAG);
 
 	// Reverse order of children
-	for(Object* child=page->children; child!=NULL; child=nextChild) {
+	for(cgc_Object* child=cgc_page->children; child!=NULL; child=nextChild) {
 		nextChild = child->next;
 		child->next = children;
 		children = child;
 	}
 
 
-	for(Object* child=children; child!=NULL; child=child->next) {
+	for(cgc_Object* child=children; child!=NULL; child=child->next) {
 		char* childString;
-		size_t childStringSize;
+		cgc_size_t childStringSize;
 
-		if(!strcmp(child->name, PARAGRAPH_TAG)) {
+		if(!cgc_strcmp(child->name, PARAGRAPH_TAG)) {
 			childString = paragraphMacro->body(macros, child);
 			if(!childString)
 				continue;
@@ -1017,19 +1017,19 @@ char* page(void* macro_ptr, Object* page) {
 			continue;
 		}
 
-		childStringSize = strlen(childString);
-		pageSize += childStringSize + strlen("\n");
-		if(!(newPage = malloc(pageSize+1)))
+		childStringSize = cgc_strlen(childString);
+		pageSize += childStringSize + cgc_strlen("\n");
+		if(!(newPage = cgc_malloc(pageSize+1)))
 			return NULL;
 
-		memset(newPage, 0, pageSize+1);
+		cgc_memset(newPage, 0, pageSize+1);
 		if(oldPage != NULL) {
-			strcat(newPage, oldPage);
-			free(oldPage);			
+			cgc_strcat(newPage, oldPage);
+			cgc_free(oldPage);			
 		}
-		strcat(newPage, childString);
-		free(childString);
-		strcat(newPage, "\n");
+		cgc_strcat(newPage, childString);
+		cgc_free(childString);
+		cgc_strcat(newPage, "\n");
 		oldPage = newPage;
 	}
 
@@ -1037,156 +1037,156 @@ char* page(void* macro_ptr, Object* page) {
 }
 
 /**
- * Render a document string from the document object
- * @param  macro_ptr The address of the macro list
- * @param  document  The document object
- * @return           The string representation of the document
+ * Render a cgc_document string from the cgc_document object
+ * @param  macro_ptr The address of the macro cgc_list
+ * @param  cgc_document  The cgc_document object
+ * @return           The string representation of the cgc_document
  */
-char* document(void* macro_ptr, Object* document) {
+char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 	char *newDocument=NULL, *oldDocument=NULL;
-	Macro *pageMacro, *columnMacro, *macros;
-	size_t documentSize=0;
-	Object* pages=NULL;
-	Object* nextChild;
+	cgc_Macro *pageMacro, *columnMacro, *macros;
+	cgc_size_t documentSize=0;
+	cgc_Object* pages=NULL;
+	cgc_Object* nextChild;
 	unsigned int totalPageNum=0;
 	char** lineBuffer;
-	size_t docLength=11, docWidth=20;
+	cgc_size_t docLength=11, docWidth=20;
 	unsigned int columnNum=1;
 
-	macros = (Macro*) macro_ptr;
-	pageMacro = getMacro(macros, PAGE_TAG);
-	columnMacro = getMacro(macros, COLUMN_TAG);
+	macros = (cgc_Macro*) macro_ptr;
+	pageMacro = cgc_getMacro(macros, PAGE_TAG);
+	columnMacro = cgc_getMacro(macros, COLUMN_TAG);
 
-	for(Object* child=document->children; child!=NULL; child=nextChild) {
+	for(cgc_Object* child=cgc_document->children; child!=NULL; child=nextChild) {
 		nextChild = child->next;
 
-		if(!strcmp(child->name, PAGE_TAG) || !strcmp(child->name, COLUMN_TAG)) {
+		if(!cgc_strcmp(child->name, PAGE_TAG) || !cgc_strcmp(child->name, COLUMN_TAG)) {
 			child->next = pages;
 			pages = child;
 			continue;
 		}
 
-		if(!strcmp(child->name, LENGTH_TAG)) {
+		if(!cgc_strcmp(child->name, LENGTH_TAG)) {
 			child = child->children;
 			if(child)
-				docLength = atoi(child->name);
+				docLength = cgc_atoi(child->name);
 			continue;
 		}
 
-		if(!strcmp(child->name, WIDTH_TAG)) {
+		if(!cgc_strcmp(child->name, WIDTH_TAG)) {
 			child = child->children;
 			if(child)	
-				docWidth = atoi(child->name);
+				docWidth = cgc_atoi(child->name);
 			continue;
 		}
 	}
 
-	if(!(lineBuffer = malloc(docLength * sizeof(char *))))
+	if(!(lineBuffer = cgc_malloc(docLength * sizeof(char *))))
 		return NULL;
 
 	for (int i=0; i < docLength; i++) {
-		if(!(lineBuffer[i] = (char *)malloc(docWidth + 3)))
+		if(!(lineBuffer[i] = (char *)cgc_malloc(docWidth + 3)))
 			return NULL;
 
-		memset(lineBuffer[i], 0, docWidth + 3);
+		cgc_memset(lineBuffer[i], 0, docWidth + 3);
 
 	}
 
 	columnWidth = docWidth;
 
-	for(Object* page=pages; page!=NULL; page=page->next) {
+	for(cgc_Object* cgc_page=pages; cgc_page!=NULL; cgc_page=cgc_page->next) {
 		char *pageString, *columnString;
-		size_t pageSize, numLines;
+		cgc_size_t pageSize, numLines;
 		char* lineString;
 		char* pageNumString;
-		size_t lineStringLength;
+		cgc_size_t lineStringLength;
 		unsigned int columnIndex;
 
-		if(!strcmp(page->name, COLUMN_TAG)) {
-			columnString = columnMacro->body(macros, page);
+		if(!cgc_strcmp(cgc_page->name, COLUMN_TAG)) {
+			columnString = columnMacro->body(macros, cgc_page);
 			if(!columnString) {
 				columnNum = 1;
 				continue;
 			}
-			columnNum = atoi(columnString);
-			if((docWidth / columnNum) - strlen(TAB) < 1)
+			columnNum = cgc_atoi(columnString);
+			if((docWidth / columnNum) - cgc_strlen(TAB) < 1)
 				columnNum = 1;
-			columnWidth = (docWidth / columnNum) - strlen(TAB);
+			columnWidth = (docWidth / columnNum) - cgc_strlen(TAB);
 			continue;
 		}
 
-		pageString = pageMacro->body(macros, page);
+		pageString = pageMacro->body(macros, cgc_page);
 		if(!pageString) 
 			continue;
 
-		lineString = strtok(pageString, '\n');
+		lineString = cgc_strtok(pageString, '\n');
 
-		// Add new page
+		// Add new cgc_page
 		totalPageNum++;
 		documentSize += (docWidth + 1) * (docLength + 2);
-		if(!(newDocument = malloc(documentSize+1)))
+		if(!(newDocument = cgc_malloc(documentSize+1)))
 			return NULL;
 
-		memset(newDocument, 0, documentSize+1);
+		cgc_memset(newDocument, 0, documentSize+1);
 		if(oldDocument != NULL) {
-			size_t existing;
+			cgc_size_t existing;
 			
-			existing = strlen(oldDocument);
-			memcpy(newDocument, oldDocument, existing);
-			free(oldDocument);
+			existing = cgc_strlen(oldDocument);
+			cgc_memcpy(newDocument, oldDocument, existing);
+			cgc_free(oldDocument);
 		}
 		oldDocument = newDocument;
 
 		columnIndex = 1;
-		// Add Lines to page
+		// Add Lines to cgc_page
 		for(int lineIndex = 0; lineIndex < docLength; lineIndex++) {
-			// Last line in page
+			// Last line in cgc_page
 			if(lineIndex == docLength - 1) {
 
-				// Last column in page
+				// Last column in cgc_page
 				if(columnIndex == columnNum) {
-					size_t existing;
+					cgc_size_t existing;
 
-					// Add page number
-					if(!(pageNumString = malloc(docWidth)))
+					// Add cgc_page number
+					if(!(pageNumString = cgc_malloc(docWidth)))
 						return NULL;
 
-					memset(pageNumString, 0, docWidth);
-					pageNumString = itoa(totalPageNum, pageNumString);
-					strcat(lineBuffer[lineIndex], " ");
-					strncat(lineBuffer[lineIndex], pageNumString, docWidth-1);
+					cgc_memset(pageNumString, 0, docWidth);
+					pageNumString = cgc_itoa(totalPageNum, pageNumString);
+					cgc_strcat(lineBuffer[lineIndex], " ");
+					cgc_strncat(lineBuffer[lineIndex], pageNumString, docWidth-1);
 
-					memset(newDocument, '=', docWidth);
-					strcat(newDocument, "\n");
-					// Append lineBuffers to document
+					cgc_memset(newDocument, '=', docWidth);
+					cgc_strcat(newDocument, "\n");
+					// Append lineBuffers to cgc_document
 					for(int index=0; index<docLength; index++) {
-						strcat(newDocument, lineBuffer[index]);
-						strcat(newDocument, "\n");
+						cgc_strcat(newDocument, lineBuffer[index]);
+						cgc_strcat(newDocument, "\n");
 
 					}
 
-					existing = strlen(newDocument);
-					memset(&newDocument[existing], '=', docWidth);
+					existing = cgc_strlen(newDocument);
+					cgc_memset(&newDocument[existing], '=', docWidth);
 
 					for (int i=0; i < docLength; i++) {
-						memset(lineBuffer[i], 0, docWidth + 3);
+						cgc_memset(lineBuffer[i], 0, docWidth + 3);
 					}
 
-					// More lines in page?
+					// More lines in cgc_page?
 					if(lineString != NULL) {
-						// Add new page
+						// Add new cgc_page
 						totalPageNum++;
 						documentSize += (docWidth + 1) * (docLength + 2);
-						if(!(newDocument = malloc(documentSize+1)))
+						if(!(newDocument = cgc_malloc(documentSize+1)))
 							return NULL;
 
-						memset(newDocument, 0, documentSize+1);
+						cgc_memset(newDocument, 0, documentSize+1);
 						if(oldDocument != NULL) {
-							size_t existing;
+							cgc_size_t existing;
 							
-							existing = strlen(oldDocument);
-							memcpy(newDocument, oldDocument, existing);
-							free(oldDocument);
+							existing = cgc_strlen(oldDocument);
+							cgc_memcpy(newDocument, oldDocument, existing);
+							cgc_free(oldDocument);
 						}
 						oldDocument = newDocument;
 						// Reset index
@@ -1203,37 +1203,37 @@ char* document(void* macro_ptr, Object* document) {
 
 			// No more lines
 			if(lineString == NULL) {
-				size_t remaining;
+				cgc_size_t remaining;
 
-				remaining = strlen(lineBuffer[lineIndex]);
-				memset(&lineBuffer[lineIndex][remaining], ' ', columnWidth);
-				strcat(lineBuffer[lineIndex], TAB);
+				remaining = cgc_strlen(lineBuffer[lineIndex]);
+				cgc_memset(&lineBuffer[lineIndex][remaining], ' ', columnWidth);
+				cgc_strcat(lineBuffer[lineIndex], TAB);
 				continue;
 			}
 
-			lineStringLength = strlen(lineString);
+			lineStringLength = cgc_strlen(lineString);
 			if(lineStringLength > columnWidth) {
-				strncat(lineBuffer[lineIndex], lineString, columnWidth);
+				cgc_strncat(lineBuffer[lineIndex], lineString, columnWidth);
 				if(columnNum > 1)
-					strcat(lineBuffer[lineIndex], TAB);
+					cgc_strcat(lineBuffer[lineIndex], TAB);
 				lineString += columnWidth;
 			} else {
-				size_t lineBufferLength;
+				cgc_size_t lineBufferLength;
 
-				strcat(lineBuffer[lineIndex], lineString);
+				cgc_strcat(lineBuffer[lineIndex], lineString);
 				for(int i=0; i<columnWidth - lineStringLength; i++)
-					strcat(lineBuffer[lineIndex], " ");
+					cgc_strcat(lineBuffer[lineIndex], " ");
 
 				if(columnNum > 1)
-					strcat(lineBuffer[lineIndex], TAB);
-				lineString = strtok(NULL, '\n');
+					cgc_strcat(lineBuffer[lineIndex], TAB);
+				lineString = cgc_strtok(NULL, '\n');
 			}
 
 		}
 
-		transmit_all(STDOUT, newDocument, strlen(newDocument));
-		transmit_all(STDOUT, "\x3", strlen("\x3"));
-		free(newDocument);
+		cgc_transmit_all(STDOUT, newDocument, cgc_strlen(newDocument));
+		cgc_transmit_all(STDOUT, "\x3", cgc_strlen("\x3"));
+		cgc_free(newDocument);
 		oldDocument=NULL;
 		newDocument=NULL;
 
@@ -1249,19 +1249,19 @@ char* document(void* macro_ptr, Object* document) {
  * @param  body 	The address of the macro function
  * @return          The address of the newly create macro
  */
-Macro* newMacro(char* name, char* (*body)(void *macros, Object* object)) {
-	Macro* macro;
-	size_t nameSize;
+cgc_Macro* cgc_newMacro(char* name, char* (*body)(void *macros, cgc_Object* object)) {
+	cgc_Macro* macro;
+	cgc_size_t nameSize;
 
-	if(!(macro = malloc(sizeof(Macro))))
+	if(!(macro = cgc_malloc(sizeof(cgc_Macro))))
 		return NULL;
 
-	nameSize = strlen(name);
-	if(!(macro->name = malloc(nameSize+1)))
+	nameSize = cgc_strlen(name);
+	if(!(macro->name = cgc_malloc(nameSize+1)))
 		return NULL;
 
-	memset(macro->name, 0, nameSize+1);
-	memcpy(macro->name, name, nameSize);
+	cgc_memset(macro->name, 0, nameSize+1);
+	cgc_memcpy(macro->name, name, nameSize);
 	macro->body = body;
 
 	return macro;
@@ -1270,40 +1270,40 @@ Macro* newMacro(char* name, char* (*body)(void *macros, Object* object)) {
 /**
  * Initialize the macros
  * 
- * @param macro_ptr The address of the macro list
+ * @param macro_ptr The address of the macro cgc_list
  */
-void initMacros(Macro** macro_ptr) {
-	Macro* macro;
+void cgc_initMacros(cgc_Macro** macro_ptr) {
+	cgc_Macro* macro;
 
-	macro = newMacro(ELEMENT_TAG, &element);
+	macro = cgc_newMacro(ELEMENT_TAG, &cgc_element);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(DOCUMENT_TAG, &document);
+	macro = cgc_newMacro(DOCUMENT_TAG, &cgc_document);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(PAGE_TAG, &page);
+	macro = cgc_newMacro(PAGE_TAG, &cgc_page);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(PARAGRAPH_TAG, &paragraph);
+	macro = cgc_newMacro(PARAGRAPH_TAG, &cgc_paragraph);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(TEXT_TAG, &text);
+	macro = cgc_newMacro(TEXT_TAG, &cgc_text);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(LIST_TAG, &list);
+	macro = cgc_newMacro(LIST_TAG, &cgc_list);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(COLUMN_TAG, &text);
+	macro = cgc_newMacro(COLUMN_TAG, &cgc_text);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
-	macro = newMacro(TABLE_TAG, &table);
+	macro = cgc_newMacro(TABLE_TAG, &cgc_table);
 	macro->next = *macro_ptr;
 	*macro_ptr = macro;
 
@@ -1312,13 +1312,13 @@ void initMacros(Macro** macro_ptr) {
 /**
  * Initialize all custom macros
  * 
- * @param customMacrosPtr The address of the custom macro list
+ * @param customMacrosPtr The address of the custom macro cgc_list
  */
-void initCustomMacros(Object **customMacrosPtr) {
-	getObject(customMacrosPtr, NULL, &FourByFourTable_Macro);
-	getObject(customMacrosPtr, NULL, &FiveByFiveTable_Macro);
-	getObject(customMacrosPtr, NULL, &AlphanumericOutline_Macro);
-	getObject(customMacrosPtr, NULL, &BulletedOutline_Macro);
+void cgc_initCustomMacros(cgc_Object **customMacrosPtr) {
+	cgc_getObject(customMacrosPtr, NULL, &FourByFourTable_Macro);
+	cgc_getObject(customMacrosPtr, NULL, &FiveByFiveTable_Macro);
+	cgc_getObject(customMacrosPtr, NULL, &AlphanumericOutline_Macro);
+	cgc_getObject(customMacrosPtr, NULL, &BulletedOutline_Macro);
 
 }
 
@@ -1327,40 +1327,40 @@ void initCustomMacros(Object **customMacrosPtr) {
  * 
  * @param documentID The value of the documentID
  */
-void sendDocumentID(unsigned int documentID) {
+void cgc_sendDocumentID(unsigned int documentID) {
 	char* documentIDString;
 
-	if(!(documentIDString = malloc(20)))
+	if(!(documentIDString = cgc_malloc(20)))
 		return;
 
-	documentIDString = itoa(documentID, documentIDString);
-	transmit_all(STDOUT, DOC_ID_STRING, strlen(DOC_ID_STRING));
-	transmit_all(STDOUT, documentIDString, strlen(documentIDString));
-	transmit_all(STDOUT, "\n", strlen("\n"));
+	documentIDString = cgc_itoa(documentID, documentIDString);
+	cgc_transmit_all(STDOUT, DOC_ID_STRING, cgc_strlen(DOC_ID_STRING));
+	cgc_transmit_all(STDOUT, documentIDString, cgc_strlen(documentIDString));
+	cgc_transmit_all(STDOUT, "\n", cgc_strlen("\n"));
 }
 
 
 int main(void) {
-	Object* documentObject;
-	Macro* macros;
+	cgc_Object* documentObject;
+	cgc_Macro* macros;
 	char* documentString;
-	Object* customMacros=NULL;
+	cgc_Object* customMacros=NULL;
 	char* titleObject;
 	unsigned int documentID;
 	char* documentIDString;
 
-	documentID = getDocumentID();
+	documentID = cgc_getDocumentID();
 
-	if(!(titleObject = malloc(sizeof(Macro))))
+	if(!(titleObject = cgc_malloc(sizeof(cgc_Macro))))
 		return -1;
 
-	initMacros(&macros);
-	initCustomMacros(&customMacros);
-	free(titleObject);
-	documentObject = getObject(&customMacros, NULL, NULL);
+	cgc_initMacros(&macros);
+	cgc_initCustomMacros(&customMacros);
+	cgc_free(titleObject);
+	documentObject = cgc_getObject(&customMacros, NULL, NULL);
 
-	sendDocumentID(documentID);
-	documentString = document(macros, documentObject);
+	cgc_sendDocumentID(documentID);
+	documentString = cgc_document(macros, documentObject);
 
 	return 0;
 }

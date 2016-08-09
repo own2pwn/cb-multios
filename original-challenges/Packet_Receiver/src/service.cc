@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,38 +30,38 @@ int main(void)
 {
     bool bDone = false;
 
-    CDataStream oDataStream;
-    CMessageHandler oMsgHandler;
-    CMessageRenderer oMsgRenderer;
+    cgc_CDataStream oDataStream;
+    cgc_CMessageHandler oMsgHandler;
+    cgc_CMessageRenderer oMsgRenderer;
 
-    oDataStream.Setup( STDIN );
+    oDataStream.cgc_Setup( STDIN );
 
-    uint32_t packet_rx_count = 0;
+    cgc_uint32_t packet_rx_count = 0;
 
     // Enter receive loop
     do
     {
-        CMessagePacket *pPacket = CMessagePacket::ParseStream( &oDataStream );
+        cgc_CMessagePacket *pPacket = cgc_CMessagePacket::cgc_ParseStream( &oDataStream );
 
         // Update packet counter
         packet_rx_count++;
 
         // Verify bytes received does not exceed maximum
-        if ( oDataStream.BytesReceived() > MAX_BYTES_RECEIVED )
+        if ( oDataStream.cgc_BytesReceived() > MAX_BYTES_RECEIVED )
             bDone = true;
 
         if ( pPacket )
         {
             // Process a packet
-            oMsgHandler.ReceivePacket( pPacket );
+            oMsgHandler.cgc_ReceivePacket( pPacket );
 
-            if ( oMsgHandler.IsMsgAvailable() )
+            if ( oMsgHandler.cgc_IsMsgAvailable() )
             {
                 // Get the first message and process it
-                CFullMessage *pNewMessage = oMsgHandler.PopFirstMessage();
+                cgc_CFullMessage *pNewMessage = oMsgHandler.cgc_PopFirstMessage();
 
                 // Render message
-                oMsgRenderer.RenderMessage( pNewMessage );
+                oMsgRenderer.cgc_RenderMessage( pNewMessage );
 
                 // Free it
                 delete pNewMessage;

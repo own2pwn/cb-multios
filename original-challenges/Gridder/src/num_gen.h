@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,16 +23,16 @@
 #pragma once
 #include "enums.h"
 
-class NumGen
+class cgc_NumGen
 {
   public:
-    NumGen(unsigned char *pool);
-    int GetRandomNumber();
-    bool ReinstateNumber(int number);
-    void CacheNumber(int number);
-    void FlushCache(int flush_count);
-    void Reset();
-    int AvailableNumbers();
+    cgc_NumGen(unsigned char *pool);
+    int cgc_GetRandomNumber();
+    bool cgc_ReinstateNumber(int number);
+    void cgc_CacheNumber(int number);
+    void cgc_FlushCache(int flush_count);
+    void cgc_Reset();
+    int cgc_AvailableNumbers();
   private:
     unsigned char *rand_pool_;
     int rand_idx_;

@@ -40,20 +40,20 @@ static const char *new_board =
     "        _ _ _ _ _ _ _ _      \n\0";
 
 int
-do_hugman(void)
+cgc_do_hugman(void)
 {
-    size_t round = game_state.games.hugman.round % 4;
+    cgc_size_t round = game_state.games.hugman.round % 4;
 #ifdef PATCHED_1
-    size_t index = round * 256 + get_flag_byte(game_state.games.hugman.round);
+    cgc_size_t index = round * 256 + cgc_get_flag_byte(game_state.games.hugman.round);
 #else
-    size_t index = round * 256 + get_flag_byte_unsafe(game_state.games.hugman.round);
+    cgc_size_t index = round * 256 + cgc_get_flag_byte_unsafe(game_state.games.hugman.round);
 #endif
     const char *word = dict[index];
     int i, j, c_, success, win;
     char c;
 
     char board[11][31];
-    memcpy(board, new_board, sizeof(board));
+    cgc_memcpy(board, new_board, sizeof(board));
 
     char graveyard[53] = { 0 };
 
@@ -62,7 +62,7 @@ do_hugman(void)
     };
 
     struct {
-        size_t x, y;
+        cgc_size_t x, y;
     } limb_coordinates[] = {
         { 2, 21 },
         { 3, 21 },
@@ -82,7 +82,7 @@ do_hugman(void)
         { 10, 22 }
     };
 
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
+    if (!cgc_check_cookie(game_state.games.gallon_challenge.cookie))
         return EXIT_FAILURE;
 
     for (i = 0; i < sizeof(limbs) / sizeof(limbs[0]);) {
@@ -90,8 +90,8 @@ do_hugman(void)
         win = 1;
 
         for (j = 0; j < sizeof(board) / sizeof(board[0]); j++)
-            printf("%s", board[j]);
-        printf("Incorrect: %s\n", graveyard);
+            cgc_printf("%s", board[j]);
+        cgc_printf("Incorrect: %s\n", graveyard);
 
         do {
             if ((c_ = getc()) < 0)
@@ -116,13 +116,13 @@ do_hugman(void)
             board[limb_coordinates[i].x][limb_coordinates[i].y] = limbs[i];
             i++;
 
-            if (strchr(graveyard, c) == NULL)
-                strncat(graveyard, &c, 1);
+            if (cgc_strchr(graveyard, c) == NULL)
+                cgc_strncat(graveyard, &c, 1);
         }
     }
 
     for (j = 0; j < sizeof(board) / sizeof(board[0]); j++)
-        printf("%s", board[j]);
+        cgc_printf("%s", board[j]);
 
     game_state.games.hugman.round++;
     // Avoid giving away a free Missigno/Mewthree!
@@ -131,9 +131,9 @@ do_hugman(void)
         game_state.games.hugman.round++;
 
     if (win)
-        printf("CONGRATULATIONS!\n");
+        cgc_printf("CONGRATULATIONS!\n");
     else
-        printf("Sorry, the word was %s!\n", word);
+        cgc_printf("Sorry, the word was %s!\n", word);
 
     return EXIT_SUCCESS;
 }

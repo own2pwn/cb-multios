@@ -13,15 +13,15 @@
 //Question is whether the compiler will rearrange certain variables
 // It looks okay when I inlined it in my test - but that does not
 // necessarily mean that it is indeed good.
-ssize_t readLine(int fd, char* buf, size_t len)
+cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
 {
   char c = '\0';
   int ret = 0;
-  size_t i = 0;
-  size_t numRead;
-  fd_set fdsToWait;
-  size_t temp = len;
-  struct timeval timeToWait;
+  cgc_size_t i = 0;
+  cgc_size_t numRead;
+  cgc_fd_set fdsToWait;
+  cgc_size_t temp = len;
+  struct cgc_timeval timeToWait;
 
   if (buf == NULL)
   {
@@ -47,7 +47,7 @@ ssize_t readLine(int fd, char* buf, size_t len)
     FD_SET(fd, &fdsToWait);
 
     //wait forever to see if there is another character available
-    ret = fdwait(1, &fdsToWait, NULL, &timeToWait, NULL);
+    ret = cgc_fdwait(1, &fdsToWait, NULL, &timeToWait, NULL);
 
     //check to see if there is an error
     if (ret != 0)
@@ -88,9 +88,9 @@ ssize_t readLine(int fd, char* buf, size_t len)
   return (i);
 }
 
-size_t myStrLen(const char* str)
+cgc_size_t cgc_myStrLen(const char* str)
 {
-  size_t i = 0;
+  cgc_size_t i = 0;
 
   if (str != NULL)
   {
@@ -103,9 +103,9 @@ size_t myStrLen(const char* str)
   return (i);
 }
 
-void write(int fd, const void* buf, size_t len) {
+void cgc_write(int fd, const void* buf, cgc_size_t len) {
    const void *end = buf + len;
-   size_t n;
+   cgc_size_t n;
    while (buf < end) {
       int r = transmit(fd, buf, end - buf, &n);
       if (r != 0 || n == 0) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,28 +26,28 @@
 
 #include "fs_file.h"
 
-class DirectoryTree
+class cgc_DirectoryTree
 {
   public:
-    DirectoryTree();
-    DirectoryTree(fs_file *directory);
-    void AddEntry(fs_file *file_info);
-    fs_file *FindFile(const char *path);
-    DirectoryTree *FindDirectory(const char *path);
-    void ListFiles(const char *path, bool recursive);
-    void ClearTree(bool delete_root);
+    cgc_DirectoryTree();
+    cgc_DirectoryTree(cgc_fs_file *directory);
+    void cgc_AddEntry(cgc_fs_file *file_info);
+    cgc_fs_file *cgc_FindFile(const char *path);
+    cgc_DirectoryTree *cgc_FindDirectory(const char *path);
+    void cgc_ListFiles(const char *path, bool recursive);
+    void cgc_ClearTree(bool delete_root);
 
-    fs_file *directory_entry();
-    Array<DirectoryTree> subdirectories();
-    Array<fs_file *> file_list();
+    cgc_fs_file *cgc_directory_entry();
+    cgc_Array<cgc_DirectoryTree> cgc_subdirectories();
+    cgc_Array<cgc_fs_file *> cgc_file_list();
 
   private:
-    fs_file *directory_entry_;
-    Array<DirectoryTree> subdirectories_;
-    Array<fs_file *> file_list_;
+    cgc_fs_file *directory_entry_;
+    cgc_Array<cgc_DirectoryTree> subdirectories_;
+    cgc_Array<cgc_fs_file *> file_list_;
 
-    bool FindFileHelper(DirectoryTree *dirnode, const char *path, DirectoryTree **found_dir, fs_file **found_file);
-    void ListFileHelper(DirectoryTree *dirnode, const fs_file *file_info, bool recursive, const char *dirname, int namelen, bool skip_path_update);
-    void ClearTreeHelper(DirectoryTree *dirnode);
+    bool cgc_FindFileHelper(cgc_DirectoryTree *dirnode, const char *path, cgc_DirectoryTree **found_dir, cgc_fs_file **found_file);
+    void cgc_ListFileHelper(cgc_DirectoryTree *dirnode, const cgc_fs_file *file_info, bool recursive, const char *dirname, int namelen, bool skip_path_update);
+    void cgc_ClearTreeHelper(cgc_DirectoryTree *dirnode);
 };
 #endif

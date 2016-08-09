@@ -19,15 +19,15 @@ char *valid_states[] = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "
 
 char *education_levels[] = { "HS", "COLLEGE", "ADV" };
 
-static int verify_choice(char **valid_choices, char *choice, size_t num_elements)
+static int cgc_verify_choice(char **valid_choices, char *choice, cgc_size_t num_elements)
 {
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < num_elements; i++) {
 #ifdef PATCHED
-        if (strlen(valid_choices[i]) == strlen(choice) &&
-                memcmp(valid_choices[i], choice, strlen(valid_choices[i])) == 0)
+        if (cgc_strlen(valid_choices[i]) == cgc_strlen(choice) &&
+                cgc_memcmp(valid_choices[i], choice, cgc_strlen(valid_choices[i])) == 0)
 #else
-        if (memcmp(valid_choices[i], choice, strlen(valid_choices[i])) == 0)
+        if (cgc_memcmp(valid_choices[i], choice, cgc_strlen(valid_choices[i])) == 0)
 #endif
             return 0;
     }
@@ -35,102 +35,102 @@ static int verify_choice(char **valid_choices, char *choice, size_t num_elements
     return -1;
 }
 
-int verify_hair(char *str, size_t size) {
-    return verify_choice(valid_hair_colors, str, sizeof(valid_hair_colors)/sizeof(char*));
+int cgc_verify_hair(char *str, cgc_size_t size) {
+    return cgc_verify_choice(valid_hair_colors, str, sizeof(valid_hair_colors)/sizeof(char*));
 }
 
-int verify_eye(char *str, size_t size) {
-    return verify_choice(valid_eye_colors, str, sizeof(valid_eye_colors)/sizeof(char*));
+int cgc_verify_eye(char *str, cgc_size_t size) {
+    return cgc_verify_choice(valid_eye_colors, str, sizeof(valid_eye_colors)/sizeof(char*));
 }
 
 
-int verify_suffix(char *str, size_t size) {
-    return verify_choice(valid_suffixes, str, sizeof(valid_suffixes)/sizeof(char*));
+int cgc_verify_suffix(char *str, cgc_size_t size) {
+    return cgc_verify_choice(valid_suffixes, str, sizeof(valid_suffixes)/sizeof(char*));
 }
 
-int verify_state(char *str, size_t size) {
-    return verify_choice(valid_states, str, sizeof(valid_states)/sizeof(char*));
+int cgc_verify_state(char *str, cgc_size_t size) {
+    return cgc_verify_choice(valid_states, str, sizeof(valid_states)/sizeof(char*));
 }
 
-int verify_education(char *str, size_t size) {
-    return verify_choice(education_levels, str, sizeof(education_levels)/sizeof(char*));
+int cgc_verify_education(char *str, cgc_size_t size) {
+    return cgc_verify_choice(education_levels, str, sizeof(education_levels)/sizeof(char*));
 }
 
-int verify_month(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_month(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
 
     int month;
-    month = strtol(str, NULL, 10);
+    month = cgc_strtol(str, NULL, 10);
     if (month <= 0 || month > 12)
         return -1;
 
     return 0;
 }
 
-int verify_day(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_day(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
 
-    int day = strtol(str, NULL, 10);
+    int day = cgc_strtol(str, NULL, 10);
     if (day <= 0 || day > 31)
         return -1;
 
     return 0;
 }
 
-int verify_year(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_year(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
 
-    int year = strtol(str, NULL, 10);
+    int year = cgc_strtol(str, NULL, 10);
     if (year < 1900 || year > 2014)
         return -1;
 
     return 0;
 }
 
-int verify_height_feet(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_height_feet(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
 
-    int feet = strtol(str, NULL, 10);
+    int feet = cgc_strtol(str, NULL, 10);
     if (feet < 1 || feet > 9)
         return -1;
 
     return 0;
 }
 
-int verify_height_inches(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_height_inches(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
 
-    int inches = strtol(str, NULL, 10);
+    int inches = cgc_strtol(str, NULL, 10);
     if (inches < 0 || inches > 11)
         return -1;
 
     return 0;
 }
 
-int verify_weight(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_weight(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
 
-    int weight = strtol(str, NULL, 10);
+    int weight = cgc_strtol(str, NULL, 10);
     if (weight < 50 || weight > 500)
         return -1;
 
     return 0;
 }
 
-int verify_sex(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_sex(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
 
@@ -140,8 +140,8 @@ int verify_sex(char *str, size_t size) {
     return 0;
 }
 
-int verify_yes_no(char *str, size_t size) {
-    int len = strlen(str) + 1;
+int cgc_verify_yes_no(char *str, cgc_size_t size) {
+    int len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
 
@@ -151,55 +151,55 @@ int verify_yes_no(char *str, size_t size) {
     return 0;
 }
 
-int verify_name(char *str, size_t size)
+int cgc_verify_name(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size || len < 2)
         return -1;
     len--;
 
     for (i = 0; i < len; i++)
-        if (!isalpha(str[i]) && str[i] != '\'')
+        if (!cgc_isalpha(str[i]) && str[i] != '\'')
             return -1;
 
     return 0;
 }
 
-int verify_street(char *str, size_t size)
+int cgc_verify_street(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size || len < 5)
         return -1;
     len--;
 
     for (i = 0; i < len; i++) {
         char c = str[i];
-        if (!isalnum(c) && c != '\'' && c != ' ' && c != ',')
+        if (!cgc_isalnum(c) && c != '\'' && c != ' ' && c != ',')
             return -1;
     }
 
     return 0;
 }
 
-int verify_city(char *str, size_t size)
+int cgc_verify_city(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size || len < 5)
         return -1;
     len--;
 
     for (i = 0; i < len; i++) {
         char c = str[i];
-        if (!isalpha(c) && c != '\'' && c != ' ')
+        if (!cgc_isalpha(c) && c != '\'' && c != ' ')
             return -1;
     }
 
     return 0;
 }
 
-int verify_zip_code(char *str, size_t size)
+int cgc_verify_zip_code(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len != size)
         return -1;
     len--;
@@ -209,7 +209,7 @@ int verify_zip_code(char *str, size_t size)
 
     for (i = 0; i < len; i++) {
         char c = str[i];
-        if (!isdigit(c))
+        if (!cgc_isdigit(c))
             return -1;
     }
 
@@ -217,9 +217,9 @@ int verify_zip_code(char *str, size_t size)
 }
 
 
-int verify_gpa(char *str, size_t size)
+int cgc_verify_gpa(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
     len--;
@@ -232,7 +232,7 @@ int verify_gpa(char *str, size_t size)
             else
                 continue;
         }
-        if (!isdigit(c)) {
+        if (!cgc_isdigit(c)) {
             return -1;
         }
     }
@@ -240,16 +240,16 @@ int verify_gpa(char *str, size_t size)
     return 0;
 }
 
-int verify_email(char *str, size_t size)
+int cgc_verify_email(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1, at_count = 0;
+    int i, len = cgc_strlen(str) + 1, at_count = 0;
     if (len > size || len < 3)
         return -1;
     len--;
 
     for (i = 0; i < len; i++) {
         char c = str[i];
-        if (!isalnum(c) && c != '@' && c != '-' && c != '.' && c != '_')
+        if (!cgc_isalnum(c) && c != '@' && c != '-' && c != '.' && c != '_')
             return -1;
         if (c == '@' && ++at_count == 2)
             return -1;
@@ -261,9 +261,9 @@ int verify_email(char *str, size_t size)
     return 0;
 }
 
-int verify_phone(char *str, size_t size)
+int cgc_verify_phone(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1, at_count = 0;
+    int i, len = cgc_strlen(str) + 1, at_count = 0;
     if (len != size)
         return -1;
     len--;
@@ -276,7 +276,7 @@ int verify_phone(char *str, size_t size)
             else
                 continue;
         }
-        if (!isdigit(c)) {
+        if (!cgc_isdigit(c)) {
             return -1;
         }
     }
@@ -284,29 +284,29 @@ int verify_phone(char *str, size_t size)
     return 0;
 }
 
-int verify_number(char *str, size_t size)
+int cgc_verify_number(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
     len--;
 
     for (i = 0; i < len; i++)
-        if (!isdigit(str[i]))
+        if (!cgc_isdigit(str[i]))
             return -1;
 
     return 0;
 }
 
-int verify_text(char *str, size_t size)
+int cgc_verify_text(char *str, cgc_size_t size)
 {
-    int i, len = strlen(str) + 1;
+    int i, len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
     len--;
 
     for (i = 0; i < len; i++)
-        if (!isprint(str[i]))
+        if (!cgc_isprint(str[i]))
             return -1;
 
     return 0;

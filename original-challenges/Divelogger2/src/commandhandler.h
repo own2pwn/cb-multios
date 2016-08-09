@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,43 +30,43 @@ THE SOFTWARE.
 #include <string.h>
 
 // Forward declarations
-class CommandHandler
+class cgc_CommandHandler
 {
 public:
-    CommandHandler();
-    ~CommandHandler();
+    cgc_CommandHandler();
+    ~cgc_CommandHandler();
 
-    void ParserLoop( void );
-
-private:
-    bool CmdChangeDiverInfo( void );
-    bool CmdLogNewDive( void );
-    bool CmdDownloadDiveData( void );
-    bool CmdEditDives( void );
-    bool CmdPrintDiveLogs( void );
-    bool CmdRemoveDives( void );
-    bool CmdDiverStatistics( void );
-    bool CmdExitApplication( void );
-
-    void PrintDiverInfo( void );
+    void cgc_ParserLoop( void );
 
 private:
-    typedef bool (CommandHandler::*pCmdFptr)( void );
+    bool cgc_CmdChangeDiverInfo( void );
+    bool cgc_CmdLogNewDive( void );
+    bool cgc_CmdDownloadDiveData( void );
+    bool cgc_CmdEditDives( void );
+    bool cgc_CmdPrintDiveLogs( void );
+    bool cgc_CmdRemoveDives( void );
+    bool cgc_CmdDiverStatistics( void );
+    bool cgc_CmdExitApplication( void );
+
+    void cgc_PrintDiverInfo( void );
+
+private:
+    typedef bool (cgc_CommandHandler::*cgc_pCmdFptr)( void );
 
     typedef struct COMMAND_FUNCTION
     {
         char szCommand[128];
         char szDescription[128];
-        pCmdFptr pCmdFunc;
-    } tCommandFunction;
+        cgc_pCmdFptr pCmdFunc;
+    } cgc_tCommandFunction;
 
-    DLQueue m_diveQueue;
-    DiverInfo m_oDiver;
+    cgc_DLQueue m_diveQueue;
+    cgc_DiverInfo m_oDiver;
     bool m_bDiverInitialized;
 
 private:
-    void PrintCommandTable( tCommandFunction * );
-    void PrintDiveList( void );
+    void cgc_PrintCommandTable( cgc_tCommandFunction * );
+    void cgc_PrintDiveList( void );
 };
 
 #endif // __COMMANDHANDLER_H__

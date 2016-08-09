@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #define TPAI_MAGIC 0xcb590f31
 
-typedef struct tpai_image_data {
+typedef struct cgc_tpai_image_data {
 	char *buffer;
 	int max;
 	int cbyte;
@@ -38,17 +38,17 @@ typedef struct tpai_image_data {
 	int height;
 	int load_direction;
 	int checksum;
-} tpai_image_data, *ptpai_image_data;
+} cgc_tpai_image_data, *cgc_ptpai_image_data;
 
-int tpai_calc_checksum( ptpai_image_data tid );
-int tpai_read_nbits( ptpai_image_data tid, int bitcount, int *value );
-int tpai_read_check( ptpai_image_data tid, int bitcount );
-int tpai_read_magic( ptpai_image_data tid );
-int tpai_read_width( ptpai_image_data tid );
-int tpai_read_height( ptpai_image_data tid );
-int tpai_read_loadd( ptpai_image_data tid, unsigned int *dir);
-int tpai_skip_rsrvd( ptpai_image_data tid );
-int tpai_display_image( ptpai_image_data tid );
-int tpai_read_pixel( ptpai_image_data tid, unsigned int *pixel);
+int cgc_tpai_calc_checksum( cgc_ptpai_image_data tid );
+int cgc_tpai_read_nbits( cgc_ptpai_image_data tid, int bitcount, int *value );
+int cgc_tpai_read_check( cgc_ptpai_image_data tid, int bitcount );
+int cgc_tpai_read_magic( cgc_ptpai_image_data tid );
+int cgc_tpai_read_width( cgc_ptpai_image_data tid );
+int cgc_tpai_read_height( cgc_ptpai_image_data tid );
+int cgc_tpai_read_loadd( cgc_ptpai_image_data tid, unsigned int *dir);
+int cgc_tpai_skip_rsrvd( cgc_ptpai_image_data tid );
+int cgc_tpai_display_image( cgc_ptpai_image_data tid );
+int cgc_tpai_read_pixel( cgc_ptpai_image_data tid, unsigned int *pixel);
 
 #endif

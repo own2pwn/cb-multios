@@ -30,7 +30,7 @@
 // IN: pointer to bytes, len (number of bytes left to safely consume)
 // OUT: populated inst struct
 // RET: status
-int inst_decode(uint8_t *bytes, uint16_t len, inst_t *inst) {
+int cgc_inst_decode(uint8_t *bytes, uint16_t len, cgc_inst_t *inst) {
 
     int ret = SUCCESS;
     uint32_t cursor = 0;
@@ -113,17 +113,17 @@ bail:
 }
 
 
-int bytecode_vrfy(uint8_t *bytes, uint16_t len) {
+int cgc_bytecode_vrfy(uint8_t *bytes, uint16_t len) {
 
     int ret = SUCCESS;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] bytecode_vrfy() | init\n");
+    fprintf(stderr, "[D] cgc_bytecode_vrfy() | init\n");
     uint32_t inst_count = 0;
 #endif
 
     uint8_t *cursor = bytes;
-    inst_t inst;
+    cgc_inst_t inst;
     uint8_t *dst = NULL;
 
     // Loop over the opcodes, verify offset within each one.
@@ -131,13 +131,13 @@ int bytecode_vrfy(uint8_t *bytes, uint16_t len) {
 
 #ifdef DEBUG
         fprintf(stderr, 
-            "\n[D] bytecode_vrfy() | instruction #%d\n", inst_count);
+            "\n[D] cgc_bytecode_vrfy() | instruction #%d\n", inst_count);
 #endif
 
-        if (SUCCESS != (ret = inst_decode(cursor, len, &inst))) {
+        if (SUCCESS != (ret = cgc_inst_decode(cursor, len, &inst))) {
 #ifdef DEBUG
             fprintf(stderr, 
-                "[D] bytecode_vrfy() | non-SUCCESS from inst_decode' bailing...\n");
+                "[D] cgc_bytecode_vrfy() | non-SUCCESS from cgc_inst_decode' bailing...\n");
 #endif
             ret = ERRNO_INST_DECODE;
             goto bail;
@@ -162,12 +162,12 @@ int bytecode_vrfy(uint8_t *bytes, uint16_t len) {
             goto bail;
         }
 
-        // These *shouldn't* under/overflow due to (inst_len > len) check in inst_decode().
+        // These *shouldn't* under/overflow due to (inst_len > len) check in cgc_inst_decode().
         cursor += inst.len;
         len -= inst.len;
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] bytecode_vrfy() | len = %d\n", len);
+        fprintf(stderr, "[D] cgc_bytecode_vrfy() | len = %d\n", len);
         inst_count++;
 #endif
     }
@@ -176,7 +176,7 @@ bail:
 #ifdef DEBUG
     if (ERRNO_VFRY_REJECT_OFF == ret) {
         fprintf(stderr, 
-            "[D] bytecode_vrfy() | REJECT due to offset check\n");
+            "[D] cgc_bytecode_vrfy() | REJECT due to offset check\n");
     }
 #endif
 
@@ -185,16 +185,16 @@ bail:
 
 
 // We've verified the bytecode for safety, now we execute it.
-int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out) {
+int cgc_bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out) {
 
     int ret = SUCCESS;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] bytecode_exec() | init\n");
+    fprintf(stderr, "[D] cgc_bytecode_exec() | init\n");
     uint32_t inst_count = 0;
 #endif
 
-    inst_t inst;
+    cgc_inst_t inst;
     uint8_t *cursor = bytes;
     uint32_t acc = 0;
     uint32_t op1 = 0;
@@ -205,13 +205,13 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
 
 #ifdef DEBUG
         fprintf(stderr, 
-            "\n[D] bytecode_exec() | instruction #%d\n", inst_count);
+            "\n[D] cgc_bytecode_exec() | instruction #%d\n", inst_count);
 #endif
 
-        if (SUCCESS != (ret = inst_decode(cursor, len, &inst))) {
+        if (SUCCESS != (ret = cgc_inst_decode(cursor, len, &inst))) {
 #ifdef DEBUG
             fprintf(stderr, 
-                "[D] bytecode_exec() | non-SUCCESS from inst_decode; bailing...\n");
+                "[D] cgc_bytecode_exec() | non-SUCCESS from cgc_inst_decode; bailing...\n");
 #endif
             ret = ERRNO_INST_DECODE;
             goto bail;
@@ -244,7 +244,7 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
             if (!(inst.opcode & INST_MASK_OP1)) {
 #ifdef DEBUG
                 fprintf(stderr, 
-                "[D] bytecode_exec() | INVALID opcode: mem dst & immediate op1; bailing...\n");
+                "[D] cgc_bytecode_exec() | INVALID opcode: mem dst & immediate op1; bailing...\n");
 #endif       
                 ret = ERRNO_INVALID_OPCODE;
                 goto bail;
@@ -257,7 +257,7 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
             // This is ILLEGAL; op1 cannot specify both dst offset and operand.
 #ifdef DEBUG
             fprintf(stderr, 
-                "[D] bytecode_exec() | INVALID opcode: mem dst & not ACC as op1; bailing...\n");
+                "[D] cgc_bytecode_exec() | INVALID opcode: mem dst & not ACC as op1; bailing...\n");
 #endif       
             ret = ERRNO_INVALID_OPCODE;
             goto bail;
@@ -277,7 +277,7 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
                         scratch[inst.op1+3] << 24;
 #ifdef DEBUG
                 fprintf(stderr, 
-                    "[D] bytecode_exec() | scratch + inst.op1 = 0x%08x; op1 = *(scratch + inst.op1) = 0x%08x\n", 
+                    "[D] cgc_bytecode_exec() | scratch + inst.op1 = 0x%08x; op1 = *(scratch + inst.op1) = 0x%08x\n", 
                     scratch + inst.op1, op1);
 #endif  
             } else {
@@ -296,7 +296,7 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
                     scratch[inst.op2+3] << 24;
 #ifdef DEBUG
             fprintf(stderr, 
-                "[D] bytecode_exec() | scratch + inst.op2 = 0x%08x; op2 = *(scratch + inst.op2) = 0x%08x\n", 
+                "[D] cgc_bytecode_exec() | scratch + inst.op2 = 0x%08x; op2 = *(scratch + inst.op2) = 0x%08x\n", 
                 scratch + inst.op2, op2);
 #endif  
         } else {
@@ -319,7 +319,7 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
             default:
 #ifdef DEBUG
                 fprintf(stderr, 
-                    "[D] bytecode_exec() | INVALID opcode; bailing...\n");
+                    "[D] cgc_bytecode_exec() | INVALID opcode; bailing...\n");
 #endif  
                 ret = ERRNO_INVALID_OPCODE;
                 goto bail;
@@ -328,16 +328,16 @@ int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out)
 
 #ifdef DEBUG
         fprintf(stderr, 
-            "[D] bytecode_exec() | dst = 0x%08x; *dst = 0x%08x\n", dst, *dst);
+            "[D] cgc_bytecode_exec() | dst = 0x%08x; *dst = 0x%08x\n", dst, *dst);
 #endif  
 
-        // These *shouldn't* under/overflow due to (inst_len > len) check in inst_decode().
+        // These *shouldn't* under/overflow due to (inst_len > len) check in cgc_inst_decode().
         cursor += inst.len;
         len -= inst.len;
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] bytecode_exec() | #%04d: acc = 0x%08x\n", inst_count++, acc);
-        fprintf(stderr, "[D] bytecode_exec() | len = %d\n", len);
+        fprintf(stderr, "[D] cgc_bytecode_exec() | #%04d: acc = 0x%08x\n", inst_count++, acc);
+        fprintf(stderr, "[D] cgc_bytecode_exec() | len = %d\n", len);
 #endif
     }
     
@@ -349,8 +349,8 @@ bail:
 int main(void) {
 
     int ret = SUCCESS;
-    size_t rx_bytes = 0;
-    size_t tx_bytes = 0;
+    cgc_size_t rx_bytes = 0;
+    cgc_size_t tx_bytes = 0;
 
     // Allocate scratch + bytecode space.
     // Per man, allocate()d memory is zero-filled.
@@ -368,9 +368,9 @@ int main(void) {
     // Get length of bytecode (2B).
     uint16_t bytecode_len = 0;
     rx_bytes = 0;
-    if (SUCCESS != (ret = receive_all(STDIN, (void *)&bytecode_len, sizeof(bytecode_len), &rx_bytes))) { 
+    if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&bytecode_len, sizeof(bytecode_len), &rx_bytes))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] during receive_all() of bytecode_len\n");
+        fprintf(stderr, "[E] during cgc_receive_all() of bytecode_len\n");
 #endif
         ret = ERRNO_RECV;
         goto bail;
@@ -389,29 +389,29 @@ int main(void) {
 
     // Read in the bytecode itself.
     rx_bytes = 0;
-    if (SUCCESS != (ret = receive_all(STDIN, (void *)(space+SCRATCH_SZ), bytecode_len, &rx_bytes))) { 
+    if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)(space+SCRATCH_SZ), bytecode_len, &rx_bytes))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] during receive_all() of bytecode\n");
+        fprintf(stderr, "[E] during cgc_receive_all() of bytecode\n");
 #endif
         ret = ERRNO_RECV;
         goto bail;
     }
 
     // Verify bytecode.
-    if (SUCCESS != (ret = bytecode_vrfy(space+SCRATCH_SZ, bytecode_len))) { 
+    if (SUCCESS != (ret = cgc_bytecode_vrfy(space+SCRATCH_SZ, bytecode_len))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[D] bytecode_vrfy(): REJECT\n");
+        fprintf(stderr, "[D] cgc_bytecode_vrfy(): REJECT\n");
 #endif
         goto bail;
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] bytecode_vrfy(): PASS\n");
+    fprintf(stderr, "[D] cgc_bytecode_vrfy(): PASS\n");
 #endif
 
     // Execute bytecode.
     uint32_t out = OUT_DEFAULT;
-    if (SUCCESS != (ret = bytecode_exec(space+SCRATCH_SZ, bytecode_len, space, &out))) { 
+    if (SUCCESS != (ret = cgc_bytecode_exec(space+SCRATCH_SZ, bytecode_len, space, &out))) { 
 #ifdef DEBUG
         fprintf(stderr, "[D] bytecode execution failed; bailing...\n");
 #endif
@@ -420,9 +420,9 @@ int main(void) {
 
     // Send answer back to CRS.
     tx_bytes = 0;
-    if (SUCCESS != (ret = transmit_all(STDOUT, &out, sizeof(out), &tx_bytes))) { 
+    if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &out, sizeof(out), &tx_bytes))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] transmit_all(answer)\n");
+        fprintf(stderr, "[E] cgc_transmit_all(answer)\n");
 #endif
         ret = ERRNO_TRANSMIT;
         goto bail;

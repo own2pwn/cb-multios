@@ -47,12 +47,12 @@
 // Prompts
 #define ROOTPROMPT "$ "
 
-void do_menu(size_t replay);
-void do_quit();
-void do_select_char();
-void send_current_board();
-void make_move();
-void send_game_results();
-void do_play();
+void cgc_do_menu(cgc_size_t replay);
+void cgc_do_quit();
+void cgc_do_select_char();
+void cgc_send_current_board();
+void cgc_make_move();
+void cgc_send_game_results();
+void cgc_do_play();
 
 #endif

@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,28 +28,28 @@
 #include <string.h>
 #include "dft.h"
 
-static complex_t *cfft(complex_t *coeff, unsigned int samples) {
+static cgc_complex_t *cgc_cfft(cgc_complex_t *coeff, unsigned int samples) {
     const double PI = atan2(1, 1) * 4;
     double theta, cos_val, sin_val;
     if (samples == 1) {
-        complex_t *xk = malloc(sizeof(complex_t));
+        cgc_complex_t *xk = cgc_malloc(sizeof(cgc_complex_t));
         xk->real = coeff[0].real;
         xk->imag = coeff[0].imag;
         return xk;
     }
 
-    complex_t *e = malloc(sizeof(complex_t) * samples/2);
-    complex_t *o = malloc(sizeof(complex_t) * samples/2);
+    cgc_complex_t *e = cgc_malloc(sizeof(cgc_complex_t) * samples/2);
+    cgc_complex_t *o = cgc_malloc(sizeof(cgc_complex_t) * samples/2);
 
     int k =0;
     for (k = 0; k < samples/2; k++) {
         e[k] = coeff[(2*k)];
         o[k] = coeff[(2*k) + 1];
     }
-    complex_t *ek = cfft(e, samples/2);
-    complex_t *ok = cfft(o, samples/2);
+    cgc_complex_t *ek = cgc_cfft(e, samples/2);
+    cgc_complex_t *ok = cgc_cfft(o, samples/2);
 
-    complex_t *Xk = malloc(sizeof(complex_t) * samples);
+    cgc_complex_t *Xk = cgc_malloc(sizeof(cgc_complex_t) * samples);
     for (k = 0; k < samples/2; k++) {
         theta = (2 * PI * k ) / (double)(samples);
         cos_val = cos(theta);
@@ -62,17 +62,17 @@ static complex_t *cfft(complex_t *coeff, unsigned int samples) {
         Xk[k + samples/2].imag = ek[k].imag - (-ok[k].real * sin_val + ok[k].imag * cos_val);
     }
 
-    free(e);
-    free(o);
-    free(ek);
-    free(ok);
+    cgc_free(e);
+    cgc_free(o);
+    cgc_free(ek);
+    cgc_free(ok);
 
     return Xk;
 }
 
-static complex_t *fft(double *real_coeff, unsigned int samples) {
-    complex_t *coeff = malloc(sizeof(complex_t) * samples);
-    complex_t *Xk = NULL;
+static cgc_complex_t *cgc_fft(double *real_coeff, unsigned int samples) {
+    cgc_complex_t *coeff = cgc_malloc(sizeof(cgc_complex_t) * samples);
+    cgc_complex_t *Xk = NULL;
 
     int i;
     for (i = 0; i < samples; i++) {
@@ -80,43 +80,43 @@ static complex_t *fft(double *real_coeff, unsigned int samples) {
         coeff[i].imag = 0;
     }
 
-    Xk = cfft(coeff, samples);
-    free(coeff);
+    Xk = cgc_cfft(coeff, samples);
+    cgc_free(coeff);
 
     return Xk;
 }
 
-complex_t *dft(double *real_coeff, unsigned int samples, int *len) {
+cgc_complex_t *cgc_dft(double *real_coeff, unsigned int samples, int *len) {
     int p_of_2 = log2(samples);
-    complex_t *Xk = NULL;
+    cgc_complex_t *Xk = NULL;
 
     if ((1 << p_of_2) != samples) {
         unsigned int orig_samples = samples;
         double *real_coeff_padded = NULL;
         samples = 1 << (p_of_2 + 1);
 
-        real_coeff_padded = malloc(sizeof(double) * samples);
+        real_coeff_padded = cgc_malloc(sizeof(double) * samples);
         if(real_coeff_padded == NULL) {
             *len = 0;
             return NULL;
         }
 
-        memset(real_coeff_padded, 0, sizeof(double) * samples);
-        memcpy(real_coeff_padded, real_coeff, sizeof(double) * orig_samples);
+        cgc_memset(real_coeff_padded, 0, sizeof(double) * samples);
+        cgc_memcpy(real_coeff_padded, real_coeff, sizeof(double) * orig_samples);
 
-        Xk = fft(real_coeff_padded, samples);
-        free(real_coeff_padded);
+        Xk = cgc_fft(real_coeff_padded, samples);
+        cgc_free(real_coeff_padded);
     } else {
-        Xk = fft(real_coeff, samples);
+        Xk = cgc_fft(real_coeff, samples);
     }
 
     *len = samples;
     return Xk;
 }
 
-double *idft(complex_t *coeff, unsigned int samples, int *len) {
+double *cgc_idft(cgc_complex_t *coeff, unsigned int samples, int *len) {
     int p_of_2 = log2(samples);
-    complex_t *xt = NULL;
+    cgc_complex_t *xt = NULL;
     double *Xt = NULL;
     int i;
 
@@ -126,10 +126,10 @@ double *idft(complex_t *coeff, unsigned int samples, int *len) {
 
     if ((1 << p_of_2) != samples) {
         unsigned int orig_samples = samples;
-        complex_t *coeff_padded = NULL;
+        cgc_complex_t *coeff_padded = NULL;
         samples = 1 << (p_of_2 + 1);
 
-        coeff_padded = malloc(sizeof(complex_t) * samples);
+        coeff_padded = cgc_malloc(sizeof(cgc_complex_t) * samples);
         if(coeff_padded == NULL) {
             for (i = 0; i < samples; i++)
                 coeff[i].imag = -coeff[i].imag;
@@ -138,13 +138,13 @@ double *idft(complex_t *coeff, unsigned int samples, int *len) {
             return NULL;
         }
 
-        memset(coeff_padded, 0, sizeof(complex_t) * samples);
-        memcpy(coeff_padded, coeff, sizeof(complex_t) * orig_samples);
+        cgc_memset(coeff_padded, 0, sizeof(cgc_complex_t) * samples);
+        cgc_memcpy(coeff_padded, coeff, sizeof(cgc_complex_t) * orig_samples);
 
-        xt = cfft(coeff_padded, samples);
-        free(coeff_padded);
+        xt = cgc_cfft(coeff_padded, samples);
+        cgc_free(coeff_padded);
     } else {
-        xt = cfft(coeff, samples);
+        xt = cgc_cfft(coeff, samples);
     }
 
     // conjugate complex number back
@@ -154,9 +154,9 @@ double *idft(complex_t *coeff, unsigned int samples, int *len) {
     if (xt == NULL)
         return NULL;
 
-    Xt = malloc(sizeof(double) * samples);
+    Xt = cgc_malloc(sizeof(double) * samples);
     if (Xt == NULL) {
-        free(xt);
+        cgc_free(xt);
         *len = 0;
         return NULL;
     }
@@ -164,7 +164,7 @@ double *idft(complex_t *coeff, unsigned int samples, int *len) {
     for (i = 0; i < samples; i++)
         Xt[i] = xt[i].real / samples; //scaling
 
-    free(xt);
+    cgc_free(xt);
     *len = samples;
     return Xt;
 }

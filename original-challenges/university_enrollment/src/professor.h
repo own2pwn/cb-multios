@@ -1,6 +1,6 @@
 #ifndef PROFESSOR_H_
 #define PROFESSOR_H_
-typedef struct professor professor_t;
+typedef struct professor cgc_professor_t;
 
 #include <stdlib.h>
 #include "ptrlist.h"
@@ -9,16 +9,16 @@ typedef struct professor professor_t;
 struct professor
 {
     char *name;
-    ptrlist_t *courses_taught;
+    cgc_ptrlist_t *courses_taught;
 };
 
-professor_t *create_professor(char *name);
-void add_course_to_professor(professor_t *prof, course_t *course);
+cgc_professor_t *cgc_create_professor(char *name);
+void cgc_add_course_to_professor(cgc_professor_t *prof, cgc_course_t *course);
 
-professor_t *get_professor(char *name);
-course_t *get_professor_class(professor_t *prof, size_t idx);
+cgc_professor_t *cgc_get_professor(char *name);
+cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, cgc_size_t idx);
 
-void list_professors();
-void list_classes_taught(professor_t *prof);
+void cgc_list_professors();
+void cgc_list_classes_taught(cgc_professor_t *prof);
 
 #endif

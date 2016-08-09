@@ -13,7 +13,7 @@
 #define POWERSET 4
 #define CARTESIAN 5
 
-typedef enum setState
+typedef enum cgc_setState
 {
 	start = 0,
 	open_set,
@@ -25,19 +25,19 @@ typedef enum setState
 	set_end,
 	error
 
-} setState;
+} cgc_setState;
 
 /**
  * Structure to hold the initial command line parsing
  * 	Something like  var = |"2","3"| will be split
  *	up into "var", "=", and '|"2","3"|'
  **/
-typedef struct splitCommand
+typedef struct cgc_splitCommand
 {
 	char *left;
 	char mid;
 	char *right;
-} splitCommand, *psplitCommand;
+} cgc_splitCommand, *cgc_psplitCommand;
 
 /**
  * Structure to store an individual element of a set
@@ -45,7 +45,7 @@ typedef struct splitCommand
  *	indicate whether or not the element is a set
  *	as well.
  **/
-typedef struct setElement
+typedef struct cgc_setElement
 {
 	/// Value of the element. This can be an actual
 	///	value or name of a set
@@ -53,19 +53,19 @@ typedef struct setElement
 
 	/// Type. Either 0 for set or 1 for value
 	int type;
-} setElement, *psetElement;
+} cgc_setElement, *cgc_psetElement;
 
 /**
  * This set will be a doubly linked list to each declared
  *	set variable.
  **/
-typedef struct setArray
+typedef struct cgc_setArray
 {
 	/// Pointer to the next set in the list
-	struct setArray *next;
+	struct cgc_setArray *next;
 
 	/// Pointer to the previous set in the list
-	struct setArray *prev;
+	struct cgc_setArray *prev;
 
 	/// Set variable name
 	char varName[0x10];
@@ -73,20 +73,20 @@ typedef struct setArray
 	/// Number of elements within the set
 	int varCount;
 
-	/// Pointer to an array of setElement pointers. The size
+	/// Pointer to an array of cgc_setElement pointers. The size
 	///	of this array is indicated by varCount with a max of 15
-	psetElement sElems[15];
+	cgc_psetElement sElems[15];
 
-} setArray, *psetArray;
+} cgc_setArray, *cgc_psetArray;
 
 
 /*********************************************************
  * Function prototypes
  *********************************************************/
 
-psetArray symmetric_difference( psetArray setone, psetArray settwo );
-psetArray set_difference( psetArray setone, psetArray settwo );
-psetArray unionset( psetArray setone, psetArray settwo );
-psetArray retrieve_set( char *setname );
+cgc_psetArray cgc_symmetric_difference( cgc_psetArray setone, cgc_psetArray settwo );
+cgc_psetArray cgc_set_difference( cgc_psetArray setone, cgc_psetArray settwo );
+cgc_psetArray cgc_unionset( cgc_psetArray setone, cgc_psetArray settwo );
+cgc_psetArray cgc_retrieve_set( char *setname );
 
 #endif

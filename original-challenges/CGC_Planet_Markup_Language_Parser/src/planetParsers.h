@@ -35,18 +35,18 @@ THE SOFTWARE.
 #include "genericParsers.h"
 #include "countryParsers.h"
 
-void initPlanet( pPlanet pl);
-int planetMenu( pPlanet pl );
-void freePlanet( pPlanet pl );
-void printPlanetInfo( pPlanet pl);
-pPlanet planetTopLevel( pstring str);
-double extractPeriod( pstring str );
-double extractOrbitSpeed( pstring str );
-double extractAphelion( pstring str );
-double extractPerihelion( pstring str );
-double extractRadius( pstring str );
-double extractERadius( pstring str );
-double extractMass( pstring str );
-double extractGravity( pstring str );
+void cgc_initPlanet( cgc_pPlanet pl);
+int cgc_planetMenu( cgc_pPlanet pl );
+void cgc_freePlanet( cgc_pPlanet pl );
+void cgc_printPlanetInfo( cgc_pPlanet pl);
+cgc_pPlanet cgc_planetTopLevel( cgc_pstring str);
+double cgc_extractPeriod( cgc_pstring str );
+double cgc_extractOrbitSpeed( cgc_pstring str );
+double cgc_extractAphelion( cgc_pstring str );
+double cgc_extractPerihelion( cgc_pstring str );
+double cgc_extractRadius( cgc_pstring str );
+double cgc_extractERadius( cgc_pstring str );
+double cgc_extractMass( cgc_pstring str );
+double cgc_extractGravity( cgc_pstring str );
 
 #endif

@@ -4,7 +4,7 @@
 namespace std
 {
     template <typename T>
-    inline const T &min (const T &a, const T &b)
+    inline const T &cgc_min (const T &a, const T &b)
     {
         if (a < b)
             return a;
@@ -13,7 +13,7 @@ namespace std
     }
 
     template <typename T>
-    inline const T &max (const T &a, const T &b)
+    inline const T &cgc_max (const T &a, const T &b)
     {
         if (a > b)
             return a;
@@ -22,23 +22,23 @@ namespace std
     }
 
     template <typename T>
-    inline const T&& move (const T &&a)
+    inline const T&& cgc_move (const T &&a)
     {
         return a;
     }
 
     template <typename T>
-    inline T&& move (T &&a)
+    inline T&& cgc_move (T &&a)
     {
         return a;
     }
 
     template <typename T>
-    inline void swap (T &a, T &b)
+    inline void cgc_swap (T &a, T &b)
     {
-        T tmp = move(a);
-        a = move(b);
-        b = move(tmp);
+        T tmp = cgc_move(a);
+        a = cgc_move(b);
+        b = cgc_move(tmp);
     }
 };
 

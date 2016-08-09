@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,23 +27,23 @@
 
 #include "bloomy.h"
 
-bloomy_t* bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3)
+cgc_bloomy_t* cgc_bloomy_new(cgc_size_t size, cgc_hash_t hash1, cgc_hash_t hash2, cgc_hash_t hash3)
 {
-  bloomy_t *bloomy;
+  cgc_bloomy_t *bloomy;
 
   if (size < 1)
     return NULL;
 
-  bloomy = (bloomy_t *) malloc(sizeof(bloomy_t));
+  bloomy = (cgc_bloomy_t *) cgc_malloc(sizeof(cgc_bloomy_t));
   if (bloomy == NULL)
     goto fail;
-  memset(bloomy, 0, sizeof(bloomy_t));
+  cgc_memset(bloomy, 0, sizeof(cgc_bloomy_t));
   bloomy->size = size;
 
-  bloomy->bits = (uint8_t *) malloc(size);
+  bloomy->bits = (cgc_uint8_t *) cgc_malloc(size);
   if (bloomy->bits == NULL)
     goto fail;
-  memset(bloomy->bits, 0, size);
+  cgc_memset(bloomy->bits, 0, size);
 
   bloomy->hashes[0] = hash1;
   bloomy->hashes[1] = hash2;
@@ -52,31 +52,31 @@ bloomy_t* bloomy_new(size_t size, hash_t hash1, hash_t hash2, hash_t hash3)
   return bloomy;
 
 fail:
-  bloomy_free(bloomy);
+  cgc_bloomy_free(bloomy);
   return NULL;
 }
 
-void bloomy_free(bloomy_t *bloomy)
+void cgc_bloomy_free(cgc_bloomy_t *bloomy)
 {
   if (bloomy)
   {
     if (bloomy->bits)
-      free(bloomy->bits);
-    free(bloomy);
+      cgc_free(bloomy->bits);
+    cgc_free(bloomy);
   }
 }
 
-int bloomy_check(bloomy_t *bloomy, const char *buf)
+int cgc_bloomy_check(cgc_bloomy_t *bloomy, const char *buf)
 {
-  uint8_t bit;
+  cgc_uint8_t bit;
   unsigned int i, n;
   if (bloomy == NULL || bloomy->bits == NULL)
     return -1;
-  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i)
+  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(cgc_hash_t); ++i)
   {
     if (bloomy->hashes[i])
     {
-      n = (bloomy->hashes[i](buf, strlen(buf)) % bloomy->size);
+      n = (bloomy->hashes[i](buf, cgc_strlen(buf)) % bloomy->size);
       bit = (bloomy->bits[n/8] & (1 << (n%8)));
       if (!bit)
         return 0;
@@ -85,16 +85,16 @@ int bloomy_check(bloomy_t *bloomy, const char *buf)
   return 1;
 }
 
-void bloomy_add(bloomy_t *bloomy, const char *buf)
+void cgc_bloomy_add(cgc_bloomy_t *bloomy, const char *buf)
 {
-  uint8_t bit;
+  cgc_uint8_t bit;
   unsigned int i, n;
 
-  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(hash_t); ++i)
+  for (i = 0; i < sizeof(bloomy->hashes) / sizeof(cgc_hash_t); ++i)
   {
     if (bloomy->hashes[i])
     {
-      n = (bloomy->hashes[i](buf, strlen(buf)) % bloomy->size);
+      n = (bloomy->hashes[i](buf, cgc_strlen(buf)) % bloomy->size);
       bloomy->bits[n/8] |= (1 << (n%8));
     }
   }

@@ -28,39 +28,39 @@ THE SOFTWARE.
 #include "jlib.h"
 
 extern int CURRENT_USER;
-//extern users_t USERS[MAX_USERS];
-extern users_t *USERS;
+//extern cgc_users_t USERS[MAX_USERS];
+extern cgc_users_t *USERS;
 extern int NUM_USERS;
 
-void SendMessage(void) {
+void cgc_SendMessage(void) {
 	char user[MAX_USER_NAME_LEN+1];
 	char message[MAX_MESSAGE_LEN];
 	int i, j;
 
 	// read in the To:
-	zero(user, MAX_USER_NAME_LEN+1);
-	print("To: ");
-	if (read_until(user, '\n', MAX_USER_NAME_LEN+1) == -1) {
+	cgc_zero(user, MAX_USER_NAME_LEN+1);
+	cgc_print("To: ");
+	if (cgc_read_until(user, '\n', MAX_USER_NAME_LEN+1) == -1) {
 		_terminate(-1);
 	}
 
-	if (strlen(user) == 0) {
+	if (cgc_strlen(user) == 0) {
 		return;
 	}
 
 	// read in the Message:
-	zero(message, MAX_MESSAGE_LEN);
-	print("Message: ");
-	if (read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
+	cgc_zero(message, MAX_MESSAGE_LEN);
+	cgc_print("Message: ");
+	if (cgc_read_until(message, '\n', MAX_MESSAGE_LEN) == -1) {
 		_terminate(-1);
 	}
-	if (strlen(message) == 0) {
+	if (cgc_strlen(message) == 0) {
 		return;
 	}
 
 	// find the recipient
 	for (i = 0; i < NUM_USERS; i++) {
-		if (strmatch(user, USERS[i].name)) {
+		if (cgc_strmatch(user, USERS[i].name)) {
 			break;
 		}
 	}
@@ -70,13 +70,13 @@ void SendMessage(void) {
 
 	if (USERS[i].top_message == MAX_MESSAGES) {
 		// recipient's mailbox is full
-		print("[-] Recipient's mailbox is full\n");
+		cgc_print("[-] Recipient's mailbox is full\n");
 		return;
 	}
 	
 	// store the message
 	j = USERS[i].top_message+1;
-	strcopy(USERS[i].messages[j], message);
+	cgc_strcopy(USERS[i].messages[j], message);
 	USERS[i].msg_read[j] = 0;
 	USERS[i].top_message = j;
 
@@ -84,48 +84,48 @@ void SendMessage(void) {
 
 }
 
-void ReadMessage(void) {
+void cgc_ReadMessage(void) {
 	char id[4];
 	int id_val;
 
 	// read in the ID:
-	zero(id, 4);
-	print("ID: ");
-	if (read_until(id, '\n', 4) == -1) {
+	cgc_zero(id, 4);
+	cgc_print("ID: ");
+	if (cgc_read_until(id, '\n', 4) == -1) {
 		_terminate(-1);
 	}
-	if (strlen(id) == 0) {
+	if (cgc_strlen(id) == 0) {
 		return;
 	}
 
-	if (!isdigits(id)) {
+	if (!cgc_isdigits(id)) {
 		return;
 	}
-	id_val = atoi(id);
+	id_val = cgc_atoi(id);
 
 	if (id_val > USERS[CURRENT_USER].top_message) {
-		print("[-] Message ID out of range\n");
+		cgc_print("[-] Message ID out of range\n");
 		return;
 	}
 
 	if (USERS[CURRENT_USER].messages[id_val][0] == '\0') {
-		print("[-] Message ID not found\n");
+		cgc_print("[-] Message ID not found\n");
 		return;
 	}
 
-	// print the message
-	print("***********************************\n");
-	print(id);
-	print(":  ");
-	print(USERS[CURRENT_USER].messages[id_val]);
-	print("\n");
-	print("***********************************\n");
+	// cgc_print the message
+	cgc_print("***********************************\n");
+	cgc_print(id);
+	cgc_print(":  ");
+	cgc_print(USERS[CURRENT_USER].messages[id_val]);
+	cgc_print("\n");
+	cgc_print("***********************************\n");
 	USERS[CURRENT_USER].msg_read[id_val] = 1;
 
 	return;
 }
 
-void ListMessages(void) {
+void cgc_ListMessages(void) {
 	unsigned int i;
 
 	for (i = 1; i <= USERS[CURRENT_USER].top_message; i++) {
@@ -133,49 +133,49 @@ void ListMessages(void) {
 			continue;
 		}
 
-		print("***********************************\n");
-		print_uint(i);
-		print(":  ");
-		print(USERS[CURRENT_USER].messages[i]);
-		print("\n");
-		print("***********************************\n");
+		cgc_print("***********************************\n");
+		cgc_print_uint(i);
+		cgc_print(":  ");
+		cgc_print(USERS[CURRENT_USER].messages[i]);
+		cgc_print("\n");
+		cgc_print("***********************************\n");
 		
 	}
 
 	return;
 }
 
-void DeleteMessage(void) {
+void cgc_DeleteMessage(void) {
 	char id[4];
 	int id_val;
 
 	// read in the ID:
-	zero(id, 4);
-	print("ID: ");
-	if (read_until(id, '\n', 4) == -1) {
+	cgc_zero(id, 4);
+	cgc_print("ID: ");
+	if (cgc_read_until(id, '\n', 4) == -1) {
 		_terminate(-1);
 	}
-	if (strlen(id) == 0) {
+	if (cgc_strlen(id) == 0) {
 		return;
 	}
 
-	if (!isdigits(id)) {
+	if (!cgc_isdigits(id)) {
 		return;
 	}
-	id_val = atoi(id);
+	id_val = cgc_atoi(id);
 
 	if (id_val > USERS[CURRENT_USER].top_message) {
-		print("[-] Message ID out of range\n");
+		cgc_print("[-] Message ID out of range\n");
 		return;
 	}
 
-	zero(USERS[CURRENT_USER].messages[id_val], MAX_MESSAGE_LEN);
+	cgc_zero(USERS[CURRENT_USER].messages[id_val], MAX_MESSAGE_LEN);
 	
 	return;
 
 }
 
-void PrintNewMessages(void) {
+void cgc_PrintNewMessages(void) {
 	unsigned int i;
 	int first = 1;
 
@@ -188,15 +188,15 @@ void PrintNewMessages(void) {
 		}
 
 		if (first) {
-			print("Unread messages:\n");
+			cgc_print("Unread messages:\n");
 			first = 0;
 		}
-		print("***********************************\n");
-		print_uint(i);
-		print(":  ");
-		print(USERS[CURRENT_USER].messages[i]);
-		print("\n");
-		print("***********************************\n");
+		cgc_print("***********************************\n");
+		cgc_print_uint(i);
+		cgc_print(":  ");
+		cgc_print(USERS[CURRENT_USER].messages[i]);
+		cgc_print("\n");
+		cgc_print("***********************************\n");
 
 		USERS[CURRENT_USER].msg_read[i] = 1;
 	}

@@ -26,7 +26,7 @@
 #include <ctype.h>
 #include <string.h>
 
-long strtol(const char *str, char **endptr, int base)
+long cgc_strtol(const char *str, char **endptr, int base)
 {
     const char *orig = str;
     int c, neg = 0;
@@ -36,7 +36,7 @@ long strtol(const char *str, char **endptr, int base)
     if (base != 0 && (base < 2 || base > 36)) return 0;
 
     /* skip whitespace */
-    while (*str && isspace(*str))
+    while (*str && cgc_isspace(*str))
         str++;
 
     /* parse potential -/+ (default to positive) */
@@ -73,7 +73,7 @@ long strtol(const char *str, char **endptr, int base)
     while ((c = *str))
     {
         /* search for c */
-        const char *idx = memchr(alphabet, tolower(c), base);
+        const char *idx = cgc_memchr(alphabet, cgc_tolower(c), base);
         if (idx == NULL)
             break;
         /* XXX clamp to LONG_MAX / LONG_MIN */
@@ -95,7 +95,7 @@ long strtol(const char *str, char **endptr, int base)
         return val;
 }
 
-unsigned long strtoul(const char *str, char **endptr, int base)
+unsigned long cgc_strtoul(const char *str, char **endptr, int base)
 {
-    return (unsigned long)strtol(str, endptr, base);
+    return (unsigned long)cgc_strtol(str, endptr, base);
 }

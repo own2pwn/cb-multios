@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,11 +29,11 @@ THE SOFTWARE.
 #define FLAG_PAGE 0x4347c000
 
 
-void InitializeRandomness();
+void cgc_InitializeRandomness();
 
-char *GenerateRandomString(int length); 
+char *cgc_GenerateRandomString(int length); 
 
 // Returns random number between min and max inclusive
-unsigned int GenerateRandomNumber(int min, int max);
+unsigned int cgc_GenerateRandomNumber(int min, int max);
 
 #endif

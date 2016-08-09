@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 
 #include "pkk.h"
 
-char* skip_whitespace(char *p, int max_len)
+char* cgc_skip_whitespace(char *p, int max_len)
 {
   while (*p == '\n' || *p == '\r' || *p == ' ' || *p == '\t')
   {
@@ -41,24 +41,24 @@ char* skip_whitespace(char *p, int max_len)
   return p;
 }
 
-pkk_t* parse_pkk(char *data, unsigned int len)
+cgc_pkk_t* cgc_parse_pkk(char *data, unsigned int len)
 {
   unsigned int sofar = 0;
   char *c = data;
-  pkk_t *pkk = NULL;
+  cgc_pkk_t *pkk = NULL;
 
   if (data == NULL)
     goto fail;
 
-  pkk = (pkk_t *) malloc(sizeof(pkk_t));
+  pkk = (cgc_pkk_t *) cgc_malloc(sizeof(cgc_pkk_t));
   if (pkk == NULL)
     goto fail;
 
   /* Header */
-  if (memcmp(c, "PK\n", 3) != 0)
+  if (cgc_memcmp(c, "PK\n", 3) != 0)
     goto fail;
   c += 3;
-  c = skip_whitespace(c, len - 3);
+  c = cgc_skip_whitespace(c, len - 3);
   if (data + len <= c)
     goto fail;
 
@@ -75,58 +75,58 @@ pkk_t* parse_pkk(char *data, unsigned int len)
 
   /* Width and Height */
   int width, height;
-  height = strtoul(c, &c, 10);
-  width = strtoul(c, &c, 10);
+  height = cgc_strtoul(c, &c, 10);
+  width = cgc_strtoul(c, &c, 10);
 
-  c = skip_whitespace(c, data + len - c);
+  c = cgc_skip_whitespace(c, data + len - c);
 
   /* Max color value */
-  if (strtoul(c, &c, 10) != 255)
+  if (cgc_strtoul(c, &c, 10) != 255)
     goto fail;
 
   /* Skip one byte (whitespace) */
   c++;
 
   /* Copy pixel data */
-  pkk = (pkk_t *) malloc(sizeof(pkk_t));
+  pkk = (cgc_pkk_t *) cgc_malloc(sizeof(cgc_pkk_t));
   pkk->width = width;
   pkk->height = height;
-  if (sizeof(pixel_t) > (0xFFFFFFFF / width) / height)
+  if (sizeof(cgc_pixel_t) > (0xFFFFFFFF / width) / height)
     goto fail;
 #ifdef PATCHED
-  if ((c - data) + sizeof(pixel_t) * width * height > len)
+  if ((c - data) + sizeof(cgc_pixel_t) * width * height > len)
 #else
-  if (c + sizeof(pixel_t) * width * height > data + len)
+  if (c + sizeof(cgc_pixel_t) * width * height > data + len)
 #endif
     goto fail;
-  pkk->pixels = (pixel_t *) malloc(sizeof(pixel_t) * width * height);
+  pkk->pixels = (cgc_pixel_t *) cgc_malloc(sizeof(cgc_pixel_t) * width * height);
   if (pkk->pixels == NULL)
     goto fail;
-  memcpy(pkk->pixels, c, sizeof(pixel_t) * width * height);
+  cgc_memcpy(pkk->pixels, c, sizeof(cgc_pixel_t) * width * height);
   return pkk;
 
 fail:
-  free_pkk(pkk);
+  cgc_free_pkk(pkk);
   return NULL;
 }
 
-char* output_pkk(pkk_t *pkk, int *out_len)
+char* cgc_output_pkk(cgc_pkk_t *pkk, int *out_len)
 {
   char *cur;
   unsigned int len;
-  len = sizeof(pixel_t) * pkk->width * pkk->height + 3 + 50 + 1 + 3 + 1;
+  len = sizeof(cgc_pixel_t) * pkk->width * pkk->height + 3 + 50 + 1 + 3 + 1;
   char *buffer = NULL;
 
-  buffer = malloc(len);
+  buffer = cgc_malloc(len);
   if (buffer == NULL)
     goto fail;
-  memset(buffer, '\0', len);
+  cgc_memset(buffer, '\0', len);
 
   cur = buffer;
-  strcpy(cur, "PK\n");
+  cgc_strcpy(cur, "PK\n");
 
   cur += 3;
-  int n = sprintf(cur, "%d %d\n255\n", pkk->height, pkk->width);
+  int n = cgc_sprintf(cur, "%d %d\n255\n", pkk->height, pkk->width);
   if (n == -1)
     goto fail;
   cur += n;
@@ -145,17 +145,17 @@ char* output_pkk(pkk_t *pkk, int *out_len)
 
 fail:
   if (buffer)
-    free(buffer);
+    cgc_free(buffer);
   *out_len = 0;
   return NULL;
 }
 
-void free_pkk(pkk_t *pkk)
+void cgc_free_pkk(cgc_pkk_t *pkk)
 {
   if (pkk)
   {
     if (pkk->pixels)
-      free(pkk->pixels);
-    free(pkk);
+      cgc_free(pkk->pixels);
+    cgc_free(pkk);
   }
 }

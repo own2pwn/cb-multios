@@ -46,7 +46,7 @@ DefineFunction(IO, void, wait_for, char c)
     char in;
 
     do {
-        size_t bytes;
+        cgc_size_t bytes;
         if (receive(this->input_fd, &in, 1, &bytes) != 0 || bytes != 1)
             break;
     } while (in != c);
@@ -54,17 +54,17 @@ DefineFunction(IO, void, wait_for, char c)
 
 DefineFunction(IO, void, wait_for_input)
 {
-    fd_set rfds;
+    cgc_fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(this->input_fd, &rfds);
 
     // wait indefinitely for user input
-    fdwait(this->input_fd + 1, &rfds, NULL, NULL, NULL);
+    cgc_fdwait(this->input_fd + 1, &rfds, NULL, NULL, NULL);
 }
 
-DefineFunction(IO, size_t, receive, void *buf, size_t count)
+DefineFunction(IO, cgc_size_t, receive, void *buf, cgc_size_t count)
 {
-    size_t bytes;
+    cgc_size_t bytes;
     if (receive(this->input_fd, buf, count, &bytes) != 0)
         bytes = 0;
     return bytes;

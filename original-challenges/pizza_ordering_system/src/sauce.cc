@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -45,46 +45,46 @@ namespace {
         {"Lite Ranch", 300, 30}
     };
 
-    sauce_lut *find_sauce_entry(const char *sauce_name)
+    sauce_lut *cgc_find_sauce_entry(const char *sauce_name)
     {
-        size_t i;
+        cgc_size_t i;
         for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++) {
-            if (strcasecmp(sauces[i].name, sauce_name) == 0)
+            if (cgc_strcasecmp(sauces[i].name, sauce_name) == 0)
                 return &sauces[i];
         }
 
         return NULL;
     }
 
-    void print_list()
+    void cgc_print_list()
     {
-        size_t i;
+        cgc_size_t i;
         for (i = 0; i < sizeof(sauces) / sizeof(sauces[0]); i++)
             printf("%d. %s\n", i + 1, sauces[i].name);
     }
 }
 
-Sauce::Sauce(const char *_name, int _calories, int _carbs)
+cgc_Sauce::cgc_Sauce(const char *_name, int _calories, int _carbs)
 {
     name = _name;
     calories = _calories;
     carbs = _carbs;
 }
 
-Sauce::~Sauce()
+cgc_Sauce::~cgc_Sauce()
 {
 }
 
-Sauce *Sauce::pour_sauce(const char *sauce_name)
+cgc_Sauce *cgc_Sauce::cgc_pour_sauce(const char *sauce_name)
 {
-    sauce_lut *sauce_entry = find_sauce_entry(sauce_name);
+    sauce_lut *sauce_entry = cgc_find_sauce_entry(sauce_name);
     if (!sauce_entry)
         return NULL;
 
-    return new Sauce(sauce_entry->name, sauce_entry->calories, sauce_entry->carbs);
+    return new cgc_Sauce(sauce_entry->name, sauce_entry->calories, sauce_entry->carbs);
 }
 
-void Sauce::list_options()
+void cgc_Sauce::cgc_list_options()
 {
-    print_list();
+    cgc_print_list();
 }

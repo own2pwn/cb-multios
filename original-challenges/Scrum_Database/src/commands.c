@@ -33,9 +33,9 @@ THE SOFTWARE.
 
 #define COMMAND_PREFIX 0x12345678
 
-int receive_commands( productDefType **database ) {
+int cgc_receive_commands( cgc_productDefType **database ) {
 
-commandMessageType command;
+cgc_commandMessageType command;
 int read_length;
 int retval;
 
@@ -44,7 +44,7 @@ int retval;
 
 		read_length = sizeof(command.prefix) + sizeof(command.command_length) + sizeof(command.command_type);
 
-		if (receive_bytes((unsigned char *)&command, read_length) == -1)
+		if (cgc_receive_bytes((unsigned char *)&command, read_length) == -1)
 			_terminate(-1);
 
 		if (command.prefix != COMMAND_PREFIX) {
@@ -59,7 +59,7 @@ int retval;
 			_terminate(-1);
 		}
 
-		if (receive_bytes((unsigned char *)&command.command, command.command_length) == -1)
+		if (cgc_receive_bytes((unsigned char *)&command.command, command.command_length) == -1)
 			_terminate(-1);
 
 		switch (command.command_type) {
@@ -71,69 +71,69 @@ int retval;
 
 				case CREATE_PRODUCT:
 
-					retval=create_product(database, command.command);
+					retval=cgc_create_product(database, command.command);
 					break;
 
 				case DELETE_PRODUCT:
 
-					retval=delete_product(database, (messageIDType *)command.command);
+					retval=cgc_delete_product(database, (cgc_messageIDType *)command.command);
 					break;
 
 				case LIST_PRODUCTS:
 
-					retval=list_product(*database, (messageIDType *)command.command);
+					retval=cgc_list_product(*database, (cgc_messageIDType *)command.command);
 					break;
 
 				case CREATE_PBI:
 
-					retval=create_pbi( *database, (newPBIMessageType *)command.command);
+					retval=cgc_create_pbi( *database, (cgc_newPBIMessageType *)command.command);
 					break;
 
 				case DELETE_PBI:
 
-					retval=delete_pbi( *database, (deletePBIMessageType *)command.command);
+					retval=cgc_delete_pbi( *database, (cgc_deletePBIMessageType *)command.command);
 					break;
 
 				case CREATE_SPRINT:
 
-					retval=create_sprint( *database, (newSprintMessageType *)command.command);
+					retval=cgc_create_sprint( *database, (cgc_newSprintMessageType *)command.command);
 					break;
 
 				case DELETE_SPRINT:
 
-					retval=delete_sprint( *database, (deleteSprintMessageType *)command.command);
+					retval=cgc_delete_sprint( *database, (cgc_deleteSprintMessageType *)command.command);
 					break;
 
 				case MOVE_PBI_TO_SPRINT:
 
 					// move an item from the product backlog to a defined sprint
-					retval=move_pbi_to_sprint( *database, (movePBIMessageType *)command.command);
+					retval=cgc_move_pbi_to_sprint( *database, (cgc_movePBIMessageType *)command.command);
 					break;
 
 				case MOVE_SBI_TO_PBI:
 
 					// move an item from the Sprint back to the product backlog
-					retval=move_sbi_to_pbl( *database, (moveToPBIMessageType *)command.command);
+					retval=cgc_move_sbi_to_pbl( *database, (cgc_moveToPBIMessageType *)command.command);
 					break;
 
 				case UPDATE_SBI_STATUS:
 
-					retval=update_sbi_status( *database, (updateSBIMessageType *)command.command );
+					retval=cgc_update_sbi_status( *database, (cgc_updateSBIMessageType *)command.command );
 					break;
 
 				case UPDATE_SBI_POINTS:
 
-					retval=update_sbi_points( *database, (updateSBIMessageType *)command.command );
+					retval=cgc_update_sbi_points( *database, (cgc_updateSBIMessageType *)command.command );
 					break;
 
 				case UPDATE_SBI_DESCR:
 
-					retval=update_sbi_description( *database, (updateSBIDescMessageType *)command.command );
+					retval=cgc_update_sbi_description( *database, (cgc_updateSBIDescMessageType *)command.command );
 					break;
 
 				case LIST_ALL_PRODUCTS:
 
-					retval = list_all_products( *database );
+					retval = cgc_list_all_products( *database );
 					break;
 
 		} // switch
@@ -141,18 +141,18 @@ int retval;
 	} // while (1)
 
 
-} // receive_commands
+} // cgc_receive_commands
 
 
 
-int send_response(int response_code) {
+int cgc_send_response(int response_code) {
 
-commandResponseType message;
+cgc_commandResponseType message;
 
 	message.prefix = 0x87654321;
 	message.command_response = response_code;
 
-	write( STDOUT, (void *)&message, sizeof(message) );
+	cgc_write( STDOUT, (void *)&message, sizeof(message) );
 
 	return 0;
 	

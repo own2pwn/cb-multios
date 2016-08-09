@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 // Verify VGF Header
 // Returns 0 for success, -1 for failure
-int VGFVerify(VGF_Header *header) {
+int cgc_VGFVerify(cgc_VGF_Header *header) {
   if (header->magic != VGF_MAGIC) {
     return -1;
   }
@@ -49,11 +49,11 @@ int VGFVerify(VGF_Header *header) {
 
 // Process VGF file contents and render the image objects to the canvas
 // Returns 0 for success, -1 for failure
-int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
-  uint8_t *file_data = *file_data_in;
+int cgc_VGFProcess(cgc_uint8_t **file_data_in, cgc_uint8_t *file_end, cgc_Canvas *c) {
+  cgc_uint8_t *file_data = *file_data_in;
   while (file_data < file_end) {
-    VGF_Object *o = (VGF_Object *)file_data;
-    file_data += sizeof(VGF_Object);
+    cgc_VGF_Object *o = (cgc_VGF_Object *)file_data;
+    file_data += sizeof(cgc_VGF_Object);
     
     if (o->type == VGF_OBJECT_LAST) {
       *file_data_in = file_data;
@@ -70,33 +70,33 @@ int VGFProcess(uint8_t **file_data_in, uint8_t *file_end, Canvas *c) {
 
     switch (o->type) {
       case VGF_OBJECT_TRIANGLE: {
-        PaintTriangle(c, o->layer, o->color, o->fill, (VGF_Triangle *)file_data);
-        file_data += sizeof(VGF_Triangle);
+        cgc_PaintTriangle(c, o->layer, o->color, o->fill, (cgc_VGF_Triangle *)file_data);
+        file_data += sizeof(cgc_VGF_Triangle);
         break;
       }
       case VGF_OBJECT_LINE: {
-        PaintLine(c, o->layer, o->color, o->fill, (VGF_Line *)file_data);
-        file_data += sizeof(VGF_Line);
+        cgc_PaintLine(c, o->layer, o->color, o->fill, (cgc_VGF_Line *)file_data);
+        file_data += sizeof(cgc_VGF_Line);
         break;
       }
       case VGF_OBJECT_CIRCLE: {
-        PaintCircle(c, o->layer, o->color, o->fill, (VGF_Circle *)file_data);
-        file_data += sizeof(VGF_Circle);
+        cgc_PaintCircle(c, o->layer, o->color, o->fill, (cgc_VGF_Circle *)file_data);
+        file_data += sizeof(cgc_VGF_Circle);
         break;
       }
       case VGF_OBJECT_SQUARE: {
-        PaintSquare(c, o->layer, o->color, o->fill, (VGF_Square *)file_data);
-        file_data += sizeof(VGF_Square);
+        cgc_PaintSquare(c, o->layer, o->color, o->fill, (cgc_VGF_Square *)file_data);
+        file_data += sizeof(cgc_VGF_Square);
         break;
       }
       case VGF_OBJECT_RECTANGLE: {
-        PaintRectangle(c, o->layer, o->color, o->fill, (VGF_Rectangle *)file_data);
-        file_data += sizeof(VGF_Rectangle);
+        cgc_PaintRectangle(c, o->layer, o->color, o->fill, (cgc_VGF_Rectangle *)file_data);
+        file_data += sizeof(cgc_VGF_Rectangle);
         break;
       }
       case VGF_OBJECT_SPRAY: {
-        PaintSpray(c, o->layer, o->color, o->fill, (VGF_Spray *)file_data);
-        file_data += sizeof(VGF_Spray);
+        cgc_PaintSpray(c, o->layer, o->color, o->fill, (cgc_VGF_Spray *)file_data);
+        file_data += sizeof(cgc_VGF_Spray);
         break;
       }
       default:

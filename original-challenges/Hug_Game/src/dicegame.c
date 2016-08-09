@@ -28,76 +28,76 @@ THE SOFTWARE.
 #include "gamestate.h"
 #include "utility.h"
 
-extern gamestate *state;
+extern cgc_gamestate *state;
 
-void dicegame() {
+void cgc_dicegame() {
 	char howmany[16];
 	unsigned int rolls[16];
-	bzero((char *)rolls, sizeof(rolls));
+	cgc_bzero((char *)rolls, sizeof(rolls));
 	int rollnum = 0;
 	int wager = 0;
 	int maxrolls;
 
-	bzero(howmany, 16);
+	cgc_bzero(howmany, 16);
 
-	wager = getBet(state);
+	wager = cgc_getBet(state);
 	if(wager == -1)
 		return;
 
-	put("How many rolls do you want? ");
-	recvUntil(0, howmany, 15, '\n');
-	maxrolls = atoi(howmany);
+	cgc_put("How many rolls do you want? ");
+	cgc_recvUntil(0, howmany, 15, '\n');
+	maxrolls = cgc_atoi(howmany);
 
 	while(rollnum < maxrolls) {
-		put("Rolling a 31337 sided dice. 31337 wins jackpot. If you guess within 100, you win.\n");
-		put("What is your guess for the dice? ");
+		cgc_put("Rolling a 31337 sided dice. 31337 wins jackpot. If you guess within 100, you win.\n");
+		cgc_put("What is your guess for the dice? ");
 		#ifdef PATCHED_1
-		rolls[rollnum%16] = hugsnextrand(state);
+		rolls[rollnum%16] = cgc_hugsnextrand(state);
 		if(rolls[rollnum%16] % 31338 == 31337)
 		#else
-		rolls[rollnum] = hugsnextrand(state);
+		rolls[rollnum] = cgc_hugsnextrand(state);
 		if(rolls[rollnum] % 31338 == 31337)
 		#endif
 		{
-			put("!!!JACKPOT!!!");
+			cgc_put("!!!JACKPOT!!!");
 			wager*=1000;
-			handleOutcome(state, 1, wager);
+			cgc_handleOutcome(state, 1, wager);
 		} else {
-			bzero(howmany, 16);
-			recvUntil(0, howmany, 15, '\n');
+			cgc_bzero(howmany, 16);
+			cgc_recvUntil(0, howmany, 15, '\n');
 			#ifdef PATCHED_1
-			if((((rolls[rollnum%16]%31338) < 100) || (atoi(howmany) > (rolls[rollnum%16]%31338)-100)) && (atoi(howmany) < (rolls[rollnum%16]%31338)+100))
+			if((((rolls[rollnum%16]%31338) < 100) || (cgc_atoi(howmany) > (rolls[rollnum%16]%31338)-100)) && (cgc_atoi(howmany) < (rolls[rollnum%16]%31338)+100))
 			#else
-			if((((rolls[rollnum]%31338) < 100) || (atoi(howmany) > (rolls[rollnum]%31338)-100)) && (atoi(howmany) < (rolls[rollnum]%31338)+100))
+			if((((rolls[rollnum]%31338) < 100) || (cgc_atoi(howmany) > (rolls[rollnum]%31338)-100)) && (cgc_atoi(howmany) < (rolls[rollnum]%31338)+100))
 			#endif
 			{
 	
-				put("Yes! ");
-				put(howmany);
-				put(" is ");
+				cgc_put("Yes! ");
+				cgc_put(howmany);
+				cgc_put(" is ");
 				#ifdef PATCHED_1
-				if((signed int)((rolls[rollnum%16]%31338)-atoi(howmany)) < 0) {
-					put(itoa(atoi(howmany)-(rolls[rollnum%16]%31338)));
+				if((signed int)((rolls[rollnum%16]%31338)-cgc_atoi(howmany)) < 0) {
+					cgc_put(cgc_itoa(cgc_atoi(howmany)-(rolls[rollnum%16]%31338)));
 				} else {
-					put(itoa((rolls[rollnum%16]%31338)-atoi(howmany)));
+					cgc_put(cgc_itoa((rolls[rollnum%16]%31338)-cgc_atoi(howmany)));
 				}
 				#else
-				if((signed int)((rolls[rollnum]%31338)-atoi(howmany)) < 0) {
-					put(itoa(atoi(howmany)-(rolls[rollnum]%31338)));
+				if((signed int)((rolls[rollnum]%31338)-cgc_atoi(howmany)) < 0) {
+					cgc_put(cgc_itoa(cgc_atoi(howmany)-(rolls[rollnum]%31338)));
 				} else {
-					put(itoa((rolls[rollnum]%31338)-atoi(howmany)));
+					cgc_put(cgc_itoa((rolls[rollnum]%31338)-cgc_atoi(howmany)));
 				}
 				#endif
-				put(" away from ");
+				cgc_put(" away from ");
 				#ifdef PATCHED_1
-				put(itoa((rolls[rollnum%16]%31338)));
+				cgc_put(cgc_itoa((rolls[rollnum%16]%31338)));
 				#else
-				put(itoa((rolls[rollnum]%31338)));
+				cgc_put(cgc_itoa((rolls[rollnum]%31338)));
 				#endif
-				put("\n");
-				handleOutcome(state, 1, wager);
+				cgc_put("\n");
+				cgc_handleOutcome(state, 1, wager);
 			} else {
-				handleOutcome(state, 0, wager);
+				cgc_handleOutcome(state, 0, wager);
 			}
 		}
 		rollnum++;

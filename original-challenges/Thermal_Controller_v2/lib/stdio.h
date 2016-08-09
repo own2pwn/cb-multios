@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,12 +29,12 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include <stdarg.h>
 
-int putchar( int c );
+int cgc_putchar( int c );
 
-int printf( const char *format, ... );
-int vprintf( const char *format, va_list args );
-int sprintf( char *buf, const char *format, ... );
-int vsprintf( char *buf, const char *format, va_list args );
-int puts( const char *s );
+int cgc_printf( const char *format, ... );
+int cgc_vprintf( const char *format, cgc_va_list args );
+int cgc_sprintf( char *buf, const char *format, ... );
+int cgc_vsprintf( char *buf, const char *format, cgc_va_list args );
+int cgc_puts( const char *s );
 
 #endif // __STDIO_H__

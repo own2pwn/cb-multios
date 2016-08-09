@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,64 +26,64 @@
 #include <cstdlib.h>
 
 template <typename T>
-class CList
+class cgc_CList
 {
     public:
-        CList() : m_head(NULL), m_size(0) {}
-        CList(const CList<T> & l);
-        ~CList();
+        cgc_CList() : m_head(NULL), m_size(0) {}
+        cgc_CList(const cgc_CList<T> & l);
+        ~cgc_CList();
 
-        size_t GetSize() const { return m_size; }
-        bool IsEmpty() const { return m_size == 0; }
-        T GetAt(int idx) const ;
+        cgc_size_t cgc_GetSize() const { return m_size; }
+        bool cgc_IsEmpty() const { return m_size == 0; }
+        T cgc_GetAt(int idx) const ;
 
-        void Append(T item);
-        void InsertAt(T item, int idx);
-        T RemoveAt(int idx);
-        void Remove(T item);
-        bool Has(T item);
+        void cgc_Append(T item);
+        void cgc_InsertAt(T item, int idx);
+        T cgc_RemoveAt(int idx);
+        void cgc_Remove(T item);
+        bool cgc_Has(T item);
 
     private:
-        class CNode {
-            friend class CList<T>;
+        class cgc_CNode {
+            friend class cgc_CList<T>;
             private:
                 T m_data;
-                CNode *m_next;
+                cgc_CNode *m_next;
             public:
-                CNode(T data, CNode *next) : m_data(data), m_next(next) {}
+                cgc_CNode(T data, cgc_CNode *next) : m_data(data), m_next(next) {}
         };
 
-        CNode *m_head;
-        size_t m_size;
+        cgc_CNode *m_head;
+        cgc_size_t m_size;
 };
 
 template <typename T>
-CList<T>::CList(const CList<T> &l) : m_head(NULL), m_size(0)
+cgc_CList<T>::cgc_CList(const cgc_CList<T> &l) : m_head(NULL), m_size(0)
 {
-    CNode *cur = l.m_head;
+    cgc_CNode *cur = l.m_head;
     while (cur)
     {
-        this->Append(cur->m_data);
+        this->cgc_Append(cur->m_data);
         cur = cur->m_next;
     }
 }
 
 template <typename T>
-CList<T>::~CList()
+cgc_CList<T>::~cgc_CList()
 {
-    while (!this->IsEmpty())
-        this->RemoveAt(0);
+    while (!this->cgc_IsEmpty())
+        this->cgc_RemoveAt(0);
 }
 
 template <typename T>
-void CList<T>::Append(T d)
+void cgc_CList<T>::cgc_Append(T d)
 {
-    CNode *node = new CNode(d, NULL);
-    if (this->IsEmpty())
+    cgc_CNode *node = new cgc_CNode(d, NULL);
+    if (this->cgc_IsEmpty())
         m_head = node;
     else
     {
-        CNode *cur = m_head;
+        cgc_CNode *cur = m_head;
         while (cur->m_next)
             cur = cur->m_next;
         cur->m_next = node;
@@ -92,14 +92,14 @@ void CList<T>::Append(T d)
 }
 
 template <typename T>
-void CList<T>::InsertAt(T d, int idx)
+void cgc_CList<T>::cgc_InsertAt(T d, int idx)
 {
-    CNode *cur = m_head, *prev = NULL;
+    cgc_CNode *cur = m_head, *prev = NULL;
     if (idx > m_size)
         return;
     if (idx == m_size)
     {
-        this->Append(d);
+        this->cgc_Append(d);
         return;
     }
     while (idx--)
@@ -107,15 +107,15 @@ void CList<T>::InsertAt(T d, int idx)
         prev = cur;
         cur = cur->m_next;
     }
-    CNode *node = new CNode(d, cur);
+    cgc_CNode *node = new cgc_CNode(d, cur);
     if (prev)
         prev->m_next = node;
 }
 
 template <typename T>
-T CList<T>::GetAt(int idx) const
+T cgc_CList<T>::cgc_GetAt(int idx) const
 {
-    CNode *cur = m_head;
+    cgc_CNode *cur = m_head;
     if (idx >= m_size)
         return NULL;
     while (idx--)
@@ -124,9 +124,9 @@ T CList<T>::GetAt(int idx) const
 }
 
 template <typename T>
-T CList<T>::RemoveAt(int idx)
+T cgc_CList<T>::cgc_RemoveAt(int idx)
 {
-    CNode *cur = m_head, *prev = NULL;
+    cgc_CNode *cur = m_head, *prev = NULL;
     if (idx >= m_size)
         return  NULL;
     while (idx--)
@@ -145,10 +145,10 @@ T CList<T>::RemoveAt(int idx)
 }
 
 template <typename T>
-void CList<T>::Remove(T item)
+void cgc_CList<T>::cgc_Remove(T item)
 {
-    CNode *cur = m_head, *prev = NULL;
-    if (IsEmpty())
+    cgc_CNode *cur = m_head, *prev = NULL;
+    if (cgc_IsEmpty())
         return;
     while (cur)
     {
@@ -168,10 +168,10 @@ void CList<T>::Remove(T item)
 }
 
 template <typename T>
-bool CList<T>::Has(T item)
+bool cgc_CList<T>::cgc_Has(T item)
 {
-    CNode *cur = m_head;
-    if (IsEmpty())
+    cgc_CNode *cur = m_head;
+    if (cgc_IsEmpty())
         return false;
     while (cur)
     {

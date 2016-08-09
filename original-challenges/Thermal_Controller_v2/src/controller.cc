@@ -37,7 +37,7 @@ THE SOFTWARE.
 
 
 
-Controller::Controller() 
+cgc_Controller::cgc_Controller() 
 {
 	m_current_sensor_count = 0;
 	m_version = VERSION;
@@ -48,38 +48,38 @@ Controller::Controller()
 	m_set_temp = 0;
 	m_smokeSensorPresent = false;
 
-	ClearBackupProgram();
-	ClearProgram();
+	cgc_ClearBackupProgram();
+	cgc_ClearProgram();
 }
 
-Controller::~Controller() 
+cgc_Controller::~cgc_Controller() 
 {
-	m_sensor_list.DeleteAll();
+	m_sensor_list.cgc_DeleteAll();
 }
 
 //
 // Add a sensor to the sensor list
 //
-bool Controller::AddSensor( Sensor *s ) 
+bool cgc_Controller::cgc_AddSensor( cgc_Sensor *s ) 
 {
 	// already full?
 	if ( m_current_sensor_count >= 10 )
 		return false; 
 
-	m_sensor_list.AddLast( s );
+	m_sensor_list.cgc_AddLast( s );
 
 	m_current_sensor_count += 1;
 
 	return true;
 }
 
-bool Controller::SetSensor( uint16_t sensor_type, bool val )
+bool cgc_Controller::cgc_SetSensor( cgc_uint16_t sensor_type, bool val )
 {
-	for ( Sensor *pCur = m_sensor_list.GetFirst(); pCur; pCur = m_sensor_list.GetNext( pCur ) )
+	for ( cgc_Sensor *pCur = m_sensor_list.cgc_GetFirst(); pCur; pCur = m_sensor_list.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetType() == sensor_type )
+		if ( pCur->cgc_GetType() == sensor_type )
 		{
-			pCur->SetEnabled( ( bool )val );
+			pCur->cgc_SetEnabled( ( bool )val );
 
 			return true;
 		}
@@ -90,11 +90,11 @@ bool Controller::SetSensor( uint16_t sensor_type, bool val )
 //
 // Remove a sensor to the sensor list
 //
-bool Controller::RemoveSensor( uint16_t id )
+bool cgc_Controller::cgc_RemoveSensor( cgc_uint16_t id )
 {
-	for ( Sensor *pCur = m_sensor_list.GetFirst(); pCur; pCur = m_sensor_list.GetNext( pCur ) )
+	for ( cgc_Sensor *pCur = m_sensor_list.cgc_GetFirst(); pCur; pCur = m_sensor_list.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetType() == id )
+		if ( pCur->cgc_GetType() == id )
 		{
 			delete pCur;
 
@@ -106,26 +106,26 @@ bool Controller::RemoveSensor( uint16_t id )
 	return false;
 }
 
-uint16_t Controller::GetSensorCount()
+cgc_uint16_t cgc_Controller::cgc_GetSensorCount()
 {
 	return m_current_sensor_count;
 }
 
-void Controller::PrintSensorList()
+void cgc_Controller::cgc_PrintSensorList()
 {
-	printf( "sl:");
-	for ( Sensor *pCur = m_sensor_list.GetFirst(); pCur; pCur = m_sensor_list.GetNext( pCur ) )
+	cgc_printf( "sl:");
+	for ( cgc_Sensor *pCur = m_sensor_list.cgc_GetFirst(); pCur; pCur = m_sensor_list.cgc_GetNext( pCur ) )
 	{
-		printf( "$d ", pCur->GetType() );
+		cgc_printf( "$d ", pCur->cgc_GetType() );
 	}
-	printf("\n");
+	cgc_printf("\n");
 }
 
 //
 // Set power to on or off
 // When system is turned off, heater turns off and programmer resets
 //
-void Controller::setPowerOn( bool val )
+void cgc_Controller::cgc_setPowerOn( bool val )
 {
 	m_powerOn = val;
 	if ( val == false )
@@ -138,7 +138,7 @@ void Controller::setPowerOn( bool val )
 //
 // Set temperature, as long is it's in valid range (175 - 350)
 //
-bool Controller::setSetTemp( int32_t val )
+bool cgc_Controller::cgc_setSetTemp( cgc_int32_t val )
 {
 	if ( val > 350 || val < 175 )
 		return false;
@@ -149,11 +149,11 @@ bool Controller::setSetTemp( int32_t val )
 }
 
 // TODO: search list and return true if found
-bool Controller::IsSensorInList( uint16_t id )
+bool cgc_Controller::cgc_IsSensorInList( cgc_uint16_t id )
 {
-	for ( Sensor *pCur = m_sensor_list.GetFirst(); pCur; pCur = m_sensor_list.GetNext( pCur ) )
+	for ( cgc_Sensor *pCur = m_sensor_list.cgc_GetFirst(); pCur; pCur = m_sensor_list.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetType() == id )
+		if ( pCur->cgc_GetType() == id )
 		{
 			return true;
 		}
@@ -164,7 +164,7 @@ bool Controller::IsSensorInList( uint16_t id )
 //
 // Back up current program to temp storage
 //
-void Controller::BackupProgram()
+void cgc_Controller::cgc_BackupProgram()
 {
 	for ( int i = 0; i < 10; i++ )
 	{
@@ -175,7 +175,7 @@ void Controller::BackupProgram()
 //
 // Overwite current programs with backup
 //
-void Controller::RevertProgram()
+void cgc_Controller::cgc_RevertProgram()
 {
 	for ( int i = 0; i < 10; i++ )
 	{
@@ -183,33 +183,33 @@ void Controller::RevertProgram()
 	}
 }
 
-void Controller::ClearBackupProgram()
+void cgc_Controller::cgc_ClearBackupProgram()
 {
 	for ( int i = 0; i < 10; i++ )
 	{
-		m_controllerProgramBackup[i].setStepType( 0 );
-		m_controllerProgramBackup[i].setSensorId( 0 );
-		m_controllerProgramBackup[i].setSetTemp( 0 );
-		m_controllerProgramBackup[i].setDuration( 0 );
+		m_controllerProgramBackup[i].cgc_setStepType( 0 );
+		m_controllerProgramBackup[i].cgc_setSensorId( 0 );
+		m_controllerProgramBackup[i].cgc_setSetTemp( 0 );
+		m_controllerProgramBackup[i].cgc_setDuration( 0 );
 	}
 }
 
-void Controller::ClearProgram()
+void cgc_Controller::cgc_ClearProgram()
 {
 	for ( int i = 0; i < 10; i++ )
 	{
-		m_controllerProgram[i].setStepType( 0 );
-		m_controllerProgram[i].setSensorId( 0 );
-		m_controllerProgram[i].setSetTemp( 0 );
-		m_controllerProgram[i].setDuration( 0 );
+		m_controllerProgram[i].cgc_setStepType( 0 );
+		m_controllerProgram[i].cgc_setSensorId( 0 );
+		m_controllerProgram[i].cgc_setSetTemp( 0 );
+		m_controllerProgram[i].cgc_setDuration( 0 );
 	}
 }
 
 // test only
-void Controller::PrintPrograms()
+void cgc_Controller::cgc_PrintPrograms()
 {
 	for ( int i = 0; i < 10; i++ )
 	{
-		printf("Program: $x $x $x $x\n", m_controllerProgram[i].getStepType(), m_controllerProgram[i].getSensorId(), m_controllerProgram[i].getSetTemp(), m_controllerProgram[i].getDuration() );
+		cgc_printf("Program: $x $x $x $x\n", m_controllerProgram[i].cgc_getStepType(), m_controllerProgram[i].cgc_getSensorId(), m_controllerProgram[i].cgc_getSetTemp(), m_controllerProgram[i].cgc_getDuration() );
 	}
 }

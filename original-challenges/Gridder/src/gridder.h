@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,25 +24,25 @@
 #include "enums.h"
 #include "num_gen.h"
 
-class Gridder
+class cgc_Gridder
 {
   public:
-    Gridder();
-    Gridder(const Gridder &copy);
-    void ResetBoard();
-    bool CopyGridder(unsigned int *pboard, int size);
-    bool GenerateNewGridder(int cell_idx, NumGen *pngen);
-    void MakeGridderSolveable(int difficulty, NumGen *pngen);
-    Gridder *FindSolution(int cell_idx);
-    bool HasUniqueSolution(int cell_idx, const Gridder *s1, bool *exit);
-    bool ValidateGridder(const Gridder &master);
-    void Serialize(FILE *out);
-    unsigned int *GetRawGridder(int *size);
-    void Debug();
+    cgc_Gridder();
+    cgc_Gridder(const cgc_Gridder &copy);
+    void cgc_ResetBoard();
+    bool cgc_CopyGridder(unsigned int *pboard, int size);
+    bool cgc_GenerateNewGridder(int cell_idx, cgc_NumGen *pngen);
+    void cgc_MakeGridderSolveable(int difficulty, cgc_NumGen *pngen);
+    cgc_Gridder *cgc_FindSolution(int cell_idx);
+    bool cgc_HasUniqueSolution(int cell_idx, const cgc_Gridder *s1, bool *cgc_exit);
+    bool cgc_ValidateGridder(const cgc_Gridder &master);
+    void cgc_Serialize(cgc_FILE *out);
+    unsigned int *cgc_GetRawGridder(int *size);
+    void cgc_Debug();
 
   private:
-    bool ValidAddNumber(int val, int row, int col);
-    bool ValidCell(int row, int col);
+    bool cgc_ValidAddNumber(int val, int row, int col);
+    bool cgc_ValidCell(int row, int col);
 
     unsigned int board_[SET_SIZE][SET_SIZE];
 };

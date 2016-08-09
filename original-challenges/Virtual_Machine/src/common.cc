@@ -33,16 +33,16 @@ extern "C"
 
 #include "common.h"
 
-uint32_t ReadBytes( uint8_t *pDest, uint32_t numBytes )
+cgc_uint32_t cgc_ReadBytes( cgc_uint8_t *pDest, cgc_uint32_t numBytes )
 {
 	if ( !pDest )
 		return (0);
 
-	size_t bytes_read = 0;
+	cgc_size_t bytes_read = 0;
 	for ( bytes_read = 0; bytes_read < numBytes; )
 	{
-		size_t num_bytes_read;
-		size_t bytes_remaining = (numBytes - bytes_read);
+		cgc_size_t num_bytes_read;
+		cgc_size_t bytes_remaining = (numBytes - bytes_read);
 
 		if ( receive( STDIN, (void *)(pDest+bytes_read), bytes_remaining, &num_bytes_read ) != 0 )
 			_terminate( -1 );

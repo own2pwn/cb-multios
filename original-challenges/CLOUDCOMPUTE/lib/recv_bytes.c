@@ -26,11 +26,11 @@
 #define SUCCESS 0
 
 // An unholy alliance of Paul's CQE function and Nick's CFE function.
-int recv_bytes(int fd, char *buf, unsigned int size) {
+int cgc_recv_bytes(int fd, char *buf, unsigned int size) {
 
   int ret = SUCCESS;
-  size_t bytes_left = size;
-  size_t rx_bytes_local = 0;
+  cgc_size_t bytes_left = size;
+  cgc_size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 

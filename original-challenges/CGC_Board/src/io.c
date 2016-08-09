@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 
 static char input_states[128 * 128];
 
-static void move_to_str(move_t move, char *buf)
+static void cgc_move_to_str(cgc_move_t move, char *buf)
 {
     buf[0] = move.sc + 'm';
     buf[1] = move.sr + '1';
@@ -56,10 +56,10 @@ static void move_to_str(move_t move, char *buf)
     buf[5] = 0;
 }
 
-void init_states()
+void cgc_init_states()
 {
     int i,j;
-    memset(input_states, STATE_ERROR, sizeof(input_states));
+    cgc_memset(input_states, STATE_ERROR, sizeof(input_states));
 #define ADD_STATE(c1, c2, s) input_states[((c1) << 7) + (c2)] = STATE_##s##_START
     for (i = 'm'; i <= 't'; i++)
         for (j = '1'; j <= '8'; j++)
@@ -80,11 +80,11 @@ void init_states()
 #undef ADD_STATE
 }
 
-int read_all(char *buf, size_t n)
+int cgc_read_all(char *buf, cgc_size_t n)
 {
     while (n > 0)
     {
-        size_t bytes;
+        cgc_size_t bytes;
         if (receive(STDIN, buf, n, &bytes) != 0 || bytes == 0)
 //        bytes = read(0, buf, n);
         if (bytes == 0)
@@ -94,102 +94,102 @@ int read_all(char *buf, size_t n)
     return 1;
 }
 
-void write_string(const char *str)
+void cgc_write_string(const char *str)
 {
-    size_t bytes;
-    transmit(STDOUT, str, strlen(str), &bytes);
-//    write(1, str, strlen(str));
+    cgc_size_t bytes;
+    transmit(STDOUT, str, cgc_strlen(str), &bytes);
+//    write(1, str, cgc_strlen(str));
 }
 
-void send_move(move_t m)
+void cgc_send_move(cgc_move_t m)
 {
-    char *buf = malloc(32);
+    char *buf = cgc_malloc(32);
     if (buf == NULL)
         return;
 
-    strcpy(buf, "move ");
-    move_to_str(m, buf + 5);
-    strcat(buf, "\n");
+    cgc_strcpy(buf, "move ");
+    cgc_move_to_str(m, buf + 5);
+    cgc_strcat(buf, "\n");
 
-    write_string(buf);
+    cgc_write_string(buf);
 
-    free(buf);
+    cgc_free(buf);
 }
 
-void send_result(int result)
+void cgc_send_result(int result)
 {
     if (result == WHITE_WON)
-        write_string("1-0\n");
+        cgc_write_string("1-0\n");
     if (result == BLACK_WON)
-        write_string("0-1\n");
+        cgc_write_string("0-1\n");
     if (result == DRAW)
-        write_string("1/2-1/2\n");
+        cgc_write_string("1/2-1/2\n");
     if (result == UNFINISHED)
-        write_string("*\n");
+        cgc_write_string("*\n");
 }
 
-void send_draw()
+void cgc_send_draw()
 {
-    write_string("offer draw\n");
+    cgc_write_string("offer draw\n");
 }
 
-void send_resign()
+void cgc_send_resign()
 {
-    write_string("resign\n");
+    cgc_write_string("resign\n");
 }
 
-void send_illegal(const char *reason, move_t move)
+void cgc_send_illegal(const char *reason, cgc_move_t move)
 {
     char movestr[8];
-    move_to_str(move, movestr);
-    write_string("Illegal move (");
-    write_string(reason);
-    write_string("): ");
-    write_string(movestr);
-    write_string("\n");
+    cgc_move_to_str(move, movestr);
+    cgc_write_string("Illegal move (");
+    cgc_write_string(reason);
+    cgc_write_string("): ");
+    cgc_write_string(movestr);
+    cgc_write_string("\n");
 }
 
-void send_error(const char *error, const char *command)
+void cgc_send_error(const char *error, const char *command)
 {
-    write_string("Error (");
-    write_string(error);
-    write_string("): ");
-    write_string(command);
-    write_string("\n");
+    cgc_write_string("Error (");
+    cgc_write_string(error);
+    cgc_write_string("): ");
+    cgc_write_string(command);
+    cgc_write_string("\n");
 }
 
-int sink_error(const char *buf)
+int cgc_sink_error(const char *buf)
 {
     char tmp[2];
-    size_t n = strlen(buf);
+    cgc_size_t n = cgc_strlen(buf);
 
-    write_string("Error (invalid command): ");
-    write_string(buf);
+    cgc_write_string("Error (invalid command): ");
+    cgc_write_string(buf);
 
     if (n >= 1 && buf[n-1] == '\n')
         return 1;
 
     tmp[1] = 0;
     do {
-        if (!read_all(&tmp[0], 1))
+        if (!cgc_read_all(&tmp[0], 1))
             return 0;
-        write_string(tmp);
+        cgc_write_string(tmp);
     } while (tmp[0] != '\n');
     return 1;
 }
 
 /* implements state machine to parse input */
-int read_keyword(char *input, size_t n)
+int cgc_read_keyword(char *input, cgc_size_t n)
 {
     int i, state;
-    memset(input, 0, n);
+    cgc_memset(input, 0, n);
 
-    if (!read_all(input, 2))
+    if (!cgc_read_all(input, 2))
         return 0;
 
     state = input_states[(input[0] << 7) | input[1]];
     if (state == STATE_ERROR)
-        return sink_error(input);
+        return cgc_sink_error(input);
 
     if (state == STATE_PLAY_START)
         return state;
@@ -197,7 +197,7 @@ int read_keyword(char *input, size_t n)
     for (i = 2; i < n - 1; i++)
     {
         char c;
-        if (!read_all(&c, 1))
+        if (!cgc_read_all(&c, 1))
             return 0;
         input[i] = c;
 
@@ -296,13 +296,13 @@ int read_keyword(char *input, size_t n)
 #ifdef PATCHED
             if (c < '1' || c > '8') {  state = STATE_ERROR; break;; }
 #endif
-            if (isdigit(c)) { state++; continue; }
+            if (cgc_isdigit(c)) { state++; continue; }
             else { state = STATE_ERROR; break;; }
         }
         else if (state == STATE_MOVE_START+2)
         {
             if (c == '\n') { state = STATE_MOVE; break; }
-            else if (islower(c)) { state = STATE_MOVE; continue; }
+            else if (cgc_islower(c)) { state = STATE_MOVE; continue; }
             else { state = STATE_ERROR; break; }
         }
         else if (state == STATE_MOVE)
@@ -316,16 +316,16 @@ int read_keyword(char *input, size_t n)
     }
 
     if (state == STATE_ERROR)
-        return sink_error(input);
+        return cgc_sink_error(input);
     else
         input[i] = 0;
 
     return state;
 }
 
-move_t str_to_move(const char *str)
+cgc_move_t cgc_str_to_move(const char *str)
 {
-    move_t move;
+    cgc_move_t move;
     move.sc = str[0] - 'm';
     move.sr = str[1] - '1';
     move.dc = str[2] - 'm';

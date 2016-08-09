@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "command.h"
 
 // Decode the data
-int DecodeData(uint8_t *data, int decoded_size, char *encoded_data, int encoded_size) {
+int cgc_DecodeData(cgc_uint8_t *data, int decoded_size, char *encoded_data, int encoded_size) {
   char *start = (char *)data;
   data++[0] = (encoded_data[0] >> 1) & 0x7f;
   for (int i = 1; i <= decoded_size; i++) {
@@ -46,79 +46,79 @@ int DecodeData(uint8_t *data, int decoded_size, char *encoded_data, int encoded_
 }
 
 // Delete the dynamic memory owned by this command structure
-void DestroyCommand(CommandStruct *command) {
+void cgc_DestroyCommand(cgc_CommandStruct *command) {
   if (command->data != NULL) {
-    free(command->data);
+    cgc_free(command->data);
     command->data = NULL;
   }
   command->command = NO_COMMAND;
-  memset(command->name, 0, sizeof(command->name));
+  cgc_memset(command->name, 0, sizeof(command->name));
   command->data_size = 0;
 }
 
-// Receives an incoming command and parses it into a CommandStruct
+// Receives an incoming command and parses it into a cgc_CommandStruct
 // Returns 0 on success, -1 on receive error, -2 on invalid command format
 // May allocate memory for the data portion of a command which should later
-// be freed by calling DestroyCommand()
-int ReceiveCommand(CommandStruct *command, int *more_commands) {
+// be freed by calling cgc_DestroyCommand()
+int cgc_ReceiveCommand(cgc_CommandStruct *command, int *more_commands) {
   if (command->data != NULL) {
-    DestroyCommand(command);
+    cgc_DestroyCommand(command);
   }
   char buffer[64];
-  size_t bytes_received;
-  bytes_received = receive_fixed(buffer, 7);
+  cgc_size_t bytes_received;
+  bytes_received = cgc_receive_fixed(buffer, 7);
   if (bytes_received != 7) {
     return -1;
   }
-  if (strncmp(buffer, "ACS+0.1", 7) == 0) {
+  if (cgc_strncmp(buffer, "ACS+0.1", 7) == 0) {
     *more_commands = 1;
-  } else if (strncmp(buffer, "ACS-0.1", 7) == 0) {
+  } else if (cgc_strncmp(buffer, "ACS-0.1", 7) == 0) {
     *more_commands = 0;
   } else {
     return -2;
   }
-  bytes_received = receive_until(buffer, ':', sizeof(buffer));
+  bytes_received = cgc_receive_until(buffer, ':', sizeof(buffer));
   if (bytes_received == 0) {
     return -1;
   }
   if (buffer[0] != '[') {
     return -2;
   }
-  if (strncmp(&buffer[1], "REQUEST", strlen("REQUEST")) == 0) {
+  if (cgc_strncmp(&buffer[1], "REQUEST", cgc_strlen("REQUEST")) == 0) {
     command->command = REQUEST;
-  } else if (strncmp(&buffer[1], "QUERY", strlen("QUERY")) == 0) {
+  } else if (cgc_strncmp(&buffer[1], "QUERY", cgc_strlen("QUERY")) == 0) {
     command->command = QUERY;
-  } else if (strncmp(&buffer[1], "SEND", strlen("SEND")) == 0) {
+  } else if (cgc_strncmp(&buffer[1], "SEND", cgc_strlen("SEND")) == 0) {
     command->command = SEND;
-  } else if (strncmp(&buffer[1], "REMOVE", strlen("REMOVE")) == 0) {
+  } else if (cgc_strncmp(&buffer[1], "REMOVE", cgc_strlen("REMOVE")) == 0) {
     command->command = REMOVE;
-  } else if (strncmp(&buffer[1], "VISUALIZE", strlen("VISUALIZE")) == 0) {
+  } else if (cgc_strncmp(&buffer[1], "VISUALIZE", cgc_strlen("VISUALIZE")) == 0) {
     command->command = VISUALIZE;
-  } else if (strncmp(&buffer[1], "INTERACT", strlen("INTERACT")) == 0) {
+  } else if (cgc_strncmp(&buffer[1], "INTERACT", cgc_strlen("INTERACT")) == 0) {
     command->command = INTERACT;
   } else {
     return -2;
   }
-  bytes_received = receive_until(buffer, ':', sizeof(buffer));
+  bytes_received = cgc_receive_until(buffer, ':', sizeof(buffer));
   if (bytes_received > sizeof(command->name)) {
     return -1;
   }
   if (bytes_received > 0) {
-    strncpy(command->name, buffer, bytes_received);
+    cgc_strncpy(command->name, buffer, bytes_received);
   }
-  bytes_received = receive_until(buffer, ':', sizeof(buffer));
+  bytes_received = cgc_receive_until(buffer, ':', sizeof(buffer));
   if (bytes_received > 6) {
     return -1;
   }
   if (bytes_received > 0) {
-    command->data_size = atoi(buffer);
+    command->data_size = cgc_atoi(buffer);
   }
   if (command->data_size > 0) {
     // Data is not encoded
-    command->data = calloc(command->data_size + 1, 1);
-    VerifyPointerOrTerminate(command->data, "command->data during parsing");
-    uint8_t *command_data = command->data;
-    bytes_received = receive_fixed((char *)command->data, command->data_size);
+    command->data = cgc_calloc(command->data_size + 1, 1);
+    cgc_VerifyPointerOrTerminate(command->data, "command->data during parsing");
+    cgc_uint8_t *command_data = command->data;
+    bytes_received = cgc_receive_fixed((char *)command->data, command->data_size);
     if (bytes_received != command->data_size) {
       return -1;
     }
@@ -126,7 +126,7 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
     // Data is encoded
     int encoded_size;
     int decoded_size;
-    bytes_received = receive_fixed((char *)&encoded_size, sizeof(encoded_size));
+    bytes_received = cgc_receive_fixed((char *)&encoded_size, sizeof(encoded_size));
     if (bytes_received != sizeof(encoded_size)) {
       return -1;
     }
@@ -136,19 +136,19 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
       return -1;
     }
     #endif 
-    command->data = calloc(decoded_size + 1, 1);
-    VerifyPointerOrTerminate(command->data, "command->data during parsing");
+    command->data = cgc_calloc(decoded_size + 1, 1);
+    cgc_VerifyPointerOrTerminate(command->data, "command->data during parsing");
     char *encoded_data;
-    encoded_data = calloc(encoded_size + 1, 1);
-    VerifyPointerOrTerminate(encoded_data, "encoded_data during parsing");
-    bytes_received = receive_fixed(encoded_data, encoded_size);
+    encoded_data = cgc_calloc(encoded_size + 1, 1);
+    cgc_VerifyPointerOrTerminate(encoded_data, "encoded_data during parsing");
+    bytes_received = cgc_receive_fixed(encoded_data, encoded_size);
     if (bytes_received != encoded_size) {
-      free(encoded_data);
+      cgc_free(encoded_data);
       return -1;
     }
     // Decode the data
-    if (DecodeData(command->data, decoded_size, encoded_data, encoded_size) != 0) {
-      free(encoded_data);
+    if (cgc_DecodeData(command->data, decoded_size, encoded_data, encoded_size) != 0) {
+      cgc_free(encoded_data);
       return -1;
     }
     if (command->data[decoded_size-1] == '\0') {
@@ -157,9 +157,9 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
       command->data_size = decoded_size;
     }
     // Deallocate the encoded data
-    free(encoded_data);
+    cgc_free(encoded_data);
   }
-  bytes_received = receive_fixed(buffer, 1);
+  bytes_received = cgc_receive_fixed(buffer, 1);
   if (bytes_received != 1) {
     return -1;
   }
@@ -170,65 +170,65 @@ int ReceiveCommand(CommandStruct *command, int *more_commands) {
 
 }
 
-void HandleCommand(CommandStruct *command) {
+void cgc_HandleCommand(cgc_CommandStruct *command) {
   switch (command->command) {
     case REQUEST: {
-      TreeNode *node = LookupNode(command->name);
+      cgc_TreeNode *node = cgc_LookupNode(command->name);
       if (node == NULL) {
-        printf("Page not found: @s\n", command->name);
+        cgc_printf("Page not found: @s\n", command->name);
       } else {
-        ServePage(node->page, node->page_size);
+        cgc_ServePage(node->page, node->page_size);
       }
       break;
     }
     case QUERY: {
-      PrintTree(command->name);
+      cgc_PrintTree(command->name);
       break;
     }
     case SEND: {
-      TreeNode *new_node = calloc(sizeof(TreeNode), 1);
-      VerifyPointerOrTerminate(command->data, "new_node during SEND");
-      memcpy(new_node->name, command->name, sizeof(new_node->name));
+      cgc_TreeNode *new_node = cgc_calloc(sizeof(cgc_TreeNode), 1);
+      cgc_VerifyPointerOrTerminate(command->data, "new_node during SEND");
+      cgc_memcpy(new_node->name, command->name, sizeof(new_node->name));
       new_node->page = (char *) command->data;
       new_node->page_size = command->data_size;
-      if (InsertNodeInTree(new_node) == 0) {
+      if (cgc_InsertNodeInTree(new_node) == 0) {
         command->data = NULL;
         command->data_size = 0;
-        printf("SUCCESS: Page uploaded to server\n");
+        cgc_printf("SUCCESS: Page uploaded to server\n");
       } else {
-        free(new_node);
-        printf("ERROR: Unable to upload page\n");
+        cgc_free(new_node);
+        cgc_printf("ERROR: Unable to upload page\n");
       }
       break;
     }
     case REMOVE: {
-      if (DeleteNode(command->name) == 0) {
-        printf("SUCCESS: Page deleted\n");
+      if (cgc_DeleteNode(command->name) == 0) {
+        cgc_printf("SUCCESS: Page deleted\n");
       } else {
-        printf("ERROR: Unable to delete page\n");
+        cgc_printf("ERROR: Unable to delete page\n");
       }
       break;
     }
     case VISUALIZE: {
-      ServePage((char *)command->data, command->data_size);
+      cgc_ServePage((char *)command->data, command->data_size);
       break;
     }
     case INTERACT: {
-      TreeNode *node = LookupNode(command->name);
+      cgc_TreeNode *node = cgc_LookupNode(command->name);
       if (node == NULL) {
-        printf("Page not found: @s\n", command->name);
+        cgc_printf("Page not found: @s\n", command->name);
       } else {
-        InteractWithPage(node->page, node->page_size, (char *)command->data);
+        cgc_InteractWithPage(node->page, node->page_size, (char *)command->data);
       }
       break;
     }
     default:
-      printf("Unsupported Command\n");
-      printf("Command type: @x\n", command->command);
-      printf("File name: @s\n", command->name);
-      printf("Data length: @d\n", command->data_size);
+      cgc_printf("Unsupported Command\n");
+      cgc_printf("Command type: @x\n", command->command);
+      cgc_printf("File name: @s\n", command->name);
+      cgc_printf("Data length: @d\n", command->data_size);
       if (command->data != NULL) {
-        printf("Data: @s\n", command->data);
+        cgc_printf("Data: @s\n", command->data);
       }
       break;
   }

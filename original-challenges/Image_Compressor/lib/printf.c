@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,15 +26,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef int (*consumer_t) (void *arg, const char *buf, size_t n);
+typedef int (*cgc_consumer_t) (void *arg, const char *buf, cgc_size_t n);
 
-int writeall(int fd, const void *buf, size_t n)
+int cgc_writeall(int fd, const void *buf, cgc_size_t n)
 {
     const void *wptr = buf;
     const void *bufend = buf + n;
     while (wptr != bufend)
     {
-        size_t tx;
+        cgc_size_t tx;
         if (transmit(fd, buf, bufend - wptr, &tx) != 0 || tx == 0)
             break;
         wptr += tx;
@@ -42,7 +42,7 @@ int writeall(int fd, const void *buf, size_t n)
     return wptr - buf;
 }
 
-static char *_print_base(char *outend, int *n, unsigned int val, unsigned int base, int uppercase)
+static char *cgc__print_base(char *outend, int *n, unsigned int val, unsigned int base, int uppercase)
 {
     *n = 0;
     if (base < 2 || base > 16)
@@ -71,7 +71,7 @@ static char *_print_base(char *outend, int *n, unsigned int val, unsigned int ba
     return outend;
 }
 
-static char *_print_signed(char *outbuf, int *n, int val)
+static char *cgc__print_signed(char *outbuf, int *n, int val)
 {
     int neg = 0;
     if (val < 0)
@@ -79,7 +79,7 @@ static char *_print_signed(char *outbuf, int *n, int val)
         neg = 1;
         val = -val;
     }
-    char *s = _print_base(outbuf, n, (unsigned int)val, 10, 0);
+    char *s = cgc__print_base(outbuf, n, (unsigned int)val, 10, 0);
     if (neg)
     {
         *(--s) = '-';
@@ -88,16 +88,16 @@ static char *_print_signed(char *outbuf, int *n, int val)
     return s;
 }
 
-static int _printf(consumer_t consumer, void *arg, const char *fmt, va_list ap)
+static int cgc__printf(cgc_consumer_t consumer, void *arg, const char *fmt, cgc_va_list ap)
 {
-    char tmpbuf[32]; /* must be at least 32 bytes for _print_base */
+    char tmpbuf[32]; /* must be at least 32 bytes for cgc__print_base */
     const char *fmtstr = NULL;
     char modifier = 0;
     int n, total = 0;
 
 #define CONSUME(b, c) \
     do { \
-        size_t tmp = (size_t)(c); \
+        cgc_size_t tmp = (cgc_size_t)(c); \
         if (tmp == 0) break; \
         total += (n = consumer(arg, (b), tmp)); \
         if (n < 0) goto error; \
@@ -152,7 +152,7 @@ static int _printf(consumer_t consumer, void *arg, const char *fmt, va_list ap)
 
 flags_done:
         /* process field width */
-        field_width = strtoul(fmt, (char **)&fmt, 10);
+        field_width = cgc_strtoul(fmt, (char **)&fmt, 10);
 
         /* process modifiers */
         switch (*fmt)
@@ -177,7 +177,7 @@ flags_done:
             sv = va_arg(ap, int);
             if (modifier == 'h') sv = (short)(sv & 0xffff);
             else if (modifier == 'H') sv = (signed char)(sv & 0xff);
-            tmpstr = _print_signed(tmpbuf + 32, &outlen, sv);
+            tmpstr = cgc__print_signed(tmpbuf + 32, &outlen, sv);
             while (field_width > outlen)
             {
                 CONSUME((flags & FLAG_ZERO_PADDING) ? "0" : " ", 1);
@@ -196,7 +196,7 @@ flags_done:
             uv = va_arg(ap, unsigned int);
             if (modifier == 'h') uv &= 0xffff;
             else if (modifier == 'H') uv &= 0xff;
-            tmpstr = _print_base(tmpbuf + 32, &outlen, uv, base, *fmt == 'X');
+            tmpstr = cgc__print_base(tmpbuf + 32, &outlen, uv, base, *fmt == 'X');
             while (field_width > outlen)
             {
                 CONSUME((flags & FLAG_ZERO_PADDING) ? "0" : " ", 1);
@@ -214,7 +214,7 @@ flags_done:
             break;
         case 's':
             pv = va_arg(ap, void *);
-            CONSUME((char *)pv, strlen((char *)pv));
+            CONSUME((char *)pv, cgc_strlen((char *)pv));
             fmt++;
             break;
         }
@@ -227,15 +227,15 @@ error:
     return -1;
 }
 
-static int _consumer_fd(void *arg, const char *buf, size_t n)
+static int cgc__consumer_fd(void *arg, const char *buf, cgc_size_t n)
 {
-    return writeall((int)arg, buf, n);
+    return cgc_writeall((int)arg, buf, n);
 }
 
-static int _consumer_string(void *arg, const char *buf, size_t n)
+static int cgc__consumer_string(void *arg, const char *buf, cgc_size_t n)
 {
     char **s = (char **)arg;
-    memcpy(*s, buf, n);
+    cgc_memcpy(*s, buf, n);
     (*s) += n;
     **s = '\0';
     return (int)n;
@@ -243,57 +243,57 @@ static int _consumer_string(void *arg, const char *buf, size_t n)
 
 typedef struct {
     char *buf;
-    size_t bytes_remaining;
-} string_info_t;
+    cgc_size_t bytes_remaining;
+} cgc_string_info_t;
 
-static int _consumer_string_checked(void *arg, const char *buf, size_t n)
+static int cgc__consumer_string_checked(void *arg, const char *buf, cgc_size_t n)
 {
-    string_info_t *sinfo = arg;
+    cgc_string_info_t *sinfo = arg;
     if (n > sinfo->bytes_remaining)
         n = sinfo->bytes_remaining;
     if (n == 0)
         return 0;
-    memcpy(sinfo->buf, buf, n);
+    cgc_memcpy(sinfo->buf, buf, n);
     sinfo->buf += n;
     sinfo->buf[0] = '\0';
     sinfo->bytes_remaining -= n;
     return (int)n;
 }
 
-int fdprintf(int fd, const char *fmt, ...)
+int cgc_fdprintf(int fd, const char *fmt, ...)
 {
-    va_list ap;
+    cgc_va_list ap;
     va_start(ap, fmt);
-    int ret = _printf(_consumer_fd, (void *)fd, fmt, ap);
+    int ret = cgc__printf(cgc__consumer_fd, (void *)fd, fmt, ap);
     va_end(ap);
     return ret;
 }
 
-int sprintf(char *s, const char *fmt, ...)
+int cgc_sprintf(char *s, const char *fmt, ...)
 {
-    va_list ap;
+    cgc_va_list ap;
     va_start(ap, fmt);
-    int ret = _printf(_consumer_string, (void *)&s, fmt, ap);
+    int ret = cgc__printf(cgc__consumer_string, (void *)&s, fmt, ap);
     va_end(ap);
     return ret;
 }
 
-int vsnprintf(char *s, size_t size, const char *fmt, va_list ap)
+int cgc_vsnprintf(char *s, cgc_size_t size, const char *fmt, cgc_va_list ap)
 {
     if (size == 0)
         return 0;
 
-    string_info_t sinfo;
+    cgc_string_info_t sinfo;
     sinfo.buf = s;
     sinfo.bytes_remaining = size - 1; /* room for NULL byte */
-    return _printf(_consumer_string_checked, (void *)&sinfo, fmt, ap);
+    return cgc__printf(cgc__consumer_string_checked, (void *)&sinfo, fmt, ap);
 }
 
-int snprintf(char *s, size_t size, const char *fmt, ...)
+int cgc_snprintf(char *s, cgc_size_t size, const char *fmt, ...)
 {
-    va_list ap;
+    cgc_va_list ap;
     va_start(ap, fmt);
-    int ret = vsnprintf(s, size, fmt, ap);
+    int ret = cgc_vsnprintf(s, size, fmt, ap);
     va_end(ap);
     return ret;
 }

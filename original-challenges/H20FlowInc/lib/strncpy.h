@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,15 +27,15 @@
  * Copies bytes from source string into destination string.
  *
  * NOTE: 
- *  if size <= strlen(src), the dest will not be null terminated.
- *  if strlen(src) < size, dest is padded with '\0' bytes.
+ *  if size <= cgc_strlen(src), the dest will not be null terminated.
+ *  if cgc_strlen(src) < size, dest is padded with '\0' bytes.
  *
  * @param dest Destination string
  * @param src Source string
  * @param size Number of bytes to copy
  * @returns VA of dest
  */
-extern char *strncpy(char* dest, const char* src, size_t size);
+extern char *cgc_strncpy(char* dest, const char* src, cgc_size_t size);
 
 
 #endif

@@ -44,14 +44,14 @@ enum {
     OP_DEC_PRE, OP_DEC_POST,
     OP_END,
 
-    // used internally in parse_expression
+    // used internally in cgc_parse_expression
     OP_DEC, OP_INC,
     OP_NEGATE_OR_SUB,
 };
 
-typedef struct expr_t {
+typedef struct cgc_expr_t {
     unsigned int op;
-    struct expr_t *next, *prev;
+    struct cgc_expr_t *next, *prev;
     union {
         struct {
             char *value; 
@@ -66,70 +66,70 @@ typedef struct expr_t {
             char *name;
         } e_var;
         struct {
-            struct expr_t *expr;
+            struct cgc_expr_t *expr;
         } e_unop;
         struct {
-            struct expr_t *lhs, *rhs;
+            struct cgc_expr_t *lhs, *rhs;
         } e_binop;
         struct {
-            struct expr_t *cond;
-            struct expr_t *vtrue;
-            struct expr_t *vfalse;
+            struct cgc_expr_t *cond;
+            struct cgc_expr_t *vtrue;
+            struct cgc_expr_t *vfalse;
         } e_cond;
     };
-} expr_t;
+} cgc_expr_t;
 
-typedef struct stmt_t {
+typedef struct cgc_stmt_t {
     unsigned int type;
-    struct stmt_t *next;
+    struct cgc_stmt_t *next;
 
     union {
         struct {
-            expr_t *cond;
-            struct stmt_t *child;
+            cgc_expr_t *cond;
+            struct cgc_stmt_t *child;
         } s_if;
         struct {
             unsigned int post;
-            expr_t *cond;
-            struct stmt_t *child;
+            cgc_expr_t *cond;
+            struct cgc_stmt_t *child;
         } s_while;
         struct {
-            expr_t *init;
-            expr_t *cond;
-            expr_t *post;
-            struct stmt_t *child;
+            cgc_expr_t *init;
+            cgc_expr_t *cond;
+            cgc_expr_t *post;
+            struct cgc_stmt_t *child;
         } s_for;
         struct {
             char *var;
             char *array;
-            struct stmt_t *child;
+            struct cgc_stmt_t *child;
         } s_foreach;
         struct {
             int value;
         } s_exit;
         struct {
-            expr_t *fmt;
-            expr_t *expr;
+            cgc_expr_t *fmt;
+            cgc_expr_t *expr;
         } s_print;
         struct {
-            expr_t *expr;
+            cgc_expr_t *expr;
         } s_expr;
     };
-} stmt_t;
+} cgc_stmt_t;
 
-typedef struct pattern_t {
+typedef struct cgc_pattern_t {
     void *pattern;
-    stmt_t *stmt;
+    cgc_stmt_t *stmt;
 
-    struct pattern_t *next;
-} pattern_t;
+    struct cgc_pattern_t *next;
+} cgc_pattern_t;
 
 typedef struct {
-    io_t *io;
-    pattern_t *patterns;
-} program_t;
+    cgc_io_t *io;
+    cgc_pattern_t *patterns;
+} cgc_program_t;
 
-void program_init(program_t *prog, io_t *io);
-int program_parse(program_t *prog);
+void cgc_program_init(cgc_program_t *prog, cgc_io_t *io);
+int cgc_program_parse(cgc_program_t *prog);
 
 #endif

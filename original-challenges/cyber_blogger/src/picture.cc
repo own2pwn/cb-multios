@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,42 +26,42 @@ extern "C" {
 #include <ctype.h>
 };
 
-Picture::Picture(void *_header, void *data, char *_filename)
-: File(sizeof(PictureHeader), ((PictureHeader *)_header)->data_size, _filename)
+cgc_Picture::cgc_Picture(void *_header, void *data, char *_filename)
+: cgc_File(sizeof(cgc_PictureHeader), ((cgc_PictureHeader *)_header)->data_size, _filename)
 {
-    memcpy(&header, _header, sizeof(PictureHeader));
+    cgc_memcpy(&header, _header, sizeof(cgc_PictureHeader));
     raw_header = (void *)&header;
-    raw_data = new char[get_data_size() + 1];
-    memcpy(raw_data, data, get_data_size());
-    raw_data[get_data_size()] = '\0';
+    raw_data = new char[cgc_get_data_size() + 1];
+    cgc_memcpy(raw_data, data, cgc_get_data_size());
+    raw_data[cgc_get_data_size()] = '\0';
 }
 
-Picture::~Picture()
+cgc_Picture::~cgc_Picture()
 {
     if (raw_data)
         delete[] raw_data;
-    clear_data_size();
+    cgc_clear_data_size();
 }
 
-unsigned int Picture::get_magic()
+unsigned int cgc_Picture::cgc_get_magic()
 {
     return header.magic;
 }
 
-size_t Picture::find_header_size()
+cgc_size_t cgc_Picture::cgc_find_header_size()
 {
-    return sizeof(PictureHeader);
+    return sizeof(cgc_PictureHeader);
 }
 
-size_t Picture::find_data_size(void *header)
+cgc_size_t cgc_Picture::cgc_find_data_size(void *header)
 {
-    return ((PictureHeader *)header)->data_size;
+    return ((cgc_PictureHeader *)header)->data_size;
 }
 
-void Picture::print_picture()
+void cgc_Picture::cgc_print_picture()
 {
-    for (size_t i = 0; i < get_data_size(); i++) {
-        if (isprint(raw_data[i]) || raw_data[i]=='\n' || raw_data[i]=='\t')
+    for (cgc_size_t i = 0; i < cgc_get_data_size(); i++) {
+        if (cgc_isprint(raw_data[i]) || raw_data[i]=='\n' || raw_data[i]=='\t')
             printf("%c", raw_data[i]);
         else
             printf(" ");

@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,11 +30,11 @@ THE SOFTWARE.
 
 
 
-Shopping_List_Type *build_shopping_list(Recipe_Type *book) {
+cgc_Shopping_List_Type *cgc_build_shopping_list(cgc_Recipe_Type *book) {
 
-Shopping_List_Type *list, *previous;
-Shopping_List_Type *list_head;
-Ingredient_Type *ingredient;
+cgc_Shopping_List_Type *list, *previous;
+cgc_Shopping_List_Type *list_head;
+cgc_Ingredient_Type *ingredient;
 
 	list_head = 0;
 	list = 0;
@@ -52,11 +52,11 @@ Ingredient_Type *ingredient;
 
 		if (list_head==0) {
 
-			list_head = malloc(sizeof(Shopping_List_Type));
+			list_head = cgc_malloc(sizeof(cgc_Shopping_List_Type));
 
 			if (list_head == 0) {
 
-				printf("unable to malloc memory\n");
+				cgc_printf("unable to cgc_malloc memory\n");
 				_terminate(-1);
 			}
 
@@ -72,11 +72,11 @@ Ingredient_Type *ingredient;
 			list->item = ingredient->item;
 			ingredient=ingredient->next;
 
-			list->next = malloc(sizeof(Shopping_List_Type));
+			list->next = cgc_malloc(sizeof(cgc_Shopping_List_Type));
 
 			if (list->next == 0) {
 
-				printf("unable to malloc memory\n");
+				cgc_printf("unable to cgc_malloc memory\n");
 				_terminate(-1);
 
 			}
@@ -91,7 +91,7 @@ Ingredient_Type *ingredient;
 	}
 
 	if (list) {
-		free(list);
+		cgc_free(list);
 		list = previous;
 		list->next = 0;
 	}
@@ -101,36 +101,36 @@ Ingredient_Type *ingredient;
 }
 
 
-void print_shopping_list(Recipe_Type *book) {
+void cgc_print_shopping_list(cgc_Recipe_Type *book) {
 
-Shopping_List_Type *my_list;
-Shopping_List_Type *tmp_list;
+cgc_Shopping_List_Type *my_list;
+cgc_Shopping_List_Type *tmp_list;
 
 	// first build a linked list of items from tagged recipes
-	my_list = build_shopping_list(book);
+	my_list = cgc_build_shopping_list(book);
 
-	printf("\n");
-	printf("Shopping List\n");
-	printf("-------------\n");
+	cgc_printf("\n");
+	cgc_printf("Shopping List\n");
+	cgc_printf("-------------\n");
 
 	if (my_list != 0) {
 
-		sort_shopping_list(my_list);
+		cgc_sort_shopping_list(my_list);
 		tmp_list = my_list;
 
 		while (tmp_list) {
 
-			printf("@s\n", tmp_list->item);
+			cgc_printf("@s\n", tmp_list->item);
 
 			tmp_list= tmp_list->next;
 		}
 
-		// now free the linked list to hold the shopping list
+		// now cgc_free the linked list to hold the shopping list
 		tmp_list = my_list->next;
 
 		while( my_list) {
 
-			free(my_list);
+			cgc_free(my_list);
 
 			my_list = tmp_list;
 
@@ -141,5 +141,5 @@ Shopping_List_Type *tmp_list;
 
 	}
 
-	printf("\n");
+	cgc_printf("\n");
 }

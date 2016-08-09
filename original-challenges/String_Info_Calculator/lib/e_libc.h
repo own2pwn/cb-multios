@@ -22,24 +22,24 @@
 */
 
 // this is the libc from EAGLE_00005/pov_1/
-// the only change I've made is to define fprintf() in e_libc.c
+// the only change I've made is to define cgc_fprintf() in e_libc.c
 // this is only used when debugging.
 #ifndef E_LIBC_H
 #define E_LIBC_H
 
-// size_t strlen(const char *str);
-// char *strcpy(char *dst, const char *src);
-// int strcmp(const char *s1, const char *s2);
-// int memcmp(const char *s1, const char *s2, unsigned int len);
-// char *memcpy(char *s1, const char *s2, unsigned int len);
-// char *strchr(const char *s, int c);
-// int printf(const char *format, ...);
+// cgc_size_t cgc_strlen(const char *str);
+// char *cgc_strcpy(char *dst, const char *src);
+// int cgc_strcmp(const char *s1, const char *s2);
+// int cgc_memcmp(const char *s1, const char *s2, unsigned int len);
+// char *cgc_memcpy(char *s1, const char *s2, unsigned int len);
+// char *cgc_strchr(const char *s, int c);
+// int cgc_printf(const char *format, ...);
 
-// int toupper(int c);
-// int tolower(int c);
+// int cgc_toupper(int c);
+// int cgc_tolower(int c);
 
-// int transmit_all(int fd, const void *buf, const size_t size);
-// int receive_all(int fd, char *buf, const size_t size);
+// int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size);
+// int cgc_receive_all(int fd, char *buf, const cgc_size_t size);
 
 #define EOF                  -1
 
@@ -53,22 +53,22 @@
 #define _FILE_HAVE_LAST   8
 
 struct _FILE;
-typedef struct _FILE FILE;
+typedef struct _FILE cgc_FILE;
 
-extern FILE *stdin;
-extern FILE *stdout;
-extern FILE *stderr;
+extern cgc_FILE *stdin;
+extern cgc_FILE *stdout;
+extern cgc_FILE *stderr;
 
-// int  fgetc(FILE *);
-// int  getc(FILE *);
-// int  getchar(void);
+// int  cgc_fgetc(cgc_FILE *);
+// int  cgc_getc(cgc_FILE *);
+// int  cgc_getchar(void);
 
-// char *fgets(char *, int, FILE *);
-// int fread(void *, size_t, size_t, FILE *);
+// char *cgc_fgets(char *, int, cgc_FILE *);
+// int cgc_fread(void *, cgc_size_t, cgc_size_t, cgc_FILE *);
 
-// int ferror(FILE *stream);
-// int feof(FILE *stream);
+// int ferror(cgc_FILE *stream);
+// int feof(cgc_FILE *stream);
 
-int fprintf(FILE * stream, const char *format, ...);
+int cgc_fprintf(cgc_FILE * stream, const char *format, ...);
 
 #endif

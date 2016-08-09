@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,12 +23,12 @@
 #include <stdlib.h>
 #include "read.h"
 
-int readline(char *buf, size_t buf_size)
+int cgc_readline(char *buf, cgc_size_t buf_size)
 {
     if (!buf || buf_size < 2)
         return -1;
 
-    size_t rx, i = 0;
+    cgc_size_t rx, i = 0;
 #ifdef PATCHED
     while (i < buf_size && receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1) {
 #else
@@ -49,11 +49,11 @@ int readline(char *buf, size_t buf_size)
     return 0;
 }
 
-int readnum(char *buf, size_t buf_size)
+int cgc_readnum(char *buf, cgc_size_t buf_size)
 {
-    if (readline(buf, buf_size))
+    if (cgc_readline(buf, buf_size))
         return -1;
 
-    return strtol(&buf[0], NULL, 10);
+    return cgc_strtol(&buf[0], NULL, 10);
 }
 

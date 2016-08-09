@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,16 +28,16 @@
 #define BUFFER_SIZE (8192)
 #define IS_MUTABLE(x) ((x)->fd >= 0)
 
-void io_init_fd(io_t *io, int fd)
+void cgc_io_init_fd(cgc_io_t *io, int fd)
 {
     io->fd = fd;
-    io->buf = malloc(BUFFER_SIZE);
+    io->buf = cgc_malloc(BUFFER_SIZE);
     io->pos = 0;
     io->length = 0;
     io->mark = -1;
 }
 
-void io_init_bytes(io_t *io, const char *str, unsigned int length)
+void cgc_io_init_bytes(cgc_io_t *io, const char *str, unsigned int length)
 {
     io->fd = -1;
     io->buf = (char *)str;
@@ -46,23 +46,23 @@ void io_init_bytes(io_t *io, const char *str, unsigned int length)
     io->mark = -1;
 }
 
-void io_init_string(io_t *io, const char *str)
+void cgc_io_init_string(cgc_io_t *io, const char *str)
 {
-    io_init_bytes(io, str, strlen(str));
+    cgc_io_init_bytes(io, str, cgc_strlen(str));
 }
 
-void io_mark(io_t *io)
+void cgc_io_mark(cgc_io_t *io)
 {
     if (IS_MUTABLE(io) && io->pos > 0)
     {
-        memmove(io->buf, io->buf + io->pos, io->length - io->pos);
+        cgc_memmove(io->buf, io->buf + io->pos, io->length - io->pos);
         io->length -= io->pos;
         io->pos = 0;
     }
     io->mark = io->pos;
 }
 
-int io_rewind(io_t *io)
+int cgc_io_rewind(cgc_io_t *io)
 {
     if (io->mark == -1)
         return 0;
@@ -72,13 +72,13 @@ int io_rewind(io_t *io)
 }
 
 /* returns position relative to last mark */
-int io_tell(io_t *io)
+int cgc_io_tell(cgc_io_t *io)
 {
     return io->pos - io->mark;
 }
 
 /* seeks to a position relative to last mark */
-int io_seek(io_t *io, int pos)
+int cgc_io_seek(cgc_io_t *io, int pos)
 {
     int new_pos = io->mark + pos;
     if (new_pos > io->length)
@@ -88,13 +88,13 @@ int io_seek(io_t *io, int pos)
     return 1;
 }
 
-int io_getc(io_t *io)
+int cgc_io_getc(cgc_io_t *io)
 {
     if (io->pos == io->length)
     {
         if (IS_MUTABLE(io))
         {
-            size_t bytes;
+            cgc_size_t bytes;
             if (io->length == BUFFER_SIZE)
                 return -1;
             if (receive(io->fd, &io->buf[io->length], 1, &bytes) != 0 || bytes != 1)
@@ -110,20 +110,20 @@ int io_getc(io_t *io)
     return io->buf[io->pos++];
 }
 
-int io_ungetc(io_t *io)
+int cgc_io_ungetc(cgc_io_t *io)
 {
-    return io_seek(io, io_tell(io) - 1);
+    return cgc_io_seek(io, cgc_io_tell(io) - 1);
 }
 
-int io_peek(io_t *io)
+int cgc_io_peek(cgc_io_t *io)
 {
-    int c = io_getc(io);
+    int c = cgc_io_getc(io);
     if (c >= 0)
-        io_ungetc(io);
+        cgc_io_ungetc(io);
     return c;
 }
 
-int io_read(io_t *io, char *buf, unsigned int cnt)
+int cgc_io_read(cgc_io_t *io, char *buf, unsigned int cnt)
 {
     return -1;
 }

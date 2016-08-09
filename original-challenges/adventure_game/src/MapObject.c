@@ -46,7 +46,7 @@ DefineFunction(MapObject, void, serialize, Buffer *buf)
 MapObject *MapObject_deserialize(Buffer *buf)
 {
     MapObject *o = NULL;
-    size_t pos = $(buf, tell);
+    cgc_size_t pos = $(buf, tell);
     int type = $(buf, read_number);
     $(buf, seek, pos);
 

@@ -28,26 +28,26 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "asan.h"
 
-void *memcpy(void *dst, void *src, unsigned int n) {
+void *cgc_memcpy(void *dst, void *src, unsigned int n) {
 	void *tmpDst;
 	void *tmpSrc;
 
 	tmpDst = dst;
 	tmpSrc = src;
 
-	validatePtr(dst);
-	validatePtr(src);
-	validatePtr(dst+n);
-	validatePtr(src+n);
+	cgc_validatePtr(dst);
+	cgc_validatePtr(src);
+	cgc_validatePtr(dst+n);
+	cgc_validatePtr(src+n);
 	while(n) {
-		validatePtr(tmpDst);
-		validatePtr(tmpSrc);
+		cgc_validatePtr(tmpDst);
+		cgc_validatePtr(tmpSrc);
 		*((char *)tmpDst)=*((char *)tmpSrc);
 		tmpDst++;
 		tmpSrc++;
 		n--;
 	}
 	*((char *)tmpDst)=*((char *)tmpSrc);
-	validateRet();
+	cgc_validateRet();
 	return dst;
 }

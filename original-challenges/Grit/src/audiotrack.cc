@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,32 +22,32 @@
  */
 #include "audiotrack.h"
 
-AudioTrack::AudioTrack()
+cgc_AudioTrack::cgc_AudioTrack()
 {
     pan = 0;
     mute = false;
 }
 
-AudioTrack::AudioTrack(AudioStream *left) : AudioTrack()
+cgc_AudioTrack::cgc_AudioTrack(cgc_AudioStream *left) : cgc_AudioTrack()
 {
     stereo = false;
     channels[0] = left;
 }
 
-AudioTrack::AudioTrack(AudioStream *left, AudioStream *right) : AudioTrack()
+cgc_AudioTrack::cgc_AudioTrack(cgc_AudioStream *left, cgc_AudioStream *right) : cgc_AudioTrack()
 {
     stereo = true;
     channels[0] = left;
     channels[1] = right;
 
     // make sure both channels are the same length
-    if (left->getLength() < right->getLength())
-        left->setLength(right->getLength());
-    else if (right->getLength() < left->getLength())
-        right->setLength(left->getLength());
+    if (left->cgc_getLength() < right->cgc_getLength())
+        left->cgc_setLength(right->cgc_getLength());
+    else if (right->cgc_getLength() < left->cgc_getLength())
+        right->cgc_setLength(left->cgc_getLength());
 }
 
-AudioTrack::~AudioTrack()
+cgc_AudioTrack::~cgc_AudioTrack()
 {
     if (channels[0])
         delete channels[0];
@@ -56,17 +56,17 @@ AudioTrack::~AudioTrack()
             delete channels[1];
 }
 
-void AudioTrack::setLength(unsigned int length)
+void cgc_AudioTrack::cgc_setLength(unsigned int length)
 {
-    channels[0]->setLength(length);
+    channels[0]->cgc_setLength(length);
     if (stereo)
-        channels[1]->setLength(length);
+        channels[1]->cgc_setLength(length);
 }
 
-void AudioTrack::mix(const AudioTrack &src)
+void cgc_AudioTrack::cgc_mix(const cgc_AudioTrack &src)
 {
-    if (getLength() < src.getLength())
-        setLength(src.getLength());
+    if (cgc_getLength() < src.cgc_getLength())
+        cgc_setLength(src.cgc_getLength());
 
     if (!stereo)
     {
@@ -75,23 +75,23 @@ void AudioTrack::mix(const AudioTrack &src)
             return;
 
         // ignore pan since we are mixing mono to mono
-        channels[0]->mix(*src.channels[0], src.gain);
+        channels[0]->cgc_mix(*src.channels[0], src.gain);
     }
     else if (!src.stereo)
     {
-        // mix src into both channels using pan
-        channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
-        channels[1]->mix(*src.channels[0], src.gain * Gain::fromPanRight(src.pan));
+        // cgc_mix src into both channels using pan
+        channels[0]->cgc_mix(*src.channels[0], src.gain * cgc_Gain::cgc_fromPanLeft(src.pan));
+        channels[1]->cgc_mix(*src.channels[0], src.gain * cgc_Gain::cgc_fromPanRight(src.pan));
     }
     else
     {
-        // mix channels independently
-        channels[0]->mix(*src.channels[0], src.gain * Gain::fromPanLeft(src.pan));
-        channels[1]->mix(*src.channels[1], src.gain * Gain::fromPanRight(src.pan));
+        // cgc_mix channels independently
+        channels[0]->cgc_mix(*src.channels[0], src.gain * cgc_Gain::cgc_fromPanLeft(src.pan));
+        channels[1]->cgc_mix(*src.channels[1], src.gain * cgc_Gain::cgc_fromPanRight(src.pan));
     }
 }
 
-bool AudioTrack::toStereo(AudioTrack *other)
+bool cgc_AudioTrack::cgc_toStereo(cgc_AudioTrack *other)
 {
     if (stereo || other->stereo)
         return false;
@@ -102,9 +102,9 @@ bool AudioTrack::toStereo(AudioTrack *other)
     delete other;
 
     // make sure both channels are the same length
-    if (channels[0]->getLength() < channels[1]->getLength())
-        channels[0]->setLength(channels[1]->getLength());
-    else if (channels[1]->getLength() < channels[0]->getLength())
-        channels[1]->setLength(channels[0]->getLength());
+    if (channels[0]->cgc_getLength() < channels[1]->cgc_getLength())
+        channels[0]->cgc_setLength(channels[1]->cgc_getLength());
+    else if (channels[1]->cgc_getLength() < channels[0]->cgc_getLength())
+        channels[1]->cgc_setLength(channels[0]->cgc_getLength());
     return true;
 }

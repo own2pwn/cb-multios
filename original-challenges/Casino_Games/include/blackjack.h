@@ -41,6 +41,6 @@ static const int bj_value[SIZE_OF_DECK + 1] = {
     10, 10, 10, 1                   // JC - AC
 };
 
-void blackjack(player_info *player);
+void cgc_blackjack(cgc_player_info *player);
 
 #endif // BLACKJACK_H

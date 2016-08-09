@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-void SendMessage(void);
-void ReadMessage(void);
-void ListMessages(void);
-void DeleteMessage(void);
-void PrintNewMessages(void);
+void cgc_SendMessage(void);
+void cgc_ReadMessage(void);
+void cgc_ListMessages(void);
+void cgc_DeleteMessage(void);
+void cgc_PrintNewMessages(void);

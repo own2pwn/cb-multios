@@ -30,12 +30,12 @@ THE SOFTWARE.
 #include "prng.h"
 
 
-// Shuffle the deck using the Knuth shuffle agorithm with array initialization
-void shuffle(standard_deck *deck)
+// Shuffle the deck using the Knuth cgc_shuffle agorithm with array initialization
+void cgc_shuffle(cgc_standard_deck *deck)
 {
 	for (int i=0; i<SIZE_OF_DECK; i++)
 	{
-		int j = random_in_range(0, i);
+		int j = cgc_random_in_range(0, i);
 		deck->deck[i] = deck->deck[j];
 		// Initialize array with the numbers 1 to 52
 		deck->deck[j] = (char)(i + 1); 
@@ -44,36 +44,36 @@ void shuffle(standard_deck *deck)
 }
 
 // Print the face value of each card in the deck (2D, AH, etc)
-void print_deck(standard_deck *deck)
+void cgc_print_deck(cgc_standard_deck *deck)
 {
-	printf("deck: ");
+	cgc_printf("deck: ");
 	for (int i=0; i< SIZE_OF_DECK; i++)
 	{
-		printf("@s ", card_names[deck->deck[i]]);
+		cgc_printf("@s ", card_names[deck->deck[i]]);
 	}
-	printf("\ntop: @d\n", deck->top);
+	cgc_printf("\ntop: @d\n", deck->top);
 } 
 
 // Print the face value of each card in the hand
-void print_hand(char *hand, size_t size)
+void cgc_print_hand(char *hand, cgc_size_t size)
 {
 	for (int i=0; i<size; i++)
 	{
 		if ((hand[i] > 0) && (hand[i] < SIZE_OF_DECK + 1))
 		{
-			printf("@s ", card_names[hand[i]]);
+			cgc_printf("@s ", card_names[hand[i]]);
 		}
 	}
-	printf("\n");
+	cgc_printf("\n");
 }
 
 // Draw a card from the deck.
 // Returns the numeric representation of the card drawn (1 to 52)
-char draw(standard_deck *deck)
+char cgc_draw(cgc_standard_deck *deck)
 {
-	if (is_empty(deck))
+	if (cgc_is_empty(deck))
 	{
-		printf("Error: Drawing from an empty deck!\n");
+		cgc_printf("Error: Drawing from an empty deck!\n");
 		_terminate(1);
 	}
 	else
@@ -84,12 +84,12 @@ char draw(standard_deck *deck)
 
 }
 
-int is_empty(standard_deck *deck)
+int cgc_is_empty(cgc_standard_deck *deck)
 {
 	return (deck->top >= SIZE_OF_DECK);
 }
 
-int get_suit(char card)
+int cgc_get_suit(char card)
 {
 	if ((card <= 0) || (card > SIZE_OF_DECK + 1))
 		return 0;

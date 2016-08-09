@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,28 +27,28 @@
 #include "phydissectors.h"
 
 void (*phy_dissectors[]) (uint8_t *payload, int size) = {
-                                process_llama
+                                cgc_process_llama
 };
 
-void process_llama(uint8_t *payload, int size) {
-    llama_hdr_t *hdr = (llama_hdr_t*)payload;
+void cgc_process_llama(uint8_t *payload, int size) {
+    cgc_llama_hdr_t *hdr = (cgc_llama_hdr_t*)payload;
 
-    if (sizeof(llama_hdr_t) > size)
+    if (sizeof(cgc_llama_hdr_t) > size)
         return;
     LOG("\n\n===llama===\n\n")
 
     if (hdr->type < sizeof(llama_dissectors)/sizeof(llama_dissectors[0])) {
-        size -= sizeof(llama_hdr_t);
-        payload += sizeof(llama_hdr_t);
+        size -= sizeof(cgc_llama_hdr_t);
+        payload += sizeof(cgc_llama_hdr_t);
         if (size > 0)
             llama_dissectors[hdr->type](&payload,&size);
     }
 }
 
-void process_dupe(dupefile_t *f) {
-    dupepkt_t *cur = NULL;
+void cgc_process_dupe(cgc_dupefile_t *f) {
+    cgc_dupepkt_t *cur = NULL;
     LOG("Starting dissection...")
-    while ((cur = dupe_next(f)) && cur != NULL) {
+    while ((cur = cgc_dupe_next(f)) && cur != NULL) {
         LOG("\n\n====New Packet====");
         if (cur->hdr.size > f->framelen || f->captype >= sizeof(phy_dissectors)/sizeof(phy_dissectors[0]))
             break;

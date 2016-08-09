@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -55,125 +55,125 @@ THE SOFTWARE.
 // Main file format header
 struct VGF_HEADER
 {
-    uint32_t    vgfMagic;
-    uint16_t    vgfVersion;
-    uint16_t    vgfHeight;      // Height in pixels
-    uint16_t    vgfWidth;       // Width in pixels
-    uint8_t     vgfLayerCount;  // Number of layers to render on
+    cgc_uint32_t    vgfMagic;
+    cgc_uint16_t    vgfVersion;
+    cgc_uint16_t    vgfHeight;      // Height in pixels
+    cgc_uint16_t    vgfWidth;       // Width in pixels
+    cgc_uint8_t     vgfLayerCount;  // Number of layers to render on
 } __attribute__ ((__packed__));
 
-typedef struct VGF_HEADER tVGFHeader;
+typedef struct VGF_HEADER cgc_tVGFHeader;
 
 // VGF files are composed of a collection of VGF objects
 struct VGF_OBJECT_HEADER
 {
-    uint8_t     object_type;
-    uint8_t     object_layer;
-    uint8_t     object_color_index;     // Index to the objects color
-    uint8_t     object_settings;
+    cgc_uint8_t     object_type;
+    cgc_uint8_t     object_layer;
+    cgc_uint8_t     object_color_index;     // Index to the objects color
+    cgc_uint8_t     object_settings;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_OBJECT_HEADER tVGFObjectHeader;
+typedef struct VGF_OBJECT_HEADER cgc_tVGFObjectHeader;
 
 // The VGF color table
 struct VGF_COLOR_TABLE
 {
-    uint8_t     color_count;
+    cgc_uint8_t     color_count;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_COLOR_TABLE tVGFColorTable;
+typedef struct VGF_COLOR_TABLE cgc_tVGFColorTable;
 
 // A single color reference in the color index table
 struct VGF_COLOR_HEADER
 {
-    uint8_t    red;
-    uint8_t    green;
-    uint8_t    blue;
+    cgc_uint8_t    red;
+    cgc_uint8_t    green;
+    cgc_uint8_t    blue;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_COLOR_HEADER tVGFColorHeader;
+typedef struct VGF_COLOR_HEADER cgc_tVGFColorHeader;
 
 // A VGF circle object
 struct VGF_DRAW_CIRCLE
 {
-    uint16_t    x_pos;
-    uint16_t    y_pos;
-    uint16_t    radius;
+    cgc_uint16_t    x_pos;
+    cgc_uint16_t    y_pos;
+    cgc_uint16_t    radius;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_DRAW_CIRCLE tVGFDrawCircle;
+typedef struct VGF_DRAW_CIRCLE cgc_tVGFDrawCircle;
 
 // A VGF rectangle object
 struct VGF_DRAW_RECT
 {
-    uint16_t    x_start;
-    uint16_t    y_start;
-    uint16_t    x_len;
-    uint16_t    y_len;
+    cgc_uint16_t    x_start;
+    cgc_uint16_t    y_start;
+    cgc_uint16_t    x_len;
+    cgc_uint16_t    y_len;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_DRAW_RECT tVGFDrawRect;
+typedef struct VGF_DRAW_RECT cgc_tVGFDrawRect;
 
 // A VGF triangle object
 struct VGF_DRAW_TRIANGLE
 {
-    uint16_t    x_pos1;
-    uint16_t    y_pos1;
-    uint16_t    x_pos2;
-    uint16_t    y_pos2;
-    uint16_t    x_pos3;
-    uint16_t    y_pos3;
+    cgc_uint16_t    x_pos1;
+    cgc_uint16_t    y_pos1;
+    cgc_uint16_t    x_pos2;
+    cgc_uint16_t    y_pos2;
+    cgc_uint16_t    x_pos3;
+    cgc_uint16_t    y_pos3;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_DRAW_TRIANGLE tVGFDrawTriangle;
+typedef struct VGF_DRAW_TRIANGLE cgc_tVGFDrawTriangle;
 
 // A VGF line object
 struct VGF_DRAW_LINE
 {
-    uint16_t    x_start;
-    uint16_t    y_start;
-    uint16_t    x_end;
-    uint16_t    y_end;
+    cgc_uint16_t    x_start;
+    cgc_uint16_t    y_start;
+    cgc_uint16_t    x_end;
+    cgc_uint16_t    y_end;
 } __attribute__ ((__packed__));
 
-typedef struct VGF_DRAW_LINE tVGFDrawLine;
+typedef struct VGF_DRAW_LINE cgc_tVGFDrawLine;
 
 typedef struct VGF_OBJECT_TABLE
 {
-    tVGFObjectHeader obj_header;
+    cgc_tVGFObjectHeader obj_header;
     union
     {
-        tVGFDrawLine        obj_line;
-        tVGFDrawTriangle    obj_triangle;
-        tVGFDrawRect        obj_rect;
-        tVGFDrawCircle      obj_circle;
+        cgc_tVGFDrawLine        obj_line;
+        cgc_tVGFDrawTriangle    obj_triangle;
+        cgc_tVGFDrawRect        obj_rect;
+        cgc_tVGFDrawCircle      obj_circle;
     } obj_data;
 
     // Next in the list
     struct VGF_OBJECT_TABLE *pNext;
-} tVGFObjectTable;
+} cgc_tVGFObjectTable;
 
 typedef struct VGF_PARSED_FILE
 {
-    tVGFHeader file_header;
-    tVGFObjectTable *pObjectList;
+    cgc_tVGFHeader file_header;
+    cgc_tVGFObjectTable *pObjectList;
 
-    uint8_t color_count;
-    tVGFColorHeader *pColorTable;
+    cgc_uint8_t color_count;
+    cgc_tVGFColorHeader *pColorTable;
 
-} tVGFParsedFile;
+} cgc_tVGFParsedFile;
 
-uint16_t vgf_get_width( tVGFParsedFile *pFile );
-uint16_t vgf_get_height( tVGFParsedFile *pFile );
-int32_t vgf_parse_data( uint8_t *pData, uint32_t dataLen, tVGFParsedFile **pParsedFile );
-void vgf_destroy_file( tVGFParsedFile *pFile );
+cgc_uint16_t cgc_vgf_get_width( cgc_tVGFParsedFile *pFile );
+cgc_uint16_t cgc_vgf_get_height( cgc_tVGFParsedFile *pFile );
+cgc_int32_t cgc_vgf_parse_data( cgc_uint8_t *pData, cgc_uint32_t dataLen, cgc_tVGFParsedFile **pParsedFile );
+void cgc_vgf_destroy_file( cgc_tVGFParsedFile *pFile );
 
-int32_t vgf_get_render_size( tVGFParsedFile *pFile );
-int32_t vgf_render_file( tVGFParsedFile *pFile, uint8_t *pDest, uint32_t *pDestLen );
+cgc_int32_t cgc_vgf_get_render_size( cgc_tVGFParsedFile *pFile );
+cgc_int32_t cgc_vgf_render_file( cgc_tVGFParsedFile *pFile, cgc_uint8_t *pDest, cgc_uint32_t *pDestLen );
 
-void vgf_render_rect( tVGFDrawRect *pRectData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t pixel_width, uint16_t pixel_height );
-void vgf_render_line( tVGFDrawLine *pLineData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t pixel_width, uint16_t pixel_height );
-void vgf_render_triangle( tVGFDrawTriangle *pTriangleData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t pixel_width, uint16_t pixel_height );
-void vgf_render_circle( tVGFDrawCircle *pCircleData, uint16_t *layer_data, uint8_t settings, uint8_t color_index, uint16_t pixel_wieth, uint16_t pixel_height );
+void cgc_vgf_render_rect( cgc_tVGFDrawRect *pRectData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t pixel_width, cgc_uint16_t pixel_height );
+void cgc_vgf_render_line( cgc_tVGFDrawLine *pLineData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t pixel_width, cgc_uint16_t pixel_height );
+void cgc_vgf_render_triangle( cgc_tVGFDrawTriangle *pTriangleData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t pixel_width, cgc_uint16_t pixel_height );
+void cgc_vgf_render_circle( cgc_tVGFDrawCircle *pCircleData, cgc_uint16_t *layer_data, cgc_uint8_t settings, cgc_uint8_t color_index, cgc_uint16_t pixel_wieth, cgc_uint16_t pixel_height );
 
 #endif // __VGF_H___

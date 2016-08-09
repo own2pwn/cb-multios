@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,20 +38,20 @@ typedef struct {
 	char *command;
 	int (* handler)(int, char **);
 
-} commandsTableType;
+} cgc_commandsTableType;
 
 
-int tokenize(char *string, char delimiter, char **args[]);
-int makeFile(int argcount, char **args);
-int eraseFile(int argcount, char **args);
-int listFiles(int argcount, char **args);
-int overwriteFile( int argcount, char **args);
-int dumpFile( int argcount, char **args);
-int readFromEnd( int argcount, char **args);
-int readFirstN(int argcount, char **args);
-int copyFile(int argcount, char **args);
-int setPermissions(int argcount, char **args);
-int makeMemFile(int argcount, char **args);
+int cgc_tokenize(char *string, char delimiter, char **args[]);
+int cgc_makeFile(int argcount, char **args);
+int cgc_eraseFile(int argcount, char **args);
+int cgc_listFiles(int argcount, char **args);
+int cgc_overwriteFile( int argcount, char **args);
+int cgc_dumpFile( int argcount, char **args);
+int cgc_readFromEnd( int argcount, char **args);
+int cgc_readFirstN(int argcount, char **args);
+int cgc_copyFile(int argcount, char **args);
+int cgc_setPermissions(int argcount, char **args);
+int cgc_makeMemFile(int argcount, char **args);
 
 #endif
 

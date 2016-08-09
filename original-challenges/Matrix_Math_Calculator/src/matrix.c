@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 #define TOLERANCE .00099
 
 //Member Functions
-static int m_get_cell(matrix_t *m, unsigned int row, unsigned int col)
+static int cgc_m_get_cell(cgc_matrix_t *m, unsigned int row, unsigned int col)
 {
     if (!m)
         return ERROR;
@@ -46,7 +46,7 @@ static int m_get_cell(matrix_t *m, unsigned int row, unsigned int col)
     }
 }
 
-static float m_get_fcell(matrix_t *m, unsigned int row, unsigned int col)
+static float cgc_m_get_fcell(cgc_matrix_t *m, unsigned int row, unsigned int col)
 {
     if (!m)
         return ERROR;
@@ -63,7 +63,7 @@ static float m_get_fcell(matrix_t *m, unsigned int row, unsigned int col)
     }
 }
 
-static int m_set_cell(matrix_t *m, unsigned int row, unsigned int col, int new_value)
+static int cgc_m_set_cell(cgc_matrix_t *m, unsigned int row, unsigned int col, int new_value)
 {
     if (!m)
         return ERROR;
@@ -87,7 +87,7 @@ static int m_set_cell(matrix_t *m, unsigned int row, unsigned int col, int new_v
     return SUCCESS;
 }
 
-static int m_set_fcell(matrix_t *m, unsigned int row, unsigned int col, float new_value)
+static int cgc_m_set_fcell(cgc_matrix_t *m, unsigned int row, unsigned int col, float new_value)
 {
     if (!m)
         return ERROR;
@@ -109,7 +109,7 @@ static int m_set_fcell(matrix_t *m, unsigned int row, unsigned int col, float ne
     return SUCCESS;
 }
 
-static int m_set_rows_cols(matrix_t *m, unsigned int num_rows, unsigned int num_cols)
+static int cgc_m_set_rows_cols(cgc_matrix_t *m, unsigned int num_rows, unsigned int num_cols)
 {
     if (!m)
         return ERROR;
@@ -121,9 +121,9 @@ static int m_set_rows_cols(matrix_t *m, unsigned int num_rows, unsigned int num_
     return SUCCESS;
 }
 
-static void transmitall(char *buf, unsigned int len)
+static void cgc_transmitall(char *buf, unsigned int len)
 {
-    size_t tx, sent = 0;
+    cgc_size_t tx, sent = 0;
     while (sent < len)
     {
         if (transmit(STDOUT, buf + sent, len - sent, &tx) != 0 || tx == 0)
@@ -132,7 +132,7 @@ static void transmitall(char *buf, unsigned int len)
     }
 }
 
-static void print_matrix(matrix_t *m)
+static void cgc_print_matrix(cgc_matrix_t *m)
 {
     static char buf[8192];
     if (!m)
@@ -142,17 +142,17 @@ static void print_matrix(matrix_t *m)
     int i, j;
     for (i = 0; i < m->num_rows; i++)
     {
-        sprintf(buf, "%s|", buf);
+        cgc_sprintf(buf, "%s|", buf);
         for (j = 0; j < m->num_cols; j++)
         {
-            if (strlen(buf) > sizeof(buf) - 1000)
+            if (cgc_strlen(buf) > sizeof(buf) - 1000)
             {
-                transmitall(buf, strlen(buf));
+                cgc_transmitall(buf, cgc_strlen(buf));
                 buf[0] = 0;
             }
             if (m->ptype != FLOAT)
             {
-                sprintf(buf, "%s %d |", buf, m->get_cell(m, i, j));
+                cgc_sprintf(buf, "%s %d |", buf, m->get_cell(m, i, j));
             }
             else
             {
@@ -172,30 +172,30 @@ static void print_matrix(matrix_t *m)
                 }
 
                 if (f_pos < 0.01)
-                    sprintf(buf, "%s 0.0 |", buf);
+                    cgc_sprintf(buf, "%s 0.0 |", buf);
                 else if (f >= -TOLERANCE)
-                    sprintf(buf, "%s %d.%d |", buf, integer, decimal);
+                    cgc_sprintf(buf, "%s %d.%d |", buf, integer, decimal);
                 else
-                    sprintf(buf, "%s -%d.%d |", buf, integer, decimal);
+                    cgc_sprintf(buf, "%s -%d.%d |", buf, integer, decimal);
             }
         }
-        sprintf(buf, "%s\n", buf);
+        cgc_sprintf(buf, "%s\n", buf);
     }
     if (buf[0] != 0)
     {
-        transmitall(buf, strlen(buf));
+        cgc_transmitall(buf, cgc_strlen(buf));
         buf[0] = 0;
     }
 }
 
 //Public Functions
-matrix_t *create_matrix(mtype_e ptype, char *data)
+cgc_matrix_t *cgc_create_matrix(cgc_mtype_e ptype, char *data)
 {
-    matrix_t *new_matrix = NULL;
+    cgc_matrix_t *new_matrix = NULL;
 
     if (data)
     {
-        new_matrix = calloc(1, sizeof(matrix_t));
+        new_matrix = cgc_calloc(1, sizeof(cgc_matrix_t));
         if (!new_matrix)
             return NULL;
 
@@ -216,7 +216,7 @@ matrix_t *create_matrix(mtype_e ptype, char *data)
             break;
         }
 
-        new_matrix = calloc(1, sizeof(matrix_t) + data_size);
+        new_matrix = cgc_calloc(1, sizeof(cgc_matrix_t) + data_size);
         if (!new_matrix)
             return NULL;
 
@@ -226,17 +226,17 @@ matrix_t *create_matrix(mtype_e ptype, char *data)
     new_matrix->num_rows = 1;
     new_matrix->num_cols = 1;
     new_matrix->ptype = ptype;
-    new_matrix->get_cell = &m_get_cell;
-    new_matrix->get_fcell = &m_get_fcell;
-    new_matrix->set_cell = &m_set_cell;
-    new_matrix->set_fcell = &m_set_fcell;
-    new_matrix->set_rows_cols = &m_set_rows_cols;
-    new_matrix->print_matrix = &print_matrix;
+    new_matrix->get_cell = &cgc_m_get_cell;
+    new_matrix->get_fcell = &cgc_m_get_fcell;
+    new_matrix->set_cell = &cgc_m_set_cell;
+    new_matrix->set_fcell = &cgc_m_set_fcell;
+    new_matrix->set_rows_cols = &cgc_m_set_rows_cols;
+    new_matrix->cgc_print_matrix = &cgc_print_matrix;
 
     return new_matrix;
 }
 
-int m_add(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
+int cgc_m_add(cgc_matrix_t *m1, cgc_matrix_t *m2, cgc_matrix_t *m_result)
 {
     if (!m1 || !m2 || !m_result)
         return ERROR;
@@ -262,7 +262,7 @@ int m_add(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
     return SUCCESS;
 }
 
-int m_subtract(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
+int cgc_m_subtract(cgc_matrix_t *m1, cgc_matrix_t *m2, cgc_matrix_t *m_result)
 {
     if (!m1 || !m2 || !m_result)
         return ERROR;
@@ -288,7 +288,7 @@ int m_subtract(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
     return SUCCESS;
 }
 
-int m_multiply(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
+int cgc_m_multiply(cgc_matrix_t *m1, cgc_matrix_t *m2, cgc_matrix_t *m_result)
 {
     if (!m1 || !m2 || !m_result)
         return ERROR;
@@ -316,7 +316,7 @@ int m_multiply(matrix_t *m1, matrix_t *m2, matrix_t *m_result)
     return SUCCESS;
 }
 
-int swap_row(matrix_t *m, int row_idx1, int row_idx2)
+int cgc_swap_row(cgc_matrix_t *m, int row_idx1, int row_idx2)
 {
     if (!m)
         return ERROR;
@@ -337,7 +337,7 @@ int swap_row(matrix_t *m, int row_idx1, int row_idx2)
     return SUCCESS;
 }
 
-int swap_col(matrix_t *m, int col_idx1, int col_idx2)
+int cgc_swap_col(cgc_matrix_t *m, int col_idx1, int col_idx2)
 {
     if (!m)
         return ERROR;
@@ -358,7 +358,7 @@ int swap_col(matrix_t *m, int col_idx1, int col_idx2)
     return SUCCESS;
 }
 
-int m_transpose(matrix_t *m)
+int cgc_m_transpose(cgc_matrix_t *m)
 {
     if (!m)
         return ERROR;
@@ -369,15 +369,15 @@ int m_transpose(matrix_t *m)
 
     int data_width;
 
-    matrix_t *mt = NULL;
+    cgc_matrix_t *mt = NULL;
     switch(m->ptype)
     {
     case(SHORT):
-        mt = create_matrix(SHORT, NULL);
+        mt = cgc_create_matrix(SHORT, NULL);
         data_width = sizeof(short);
         break;
     case(INT):
-        mt = create_matrix(INT, NULL);
+        mt = cgc_create_matrix(INT, NULL);
         data_width = sizeof(INT);
         break;
     case(FLOAT):
@@ -399,13 +399,13 @@ int m_transpose(matrix_t *m)
     }
 
     m->set_rows_cols(m, old_cols, old_rows);
-    memcpy(m->data, mt->data, old_cols * old_rows * data_width);
-    free(mt);
+    cgc_memcpy(m->data, mt->data, old_cols * old_rows * data_width);
+    cgc_free(mt);
     return SUCCESS;
 }
 
 //Helper Functions
-static int swap_nonzero_cell(matrix_t *m, int row, int col)
+static int cgc_swap_nonzero_cell(cgc_matrix_t *m, int row, int col)
 {
     if (!m)
         return ERROR;
@@ -415,13 +415,13 @@ static int swap_nonzero_cell(matrix_t *m, int row, int col)
     int init_row = row;
     for (row=row + 1; row < m->num_rows; row++)
         if (m->get_fcell(m, row, col) > TOLERANCE || m->get_fcell(m, row, col) < -TOLERANCE)
-            return swap_row(m, init_row, row);
+            return cgc_swap_row(m, init_row, row);
 
     return FAIL;
 }
 
 
-static int subtract_row(matrix_t *m, int row_idx1, int row_idx2, int col_offset, float scalar)
+static int cgc_subtract_row(cgc_matrix_t *m, int row_idx1, int row_idx2, int col_offset, float scalar)
 {
     if (!m)
         return ERROR;
@@ -441,7 +441,7 @@ static int subtract_row(matrix_t *m, int row_idx1, int row_idx2, int col_offset,
     return SUCCESS;
 }
 
-int m_rref(matrix_t *m, matrix_t *m_result)
+int cgc_m_rref(cgc_matrix_t *m, cgc_matrix_t *m_result)
 {
     if (!m || !m_result)
         return ERROR;
@@ -460,7 +460,7 @@ int m_rref(matrix_t *m, matrix_t *m_result)
         if (divisor <= TOLERANCE && divisor >= -TOLERANCE)
             --i;
 
-        swap_nonzero_cell(m_result, i, j);
+        cgc_swap_nonzero_cell(m_result, i, j);
         divisor = m_result->get_fcell(m_result, i, j);
         for (k = j; k < m_result->num_cols; k++)
         {
@@ -481,7 +481,7 @@ int m_rref(matrix_t *m, matrix_t *m_result)
 
             float scalar = m_result->get_fcell(m_result, k, j);
             if (scalar > TOLERANCE || scalar < -TOLERANCE)
-                subtract_row(m_result, i, k, j, scalar);
+                cgc_subtract_row(m_result, i, k, j, scalar);
         }
     }
 

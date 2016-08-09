@@ -26,23 +26,23 @@ THE SOFTWARE.
 
 #include "char.h"
 
-uint8 char_is_num(char c) {
+cgc_uint8 cgc_char_is_num(char c) {
   return (('0' <= c) && ('9' >= c));
 }
 
-uint8 char_is_lower(char c) {
+cgc_uint8 cgc_char_is_lower(char c) {
   return (('a' <= c) && ('z' >= c));
 }
 
-uint8 char_is_upper(char c) {
+cgc_uint8 cgc_char_is_upper(char c) {
   return (('A' <= c) && ('Z' >= c));
 }
 
-uint8 char_is_alpha(char c) {
-  return char_is_lower(c) || char_is_upper(c);
+cgc_uint8 cgc_char_is_alpha(char c) {
+  return cgc_char_is_lower(c) || cgc_char_is_upper(c);
 }
 
-uint8 char_is_whitespace(char c) {
+cgc_uint8 cgc_char_is_whitespace(char c) {
   if (c == ' ') return 1;
   if (c == '\n') return 1;
   if (c == '\t') return 1;

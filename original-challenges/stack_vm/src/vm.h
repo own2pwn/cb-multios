@@ -35,18 +35,18 @@
 #define INVALID_ADDRESS_STR "Invalid address\n"
 #define NEWLINE "\n"
 
-typedef char ProgramLine[8];
+typedef char cgc_ProgramLine[8];
 
 typedef struct {
 	long long size;
 	int lineNumber;
-	ProgramLine lines;
-} Program;
+	cgc_ProgramLine lines;
+} cgc_Program;
 
-void initProgram(Program **program, int socket);
-void addLine(Program *program, ProgramLine line);
-int isProgramFull(Program *program);
-void executeProgram(Program *program);
-int parseCmd(char* command, char* buffer);
+void cgc_initProgram(cgc_Program **program, int socket);
+void cgc_addLine(cgc_Program *program, cgc_ProgramLine line);
+int cgc_isProgramFull(cgc_Program *program);
+void cgc_executeProgram(cgc_Program *program);
+int cgc_parseCmd(char* command, char* buffer);
 
 

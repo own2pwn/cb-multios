@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,74 +28,74 @@ unsigned char ready = 0;
 unsigned char units = 0;
 unsigned char bowl_set = 0;
 
-void init_dispenser(void) {
+void cgc_init_dispenser(void) {
 	bowl_set = 0;
 	units = 0;
 	ready = 1;
 }
 
-void dispense_bowl(void) {
+void cgc_dispense_bowl(void) {
 	bowl_set = 1;
 }
 
-void completion_buzzer(void) {
+void cgc_completion_buzzer(void) {
 	ready = 0;
 }
 
 // liquids
-void dispense_dairy_milk(void) {
+void cgc_dispense_dairy_milk(void) {
 	units++;
 }
-void dispense_dairy_cream(void) {
+void cgc_dispense_dairy_cream(void) {
 	units++;
 }
-void dispense_water(void) {
+void cgc_dispense_water(void) {
 	units++;
 }
-void dispense_soy_milk(void) {
+void cgc_dispense_soy_milk(void) {
 	units++;
 }
-void dispense_almond_milk(void) {
+void cgc_dispense_almond_milk(void) {
 	units++;
 }
 
 // cereals
-void dispense_sugar_loops(void) {
+void cgc_dispense_sugar_loops(void) {
 	units++;
 }
-void dispense_maize_flakes(void) {
+void cgc_dispense_maize_flakes(void) {
 	units++;
 }
-void dispense_marshmallow_figuringes(void) {
+void cgc_dispense_marshmallow_figuringes(void) {
 	units++;
 }
-void dispense_chocolate_rice_pellets(void) {
+void cgc_dispense_chocolate_rice_pellets(void) {
 	units++;
 }
-void dispense_oohs_of_oats(void) {
+void cgc_dispense_oohs_of_oats(void) {
 	units++;
 }
-void dispense_crunchy_puffs(void) {
+void cgc_dispense_crunchy_puffs(void) {
 	units++;
 }
-void dispense_frutiz_n_nuts(void) {
+void cgc_dispense_frutiz_n_nuts(void) {
 	units++;
 }
 
 // toppings
-void dispense_chocolate_drops(void) {
+void cgc_dispense_chocolate_drops(void) {
 	units++;
 }
-void dispense_blueberries(void) {
+void cgc_dispense_blueberries(void) {
 	units++;
 }
-void dispense_berry_medley(void) {
+void cgc_dispense_berry_medley(void) {
 	units++;
 }
-void dispense_sugar_cube(void) {
+void cgc_dispense_sugar_cube(void) {
 	units++;
 }
-void dispense_strawberries(void) {
+void cgc_dispense_strawberries(void) {
 	units++;
 }
 

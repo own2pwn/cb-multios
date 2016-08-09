@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,7 +27,7 @@ typedef struct {
     char type[4];			// type of content (Plain or Serialized)
     unsigned short size;	// number of bytes in content
     char content[];			// buffer to store content
-} Stream;
+} cgc_Stream;
 
 /**
  * Process the input stream to extract serialized objects
@@ -35,14 +35,14 @@ typedef struct {
  * @param input_stream 	Input stream object
  * @return 0 on success, else -1 on error
  */
-ssize_t process_serialized_input(Stream *input_stream);
+cgc_ssize_t cgc_process_serialized_input(cgc_Stream *input_stream);
 /**
  * Process the input stream to extract non-serialized objects
  *
  * @param input_stream 	Input stream object
  * @return 0 on success, else -1 on error
  */
-ssize_t process_plain_input(Stream *input_stream);
+cgc_ssize_t cgc_process_plain_input(cgc_Stream *input_stream);
 
 
 #endif

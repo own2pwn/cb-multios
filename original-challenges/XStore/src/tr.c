@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,45 +25,45 @@
 #include <string.h>
 #include "tr.h"
 
-tr_t _tr_rot_left(tr_t root)
+cgc_tr_t cgc__tr_rot_left(cgc_tr_t root)
 {
-    tr_node_t *nroot;
+    cgc_tr_node_t *nroot;
     nroot = root->left;
     root->left = nroot->right;
     nroot->right = root;
     return nroot;
 }
 
-tr_t _tr_rot_right(tr_t root)
+cgc_tr_t cgc__tr_rot_right(cgc_tr_t root)
 {
-    tr_node_t *nroot;
+    cgc_tr_node_t *nroot;
     nroot = root->right;
     root->right = nroot->left;
     nroot->left = root;
     return nroot;
 }
 
-tr_t tr_insert(tr_t root, char *key, T value)
+cgc_tr_t cgc_tr_insert(cgc_tr_t root, char *key, cgc_T value)
 {
     if (root == NULL)
     {
-        root = (tr_node_t *) malloc(sizeof(tr_node_t));
-        root->key = strdup(key);
-        random(&(root->prio), sizeof(root->prio), NULL);
+        root = (cgc_tr_node_t *) cgc_malloc(sizeof(cgc_tr_node_t));
+        root->key = cgc_strdup(key);
+        cgc_random(&(root->prio), sizeof(root->prio), NULL);
         root->value = value;
         root->left = root->right = NULL;
     }
-    else if (strcmp(key, root->key) < 0)
+    else if (cgc_strcmp(key, root->key) < 0)
     {
-        root->left = tr_insert(root->left, key, value);
+        root->left = cgc_tr_insert(root->left, key, value);
         if (root->left->prio < root->prio)
-            root = _tr_rot_left(root);
+            root = cgc__tr_rot_left(root);
     }
-    else if (strcmp(key, root->key) > 0)
+    else if (cgc_strcmp(key, root->key) > 0)
     {
-        root->right = tr_insert(root->right, key, value);
+        root->right = cgc_tr_insert(root->right, key, value);
         if (root->right->prio < root->prio)
-            root = _tr_rot_right(root);
+            root = cgc__tr_rot_right(root);
     }
     else
     {
@@ -74,35 +74,35 @@ tr_t tr_insert(tr_t root, char *key, T value)
     return root;
 }
 
-void _tr_destroy_node(tr_node_t *node)
+void cgc__tr_destroy_node(cgc_tr_node_t *node)
 {
     //destroy_value_fn(node->value);
-    free(node->key);
-    free(node);
+    cgc_free(node->key);
+    cgc_free(node);
 }
 
-tr_t tr_delete(tr_t root, char *key)
+cgc_tr_t cgc_tr_delete(cgc_tr_t root, char *key)
 {
-    tr_node_t *tmp;
+    cgc_tr_node_t *tmp;
     if (root == NULL)
         return NULL;
-    if (strcmp(key, root->key) < 0)
-        root->left = tr_delete(root->left, key);
-    else if (strcmp(key, root->key) > 0)
-        root->right = tr_delete(root->right, key);
+    if (cgc_strcmp(key, root->key) < 0)
+        root->left = cgc_tr_delete(root->left, key);
+    else if (cgc_strcmp(key, root->key) > 0)
+        root->right = cgc_tr_delete(root->right, key);
     else
     {
         if (root->left && root->right)
         {
             if (root->left->prio < root->right->prio)
             {
-                root = _tr_rot_left(root);
-                root->right = tr_delete(root->right, key);
+                root = cgc__tr_rot_left(root);
+                root->right = cgc_tr_delete(root->right, key);
             }
             else
             {
-                root = _tr_rot_right(root);
-                root->left = tr_delete(root->left, key);
+                root = cgc__tr_rot_right(root);
+                root->left = cgc_tr_delete(root->left, key);
             }
         }
         else
@@ -114,50 +114,50 @@ tr_t tr_delete(tr_t root, char *key)
                 root = root->right;
             else
                 root = NULL;
-            _tr_destroy_node(tmp);
+            cgc__tr_destroy_node(tmp);
         }
     }
     return root;
 }
 
-T tr_find(tr_t root, char *key)
+cgc_T cgc_tr_find(cgc_tr_t root, char *key)
 {
     if (root == NULL)
         return NULL;
-    if (strcmp(key, root->key) < 0)
-        return tr_find(root->left, key);
-    else if (strcmp(key, root->key) > 0)
-        return tr_find(root->right, key);
+    if (cgc_strcmp(key, root->key) < 0)
+        return cgc_tr_find(root->left, key);
+    else if (cgc_strcmp(key, root->key) > 0)
+        return cgc_tr_find(root->right, key);
     else
         return root->value;
 }
 
-void tr_destroy(tr_t root)
+void cgc_tr_destroy(cgc_tr_t root)
 {
     if (root != NULL)
     {
-        tr_destroy(root->left);
-        _tr_destroy_node(root);
-        tr_destroy(root->right);
+        cgc_tr_destroy(root->left);
+        cgc__tr_destroy_node(root);
+        cgc_tr_destroy(root->right);
     }
 }
 
-void tr_apply(tr_t root, tr_apply_fn apply, void *arg)
+void cgc_tr_apply(cgc_tr_t root, cgc_tr_apply_fn apply, void *arg)
 {
     if (root != NULL)
     {
-        tr_apply(root->left, apply, arg);
+        cgc_tr_apply(root->left, apply, arg);
         apply(root, arg);
-        tr_apply(root->right, apply, arg);
+        cgc_tr_apply(root->right, apply, arg);
     }
 }
 
-void tr_print(tr_t root)
+void cgc_tr_print(cgc_tr_t root)
 {
     if (root != NULL)
     {
-        tr_print(root->left);
-        printf("&s (&d)" NL, root->key, (int) root->value);
-        tr_print(root->right);
+        cgc_tr_print(root->left);
+        cgc_printf("&s (&d)" NL, root->key, (int) root->value);
+        cgc_tr_print(root->right);
     }
 }

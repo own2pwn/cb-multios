@@ -34,7 +34,7 @@ extern "C"
 #define INPUT_CAP 512
 
 /*
-bool HexCharToInt( char c, uint8_t &outValue )
+bool HexCharToInt( char c, cgc_uint8_t &outValue )
 {
 	if ( c >= 'A' && c <= 'F' )
 		outValue = (10 + (c - 'A'));
@@ -48,32 +48,32 @@ bool HexCharToInt( char c, uint8_t &outValue )
 	return (true);
 }*/
 
-char* ConvertToHexChars( uint8_t *pData, uint32_t dataLen )
+char* cgc_ConvertToHexChars( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	int len = dataLen * 2;
 	char* str = new char[len];
 
-	for ( uint32_t i = 0; i < dataLen; i++ )
+	for ( cgc_uint32_t i = 0; i < dataLen; i++ )
 	{
-		sprintf( &str[ i * 2 ], "$x", (pData[i] >> 4) & 0xF );
-		sprintf( &str[ ( i * 2 )+1 ], "$x", pData[i] & 0xF );
+		cgc_sprintf( &str[ i * 2 ], "$x", (pData[i] >> 4) & 0xF );
+		cgc_sprintf( &str[ ( i * 2 )+1 ], "$x", pData[i] & 0xF );
 	}
 	
 	return str;
 }
 
 /*
-uint8_t* ConvertBackHexChars( uint8_t *pData, uint32_t dataLen )
+cgc_uint8_t* ConvertBackHexChars( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	int len = dataLen / 2;
-	uint8_t* str = new uint8_t[len];
+	cgc_uint8_t* str = new cgc_uint8_t[len];
 
 	int j = 0;
 
-	for ( uint32_t i = 0; i < dataLen; )
+	for ( cgc_uint32_t i = 0; i < dataLen; )
 	{
-		uint16_t var = 0;
-		uint8_t a,b;
+		cgc_uint16_t var = 0;
+		cgc_uint8_t a,b;
 		HexCharToInt( pData[i], a );
 		HexCharToInt( pData[i+1], b );
 		var = a << 4; // move to high nibble
@@ -85,11 +85,11 @@ uint8_t* ConvertBackHexChars( uint8_t *pData, uint32_t dataLen )
 	return str;
 }*/
 /*
-void PrintHexBytes( uint8_t *pData, uint32_t dataLen )
+void PrintHexBytes( cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
-	for ( uint32_t i = 0; i < dataLen; i++ )
-		printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
+	for ( cgc_uint32_t i = 0; i < dataLen; i++ )
+		cgc_printf( "$x$x", (pData[i] >> 4) & 0xF, pData[i] & 0xF );
 	
-	printf( "\n" );
+	cgc_printf( "\n" );
 }*/
 

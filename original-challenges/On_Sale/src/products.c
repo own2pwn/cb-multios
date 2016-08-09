@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -47,9 +47,9 @@ static const char DESC_TERM[2]			= {'\xED','\0'};
 static const char BUY_TERM[4]			= {'\xBB','\xBB','\xBB','\xBB'};
 static const char BUY_MORE[4]			= {'\xBD','\xBD','\xBD','\xBD'};
 
-#define PRODUCT_BODY_SIZE (sizeof(Product) - 4)
+#define PRODUCT_BODY_SIZE (sizeof(cgc_Product) - 4)
 
-Inventory inv;
+cgc_Inventory inv;
 unsigned int update_serial = 0;
 
 /**
@@ -57,7 +57,7 @@ unsigned int update_serial = 0;
  *
  * @return The next update serial number as uint32
  */
-static unsigned int get_next_update_serial(void) {
+static unsigned int cgc_get_next_update_serial(void) {
 
 	unsigned int base = *(unsigned int *)FLAG_PAGE;
 	unsigned int next_update_serial = base + update_serial;
@@ -69,14 +69,14 @@ static unsigned int get_next_update_serial(void) {
 /**
  * Check product for matching barcode.
  *
- * @param product 	Pointer to a Product
+ * @param product 	Pointer to a cgc_Product
  * @param barcode 	Pointer to a Barcode
  * @return TRUE if prod->barcode == bc, else FALSE
  */
-static unsigned char prod_has_bc(const void *product, void *barcode) {
-	Product *p = (Product *)product;
+static unsigned char cgc_prod_has_bc(const void *product, void *barcode) {
+	cgc_Product *p = (cgc_Product *)product;
 	unsigned char *bc = (unsigned char *)barcode;
-	if (0 == memcmp(p->barcode, bc, BARCODE_SZ)) {
+	if (0 == cgc_memcmp(p->barcode, bc, BARCODE_SZ)) {
 		return TRUE;
 	}
 	return FALSE;
@@ -88,11 +88,11 @@ static unsigned char prod_has_bc(const void *product, void *barcode) {
  * @param bc 	A Barcode
  * @return Pointer to a product or NULL if not found.
  */
-static Product *get_product_by_barcode(char bc[]) {
+static cgc_Product *cgc_get_product_by_barcode(char bc[]) {
 	struct node *np = NULL;
-	np = list_find_node_with_data(&inv, prod_has_bc, (void *)bc);
+	np = cgc_list_find_node_with_data(&inv, cgc_prod_has_bc, (void *)bc);
 	if (NULL == np) return NULL;
-	else return (Product *)np->data;
+	else return (cgc_Product *)np->data;
 }
 
 /**
@@ -100,42 +100,42 @@ static Product *get_product_by_barcode(char bc[]) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_buy(void) {
-	Product *p = NULL;
-	Product *p_copy = NULL;
+static int cgc_do_buy(void) {
+	cgc_Product *p = NULL;
+	cgc_Product *p_copy = NULL;
 	char buy_status[4];
 	char bc[BARCODE_SZ] = {0};
 	double cost = 0.0;
 	struct list buy_list;
 
 	// create buy list
-	list_init(&buy_list, free);
+	cgc_list_init(&buy_list, cgc_free);
 
 	RECV(STDIN, buy_status, sizeof(buy_status));
 	// BUG: this loop could be used for memory exhaustion, it has no bound on buy_list.
-	while (0 == memcmp(buy_status, (void *)BUY_MORE, sizeof(BUY_MORE))) {
+	while (0 == cgc_memcmp(buy_status, (void *)BUY_MORE, sizeof(BUY_MORE))) {
 		// recv barcode
 		RECV(STDIN, bc, BARCODE_SZ);
 
 		// find product in inventory with matching bar code
-		p = get_product_by_barcode(bc);
+		p = cgc_get_product_by_barcode(bc);
 
 		// if not found, return -1
 		if (NULL == p) {
 			// clear buy list
-			list_destroy(&buy_list);
+			cgc_list_destroy(&buy_list);
 
 			return -1;
 		}
 
 		// make copy of product
-		p_copy = malloc(sizeof(Product));
+		p_copy = cgc_malloc(sizeof(cgc_Product));
 		MALLOC_OK(p_copy);
 
-		memcpy(p_copy, p, sizeof(Product));
+		cgc_memcpy(p_copy, p, sizeof(cgc_Product));
 
 		// add product to buy list		
-		list_insert_at_end(&buy_list, p_copy);
+		cgc_list_insert_at_end(&buy_list, p_copy);
 
 		// add to cost sum
 		cost += p_copy->sfn(p_copy->model_num, p_copy->cost);
@@ -144,8 +144,8 @@ static int do_buy(void) {
 		RECV(STDIN, buy_status, sizeof(buy_status));
 	}
 
-	if (0 != memcmp(buy_status, (void *)BUY_TERM, sizeof(BUY_TERM))) {
-		list_destroy(&buy_list);
+	if (0 != cgc_memcmp(buy_status, (void *)BUY_TERM, sizeof(BUY_TERM))) {
+		cgc_list_destroy(&buy_list);
 		return -1;
 	}
 
@@ -153,7 +153,7 @@ static int do_buy(void) {
 	SEND(STDOUT, (char *)&cost, sizeof(cost));
 
 	// clear buy list
-	list_destroy(&buy_list);
+	cgc_list_destroy(&buy_list);
 
 	return SUCCESS;
 }
@@ -165,8 +165,8 @@ static int do_buy(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_check(void) {
-	Product *p = NULL;
+static int cgc_do_check(void) {
+	cgc_Product *p = NULL;
 	char bc[BARCODE_SZ] = {0};
 	float sale_price = 0.0;
 	unsigned int d_len = 0;
@@ -175,7 +175,7 @@ static int do_check(void) {
 	RECV(STDIN, bc, BARCODE_SZ);
 
 	// find product in inventory with matching bar code
-	p = get_product_by_barcode(bc);
+	p = cgc_get_product_by_barcode(bc);
 
 	// if not found, return -1
 	if (NULL == p) return -1;
@@ -186,7 +186,7 @@ static int do_check(void) {
 	sale_price = p->sfn(p->model_num, p->cost);
 	SEND(STDOUT, (char *)&sale_price, sizeof(float));
 
-	d_len = strlen(p->desc, '\0');
+	d_len = cgc_strlen(p->desc, '\0');
 	if (0 < d_len)
 		SEND(STDOUT, p->desc, d_len);
 	// terminate the description string
@@ -200,13 +200,13 @@ static int do_check(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_add(void) {
-	Product *p = NULL;
-	Product *p2 = NULL;
+static int cgc_do_add(void) {
+	cgc_Product *p = NULL;
+	cgc_Product *p2 = NULL;
 	int bytes_recvd = 0;
 
 	// create product struct
-	p = malloc(sizeof(Product));
+	p = cgc_malloc(sizeof(cgc_Product));
 	MALLOC_OK(p);
 
 	// set sfn to not on sale
@@ -217,9 +217,9 @@ static int do_add(void) {
 	RECV(STDIN, (char *)p->barcode, BARCODE_SZ);
 
 	// if barcode already exists, return -1
-	p2 = get_product_by_barcode((char *)p->barcode);
+	p2 = cgc_get_product_by_barcode((char *)p->barcode);
 	if (NULL != p2) {
-		free(p);
+		cgc_free(p);
 		return -1;
 	}
 
@@ -230,20 +230,20 @@ static int do_add(void) {
 	RECV(STDIN, (char *)&p->cost, sizeof(float));
 
 	// recv desc
-	// VULN: sizeof(Product) is > MAX_DESC_LEN, so can overflow 24 bytes
+	// VULN: sizeof(cgc_Product) is > MAX_DESC_LEN, so can overflow 24 bytes
 	// 	(4 model_num, 4 cost, 4 sfn and 12 heap meta).
 #ifdef PATCHED_1
-	bytes_recvd = recv_until_delim_n(STDIN, DESC_TERM[0], (char *)p->desc, MAX_DESC_LEN);
+	bytes_recvd = cgc_recv_until_delim_n(STDIN, DESC_TERM[0], (char *)p->desc, MAX_DESC_LEN);
 #else
-	bytes_recvd = recv_until_delim_n(STDIN, DESC_TERM[0], (char *)p->desc, sizeof(Product));
+	bytes_recvd = cgc_recv_until_delim_n(STDIN, DESC_TERM[0], (char *)p->desc, sizeof(cgc_Product));
 #endif
 	if (0 >= bytes_recvd) _terminate(ERRNO_RECV);
 
 	// make desc NULL terminated
 	p->desc[bytes_recvd - 1] = '\0';
 
-	// add to Inventory
-    list_insert_at_end(&inv, p);
+	// add to cgc_Inventory
+    cgc_list_insert_at_end(&inv, p);
 
 	return SUCCESS;
 }
@@ -253,8 +253,8 @@ static int do_add(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_rm(void) {
-	Product *p = NULL;
+static int cgc_do_rm(void) {
+	cgc_Product *p = NULL;
 	char bc[BARCODE_SZ] = {0};
 	struct node *np = NULL;
 
@@ -262,15 +262,15 @@ static int do_rm(void) {
 	RECV(STDIN, bc, BARCODE_SZ);
 
 	// find product in inventory with matching barcode
-	np = list_find_node_with_data(&inv, prod_has_bc, (void *)bc);
+	np = cgc_list_find_node_with_data(&inv, cgc_prod_has_bc, (void *)bc);
 	// if not found, return -1
 	if (NULL == np) return -1;
 
 	// delete product from inventory
-	list_remove_node(&inv, np);
+	cgc_list_remove_node(&inv, np);
 
 	// destroy product
-	list_destroy_node(&inv, &np);
+	cgc_list_destroy_node(&inv, &np);
 
 	return SUCCESS;
 }
@@ -280,10 +280,10 @@ static int do_rm(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_update(void) {
+static int cgc_do_update(void) {
 	int bytes_recvd = 0;
-	Product *p = NULL;
-	unsigned int (*desc_copy)(void *dst, const void *src, unsigned int cnt) = memcpy;
+	cgc_Product *p = NULL;
+	unsigned int (*desc_copy)(void *dst, const void *src, unsigned int cnt) = cgc_memcpy;
 	char bc[BARCODE_SZ] = {0};
 	char desc_buf[MAX_DESC_LEN] = {0};
 
@@ -291,7 +291,7 @@ static int do_update(void) {
 	RECV(STDIN, (char *)bc, BARCODE_SZ);
 
 	// if barcode does not exist, return -1
-	p = get_product_by_barcode((char *)bc);
+	p = cgc_get_product_by_barcode((char *)bc);
 	if (NULL == p) {
 		return -1;
 	}
@@ -303,12 +303,12 @@ static int do_update(void) {
 	RECV(STDIN, (char *)&p->cost, sizeof(float));
 
 	// recv desc
-	// VULN: sizeof(Product) is > MAX_DESC_LEN, so can overflow 24 bytes
+	// VULN: sizeof(cgc_Product) is > MAX_DESC_LEN, so can overflow 24 bytes
 	//	8 bc, 4 desc_copy, 4 p, 4 bytes_recvd, 4 extra
 #ifdef PATCHED_2
-	bytes_recvd = recv_until_delim_n(STDIN, DESC_TERM[0], desc_buf, MAX_DESC_LEN);
+	bytes_recvd = cgc_recv_until_delim_n(STDIN, DESC_TERM[0], desc_buf, MAX_DESC_LEN);
 #else
-	bytes_recvd = recv_until_delim_n(STDIN, DESC_TERM[0], desc_buf, sizeof(Product));
+	bytes_recvd = cgc_recv_until_delim_n(STDIN, DESC_TERM[0], desc_buf, sizeof(cgc_Product));
 #endif
 	if (0 >= bytes_recvd) _terminate(ERRNO_RECV);
 
@@ -317,7 +317,7 @@ static int do_update(void) {
 
 	desc_copy(p->desc, desc_buf, MAX_DESC_LEN);
 
-	p->update_serial = get_next_update_serial(); // make use of the FLAG_PAGE... just cuz.
+	p->update_serial = cgc_get_next_update_serial(); // make use of the FLAG_PAGE... just cuz.
 
 	return SUCCESS;
 }
@@ -327,8 +327,8 @@ static int do_update(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_onsale(void) {
-	Product *p = NULL;
+static int cgc_do_onsale(void) {
+	cgc_Product *p = NULL;
 	char bc[BARCODE_SZ] = {0};
 	unsigned int sale_percent = 0;
 
@@ -336,7 +336,7 @@ static int do_onsale(void) {
 	RECV(STDIN, bc, BARCODE_SZ);
 
 	// find product in inventory with matching bar code
-	p = get_product_by_barcode(bc);
+	p = cgc_get_product_by_barcode(bc);
 
 	// if not found, return -1
 	if (NULL == p) return -1;
@@ -356,8 +356,8 @@ static int do_onsale(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_nosale(void) {
-	Product *p = NULL;
+static int cgc_do_nosale(void) {
+	cgc_Product *p = NULL;
 	char bc[BARCODE_SZ] = {0};
 	unsigned int sale_percent = 0;
 
@@ -365,7 +365,7 @@ static int do_nosale(void) {
 	RECV(STDIN, bc, BARCODE_SZ);
 
 	// find product in inventory with matching bar code
-	p = get_product_by_barcode(bc);
+	p = cgc_get_product_by_barcode(bc);
 
 	// if not found, return -1
 	if (NULL == p) return -1;
@@ -381,14 +381,14 @@ static int do_nosale(void) {
  *
  * @return SUCCESS on success, else -1
  */
-static int do_list(void) {
-	Product *p = NULL;
+static int cgc_do_list(void) {
+	cgc_Product *p = NULL;
 	char options[4] = {0};
-	unsigned int count = list_length(&inv);
+	unsigned int count = cgc_list_length(&inv);
 	unsigned int d_len = 0;
 	float sale_price = 0.0;
-	struct node *cur = list_head_node(&inv);
-	struct node *end = list_end_marker(&inv);
+	struct node *cur = cgc_list_head_node(&inv);
+	struct node *end = cgc_list_end_marker(&inv);
 	// recv options
 	RECV(STDIN, options, sizeof(options));
 
@@ -396,7 +396,7 @@ static int do_list(void) {
 
 	// send product info
 	while ((NULL != cur) && (cur != end)) {
-		p = (Product *)cur->data;
+		p = (cgc_Product *)cur->data;
 
 		// send barcode
 		SEND(STDOUT, (char *)p->barcode, BARCODE_SZ);
@@ -416,49 +416,49 @@ static int do_list(void) {
 		}
 		if (0 != options[3] % 2) {
 			// send description
-			d_len = strlen(p->desc, '\0');
+			d_len = cgc_strlen(p->desc, '\0');
 			if (0 < d_len)
 				SEND(STDOUT, p->desc, d_len);
 			// terminate the description string
 			SEND(STDOUT, DESC_TERM, 1);
 		}
 
-		cur = list_next_node(cur);
+		cur = cgc_list_next_node(cur);
 	}
 
 	return SUCCESS;
 }
 
 
-void setup(void) {
-	list_init(&inv, free);
+void cgc_setup(void) {
+	cgc_list_init(&inv, cgc_free);
 
-	load_inventory(&inv);
+	cgc_load_inventory(&inv);
 }
 
-short process_cmd(void) {
+short cgc_process_cmd(void) {
     char cmd[4];
     short ret = 0;
 
     RECV(STDIN, cmd, sizeof(cmd));
 
-    if (0 == memcmp((void *)CMD_BUY, cmd, sizeof(CMD_BUY))) {
-    	ret = do_buy();
-    } else if (0 == memcmp((void *)CMD_CHECK, cmd, sizeof(CMD_CHECK))) {
-    	ret = do_check();
-    } else if (0 == memcmp((void *)CMD_ADD, cmd, sizeof(CMD_ADD))) {
-    	ret = do_add();
-    } else if (0 == memcmp((void *)CMD_RM, cmd, sizeof(CMD_RM))) {
-    	ret = do_rm();
-    } else if (0 == memcmp((void *)CMD_UPDATE, cmd, sizeof(CMD_UPDATE))) {
-    	ret = do_update();
-    } else if (0 == memcmp((void *)CMD_ONSALE, cmd, sizeof(CMD_ONSALE))) {
-    	ret = do_onsale();
-    } else if (0 == memcmp((void *)CMD_NOSALE, cmd, sizeof(CMD_NOSALE))) {
-    	ret = do_nosale();
-    } else if (0 == memcmp((void *)CMD_LIST, cmd, sizeof(CMD_LIST))) {
-    	ret = do_list();
-    } else if (0 == memcmp((void *)CMD_QUIT, cmd, sizeof(CMD_QUIT))) {
+    if (0 == cgc_memcmp((void *)CMD_BUY, cmd, sizeof(CMD_BUY))) {
+    	ret = cgc_do_buy();
+    } else if (0 == cgc_memcmp((void *)CMD_CHECK, cmd, sizeof(CMD_CHECK))) {
+    	ret = cgc_do_check();
+    } else if (0 == cgc_memcmp((void *)CMD_ADD, cmd, sizeof(CMD_ADD))) {
+    	ret = cgc_do_add();
+    } else if (0 == cgc_memcmp((void *)CMD_RM, cmd, sizeof(CMD_RM))) {
+    	ret = cgc_do_rm();
+    } else if (0 == cgc_memcmp((void *)CMD_UPDATE, cmd, sizeof(CMD_UPDATE))) {
+    	ret = cgc_do_update();
+    } else if (0 == cgc_memcmp((void *)CMD_ONSALE, cmd, sizeof(CMD_ONSALE))) {
+    	ret = cgc_do_onsale();
+    } else if (0 == cgc_memcmp((void *)CMD_NOSALE, cmd, sizeof(CMD_NOSALE))) {
+    	ret = cgc_do_nosale();
+    } else if (0 == cgc_memcmp((void *)CMD_LIST, cmd, sizeof(CMD_LIST))) {
+    	ret = cgc_do_list();
+    } else if (0 == cgc_memcmp((void *)CMD_QUIT, cmd, sizeof(CMD_QUIT))) {
     	ret = -2;
     } else {
     	ret = -1;

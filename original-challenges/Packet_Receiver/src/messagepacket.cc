@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,20 +25,20 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CMessagePacket::CMessagePacket( uint8_t hdr, uint8_t len )
+cgc_CMessagePacket::cgc_CMessagePacket( cgc_uint8_t hdr, cgc_uint8_t len )
 {
     m_messageHeader.hdr = hdr;
     m_messageHeader.len = len;
-    m_pMessageData = new uint8_t[len];
+    m_pMessageData = new cgc_uint8_t[len];
 }
 
-CMessagePacket::~CMessagePacket( )
+cgc_CMessagePacket::~cgc_CMessagePacket( )
 {
     if ( m_pMessageData )
         delete [] m_pMessageData;
 }
 
-void CMessagePacket::SetDataByteAt( uint8_t data_pos, uint8_t value )
+void cgc_CMessagePacket::cgc_SetDataByteAt( cgc_uint8_t data_pos, cgc_uint8_t value )
 {
     if ( !m_pMessageData )
         return;
@@ -49,15 +49,15 @@ void CMessagePacket::SetDataByteAt( uint8_t data_pos, uint8_t value )
     m_pMessageData[data_pos] = value;
 }
 
-uint8_t CMessagePacket::WaitForPreambleLock( CDataStream *pRxStream )
+cgc_uint8_t cgc_CMessagePacket::cgc_WaitForPreambleLock( cgc_CDataStream *pRxStream )
 {
-    uint32_t lockBitCount = 0;
-    uint8_t lockState = 1;
+    cgc_uint32_t lockBitCount = 0;
+    cgc_uint8_t lockState = 1;
 
     // Wait for receiver lock on preamble
     for ( ; lockBitCount < PREAMBLE_LOCK_COUNT; )
     {
-        uint8_t readBit = pRxStream->ReadBit();
+        cgc_uint8_t readBit = pRxStream->cgc_ReadBit();
 
         if ( lockState == 1 )
         {
@@ -94,25 +94,25 @@ uint8_t CMessagePacket::WaitForPreambleLock( CDataStream *pRxStream )
     return (lockState);
 }
 
-CMessagePacket *CMessagePacket::ParseStream( CDataStream *pRxStream )
+cgc_CMessagePacket *cgc_CMessagePacket::cgc_ParseStream( cgc_CDataStream *pRxStream )
 {
     // Wait for preamble lock
-    uint8_t preambleState = WaitForPreambleLock( pRxStream );
+    cgc_uint8_t preambleState = cgc_WaitForPreambleLock( pRxStream );
 
 #if DEBUG_MESSAGES
-    printf( "Preamble lock\n" );
+    cgc_printf( "Preamble lock\n" );
 #endif
 
     // Find synch byte
     // Stay on sequence if it is the preamble -- if it diverges it should be the byte align sequence
-    uint8_t lockState = 0;
-    uint8_t readBit = 0;
-    uint8_t byteLockPos = 0;
+    cgc_uint8_t lockState = 0;
+    cgc_uint8_t readBit = 0;
+    cgc_uint8_t byteLockPos = 0;
 
     bool bByteLocked = false;
     while ( !bByteLocked )
     {
-        readBit = pRxStream->ReadBit();
+        readBit = pRxStream->cgc_ReadBit();
 
         if ( lockState == 0 )
         {
@@ -170,22 +170,22 @@ CMessagePacket *CMessagePacket::ParseStream( CDataStream *pRxStream )
     }
 
 #if DEBUG_MESSAGES
-    printf( "Byte lock acquired\n" );
+    cgc_printf( "Byte lock acquired\n" );
 #endif
 
     // Read header
-    uint8_t hdr;
-    uint8_t data_len;
+    cgc_uint8_t hdr;
+    cgc_uint8_t data_len;
 
-    hdr = pRxStream->ReadByte();
+    hdr = pRxStream->cgc_ReadByte();
 
     // Validate header...
     if ( (hdr & HEADER_IDENTIFIER_BITS) != HEADER_IDENTIFIER_VALUE )
         return (NULL);
 
     // Validate header parity bit
-    uint8_t parity_check_value = 0;
-    for ( uint8_t i = 0; i < 8; i++ )
+    cgc_uint8_t parity_check_value = 0;
+    for ( cgc_uint8_t i = 0; i < 8; i++ )
     {
         if ( (1<<i) & HEADER_PARITY_BIT_MASK )
             parity_check_value += ((hdr & (1<<i)) >> i) & 0x1;
@@ -194,40 +194,40 @@ CMessagePacket *CMessagePacket::ParseStream( CDataStream *pRxStream )
     // Even or odd (even = 0, odd = 1)
     parity_check_value = parity_check_value % 2;
 
-    uint8_t parity_value = ((hdr & (1<<HEADER_PARITY_BIT)) >> HEADER_PARITY_BIT) & 0x1;
+    cgc_uint8_t parity_value = ((hdr & (1<<HEADER_PARITY_BIT)) >> HEADER_PARITY_BIT) & 0x1;
 
     // Verify parity bit
     if ( parity_value != parity_check_value )
         return (NULL);
 
-    data_len = pRxStream->ReadByte();
+    data_len = pRxStream->cgc_ReadByte();
 
     // Allocate new message packet
-    CMessagePacket *pNewPacket = new CMessagePacket( hdr, data_len );
+    cgc_CMessagePacket *pNewPacket = new cgc_CMessagePacket( hdr, data_len );
 
     // Read in data
-    uint32_t checksum32 = 0;
-    uint16_t checksum16 = 0;
-    for ( uint8_t data_pos = 0; data_pos < data_len; data_pos++ )
+    cgc_uint32_t checksum32 = 0;
+    cgc_uint16_t checksum16 = 0;
+    for ( cgc_uint8_t data_pos = 0; data_pos < data_len; data_pos++ )
     {
-        uint8_t read_byte = pRxStream->ReadByte();
+        cgc_uint8_t read_byte = pRxStream->cgc_ReadByte();
 
         checksum32 += read_byte;
         checksum16 += read_byte;
 
-        pNewPacket->SetDataByteAt( data_pos, read_byte );
+        pNewPacket->cgc_SetDataByteAt( data_pos, read_byte );
     }
 
     // Now read in checksum
-    if ( pNewPacket->IsLargeChecksum() )
+    if ( pNewPacket->cgc_IsLargeChecksum() )
     {
         // Read in a large checksum!
-        uint32_t new_checksum = 0;
+        cgc_uint32_t new_checksum = 0;
 
-        new_checksum = (pRxStream->ReadByte() << 24);
-        new_checksum |= (pRxStream->ReadByte() << 16);
-        new_checksum |= (pRxStream->ReadByte() << 8);
-        new_checksum |= (pRxStream->ReadByte());
+        new_checksum = (pRxStream->cgc_ReadByte() << 24);
+        new_checksum |= (pRxStream->cgc_ReadByte() << 16);
+        new_checksum |= (pRxStream->cgc_ReadByte() << 8);
+        new_checksum |= (pRxStream->cgc_ReadByte());
 
         if ( checksum32 != new_checksum )
         {
@@ -237,14 +237,14 @@ CMessagePacket *CMessagePacket::ParseStream( CDataStream *pRxStream )
         }
 
         // Assign checksum 32-bit
-        pNewPacket->SetChecksum32( new_checksum );
+        pNewPacket->cgc_SetChecksum32( new_checksum );
     }
     else
     {
-        uint16_t new_checksum = 0;
+        cgc_uint16_t new_checksum = 0;
 
-        new_checksum = (pRxStream->ReadByte() << 8);
-        new_checksum |= (pRxStream->ReadByte());
+        new_checksum = (pRxStream->cgc_ReadByte() << 8);
+        new_checksum |= (pRxStream->cgc_ReadByte());
 
         if ( checksum16 != new_checksum )
         {
@@ -254,11 +254,11 @@ CMessagePacket *CMessagePacket::ParseStream( CDataStream *pRxStream )
         }
 
         // Assign checksum 16-bit
-        pNewPacket->SetChecksum16( new_checksum );
+        pNewPacket->cgc_SetChecksum16( new_checksum );
     }
 
 #ifdef DEBUG_MESSAGES
-    printf( "Packet received\n" );
+    cgc_printf( "Packet received\n" );
 #endif
 
     // Return newly read packet

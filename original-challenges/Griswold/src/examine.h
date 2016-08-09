@@ -23,11 +23,11 @@
 #ifndef EXAMINE_H
 #define EXAMINE_H 1
 
-uint8_t is_electrical_panel_overloaded();
-uint8_t is_breaker_overloaded(uint32_t breaker_id);
-uint8_t is_outlet_overloaded(uint32_t outlet_id);
-uint8_t is_splitter_overloaded(uint32_t splitter_id);
-uint8_t is_light_string_overloaded(uint32_t light_string_id);
-uint8_t is_receptacle_overloaded(uint32_t receptacle_id);
+cgc_uint8_t cgc_is_electrical_panel_overloaded();
+cgc_uint8_t cgc_is_breaker_overloaded(cgc_uint32_t breaker_id);
+cgc_uint8_t cgc_is_outlet_overloaded(cgc_uint32_t outlet_id);
+cgc_uint8_t cgc_is_splitter_overloaded(cgc_uint32_t splitter_id);
+cgc_uint8_t cgc_is_light_string_overloaded(cgc_uint32_t light_string_id);
+cgc_uint8_t cgc_is_receptacle_overloaded(cgc_uint32_t receptacle_id);
 
 #endif

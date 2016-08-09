@@ -24,9 +24,9 @@
  */
 #include <string.h>
 
-char *strcpy(char *dest, const char *src)
+char *cgc_strcpy(char *dest, const char *src)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     while (*src)
       dest[i++] = *src++;
 

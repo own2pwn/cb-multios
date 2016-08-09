@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,24 +22,24 @@
  */
 #include "query.h"
 
-static uint16_t swap16(uint16_t x)
+static cgc_uint16_t cgc_swap16(cgc_uint16_t x)
 {
     return (x >> 8) | (x << 8);
 }
 
-Query::Query(const unsigned char *src, unsigned int length)
+cgc_Query::cgc_Query(const unsigned char *src, unsigned int cgc_length)
 {
     d_insn[0].d_op = Op::ERROR;
 
-    parse(src, length);
+    cgc_parse(src, cgc_length);
 }
 
-Query::~Query()
+cgc_Query::~cgc_Query()
 {
-    destroy_insns();
+    cgc_destroy_insns();
 }
 
-void Query::destroy_insns()
+void cgc_Query::cgc_destroy_insns()
 {
     for (unsigned int i = 0; i < MAX_DEPTH + 1; i++)
     {
@@ -60,22 +60,22 @@ void Query::destroy_insns()
             break;
         case Op::TAG:
         case Op::NAMESPACE:
-            d_insn[i].d_op1_s->destroy();
+            d_insn[i].d_op1_s->cgc_destroy();
             break;
         case Op::ATTRIBUTE:
-            d_insn[i].d_op1_s->destroy();
-            d_insn[i].d_op2_s->destroy();
+            d_insn[i].d_op1_s->cgc_destroy();
+            d_insn[i].d_op2_s->cgc_destroy();
             break;
         }
     }
     d_insn[0].d_op = Op::ERROR;
 }
 
-void Query::parse(const unsigned char *str, unsigned int length)
+void cgc_Query::cgc_parse(const unsigned char *str, unsigned int cgc_length)
 {
     unsigned int i = 0;
-    Instruction *cur = &d_insn[0];
-    while (i < length)
+    cgc_Instruction *cur = &d_insn[0];
+    while (i < cgc_length)
     {
         const unsigned char *end;
         if (cur == &d_insn[MAX_DEPTH])
@@ -99,32 +99,32 @@ void Query::parse(const unsigned char *str, unsigned int length)
             break;
         case Op::INDEX:
             i++;
-            if (length - i < 2)
+            if (cgc_length - i < 2)
                 goto invalid;
-            cur->d_op1_u = swap16(*(uint16_t *)&str[i]);
+            cur->d_op1_u = cgc_swap16(*(cgc_uint16_t *)&str[i]);
             i += 2;
             break;
         case Op::TAG:
         case Op::NAMESPACE:
             i++;
-            end = static_cast<const unsigned char *>(memchr(&str[i], 0, length - i));
+            end = static_cast<const unsigned char *>(cgc_memchr(&str[i], 0, cgc_length - i));
             if (end == nullptr)
                 goto invalid;
-            cur->d_op1_s = String::create(reinterpret_cast<const char *>(&str[i]));
+            cur->d_op1_s = cgc_String::cgc_create(reinterpret_cast<const char *>(&str[i]));
             i += end - &str[i] + 1;
             break;
         case Op::ATTRIBUTE:
             i++;
-            end = static_cast<const unsigned char *>(memchr(&str[i], 0, length - i));
+            end = static_cast<const unsigned char *>(cgc_memchr(&str[i], 0, cgc_length - i));
             if (end == nullptr)
                 goto invalid;
-            cur->d_op1_s = String::create(reinterpret_cast<const char *>(&str[i]));
+            cur->d_op1_s = cgc_String::cgc_create(reinterpret_cast<const char *>(&str[i]));
             i += end - &str[i] + 1;
 
-            end = static_cast<const unsigned char *>(memchr(&str[i], 0, length - i));
+            end = static_cast<const unsigned char *>(cgc_memchr(&str[i], 0, cgc_length - i));
             if (end == nullptr)
                 goto invalid;
-            cur->d_op2_s = String::create(reinterpret_cast<const char *>(&str[i]));
+            cur->d_op2_s = cgc_String::cgc_create(reinterpret_cast<const char *>(&str[i]));
             i += end - &str[i] + 1;
             break;
         }
@@ -140,10 +140,10 @@ invalid:
     return;
 }
 
-Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
+cgc_Node *cgc_Query::cgc_apply(cgc_Node *root, cgc_Instruction *cur, unsigned int index)
 {
-    Attribute *attr;
-    Node *node, *child;
+    cgc_Attribute *cgc_attr;
+    cgc_Node *node, *child;
     if (d_depth == MAX_RECURSION)
     {
         d_error = Error::RECURSION;
@@ -158,16 +158,16 @@ Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
             d_error = Error::SUCCESS;
             return root;
         case Op::TAG:
-            if (strcmp(root->tag()->cstr(), cur->d_op1_s->cstr()) != 0)
+            if (cgc_strcmp(root->cgc_tag()->cgc_cstr(), cur->d_op1_s->cgc_cstr()) != 0)
                 return nullptr;
             break;
         case Op::NAMESPACE:
-            if (root->ns() == nullptr || strcmp(root->ns()->cstr(), cur->d_op1_s->cstr()) != 0)
+            if (root->cgc_ns() == nullptr || cgc_strcmp(root->cgc_ns()->cgc_cstr(), cur->d_op1_s->cgc_cstr()) != 0)
                 return nullptr;
             break;
         case Op::ATTRIBUTE:
-            attr = root->get_attr(cur->d_op1_s->cstr());
-            if (attr == nullptr || strcmp(attr->get()->cstr(), cur->d_op2_s->cstr()) != 0)
+            cgc_attr = root->cgc_get_attr(cur->d_op1_s->cgc_cstr());
+            if (cgc_attr == nullptr || cgc_strcmp(cgc_attr->cgc_get()->cgc_cstr(), cur->d_op2_s->cgc_cstr()) != 0)
                 return nullptr;
             break;
         case Op::INDEX:
@@ -178,7 +178,7 @@ Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
             goto invalid;
         }
         d_depth++;
-        node = apply(root, cur + 1, index);
+        node = cgc_apply(root, cur + 1, index);
         d_depth--;
         return node;
     }
@@ -187,41 +187,41 @@ Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
         // target
         if (cur->d_op == Op::ANCESTORS)
         {
-            if (root->parent() == nullptr)
+            if (root->cgc_parent() == nullptr)
                 return nullptr;
             d_depth++;
-            node = apply(root->parent(), cur + 1, 0);
+            node = cgc_apply(root->cgc_parent(), cur + 1, 0);
             d_depth--;
             if (node != nullptr)
                 return node;
             d_depth++;
-            node = apply(root->parent(), cur, 0);
+            node = cgc_apply(root->cgc_parent(), cur, 0);
             d_depth--;
             return node;
         }
         else if (cur->d_op == Op::PARENT)
         {
-            if (root->parent() == nullptr)
+            if (root->cgc_parent() == nullptr)
                 return nullptr;
             d_depth++;
-            node = apply(root->parent(), cur + 1, 0);
+            node = cgc_apply(root->cgc_parent(), cur + 1, 0);
             d_depth--;
             return node;
         }
         else if (cur->d_op == Op::DESCENDANTS)
         {
-            for (child = root->first(); child != nullptr; child = child->next())
+            for (child = root->cgc_first(); child != nullptr; child = child->cgc_next())
             {
                 d_depth++;
-                node = apply(child, cur + 1, 0);
+                node = cgc_apply(child, cur + 1, 0);
                 d_depth--;
                 if (node != nullptr)
                     return node;
             }
-            for (child = root->first(); child != nullptr; child = child->next())
+            for (child = root->cgc_first(); child != nullptr; child = child->cgc_next())
             {
                 d_depth++;
-                node = apply(child, cur, 0);
+                node = cgc_apply(child, cur, 0);
                 d_depth--;
                 if (node != nullptr)
                     return node;
@@ -231,10 +231,10 @@ Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
         else if (cur->d_op == Op::CHILDREN)
         {
             index = 0;
-            for (child = root->first(); child != nullptr; child = child->next())
+            for (child = root->cgc_first(); child != nullptr; child = child->cgc_next())
             {
                 d_depth++;
-                node = apply(child, cur + 1, index++);
+                node = cgc_apply(child, cur + 1, index++);
                 d_depth--;
                 if (node != nullptr)
                     return node;
@@ -243,13 +243,13 @@ Node *Query::apply(Node *root, Instruction *cur, unsigned int index)
         }
         else if (cur->d_op == Op::SIBLINGS)
         {
-            if (root->parent() == nullptr)
+            if (root->cgc_parent() == nullptr)
                 return nullptr;
             index = 0;
-            for (child = root->parent()->first(); child != nullptr; child = child->next())
+            for (child = root->cgc_parent()->cgc_first(); child != nullptr; child = child->cgc_next())
             {
                 d_depth++;
-                node = apply(child, cur + 1, index++);
+                node = cgc_apply(child, cur + 1, index++);
                 d_depth--;
                 if (node != nullptr)
                     return node;
@@ -266,9 +266,9 @@ invalid:
     return nullptr;
 }
 
-Node *Query::match(Node *root)
+cgc_Node *cgc_Query::cgc_match(cgc_Node *root)
 {
     d_depth = 0;
     d_error = Error::NOT_FOUND;
-    return apply(root, &d_insn[0], 0);
+    return cgc_apply(root, &d_insn[0], 0);
 }

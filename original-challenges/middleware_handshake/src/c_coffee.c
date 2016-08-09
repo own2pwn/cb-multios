@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,12 +27,12 @@
 #define N 32
 
 typedef struct {
-    uint32_t K[2 * N];
-} coffee_priv_t;
+    cgc_uint32_t K[2 * N];
+} cgc_coffee_priv_t;
 
-static inline void fE(coffee_priv_t *priv, int r, uint32_t *pL, uint32_t *pR)
+static inline void cgc_fE(cgc_coffee_priv_t *priv, int r, cgc_uint32_t *pL, cgc_uint32_t *pR)
 {
-    uint32_t L, R, tmp;
+    cgc_uint32_t L, R, tmp;
     L = *pL;
     R = *pR;
 
@@ -54,9 +54,9 @@ static inline void fE(coffee_priv_t *priv, int r, uint32_t *pL, uint32_t *pR)
     *pR = R;
 }
 
-static inline void fD(coffee_priv_t *priv, int r, uint32_t *pL, uint32_t *pR)
+static inline void cgc_fD(cgc_coffee_priv_t *priv, int r, cgc_uint32_t *pL, cgc_uint32_t *pR)
 {
-    uint32_t L, R, tmp;
+    cgc_uint32_t L, R, tmp;
     L = *pL;
     R = *pR;
 
@@ -78,14 +78,14 @@ static inline void fD(coffee_priv_t *priv, int r, uint32_t *pL, uint32_t *pR)
     *pR = R;
 }
 
-static int coffee_init(code_t *code, const unsigned char *k)
+static int cgc_coffee_init(cgc_code_t *code, const unsigned char *k)
 {
     int r;
-    uint32_t D;
-    const uint32_t *k32 = (const uint32_t *)k;
-    coffee_priv_t *priv;
+    cgc_uint32_t D;
+    const cgc_uint32_t *k32 = (const cgc_uint32_t *)k;
+    cgc_coffee_priv_t *priv;
 
-    code->priv = priv = malloc(sizeof(coffee_priv_t));
+    code->priv = priv = cgc_malloc(sizeof(cgc_coffee_priv_t));
     if (priv == NULL)
         return FAILURE;
 
@@ -103,53 +103,53 @@ static int coffee_init(code_t *code, const unsigned char *k)
     return SUCCESS;
 }
 
-static void coffee_destroy(code_t *code)
+static void cgc_coffee_destroy(cgc_code_t *code)
 {
-    free(code->priv);
+    cgc_free(code->priv);
 }
 
-static int coffee_encode(code_t *code, unsigned char *b)
+static int cgc_coffee_encode(cgc_code_t *code, unsigned char *b)
 {
-    uint32_t *b32 = (uint32_t *)b;
-    uint32_t L, R;
+    cgc_uint32_t *b32 = (cgc_uint32_t *)b;
+    cgc_uint32_t L, R;
     int r;
-    coffee_priv_t *priv = code->priv;
+    cgc_coffee_priv_t *priv = code->priv;
 
     L = b32[0];
     R = b32[1];
 
-    fE(priv, 0, &L, &R);
-    fE(priv, 1, &L, &R);
-    fE(priv, 2, &L, &R);
-    fE(priv, 3, &L, &R);
-    fE(priv, 4, &L, &R);
-    fE(priv, 5, &L, &R);
-    fE(priv, 6, &L, &R);
-    fE(priv, 7, &L, &R);
-    fE(priv, 8, &L, &R);
-    fE(priv, 9, &L, &R);
-    fE(priv, 10, &L, &R);
-    fE(priv, 11, &L, &R);
-    fE(priv, 12, &L, &R);
-    fE(priv, 13, &L, &R);
-    fE(priv, 14, &L, &R);
-    fE(priv, 15, &L, &R);
-    fE(priv, 16, &L, &R);
-    fE(priv, 17, &L, &R);
-    fE(priv, 18, &L, &R);
-    fE(priv, 19, &L, &R);
-    fE(priv, 20, &L, &R);
-    fE(priv, 21, &L, &R);
-    fE(priv, 22, &L, &R);
-    fE(priv, 23, &L, &R);
-    fE(priv, 24, &L, &R);
-    fE(priv, 25, &L, &R);
-    fE(priv, 26, &L, &R);
-    fE(priv, 27, &L, &R);
-    fE(priv, 28, &L, &R);
-    fE(priv, 29, &L, &R);
-    fE(priv, 30, &L, &R);
-    fE(priv, 31, &L, &R);
+    cgc_fE(priv, 0, &L, &R);
+    cgc_fE(priv, 1, &L, &R);
+    cgc_fE(priv, 2, &L, &R);
+    cgc_fE(priv, 3, &L, &R);
+    cgc_fE(priv, 4, &L, &R);
+    cgc_fE(priv, 5, &L, &R);
+    cgc_fE(priv, 6, &L, &R);
+    cgc_fE(priv, 7, &L, &R);
+    cgc_fE(priv, 8, &L, &R);
+    cgc_fE(priv, 9, &L, &R);
+    cgc_fE(priv, 10, &L, &R);
+    cgc_fE(priv, 11, &L, &R);
+    cgc_fE(priv, 12, &L, &R);
+    cgc_fE(priv, 13, &L, &R);
+    cgc_fE(priv, 14, &L, &R);
+    cgc_fE(priv, 15, &L, &R);
+    cgc_fE(priv, 16, &L, &R);
+    cgc_fE(priv, 17, &L, &R);
+    cgc_fE(priv, 18, &L, &R);
+    cgc_fE(priv, 19, &L, &R);
+    cgc_fE(priv, 20, &L, &R);
+    cgc_fE(priv, 21, &L, &R);
+    cgc_fE(priv, 22, &L, &R);
+    cgc_fE(priv, 23, &L, &R);
+    cgc_fE(priv, 24, &L, &R);
+    cgc_fE(priv, 25, &L, &R);
+    cgc_fE(priv, 26, &L, &R);
+    cgc_fE(priv, 27, &L, &R);
+    cgc_fE(priv, 28, &L, &R);
+    cgc_fE(priv, 29, &L, &R);
+    cgc_fE(priv, 30, &L, &R);
+    cgc_fE(priv, 31, &L, &R);
 
     b32[0] = R;
     b32[1] = L;
@@ -157,61 +157,61 @@ static int coffee_encode(code_t *code, unsigned char *b)
     return SUCCESS;
 }
 
-static int coffee_decode(code_t *code, unsigned char *b)
+static int cgc_coffee_decode(cgc_code_t *code, unsigned char *b)
 {
-    uint32_t *b32 = (uint32_t *)b;
-    uint32_t L, R;
+    cgc_uint32_t *b32 = (cgc_uint32_t *)b;
+    cgc_uint32_t L, R;
     int r;
-    coffee_priv_t *priv = code->priv;
+    cgc_coffee_priv_t *priv = code->priv;
 
     R = b32[0];
     L = b32[1];
 
-    fD(priv, 31, &R, &L);
-    fD(priv, 30, &R, &L);
-    fD(priv, 29, &R, &L);
-    fD(priv, 28, &R, &L);
-    fD(priv, 27, &R, &L);
-    fD(priv, 26, &R, &L);
-    fD(priv, 25, &R, &L);
-    fD(priv, 24, &R, &L);
-    fD(priv, 23, &R, &L);
-    fD(priv, 22, &R, &L);
-    fD(priv, 21, &R, &L);
-    fD(priv, 20, &R, &L);
-    fD(priv, 19, &R, &L);
-    fD(priv, 18, &R, &L);
-    fD(priv, 17, &R, &L);
-    fD(priv, 16, &R, &L);
-    fD(priv, 15, &R, &L);
-    fD(priv, 14, &R, &L);
-    fD(priv, 13, &R, &L);
-    fD(priv, 12, &R, &L);
-    fD(priv, 11, &R, &L);
-    fD(priv, 10, &R, &L);
-    fD(priv, 9, &R, &L);
-    fD(priv, 8, &R, &L);
-    fD(priv, 7, &R, &L);
-    fD(priv, 6, &R, &L);
-    fD(priv, 5, &R, &L);
-    fD(priv, 4, &R, &L);
-    fD(priv, 3, &R, &L);
-    fD(priv, 2, &R, &L);
-    fD(priv, 1, &R, &L);
-    fD(priv, 0, &R, &L);
+    cgc_fD(priv, 31, &R, &L);
+    cgc_fD(priv, 30, &R, &L);
+    cgc_fD(priv, 29, &R, &L);
+    cgc_fD(priv, 28, &R, &L);
+    cgc_fD(priv, 27, &R, &L);
+    cgc_fD(priv, 26, &R, &L);
+    cgc_fD(priv, 25, &R, &L);
+    cgc_fD(priv, 24, &R, &L);
+    cgc_fD(priv, 23, &R, &L);
+    cgc_fD(priv, 22, &R, &L);
+    cgc_fD(priv, 21, &R, &L);
+    cgc_fD(priv, 20, &R, &L);
+    cgc_fD(priv, 19, &R, &L);
+    cgc_fD(priv, 18, &R, &L);
+    cgc_fD(priv, 17, &R, &L);
+    cgc_fD(priv, 16, &R, &L);
+    cgc_fD(priv, 15, &R, &L);
+    cgc_fD(priv, 14, &R, &L);
+    cgc_fD(priv, 13, &R, &L);
+    cgc_fD(priv, 12, &R, &L);
+    cgc_fD(priv, 11, &R, &L);
+    cgc_fD(priv, 10, &R, &L);
+    cgc_fD(priv, 9, &R, &L);
+    cgc_fD(priv, 8, &R, &L);
+    cgc_fD(priv, 7, &R, &L);
+    cgc_fD(priv, 6, &R, &L);
+    cgc_fD(priv, 5, &R, &L);
+    cgc_fD(priv, 4, &R, &L);
+    cgc_fD(priv, 3, &R, &L);
+    cgc_fD(priv, 2, &R, &L);
+    cgc_fD(priv, 1, &R, &L);
+    cgc_fD(priv, 0, &R, &L);
 
     b32[0] = L;
     b32[1] = R;
     return SUCCESS;
 }
 
-const code_def_t coffee_code = {
+const cgc_code_def_t coffee_code = {
     .name = "Coffee",
     .type = C_COFFEE,
     .bsize = 64,
     .ksize = 128,
-    .init = coffee_init,
-    .destroy = coffee_destroy,
-    .encode = coffee_encode,
-    .decode = coffee_decode
+    .init = cgc_coffee_init,
+    .destroy = cgc_coffee_destroy,
+    .encode = cgc_coffee_encode,
+    .decode = cgc_coffee_decode
 };

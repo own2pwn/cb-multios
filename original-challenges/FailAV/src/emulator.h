@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,10 +25,10 @@
 #include "instruction.h"
 
 
-class Emulator
+class cgc_Emulator
 {
 private:
-    inline bool in_stack(int mem)
+    inline bool cgc_in_stack(int mem)
     {
 #ifdef PATCHED_1
         if ((unsigned char *)mem < d_stack)
@@ -36,49 +36,49 @@ private:
 #endif
         return (unsigned char *)mem - d_stack < STACK_SIZE;
     }
-    inline bool in_heap(int mem)
+    inline bool cgc_in_heap(int mem)
     {
         return (mem >> 30) == 0;
     }
-    inline unsigned char *heap_addr(int mem)
+    inline unsigned char *cgc_heap_addr(int mem)
     {
         return mem + d_heap;
     }
-    inline unsigned int heap_length(int mem)
+    inline unsigned int cgc_heap_length(int mem)
     {
-        if (!in_heap(mem))
+        if (!cgc_in_heap(mem))
             return 0;
         return 0x40000000 - mem;
     }
-    inline void set_operand(const Operand &opr, int value, bool carry, bool do_flags)
+    inline void cgc_set_operand(const cgc_Operand &opr, int value, bool carry, bool do_flags)
     {
         if (do_flags)
-            set_flags(value, carry);
-        set_operand(opr, value);
+            cgc_set_flags(value, carry);
+        cgc_set_operand(opr, value);
     }
-    inline void set_flags(int value, bool carry)
+    inline void cgc_set_flags(int value, bool carry)
     {
         d_zf = value == 0;
         d_cf = carry;
     }
 
 public:
-    Emulator(void *sp, void *heap);
-    ~Emulator();
+    cgc_Emulator(void *sp, void *heap);
+    ~cgc_Emulator();
 
-    void reset();
-    void set_ip(int ip);
-    bool step();
-    void print_state();
-    int get_operand_mem(const Operand &opr);
-    int get_operand(const Operand &opr);
-    void set_operand(const Operand &opr, int value);
-    const Instruction &last_instruction()
+    void cgc_reset();
+    void cgc_set_ip(int ip);
+    bool cgc_step();
+    void cgc_print_state();
+    int cgc_get_operand_mem(const cgc_Operand &opr);
+    int cgc_get_operand(const cgc_Operand &opr);
+    void cgc_set_operand(const cgc_Operand &opr, int value);
+    const cgc_Instruction &cgc_last_instruction()
     {
         return d_instruction;
     }
     template <typename F>
-    void traverse_dirty(F f)
+    void cgc_traverse_dirty(F f)
     {
         for (unsigned int i = 0; i < sizeof(d_dirty_pages); i++)
         {
@@ -103,5 +103,5 @@ private:
     int d_ip;
     unsigned int d_zf : 1;
     unsigned int d_cf : 1;
-    Instruction d_instruction;
+    cgc_Instruction d_instruction;
 };

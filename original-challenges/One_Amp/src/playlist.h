@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,31 +27,31 @@
 #define MAX_PLAYLIST_LENGTH 16000
 #include "tag_and_file.h"
 
-class Playlist
+class cgc_Playlist
 {
   public:
-    Playlist();
-    bool AddSong(const tag_and_file *song);
-    bool RemoveSong(const unsigned int song_id, tag_and_file *removed_song);
-    tag_and_file *GetSong(const unsigned int song_id);
-    void SortById();
-    void SortByTitle();
-    void SortByArtistAndAlbum();
-    void SortByArtistAndTitle();
-    void SortByAlbum();
-    void SortByAlbumAndTitle();
-    void ListAllSongs();
-    void ClearPlaylist(bool delete_playlist);
+    cgc_Playlist();
+    bool cgc_AddSong(const cgc_tag_and_file *song);
+    bool cgc_RemoveSong(const unsigned int song_id, cgc_tag_and_file *removed_song);
+    cgc_tag_and_file *cgc_GetSong(const unsigned int song_id);
+    void cgc_SortById();
+    void cgc_SortByTitle();
+    void cgc_SortByArtistAndAlbum();
+    void cgc_SortByArtistAndTitle();
+    void cgc_SortByAlbum();
+    void cgc_SortByAlbumAndTitle();
+    void cgc_ListAllSongs();
+    void cgc_ClearPlaylist(bool delete_playlist);
 
-    unsigned int length();
+    unsigned int cgc_length();
   private:
-    tag_and_file *playlist_;
+    cgc_tag_and_file *playlist_;
     unsigned int length_;
     unsigned int list_size_;
 
-    void Sort(tag_and_file *playlist, unsigned int length, int (*compare_fn)(tag_and_file *playlist1, tag_and_file *playlist2));
-    void SortHelper(tag_and_file *playlist, tag_and_file *duped_list, unsigned int start_idx, unsigned int end_idx,
-                    int (*compare_fn)(tag_and_file *playlist1, tag_and_file *playlist2));
+    void cgc_Sort(cgc_tag_and_file *playlist, unsigned int cgc_length, int (*compare_fn)(cgc_tag_and_file *playlist1, cgc_tag_and_file *playlist2));
+    void cgc_SortHelper(cgc_tag_and_file *playlist, cgc_tag_and_file *duped_list, unsigned int start_idx, unsigned int end_idx,
+                    int (*compare_fn)(cgc_tag_and_file *playlist1, cgc_tag_and_file *playlist2));
 };
 
 #endif

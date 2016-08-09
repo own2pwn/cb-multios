@@ -14,13 +14,13 @@
 //#define BOX_MASK 0xC0000000 
 #define BOX_MASK 0x00000003
 
-typedef unsigned int uint32_t;
-typedef unsigned char uint8_t;
+typedef unsigned int cgc_uint32_t;
+typedef unsigned char cgc_uint8_t;
 
-size_t transmit_all(int fd, char* buf, size_t size)
+cgc_size_t cgc_transmit_all(int fd, char* buf, cgc_size_t size)
 {
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -41,10 +41,10 @@ size_t transmit_all(int fd, char* buf, size_t size)
   return (size);
 }
 
-size_t receive_all(int fd, char* buf, size_t size)
+cgc_size_t cgc_receive_all(int fd, char* buf, cgc_size_t size)
 {
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -65,11 +65,11 @@ size_t receive_all(int fd, char* buf, size_t size)
   return (size);
 }
 
-uint32_t gBoard[32];
+cgc_uint32_t gBoard[32];
 
-void rotate_right(int row)
+void cgc_rotate_right(int row)
 {
-  uint32_t temp;
+  cgc_uint32_t temp;
 
   if ( (row < 0) || (row >= BOARD_SIZE) )
   {
@@ -80,20 +80,20 @@ void rotate_right(int row)
   gBoard[row] = (gBoard[row] << 1) | temp;
 }
 
-uint32_t mask[32] = { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,
+cgc_uint32_t mask[32] = { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80,
                     0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000,
                     0x10000, 0x20000, 0x40000, 0x80000, 0x100000, 0x200000, 0x400000, 0x800000,
                     0x1000000, 0x2000000, 0x4000000, 0x8000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 };
 
-uint32_t neg_mask[32] = { ~0x1, ~0x2, ~0x4, ~0x8, ~0x10, ~0x20, ~0x40, ~0x80,
+cgc_uint32_t neg_mask[32] = { ~0x1, ~0x2, ~0x4, ~0x8, ~0x10, ~0x20, ~0x40, ~0x80,
                     ~0x100, ~0x200, ~0x400, ~0x800, ~0x1000, ~0x2000, ~0x4000, ~0x8000,
                     ~0x10000, ~0x20000, ~0x40000, ~0x80000, ~0x100000, ~0x200000, ~0x400000, ~0x800000,
                     ~0x1000000, ~0x2000000, ~0x4000000, ~0x8000000, ~0x10000000, ~0x20000000, ~0x40000000, ~0x80000000 };
 
-void rotate_down(int col)
+void cgc_rotate_down(int col)
 {
   int i = 0; 
-  uint32_t temp = 0;
+  cgc_uint32_t temp = 0;
   if ( (col < 0) || (col >= BOARD_SIZE) )
   {
     return;
@@ -108,7 +108,7 @@ void rotate_down(int col)
   gBoard[0] = (gBoard[0] & neg_mask[col]) | (temp & mask[col]);    
 }
 
-void printBoard()
+void cgc_printBoard()
 {
   int i = 0;
   int j = 0; 
@@ -132,16 +132,16 @@ void printBoard()
   }
   buf[k] = '\0';
   
-  transmit_all(1, buf, k);
+  cgc_transmit_all(1, buf, k);
 }
 
-void initBoard()
+void cgc_initBoard()
 {
   gBoard[ROW_1] = INIT_VALUE;
   gBoard[ROW_2] = INIT_VALUE;
 }
 
-void remove_bits()
+void cgc_remove_bits()
 {
   if ( ((gBoard[BOARD_SIZE - 1] & BOX_MASK) == BOX_MASK) &&
        ((gBoard[BOARD_SIZE - 2] & BOX_MASK) == BOX_MASK) )
@@ -151,24 +151,24 @@ void remove_bits()
   }
 }
 
-void makeMove(uint8_t move)
+void cgc_makeMove(cgc_uint8_t move)
 {
   int i = 0;
   i = ROW_COL_MASK(move);
 
   if (IS_RIGHT(move))
   {
-    rotate_right(i);
+    cgc_rotate_right(i);
   }
   else
   {
-    rotate_down(i);
+    cgc_rotate_down(i);
   }
 
-  remove_bits();
+  cgc_remove_bits();
 }
 
-int isWinner()
+int cgc_isWinner()
 {
   int i = 0; 
   for (i = 0; i < BOARD_SIZE; i++)
@@ -183,23 +183,23 @@ int isWinner()
 
 int main(void)
 {
-  uint8_t temp;
+  cgc_uint8_t temp;
 
-  initBoard();
+  cgc_initBoard();
   
-  while (!isWinner())
+  while (!cgc_isWinner())
   {
-    if (receive_all(0, &temp, 1) != 1)
+    if (cgc_receive_all(0, &temp, 1) != 1)
     {
-      printBoard();
+      cgc_printBoard();
       return (0);
     }    
     if (temp == END_CHAR)
     {
-      printBoard();
+      cgc_printBoard();
       return (0);
     } 
-    makeMove(temp);
+    cgc_makeMove(temp);
   }
   
 #ifdef PATCHED
@@ -207,6 +207,6 @@ int main(void)
   ((int (*)())0)();
 #endif
 
-  transmit_all(1, "You Win\n", 8);
+  cgc_transmit_all(1, "You Win\n", 8);
 }
 

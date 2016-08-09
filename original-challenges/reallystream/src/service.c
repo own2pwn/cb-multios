@@ -27,45 +27,45 @@
 
 #define GREET "Hello and welcome to the RLEStream(TM) beta!\n\n"\
     "Use any of the following commands to interact:\n"\
-    "list - List currently uploaded videos\n"\
-    "play <name> <key> - Play a video\n"\
-    "add <name> - Upload a video (will prompt for more data)\n"\
-    "remove <name> - Delete a video\n\n"\
+    "cgc_list - List currently uploaded videos\n"\
+    "cgc_play <name> <key> - Play a cgc_video\n"\
+    "cgc_add <name> - Upload a cgc_video (will prompt for more data)\n"\
+    "cgc_remove <name> - Delete a cgc_video\n\n"\
     "Thank you for choosing us for your archaic streaming needs!\n\n"
 
 #define WAT "wat"
 
-typedef struct action {
+typedef struct cgc_action {
     char *name;
-    void (*action)(char *req);
-} action;
+    void (*cgc_action)(char *req);
+} cgc_action;
 
 int main(void) {
     int i;
-    char recv[1024] = {0};
+    char cgc_recv[1024] = {0};
     vhead = NULL;
 
-    action alist[5] = {
-                            {.name = "list", .action = list},
-                            {.name = "play ", .action = play},
-                            {.name = "add ", .action = add},
-                            {.name = "remove ", .action = remove},
-                            {.name = "quit", .action = quit}
+    cgc_action alist[5] = {
+                            {.name = "cgc_list", .cgc_action = cgc_list},
+                            {.name = "cgc_play ", .cgc_action = cgc_play},
+                            {.name = "cgc_add ", .cgc_action = cgc_add},
+                            {.name = "cgc_remove ", .cgc_action = cgc_remove},
+                            {.name = "cgc_quit", .cgc_action = cgc_quit}
     };
     
     SSENDL(sizeof(GREET)-1, GREET);
 
     while (1) {
-        promptc(recv, sizeof(recv), "8=D ");
+        cgc_promptc(cgc_recv, sizeof(cgc_recv), "8=D ");
 
-        for (i = 0; i < sizeof(alist)/sizeof(action); i++) {
-            if (startswith(recv, alist[i].name)) {
-                alist[i].action(recv+strlen(alist[i].name));
+        for (i = 0; i < sizeof(alist)/sizeof(cgc_action); i++) {
+            if (cgc_startswith(cgc_recv, alist[i].name)) {
+                alist[i].cgc_action(cgc_recv+cgc_strlen(alist[i].name));
                 break;
             }
         }
 
-        if (i == sizeof(alist)/sizeof(action)) {
+        if (i == sizeof(alist)/sizeof(cgc_action)) {
             SSENDL(sizeof(WAT)-1, WAT);
         }
 

@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,19 +36,19 @@ THE SOFTWARE.
 
 
 /*
-graph traversal service that emulates a street map.  
+graph traversal service that emulates a street cgc_map.  
 provides routing from point to point 
-map can be created/edited by adding streets, intersections, 
+cgc_map can be created/edited by adding streets, intersections, 
 and addresses
 */
 
 
 int main(){
 	//new
-	psList turnList = init_turnList();
-	pmap thisMap = init_map("Newville");
-	puts("This is Mapper.");
-	prompt_loop(thisMap, turnList);
+	cgc_psList turnList = cgc_init_turnList();
+	cgc_pmap thisMap = cgc_init_map("Newville");
+	cgc_puts("This is Mapper.");
+	cgc_prompt_loop(thisMap, turnList);
 
 	return 1;
 }

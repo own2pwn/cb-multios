@@ -42,7 +42,7 @@
 typedef struct {
 	unsigned short x;
 	unsigned short y;
-} Record; 
+} cgc_Record; 
 
 typedef struct {
 	int sampleSize;
@@ -50,18 +50,18 @@ typedef struct {
 	float Q;
 	float variance;
 	float stdDev;
-} Dataset;
+} cgc_Dataset;
 
 typedef struct {
 	char symbol;
 	unsigned short currentPrice;
 	unsigned short purchasedPrice;
-} Stock;
+} cgc_Stock;
 
 typedef struct {
 	unsigned short cashBalance;
 	unsigned short assetBalance;
 	unsigned short goal;
 	unsigned short numEntries;
-	Stock* stocks;
-} Portfolio;
+	cgc_Stock* stocks;
+} cgc_Portfolio;

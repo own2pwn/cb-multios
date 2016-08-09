@@ -4,16 +4,16 @@
 #include "support.h"
 
 #define MAX_WORKERS 128
-class List
+class cgc_List
 {
   public:
-    List();
-    bool Append(Support* s);
-    Support* Remove(uint32_t idx);
-    Support* Get(uint32_t idx);
-    uint32_t Length();
+    cgc_List();
+    bool cgc_Append(cgc_Support* s);
+    cgc_Support* cgc_Remove(cgc_uint32_t idx);
+    cgc_Support* cgc_Get(cgc_uint32_t idx);
+    cgc_uint32_t cgc_Length();
   private:
-    Support* data[MAX_WORKERS];
-    uint32_t size;
-    uint32_t cap;
+    cgc_Support* data[MAX_WORKERS];
+    cgc_uint32_t size;
+    cgc_uint32_t cap;
 };

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,14 +25,14 @@
 #include "hashmap.h"
 #include "singleton.h"
 
-class String;
-class StringManager;
+class cgc_String;
+class cgc_StringManager;
 
-class StringManager : public Singleton<StringManager>
+class cgc_StringManager : public cgc_Singleton<cgc_StringManager>
 {
 public:
-    StringManager();
-    const String *intern(const char *str);
+    cgc_StringManager();
+    const cgc_String *cgc_intern(const char *str);
 private:
-    HashMap<const char *, String *, CStringComparator> d_intern_map;
+    cgc_HashMap<const char *, cgc_String *, CStringComparator> d_intern_map;
 };

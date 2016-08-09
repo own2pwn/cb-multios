@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -118,18 +118,18 @@ typedef struct {
 	// The size of the session's opcode buffer.  Dictated by the CRS during 
 	// session initialization.
 	uint16_t sz;
-} session_t;
+} cgc_session_t;
 
 /**
- * Look up a session based on its session ID.  Backing memory is memset() to 
- * \x00, so this function is also used to look up the next free session slot 
+ * Look up a session based on its session ID.  Backing memory is cgc_memset() to 
+ * \x00, so this function is also used to look up the next cgc_free session slot 
  * (the first session with a session ID of \x00\x00\x00\x00).
  *
  * @param id The requested session ID.
- * @return A pointer to the requested session_t struct (if found) or NULL 
+ * @return A pointer to the requested cgc_session_t struct (if found) or NULL 
  *	(if not found).
  */
-session_t * find_session(uint32_t id);
+cgc_session_t * cgc_find_session(uint32_t id);
 
 /**
  * Initialize a new session instance.  There is a maximum of 20 sessions, but 
@@ -137,13 +137,13 @@ session_t * find_session(uint32_t id);
  * session is exercised (a new session or old), this function is called to 
  * initialize the session instance.  This function is responsible for speaking 
  * the protocol up until the CB has bytecode to execute.  Barring any error, 
- * state is advanced to STATE_EXEC and do_exec is called in succession.
+ * state is advanced to STATE_EXEC and cgc_do_exec is called in succession.
  *
  * @param session A pointer to a pointer to a session struct that is to be 
  *	populated by values exchanged during session instance negotiation.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int do_init(session_t **session);
+int cgc_do_init(cgc_session_t **session);
 
 /**
  * Session instance negotiation is complete and we continue with session 
@@ -156,14 +156,14 @@ int do_init(session_t **session);
  * 4) transmit the session's scratch buffer back to the CRS
  *
  * @param session A pointer to a session struct that was initialized by 
- *	do_init().
+ *	cgc_do_init().
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int do_exec(session_t *session);
+int cgc_do_exec(cgc_session_t *session);
 
 /**
  * The main loop.  Responsible for maintaining the simple state machine and 
- * dispatching to do_init() and do_exec().  Should not return.
+ * dispatching to cgc_do_init() and cgc_do_exec().  Should not return.
  *
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */

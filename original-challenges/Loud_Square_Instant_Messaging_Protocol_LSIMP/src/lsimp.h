@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -43,37 +43,37 @@ typedef struct lsimp_helo {
   char version;
   char secure_mode;
   int ttl;
-} lsimp_helo_t;
+} cgc_lsimp_helo_t;
 
 typedef struct lsimp_keyx {
   char *key;
   unsigned int key_len;
   char option;
-} lsimp_keyx_t;
+} cgc_lsimp_keyx_t;
 
 typedef struct lsimp_data {
   int seq;
   char *data;
   unsigned int data_len;
-} lsimp_data_t;
+} cgc_lsimp_data_t;
 
 typedef struct lsimp_text {
   char *msg;
   unsigned int msg_len;
-} lsimp_text_t;
+} cgc_lsimp_text_t;
 
 typedef struct lsimp_msg {
   struct lsimp_msg *next;
   enum lsimp_msg_type_t type;
   union {
-    lsimp_helo_t helo;
-    lsimp_keyx_t keyx;
-    lsimp_data_t data;
-    lsimp_text_t text;
+    cgc_lsimp_helo_t helo;
+    cgc_lsimp_keyx_t keyx;
+    cgc_lsimp_data_t data;
+    cgc_lsimp_text_t text;
   };
-} lsimp_msg_t;
+} cgc_lsimp_msg_t;
 
-lsimp_msg_t* parse_msg(char *buf, unsigned int buf_len);
-int decode_data(lsimp_keyx_t *keyx, lsimp_data_t* data);
+cgc_lsimp_msg_t* cgc_parse_msg(char *buf, unsigned int buf_len);
+int cgc_decode_data(cgc_lsimp_keyx_t *keyx, cgc_lsimp_data_t* data);
 
 #endif

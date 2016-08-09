@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,8 +28,8 @@
 #include "cmdb.h"
 #include "cmdb_backend.h"
 
-void init_movies() {
-    cmdb_entry_t initial_rows[] = {
+void cgc_init_movies() {
+    cgc_cmdb_entry_t initial_rows[] = {
       {"The Shawshank Redemption", "Two imprisoned men bond over a number of years, finding solace and eventual\n     redemption through acts of common decency.", 1994, 93, "Other", "R"},
       {"The Godfather", "The aging patriarch of an organized crime dynasty transfers control of his clandestine\n     empire to his reluctant son.", 1972, 92, "Other", "R"},
       {"The Dark Knight", "When Batman, Gordon have Harvey Dent launch an assault on the mob, they let the clown\n     out of the box, the Joker, bent on turning Gotham on itself and bringing any heroes\n     down to his level.", 2008, 90, "Action", "PG13"},
@@ -43,42 +43,42 @@ void init_movies() {
     };
 
     int i;
-    for (i = 0; i < sizeof(initial_rows)/sizeof(cmdb_entry_t); i++) {
-        cmdb_entry_t *row = &initial_rows[i];
-        add_movie(row->name, row->desc, row->year, row->score, row->type, row->mpaa);
+    for (i = 0; i < sizeof(initial_rows)/sizeof(cgc_cmdb_entry_t); i++) {
+        cgc_cmdb_entry_t *row = &initial_rows[i];
+        cgc_add_movie(row->name, row->desc, row->year, row->score, row->type, row->mpaa);
     }
 }
 
-int rent_movie(int id)
+int cgc_rent_movie(int id)
 {
-    return rent_entry(id);
+    return cgc_rent_entry(id);
 }
 
-int return_movie(int id)
+int cgc_return_movie(int id)
 {
-    return return_entry(id);
+    return cgc_return_entry(id);
 }
 
-void list_all_movies()
+void cgc_list_all_movies()
 {
-    print_movies(ALL);
+    cgc_print_movies(ALL);
 }
 
-void list_owned_movies()
+void cgc_list_owned_movies()
 {
-    print_movies(OWNED);
+    cgc_print_movies(OWNED);
 }
 
-void list_rented_movies()
+void cgc_list_rented_movies()
 {
-    print_movies(RENTED);
+    cgc_print_movies(RENTED);
 }
 
-int get_num_owned_movies() {
-    return get_list_length();
+int cgc_get_num_owned_movies() {
+    return cgc_get_list_length();
 }
 
-int get_num_rented_movies() {
-    return get_num_rented();
+int cgc_get_num_rented_movies() {
+    return cgc_get_num_rented();
 }
 

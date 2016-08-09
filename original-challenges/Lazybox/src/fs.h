@@ -38,23 +38,23 @@ typedef struct _filesystem {
 	char Data[MAX_FILE_SIZE];
 	char Owner[32];
 	char Group[32];
-	uint16_t Perms;
-	uint16_t Size;
-} Filesystem, *pFilesystem;
+	cgc_uint16_t Perms;
+	cgc_uint16_t Size;
+} cgc_Filesystem, *cgc_pFilesystem;
 
 typedef struct _file {
-	pFilesystem fp;
+	cgc_pFilesystem fp;
 	char *CurrPosition;
-	uint8_t mode;
-} FILE, *pFILE;
+	cgc_uint8_t mode;
+} cgc_FILE, *cgc_pFILE;
 
-void InitFilesystem(void);
-void ListFiles(void);
-pFILE fopen(char *Filename, char *Mode, uint8_t Suid);
-char *fgets(char *str, uint32_t size, pFILE stream);
-uint8_t fclose(pFILE stream);
-size_t fread(void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream);
-size_t fwrite(const void *restrict ptr, size_t size, size_t nitems, FILE *restrict stream);
-uint8_t Dump(char *filename);
+void cgc_InitFilesystem(void);
+void cgc_ListFiles(void);
+cgc_pFILE cgc_fopen(char *Filename, char *Mode, cgc_uint8_t Suid);
+char *cgc_fgets(char *str, cgc_uint32_t size, cgc_pFILE stream);
+cgc_uint8_t cgc_fclose(cgc_pFILE stream);
+cgc_size_t cgc_fread(void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream);
+cgc_size_t cgc_fwrite(const void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream);
+cgc_uint8_t cgc_Dump(char *filename);
 
 #endif

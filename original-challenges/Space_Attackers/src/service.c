@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,8 +38,8 @@ int lost = 0;
 unsigned int seed1 = 0;
 unsigned int seed2 = 0;
 
-void seedRandomGen(unsigned int inc1, unsigned int inc2) {
-    if (strcmp(playerName, "magic") == 0) {
+void cgc_seedRandomGen(unsigned int inc1, unsigned int inc2) {
+    if (cgc_strcmp(playerName, "magic") == 0) {
         seed1 = 0;
         seed2 = 0;
     }
@@ -50,23 +50,23 @@ void seedRandomGen(unsigned int inc1, unsigned int inc2) {
     }
 }
 
-int getRandomInt() {
+int cgc_getRandomInt() {
     
     seed1 = 42871 * (seed1 & 0xFFFF) + (seed1 >> 16);
     seed2 = 28172 * (seed2 & 0xFFFF) + (seed2 >> 16);
     unsigned int val = (seed1 << 16) + seed2;
-    //printf("%d\n", val%1000);
+    //cgc_printf("%d\n", val%1000);
     return val;
 }
 
-void createEnemies() {
+void cgc_createEnemies() {
     // allocate enemies array
     // 0 means dead
     // 1,2,3,4 is the quadrant they are in, clockwise starting from top left
-    enemies = calloc(rowCount, sizeof(int*));
+    enemies = cgc_calloc(rowCount, sizeof(int*));
     for (int i = 0; i < rowCount; i++)
     {
-        enemies[i] = calloc(columns/2, sizeof(int));
+        enemies[i] = cgc_calloc(columns/2, sizeof(int));
         for (int j = 0; j < columns/2; j++)
         {
             enemies[i][j] = 1;
@@ -75,11 +75,11 @@ void createEnemies() {
     
 }
 
-int** createBoard (int m, int n) {
-    int** board = malloc(m * sizeof(int*));
+int** cgc_createBoard (int m, int n) {
+    int** board = cgc_malloc(m * sizeof(int*));
     for (int i= 0; i < m; ++i)
     {
-        board[i] = malloc(n * sizeof(int));
+        board[i] = cgc_malloc(n * sizeof(int));
     }
     // clear board
     for (int i = 0; i < m; i++)
@@ -93,7 +93,7 @@ int** createBoard (int m, int n) {
     return board;
 }
 
-void clearEnemies() {
+void cgc_clearEnemies() {
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < columns; j++)
@@ -106,7 +106,7 @@ void clearEnemies() {
     }
 }
 
-void setEnemies() {
+void cgc_setEnemies() {
     // calc how far down the enemies have moved
     int depressCount = turnCounter/20;
     
@@ -138,12 +138,12 @@ void setEnemies() {
     
 }
 
-int movePieces () {
+int cgc_movePieces () {
     
     return 0;
 }
 
-int canEnemyFire(int m, int n) {
+int cgc_canEnemyFire(int m, int n) {
     
     // check if you are on the bottom row
     if (m == rowCount-1) {
@@ -161,7 +161,7 @@ int canEnemyFire(int m, int n) {
     return 0;
 }
 
-void enemyFire(int x, int y) {
+void cgc_enemyFire(int x, int y) {
     // look for empty bullet location
     int emptyLoc = -1;
     for (int i = 0; i < (rows * (columns/2)); i++) {
@@ -176,7 +176,7 @@ void enemyFire(int x, int y) {
     enemyBullets[emptyLoc][1] = x;
 }
 
-void updateEnemies() {
+void cgc_updateEnemies() {
     // for each enemie decide whether or not they should move or fire
     int isThereAnEnemy = 0;
     for (int i = 0; i < rowCount; i++)
@@ -187,7 +187,7 @@ void updateEnemies() {
             if (enemies[i][j] != 0)
             {
                 isThereAnEnemy = 1;
-                unsigned int gen = getRandomInt();
+                unsigned int gen = cgc_getRandomInt();
                 unsigned int r = gen%7;
                 
                 //decide if enemy wants to fire
@@ -195,7 +195,7 @@ void updateEnemies() {
                 {
                     int x = -1;
                     int y = -1;
-                    if (canEnemyFire(i, j) == 0) {
+                    if (cgc_canEnemyFire(i, j) == 0) {
                         // switch on which quadrant the enemy is in to decide where the
                         // bullet should come from
                         switch (enemies[i][j]) {
@@ -224,7 +224,7 @@ void updateEnemies() {
                                 break;
                         }
                         // fire!
-                        enemyFire(x, y);
+                        cgc_enemyFire(x, y);
                     }
                 }
                 else
@@ -269,88 +269,88 @@ void updateEnemies() {
     }
 }
 
-void clearScreen() {
-    //fprintf(stdout, "\x1B[2J");
+void cgc_clearScreen() {
+    //cgc_fprintf(stdout, "\x1B[2J");
 }
 
-int drawBoard() {
+int cgc_drawBoard() {
     //cause computer pieces to update
-    movePieces();
+    cgc_movePieces();
     
     // clear the screen for new game board to come down
-    clearScreen();
+    cgc_clearScreen();
     
     // write the users name at the top
-    fprintf(stdout, "\tWelcome to Attackers General %s!\n", playerName);
+    cgc_fprintf(stdout, "\tWelcome to Attackers General %s!\n", playerName);
     
     //draw current board
     //draw top
     for (int i = 0; i < columns+2; i++)
     {
-        fprintf(stdout, "-");
+        cgc_fprintf(stdout, "-");
     }
-    fprintf(stdout, "\n");
+    cgc_fprintf(stdout, "\n");
     
     // print the actors
     for (int i = 0; i < rows; i++)
     {
-        //fprintf(stdout, "%02d|", i);
-        fprintf(stdout, "|");
+        //cgc_fprintf(stdout, "%02d|", i);
+        cgc_fprintf(stdout, "|");
         for (int j = 0; j < columns; j++)
         {
             
             switch (board[i][j]) {
                 case 1:
-                    fprintf(stdout, "=");
+                    cgc_fprintf(stdout, "=");
                     break;
                 case 2:
-                    fprintf(stdout, "W");
+                    cgc_fprintf(stdout, "W");
                     break;
                 case 3:
-                    fprintf(stdout, "#");
+                    cgc_fprintf(stdout, "#");
                     break;
                 case 4:
-                    fprintf(stdout, "!");
+                    cgc_fprintf(stdout, "!");
                     break;
                 case 5:
-                    fprintf(stdout, "+");
+                    cgc_fprintf(stdout, "+");
                     break;
                 default:
-                    fprintf(stdout, " ");
+                    cgc_fprintf(stdout, " ");
                     break;
             }
             
         }
-        fprintf(stdout, "|\n");
+        cgc_fprintf(stdout, "|\n");
     }
     
     
     //draw bottom
-    //fprintf(stdout, "  ");
+    //cgc_fprintf(stdout, "  ");
     for (int i = 0; i < columns+2; i++)
     {
-        fprintf(stdout, "-");
+        cgc_fprintf(stdout, "-");
     }
-    fprintf(stdout, "\n");
+    cgc_fprintf(stdout, "\n");
     
     return 0;
 }
 
-int setupNewGame() {
+int cgc_setupNewGame() {
     // create the board
-    board = createBoard(rows, columns);
+    board = cgc_createBoard(rows, columns);
     
     // create the ship
-    shipCords = (int*) calloc(2, sizeof(int));
+    shipCords = (int*) cgc_calloc(2, sizeof(int));
     shipCords[0] = 0;
     shipCords[1] = rows-1;
     board[shipCords[1]][shipCords[0]] = 2;
     
     // get the user's name
-    fprintf(stdout, "Please input your name:\n");
-    playerName = (char*) calloc(sizeof(char), 256);
-    fflush(stdout);
-    freaduntil(playerName, 256, '\n', stdin);
+    cgc_fprintf(stdout, "Please input your name:\n");
+    playerName = (char*) cgc_calloc(sizeof(char), 256);
+    cgc_fflush(stdout);
+    cgc_freaduntil(playerName, 256, '\n', stdin);
     
 #if 0
     // if someone put in more than 255 characters, throw the extra away
@@ -358,7 +358,7 @@ int setupNewGame() {
     {
         char junk = 0x0;
         while (junk != '\n') {
-            fread(&junk, 1, stdin);
+            cgc_fread(&junk, 1, stdin);
         }
     }
 #endif
@@ -378,23 +378,23 @@ int setupNewGame() {
     }
     
     // create the enemies
-    createEnemies();
-    setEnemies();
+    cgc_createEnemies();
+    cgc_setEnemies();
     
     // instantiate user bullets array
-    userBullets = (int**)calloc(rows, sizeof(int*));
+    userBullets = (int**)cgc_calloc(rows, sizeof(int*));
     for (int i = 0; i < rows; i++)
     {
-        userBullets[i] = (int*)calloc(2, sizeof(int));
+        userBullets[i] = (int*)cgc_calloc(2, sizeof(int));
         userBullets[i][0] = -1;
         userBullets[i][1] = -1;
     }
     
     // instantiate enemy bullets array
-    enemyBullets = (int**)calloc(rows*(columns/2), sizeof(int*));
+    enemyBullets = (int**)cgc_calloc(rows*(columns/2), sizeof(int*));
     for (int i = 0; i < (rows*(columns/2)); i++)
     {
-        enemyBullets[i] = (int*) calloc(2, sizeof(int));
+        enemyBullets[i] = (int*) cgc_calloc(2, sizeof(int));
         enemyBullets[i][0] = -1;
         enemyBullets[i][1] = -1;
     }
@@ -402,27 +402,27 @@ int setupNewGame() {
     return 0;
 }
 
-char getUserInput() {
+char cgc_getUserInput() {
     //get the first char that the user hit
-    char* buffer = (char*) calloc(256, sizeof(char));
-    fflush(stdout);
-    freaduntil(buffer, 200, '\n', stdin);
+    char* buffer = (char*) cgc_calloc(256, sizeof(char));
+    cgc_fflush(stdout);
+    cgc_freaduntil(buffer, 200, '\n', stdin);
     
     return buffer[0];
 }
 
-void clearShip() {
+void cgc_clearShip() {
     board[shipCords[1]][shipCords[0]] = 0;
 }
 
-void setShip() {
-	//fprintf(stderr, "prev thing: %d\n", board[shipCords[1]][shipCords[0]]);
+void cgc_setShip() {
+	//cgc_fprintf(stderr, "prev thing: %d\n", board[shipCords[1]][shipCords[0]]);
 	if (board[shipCords[1]][shipCords[0]] == 5)
 		lost = 1;
     board[shipCords[1]][shipCords[0]] = 2;
 }
 
-void userFire() {
+void cgc_userFire() {
     // find empty bullet
     int emptyLoc = -1;
     for (int i = 0; i < rows; i++)
@@ -443,54 +443,54 @@ void userFire() {
     }
 }
 
-void moveUser() {
+void cgc_moveUser() {
     // get the user's movement
-    char move = getUserInput();
+    char move = cgc_getUserInput();
     // move the ship based on the key
     switch (move) {
         case 'w':
             //move up
             if (shipCords[1] > 0) {
-                clearShip();
+                cgc_clearShip();
                 shipCords[1] = shipCords[1]-1;
-                setShip();
+                cgc_setShip();
             }
             break;
             
         case 'a':
             //move up
             if (shipCords[0] > 0) {
-                clearShip();
+                cgc_clearShip();
                 shipCords[0] = shipCords[0]-1;
-                setShip();
+                cgc_setShip();
             }
             break;
             
         case 'd':
             //move up
             if (shipCords[0] < columns-1) {
-                clearShip();
+                cgc_clearShip();
                 shipCords[0] = shipCords[0]+1;
-                setShip();
+                cgc_setShip();
             }
             break;
             
         case 's':
             //move up
             if (shipCords[1] < rows-1) {
-                clearShip();
+                cgc_clearShip();
                 shipCords[1] = shipCords[1]+1;
-                setShip();
+                cgc_setShip();
             }
             break;
             
         default:
-            userFire();
+            cgc_userFire();
             break;
     }
 }
 
-void updateBullets() {
+void cgc_updateBullets() {
     // go through all user bullets and advance them by 1
     // if the advance would move them off the map, then delete them
     for (int i = 0; i < rows; i++)
@@ -534,7 +534,7 @@ void updateBullets() {
     }
 }
 
-void clearBullets() {
+void cgc_clearBullets() {
     for (int i = 0; i < rows; i++) {
         if((userBullets[i][0] != -1) && (board[userBullets[i][1]][userBullets[i][0]] == 4))
         {
@@ -550,7 +550,7 @@ void clearBullets() {
     }
 }
 
-void setBullets() {
+void cgc_setBullets() {
     for (int i = 0; i < rows; i++) {
         if(userBullets[i][0] != -1)
         {
@@ -560,10 +560,10 @@ void setBullets() {
                 board[userBullets[i][1]][userBullets[i][0]] = 0;
                 // delete ship
                 int hold = (userBullets[i][1]-(turnCounter/20))/2;
-                //fprintf(stdout, "There is a ship at: (%i, %i)\n I want to delete enemy: [%i][%i]\n", userBullets[i][1], userBullets[i][0], hold, (userBullets[i][0]/2));
+                //cgc_fprintf(stdout, "There is a ship at: (%i, %i)\n I want to delete enemy: [%i][%i]\n", userBullets[i][1], userBullets[i][0], hold, (userBullets[i][0]/2));
                 
                 enemies[hold][(userBullets[i][0]/2)] = 0;
-                //fprintf(stdout, "BOOM\n");
+                //cgc_fprintf(stdout, "BOOM\n");
                 //delete bullet
                 userBullets[i][0] = -1;
                 userBullets[i][1] = -1;
@@ -598,40 +598,40 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
 
     (void) secret_page;
     
-    fbuffered(stdout, 1);
+    cgc_fbuffered(stdout, 1);
     if (turnCounter == 0) {
-        setupNewGame();
+        cgc_setupNewGame();
         
         // seed the random number generator
-        seedRandomGen(((int *)secret_page)[0] ^ ((int *)secret_page)[1] , ((int *)secret_page)[2] ^ ((int *)secret_page)[3]);
+        cgc_seedRandomGen(((int *)secret_page)[0] ^ ((int *)secret_page)[1] , ((int *)secret_page)[2] ^ ((int *)secret_page)[3]);
     }
     while (turnCounter < 10000 && lost == 0)
     {
-        //printf("%d %d\n", seed1, seed2);
+        //cgc_printf("%d %d\n", seed1, seed2);
         if (turnCounter != 0) {
             // update enemies
-            clearEnemies();
-            updateEnemies();
-            setEnemies();
+            cgc_clearEnemies();
+            cgc_updateEnemies();
+            cgc_setEnemies();
             
             // update bullets
-            clearBullets();
-            updateBullets();
-            setBullets();
+            cgc_clearBullets();
+            cgc_updateBullets();
+            cgc_setBullets();
         }
         // check if ship is hit, if not, draw it
         if (shipCords[0] != -1)
         {
-            setShip();
+            cgc_setShip();
         }
         
         //draw the board
-		//fprintf(stderr,"lost: %d, turnCounter: %d\n", lost, turnCounter);
-        drawBoard();
-        fprintf(stdout, "\t\tLevel #%d\n", (turnCounter/20)+1);
+		//cgc_fprintf(stderr,"lost: %d, turnCounter: %d\n", lost, turnCounter);
+        cgc_drawBoard();
+        cgc_fprintf(stdout, "\t\tLevel #%d\n", (turnCounter/20)+1);
         
         //get user move and update their piece
-        moveUser();
+        cgc_moveUser();
         
         
         turnCounter++;
@@ -645,8 +645,8 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
     
     // check if we lost
     if (lost == 1) {
-        clearScreen();
-        fprintf(stdout, "\t\tyou lose\n\n\n\n\n");
+        cgc_clearScreen();
+        cgc_fprintf(stdout, "\t\tyou lose\n\n\n\n\n");
     }
     // check if we won
     else if (lost == -1)
@@ -657,7 +657,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
         // let them overwrite a buffer
         int i;
         char targetBuffer[256];
-        char* srcBuffer = (char*) calloc(100000, sizeof(char));
+        char* srcBuffer = (char*) cgc_calloc(100000, sizeof(char));
         char currentChar = 0;
         int counter = 0;
         
@@ -665,39 +665,39 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
         {
             
             //draw board
-            //clearScreen();
+            //cgc_clearScreen();
             //draw top
-            fprintf(stdout, "\t\t!!!DANCE MODE!!!\n\n\n\n\n");
-            fprintf(stdout, "\n\n\n");
+            cgc_fprintf(stdout, "\t\t!!!DANCE MODE!!!\n\n\n\n\n");
+            cgc_fprintf(stdout, "\n\n\n");
             for (int j = 0; j < 12; j++) {
-                fprintf(stdout, "-");
+                cgc_fprintf(stdout, "-");
             }
-            fprintf(stdout, "\n");
+            cgc_fprintf(stdout, "\n");
             // draw middle
             for (int q = 0; q < 10; q++) {
-                fprintf(stdout, "|");
+                cgc_fprintf(stdout, "|");
                 for (int k = 0; k < 10; k++) {
                     if (shipX == q && shipY == k) {
-                        fprintf(stdout, "W");
+                        cgc_fprintf(stdout, "W");
                     }
                     else
                     {
-                        fprintf(stdout, " ");
+                        cgc_fprintf(stdout, " ");
                     }
                 }
-                fprintf(stdout, "|\n");
+                cgc_fprintf(stdout, "|\n");
             }
             //draw bottom
             for (int j = 0; j < 12; j++) {
-                fprintf(stdout, "-");
+                cgc_fprintf(stdout, "-");
             }
-            fprintf(stdout, "\n");
+            cgc_fprintf(stdout, "\n");
             
             // get user input
-            fprintf(stdout, "Bust a move (w = +1, s=SaveDigit, d=FIRE, q=Quit)\n%x\n", currentChar);
-            fflush(stdout);
-            char response = (char)calloc(1, sizeof(char));
-            response = getUserInput();
+            cgc_fprintf(stdout, "Bust a move (w = +1, s=SaveDigit, d=FIRE, q=Quit)\n%x\n", currentChar);
+            cgc_fflush(stdout);
+            char response = (char)cgc_calloc(1, sizeof(char));
+            response = cgc_getUserInput();
             if (response == 'q')
                 break;
             switch (response) {
@@ -711,9 +711,9 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
                     break;
                 case 'd':
 #ifdef PATCHED_1
-                    strncpy(targetBuffer, srcBuffer, sizeof(targetBuffer));
+                    cgc_strncpy(targetBuffer, srcBuffer, sizeof(targetBuffer));
 #else
-                    strncpy(targetBuffer, srcBuffer, counter);
+                    cgc_strncpy(targetBuffer, srcBuffer, counter);
 #endif
                     break;
                 default:
@@ -722,7 +722,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
             }
             
             //move the ship randomly (i.e. dancing)
-            int r = getRandomInt()%4;
+            int r = cgc_getRandomInt()%4;
             
             switch (r) {
                 case 0:
@@ -776,6 +776,6 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
         }
     }
 
-    fflush(stdout);
+    cgc_fflush(stdout);
     return 0;
 }

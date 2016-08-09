@@ -42,35 +42,35 @@ THE SOFTWARE.
 
 typedef struct _USER_STATE_STRUCT
 {
-    uint32_t    state;
-} tUserState;
+    cgc_uint32_t    state;
+} cgc_tUserState;
 
 // Command Function Pointer type
-typedef int8_t (*fpCommandHandler)( uint8_t *pszCommandString, tUserState *pState );
+typedef cgc_int8_t (*cgc_fpCommandHandler)( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
 
 
 typedef struct _COMMAND_HANDLER_TABLE
 {
-    uint8_t szCommand[MAX_COMMAND_LENGTH+1];
-    fpCommandHandler pCmdHandler;
-    uint8_t flags;
-} tCommandHandlerTable;
+    cgc_uint8_t szCommand[MAX_COMMAND_LENGTH+1];
+    cgc_fpCommandHandler pCmdHandler;
+    cgc_uint8_t flags;
+} cgc_tCommandHandlerTable;
 
 
 // User handlers
-void init_user( tUserState *pState );
+void cgc_init_user( cgc_tUserState *pState );
 
 // Parses a command string
-int8_t parse_command( uint8_t *pszCommandLine, tUserState *pState );
+cgc_int8_t cgc_parse_command( cgc_uint8_t *pszCommandLine, cgc_tUserState *pState );
 
 // Command Handlers
-int8_t command_insert( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_remove( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_update( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_print( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_find( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_login( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_logout( uint8_t *pszCommandString, tUserState *pState );
-int8_t command_exit( uint8_t *pszCommandString, tUserState *pState );
+cgc_int8_t cgc_command_insert( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_remove( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_update( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_print( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_find( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_login( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_logout( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
+cgc_int8_t cgc_command_exit( cgc_uint8_t *pszCommandString, cgc_tUserState *pState );
 
 #endif // __COMMAND_HANDLER_H__

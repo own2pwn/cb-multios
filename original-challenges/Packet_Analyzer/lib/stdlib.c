@@ -27,27 +27,27 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "io.h"
 
-int strlen(char *s) {
+int cgc_strlen(char *s) {
   char *e = s;
   while (*e != '\0') e++;
   return (e - s);
 }
 
-void bzero(char *s, size_t length) {
+void cgc_bzero(char *s, cgc_size_t length) {
   while (length > 0) {
     *s++ = '\0';
     length--;
   }
 }
 
-void memcpy(char *d, char *s, size_t num) {
+void cgc_memcpy(char *d, char *s, cgc_size_t num) {
   while(num > 0) {
     *d++ = *s++;
     num--;
   }
 }
 
-int atoi(char *s) {
+int cgc_atoi(char *s) {
   if (s == NULL) {
     return 0;
   }
@@ -82,7 +82,7 @@ int atoi(char *s) {
 
 // This function counts the number of single null
 // terminated strings stopping after the first double null is found
-int count_strings(char *s) {
+int cgc_count_strings(char *s) {
   int count = 0;
   while (*s != '\0' || *(s+1) != '\0') {
     if (*(s+1) == '\0') {
@@ -95,7 +95,7 @@ int count_strings(char *s) {
 
 // This function returns a pointer to the next null terminated string
 // If it encounters a double null it returns 0;
-char *next_string(char *s) {
+char *cgc_next_string(char *s) {
   char *n = s;
   while (*n != '\0') {
     n++;

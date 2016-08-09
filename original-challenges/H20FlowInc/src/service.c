@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,23 +31,23 @@ int main(void) {
 	char ret = SUCCESS;
     struct tankset *t = NULL;
 
-    if (SUCCESS != (ret = create_tanks(&t, TANK_QTY))) {goto bail;}
+    if (SUCCESS != (ret = cgc_create_tanks(&t, TANK_QTY))) {goto bail;}
 
-    syslog(LOG_INFO, "H2FLOW Service Ready.");
+    cgc_syslog(LOG_INFO, "H2FLOW Service Ready.");
 
     while (1) {
-        if (SUCCESS != (ret = update_drain_factors(t))) {goto bail;}
-        if (SUCCESS != (ret = rxtx(t))) {goto bail;}
+        if (SUCCESS != (ret = cgc_update_drain_factors(t))) {goto bail;}
+        if (SUCCESS != (ret = cgc_rxtx(t))) {goto bail;}
 
-        sleep(SLEEP_INT_SEC, SLEEP_INT_USEC);
+        cgc_sleep(SLEEP_INT_SEC, SLEEP_INT_USEC);
 
-        if (SUCCESS != (ret = update_water_levels(t))) {goto bail;}
-        if (SUCCESS != (ret = check_levels(t))) {goto bail;}
+        if (SUCCESS != (ret = cgc_update_water_levels(t))) {goto bail;}
+        if (SUCCESS != (ret = cgc_check_levels(t))) {goto bail;}
     }
 
 bail:
 	if (0 > ret) {
-		send((char *)&ret, 1);
+		cgc_send((char *)&ret, 1);
 	}
 
 	return ret;

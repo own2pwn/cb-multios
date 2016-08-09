@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 #include "tpai_image_data.h"
 
-int tpai_read_pixel( ptpai_image_data tid, unsigned int *pixel )
+int cgc_tpai_read_pixel( cgc_ptpai_image_data tid, unsigned int *pixel )
 {
 	char ascii_index[] = {' ','!','"','#','$','%','&','\'','(',')','*','+',',','-','.','/','0','1','2','3','4','5','6','7','8','9',':',';','<','=','>','?','@','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','[','\\',']','^','_','`','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','{','|','}','~'};
 	int value = 0;
@@ -32,7 +32,7 @@ int tpai_read_pixel( ptpai_image_data tid, unsigned int *pixel )
 		return 0;
 	}
 
-	if ( tpai_read_nbits( tid, 7, &value ) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 7, &value ) == 0 ) {
 		return 0;
 	}
 
@@ -47,7 +47,7 @@ int tpai_read_pixel( ptpai_image_data tid, unsigned int *pixel )
 	return 1;	
 }
 
-int tpai_display_image( ptpai_image_data tid )
+int cgc_tpai_display_image( cgc_ptpai_image_data tid )
 {
 	char *image = NULL;
 	unsigned int image_length = 0;
@@ -61,27 +61,27 @@ int tpai_display_image( ptpai_image_data tid )
 		return 0;
 	}
 
-	if ( tpai_read_magic( tid ) == 0 ) {
+	if ( cgc_tpai_read_magic( tid ) == 0 ) {
 		return 0;
 	}
 
-	if ( tpai_read_width( tid ) == 0 ) {
+	if ( cgc_tpai_read_width( tid ) == 0 ) {
 		return 0;
 	}
 
-	if ( tpai_read_height( tid ) == 0 ) {
+	if ( cgc_tpai_read_height( tid ) == 0 ) {
 		return 0;
 	}
 
-	if ( tpai_read_loadd( tid, &image_length ) == 0 ) {
+	if ( cgc_tpai_read_loadd( tid, &image_length ) == 0 ) {
 		return 0;
 	}
 
-	if ( tpai_skip_rsrvd( tid ) == 0 ) {
+	if ( cgc_tpai_skip_rsrvd( tid ) == 0 ) {
 		return 0;
 	}
 
-	if ( tpai_calc_checksum( tid ) == 0 ) {
+	if ( cgc_tpai_calc_checksum( tid ) == 0 ) {
 		return 0;
 	}
 
@@ -91,10 +91,10 @@ int tpai_display_image( ptpai_image_data tid )
 		return 0;
 	}
 
-	memset( image, ' ', image_length);
+	cgc_memset( image, ' ', image_length);
 	image[image_length] = '\x00';
 
-	while ( tpai_read_pixel( tid, &pixel) != 0 ) {
+	while ( cgc_tpai_read_pixel( tid, &pixel) != 0 ) {
 		switch ( tid->load_direction ) {
 			case 0:
 				row = count / tid->width;
@@ -136,7 +136,7 @@ int tpai_display_image( ptpai_image_data tid )
 		index = (row * tid->width) + column;
 
 		if ( index > image_length ) {
-			printf("[ERROR] Pixel out of bounds\n");
+			cgc_printf("[ERROR] Pixel out of bounds\n");
 			deallocate( image, image_length + 1 );
 			return 0;
 		}
@@ -147,19 +147,19 @@ int tpai_display_image( ptpai_image_data tid )
 
 	for (index = 0; index < image_length; index++) {
 		if ( index % tid->width == 0 && index != 0 ) {
-			printf("\n");
+			cgc_printf("\n");
 		}
 
-		printf("@c", image[index]);
+		cgc_printf("@c", image[index]);
 	}
 
-	printf("\n");
+	cgc_printf("\n");
 	deallocate(image, image_length + 1 );
 
 	return 1;
 }
 
-int tpai_calc_checksum( ptpai_image_data tid )
+int cgc_tpai_calc_checksum( cgc_ptpai_image_data tid )
 {
 	int shorts = 0;
 	short *pixels = NULL;
@@ -204,11 +204,11 @@ int tpai_calc_checksum( ptpai_image_data tid )
 	return 1;	
 }
 
-int tpai_skip_rsrvd( ptpai_image_data tid )
+int cgc_tpai_skip_rsrvd( cgc_ptpai_image_data tid )
 {	
 	int value = 0;
 
-	if ( tpai_read_nbits( tid, 17, &value ) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 17, &value ) == 0 ) {
 		value = 0;
 		return value;
 	}
@@ -220,7 +220,7 @@ int tpai_skip_rsrvd( ptpai_image_data tid )
 	return 1;
 }
 
-int tpai_read_loadd( ptpai_image_data tid, unsigned int *dir)
+int cgc_tpai_read_loadd( cgc_ptpai_image_data tid, unsigned int *dir)
 {
 	int value = 0;
 
@@ -228,7 +228,7 @@ int tpai_read_loadd( ptpai_image_data tid, unsigned int *dir)
 		return 0;
 	}
 
-	if ( tpai_read_nbits( tid, 3, &value ) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 3, &value ) == 0 ) {
 		value &= 0;
 		return value;
 	}
@@ -239,11 +239,11 @@ int tpai_read_loadd( ptpai_image_data tid, unsigned int *dir)
 	return 1;
 }
 
-int tpai_read_width( ptpai_image_data tid )
+int cgc_tpai_read_width( cgc_ptpai_image_data tid )
 {
 	int width = 0;
 
-	if ( tpai_read_nbits( tid, 6, &width) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 6, &width) == 0 ) {
 		return 0;
 	}
 
@@ -252,11 +252,11 @@ int tpai_read_width( ptpai_image_data tid )
 	return width;
 }
 
-int tpai_read_height( ptpai_image_data tid )
+int cgc_tpai_read_height( cgc_ptpai_image_data tid )
 {
 	int height = 0;
 
-	if ( tpai_read_nbits( tid, 6, &height) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 6, &height) == 0 ) {
 		return 0;
 	}
 
@@ -265,7 +265,7 @@ int tpai_read_height( ptpai_image_data tid )
 	return height;
 }
 
-int tpai_read_magic( ptpai_image_data tid )
+int cgc_tpai_read_magic( cgc_ptpai_image_data tid )
 {
 	int magic;
 
@@ -273,7 +273,7 @@ int tpai_read_magic( ptpai_image_data tid )
 		return 0;
 	}
 
-	if ( tpai_read_nbits( tid, 32, &magic) == 0 ) {
+	if ( cgc_tpai_read_nbits( tid, 32, &magic) == 0 ) {
 		return 0;
 	}
 
@@ -284,7 +284,7 @@ int tpai_read_magic( ptpai_image_data tid )
 	return 1;
 }
 
-int tpai_read_check( ptpai_image_data tid, int bitcount )
+int cgc_tpai_read_check( cgc_ptpai_image_data tid, int bitcount )
 {
 	int used_bits = 0;
 
@@ -309,12 +309,12 @@ int tpai_read_check( ptpai_image_data tid, int bitcount )
 	return 1;
 }
 
-int tpai_read_nbits( ptpai_image_data tid, int bitcount, int *value )
+int cgc_tpai_read_nbits( cgc_ptpai_image_data tid, int bitcount, int *value )
 {
 	int data = 0;
 	char c = '\x00';
 	
-	if ( tpai_read_check( tid, bitcount ) == 0 ) {
+	if ( cgc_tpai_read_check( tid, bitcount ) == 0 ) {
 		return 0;
 	}
 

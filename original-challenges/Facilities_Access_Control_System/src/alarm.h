@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,5 +25,5 @@ THE SOFTWARE.
 */
 #include <libcgc.h>
 
-void ProcessAlarms(void);
-void InvertAlarmState(uint8_t TargetDevice);
+void cgc_ProcessAlarms(void);
+void cgc_InvertAlarmState(cgc_uint8_t TargetDevice);

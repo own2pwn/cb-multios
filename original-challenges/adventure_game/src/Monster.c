@@ -136,7 +136,7 @@ DefineFunction(Monster, void, deserialize, Buffer *buf)
 // static functions
 void Monster_print_array(Array *arr)
 {
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < arr->m_count; i++)
     {
         Monster *m = $(arr, get, i);
@@ -145,7 +145,7 @@ void Monster_print_array(Array *arr)
     }
 }
 
-Monster *Monster_new_random(unsigned int level)
+Monster *Monster_new_cgc_random(unsigned int level)
 {
     unsigned int kind_id = $($g->m_random, randint, NUM_BUILTIN_KINDS);
     Monster *m = new(Monster);
@@ -155,7 +155,7 @@ Monster *Monster_new_random(unsigned int level)
 
 void Monster_deserialize_array(Array *arr, Buffer *buf)
 {
-    size_t i, count;
+    cgc_size_t i, count;
     count = $(buf, read_number);
 
     for (i = 0; i < count; i++)
@@ -168,7 +168,7 @@ void Monster_deserialize_array(Array *arr, Buffer *buf)
 
 void Monster_serialize_array(Array *arr, Buffer *buf)
 {
-    size_t i;
+    cgc_size_t i;
     $(buf, write_number, arr->m_count);
 
     for (i = 0; i < arr->m_count; i++)

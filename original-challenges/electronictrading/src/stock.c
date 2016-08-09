@@ -33,7 +33,7 @@ static unsigned int
 #else
 static int
 #endif
-strhash(const char *s, size_t n)
+cgc_strhash(const char *s, cgc_size_t n)
 {
     int ret = 0;
     const unsigned char *p = NULL;
@@ -44,18 +44,18 @@ strhash(const char *s, size_t n)
     return ret;
 }
 
-static stock_list_t *
-get_bucket(const struct stock_state *state, const char *name)
+static cgc_stock_list_t *
+cgc_get_bucket(const struct stock_state *state, const char *name)
 {
-    return (stock_list_t *)&state->stock_hash_table[strhash(name,
+    return (cgc_stock_list_t *)&state->stock_hash_table[cgc_strhash(name,
             STOCK_NAME_MAX_LEN) % HASH_TABLE_NUM_BUCKETS];
 }
 
 static struct stock *
-lookup_stock(const struct stock_state *state, const char *name)
+cgc_lookup_stock(const struct stock_state *state, const char *name)
 {
     struct stock *cur = NULL;
-    stock_list_t *bucket = get_bucket(state, name);
+    cgc_stock_list_t *bucket = cgc_get_bucket(state, name);
 
     LIST_FOR_EACH(bucket, bucket_list, cur) {
 // Type confusion
@@ -64,7 +64,7 @@ lookup_stock(const struct stock_state *state, const char *name)
             return NULL;
 #endif
 
-        if (strncmp(cur->name, name, STOCK_NAME_MAX_LEN) == 0)
+        if (cgc_strncmp(cur->name, name, STOCK_NAME_MAX_LEN) == 0)
             return cur;
     }
 
@@ -72,9 +72,9 @@ lookup_stock(const struct stock_state *state, const char *name)
 }
 
 static void
-remove_stock(struct stock_state *state, struct stock *stock)
+cgc_remove_stock(struct stock_state *state, struct stock *stock)
 {
-    stock_list_t *bucket = NULL;
+    cgc_stock_list_t *bucket = NULL;
 
 // Type confusion
 #ifdef PATCHED
@@ -82,7 +82,7 @@ remove_stock(struct stock_state *state, struct stock *stock)
         return;
 #endif
 
-    bucket = get_bucket(state, stock->name);
+    bucket = cgc_get_bucket(state, stock->name);
 
 // Use after free
 #ifdef PATCHED
@@ -92,18 +92,18 @@ remove_stock(struct stock_state *state, struct stock *stock)
 #endif
     LIST_REMOVE(bucket, bucket_list, stock);
 
-    pool_free(&state->stock_pool, stock);
+    cgc_pool_free(&state->stock_pool, stock);
 }
 
 static int
-insert_stock(struct stock_state *state, const char *name)
+cgc_insert_stock(struct stock_state *state, const char *name)
 {
     struct stock *new = NULL;
-    stock_list_t *bucket = NULL;
+    cgc_stock_list_t *bucket = NULL;
 
-    bucket = get_bucket(state, name);
+    bucket = cgc_get_bucket(state, name);
 
-    if ((new = pool_alloc(&state->stock_pool)) == NULL)
+    if ((new = cgc_pool_alloc(&state->stock_pool)) == NULL)
         return -1;
 
     LIST_INIT(&new->buy_orders);
@@ -121,16 +121,16 @@ insert_stock(struct stock_state *state, const char *name)
 
 // Buffer overflow
 #ifdef PATCHED
-    strncpy(new->name, name, STOCK_NAME_MAX_LEN);
+    cgc_strncpy(new->name, name, STOCK_NAME_MAX_LEN);
 #else
-    strcpy(new->name, name);
+    cgc_strcpy(new->name, name);
 #endif
 
     return 0;
 }
 
 static struct order *
-lookup_order(const struct stock_state *state, unsigned int id)
+cgc_lookup_order(const struct stock_state *state, unsigned int id)
 {
 // Dereference of untrusted pointer
 #ifdef PATCHED
@@ -153,9 +153,9 @@ lookup_order(const struct stock_state *state, unsigned int id)
 }
 
 static void
-remove_order(struct stock_state *state, struct order *order)
+cgc_remove_order(struct stock_state *state, struct order *order)
 {
-    order_list_t *stock_list = NULL;
+    cgc_order_list_t *stock_list = NULL;
 
 // Type confusion
 #ifdef PATCHED
@@ -174,15 +174,15 @@ remove_order(struct stock_state *state, struct order *order)
 
     if (order->stock->buy_orders.head == NULL &&
             order->stock->sell_orders.head == NULL) {
-        remove_stock(state, order->stock);
+        cgc_remove_stock(state, order->stock);
     }
 
     if (order->quantity == 0)
-        order->on_complete(order);
+        order->cgc_on_complete(order);
 }
 
 static int
-order_cmp(const struct order *a, const struct order *b)
+cgc_order_cmp(const struct order *a, const struct order *b)
 {
     if (a->price != b->price)
         return b->price - a->price;
@@ -191,7 +191,7 @@ order_cmp(const struct order *a, const struct order *b)
 }
 
 static void
-on_complete(struct order *order)
+cgc_on_complete(struct order *order)
 {
     // Notify observers, talk to database, etc
 #ifdef DEBUG
@@ -200,7 +200,7 @@ on_complete(struct order *order)
 }
 
 static int
-match_order(struct stock_state *state, struct stock *stock, struct order *order)
+cgc_match_order(struct stock_state *state, struct stock *stock, struct order *order)
 {
     struct order *cur = NULL;
     unsigned int quantity = 0;
@@ -226,10 +226,10 @@ match_order(struct stock_state *state, struct stock *stock, struct order *order)
                 cur->quantity -= quantity;
 
                 if (cur->quantity == 0)
-                    remove_order(state, cur);
+                    cgc_remove_order(state, cur);
 
                 if (order->quantity == 0) {
-                    remove_order(state, order);
+                    cgc_remove_order(state, order);
                     break;
                 }
             }
@@ -249,10 +249,10 @@ match_order(struct stock_state *state, struct stock *stock, struct order *order)
                 cur->quantity -= quantity;
 
                 if (cur->quantity == 0)
-                    remove_order(state, cur);
+                    cgc_remove_order(state, cur);
 
                 if (order->quantity == 0) {
-                    remove_order(state, order);
+                    cgc_remove_order(state, order);
                     break;
                 }
             }
@@ -263,7 +263,7 @@ match_order(struct stock_state *state, struct stock *stock, struct order *order)
 }
 
 static unsigned int
-get_next_id(struct stock_state *state, struct order *order)
+cgc_get_next_id(struct stock_state *state, struct order *order)
 {
     // Use pointer as value even in patched binary, should be unique once
     // allocated to an order and appears to be needed for the poller to work on
@@ -272,26 +272,26 @@ get_next_id(struct stock_state *state, struct order *order)
 }
 
 static int
-insert_order(struct stock_state *state, const char *name, enum order_type type,
+cgc_insert_order(struct stock_state *state, const char *name, enum order_type type,
         unsigned int quantity, unsigned int price)
 {
     struct order *new = NULL;
     struct order *cur = NULL;
     struct stock *stock = NULL;
-    order_list_t *stock_list = NULL;
+    cgc_order_list_t *stock_list = NULL;
 
-    if (strnlen(name, STOCK_NAME_MAX_LEN) == 0)
+    if (cgc_strnlen(name, STOCK_NAME_MAX_LEN) == 0)
         return -1;
 
-    if ((stock = lookup_stock(state, name)) == NULL &&
-        insert_stock(state, name) != 0) {
+    if ((stock = cgc_lookup_stock(state, name)) == NULL &&
+        cgc_insert_stock(state, name) != 0) {
         return -1;
     }
 
-    if (stock == NULL && (stock = lookup_stock(state, name)) == NULL)
+    if (stock == NULL && (stock = cgc_lookup_stock(state, name)) == NULL)
         return -1;
 
-    if ((new = pool_alloc(&state->stock_pool)) == NULL)
+    if ((new = cgc_pool_alloc(&state->stock_pool)) == NULL)
         return -1;
 
 // Type confusion
@@ -299,14 +299,14 @@ insert_order(struct stock_state *state, const char *name, enum order_type type,
     new->obj_type = ORDER;
 #endif
 
-    new->id = get_next_id(state, new);
+    new->id = cgc_get_next_id(state, new);
     new->type = type;
     new->quantity = quantity;
     new->price = price;
     new->stock = stock;
 
     // Only one possible action to take for now
-    new->on_complete = on_complete;
+    new->cgc_on_complete = cgc_on_complete;
 
     LIST_ELEMS_INIT(&new->global_list);
     LIST_ELEMS_INIT(&new->stock_list);
@@ -319,7 +319,7 @@ insert_order(struct stock_state *state, const char *name, enum order_type type,
             return -1;
 #endif
 
-        if (order_cmp(cur, new) >= 0)
+        if (cgc_order_cmp(cur, new) >= 0)
             break;
     }
 
@@ -328,17 +328,17 @@ insert_order(struct stock_state *state, const char *name, enum order_type type,
 
     stock->num_orders++;
 
-    if (match_order(state, stock, new) == 0)
+    if (cgc_match_order(state, stock, new) == 0)
         return 0;
  
     return new->id;
 }
 
 static void
-order_to_str(const struct order *order, char *s)
+cgc_order_to_str(const struct order *order, char *s)
 {
     char intbuf[80] = {};
-    strcpy(s, itoa(order->id, intbuf));
+    cgc_strcpy(s, cgc_itoa(order->id, intbuf));
 
 // Type confusion
 #ifdef PATCHED
@@ -347,24 +347,24 @@ order_to_str(const struct order *order, char *s)
 #endif
 
     if (order->type == BUY) {
-        strcat(s, "\tBUY\t");
-        strcat(s, itoa(order->quantity, intbuf));
-        strcat(s, "\t");
-        strcat(s, itoa(order->price, intbuf));
-        strcat(s, "\t\t\t\n");
+        cgc_strcat(s, "\tBUY\t");
+        cgc_strcat(s, cgc_itoa(order->quantity, intbuf));
+        cgc_strcat(s, "\t");
+        cgc_strcat(s, cgc_itoa(order->price, intbuf));
+        cgc_strcat(s, "\t\t\t\n");
     } else {
-        strcat(s, "\t\t\t");
-        strcat(s, itoa(order->price, intbuf));
-        strcat(s, "\t");
-        strcat(s, itoa(order->quantity, intbuf));
-        strcat(s, "\tSELL\n");
+        cgc_strcat(s, "\t\t\t");
+        cgc_strcat(s, cgc_itoa(order->price, intbuf));
+        cgc_strcat(s, "\t");
+        cgc_strcat(s, cgc_itoa(order->quantity, intbuf));
+        cgc_strcat(s, "\tSELL\n");
     }
 }
 
 int 
-cmd_list_stocks(struct stock_state *state)
+cgc_cmd_list_stocks(struct stock_state *state)
 {
-    size_t len = 0;
+    cgc_size_t len = 0;
     struct stock *cur = NULL;
     struct stock *prev = NULL;
     char buf[5] = {};
@@ -384,7 +384,7 @@ cmd_list_stocks(struct stock_state *state)
 
         if (cur->buy_orders.head == NULL &&
                 cur->sell_orders.head == NULL) {
-            remove_stock(state, cur);
+            cgc_remove_stock(state, cur);
             continue;
         }
 
@@ -395,12 +395,12 @@ cmd_list_stocks(struct stock_state *state)
     }
 
     LIST_FOR_EACH(&state->stocks_list, global_list, cur) {
-        len = strnlen(cur->name, STOCK_NAME_MAX_LEN);
+        len = cgc_strnlen(cur->name, STOCK_NAME_MAX_LEN);
 
-        strncpy(buf, cur->name, len);
+        cgc_strncpy(buf, cur->name, len);
         buf[len++] = '\n';
 
-        if (write_all(STDOUT, buf, len) != len)
+        if (cgc_write_all(STDOUT, buf, len) != len)
             return -1;
     }
 
@@ -408,22 +408,22 @@ cmd_list_stocks(struct stock_state *state)
 }
 
 int
-cmd_list_orders(const struct stock_state *state, const char *name)
+cgc_cmd_list_orders(const struct stock_state *state, const char *name)
 {
     struct order *cur = NULL;
     struct stock *stock = NULL;
-    size_t len = 0;
+    cgc_size_t len = 0;
     char buf[200] = {};
 
-    if ((stock = lookup_stock(state, name)) == NULL)
+    if ((stock = cgc_lookup_stock(state, name)) == NULL)
         return -1;
 
-    strcpy(buf, "Order book for ");
-    strncat(buf, stock->name, STOCK_NAME_MAX_LEN);
-    strcat(buf, "\nID\tSIDE\tQTY\tPRICE\tQTY\tSIDE\n"); 
+    cgc_strcpy(buf, "Order book for ");
+    cgc_strncat(buf, stock->name, STOCK_NAME_MAX_LEN);
+    cgc_strcat(buf, "\nID\tSIDE\tQTY\tPRICE\tQTY\tSIDE\n"); 
 
-    len = strlen(buf);
-    if (write_all(STDOUT, buf, len) != len)
+    len = cgc_strlen(buf);
+    if (cgc_write_all(STDOUT, buf, len) != len)
         return -1;
 
     LIST_FOR_EACH(&stock->sell_orders, stock_list, cur) {
@@ -433,10 +433,10 @@ cmd_list_orders(const struct stock_state *state, const char *name)
             return -1;
 #endif
 
-        order_to_str(cur, buf);
+        cgc_order_to_str(cur, buf);
 
-        len = strlen(buf);
-        if (write_all(STDOUT, buf, len) != len)
+        len = cgc_strlen(buf);
+        if (cgc_write_all(STDOUT, buf, len) != len)
             return -1;
     }
 
@@ -447,10 +447,10 @@ cmd_list_orders(const struct stock_state *state, const char *name)
             return -1;
 #endif
 
-        order_to_str(cur, buf);
+        cgc_order_to_str(cur, buf);
 
-        len = strlen(buf);
-        if (write_all(STDOUT, buf, len) != len)
+        len = cgc_strlen(buf);
+        if (cgc_write_all(STDOUT, buf, len) != len)
             return -1;
     }
 
@@ -458,37 +458,37 @@ cmd_list_orders(const struct stock_state *state, const char *name)
 }
 
 int
-cmd_place_order(struct stock_state *state, const char *name, int type,
+cgc_cmd_place_order(struct stock_state *state, const char *name, int type,
         unsigned int quantity, unsigned int price)
 {
-    return insert_order(state, name, type == BUY ? BUY : SELL, quantity, price);
+    return cgc_insert_order(state, name, type == BUY ? BUY : SELL, quantity, price);
 }
 
 int
-cmd_check_order(const struct stock_state *state, unsigned int id)
+cgc_cmd_check_order(const struct stock_state *state, unsigned int id)
 {
     struct order *order = NULL;
-    size_t len = 0;
+    cgc_size_t len = 0;
     char buf[200] = {};
 
-    if ((order = lookup_order(state, id)) == NULL)
+    if ((order = cgc_lookup_order(state, id)) == NULL)
         return -1;
 
     // Sanity checking for our insane address->id scheme
     if (order->id != (unsigned int)order)
         return -1;
 
-    order_to_str(order, buf);
+    cgc_order_to_str(order, buf);
 
-    len = strlen(buf);
-    if (write_all(STDOUT, buf, len) != len)
+    len = cgc_strlen(buf);
+    if (cgc_write_all(STDOUT, buf, len) != len)
         return -1;
 
     return 0;
 }
 
 int
-cmd_cancel_order(struct stock_state *state, unsigned int id)
+cgc_cmd_cancel_order(struct stock_state *state, unsigned int id)
 {
     struct order *cur = NULL;
 
@@ -506,23 +506,23 @@ cmd_cancel_order(struct stock_state *state, unsigned int id)
     if (!cur)
         return -1;
 
-    remove_order(state, cur);
+    cgc_remove_order(state, cur);
 
     return 0;
 }
 
 void
-stock_init(struct stock_state *state)
+cgc_stock_init(struct stock_state *state)
 {
-    size_t i = 0;
-    size_t size = MAX(sizeof(struct order), sizeof(struct stock));
+    cgc_size_t i = 0;
+    cgc_size_t size = MAX(sizeof(struct order), sizeof(struct stock));
 
 // Use after free
 #ifdef PATCHED
     state->stock_freed = 0;
 #endif
 
-    pool_init(&state->stock_pool, size);
+    cgc_pool_init(&state->stock_pool, size);
     LIST_INIT(&state->stocks_list);
     LIST_INIT(&state->orders_list);
     for (i = 0; i < HASH_TABLE_NUM_BUCKETS; i++)
@@ -530,7 +530,7 @@ stock_init(struct stock_state *state)
 }
 
 void
-stock_destroy(struct stock_state *state)
+cgc_stock_destroy(struct stock_state *state)
 {
     struct order *cur = NULL;
     struct order *kill = NULL;
@@ -540,9 +540,9 @@ stock_destroy(struct stock_state *state)
     while (cur != NULL) {
         kill = cur;
         cur = cur->global_list.next;
-        remove_order(state, kill);
+        cgc_remove_order(state, kill);
     }
 
-    pool_destroy(&state->stock_pool);
+    cgc_pool_destroy(&state->stock_pool);
 }
 

@@ -28,36 +28,36 @@ THE SOFTWARE.
 #include "libc.h"
 #include "utility.h"
 
-extern gamestate *state;
+extern cgc_gamestate *state;
 
-void coinflip() {
+void cgc_coinflip() {
 	char got[4];
 	char choice;
 	unsigned int wager = 0;
 
-	bzero(got, 4);
+	cgc_bzero(got, 4);
 
-	wager = getBet(state);
+	wager = cgc_getBet(state);
 	if(wager == -1)
 		return;
 
-	put("Flipping a coin. Do you think it's going to be (h)eads or (t)ails?\n");
-	recvUntil(0, got, 3, '\n');
+	cgc_put("Flipping a coin. Do you think it's going to be (h)eads or (t)ails?\n");
+	cgc_recvUntil(0, got, 3, '\n');
 
 	switch(got[0]) {
 		case 'h':
 		case 't':
 			break;
 		default:
-			put("Invalid choice. Pay the hug tax.");
+			cgc_put("Invalid choice. Pay the hug tax.");
 			state->hugcount-=wager;
 			return;
 	}
 
 	choice = (got[0] == 'h' ?  1 :  0);
 
-	if(choice == (hugsnextrand(state) % 2))
-		handleOutcome(state, 1, wager);
+	if(choice == (cgc_hugsnextrand(state) % 2))
+		cgc_handleOutcome(state, 1, wager);
 	else
-		handleOutcome(state, 0, wager);
+		cgc_handleOutcome(state, 0, wager);
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,9 +30,9 @@
  * Send bytes from buffer to file descriptor.
  *
  * @param buf Source buffer
- * @param size Number of bytes to send.
+ * @param size Number of bytes to cgc_send.
  * @returns SUCCESS, ERRNO_SEND on error.
  */
-int sendall(int fd, const char * buf, const size_t size);
+int cgc_sendall(int fd, const char * buf, const cgc_size_t size);
 
 #endif

@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -28,10 +28,10 @@
 #include "player.h"
 
 struct game_state {
-	uint8_t whos_turn;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
-	uint8_t unk3; // push size to mult of 4 bytes
+	cgc_uint8_t whos_turn;
+	cgc_uint8_t unk1; // push size to mult of 4 bytes
+	cgc_uint8_t unk2; // push size to mult of 4 bytes
+	cgc_uint8_t unk3; // push size to mult of 4 bytes
 	struct deck *pool;
 	struct player *p_remote;
 	struct player *p_bot;
@@ -43,7 +43,7 @@ struct game_state {
  * @param player_name Name of remote player
  * @return Pointer to the game state.
  */
-extern struct game_state *create_game(char *player_name);
+extern struct game_state *cgc_create_game(char *player_name);
 
 /**
  * Deal the initial hand to each player.
@@ -53,14 +53,14 @@ extern struct game_state *create_game(char *player_name);
  *	ERR_UNINITIALIZED_PLAYER, ERR_UNINITIALIZED_DECK, ERR_UNINITIALIZED_GAME
  *  on error 
  */
-extern int deal(struct game_state *game);
+extern int cgc_deal(struct game_state *game);
 
 /**
  * Get number of cards in initial hand.
  *
  * @return Number of cards in initial hand.
  */
-extern int get_hand_size();
+extern int cgc_get_hand_size();
 
 /**
  * The player has finished their turn, so update whos_turn
@@ -69,7 +69,7 @@ extern int get_hand_size();
  * @param game Pointer to the game state.
  * @return SUCCESS or ERR_UNINITIALIZED_GAME on error
  */
-extern int turn_complete(struct game_state *game);
+extern int cgc_turn_complete(struct game_state *game);
 
 /**
  * Check to see if this turn is the player's turn.
@@ -77,7 +77,7 @@ extern int turn_complete(struct game_state *game);
  * @param game Pointer to the game state.
  * @return TRUE if yes, FALSE if no or ERR_UNINITIALIZED_GAME on error
  */
-extern int is_player_turn(struct game_state *game);
+extern int cgc_is_player_turn(struct game_state *game);
 
 /**
  * Check to see if the game is over.
@@ -85,7 +85,7 @@ extern int is_player_turn(struct game_state *game);
  * @param game Pointer to the game state.
  * @return TRUE if yes, FALSE if no or ERR_UNINITIALIZED_GAME on error
  */
-extern int is_game_over(struct game_state *game);
+extern int cgc_is_game_over(struct game_state *game);
 
 
 #endif

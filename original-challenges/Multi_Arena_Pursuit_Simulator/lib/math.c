@@ -22,7 +22,7 @@
 #include <libcgc.h>
 #include "math.h"
 
-double exponential(double x) {
+double cgc_exponential(double x) {
 	double sum = 1.0;
 
 	for (int t = 1; t < EXP_NUM_TERMS; t++) {
@@ -37,7 +37,7 @@ double exponential(double x) {
 	return sum;
 }
 
-double ln(double x) {
+double cgc_ln(double x) {
 	double sum = 0.0;
 	int powerOfTwos = 0;
 	double ln2 = 0.69314718056;
@@ -71,7 +71,7 @@ double pow(double x, double n) {
 	double exp20 = 485165195.41;
 	double e_exp = 0.0;
 
-	e_exp = n*ln(x);
+	e_exp = n*cgc_ln(x);
 
 	while( e_exp >= 20.0) {
 		e_exp = e_exp - 20.0;
@@ -82,10 +82,10 @@ double pow(double x, double n) {
 		sum = sum*exp20;
 	}
 
-	return sum * exponential(e_exp);
+	return sum * cgc_exponential(e_exp);
 }
 
-double cosine(double x) {
+double cgc_cosine(double x) {
 	double sum = 1.0;
 
 	while(x >= 2*PI || x <= -2*PI) {
@@ -112,7 +112,7 @@ double cosine(double x) {
 	return sum;
 }
 
-double sine(double x) {
+double cgc_sine(double x) {
 	double sum;
 
 	while(x >= 2*PI || x <= -2*PI) {
@@ -142,7 +142,7 @@ double sine(double x) {
 	return sum;
 }
 
-double atan(double x) {
+double cgc_atan(double x) {
 	double sum = x;
 
 	if(x >= 1.0 || x <= -1.0) {
@@ -152,7 +152,7 @@ double atan(double x) {
 
 		v = (x - u) / (1 + u*x);
 
-		return arctanU+ atan(v);
+		return arctanU+ cgc_atan(v);
 	}
 
 	for (int t = 1; t < TRIG_NUM_TERMS; t++) {
@@ -174,14 +174,14 @@ double atan(double x) {
 	return sum;
 }
 
-double atanTwo(double y, double x) {
+double cgc_atanTwo(double y, double x) {
 	if( x > 0)
-		return atan(y/x);
+		return cgc_atan(y/x);
 	if( x < 0) {
 		if(y >= 0)
-			return atan(y/x) + PI;
+			return cgc_atan(y/x) + PI;
 		else
-			return atan(y/x) - PI;
+			return cgc_atan(y/x) - PI;
 	}
 	if( x == 0) {
 		if(y > 0)

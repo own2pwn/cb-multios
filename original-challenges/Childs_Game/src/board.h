@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,13 +34,13 @@ typedef struct board
     char ttt_board[BOARD_HEIGHT][BOARD_WIDTH];
     int num_moves;
     int winner;
-} board_t;
+} cgc_board_t;
 
-board_t *create_board();
-void clear_board(board_t *board);
-int check_winning_board(board_t *board);
-int do_move(board_t *board, int posy, int posx, int player);
-void print_board(board_t *board);
-int undo_move(board_t *board, int posy, int posx);
+cgc_board_t *cgc_create_board();
+void cgc_clear_board(cgc_board_t *board);
+int cgc_check_winning_board(cgc_board_t *board);
+int cgc_do_move(cgc_board_t *board, int posy, int posx, int player);
+void cgc_print_board(cgc_board_t *board);
+int cgc_undo_move(cgc_board_t *board, int posy, int posx);
 
 #endif

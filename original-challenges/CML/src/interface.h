@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,33 +38,33 @@ enum class Error
     NOT_FOUND = 5
 };
 
-class Interface
+class cgc_Interface
 {
 private:
-    Node *get_node();
-    char *get_string();
-    unsigned char *get_string_binary(uint16_t *psize);
-    unsigned int new_descriptor(Node *node);
-    void send_error(Error error);
-    void send_descriptor(unsigned int desc);
-    void send_string(const char *str);
+    cgc_Node *cgc_get_node();
+    char *cgc_get_string();
+    unsigned char *cgc_get_string_binary(cgc_uint16_t *psize);
+    unsigned int cgc_new_descriptor(cgc_Node *node);
+    void cgc_send_error(Error cgc_error);
+    void cgc_send_descriptor(unsigned int desc);
+    void cgc_send_string(const char *str);
 
-    bool op_init_parser();
-    bool op_load_data();
-    bool op_get_attr();
-    bool op_set_attr();
-    bool op_list_attr();
-    bool op_get_tag();
-    bool op_get_ns();
-    bool op_query();
-    bool op_version_check();
+    bool cgc_op_init_parser();
+    bool cgc_op_load_data();
+    bool cgc_op_get_attr();
+    bool cgc_op_set_attr();
+    bool cgc_op_list_attr();
+    bool cgc_op_get_tag();
+    bool cgc_op_get_ns();
+    bool cgc_op_query();
+    bool cgc_op_version_check();
 public:
-    Interface(FILE *input, FILE *output);
+    cgc_Interface(cgc_FILE *input, cgc_FILE *output);
 
-    bool process();
+    bool cgc_process();
 private:
-    FILE *d_in, *d_out;
+    cgc_FILE *d_in, *d_out;
     unsigned int d_next;
-    HashMap<unsigned int, Node *, UIntComparator> d_descriptors;    
-    Parser *d_parser;
+    cgc_HashMap<unsigned int, cgc_Node *, UIntComparator> d_descriptors;    
+    cgc_Parser *d_parser;
 };

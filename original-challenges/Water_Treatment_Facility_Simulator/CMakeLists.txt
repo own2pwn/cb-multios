@@ -1,0 +1,5 @@
+set( SERVICE_ID "00048" )
+set( AUTHOR_ID "CROMU" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O0 -g  -Wno-overlength-strings -Wno-packed -mstack-alignment=3" )
+set( VULN_COUNT "1" )
+buildCB(${CFLAGS})

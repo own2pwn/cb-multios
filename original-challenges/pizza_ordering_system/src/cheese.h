@@ -2,15 +2,15 @@
 #define CHEESE_H_
 #include "topping.h"
 
-class Cheese : public Topping {
+class cgc_Cheese : public cgc_Topping {
 private:
-    Cheese(const char *_name, int _calories, int _carbs);
+    cgc_Cheese(const char *_name, int _calories, int _carbs);
 public:
-    virtual ~Cheese();
-    static Cheese *select_cheese(const char *cheese_name);
-    static void list_options();
-    virtual bool is_vegetarian() { return true; }
-    virtual bool contains_pork() { return false; }
+    virtual ~cgc_Cheese();
+    static cgc_Cheese *cgc_select_cheese(const char *cheese_name);
+    static void cgc_list_options();
+    virtual bool cgc_is_vegetarian() { return true; }
+    virtual bool cgc_contains_pork() { return false; }
 };
 
 #endif

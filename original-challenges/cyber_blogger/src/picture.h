@@ -1,23 +1,23 @@
 #include "file.h"
 
-class Picture : public File
+class cgc_Picture : public cgc_File
 {
 private:
-    struct PictureHeader
+    struct cgc_PictureHeader
     {
         unsigned int magic;
         unsigned int data_size;
     };
 
-    PictureHeader header;
+    cgc_PictureHeader header;
 public:
-    Picture(void *header, void *data, char *_filename);
-    virtual ~Picture();
+    cgc_Picture(void *header, void *data, char *_filename);
+    virtual ~cgc_Picture();
 
-    virtual unsigned int get_magic();
+    virtual unsigned int cgc_get_magic();
 
-    static size_t find_header_size();
-    static size_t find_data_size(void *header);
+    static cgc_size_t cgc_find_header_size();
+    static cgc_size_t cgc_find_data_size(void *header);
 
-    void print_picture();
+    void cgc_print_picture();
 };

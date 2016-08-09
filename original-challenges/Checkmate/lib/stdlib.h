@@ -60,7 +60,7 @@
 #define PAGE_SIZE (1 << 12)
 
 #ifndef va_start
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define va_start(ap, param) __builtin_va_start(ap, param)
 #define va_end(ap) __builtin_va_end(ap)
 #define va_arg(ap, type) __builtin_va_arg(ap, type)
@@ -71,7 +71,7 @@ typedef __builtin_va_list va_list;
  *
  * @param seed The value to seed the RNG with
  */
-void srand(unsigned int seed);
+void cgc_srand(unsigned int seed);
 
 /**
  * Get a "random" integer.
@@ -80,7 +80,7 @@ void srand(unsigned int seed);
  *
  * @return A "random"-ish integer from 0 to UINT_MAX
  */
-unsigned int rand(void);
+unsigned int cgc_rand(void);
 
 
 /**
@@ -89,7 +89,7 @@ unsigned int rand(void);
  * @param index The byte to get
  * @return A byte from the flag page
  */
-unsigned char get_flag_byte(size_t index);
+unsigned char cgc_get_flag_byte(cgc_size_t index);
 
 /**
  * Get a byte from the flag page.
@@ -97,6 +97,6 @@ unsigned char get_flag_byte(size_t index);
  * @param index The byte to get
  * @return A byte from the flag page
  */
-unsigned char get_flag_byte_unsafe(size_t index);
+unsigned char cgc_get_flag_byte_unsafe(cgc_size_t index);
 #endif /* STDLIB_H_ */
 

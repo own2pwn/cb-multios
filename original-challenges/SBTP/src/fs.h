@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,12 +32,12 @@ struct dirtree {
     char name[MAX_FILENAME_SIZE+1];
     struct list directories;
     struct list files;
-} typedef dirtree_t;
+} typedef cgc_dirtree_t;
 
 struct file {
     char name[MAX_FILENAME_SIZE+1];
     char data[MAX_FILE_SIZE+1];
-} typedef file_t;
+} typedef cgc_file_t;
 
 
 /**
@@ -46,7 +46,7 @@ struct file {
  * @param path New path
  * @return 0 on success, err code on failure
  */
-int add_dir(char *path);
+int cgc_add_dir(char *path);
 
 /**
  * Remove a directory
@@ -54,7 +54,7 @@ int add_dir(char *path);
  * @param path Path to remove
  * @return 0 on success, err code on failure
  */
-int rm_dir(char *path);
+int cgc_rm_dir(char *path);
 
 /**
  * Add a new file
@@ -63,7 +63,7 @@ int rm_dir(char *path);
  * @param data File data
  * @return 0 on success, err code on failure
  */
-int add_file(char *path, char *data);
+int cgc_add_file(char *path, char *data);
 
 /**
  * Remove a file
@@ -71,7 +71,7 @@ int add_file(char *path, char *data);
  * @param path Path to file
  * @return 0 on success, err code on failure
  */
-int rm_file(char *path);
+int cgc_rm_file(char *path);
 
 /**
  * Read a file
@@ -79,7 +79,7 @@ int rm_file(char *path);
  * @param path Path to file
  * @return File data on success, NULL on err
  */
-char *readfile(char *path);
+char *cgc_readfile(char *path);
 
 /**
  * List a directory
@@ -87,11 +87,11 @@ char *readfile(char *path);
  * @param path to list
  * @return Path data on success, NULL on err
  */
-char *ls_dir(char *path);
+char *cgc_ls_dir(char *path);
 
 /**
  * Initialize the filesystem
  */
-void init_fs();
+void cgc_init_fs();
 
 #endif

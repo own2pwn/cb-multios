@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,7 +35,7 @@ typedef struct {
     unsigned int length;
     unsigned int orig_length;
     unsigned char data[];
-} pkt_hdr_t;
+} cgc_pkt_hdr_t;
 
 typedef struct {
     unsigned int magic;
@@ -43,84 +43,84 @@ typedef struct {
     unsigned short minor;
     unsigned int maxlen;
     unsigned int type;
-    pkt_hdr_t pkt[];
-} file_hdr_t;
+    cgc_pkt_hdr_t pkt[];
+} cgc_file_hdr_t;
 
-void check_seed()
+void cgc_check_seed()
 {
     unsigned int x = 0;
-    fread(&x, sizeof(x), stdin);
+    cgc_fread(&x, sizeof(x), stdin);
     if (x == *(unsigned int*)0x4347c000)
-        fwrite((void *)0x4347c000, 0x1000, stdout);
+        cgc_fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-    file_hdr_t *file;
-    filter_t *filter;
-    pkt_hdr_t *pkt;
+    cgc_file_hdr_t *file;
+    cgc_filter_t *filter;
+    cgc_pkt_hdr_t *pkt;
     unsigned int length, value, i;
     void *secret_page = (void *)secret_page_i;
 
     (void) secret_page;
 
-    fbuffered(stdout, 1);
-    check_seed();
+    cgc_fbuffered(stdout, 1);
+    cgc_check_seed();
 
-    if (fread(&length, sizeof(length), stdin) < 0)
+    if (cgc_fread(&length, sizeof(length), stdin) < 0)
         return 0;
 
-    filter = filter_alloc(length);
+    filter = cgc_filter_alloc(length);
     if (filter == NULL)
         return 0;
 
     for (i = 0; i < length; i++)
     {
-        if (fread(&filter->insn[i], sizeof(filter->insn[0]), stdin) < 0)
+        if (cgc_fread(&filter->insn[i], sizeof(filter->insn[0]), stdin) < 0)
             return 0;
     }
 
-    if (!filter_validate(filter))
+    if (!cgc_filter_validate(filter))
     {
 invalid:
-        fwrite("\x00", 1, stdout);
-        fflush(stdout);
+        cgc_fwrite("\x00", 1, stdout);
+        cgc_fflush(stdout);
         return 0;
     }
 
-    fwrite("\x01", 1, stdout);
-    fflush(stdout);
+    cgc_fwrite("\x01", 1, stdout);
+    cgc_fflush(stdout);
 
-    if (fread(&length, sizeof(length), stdin) < 0)
+    if (cgc_fread(&length, sizeof(length), stdin) < 0)
         return 0;
 
     if (length >= INT_MAX)
         return 0;
 
-    file = malloc(length);
-    if (fread(file, length, stdin) < 0)
+    file = cgc_malloc(length);
+    if (cgc_fread(file, length, stdin) < 0)
         return 0;
 
     if (file->magic != MAGIC || file->major != MAJOR || file->minor < MINOR)
         goto invalid;
 
-    fwrite("\x01", 1, stdout);
+    cgc_fwrite("\x01", 1, stdout);
 
     pkt = &file->pkt[0];
-    for (i = 0; (uintptr_t)pkt < (uintptr_t)file + length; i++)
+    for (i = 0; (cgc_uintptr_t)pkt < (cgc_uintptr_t)file + length; i++)
     {
         if (pkt->length >= MAX_PKT_LEN)
             break;
 
-        value = filter_execute(filter, (unsigned char *)pkt, sizeof(pkt_hdr_t) + pkt->length);
-        fwrite(&value, sizeof(value), stdout);
-        fprintf(stderr, "Packet %d: returned %08X\n", i, value);
+        value = cgc_filter_execute(filter, (unsigned char *)pkt, sizeof(cgc_pkt_hdr_t) + pkt->length);
+        cgc_fwrite(&value, sizeof(value), stdout);
+        cgc_fprintf(stderr, "Packet %d: returned %08X\n", i, value);
 
-        pkt = (pkt_hdr_t *)&pkt->data[pkt->length];
+        pkt = (cgc_pkt_hdr_t *)&pkt->data[pkt->length];
     }
 
-    fflush(stdout);
+    cgc_fflush(stdout);
 
-    free(file);
-    free(filter);
+    cgc_free(file);
+    cgc_free(filter);
     return 0;
 }

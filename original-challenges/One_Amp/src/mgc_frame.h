@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,7 +25,7 @@
 #define MGC_FRAME_H_
 
 #pragma pack(push, 1)
-struct mgc_frame
+struct cgc_mgc_frame
 {
     unsigned char raw_header[3];
     unsigned short num_frames_left;

@@ -4,7 +4,7 @@ Author: James Connor <jymbo@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,7 +35,7 @@ THE SOFTWARE.
 #ifndef ui_h
 #define ui_h
 
-void name_map(pmap map);
-void prompt_loop(pmap map, psList turnList);
+void cgc_name_map(cgc_pmap cgc_map);
+void cgc_prompt_loop(cgc_pmap cgc_map, cgc_psList turnList);
 
 #endif

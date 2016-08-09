@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,74 +36,74 @@
 #define TOSTR(x) #x
 #define WITHIN(a, b, v) ((v) >= (a) && (v) <= (b))
 
-class Scheduler
+class cgc_Scheduler
 {
   private:
-    List* workers_;
-    Dispatcher* dispatcher_;
+    cgc_List* workers_;
+    cgc_Dispatcher* dispatcher_;
 
   public:
-    Scheduler(List* workers, Dispatcher* dispatcher);
-    void Run(void);
+    cgc_Scheduler(cgc_List* workers, cgc_Dispatcher* dispatcher);
+    void cgc_Run(void);
 };
 
-Scheduler::Scheduler(List* workers, Dispatcher* dispatcher)
+cgc_Scheduler::cgc_Scheduler(cgc_List* workers, cgc_Dispatcher* dispatcher)
 {
   dispatcher_ = dispatcher;
   workers_ = workers;
 }
 
-void Scheduler::Run(void)
+void cgc_Scheduler::cgc_Run(void)
 {
-  for (size_t i = 0; i < workers_->Length(); ++i)
+  for (cgc_size_t i = 0; i < workers_->cgc_Length(); ++i)
   {
-    Support* worker = workers_->Get(i);
-    if (worker->CurrentTicket() == nullptr)
+    cgc_Support* worker = workers_->cgc_Get(i);
+    if (worker->cgc_CurrentTicket() == nullptr)
     {
-      Ticket* ticket = dispatcher_->GetTicket(worker->max_priority());
+      cgc_Ticket* ticket = dispatcher_->cgc_GetTicket(worker->cgc_max_priority());
       if (ticket != nullptr)
       {
         if (ticket->prev != worker)
         {
-          worker->AssignTicket(ticket);
-          ticket->UpdateStatus(IN_PROGRESS);
+          worker->cgc_AssignTicket(ticket);
+          ticket->cgc_UpdateStatus(IN_PROGRESS);
         }
         else
         {
-          dispatcher_->AddTicket(ticket);
+          dispatcher_->cgc_AddTicket(ticket);
         }
       }
     }
     else
     {
-      Ticket* ticket = worker->CurrentTicket();
-      ticket->WorkOn();
+      cgc_Ticket* ticket = worker->cgc_CurrentTicket();
+      ticket->cgc_WorkOn();
 
-      if (ticket->CheckDone())
+      if (ticket->cgc_CheckDone())
       {
-        ticket->UpdateStatus(RESOLVED);
-        dispatcher_->RecordFinished(worker);
+        ticket->cgc_UpdateStatus(RESOLVED);
+        dispatcher_->cgc_RecordFinished(worker);
       }
-      else if (dispatcher_->GetRandomTicks(10) < 2)
+      else if (dispatcher_->cgc_GetRandomTicks(10) < 2)
       {
-        if (ticket->priority() > HIGH)
+        if (ticket->cgc_priority() > HIGH)
           continue;
-        ticket->UpdateStatus(REJECTED);
-        worker->RemoveTicket();
+        ticket->cgc_UpdateStatus(REJECTED);
+        worker->cgc_RemoveTicket();
       }
-      else if (dispatcher_->GetRandomTicks(10) < 3)
+      else if (dispatcher_->cgc_GetRandomTicks(10) < 3)
       {
-        worker->RemoveTicket();
-        dispatcher_->AddTicket(ticket);
-        ticket->UpdateStatus(OPEN);
+        worker->cgc_RemoveTicket();
+        dispatcher_->cgc_AddTicket(ticket);
+        ticket->cgc_UpdateStatus(OPEN);
       }
     }
   }
 }
 
-List workers;
-Dispatcher* dispatcher;
-Scheduler* scheduler;
+cgc_List workers;
+cgc_Dispatcher* dispatcher;
+cgc_Scheduler* scheduler;
 
 typedef enum
 {
@@ -117,22 +117,22 @@ typedef enum
   VIEW,
   VSTATUS,
   QUIT,
-} COMMAND;
+} cgc_COMMAND;
 
-typedef int (*handler)(FILE* in, FILE* out, char** components, size_t num_components);
+typedef int (*cgc_handler)(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components);
 
-int handle_command_error(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_command_error(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  fprintf(out, "Invalid command" EOL);
+  cgc_fprintf(out, "Invalid command" EOL);
   return 0;
 }
 
-int handle_add_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_add_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  PRIORITY p = LOW;
+  cgc_PRIORITY p = LOW;
   if (components[3])
   {
-    p = (PRIORITY)strtol(components[3], nullptr, 10);
+    p = (cgc_PRIORITY)cgc_strtol(components[3], nullptr, 10);
   }
 
   if (p < LOW || p > CRITICAL)
@@ -140,77 +140,77 @@ int handle_add_command(FILE* in, FILE* out, char** components, size_t num_compon
     p = LOW;
   }
 
-  Ticket* new_ticket = Ticket::GetTicket(
-      components[1], components[2], Time::GetTime(),
-      dispatcher->GetRandomTicks(100), p
+  cgc_Ticket* new_ticket = cgc_Ticket::cgc_GetTicket(
+      components[1], components[2], Time::cgc_GetTime(),
+      dispatcher->cgc_GetRandomTicks(100), p
   );
 
   if (new_ticket)
   {
-    dispatcher->AddTicket(new_ticket);
+    dispatcher->cgc_AddTicket(new_ticket);
   }
 
   return 0;
 }
 
-int handle_cancel_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_cancel_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  uint32_t cur_id = strtol(components[1], nullptr, 10);
-  dispatcher->CancelTicket(cur_id);
+  cgc_uint32_t cur_id = cgc_strtol(components[1], nullptr, 10);
+  dispatcher->cgc_CancelTicket(cur_id);
   return 0;
 }
 
-int handle_list_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_list_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  for (size_t i = 0; i < workers.Length(); i++)
+  for (cgc_size_t i = 0; i < workers.cgc_Length(); i++)
   {
-    workers.Get(i)->Display();
+    workers.cgc_Get(i)->cgc_Display();
   }
 
   return 0;
 }
 
-int handle_list_free_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_list_free_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  for (size_t i = 0; i < workers.Length(); i++)
+  for (cgc_size_t i = 0; i < workers.cgc_Length(); i++)
   {
-    Support* s = workers.Get(i);
-    if (!s->CurrentTicket())
+    cgc_Support* s = workers.cgc_Get(i);
+    if (!s->cgc_CurrentTicket())
     {
-      s->Display();
+      s->cgc_Display();
     }
   }
 
   return 0;
 }
 
-int handle_hire_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_hire_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  PRIORITY p = (PRIORITY)strtol(components[1], nullptr, 10);
+  cgc_PRIORITY p = (cgc_PRIORITY)cgc_strtol(components[1], nullptr, 10);
   if (p < LOW || p > CRITICAL)
     return 0;
-  Support* s = new Support(0, p);
-  workers.Append(s);
+  cgc_Support* s = new cgc_Support(0, p);
+  workers.cgc_Append(s);
   return 0;
 }
 
-int handle_fire_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_fire_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  PRIORITY p = (PRIORITY)strtol(components[1], nullptr, 10);
+  cgc_PRIORITY p = (cgc_PRIORITY)cgc_strtol(components[1], nullptr, 10);
   if (p < LOW || p > CRITICAL)
     return 0;
 
-  for (size_t i = 0; i < workers.Length(); i++)
+  for (cgc_size_t i = 0; i < workers.cgc_Length(); i++)
   {
-    Support* s = workers.Get(i);
-    if (s->max_priority() == p)
+    cgc_Support* s = workers.cgc_Get(i);
+    if (s->cgc_max_priority() == p)
     {
-      if (s->CurrentTicket())
+      if (s->cgc_CurrentTicket())
       {
-        dispatcher->AddTicket(s->CurrentTicket());
+        dispatcher->cgc_AddTicket(s->cgc_CurrentTicket());
       }
 
-      workers.Remove(i);
+      workers.cgc_Remove(i);
       break;
     }
   }
@@ -218,72 +218,72 @@ int handle_fire_command(FILE* in, FILE* out, char** components, size_t num_compo
   return 0;
 }
 
-int handle_view_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_view_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  STATUS s = (STATUS)0;
+  cgc_STATUS s = (cgc_STATUS)0;
   if (num_components == 2)
   {
-    s = (STATUS)strtol(components[1], nullptr, 10);
+    s = (cgc_STATUS)cgc_strtol(components[1], nullptr, 10);
     if (s > RESOLVED)
-      s = (STATUS)0;
+      s = (cgc_STATUS)0;
   }
 
   if (s)
   {
-    dispatcher->ViewTickets(s);
+    dispatcher->cgc_ViewTickets(s);
   }
   else
   {
-    for (size_t i = OPEN; i < RESOLVED; i++)
+    for (cgc_size_t i = OPEN; i < RESOLVED; i++)
     {
-      dispatcher->ViewTickets((STATUS)i);
+      dispatcher->cgc_ViewTickets((cgc_STATUS)i);
     }
   }
 
   return 0;
 }
 
-int handle_status_command(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_status_command(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  uint32_t tid = strtol(components[1], nullptr, 10);
-  dispatcher->ViewTicket(tid);
+  cgc_uint32_t tid = cgc_strtol(components[1], nullptr, 10);
+  dispatcher->cgc_ViewTicket(tid);
   return 0;
 }
 
-int handle_quit(FILE* in, FILE* out, char** components, size_t num_components)
+int cgc_handle_quit(cgc_FILE* in, cgc_FILE* out, char** components, cgc_size_t num_components)
 {
-  fprintf(out, "TERMINATING TERRIBLE TICKET TRACKER" EOL);
+  cgc_fprintf(out, "TERMINATING TERRIBLE TICKET TRACKER" EOL);
   return -1;
 }
 
-handler command_handlers[] = {
-  handle_command_error,
-  handle_add_command,
-  handle_cancel_command,
-  handle_list_command,
-  handle_list_free_command,
-  handle_hire_command,
-  handle_fire_command,
-  handle_view_command,
-  handle_status_command,
-  handle_quit,
+cgc_handler command_handlers[] = {
+  cgc_handle_command_error,
+  cgc_handle_add_command,
+  cgc_handle_cancel_command,
+  cgc_handle_list_command,
+  cgc_handle_list_free_command,
+  cgc_handle_hire_command,
+  cgc_handle_fire_command,
+  cgc_handle_view_command,
+  cgc_handle_status_command,
+  cgc_handle_quit,
 };
 
 
-COMMAND read_command(FILE* f, char*** components, size_t* num_components)
+cgc_COMMAND cgc_read_command(cgc_FILE* f, char*** components, cgc_size_t* num_components)
 {
-  COMMAND c = COMMAND_ERROR;
+  cgc_COMMAND c = COMMAND_ERROR;
   char* component = nullptr;
   char** comps = *components;
   *num_components = 0;
 
-  for (size_t i = 0; i < MAX_COMPONENTS; ++i)
+  for (cgc_size_t i = 0; i < MAX_COMPONENTS; ++i)
   {
     component = new char[MAX_COMPONENT + 1];
-    memset(component, 0, MAX_COMPONENT + 1);
+    cgc_memset(component, 0, MAX_COMPONENT + 1);
     c = COMMAND_ERROR;
 
-    int ret = freaduntil(component, MAX_COMPONENT, COMPONENT_DELIM, f);
+    int ret = cgc_freaduntil(component, MAX_COMPONENT, COMPONENT_DELIM, f);
 
     if (ret > 1) // So two successive COMPONENT_DELIM ends command
     {
@@ -302,63 +302,63 @@ COMMAND read_command(FILE* f, char*** components, size_t* num_components)
     goto done;
   }
 
-  if (strcmp(comps[0], TOSTR(ADD_TICKET)) == 0)
+  if (cgc_strcmp(comps[0], TOSTR(ADD_TICKET)) == 0)
   {
     if (!WITHIN(3, 4, *num_components))
       goto done;
 
     c = ADD_TICKET;
   }
-  else if (strcmp(comps[0], TOSTR(CANCEL_TICKET)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(CANCEL_TICKET)) == 0)
   {
     if (!WITHIN(2, 2, *num_components))
       goto done;
 
     c = CANCEL_TICKET;
   }
-  else if (strcmp(comps[0], TOSTR(LIST_SUPPORT)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(LIST_SUPPORT)) == 0)
   {
     if (!WITHIN(1, 1, *num_components))
       goto done;
 
     c = LIST_SUPPORT;
   }
-  else if (strcmp(comps[0], TOSTR(LIST_FREE_SUPPORT)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(LIST_FREE_SUPPORT)) == 0)
   {
     if (!WITHIN(1, 1, *num_components))
       goto done;
 
     c = LIST_FREE_SUPPORT;
   }
-  else if (strcmp(comps[0], TOSTR(HIRE)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(HIRE)) == 0)
   {
     if (!WITHIN(2, 2, *num_components))
       goto done;
 
     c = HIRE;
   }
-  else if (strcmp(comps[0], TOSTR(FIRE)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(FIRE)) == 0)
   {
     if (!WITHIN(2, 2, *num_components))
       goto done;
 
     c = FIRE;
   }
-  else if (strcmp(comps[0], TOSTR(VIEW)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(VIEW)) == 0)
   {
     if (!WITHIN(1, 2, *num_components))
       goto done;
 
     c = VIEW;
   }
-  else if (strcmp(comps[0], TOSTR(VSTATUS)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(VSTATUS)) == 0)
   {
     if (!WITHIN(2, 2, *num_components))
       goto done;
 
     c = VSTATUS;
   }
-  else if (strcmp(comps[0], TOSTR(QUIT)) == 0)
+  else if (cgc_strcmp(comps[0], TOSTR(QUIT)) == 0)
   {
     c = QUIT;
   }
@@ -367,32 +367,32 @@ done:
   return c;
 }
 
-void run_server(FILE* in, FILE* out, unsigned char* secrets)
+void cgc_run_server(cgc_FILE* in, cgc_FILE* out, unsigned char* secrets)
 {
-  COMMAND command;
-  size_t num_components;
+  cgc_COMMAND command;
+  cgc_size_t num_components;
   char** components = new char*[MAX_COMPONENTS];
 
-  Time::Reset();
-  dispatcher = new Dispatcher(&workers, (uint32_t*)(secrets));
-  scheduler = new Scheduler(&workers, dispatcher);
+  Time::cgc_Reset();
+  dispatcher = new cgc_Dispatcher(&workers, (cgc_uint32_t*)(secrets));
+  scheduler = new cgc_Scheduler(&workers, dispatcher);
 
 
   // Setup two starter workers
   char *commands[2] = {(char *)"HIRE", (char *)"3"};
-  handle_hire_command(in, out, commands, 2);
+  cgc_handle_hire_command(in, out, commands, 2);
   commands[1] = (char *)"5";
-  handle_hire_command(in, out, commands, 2);
+  cgc_handle_hire_command(in, out, commands, 2);
 
-  fprintf(out, "Welcome to the terrible ticket tracker" EOL);
+  cgc_fprintf(out, "Welcome to the terrible ticket tracker" EOL);
   for (;;)
   {
-    // Tick
-    Time::GetTime();
-    scheduler->Run();
+    // cgc_Tick
+    Time::cgc_GetTime();
+    scheduler->cgc_Run();
 
     // Clear previous components
-    for (size_t i = 0; i < MAX_COMPONENTS; ++i)
+    for (cgc_size_t i = 0; i < MAX_COMPONENTS; ++i)
     {
       if (components[i] != nullptr)
       {
@@ -402,8 +402,8 @@ void run_server(FILE* in, FILE* out, unsigned char* secrets)
     }
 
     // Read components
-    fprintf(out, "$ ");
-    command = read_command(in, &components, &num_components);
+    cgc_fprintf(out, "$ ");
+    command = cgc_read_command(in, &components, &num_components);
 
     // Dispatch command
     int ret = command_handlers[command](in, out, components, num_components);
@@ -412,15 +412,15 @@ void run_server(FILE* in, FILE* out, unsigned char* secrets)
       break;
     }
 
-    fprintf(out, "OK" EOL);
+    cgc_fprintf(out, "OK" EOL);
   }
 }
 
 extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
     unsigned char *secret_page = (unsigned char *)secret_page_i;
-    fxlat(stdin, "EREH_EULAV_MODNAR");
-    fxlat(stdout, "EREH_EULAV_MODNAR");
-    run_server(stdin, stdout, secret_page);
+    cgc_fxlat(stdin, "EREH_EULAV_MODNAR");
+    cgc_fxlat(stdout, "EREH_EULAV_MODNAR");
+    cgc_run_server(stdin, stdout, secret_page);
     return 0;
 }

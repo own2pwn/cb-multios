@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -53,7 +53,7 @@ proc main():
 
     var password = flag(0)
     var running = 1
-    var numbers = Array()
+    var numbers = cgc_Array()
     while running:
         var op = read_uint16()
 
@@ -85,9 +85,9 @@ proc main():
             aset(numbers, read_uint32(), a * b)
         elif (op == 0x71B8) || (op == 0x1510):
             var start = read_uint32()
-            var end = read_uint32()
+            var cgc_end = read_uint32()
             var sum = (op == 0x1510)
-            while start < end:
+            while start < cgc_end:
                 var num = aget(numbers, start)
                 if op == 0x71B8:
                     sum = sum + num
@@ -103,71 +103,71 @@ proc main():
 main()
 )==END==";
 
-static bool builtin_echo(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_echo(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    for (unsigned int i = 0; i < args.length(); i++)
+    for (unsigned int i = 0; i < args.cgc_length(); i++)
     {
-        Var *var = args[i].get();
-        if (var == nullptr || var->getType() != VarType::String)
+        cgc_Var *var = args[i].cgc_get();
+        if (var == nullptr || var->cgc_getType() != VarType::String)
         {
-            fprintf(stderr, "Error: bad type in echo\n");
+            cgc_fprintf(stderr, "Error: bad type in echo\n");
             return false;
         }
 
-        StringVar *svar = static_cast<StringVar *>(var);
-        fwrite(svar->getBuffer(), svar->getLength(), stdout);
+        cgc_StringVar *svar = static_cast<cgc_StringVar *>(var);
+        cgc_fwrite(svar->cgc_getBuffer(), svar->cgc_getLength(), stdout);
     }
 
-    result.reset(nullptr);
+    result.cgc_reset(nullptr);
     return true;
 }
 
-static bool builtin_read(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_read(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    if (args.cgc_length() != 1 || !args[0] || args[0]->cgc_getType() != VarType::Number)
         return false;
-    unsigned int length = static_cast<NumberVar*>(args[0].get())->getValue();
-    unique_ptr<StringVar> svar = new StringVar();
-    svar->resize(length);
-    if (fread(svar->getBuffer(), length, stdin) != length)
+    unsigned int cgc_length = static_cast<cgc_NumberVar*>(args[0].cgc_get())->cgc_getValue();
+    cgc_unique_ptr<cgc_StringVar> svar = new cgc_StringVar();
+    svar->cgc_resize(cgc_length);
+    if (cgc_fread(svar->cgc_getBuffer(), cgc_length, stdin) != cgc_length)
         return false;
-    result.reset(svar.release());
+    result.cgc_reset(svar.cgc_release());
     return true;
 }
 
-static bool builtin_flag(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_flag(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    if (args.cgc_length() != 1 || !args[0] || args[0]->cgc_getType() != VarType::Number)
         return false;
     const unsigned int *secret_page = reinterpret_cast<const unsigned int *>(arg);
-    NumberVar *var = new NumberVar(secret_page[static_cast<NumberVar*>(args[0].get())->getValue() & 0x3ff]);
-    result.reset(var);
+    cgc_NumberVar *var = new cgc_NumberVar(secret_page[static_cast<cgc_NumberVar*>(args[0].cgc_get())->cgc_getValue() & 0x3ff]);
+    result.cgc_reset(var);
     return true;
 }
 
-static bool builtin_chr(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_chr(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::Number)
+    if (args.cgc_length() != 1 || !args[0] || args[0]->cgc_getType() != VarType::Number)
         return false;
-    StringVar *svar = new StringVar();
-    svar->resize(1);
-    svar->getBuffer()[0] = static_cast<NumberVar*>(args[0].get())->getValue();
-    result.reset(svar);
+    cgc_StringVar *svar = new cgc_StringVar();
+    svar->cgc_resize(1);
+    svar->cgc_getBuffer()[0] = static_cast<cgc_NumberVar*>(args[0].cgc_get())->cgc_getValue();
+    result.cgc_reset(svar);
     return true;
 }
 
-static bool builtin_ord(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_ord(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
-    if (args.length() != 1 || !args[0] || args[0]->getType() != VarType::String)
+    if (args.cgc_length() != 1 || !args[0] || args[0]->cgc_getType() != VarType::String)
         return false;
-    StringVar *svar = static_cast<StringVar*>(args[0].get());
-    if (svar->getLength() < 1)
+    cgc_StringVar *svar = static_cast<cgc_StringVar*>(args[0].cgc_get());
+    if (svar->cgc_getLength() < 1)
         return false;
-    result.reset(new NumberVar((unsigned char)svar->getBuffer()[0]));
+    result.cgc_reset(new cgc_NumberVar((unsigned char)svar->cgc_getBuffer()[0]));
     return true;
 }
 
-static bool builtin_rand(void *arg, Evaluator &eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result)
+static bool cgc_builtin_rand(void *arg, cgc_Evaluator &eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result)
 {
     static unsigned int state = 0x4347c000;
     static unsigned int idx = 0;
@@ -178,8 +178,8 @@ static bool builtin_rand(void *arg, Evaluator &eval, const vector<unique_ptr<Var
     idx = (idx + 4) & 0x3ff;
     state *= 1234567;
 
-    NumberVar *var = new NumberVar(state);
-    result.reset(var);
+    cgc_NumberVar *var = new cgc_NumberVar(state);
+    result.cgc_reset(var);
     return true;
 }
 
@@ -187,25 +187,25 @@ extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
     char *secret_page = (char *)secret_page_i;
 
-    Parser parser(program);
-    if (parser.parse())
+    cgc_Parser parser(program);
+    if (parser.cgc_parse())
     {
-        Evaluator eval(parser.releaseRoot());
-        ArrayVar::registerExternals(eval);
-        eval.addExternal("chr", builtin_chr);
-        eval.addExternal("echo", builtin_echo);
-        eval.addExternal("ord", builtin_ord);
-        eval.addExternal("flag", builtin_flag, secret_page);
-        eval.addExternal("rand", builtin_rand, secret_page);
-        eval.addExternal("read", builtin_read);
-        if (!eval.run())
+        cgc_Evaluator eval(parser.cgc_releaseRoot());
+        cgc_ArrayVar::cgc_registerExternals(eval);
+        eval.cgc_addExternal("chr", cgc_builtin_chr);
+        eval.cgc_addExternal("echo", cgc_builtin_echo);
+        eval.cgc_addExternal("ord", cgc_builtin_ord);
+        eval.cgc_addExternal("flag", cgc_builtin_flag, secret_page);
+        eval.cgc_addExternal("rand", cgc_builtin_rand, secret_page);
+        eval.cgc_addExternal("read", cgc_builtin_read);
+        if (!eval.cgc_run())
         {
-            fprintf(stderr, "Eval error\n");
+            cgc_fprintf(stderr, "Eval error\n");
         }
     }
     else
     {
-        fprintf(stderr, "Program error\n");
+        cgc_fprintf(stderr, "Program error\n");
     }
 
     return 0;

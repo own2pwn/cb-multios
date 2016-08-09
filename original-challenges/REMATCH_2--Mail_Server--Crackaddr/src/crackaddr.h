@@ -7,7 +7,7 @@
 #define TRUE 1
 #define FALSE 0
 
-char *crackaddr(char *addr, char *output);
+char *cgc_crackaddr(char *addr, char *output);
 
 
 #endif

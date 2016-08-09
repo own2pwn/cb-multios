@@ -44,44 +44,44 @@ enum
 	SEX
 } USER_FIELD_TYPES;
 
-class User
+class cgc_User
 {
 private:
-	uint16_t m_id;   // KEY. unique
-	uint16_t m_weight; // kg
-	uint16_t m_height; // cm	
-	uint16_t m_age;    // years
-	uint16_t m_bodyFat; // percentage 0 - 100
-	uint16_t m_bloodPressure;
-	uint32_t m_totalDist;
+	cgc_uint16_t m_id;   // KEY. unique
+	cgc_uint16_t m_weight; // kg
+	cgc_uint16_t m_height; // cm	
+	cgc_uint16_t m_age;    // years
+	cgc_uint16_t m_bodyFat; // percentage 0 - 100
+	cgc_uint16_t m_bloodPressure;
+	cgc_uint32_t m_totalDist;
 
 	
 public:
-	User( uint16_t id );
+	cgc_User( cgc_uint16_t id );
 
-	void SetId( uint16_t id ) { m_id = id; }
-	uint16_t GetId() { return m_id; }
+	void cgc_SetId( cgc_uint16_t id ) { m_id = id; }
+	cgc_uint16_t cgc_GetId() { return m_id; }
 
-	void SetWeight( uint16_t w ) { m_weight = w; }
-	uint16_t GetWeight() { return m_weight; }
+	void cgc_SetWeight( cgc_uint16_t w ) { m_weight = w; }
+	cgc_uint16_t cgc_GetWeight() { return m_weight; }
 
-	void SetHeight( uint16_t h ) { m_height = h; }
-	uint16_t GetHeight() { return m_height; }
+	void cgc_SetHeight( cgc_uint16_t h ) { m_height = h; }
+	cgc_uint16_t cgc_GetHeight() { return m_height; }
 
-	void SetAge( uint16_t a ) { m_age = a; }
-	uint16_t GetAge() { return m_age; }
+	void cgc_SetAge( cgc_uint16_t a ) { m_age = a; }
+	cgc_uint16_t cgc_GetAge() { return m_age; }
 
-	void AddTotalDistance( uint16_t new_dist ) { m_totalDist += new_dist; }
-	uint16_t GetTotalDistance() { return m_totalDist; }
+	void cgc_AddTotalDistance( cgc_uint16_t new_dist ) { m_totalDist += new_dist; }
+	cgc_uint16_t cgc_GetTotalDistance() { return m_totalDist; }
 
-	bool SetBodyFat( uint16_t bf );
-	uint16_t GetBodyFat() { return m_bodyFat; }
+	bool cgc_SetBodyFat( cgc_uint16_t bf );
+	cgc_uint16_t cgc_GetBodyFat() { return m_bodyFat; }
 
-	bool SetBloodPressure( uint16_t bp );
-	uint16_t GetBloodPressure() { return m_bloodPressure; }
+	bool cgc_SetBloodPressure( cgc_uint16_t bp );
+	cgc_uint16_t cgc_GetBloodPressure() { return m_bloodPressure; }
 
-	// used for linked list in SensorManager
-	CUtil::DLL_LINK( User ) m_userLink;
+	// used for linked list in cgc_SensorManager
+	CUtil::DLL_LINK( cgc_User ) m_userLink;
 };
 
 #endif

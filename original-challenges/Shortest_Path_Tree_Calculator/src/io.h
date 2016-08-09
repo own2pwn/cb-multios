@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,11 +32,11 @@ THE SOFTWARE.
 #define CMD_SEND_EDGES (2)
 #define CMD_RUN_SPT (3)
 typedef struct __attribute__((__packed__)) _command {
-	uint8_t Action;
-	uint32_t NumElements;
-	uint32_t StartingNode;
-	uint32_t EndingNode;
-} Command, *pCommand;
+	cgc_uint8_t Action;
+	cgc_uint32_t NumElements;
+	cgc_uint32_t StartingNode;
+	cgc_uint32_t EndingNode;
+} cgc_Command, *cgc_pCommand;
 
 #define RESP_ERROR_DUPLICATE_NODE (1)
 #define RESP_ERROR_TOO_MANY_NODES (2)
@@ -46,16 +46,16 @@ typedef struct __attribute__((__packed__)) _command {
 #define RESP_NODE_SET (6)
 #define RESP_ERROR_SPT_FAIL (7)
 typedef struct __attribute__((__packed__)) _response {
-	uint8_t Code;
-	uint8_t NumElements;
-} Response, *pResponse;
+	cgc_uint8_t Code;
+	cgc_uint8_t NumElements;
+} cgc_Response, *cgc_pResponse;
 
 typedef struct _edgearray {
-	uint32_t NodeA;
-	uint32_t NodeZ;
-	uint32_t Weight;
-} EdgeArray, *pEdgeArray;
+	cgc_uint32_t NodeA;
+	cgc_uint32_t NodeZ;
+	cgc_uint32_t Weight;
+} cgc_EdgeArray, *cgc_pEdgeArray;
 
-uint8_t ReadCmd(void);
+cgc_uint8_t cgc_ReadCmd(void);
 
 #endif // #ifndef IO_H

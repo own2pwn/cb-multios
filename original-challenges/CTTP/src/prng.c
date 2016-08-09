@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,18 +23,18 @@
 #include "libc.h"
 #include "prng.h"
 
-static bool initialized;
-static uint32_t last;
+static cgc_bool initialized;
+static cgc_uint32_t last;
 
-#define FPSIZE (PAGE_SIZE/sizeof(uint32_t))
+#define FPSIZE (PAGE_SIZE/sizeof(cgc_uint32_t))
 
 /**
  * Return a random integer
  *
  * @return A random integer
  */
-uint32_t randint() {
-    uint32_t *src = (uint32_t*)FLAG_PAGE;
+cgc_uint32_t cgc_randint() {
+    cgc_uint32_t *src = (cgc_uint32_t*)FLAG_PAGE;
 
     if (!initialized) {
         last = *src;
@@ -56,13 +56,13 @@ uint32_t randint() {
  *
  * @return 0, always succeeds 
  */
-uint32_t rand(void *buf, size_t s, size_t *out) {
-    size_t i;
-    uint8_t *b = (uint8_t *) buf;
+cgc_uint32_t cgc_rand(void *buf, cgc_size_t s, cgc_size_t *out) {
+    cgc_size_t i;
+    cgc_uint8_t *b = (cgc_uint8_t *) buf;
 
 
     for (i = 0; i < s; i++) {
-        b[i] = randint(); //just truncate
+        b[i] = cgc_randint(); //just truncate
     }
 
     if (out)

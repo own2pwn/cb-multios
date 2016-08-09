@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,19 +28,19 @@
 
 #define INPUT_SIZE 512
 
-typedef enum {MAIN_MENU, SQUARE_RABBIT } screen_select;
+typedef enum {MAIN_MENU, SQUARE_RABBIT } cgc_screen_select;
 typedef struct {
     int money;
     int current_game;
     int current_bet;
-} player_t;
+} cgc_player_t;
 
 //GLOBAL VARIABLES
-static player_t g_player;
+static cgc_player_t g_player;
 
-static char readchar(int fd)
+static char cgc_readchar(int fd)
 {
-    size_t rx;
+    cgc_size_t rx;
     char c, delim;
 
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
@@ -54,10 +54,10 @@ static char readchar(int fd)
     return c;
 }
 
-static int readline(int fd, char *buf, size_t size)
+static int cgc_readline(int fd, char *buf, cgc_size_t size)
 {
-    size_t i;
-    size_t rx;
+    cgc_size_t i;
+    cgc_size_t rx;
 
     for (i = 0; i < size; i++) {
         if (receive(fd, buf, 1, &rx) != 0 || rx == 0)
@@ -77,22 +77,22 @@ static int readline(int fd, char *buf, size_t size)
     return 0;
 }
 
-static void init_player() {
+static void cgc_init_player() {
     g_player.money = 100000;
     g_player.current_game = MAIN_MENU;
     g_player.current_bet = 0;
 }
 
-void print_game_menu()
+void cgc_print_game_menu()
 {
-    printf("Game Sultan: Main Menu\n");
-    printf("1. Square Rabbit\n");
-    printf("2. Quit\n\n");
-    printf("Select:-@ ");
+    cgc_printf("Game Sultan: Main Menu\n");
+    cgc_printf("1. Square Rabbit\n");
+    cgc_printf("2. Quit\n\n");
+    cgc_printf("Select:-@ ");
 
 }
 
-char *cardtos(card_t *card) {
+char *cgc_cardtos(cgc_card_t *card) {
     switch (card->face) {
     case WILD:
         return "W";
@@ -127,7 +127,7 @@ char *cardtos(card_t *card) {
    }
 }
 
-char *suittos(card_t *card) {
+char *cgc_suittos(cgc_card_t *card) {
     return "";
     switch (card->suit) {
     case SQUARE:
@@ -143,98 +143,98 @@ char *suittos(card_t *card) {
    }
 }
 
-static void print_winner(int player_score, int dealer_score) {
+static void cgc_print_winner(int player_score, int dealer_score) {
     if (player_score > 21)
-        printf("  Busted! Better luck next time\n");
+        cgc_printf("  Busted! Better luck next time\n");
     else if (player_score > dealer_score || dealer_score > 21)
-        printf("  Winner!\n");
+        cgc_printf("  Winner!\n");
     else if (player_score == dealer_score)
-        printf("  Pushed.\n");
+        cgc_printf("  Pushed.\n");
     else
-        printf("  Dealer Wins.\n");
+        cgc_printf("  Dealer Wins.\n");
 }
 
-static int print_cards()
+static int cgc_print_cards()
 {
     int i = 1, dealer_score, player_score;
-    card_t *card;
-    squarerabbit_t *srabbit = get_srabbit_game();
-    squarerabbit_t *split_hand = get_split_hand();
-    hand_t *player = srabbit->player_hand;
-    hand_t *dealer = srabbit->dealer_hand;
-    player_score = calc_score(player, NULL);
-    squarerabbit_t *split;
+    cgc_card_t *card;
+    cgc_squarerabbit_t *srabbit = cgc_get_srabbit_game();
+    cgc_squarerabbit_t *split_hand = cgc_get_split_hand();
+    cgc_hand_t *player = srabbit->player_hand;
+    cgc_hand_t *dealer = srabbit->dealer_hand;
+    player_score = cgc_calc_score(player, NULL);
+    cgc_squarerabbit_t *cgc_split;
 
-    if (!is_player_finished()) {
+    if (!cgc_is_player_finished()) {
         card = srabbit->dealer_hand->card;
-        printf("Dealer: |%s%s|?|\n", cardtos(card), suittos(card));
-        printf("----------------\n");
+        cgc_printf("Dealer: |%s%s|?|\n", cgc_cardtos(card), cgc_suittos(card));
+        cgc_printf("----------------\n");
     } else {
-        dealer_hit();
-        dealer_score = calc_score(dealer, NULL);
-        printf("Dealer: |");
+        cgc_dealer_hit();
+        dealer_score = cgc_calc_score(dealer, NULL);
+        cgc_printf("Dealer: |");
         while (dealer != NULL) {
             card = dealer->card;
-            printf("%s%s|", cardtos(card), suittos(card));
+            cgc_printf("%s%s|", cgc_cardtos(card), cgc_suittos(card));
             dealer = dealer->next;
         }
-        printf("    Score: %d\n", dealer_score);
-        printf("-------------------------------\n");
+        cgc_printf("    Score: %d\n", dealer_score);
+        cgc_printf("-------------------------------\n");
     }
 
-    printf("Player: |");
+    cgc_printf("Player: |");
     while (player != NULL) {
         card = player->card;
-        printf("%s%s|", cardtos(card), suittos(card));
+        cgc_printf("%s%s|", cgc_cardtos(card), cgc_suittos(card));
         player = player->next;
     }
-    printf("    Score: %d\n", player_score);
+    cgc_printf("    Score: %d\n", player_score);
     if (!srabbit->player_finished) {
-        printf("Select (H/S");
+        cgc_printf("Select (H/S");
         if (srabbit->double_or_split) {
-            printf("/D");
-            if (can_split(srabbit) && split_len() < max_split()) {
-                printf("/X");
+            cgc_printf("/D");
+            if (cgc_can_split(srabbit) && cgc_split_len() < cgc_max_split()) {
+                cgc_printf("/X");
             }
         }
-        printf("): ");
+        cgc_printf("): ");
         return 1;
     } else {
-        if (is_player_finished())
-            print_winner(player_score, dealer_score);
+        if (cgc_is_player_finished())
+            cgc_print_winner(player_score, dealer_score);
     }
 
-    for (i = 0; i < split_len(); i++) {
-        split = &split_hand[i];
-        player = split->player_hand;
-        player_score = calc_score(player, NULL);
-        printf("Split %d: |", i + 1);
+    for (i = 0; i < cgc_split_len(); i++) {
+        cgc_split = &split_hand[i];
+        player = cgc_split->player_hand;
+        player_score = cgc_calc_score(player, NULL);
+        cgc_printf("Split %d: |", i + 1);
         while (player != NULL) {
             card = player->card;
-            printf("%s%s|", cardtos(card), suittos(card));
+            cgc_printf("%s%s|", cgc_cardtos(card), cgc_suittos(card));
             player = player->next;
         }
-        printf("    Score: %d\n", player_score);
-        if (!split->player_finished) {
-            printf("Select (H/S");
-            if (split->double_or_split) {
-                printf("/D");
-                if (can_split(split) && split_len() < max_split()) {
-                    printf("/X");
+        cgc_printf("    Score: %d\n", player_score);
+        if (!cgc_split->player_finished) {
+            cgc_printf("Select (H/S");
+            if (cgc_split->double_or_split) {
+                cgc_printf("/D");
+                if (cgc_can_split(cgc_split) && cgc_split_len() < cgc_max_split()) {
+                    cgc_printf("/X");
                 }
             }
-            printf("): ");
+            cgc_printf("): ");
             return 1;
         } else {
-            if (is_player_finished())
-                print_winner(player_score, dealer_score);
+            if (cgc_is_player_finished())
+                cgc_print_winner(player_score, dealer_score);
         }
     }
 
     return 0;
 }
 
-void play_squarerabbit()
+void cgc_play_squarerabbit()
 {
     int quit = FALSE;
     int bet;
@@ -242,20 +242,20 @@ void play_squarerabbit()
     char response = 0;
     char input[INPUT_SIZE];
 
-    printf("******************\n");
-    printf("* Square Rabbit! *\n");
-    printf("******************\n");
+    cgc_printf("******************\n");
+    cgc_printf("* Square Rabbit! *\n");
+    cgc_printf("******************\n");
     while (!quit) {
-        printf("Total Money: $%d\n", g_player.money);
-        printf("\nType QUIT to exit to main menu\n");
-        printf("Place Bet (100, 200, 500, 1000): ");
-        if (readline(STDIN, input, INPUT_SIZE) != 0)
+        cgc_printf("Total Money: $%d\n", g_player.money);
+        cgc_printf("\nType QUIT to cgc_exit to main menu\n");
+        cgc_printf("Place Bet (100, 200, 500, 1000): ");
+        if (cgc_readline(STDIN, input, INPUT_SIZE) != 0)
             continue;
 
-        if (memcmp(input, "QUIT", sizeof("QUIT")) == 0)
+        if (cgc_memcmp(input, "QUIT", sizeof("QUIT")) == 0)
             return;
 
-        bet = strtol(input, NULL, 10);
+        bet = cgc_strtol(input, NULL, 10);
         switch(bet) {
         case 100:
         case 200:
@@ -268,70 +268,70 @@ void play_squarerabbit()
         }
 
         if(bet == -1) {
-            printf("Bad Bet\n\n");
+            cgc_printf("Bad Bet\n\n");
             continue;
         }
 
         if (g_player.current_bet > g_player.money) {
-            printf("Not enough money, bet with a lower amount\n");
+            cgc_printf("Not enough money, bet with a lower amount\n");
             continue;
         }
 
-        status_code = deal_srabbit(g_player.current_bet);
+        status_code = cgc_deal_srabbit(g_player.current_bet);
         switch (status_code) {
         case 0:
-            print_cards();
-            printf("Square Rabbit!\n");
+            cgc_print_cards();
+            cgc_printf("Square Rabbit!\n");
             break;
         case 1: //Both have square rabbit, push
-            print_cards();
+            cgc_print_cards();
             break;
         case 2: //Deal with a dealer who has squarerabbit
-            printf("Dealer has a Duck... Insurance? (y\\n): ");
+            cgc_printf("Dealer has a Duck... Insurance? (y\\n): ");
             response = '\x00';
             while(response != 'y' && response != 'n')
-                response = readchar(STDIN);
+                response = cgc_readchar(STDIN);
             if (response == 'y')
-                pay_insurance();
+                cgc_pay_insurance();
 
-            check_dealer_squarerabbit();
-            if(!check_dealer_squarerabbit2() && check_player_squarerabbit(get_srabbit_game())) {
-                print_cards();
-                printf("Square Rabbit!\n");
+            cgc_check_dealer_squarerabbit();
+            if(!cgc_check_dealer_squarerabbit2() && cgc_check_player_squarerabbit(cgc_get_srabbit_game())) {
+                cgc_print_cards();
+                cgc_printf("Square Rabbit!\n");
                 break;
             }
         case 3:
-            while(print_cards() != 0) {
-                response = readchar(STDIN);
+            while(cgc_print_cards() != 0) {
+                response = cgc_readchar(STDIN);
                 switch (response) {
                 case 'H':
-                    if (hit() < 0)
-                        printf("INVALID CHOICE");
+                    if (cgc_hit() < 0)
+                        cgc_printf("INVALID CHOICE");
                     break;
                 case 'S':
-                    if (stand() < 0)
-                        printf("INVALID CHOICE");
+                    if (cgc_stand() < 0)
+                        cgc_printf("INVALID CHOICE");
                     break;
                 case 'D':
-                    if (g_player.money < g_player.current_bet || double_down() < 0)
-                        printf("CAN'T DOUBLE DOWN'");
+                    if (g_player.money < g_player.current_bet || cgc_double_down() < 0)
+                        cgc_printf("CAN'T DOUBLE DOWN'");
                     break;
                 case 'X':
-                    if (g_player.money < g_player.current_bet || split() < 0)
-                        printf("CAN'T SPLIT");
+                    if (g_player.money < g_player.current_bet || cgc_split() < 0)
+                        cgc_printf("CAN'T SPLIT");
                     break;
                 default:
-                    printf("INVALID CHOICE");
+                    cgc_printf("INVALID CHOICE");
                 }
-                printf("\n");
+                cgc_printf("\n");
             }
         }
 
-        g_player.money += srabbit_payout();
+        g_player.money += cgc_srabbit_payout();
     }
 }
 
-void play_poker()
+void cgc_play_poker()
 {
     return;
 }
@@ -341,47 +341,47 @@ int main()
     char input[INPUT_SIZE];
     unsigned int seed = 0;
 
-    printf("Enter a number greater than 0: ");
-    if (readline(STDIN, input, INPUT_SIZE) != 0) {
-        printf("INVALID INPUT\n");
-        printf("Exiting...\n");
+    cgc_printf("Enter a number greater than 0: ");
+    if (cgc_readline(STDIN, input, INPUT_SIZE) != 0) {
+        cgc_printf("INVALID INPUT\n");
+        cgc_printf("Exiting...\n");
         return 0;
     }
 
-    seed = strtol(input, NULL, 10);
+    seed = cgc_strtol(input, NULL, 10);
     if (seed == 0) {
-        printf("INVALID INPUT\n");
-        printf("Exiting...\n");
+        cgc_printf("INVALID INPUT\n");
+        cgc_printf("Exiting...\n");
         return 0;
     }
 
-    printf("\n\n");
-    printf("*************************\n");
-    printf("*Welcome to Game Sultan!*\n");
-    printf("*************************\n\n");
+    cgc_printf("\n\n");
+    cgc_printf("*************************\n");
+    cgc_printf("*Welcome to Game Sultan!*\n");
+    cgc_printf("*************************\n\n");
 
-    init_player();
-    init_squarerabbit(&seed);
+    cgc_init_player();
+    cgc_init_squarerabbit(&seed);
     //init_poker();
 
     char choice = '0';
     while(choice != '2') {
-        print_game_menu();
-        choice = readchar(STDIN);
+        cgc_print_game_menu();
+        choice = cgc_readchar(STDIN);
         switch(choice) {
         case '1':
-            play_squarerabbit();
+            cgc_play_squarerabbit();
             break;
         case '2':
-            //play_poker();
+            //cgc_play_poker();
             break;
         case '3':
             //break;
         default:
-            printf("Bad Choice. Select another option\n\n");
+            cgc_printf("Bad Choice. Select another option\n\n");
         }
     }
 
-    printf("Thanks for playing!\n");
+    cgc_printf("Thanks for playing!\n");
 }
 

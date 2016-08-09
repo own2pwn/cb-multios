@@ -23,11 +23,11 @@
 #include <libcgc.h>
 #include "libc.h"
 
-ssize_t
-read_all(int fd, void *buf, size_t n)
+cgc_ssize_t
+cgc_read_all(int fd, void *buf, cgc_size_t n)
 {
-    ssize_t ret = 0;
-    size_t read;
+    cgc_ssize_t ret = 0;
+    cgc_size_t read;
 
     while (n) {
         if (receive(fd, (char *)(buf + ret), n, &read) != 0)
@@ -40,11 +40,11 @@ read_all(int fd, void *buf, size_t n)
     return ret;
 }
 
-ssize_t
-write_all(int fd, void *buf, size_t n)
+cgc_ssize_t
+cgc_write_all(int fd, void *buf, cgc_size_t n)
 {
-    ssize_t ret = 0;
-    size_t written;
+    cgc_ssize_t ret = 0;
+    cgc_size_t written;
 
     while (n) {
         if (transmit(fd, (char *)(buf + ret), n, &written) != 0)
@@ -58,7 +58,7 @@ write_all(int fd, void *buf, size_t n)
 }
 
 void *
-memset(void *ptr, int val, size_t n)
+cgc_memset(void *ptr, int val, cgc_size_t n)
 {
     void *ret = ptr;
     while (n--)
@@ -67,9 +67,9 @@ memset(void *ptr, int val, size_t n)
 }
 
 char *
-strcpy(char *dst, const char *src)
+cgc_strcpy(char *dst, const char *src)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (; src[i]; i++)
         dst[i] = src[i];
     dst[i] = '\0';
@@ -77,9 +77,9 @@ strcpy(char *dst, const char *src)
 }
 
 char *
-strncpy(char *dst, const char *src, size_t n)
+cgc_strncpy(char *dst, const char *src, cgc_size_t n)
 {
-    size_t i = 0;
+    cgc_size_t i = 0;
     for (; i < n && src[i]; i++)
         dst[i] = src[i];
     for (; i < n; i++)
@@ -89,43 +89,43 @@ strncpy(char *dst, const char *src, size_t n)
 }
 
 char *
-strcat(char *dst, const char *src)
+cgc_strcat(char *dst, const char *src)
 {
     char *ret = dst;
-    dst += strlen(dst);
-    strcpy(dst, src);
+    dst += cgc_strlen(dst);
+    cgc_strcpy(dst, src);
     return ret;
 }
 
 char *
-strncat(char *dst, const char *src, size_t n)
+cgc_strncat(char *dst, const char *src, cgc_size_t n)
 {
     char *ret = dst;
-    dst += strlen(dst);
-    strncpy(dst, src, n);
+    dst += cgc_strlen(dst);
+    cgc_strncpy(dst, src, n);
     dst[n] = '\0';
     return ret;
 }
 
-size_t
-strlen(const char *s) {
-    size_t ret = 0;
+cgc_size_t
+cgc_strlen(const char *s) {
+    cgc_size_t ret = 0;
     while (*s++)
         ret++;
     return ret;
 }
 
-size_t
-strnlen(const char *s, size_t n)
+cgc_size_t
+cgc_strnlen(const char *s, cgc_size_t n)
 {
-    size_t ret = 0;
+    cgc_size_t ret = 0;
     while (n-- && *s++)
         ret++;
     return ret;
 }
 
 int
-strncmp(const char *a, const char *b, size_t n)
+cgc_strncmp(const char *a, const char *b, cgc_size_t n)
 {
     for (; --n && *a && *a == *b; a++, b++)
         ;
@@ -133,14 +133,14 @@ strncmp(const char *a, const char *b, size_t n)
 }
 
 char *
-itoa(int val, char *s)
+cgc_itoa(int val, char *s)
 {
     char tmp = '\0';
     char *t = s;
     char *ret = s;
 
     if (val == 0)
-        return strcpy(s, "0");
+        return cgc_strcpy(s, "0");
 
     if (val < 0) {
         s++;
@@ -1048,7 +1048,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user, con
                }
                case 's': {
                   const char *s_arg = (const char *)args[field_arg];
-                  int len = strlen(s_arg);
+                  int len = cgc_strlen(s_arg);
                   if (width_value == -1) {
                      //by default min length is the entire string
                      width_value = len;

@@ -27,18 +27,18 @@
 
 #include "malloc_internal.h"
 
-static int allocate_span()
+static int cgc_allocate_span()
 {
     void *mem;
     if (allocate(SPAN_SIZE << 1, 0, &mem) != 0)
         return 1;
 
-    intptr_t span = ((intptr_t)mem + SPAN_SIZE-1) & ~(SPAN_SIZE-1);
-    if (span - (intptr_t)mem)
-        deallocate(mem, span - (intptr_t)mem);
-    deallocate((void *)(span + SPAN_SIZE), ((intptr_t)mem + (SPAN_SIZE << 1)) - (span + SPAN_SIZE));
+    cgc_intptr_t span = ((cgc_intptr_t)mem + SPAN_SIZE-1) & ~(SPAN_SIZE-1);
+    if (span - (cgc_intptr_t)mem)
+        deallocate(mem, span - (cgc_intptr_t)mem);
+    deallocate((void *)(span + SPAN_SIZE), ((cgc_intptr_t)mem + (SPAN_SIZE << 1)) - (span + SPAN_SIZE));
     
-    free_block_t *block = (free_block_t *)span;
+    cgc_free_block_t *block = (cgc_free_block_t *)span;
     block->hdr.size = SPAN_SIZE;
     block->hdr.free = 1;
     block->hdr.mmap = 0;
@@ -48,9 +48,9 @@ static int allocate_span()
     return 0;
 }
 
-static free_block_t *pop_block(int i)
+static cgc_free_block_t *cgc_pop_block(int i)
 {
-    free_block_t *blk = g_malloc.free_list[i];
+    cgc_free_block_t *blk = g_malloc.free_list[i];
     /* remove from current list */
     if (blk->next != NULL)
         blk->next->prev = blk->prev;
@@ -64,20 +64,20 @@ static free_block_t *pop_block(int i)
     return blk;
 }
 
-void *malloc(size_t size)
+void *cgc_malloc(cgc_size_t size)
 {
-    size_t min_size = size + OVERHEAD_BYTES;
+    cgc_size_t min_size = size + OVERHEAD_BYTES;
 
     if (min_size >= MAX_ALLOC)
     {
         void *ret;
         if (allocate(min_size, 0, &ret) != 0)
             return NULL;
-        block_t *block = (block_t *)ret;
+        cgc_block_t *block = (cgc_block_t *)ret;
         block->free = 0;
         block->mmap = 1;
         block->size = min_size;
-        return (void *)((intptr_t)ret + OVERHEAD_BYTES);
+        return (void *)((cgc_intptr_t)ret + OVERHEAD_BYTES);
     }
 
     /* use buddy allocator */
@@ -91,7 +91,7 @@ void *malloc(size_t size)
     if (i == NUM_BUCKETS)
     {
         /* allocate new span */
-        if (allocate_span() == 0)
+        if (cgc_allocate_span() == 0)
             i = NUM_BUCKETS-1;
         else
             return NULL;
@@ -100,11 +100,11 @@ void *malloc(size_t size)
     /* split block until it is the minimum size */
     for (; i > order; i--)
     {
-        free_block_t *blk = pop_block(i);
+        cgc_free_block_t *blk = cgc_pop_block(i);
 
         /* split block */
         blk->hdr.size >>= 1;
-        free_block_t *blk2 = (free_block_t *)((intptr_t)blk ^ blk->hdr.size);
+        cgc_free_block_t *blk2 = (cgc_free_block_t *)((cgc_intptr_t)blk ^ blk->hdr.size);
         *blk2 = *blk;
 
         /* add both to next list */
@@ -118,9 +118,9 @@ void *malloc(size_t size)
     }
 
     /* we are now guaranteed that g_malloc.free_list[order] != NULL */
-    free_block_t *blk = pop_block(order);
+    cgc_free_block_t *blk = cgc_pop_block(order);
     blk->hdr.free = 0;
 
-    //printf("malloc(%d) = %08X\n", size, ((intptr_t)blk + OVERHEAD_BYTES));
-    return (void *)((intptr_t)blk + OVERHEAD_BYTES);
+    //printf("cgc_malloc(%d) = %08X\n", size, ((cgc_intptr_t)blk + OVERHEAD_BYTES));
+    return (void *)((cgc_intptr_t)blk + OVERHEAD_BYTES);
 }

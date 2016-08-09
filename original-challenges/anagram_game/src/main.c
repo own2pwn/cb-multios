@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,97 +44,97 @@ enum {
 };
 
 typedef struct {
-    atree_t *tree;
-} main_t;
+    cgc_atree_t *tree;
+} cgc_main_t;
 
-int read_initial_words(main_t *state)
+int cgc_read_initial_words(cgc_main_t *state)
 {
     unsigned int count, i;
     char **words;
-    freqtab_t ftab;
+    cgc_freqtab_t ftab;
 
-    count = read_int();
+    count = cgc_read_int();
     if (count >= UINT_MAX / sizeof(char *))
         return 0;
 
-    words = malloc(sizeof(char *) * count);
+    words = cgc_malloc(sizeof(char *) * count);
     if (words == NULL)
         return 0;
 
     for (i = 0; i < count; i++)
     {
-        words[i] = read_string();
+        words[i] = cgc_read_string();
         if (words[i] == NULL)
             goto error;
 
-        if (strlen(words[i]) == 0)
+        if (cgc_strlen(words[i]) == 0)
             goto error;
     }
 
-    ftab_init1(&ftab);
+    cgc_ftab_init1(&ftab);
     for (i = 0; i < count; i++)
-        ftab_add(&ftab, words[i]);
+        cgc_ftab_add(&ftab, words[i]);
 
-    state->tree = atree_init(&ftab);
+    state->tree = cgc_atree_init(&ftab);
     if (state->tree == NULL)
         goto error;
 
     for (i = 0; i < count; i++)
-        atree_add(state->tree, words[i]);
+        cgc_atree_add(state->tree, words[i]);
 
-//    free(words);
+//    cgc_free(words);
     return 1;
 
 error:
 //    for (i = 0; i < count; i++)
-//        free(words[i]);
-//    free(words);
+//        cgc_free(words[i]);
+//    cgc_free(words);
     return 0;
 }
 
-void cmd_add_word(main_t *state)
+void cgc_cmd_add_word(cgc_main_t *state)
 {
-    char *str = read_string();
+    char *str = cgc_read_string();
     if (str == NULL)
     {
-        write_int(STATUS_ERROR);
+        cgc_write_int(STATUS_ERROR);
     }
     else
     {
-        if (!atree_add(state->tree, str))
+        if (!cgc_atree_add(state->tree, str))
         {
-            write_int(STATUS_ERROR);
-            free(str);
+            cgc_write_int(STATUS_ERROR);
+            cgc_free(str);
         }
         else
         {
-            write_int(STATUS_SUCCESS);
+            cgc_write_int(STATUS_SUCCESS);
         }
     }
 }
 
-void cmd_remove_word(main_t *state)
+void cgc_cmd_remove_word(cgc_main_t *state)
 {
-    char *str = read_string();
+    char *str = cgc_read_string();
     if (str == NULL)
     {
-        write_int(STATUS_ERROR);
+        cgc_write_int(STATUS_ERROR);
     }
     else
     {
-        if (!atree_remove(state->tree, str))
+        if (!cgc_atree_remove(state->tree, str))
         {
-            write_int(STATUS_ERROR);
+            cgc_write_int(STATUS_ERROR);
         }
         else
         {
-            write_int(STATUS_SUCCESS);
+            cgc_write_int(STATUS_SUCCESS);
         }
-        free(str);
+        cgc_free(str);
     }
 }
 
-static void sort_results(char **results, int count)
+static void cgc_sort_results(char **results, int count)
 {
     int i, j;
     for (i = 1; i < count; i++)
@@ -142,7 +142,7 @@ static void sort_results(char **results, int count)
         char *a = results[i];
         for (j = i; j > 0; j--)
         {
-            if (strcmp(results[j-1], a) <= 0)
+            if (cgc_strcmp(results[j-1], a) <= 0)
                 break;
             results[j] = results[j-1];
         }
@@ -150,25 +150,25 @@ static void sort_results(char **results, int count)
     }
 }
 
-void cmd_query(main_t *state, int subset)
+void cgc_cmd_query(cgc_main_t *state, int subset)
 {
     char *str, **results;
-    str = read_string();
+    str = cgc_read_string();
     if (str == NULL)
     {
-        write_int(STATUS_ERROR);
+        cgc_write_int(STATUS_ERROR);
     }
     else
     {
         if (subset)
-            results = atree_query_subset(state->tree, str);
+            results = cgc_atree_query_subset(state->tree, str);
         else
-            results = atree_query(state->tree, str);
-        free(str);
+            results = cgc_atree_query(state->tree, str);
+        cgc_free(str);
 
         if (results == NULL)
         {
-            write_int(STATUS_ERROR);
+            cgc_write_int(STATUS_ERROR);
         }
         else
         {
@@ -176,23 +176,23 @@ void cmd_query(main_t *state, int subset)
             int count = 0;
             for (it = results; *it != NULL; it++)
                 count++;
-            write_int(STATUS_SUCCESS);
-            write_int(count);
-            sort_results(results, count);
+            cgc_write_int(STATUS_SUCCESS);
+            cgc_write_int(count);
+            cgc_sort_results(results, count);
             for (it = results; *it != NULL; it++)
-                write_string(*it);
+                cgc_write_string(*it);
         }
     }
 }
 
-void cmd_play_game(main_t *state)
+void cgc_cmd_play_game(cgc_main_t *state)
 {
     int level;
     const char *words[NUM_LEVELS];
 
-    if (atree_count(state->tree) < NUM_LEVELS)
+    if (cgc_atree_count(state->tree) < NUM_LEVELS)
     {
-        write_int(STATUS_ERROR);
+        cgc_write_int(STATUS_ERROR);
         return;
     }
 
@@ -202,7 +202,7 @@ void cmd_play_game(main_t *state)
         int total, solved, goal, i;
         // choose a random word without repeat
         do {
-            words[level] = atree_random(state->tree);
+            words[level] = cgc_atree_cgc_random(state->tree);
             for (i = 0; i < level; i++)
             {
                 if (words[i] == words[level])
@@ -213,10 +213,10 @@ void cmd_play_game(main_t *state)
             }
         } while (words[level] == NULL);
 
-        answers = atree_query(state->tree, words[level]);
+        answers = cgc_atree_query(state->tree, words[level]);
         if (answers == NULL)
         {
-            write_int(STATUS_ERROR);
+            cgc_write_int(STATUS_ERROR);
             break;
         }
 
@@ -227,75 +227,75 @@ void cmd_play_game(main_t *state)
         if (goal == 0)
             goal = 1;
 
-        write_string(words[level]);
-        write_int(goal);
+        cgc_write_string(words[level]);
+        cgc_write_int(goal);
 
         while (solved < goal)
         {
-            char *str = read_string();
+            char *str = cgc_read_string();
             if (str == NULL)
                 return;
 
             for (it = answers; it < answers + total; it++)
             {
-                if (*it && strcasecmp(str, *it) == 0)
+                if (*it && cgc_strcasecmp(str, *it) == 0)
                 {
                     solved++;
                     *it = NULL;
-                    write_int(solved);
+                    cgc_write_int(solved);
                     break;
                 }
             }
 
-            free(str);
+            cgc_free(str);
         }
 
-        free(answers);
+        cgc_free(answers);
     }
 
-    write_int(STATUS_SUCCESS);
+    cgc_write_int(STATUS_SUCCESS);
 }
 
 int main()
 {
-    main_t state;
-    memset(&state, 0, sizeof(main_t));
+    cgc_main_t state;
+    cgc_memset(&state, 0, sizeof(cgc_main_t));
 
-    while (!read_initial_words(&state))
+    while (!cgc_read_initial_words(&state))
     {
-        write_int(STATUS_ERROR);
+        cgc_write_int(STATUS_ERROR);
     }
-    write_int(STATUS_SUCCESS);
+    cgc_write_int(STATUS_SUCCESS);
 
     while (1)
     {
-        int cmd = read_int();
+        int cmd = cgc_read_int();
         if (cmd == CMD_QUIT)
             break;
 
         switch (cmd)
         {
         case CMD_ADD_WORD:
-            cmd_add_word(&state);
+            cgc_cmd_add_word(&state);
             break;
         case CMD_REMOVE_WORD:
-            cmd_remove_word(&state);
+            cgc_cmd_remove_word(&state);
             break;
         case CMD_QUERY:
-            cmd_query(&state, 0);
+            cgc_cmd_query(&state, 0);
             break;
         case CMD_QUERY_SUBSET:
-            cmd_query(&state, 1);
+            cgc_cmd_query(&state, 1);
             break;
         case CMD_PLAY_GAME:
-            cmd_play_game(&state);
+            cgc_cmd_play_game(&state);
             break;
         default:
-            write_int(STATUS_ERROR);
+            cgc_write_int(STATUS_ERROR);
             break;
         }
     }
-    write_int(STATUS_SUCCESS);
+    cgc_write_int(STATUS_SUCCESS);
 
     return 0;
 }

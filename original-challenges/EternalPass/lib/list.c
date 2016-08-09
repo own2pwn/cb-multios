@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,9 +25,9 @@
 #include "malloc.h"
 
 
-struct node *list_create_node(void *data) {
+struct node *cgc_list_create_node(void *data) {
 
-	struct node *np = malloc(sizeof(struct node));
+	struct node *np = cgc_malloc(sizeof(struct node));
 	if (NULL == np) {
 		return np;
 	}
@@ -37,7 +37,7 @@ struct node *list_create_node(void *data) {
 	return np;
 }
 
-void list_destroy_node(struct list *l, struct node **n) {
+void cgc_list_destroy_node(struct list *l, struct node **n) {
 
 	// destroy node->data
 	if (NULL != l->ndf) {
@@ -48,11 +48,11 @@ void list_destroy_node(struct list *l, struct node **n) {
 	(*n)->prev = NULL;
 
 	// destroy node
-	free(*n);
+	cgc_free(*n);
 	*n = NULL;
 }
 
-void list_init(struct list *l, nodeDataFreeFn ndf) {
+void cgc_list_init(struct list *l, cgc_nodeDataFreeFn ndf) {
 	l->length = 0;
 	l->dummy.data = NULL;
 	l->dummy.next = &(l->dummy);
@@ -60,20 +60,20 @@ void list_init(struct list *l, nodeDataFreeFn ndf) {
 	l->ndf = ndf;
 }
 
-void list_destroy(struct list *l) {
-	if ((NULL != l) && (0 < list_length(l))) {
-		while (NULL != list_head_node(l)) {
-			struct node *h = list_pop(l);
-			list_destroy_node(l, &h);
+void cgc_list_destroy(struct list *l) {
+	if ((NULL != l) && (0 < cgc_list_length(l))) {
+		while (NULL != cgc_list_head_node(l)) {
+			struct node *h = cgc_list_pop(l);
+			cgc_list_destroy_node(l, &h);
 		}
 	}
 	l->dummy.next = &(l->dummy);
 	l->dummy.prev = &(l->dummy);
 }
 
-void list_insert_node_at_end(struct list *l, struct node *new) {
+void cgc_list_insert_node_at_end(struct list *l, struct node *new) {
 	if ((NULL != l) && (NULL != new)) {
-		struct node *t = list_tail_node(l);
+		struct node *t = cgc_list_tail_node(l);
 
 		new->next = &(l->dummy);
 		new->prev = l->dummy.prev;
@@ -90,16 +90,16 @@ void list_insert_node_at_end(struct list *l, struct node *new) {
 	}
 }
 
-void list_insert_at_end(struct list *l, void *d) {
+void cgc_list_insert_at_end(struct list *l, void *d) {
 	if (NULL != l) {
-		struct node *new = list_create_node(d);
-		list_insert_node_at_end(l, new);
+		struct node *new = cgc_list_create_node(d);
+		cgc_list_insert_node_at_end(l, new);
 	}
 }
 
-void list_insert_node_at_start(struct list *l, struct node *new) {
+void cgc_list_insert_node_at_start(struct list *l, struct node *new) {
 	if ((NULL != l) && (NULL != new)) {
-		struct node *h = list_head_node(l);
+		struct node *h = cgc_list_head_node(l);
 
 		new->prev = &(l->dummy);
 		new->next = l->dummy.next;
@@ -116,24 +116,24 @@ void list_insert_node_at_start(struct list *l, struct node *new) {
 	}
 }
 
-void list_insert_at_start(struct list *l, void *d) {
+void cgc_list_insert_at_start(struct list *l, void *d) {
 	if (NULL != l) {
-		struct node *new = list_create_node(d);
-		list_insert_node_at_start(l, new);
+		struct node *new = cgc_list_create_node(d);
+		cgc_list_insert_node_at_start(l, new);
 	}
 }
 
-struct node *list_pop(struct list *l) {
+struct node *cgc_list_pop(struct list *l) {
 	if (NULL == l) {
 		return NULL;
 	}
 
-	struct node *h = list_head_node(l);
-	list_remove_node(l, h);
+	struct node *h = cgc_list_head_node(l);
+	cgc_list_remove_node(l, h);
 	return h;
 }
 
-void list_remove_node(struct list *l, struct node *n) {
+void cgc_list_remove_node(struct list *l, struct node *n) {
 	if ((NULL != n) && (0 < l->length)) {
 		struct node *prev = n->prev;
 		struct node *next = n->next;
@@ -146,28 +146,28 @@ void list_remove_node(struct list *l, struct node *n) {
 	}
 }
 
-struct node *list_head_node(struct list *l) {
+struct node *cgc_list_head_node(struct list *l) {
 	if (&(l->dummy) == l->dummy.next) {
 		return NULL;
 	}
 	return l->dummy.next;
 }
 
-struct node *list_tail_node(struct list *l) {
+struct node *cgc_list_tail_node(struct list *l) {
 	if (&(l->dummy) == l->dummy.prev) {
 		return NULL;
 	}
 	return l->dummy.prev;
 }
 
-unsigned int list_length(struct list *l) {
+unsigned int cgc_list_length(struct list *l) {
 	return l->length;
 }
 
-struct node *list_foreach(struct list *l, void (*iter)(void *)) {
+struct node *cgc_list_foreach(struct list *l, void (*iter)(void *)) {
 
 	if ((NULL != l) && (NULL != iter)) {
-		struct node *n = list_head_node(l);
+		struct node *n = cgc_list_head_node(l);
 		for (unsigned int i = 0; i < l->length; i++) {
 			iter((void *)n->data); 
             n = n->next;
@@ -177,10 +177,10 @@ struct node *list_foreach(struct list *l, void (*iter)(void *)) {
 	return NULL;
 }
 
-struct node *list_find_node_with_data(struct list *l, bool (*predFn)(void *, void *), void *data) {
+struct node *cgc_list_find_node_with_data(struct list *l, cgc_bool (*predFn)(void *, void *), void *data) {
 
 	if ((NULL != l) && (NULL != data)) {
-		struct node *n = list_head_node(l);
+		struct node *n = cgc_list_head_node(l);
 		for (unsigned int i = 0; i < l->length; i++) {
 			if (predFn(n->data, data)) {
 				return n;
@@ -193,10 +193,10 @@ struct node *list_find_node_with_data(struct list *l, bool (*predFn)(void *, voi
 	return NULL;
 }
 
-struct node *list_find_node_with_data_recurse(struct list *l, struct node* (*predFn)(struct node *, void *), void *data) {
+struct node *cgc_list_find_node_with_data_recurse(struct list *l, struct node* (*predFn)(struct node *, void *), void *data) {
     struct node *res;
 	if ((NULL != l) && (NULL != data)) {
-		struct node *n = list_head_node(l);
+		struct node *n = cgc_list_head_node(l);
 		for (unsigned int i = 0; i < l->length; i++) {
 			if ((res = predFn(n, data))) {
 				return res;

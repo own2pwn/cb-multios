@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,74 +26,74 @@ THE SOFTWARE.
 
 #include "common.h"
 
-bool CMessageRenderer::RenderHeader( void )
+bool cgc_CMessageRenderer::cgc_RenderHeader( void )
 {
-    printf( "<HTML>\n" );
-    printf( "<HEAD>Messages</HEAD>\n" );
-    printf( "<BODY>\n" );
+    cgc_printf( "<HTML>\n" );
+    cgc_printf( "<HEAD>Messages</HEAD>\n" );
+    cgc_printf( "<BODY>\n" );
 
     return (true);
 }
 
-bool CMessageRenderer::RenderFooter( void )
+bool cgc_CMessageRenderer::cgc_RenderFooter( void )
 {
-    printf( "</BODY>\n" );
-    printf( "</HTML>\n" );
+    cgc_printf( "</BODY>\n" );
+    cgc_printf( "</HTML>\n" );
 
     return (true);
 }
 
-uint32_t add_render_buffer( uint8_t *pBuffer, uint32_t bufferPos, const char *pszString, uint32_t maxBufferPos )
+cgc_uint32_t cgc_add_render_buffer( cgc_uint8_t *pBuffer, cgc_uint32_t bufferPos, const char *pszString, cgc_uint32_t maxBufferPos )
 {
 #ifdef PATCHED
-    uint32_t lenToAdd = strlen( pszString );
+    cgc_uint32_t lenToAdd = cgc_strlen( pszString );
 
     if ( (bufferPos + lenToAdd) > maxBufferPos )
         return 0;
 #endif
 
-    memcpy( (uint8_t*)pBuffer+bufferPos, (uint8_t*)pszString, strlen( pszString ) );
+    cgc_memcpy( (cgc_uint8_t*)pBuffer+bufferPos, (cgc_uint8_t*)pszString, cgc_strlen( pszString ) );
 
-    return strlen( pszString );
+    return cgc_strlen( pszString );
 }
 
-bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
+bool cgc_CMessageRenderer::cgc_RenderMessage( cgc_CFullMessage *pMessage )
 {
     // BUG:: It is possible to overrun the renderBuffer by writing out a bunch of mark ups (these cost only 1-byte in the message itself but equal to 3 bytes in the render buffer)
-    uint8_t renderBuffer[MAX_MESSAGE_FRAGMENTS*256];
-    uint32_t maxBufferPos = MAX_MESSAGE_FRAGMENTS*256;
+    cgc_uint8_t renderBuffer[MAX_MESSAGE_FRAGMENTS*256];
+    cgc_uint32_t maxBufferPos = MAX_MESSAGE_FRAGMENTS*256;
 
     // Get from address
-    if ( pMessage->GetLength() < 1 )
+    if ( pMessage->cgc_GetLength() < 1 )
         return (false);
 
-    uint8_t fromAddress = *((uint8_t*)(pMessage->GetData()+0));
+    cgc_uint8_t fromAddress = *((cgc_uint8_t*)(pMessage->cgc_GetData()+0));
 
-    if ( pMessage->GetLength() < 2 )
+    if ( pMessage->cgc_GetLength() < 2 )
         return (false);
 
-    uint8_t toAddress = *((uint8_t*)(pMessage->GetData()+1));
+    cgc_uint8_t toAddress = *((cgc_uint8_t*)(pMessage->cgc_GetData()+1));
 
     // Now render message!
-    uint32_t messagePos = 2;
-    uint8_t *pMessageData = pMessage->GetData();
+    cgc_uint32_t messagePos = 2;
+    cgc_uint8_t *pMessageData = pMessage->cgc_GetData();
 
     // Render position
-    uint32_t renderPos = 0;
-    uint32_t renderLen = 0;
+    cgc_uint32_t renderPos = 0;
+    cgc_uint32_t renderLen = 0;
 
     bool bMarkupItalics = false;
     bool bMarkupUnderline = false;
     bool bMarkupBold = false;
 
     // Render message header
-    RenderHeader();
+    cgc_RenderHeader();
 
     // Render message data
-    while ( messagePos < pMessage->GetLength() )
+    while ( messagePos < pMessage->cgc_GetLength() )
     {
         // Read markup -- if it exists
-        uint8_t nextchar = pMessageData[messagePos++];
+        cgc_uint8_t nextchar = pMessageData[messagePos++];
 
         if ( nextchar & 0x80 )
         {
@@ -156,7 +156,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                 if ( bMarkupItalics && !bNewItalics )
                 {
                     // Stop italics
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "</i>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "</i>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -165,7 +165,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                 if ( !bMarkupItalics && bNewItalics )
                 {
                     // Start italics
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "<i>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "<i>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -174,7 +174,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                 if ( bMarkupBold && !bNewBold )
                 {
                     // Stop bold
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "</b>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "</b>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -183,7 +183,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                 if ( !bMarkupBold && bNewBold )
                 {
                     // Start bold
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "<b>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "<b>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -191,7 +191,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
 
                 if ( bMarkupUnderline && !bNewUnderline )
                 {
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "</u>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "</u>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -199,7 +199,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
 
                 if ( !bMarkupUnderline && bNewUnderline )
                 {
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "<u>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "<u>", maxBufferPos );
                     if ( renderLen == 0 )
                         break;
                     renderPos += renderLen;
@@ -222,7 +222,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                 switch( nextchar & 0xF )
                 {
                 case 0: // BR
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "<BR>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "<BR>", maxBufferPos );
                     // Check for render overrun
                     if ( renderLen == 0 )
                         bExit = true;
@@ -232,7 +232,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                     break;
 
                 case 1: // TABSTOP
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "&nbsp&nbsp&nbsp&nbsp", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "&nbsp&nbsp&nbsp&nbsp", maxBufferPos );
                     // Check for render overrun
                     if ( renderLen == 0 )
                         bExit = true;
@@ -242,7 +242,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                     break;
 
                 case 2: // Paragraph
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "<p>", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "<p>", maxBufferPos );
                     // Check for render overrun
                     if ( renderLen == 0 )
                         bExit = true;
@@ -252,7 +252,7 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
                     break;
 
                 case 3: // End paragraph
-                    renderLen = add_render_buffer( renderBuffer, renderPos, "\n", maxBufferPos );
+                    renderLen = cgc_add_render_buffer( renderBuffer, renderPos, "\n", maxBufferPos );
                     // Check for render overrun
                     if ( renderLen == 0 )
                         bExit = true;
@@ -291,25 +291,25 @@ bool CMessageRenderer::RenderMessage( CFullMessage *pMessage )
     }
 
     // Output message header information
-    printf( "<b>Message @d:</b><BR>\n", m_messageRenderCount );
+    cgc_printf( "<b>Message @d:</b><BR>\n", m_messageRenderCount );
 
     // Update message render counter
     m_messageRenderCount++;
 
     // Print who the message is from
-    printf( "<b>From:</b> @d<BR>\n", fromAddress );
+    cgc_printf( "<b>From:</b> @d<BR>\n", fromAddress );
 
     // Print who the message is to
-    printf( "<b>To:</b> @d<BR>\n", toAddress );
+    cgc_printf( "<b>To:</b> @d<BR>\n", toAddress );
 
     // Print out the message data
     renderBuffer[renderPos] = '\0';
 
     // Lastly print out the message data
-    printf( "<b>Message Data:</b><BR>\n@s\n", renderBuffer );
+    cgc_printf( "<b>Message Data:</b><BR>\n@s\n", renderBuffer );
 
     // Now render message footer
-    RenderFooter();
+    cgc_RenderFooter();
 
     return (true);
 }

@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <prng.h>
 
 
-int minimum(unsigned int a, unsigned int b) {
+int cgc_minimum(unsigned int a, unsigned int b) {
 
 	if (a < b)
 		return a;
@@ -38,7 +38,7 @@ int minimum(unsigned int a, unsigned int b) {
 		return b;
 }
 
-int max(int a, int b) {
+int cgc_max(int a, int b) {
 
 	if (a > b)
 		return a;
@@ -47,22 +47,22 @@ int max(int a, int b) {
 
 }
 
-int rand( void )
+int cgc_rand( void )
 {
-	return (random_in_range( 0, RAND_MAX-1 ));
+	return (cgc_random_in_range( 0, RAND_MAX-1 ));
 }
 
-void srand( unsigned int seed )
+void cgc_srand( unsigned int seed )
 {
-	seed_prng( seed );
+	cgc_seed_prng( seed );
 }
 
-int atoi( const char *pStr )
+int cgc_atoi( const char *pStr )
 {
 	int value = 0;
 	int negative = 0;
 
-	while ( isspace( *pStr ) )
+	while ( cgc_isspace( *pStr ) )
 		pStr++;
 
 	if ( *pStr == '\0' )
@@ -75,7 +75,7 @@ int atoi( const char *pStr )
 	}
 
 	// Read in string
-	while ( isdigit( *pStr ) )
+	while ( cgc_isdigit( *pStr ) )
 		value = (value * 10) + (*pStr++ - '0');
 
 	if ( negative )
@@ -86,7 +86,7 @@ int atoi( const char *pStr )
 
 
 
-double atof( char *pStr )
+double cgc_atof( char *pStr )
 {
 
 double tmpNumber;

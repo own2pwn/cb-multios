@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,24 +35,24 @@
 #define MAX_SEARCH_STR_SIZE 500
 
 //Put the bug here -- Get it so there is a case where resizing the buffer doesn't set it to null
-static int resize_buf(void **buf, size_t old_size)
+static int cgc_resize_buf(void **buf, cgc_size_t old_size)
 {
     if (MAX_TEXT_SIZE / 2 < old_size)
         return 0;
 
     int new_size = old_size * 2;
-    char *new_buf = malloc(new_size);
+    char *new_buf = cgc_malloc(new_size);
     if (*buf) {
-        memcpy(new_buf, *buf, old_size);
-        free(*buf);
+        cgc_memcpy(new_buf, *buf, old_size);
+        cgc_free(*buf);
     }
     *buf = new_buf;
     return new_size;
 }
 
-static unsigned char readopt(int fd) {
+static unsigned char cgc_readopt(int fd) {
     unsigned char c = 0, d = 0;
-    size_t rx;
+    cgc_size_t rx;
 
     if ((receive(fd, &c, 1, &rx) != 0 || rx == 0) || (receive(fd, &d, 1, &rx) != 0 || rx == 0))
         return -1;
@@ -67,9 +67,9 @@ static unsigned char readopt(int fd) {
     return c;
 }
 
-static int readtrex(int fd, unsigned char *trex, size_t size)
+static int cgc_readtrex(int fd, unsigned char *trex, cgc_size_t size)
 {
-    size_t i, rx;
+    cgc_size_t i, rx;
     unsigned char d = 0;
 
     for (i = 0; i < size; i++) {
@@ -92,13 +92,13 @@ static int readtrex(int fd, unsigned char *trex, size_t size)
     return i;
 }
 
-static int create_text(int fd, unsigned char **text)
+static int cgc_create_text(int fd, unsigned char **text)
 {
-    size_t len = 0, buf_size = 16, rx;
+    cgc_size_t len = 0, buf_size = 16, rx;
     unsigned char *pend_seq = TEXT_END_SEQ;
     unsigned char *buf;
 
-    buf_size = resize_buf(text, buf_size);
+    buf_size = cgc_resize_buf(text, buf_size);
     while(buf_size) {
         buf = *text;
         if (receive(fd, &buf[len], 1, &rx) != 0 || rx == 0)
@@ -110,7 +110,7 @@ static int create_text(int fd, unsigned char **text)
             pend_seq = TEXT_END_SEQ;
         }
         if (++len == buf_size)
-            buf_size = resize_buf(text, buf_size);
+            buf_size = cgc_resize_buf(text, buf_size);
     }
     if(len < 3 || !buf_size)
         goto bad_text;
@@ -119,12 +119,12 @@ static int create_text(int fd, unsigned char **text)
     return len - 2;
 bad_text:
     if (buf_size)
-        free(*text);
+        cgc_free(*text);
     *text = NULL;
     return 0;
 }
 
-void print_menu(match_type_e match_type, unsigned char *text, unsigned char *trex)
+void cgc_print_menu(cgc_match_type_e match_type, unsigned char *text, unsigned char *trex)
 {
     unsigned char temp;
     printf("Text Searcher: Main Menu\n");
@@ -137,7 +137,7 @@ void print_menu(match_type_e match_type, unsigned char *text, unsigned char *tre
     printf("7. Search Text\n");
     printf("8. Quit\n\n");
     if (text) {
-        if (strlen(text) > 15) {
+        if (cgc_strlen(text) > 15) {
             temp = text[15];
             text[15] = '\0';
             printf("[Text=%s...]\n", text);
@@ -146,8 +146,8 @@ void print_menu(match_type_e match_type, unsigned char *text, unsigned char *tre
             printf("[Text=%s]\n", text);
         }
     }
-    if (strlen(trex)) {
-        if (strlen(trex) > 15) {
+    if (cgc_strlen(trex)) {
+        if (cgc_strlen(trex) > 15) {
             temp = trex[15];
             trex[15] = '\0';
             printf("[SearchString=%s...]\n", trex);
@@ -164,31 +164,31 @@ void print_menu(match_type_e match_type, unsigned char *text, unsigned char *tre
     printf("Select: ");
 }
 
-static void test()
+static void cgc_test()
 {
-    state_t *nfa;
+    cgc_state_t *nfa;
     unsigned char *rpn = NULL;
     unsigned char *test_string = "aaaaaaaa";
     unsigned char *trex = "a";
-    int retcode = retorpn(trex, strlen(trex) + 1, &rpn);
-    retcode = retorpn(trex, strlen(trex) + 1, &rpn);
+    int retcode = cgc_retorpn(trex, cgc_strlen(trex) + 1, &rpn);
+    retcode = cgc_retorpn(trex, cgc_strlen(trex) + 1, &rpn);
     if (retcode >= 0)
-        nfa = evalrpn(rpn);
+        nfa = cgc_evalrpn(rpn);
     else
         printf("Invalid search string\n");
     if (nfa == NULL)
         printf("Bad rpn\n");
-    debug_state(nfa);
+    cgc_debug_state(nfa);
     printf("trex = %s\n", trex);
     printf("rpn = %s\n", rpn);
     printf("Test string = %s\n", test_string);
 
     printf("Partial Matching:\n");
-    match(nfa, test_string, PARTIAL);
+    cgc_match(nfa, test_string, PARTIAL);
     printf("Full Line Matching:\n");
-    match(nfa, test_string, ALL);
+    cgc_match(nfa, test_string, ALL);
 
-    exit(0);
+    cgc_exit(0);
 }
 
 int main(void)
@@ -198,27 +198,27 @@ int main(void)
     unsigned char trex[MAX_SEARCH_STR_SIZE] = {'\0'};
     unsigned char selection = 0;
     int match_len = 0, text_len = 0, trex_len = 0, retcode;
-    match_type_e match_type = PARTIAL;
-    state_t *nfa = NULL;
-    init_trex();
+    cgc_match_type_e match_type = PARTIAL;
+    cgc_state_t *nfa = NULL;
+    cgc_init_trex();
 
     do {
         printf("\n");
-        print_menu(match_type, text, trex);
-        selection = readopt(STDIN);
-        //fdprintf(2, "Selection = %c\n", selection);
+        cgc_print_menu(match_type, text, trex);
+        selection = cgc_readopt(STDIN);
+        //cgc_fdprintf(2, "Selection = %c\n", selection);
         switch(selection) {
             case '1':
                 printf("Enter text to search\n");
                 if(text) {
-                    free(text);
+                    cgc_free(text);
                     text = NULL;
                 }
-                text_len = create_text(STDIN, &text);
+                text_len = cgc_create_text(STDIN, &text);
                 break;
             case '2':
                 printf("Enter search string\n");
-                trex_len = readtrex(STDIN, trex, MAX_SEARCH_STR_SIZE);
+                trex_len = cgc_readtrex(STDIN, trex, MAX_SEARCH_STR_SIZE);
                 if (trex_len < 0)
                 {
                     trex_len = 0;
@@ -238,7 +238,7 @@ int main(void)
                     printf("--Text--\n\n", text);
                 break;
             case '6':
-                if (strlen(trex))
+                if (cgc_strlen(trex))
                     printf("--Search String--\n%s\n", trex);
                 else
                     printf("--Search String--\n\n", trex);
@@ -251,9 +251,9 @@ int main(void)
                     printf("Search text has not been received\n");
                     break;
                 }
-                retcode = retorpn(trex, strlen(trex) + 1, &rpn);
+                retcode = cgc_retorpn(trex, cgc_strlen(trex) + 1, &rpn);
                 if (retcode >= 0) {
-                    nfa = evalrpn(rpn);
+                    nfa = cgc_evalrpn(rpn);
                 } else {
                     printf("Invalid search string\n");
                     break;
@@ -262,7 +262,7 @@ int main(void)
                     printf("Bad rpn\n");
                     break;
                 }
-                match(nfa, text, match_type);
+                cgc_match(nfa, text, match_type);
                 break;
             case '8':
                 break;

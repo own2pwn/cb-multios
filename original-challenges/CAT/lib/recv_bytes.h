@@ -31,6 +31,6 @@
  * @param size The amount of bytes to recv.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int recv_bytes(int fd, char *buf, unsigned int size);
+int cgc_recv_bytes(int fd, char *buf, unsigned int size);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,22 +26,22 @@
 #include "audiostream.h"
 #include "gain.h"
 
-class AudioTrack
+class cgc_AudioTrack
 {
 public:
-    AudioTrack(AudioStream *);
-    AudioTrack(AudioStream *, AudioStream *);
-    ~AudioTrack();
+    cgc_AudioTrack(cgc_AudioStream *);
+    cgc_AudioTrack(cgc_AudioStream *, cgc_AudioStream *);
+    ~cgc_AudioTrack();
 
-    inline unsigned int getLength() const
+    inline unsigned int cgc_getLength() const
     {
-        return channels[0]->getLength();
+        return channels[0]->cgc_getLength();
     }
-    inline bool getStereo() const
+    inline bool cgc_getStereo() const
     {
         return stereo;
     }
-    inline AudioStream *getChannel(unsigned int i) const
+    inline cgc_AudioStream *cgc_getChannel(unsigned int i) const
     {
         if (i == 0)
             return channels[0];
@@ -52,37 +52,37 @@ public:
             return NULL;
     }
 
-    void setLength(unsigned int length);
-    inline void setGain(Gain level)
+    void cgc_setLength(unsigned int length);
+    inline void cgc_setGain(cgc_Gain level)
     {
         gain = level;
     }
-    inline void setPan(int32_t value)
+    inline void cgc_setPan(cgc_int32_t cgc_value)
     {
-        pan = value;
+        pan = cgc_value;
     }
-    inline void setMute(bool value)
+    inline void cgc_setMute(bool cgc_value)
     {
-        mute = value;
+        mute = cgc_value;
     }
-    inline AudioTrack *toMono()
+    inline cgc_AudioTrack *cgc_toMono()
     {
         if (!stereo)
             return NULL;
 
         stereo = false;
-        return new AudioTrack(channels[1]);
+        return new cgc_AudioTrack(channels[1]);
     }
-    bool toStereo(AudioTrack *other);
-    void mix(const AudioTrack &src);
+    bool cgc_toStereo(cgc_AudioTrack *other);
+    void cgc_mix(const cgc_AudioTrack &src);
 public:
     unsigned int id;
 private:
-    AudioTrack();
+    cgc_AudioTrack();
 
     bool stereo;
-    AudioStream *channels[2];
-    Gain gain;
-    int32_t pan;
+    cgc_AudioStream *channels[2];
+    cgc_Gain gain;
+    cgc_int32_t pan;
     bool mute;
 };

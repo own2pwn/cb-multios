@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,9 +24,9 @@
 #include "io.h"
 #include "user.h"
 
-void call_ctors(void);
+void cgc_call_ctors(void);
 
-void print_menu(User *current_user)
+void cgc_print_menu(cgc_User *current_user)
 {
     printf("Select an option\n");
     if (!current_user) {
@@ -50,21 +50,21 @@ void print_menu(User *current_user)
     }
 }
 
-bool make_selection(User *&current_user)
+bool cgc_make_selection(cgc_User *&current_user)
 {
-    size_t selection = 0;
+    cgc_size_t selection = 0;
     printf("Selection: ");
-    selection = IO::readnum();
+    selection = IO::cgc_readnum();
     if (!current_user) {
         switch(selection) {
         case 1:
-            Blog::register_user(); break;
+            Blog::cgc_register_user(); break;
         case 2:
-            current_user = Blog::log_in(); break;
+            current_user = Blog::cgc_log_in(); break;
         case 3:
-            Blog::view_user_posts(); break;
+            Blog::cgc_view_user_posts(); break;
         case 4:
-            Blog::view_user_profile(); break;
+            Blog::cgc_view_user_profile(); break;
         case 5:
             printf("Quitting\n");
             return false;
@@ -74,25 +74,25 @@ bool make_selection(User *&current_user)
     } else {
         switch(selection) {
         case 1:
-            current_user->add_post(); break;
+            current_user->cgc_add_post(); break;
         case 2:
-            current_user->delete_post(); break;
+            current_user->cgc_delete_post(); break;
         case 3:
-            current_user->edit_profile(); break;
+            current_user->cgc_edit_profile(); break;
         case 4:
-            Blog::add_friend(current_user); break;
+            Blog::cgc_add_friend(current_user); break;
         case 5:
-            current_user->list_friends(); break;
+            current_user->cgc_list_friends(); break;
         case 6:
-            current_user->unfriend(); break;
+            current_user->cgc_unfriend(); break;
         case 7:
-            Blog::view_user_posts(current_user, current_user); break;
+            Blog::cgc_view_user_posts(current_user, current_user); break;
         case 8:
-            Blog::view_user_profile(current_user); break;
+            Blog::cgc_view_user_profile(current_user); break;
         case 9:
-            Blog::view_user_posts(current_user); break;
+            Blog::cgc_view_user_posts(current_user); break;
         case 10:
-            Blog::view_user_profile(); break;
+            Blog::cgc_view_user_profile(); break;
         case 11:
             printf("Logging Out\n");
             current_user = NULL;
@@ -107,14 +107,14 @@ bool make_selection(User *&current_user)
 
 int main()
 {
-    User *current_user = NULL;
-    size_t selection = 0;
+    cgc_User *current_user = NULL;
+    cgc_size_t selection = 0;
     bool not_done = true;
 
-    call_ctors();
+    
 
     while (not_done) {
-        print_menu(current_user);
-        not_done = make_selection(current_user);
+        cgc_print_menu(current_user);
+        not_done = cgc_make_selection(current_user);
     }
 }

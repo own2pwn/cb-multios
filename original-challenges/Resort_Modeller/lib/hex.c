@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 
-int is_hex_digit(int8_t digit) {
+int cgc_is_hex_digit(cgc_int8_t digit) {
 	if (('A' <= digit) && ('F' >= digit)) {
 		return TRUE;
 	} else if (('a' <= digit) && ('f' >= digit)) {
@@ -35,7 +35,7 @@ int is_hex_digit(int8_t digit) {
 	}
 }
 
-char ascii_hex_to_bin(int8_t hex_digit) {
+char cgc_ascii_hex_to_bin(cgc_int8_t hex_digit) {
 	if (('A' <= hex_digit) && ('F' >= hex_digit)) {
 		return hex_digit - 'A' + 10;
 	} else if (('a' <= hex_digit) && ('f' >= hex_digit)) {

@@ -27,36 +27,36 @@ THE SOFTWARE.
 #include "sensor_manager.h"
 
 
-SensorManager::~SensorManager() 
+cgc_SensorManager::~cgc_SensorManager() 
 {
-	m_userList.DeleteAll();
-	m_userList.DeleteAll();
+	m_userList.cgc_DeleteAll();
+	m_userList.cgc_DeleteAll();
 }
 
-void SensorManager::PrintSensors()
+void cgc_SensorManager::cgc_PrintSensors()
 {
-	printf( "  print sensors for user: $x\n", m_currentUser );
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	cgc_printf( "  print sensors for user: $x\n", m_currentUser );
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		pCur->Print();
+		pCur->cgc_Print();
 	}
-	printf("\n");
+	cgc_printf("\n");
 }
 
-uint8_t *SensorManager::ListSensors( uint16_t &buffer_len)
+cgc_uint8_t *cgc_SensorManager::cgc_ListSensors( cgc_uint16_t &buffer_len)
 {
 	buffer_len = 0;
 				
 // each sensor is 2b ID, 4b mac: 6B
-	uint8_t data[ 6 * MAX_SENSORS_PER_USER * MAX_USERS ];
-	bzero( data, 6 * MAX_SENSORS_PER_USER * MAX_USERS );
+	cgc_uint8_t data[ 6 * MAX_SENSORS_PER_USER * MAX_USERS ];
+	cgc_bzero( data, 6 * MAX_SENSORS_PER_USER * MAX_USERS );
 
-	uint8_t *buff = (uint8_t *)&data;
+	cgc_uint8_t *buff = (cgc_uint8_t *)&data;
 
 	int count_users = 0;
 	
 	// for each user, list the first MAX_SENSORS_PER_USER
-	for ( User *pUser = m_userList.GetFirst(); pUser; pUser = m_userList.GetNext( pUser ) )
+	for ( cgc_User *pUser = m_userList.cgc_GetFirst(); pUser; pUser = m_userList.cgc_GetNext( pUser ) )
 	{
 #ifdef PATCHED_1
 		if ( count_users >= MAX_USERS )
@@ -65,39 +65,39 @@ uint8_t *SensorManager::ListSensors( uint16_t &buffer_len)
 		count_users++;
 
 		int count_per_user = 0;
-		for ( FitnessSensor *pSensor = m_sensorList.GetFirst(); pSensor; pSensor = m_sensorList.GetNext( pSensor ) )
+		for ( cgc_FitnessSensor *pSensor = m_sensorList.cgc_GetFirst(); pSensor; pSensor = m_sensorList.cgc_GetNext( pSensor ) )
 		{
 
-			if ( pSensor->GetUser() == pUser->GetId() )
+			if ( pSensor->cgc_GetUser() == pUser->cgc_GetId() )
 			{
 
 				if ( count_per_user >= MAX_SENSORS_PER_USER )
 					break;
 
 				count_per_user++;
-				uint16_t id = pSensor->GetID();
-				uint32_t mac = pSensor->GetMacAsInt();
-				memcpy( &buff[buffer_len], &id, sizeof( uint16_t ) );
+				cgc_uint16_t id = pSensor->cgc_GetID();
+				cgc_uint32_t mac = pSensor->cgc_GetMacAsInt();
+				cgc_memcpy( &buff[buffer_len], &id, sizeof( cgc_uint16_t ) );
 
-				buffer_len += sizeof( uint16_t );
-				memcpy( &buff[buffer_len], &mac, sizeof( uint32_t ) );
-				buffer_len += sizeof( uint32_t );
+				buffer_len += sizeof( cgc_uint16_t );
+				cgc_memcpy( &buff[buffer_len], &mac, sizeof( cgc_uint32_t ) );
+				buffer_len += sizeof( cgc_uint32_t );
 
-				if (pSensor->GetType() == BIKE)
+				if (pSensor->cgc_GetType() == BIKE)
 				{
-					uint8_t *data = pSensor->GetData();
+					cgc_uint8_t *data = pSensor->cgc_GetData();
 
 					if (data)
 					{
-						uint32_t len = strlen((char *)data);
+						cgc_uint32_t len = cgc_strlen((char *)data);
 #ifdef PATCHED_1		
 						if ( buffer_len < ( 6 * MAX_SENSORS_PER_USER * MAX_USERS - len + 1) )
 						{
-							memcpy(&buff[buffer_len], data, len);
+							cgc_memcpy(&buff[buffer_len], data, len);
 							buffer_len += len;
 						}
 #else
-						memcpy(&buff[buffer_len], data, len);
+						cgc_memcpy(&buff[buffer_len], data, len);
 
 						return NULL;
 #endif
@@ -106,23 +106,23 @@ uint8_t *SensorManager::ListSensors( uint16_t &buffer_len)
 			}
 		}
 	}
-	uint8_t *rbuf = new uint8_t[buffer_len];
-	memcpy(rbuf, data, buffer_len);
+	cgc_uint8_t *rbuf = new cgc_uint8_t[buffer_len];
+	cgc_memcpy(rbuf, data, buffer_len);
 	return rbuf;
 }
 
-bool SensorManager::ListHwIds( uint16_t &buffer_len, uint8_t* buff )
+bool cgc_SensorManager::cgc_ListHwIds( cgc_uint16_t &buffer_len, cgc_uint8_t* buff )
 {
 	buffer_len = 0;
 	for ( int i = 0; i < MAX_SENSOR_VALUE; i ++ )
 	{
-		buff[i] = FitnessSensor::m_sensorArray[i];
+		buff[i] = cgc_FitnessSensor::m_sensorArray[i];
 		buffer_len++;
 	}
 	return true;
 }
 
-bool MacsAreSame( SensorMacFormat a, SensorMacFormat b )
+bool cgc_MacsAreSame( cgc_SensorMacFormat a, cgc_SensorMacFormat b )
 {
 	if ( a.Type == b.Type &&
 		 a.Val_1 == b.Val_1 && 
@@ -135,12 +135,12 @@ bool MacsAreSame( SensorMacFormat a, SensorMacFormat b )
 //
 // Returns pointer to sensor if ID matches AND this is a sensor for the current user
 //
-FitnessSensor* SensorManager::GetSensor( uint16_t id )
+cgc_FitnessSensor* cgc_SensorManager::cgc_GetSensor( cgc_uint16_t id )
 {
 	// given the sensor id, return a pointer to the sensor
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetID() == id && pCur->GetUser() == m_currentUser )
+		if ( pCur->cgc_GetID() == id && pCur->cgc_GetUser() == m_currentUser )
 		{
 			return pCur;
 		}
@@ -153,17 +153,17 @@ FitnessSensor* SensorManager::GetSensor( uint16_t id )
 //
 // Add this sensor to the list under the current user's name
 //
-int SensorManager::AddSensor( FitnessSensor *sensor )
+int cgc_SensorManager::cgc_AddSensor( cgc_FitnessSensor *sensor )
 {
 	// Check if this sensor's ID is already in the list for this user
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetUser() == sensor->GetUser() && MacsAreSame( sensor->GetMAC(), pCur->GetMAC() ) )
+		if ( pCur->cgc_GetUser() == sensor->cgc_GetUser() && cgc_MacsAreSame( sensor->cgc_GetMAC(), pCur->cgc_GetMAC() ) )
 		{
 			// this sensor ID is already in the sensor list, don't add it again
 			return 1;
 		}
-		if ( pCur->GetUser() == sensor->GetUser() && sensor->GetID() == pCur->GetID() )
+		if ( pCur->cgc_GetUser() == sensor->cgc_GetUser() && sensor->cgc_GetID() == pCur->cgc_GetID() )
 		{
 			// this sensor ID is already in the sensor list, don't add it again
 			return 1;
@@ -171,9 +171,9 @@ int SensorManager::AddSensor( FitnessSensor *sensor )
 	}
 
 	int count = 0;
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetUser() == sensor->GetUser() )
+		if ( pCur->cgc_GetUser() == sensor->cgc_GetUser() )
 		{
 			count += 1;
 		}
@@ -185,18 +185,18 @@ int SensorManager::AddSensor( FitnessSensor *sensor )
 		return 2;
 	}
 
-	m_sensorList.AddLast( sensor );
+	m_sensorList.cgc_AddLast( sensor );
 	return 0;
 }
 
 //
 // Remove a sensor from the sensor list
 //
-bool SensorManager::RemoveSensor( uint16_t id, uint16_t user )
+bool cgc_SensorManager::cgc_RemoveSensor( cgc_uint16_t id, cgc_uint16_t user )
 {
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetID() == id && pCur->GetUser() == user )
+		if ( pCur->cgc_GetID() == id && pCur->cgc_GetUser() == user )
 		{
 			delete pCur;
 			return true;
@@ -211,7 +211,7 @@ bool SensorManager::RemoveSensor( uint16_t id, uint16_t user )
 // Return 0 is success (current user is set)
 // Return RET_USER_FULL if this new user couldn't be added
 //
-uint8_t SensorManager::SetCurrentUser( uint16_t user_id )
+cgc_uint8_t cgc_SensorManager::cgc_SetCurrentUser( cgc_uint16_t user_id )
 {
 	if ( user_id == INVALID_USER )
 	{
@@ -219,9 +219,9 @@ uint8_t SensorManager::SetCurrentUser( uint16_t user_id )
 		return 0;
 	}
 
-	for ( User *pCur = m_userList.GetFirst(); pCur; pCur = m_userList.GetNext( pCur ) )
+	for ( cgc_User *pCur = m_userList.cgc_GetFirst(); pCur; pCur = m_userList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetId() == user_id )
+		if ( pCur->cgc_GetId() == user_id )
 		{
 			m_currentUser = user_id;
 			return 0;
@@ -236,14 +236,14 @@ uint8_t SensorManager::SetCurrentUser( uint16_t user_id )
 // Return 1 if this user_id is already in the list
 // Return 2 if add failed (too many users)
 //
-uint8_t SensorManager::AddUser( User* new_user )
+cgc_uint8_t cgc_SensorManager::cgc_AddUser( cgc_User* new_user )
 {
 	int count = 0;
 	// Is this user already in the list?
-	for ( User *pCur = m_userList.GetFirst(); pCur; pCur = m_userList.GetNext( pCur ) )
+	for ( cgc_User *pCur = m_userList.cgc_GetFirst(); pCur; pCur = m_userList.cgc_GetNext( pCur ) )
 	{
 		count++;
-		if ( pCur->GetId() == new_user->GetId() )
+		if ( pCur->cgc_GetId() == new_user->cgc_GetId() )
 		{
 			return RET_USER_REDUNDANT;
 		}
@@ -253,7 +253,7 @@ uint8_t SensorManager::AddUser( User* new_user )
 		return RET_USER_FULL;
 
 	// Add user to list
-	m_userList.AddLast( new_user );
+	m_userList.cgc_AddLast( new_user );
 
 	return RET_USER_ADDED;
 }
@@ -261,11 +261,11 @@ uint8_t SensorManager::AddUser( User* new_user )
 //
 // Return true if this id is registered with the current user
 //
-bool SensorManager::VerifySensor( uint16_t id )
+bool cgc_SensorManager::cgc_VerifySensor( cgc_uint16_t id )
 {
-	for ( FitnessSensor *pCur = m_sensorList.GetFirst(); pCur; pCur = m_sensorList.GetNext( pCur ) )
+	for ( cgc_FitnessSensor *pCur = m_sensorList.cgc_GetFirst(); pCur; pCur = m_sensorList.cgc_GetNext( pCur ) )
 	{
-		if ( pCur->GetID() == id && pCur->GetUser() == this->m_currentUser )
+		if ( pCur->cgc_GetID() == id && pCur->cgc_GetUser() == this->m_currentUser )
 		{
 			return true;
 		}
@@ -276,12 +276,12 @@ bool SensorManager::VerifySensor( uint16_t id )
 //
 // Add new distance to a user's total distance
 //
-bool SensorManager::AddDistance( uint16_t new_dist, uint16_t user )
+bool cgc_SensorManager::cgc_AddDistance( cgc_uint16_t new_dist, cgc_uint16_t user )
 {
-	User *thisUser;
-	for ( thisUser = m_userList.GetFirst(); thisUser; thisUser = m_userList.GetNext( thisUser ) )
+	cgc_User *thisUser;
+	for ( thisUser = m_userList.cgc_GetFirst(); thisUser; thisUser = m_userList.cgc_GetNext( thisUser ) )
 	{
-		if ( thisUser->GetId() == user )
+		if ( thisUser->cgc_GetId() == user )
 		{
 			goto found;
 		}
@@ -289,7 +289,7 @@ bool SensorManager::AddDistance( uint16_t new_dist, uint16_t user )
 	return false;
 
 found:
-	thisUser->AddTotalDistance( new_dist );
+	thisUser->cgc_AddTotalDistance( new_dist );
 
 	return true;
 } 

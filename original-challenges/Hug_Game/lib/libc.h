@@ -25,11 +25,11 @@ THE SOFTWARE.
 */
 #ifndef _LIBC_H
 #define _LIBC_H
-int put(char *string);
-void bzero(char *what, int howmany);
-int recvUntil(int fd, char *buf, int max, char delim);
-int strlen(char * string);
-unsigned int atoi(char *number);
-char *itoa(unsigned int number);
-int memcpy(char *dst, char *src, int size);
+int cgc_put(char *string);
+void cgc_bzero(char *what, int howmany);
+int cgc_recvUntil(int fd, char *buf, int max, char delim);
+int cgc_strlen(char * string);
+unsigned int cgc_atoi(char *number);
+char *cgc_itoa(unsigned int number);
+int cgc_memcpy(char *dst, char *src, int size);
 #endif

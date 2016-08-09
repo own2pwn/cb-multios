@@ -26,22 +26,22 @@ THE SOFTWARE.
 #ifndef __STDLIB_H__
 #define __STDLIB_H__
 
-int isspace( int c );
-int isdigit( int c );
-int isnan( double val );
-int isinf( double val );
-double atof(const char *str);
-int atoi(const char *str);
+int cgc_isspace( int c );
+int cgc_isdigit( int c );
+int cgc_isnan( double val );
+int cgc_isinf( double val );
+double cgc_atof(const char *str);
+int cgc_atoi(const char *str);
 
-char *strcpy( char *dest, char *src );
-int printf( const char *fmt, ... );
-void bzero( void *, size_t );
-int strcmp( const char *, const char * );
-char *strncat( char *dest, const char *src, size_t n );
-size_t receive_until( char *, char, size_t );
-size_t strcat( char *, char* );
-size_t strlen( char * );
-size_t itoa( char *, size_t, size_t );
-void puts( char *t );
+char *cgc_strcpy( char *dest, char *src );
+int cgc_printf( const char *fmt, ... );
+void cgc_bzero( void *, cgc_size_t );
+int cgc_strcmp( const char *, const char * );
+char *cgc_strncat( char *dest, const char *src, cgc_size_t n );
+cgc_size_t cgc_receive_until( char *, char, cgc_size_t );
+cgc_size_t cgc_strcat( char *, char* );
+cgc_size_t cgc_strlen( char * );
+cgc_size_t cgc_itoa( char *, cgc_size_t, cgc_size_t );
+void cgc_puts( char *t );
 
 #endif // __STDLIB_H__

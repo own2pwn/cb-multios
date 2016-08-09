@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,25 +34,25 @@ THE SOFTWARE.
 
 // Globals for handles to the filesystem objects
 void *fileSystem;
-mbStructType *masterBlocks;
+cgc_mbStructType *masterBlocks;
 unsigned char *freeList;
-rootDirType *rootDir;
-fileCursorType fileCursors[MAX_OPEN_FILES];
+cgc_rootDirType *rootDir;
+cgc_fileCursorType fileCursors[MAX_OPEN_FILES];
 
 
 // internally used functions
-void setBlockInUse( unsigned int blockNum );
-void setBlockAsFree( unsigned int blockNum );
-unsigned int findFreeBlock( unsigned int *blockNum );
-void eraseBlock( unsigned int blockNum );
-unsigned int addNewBlock(fileHandleType fh); 
-int writeBlock(void *blockData, unsigned int blockNum);
-int readBlock(unsigned int blockNum, void **buffer); 
-int wildcard_search(char *search, char *target);
-int readMemoryFile(fileHandleType fh, char *buffer, unsigned int size, unsigned int *numRead );
-int writeMemoryFile(fileHandleType fh, char *buffer, unsigned int size );
+void cgc_setBlockInUse( unsigned int blockNum );
+void cgc_setBlockAsFree( unsigned int blockNum );
+unsigned int cgc_findFreeBlock( unsigned int *blockNum );
+void cgc_eraseBlock( unsigned int blockNum );
+unsigned int cgc_addNewBlock(cgc_fileHandleType fh); 
+int cgc_writeBlock(void *blockData, unsigned int blockNum);
+int cgc_readBlock(unsigned int blockNum, void **buffer); 
+int cgc_wildcard_search(char *search, char *target);
+int cgc_readMemoryFile(cgc_fileHandleType fh, char *buffer, unsigned int size, unsigned int *numRead );
+int cgc_writeMemoryFile(cgc_fileHandleType fh, char *buffer, unsigned int size );
 
-int initFileSystem( unsigned int sectorSize, unsigned int blockSize, unsigned int totalSize) {
+int cgc_initFileSystem( unsigned int sectorSize, unsigned int blockSize, unsigned int totalSize) {
 	
 unsigned int numSectors;
 unsigned int numBlocks;
@@ -89,10 +89,10 @@ int retval;
 	}
 
 	// if we got here, we have a suitable block of memory
-	bzero(fileSystem, totalSize);
+	cgc_bzero(fileSystem, totalSize);
 
 	// put the masterBlocks into the first block of the filesystem
-	masterBlocks = (mbStructType *)fileSystem;
+	masterBlocks = (cgc_mbStructType *)fileSystem;
 
 	masterBlocks->mblock0.inUse = 1;
 	masterBlocks->mblock0.totalSize = totalSize;
@@ -102,9 +102,9 @@ int retval;
 	masterBlocks->mblock0.freeListBlock = 1;
 
 #ifdef PATCHED_1
-	masterBlocks->mblock0.dirEntriesPerBlock = (blockSize - 8)/sizeof(directoryEntryType);
+	masterBlocks->mblock0.dirEntriesPerBlock = (blockSize - 8)/sizeof(cgc_directoryEntryType);
 #else
-	masterBlocks->mblock0.dirEntriesPerBlock = blockSize /sizeof(directoryEntryType);
+	masterBlocks->mblock0.dirEntriesPerBlock = blockSize /sizeof(cgc_directoryEntryType);
 #endif
 	masterBlocks->mblock0.blockEntriesPerCatalog = (blockSize - 8) / sizeof(int);
 	masterBlocks->mblock0.checkValue = 0;    // unused for now
@@ -115,22 +115,22 @@ int retval;
 	freeList = (unsigned char *)(fileSystem + blockSize);
 
 	// and the root directory to the third
-	rootDir = (rootDirType *)(fileSystem + (blockSize * 2));
+	rootDir = (cgc_rootDirType *)(fileSystem + (blockSize * 2));
 
 
 	// make sure these blocks are marked as in use
-	setBlockInUse(0);  // master block
-	setBlockInUse(1);  // free list block
-	setBlockInUse(2);  // root directory
+	cgc_setBlockInUse(0);  // master block
+	cgc_setBlockInUse(1);  // cgc_free list block
+	cgc_setBlockInUse(2);  // root directory
 
 	// now setup the root directory
 
-	// calculate the max number of entries given the size of a block, minus the space for a link to the next block
-	rootDir->maxEntries = (blockSize - 8)/sizeof(directoryEntryType);
+	// calculate the cgc_max number of entries given the size of a block, minus the space for a link to the next block
+	rootDir->maxEntries = (blockSize - 8)/sizeof(cgc_directoryEntryType);
 
 	rootDir->numEntries = 0;
 
-	bzero( fileCursors, sizeof(fileCursors));
+	cgc_bzero( fileCursors, sizeof(fileCursors));
 
 	return NO_ERROR;
 
@@ -138,7 +138,7 @@ int retval;
 
 
 // returns 0 if file found, -1 if not found
-int statusFile(char *name, fileInfoType *info) {
+int cgc_statusFile(char *name, cgc_fileInfoType *info) {
 
 int i;
 
@@ -158,7 +158,7 @@ int i;
 
 	for ( i = 0; i < rootDir->maxEntries; ++i ) {
 
-		if ( strcmp(rootDir->entry[i].name, name) == 0) {
+		if ( cgc_strcmp(rootDir->entry[i].name, name) == 0) {
 
 
 			if (info != 0 ) {
@@ -169,7 +169,7 @@ int i;
 
 			return NO_ERROR;
 
-		} // if strcmp
+		} // if cgc_strcmp
 
 	}  // for
 
@@ -177,7 +177,7 @@ int i;
 
 }
 
-fileHandleType openFile(char *name, securityIdType securityID) {
+cgc_fileHandleType cgc_openFile(char *name, cgc_securityIdType securityID) {
 
 int i;
 int x;
@@ -191,7 +191,7 @@ int x;
 	for ( i = 0; i < rootDir->maxEntries; ++i ) {
 
 		// found a matching name in the directory
-		if ( strcmp(rootDir->entry[i].name, name) == 0) {
+		if ( cgc_strcmp(rootDir->entry[i].name, name) == 0) {
 
 
 			// if this file doesn't belong to this user and the user isn't "root"
@@ -214,7 +214,7 @@ int x;
 
 			}
 
-			// find a free fileCursor and assign it to this file
+			// find a cgc_free fileCursor and assign it to this file
 			for ( x = 0; x < MAX_OPEN_FILES; ++x ) {
 
 				if (fileCursors[x].inUse == 0)
@@ -236,7 +236,7 @@ int x;
 			fileCursors[x].othersPermissions = rootDir->entry[i].othersPermissions;
 			fileCursors[x].fileType = rootDir->entry[i].fileType;
 
-			// if the file has data in it, position the write cursor at the end
+			// if the file has data in it, position the cgc_write cursor at the end
 			if (rootDir->entry[i].fileSize > 0) {
 				
 				fileCursors[x].writeBlockNum = rootDir->entry[i].fileSize / masterBlocks->mblock0.blockSize;
@@ -246,7 +246,7 @@ int x;
 
 			return x;
 
-		} // if strcmp
+		} // if cgc_strcmp
 
 	}  // for
 
@@ -254,7 +254,7 @@ return (ERROR_NOT_FOUND);
 
 }
 
-int setPerms(fileHandleType fh, otherPermsType othersPermissions, securityIdType securityID) {
+int cgc_setPerms(cgc_fileHandleType fh, cgc_otherPermsType othersPermissions, cgc_securityIdType securityID) {
 
 
 	if (fh > MAX_OPEN_FILES) {
@@ -284,7 +284,7 @@ int setPerms(fileHandleType fh, otherPermsType othersPermissions, securityIdType
 }
 
 
-int closeFile(fileHandleType fh) {
+int cgc_closeFile(cgc_fileHandleType fh) {
 
 
 	if (fh > MAX_OPEN_FILES)
@@ -293,7 +293,7 @@ int closeFile(fileHandleType fh) {
 	if (fileCursors[fh].inUse == 0)
 		return ERROR_BAD_HANDLE;
 
-	flushFile(fh);
+	cgc_flushFile(fh);
 
 	fileCursors[fh].inUse = 0;
 	fileCursors[fh].dirEntryNum = 0;
@@ -307,7 +307,7 @@ int closeFile(fileHandleType fh) {
 }
 
 
-int createFile(char *name, enum fileTypes type, securityIdType securityID) {
+int cgc_createFile(char *name, enum fileTypes type, cgc_securityIdType securityID) {
 
 int i;
 unsigned int catalogBlock;
@@ -328,7 +328,7 @@ unsigned int catalogBlock;
 	}
 
 	// if the file already exists, return error
-	if ( statusFile(name, 0) == 0 ) {
+	if ( cgc_statusFile(name, 0) == 0 ) {
 
 		return ERROR_FILE_EXISTS;
 
@@ -340,7 +340,7 @@ unsigned int catalogBlock;
 
 		if ( rootDir->entry[i].name[0] == 0) {
 
-			strncpy(rootDir->entry[i].name, name, MAX_FILENAME_LEN);
+			cgc_strncpy(rootDir->entry[i].name, name, MAX_FILENAME_LEN);
 			rootDir->entry[i].fileSize = 0;
 			rootDir->entry[i].fileType = type;
 			rootDir->entry[i].securityID = securityID;
@@ -348,11 +348,11 @@ unsigned int catalogBlock;
 
 			// now allocate a block for its first catalog block
 
-			if (findFreeBlock(&catalogBlock) == 0 ) {
+			if (cgc_findFreeBlock(&catalogBlock) == 0 ) {
 
-				eraseBlock(catalogBlock);
+				cgc_eraseBlock(catalogBlock);
 
-				setBlockInUse(catalogBlock);
+				cgc_setBlockInUse(catalogBlock);
 
 				rootDir->entry[i].firstCatalogBlock = catalogBlock;
 
@@ -366,7 +366,7 @@ unsigned int catalogBlock;
 			rootDir->numEntries++;
 			return NO_ERROR;
 
-		} // if strcmp
+		} // if cgc_strcmp
 
 	}  // for
 
@@ -375,7 +375,7 @@ unsigned int catalogBlock;
 }
 
 
-int writeFile(fileHandleType fh, char *buffer, unsigned int size, securityIdType securityID) {
+int cgc_writeFile(cgc_fileHandleType fh, char *buffer, unsigned int size, cgc_securityIdType securityID) {
 
 unsigned int leftToWrite;
 unsigned int writePtr;
@@ -427,7 +427,7 @@ int retcode;
 	// treat a memory file specially 
 	if (fileCursors[fh].fileType > 2 ) {
 
-		retcode=writeMemoryFile( fh, buffer, size );
+		retcode=cgc_writeMemoryFile( fh, buffer, size );
 
 		return retcode;
 
@@ -449,7 +449,7 @@ int retcode;
 
 		if (blockOffset == 0 && writePos == fileCursors[fh].fileSize) {
 
-			if (addNewBlock(fh) == -1) {
+			if (cgc_addNewBlock(fh) == -1) {
 
 				return ERROR_NO_BLOCKS;
 
@@ -461,7 +461,7 @@ int retcode;
 		dirEntry = fileCursors[fh].dirEntryNum;
 
 		// read the catalog for this file
-		if (readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock) != 0) {
+		if (cgc_readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock) != 0) {
 
 			return ERROR_READ_ERROR;
 
@@ -471,19 +471,19 @@ int retcode;
 
 		deallocate(catalogBlock, blockSize);
 
-		writeLength = minimum(blockSize - blockOffset, leftToWrite);
+		writeLength = cgc_minimum(blockSize - blockOffset, leftToWrite);
 
-		if (readBlock(blockNumForWrite, &blockForWrite)!=0) {
+		if (cgc_readBlock(blockNumForWrite, &blockForWrite)!=0) {
 
 			return ERROR_READ_ERROR;
 
 		}
 
-		memcpy(blockForWrite+blockOffset, buffer, writeLength);
+		cgc_memcpy(blockForWrite+blockOffset, buffer, writeLength);
 
-		writeBlock(blockForWrite, blockNumForWrite);
+		cgc_writeBlock(blockForWrite, blockNumForWrite);
 
-		// free the memory for the buffer
+		// cgc_free the memory for the buffer
 		deallocate(blockForWrite, blockSize);
 
 		leftToWrite -= writeLength;
@@ -502,7 +502,7 @@ int retcode;
 
 // read up to size bytes from the file.  Stops reading if the end of file is reached.
 // returns the actual number of bytes read, or -1 on error
-int readFile(fileHandleType fh, char *buffer, unsigned int size, int relPosition, unsigned int *numRead, securityIdType securityID) {
+int cgc_readFile(cgc_fileHandleType fh, char *buffer, unsigned int size, int relPosition, unsigned int *numRead, cgc_securityIdType securityID) {
 
 int i;
 int retval;
@@ -556,7 +556,7 @@ int retcode;
 	// treat a memory file specially 
 	if (fileCursors[fh].fileType > 2 ) {
 
-		retcode=readMemoryFile( fh, buffer, size, numRead );
+		retcode=cgc_readMemoryFile( fh, buffer, size, numRead );
 
 		return retcode;
 
@@ -569,7 +569,7 @@ int retcode;
 
 		offset = relPosition;
 	
-		if (fileReadPosRelative(fh, offset) != 0 ) {
+		if (cgc_fileReadPosRelative(fh, offset) != 0 ) {
 
 			return ERROR_BAD_VALUE;
 	
@@ -600,7 +600,7 @@ int retcode;
 
 		// read the catalog for this file
 		// re-read it every time because it could also get written to, extending the EOF
-		if (readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
+		if (cgc_readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
 
 			return ERROR_READ_ERROR;
 
@@ -610,7 +610,7 @@ int retcode;
 
 		deallocate(catalogBlock, blockSize);
 
-		if (readBlock(blockNumForRead, &blockToRead)!= 0) {
+		if (cgc_readBlock(blockNumForRead, &blockToRead)!= 0) {
 
 			return ERROR_READ_ERROR;
 
@@ -626,9 +626,9 @@ int retcode;
 		remainingInBlock = blockSize - readOffset;
 		remainingInFile = rootDir->entry[dirEntry].fileSize - readPos;
 
-		amountToRead = minimum( minimum(remainingInFile, remainingInBlock), leftToRead);
+		amountToRead = cgc_minimum( cgc_minimum(remainingInFile, remainingInBlock), leftToRead);
 
-		memcpy(buffer+bytesRead, blockToRead+readOffset, amountToRead);
+		cgc_memcpy(buffer+bytesRead, blockToRead+readOffset, amountToRead);
 
 		// we are done with this block so release the memory
 		deallocate((void *)blockToRead, blockSize);
@@ -654,7 +654,7 @@ int retcode;
 	}
 }
 
-int readMemoryFile(fileHandleType fh, char *buffer, unsigned int size, unsigned int *numRead ) {
+int cgc_readMemoryFile(cgc_fileHandleType fh, char *buffer, unsigned int size, unsigned int *numRead ) {
 
 unsigned int *catalogBlock;
 unsigned int copySize;
@@ -669,7 +669,7 @@ struct memoryFileInfo {
 	// all security validation has already been done, so just skip to reading
 
 	// first load the memory region info from the special catalogblock
-	if (readBlock(rootDir->entry[fileCursors[fh].dirEntryNum].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
+	if (cgc_readBlock(rootDir->entry[fileCursors[fh].dirEntryNum].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
 
 		return ERROR_READ_ERROR;
 
@@ -685,16 +685,16 @@ struct memoryFileInfo {
 	}
 
 
-	copySize = minimum(size, fileCursors[fh].fileSize - fileCursors[fh].readPos);
+	copySize = cgc_minimum(size, fileCursors[fh].fileSize - fileCursors[fh].readPos);
 
 	// copy the memory into the buffer and return
-	memcpy(buffer, (void *)memoryInfo->address+fileCursors[fh].readPos, copySize);
+	cgc_memcpy(buffer, (void *)memoryInfo->address+fileCursors[fh].readPos, copySize);
 
 	*numRead = copySize;
 
 	fileCursors[fh].readPos += copySize;
 
-	// free the catalog block
+	// cgc_free the catalog block
 	deallocate(catalogBlock, masterBlocks->mblock0.blockSize);
 
 	if (fileCursors[fh].readPos >= fileCursors[fh].fileSize ) {
@@ -709,7 +709,7 @@ struct memoryFileInfo {
 	}
 }
 
-int writeMemoryFile(fileHandleType fh, char *buffer, unsigned int size ) {
+int cgc_writeMemoryFile(cgc_fileHandleType fh, char *buffer, unsigned int size ) {
 
 unsigned int *catalogBlock;
 unsigned int copySize;
@@ -724,7 +724,7 @@ struct memoryFileInfo {
 	// all security validation has already been done, so just skip to writing
 
 	// first load the memory region info from the special catalogblock
-	if (readBlock(rootDir->entry[fileCursors[fh].dirEntryNum].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
+	if (cgc_readBlock(rootDir->entry[fileCursors[fh].dirEntryNum].firstCatalogBlock, (void **)&catalogBlock)!= 0) {
 
 		return ERROR_READ_ERROR;
 
@@ -740,12 +740,12 @@ struct memoryFileInfo {
 	}
 
 	// copy the memory into the buffer and return
-	memcpy((void *)memoryInfo->address, buffer, size);
+	cgc_memcpy((void *)memoryInfo->address, buffer, size);
 
 
 	fileCursors[fh].fileSize = size;
 
-	// free the catalog block
+	// cgc_free the catalog block
 	deallocate(catalogBlock, masterBlocks->mblock0.blockSize);
 
 	return NO_ERROR;
@@ -753,7 +753,7 @@ struct memoryFileInfo {
 }
 
 // Updates the open fileCursor and directory entry to reflect any writes that have occurred.  
-int flushFile(fileHandleType fh) {
+int cgc_flushFile(cgc_fileHandleType fh) {
 
 	if (fh > MAX_OPEN_FILES) {
 
@@ -777,7 +777,7 @@ int flushFile(fileHandleType fh) {
 }
 
 // update the fileCursor's read pointer to the offset specified
-int fileReadPosition(fileHandleType fh, unsigned int offset) {
+int cgc_fileReadPosition(cgc_fileHandleType fh, unsigned int offset) {
 
 	if (fh > MAX_OPEN_FILES) {
 
@@ -801,7 +801,7 @@ int fileReadPosition(fileHandleType fh, unsigned int offset) {
 }
 
 // update the fileCursor's read pointer relative to the current value
-int fileReadPosRelative(fileHandleType fh, int offset) {
+int cgc_fileReadPosRelative(cgc_fileHandleType fh, int offset) {
 
 	if (fh > MAX_OPEN_FILES) {
 
@@ -833,9 +833,9 @@ int fileReadPosRelative(fileHandleType fh, int offset) {
 	return NO_ERROR;
 }
 
-// update the fileCursor's write pointer to the absolute value
+// update the fileCursor's cgc_write pointer to the absolute value
 // going beyond the end of file is an error
-int fileWritePosition(fileHandleType fh, unsigned int offset) {
+int cgc_fileWritePosition(cgc_fileHandleType fh, unsigned int offset) {
 
 	if (fh > MAX_OPEN_FILES) {
 
@@ -857,8 +857,8 @@ int fileWritePosition(fileHandleType fh, unsigned int offset) {
 	return NO_ERROR;
 }
 
-// update the write position relative to the current value
-int fileWritePosRelative(fileHandleType fh, int offset) {
+// update the cgc_write position relative to the current value
+int cgc_fileWritePosRelative(cgc_fileHandleType fh, int offset) {
 
 	if (fh > MAX_OPEN_FILES) {
 
@@ -891,7 +891,7 @@ int fileWritePosRelative(fileHandleType fh, int offset) {
 
 }
 
-int deleteFile( fileHandleType fh, securityIdType securityID ) {
+int cgc_deleteFile( cgc_fileHandleType fh, cgc_securityIdType securityID ) {
 
 unsigned int dirEntry;
 unsigned int *catalogBlock;
@@ -925,7 +925,7 @@ struct memoryFileInfo {
 	dirEntry = fileCursors[fh].dirEntryNum;
 	
 	// read the catalog for this file
-	retval = readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock);
+	retval = cgc_readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock);
 
 	if (retval != 0) {
 
@@ -939,7 +939,7 @@ struct memoryFileInfo {
 
 		if (memoryInfo->address > 0 ) {
 
-			free((void *)memoryInfo->address);
+			cgc_free((void *)memoryInfo->address);
 
 		}
 
@@ -949,17 +949,17 @@ struct memoryFileInfo {
 
 		while(*entryPtr != 0) {
 
-			eraseBlock(*entryPtr);
-			setBlockAsFree(*entryPtr);
+			cgc_eraseBlock(*entryPtr);
+			cgc_setBlockAsFree(*entryPtr);
 			++entryPtr;
 		}
 	}
 
 	deallocate((void *)catalogBlock, masterBlocks->mblock0.blockSize);
 
-	eraseBlock(rootDir->entry[dirEntry].firstCatalogBlock);
+	cgc_eraseBlock(rootDir->entry[dirEntry].firstCatalogBlock);
 
-	setBlockAsFree(rootDir->entry[dirEntry].firstCatalogBlock);
+	cgc_setBlockAsFree(rootDir->entry[dirEntry].firstCatalogBlock);
 
 	rootDir->entry[dirEntry].name[0] = 0;
 	rootDir->entry[dirEntry].fileSize = 0;
@@ -977,7 +977,7 @@ struct memoryFileInfo {
 }
 
 
-int truncateFile( fileHandleType fh, securityIdType securityID ) {
+int cgc_truncateFile( cgc_fileHandleType fh, cgc_securityIdType securityID ) {
 
 unsigned int dirEntry;
 unsigned int *catalogBlock;
@@ -1011,7 +1011,7 @@ int retval;
 	dirEntry = fileCursors[fh].dirEntryNum;
 	
 	// read the catalog for this file
-	retval = readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock);
+	retval = cgc_readBlock(rootDir->entry[dirEntry].firstCatalogBlock, (void **)&catalogBlock);
 
 	if (retval != 0) {
 
@@ -1023,16 +1023,16 @@ int retval;
 
 	while(*entryPtr != 0) {
 
-		eraseBlock(*entryPtr);
+		cgc_eraseBlock(*entryPtr);
 
-		setBlockAsFree(*entryPtr);
+		cgc_setBlockAsFree(*entryPtr);
 
 		++entryPtr;
 	}
 
 	deallocate((void *)catalogBlock, masterBlocks->mblock0.blockSize);
 
-	eraseBlock(rootDir->entry[dirEntry].firstCatalogBlock);
+	cgc_eraseBlock(rootDir->entry[dirEntry].firstCatalogBlock);
 
 	rootDir->entry[dirEntry].fileSize = 0;
 
@@ -1046,14 +1046,14 @@ int retval;
 }
 
 
-int findFiles( char *filespec, findFileHandleType **findFileHandle ) {
+int cgc_findFiles( char *filespec, cgc_findFileHandleType **findFileHandle ) {
 
 int i;
-directoryEntryType *currentFile;
+cgc_directoryEntryType *currentFile;
 char strcmpbuffer[MAX_FILENAME_LEN+1];
 char tempbuffer[24];
 
-static findFileHandleType fileHandle;
+static cgc_findFileHandleType fileHandle;
 
 	if (rootDir == 0) {
 
@@ -1067,13 +1067,13 @@ static findFileHandleType fileHandle;
 
 		if (currentFile->name[0] != 0 ) {
 
-			// nulls aren't necessariy stored in the directory if the filename has max length
+			// nulls aren't necessariy stored in the directory if the filename has cgc_max length
 			// so make a copy that we can use with the wildcard search function
-			strncpy(strcmpbuffer, currentFile->name, MAX_FILENAME_LEN);
+			cgc_strncpy(strcmpbuffer, currentFile->name, MAX_FILENAME_LEN);
 			strcmpbuffer[MAX_FILENAME_LEN] = 0;
 
 			// now match against the filespec
-			if (filespec[0] != 0 && wildcard_search(filespec, strcmpbuffer) != 1) {
+			if (filespec[0] != 0 && cgc_wildcard_search(filespec, strcmpbuffer) != 1) {
 				currentFile++;
 				continue;
 			}
@@ -1082,7 +1082,7 @@ static findFileHandleType fileHandle;
 			// access to the real directory structure
 
 			fileHandle.currentFile = currentFile;
-			strncpy(fileHandle.filespec, filespec, MAX_FILENAME_LEN);
+			cgc_strncpy(fileHandle.filespec, filespec, MAX_FILENAME_LEN);
 
 			*findFileHandle = &fileHandle;
 
@@ -1097,7 +1097,7 @@ static findFileHandleType fileHandle;
 
 } 
 
-int findNextFile( findFileHandleType *findFileHandle) {
+int cgc_findNextFile( cgc_findFileHandleType *findFileHandle) {
 
 	if (findFileHandle == 0) {
 
@@ -1111,7 +1111,7 @@ int findNextFile( findFileHandleType *findFileHandle) {
 
 		if (findFileHandle->currentFile->name[0] != 0) {
 
-			if (findFileHandle->filespec[0] != 0 && wildcard_search(findFileHandle->filespec, findFileHandle->currentFile->name ) != 1) {
+			if (findFileHandle->filespec[0] != 0 && cgc_wildcard_search(findFileHandle->filespec, findFileHandle->currentFile->name ) != 1) {
 
 				continue;
 			}
@@ -1125,15 +1125,15 @@ int findNextFile( findFileHandleType *findFileHandle) {
 
 }
 
-void eraseBlock( unsigned int blockNum) {
+void cgc_eraseBlock( unsigned int blockNum) {
 unsigned int blockSize;
 
 	blockSize = masterBlocks->mblock0.blockSize;
-	bzero((unsigned char *)(fileSystem + (blockSize * blockNum)), blockSize);
+	cgc_bzero((unsigned char *)(fileSystem + (blockSize * blockNum)), blockSize);
 
 }
 
-void setBlockInUse(unsigned int blockNum) {
+void cgc_setBlockInUse(unsigned int blockNum) {
 
 int byteNum;
 int bitNum;
@@ -1145,7 +1145,7 @@ int bitNum;
 
 }
 
-void setBlockAsFree(unsigned int blockNum) {
+void cgc_setBlockAsFree(unsigned int blockNum) {
 
 int byteNum;
 int bitNum;
@@ -1157,7 +1157,7 @@ int bitNum;
 
 }
 
-unsigned int findFreeBlock(unsigned int *blockNum) {
+unsigned int cgc_findFreeBlock(unsigned int *blockNum) {
 
 int i;
 int x;
@@ -1207,7 +1207,7 @@ unsigned char tempByte;
 
 }
 
-int getFileSystemInfo(fileSystemInfoType *fsInfo) {
+int cgc_getFileSystemInfo(cgc_fileSystemInfoType *fsInfo) {
 
 	if ( fsInfo == 0 ) {
 
@@ -1231,7 +1231,7 @@ int getFileSystemInfo(fileSystemInfoType *fsInfo) {
 
 }
 
-int readBlock(unsigned int blockNum, void **buffer) {
+int cgc_readBlock(unsigned int blockNum, void **buffer) {
 
 void *blockData;
 unsigned int blockSize;
@@ -1257,7 +1257,7 @@ int retval;
 
 	}
 
-	memcpy(blockData, (fileSystem + (blockSize * blockNum)), blockSize);
+	cgc_memcpy(blockData, (fileSystem + (blockSize * blockNum)), blockSize);
 
 	*buffer = blockData;
 
@@ -1265,7 +1265,7 @@ int retval;
 
 }
 
-int writeBlock(void *blockData, unsigned int blockNum) {
+int cgc_writeBlock(void *blockData, unsigned int blockNum) {
 
 unsigned int blockSize;
 
@@ -1277,14 +1277,14 @@ unsigned int blockSize;
 	
 	blockSize = masterBlocks->mblock0.blockSize;
 
-	memcpy(fileSystem + (blockSize * blockNum), blockData, blockSize);
+	cgc_memcpy(fileSystem + (blockSize * blockNum), blockData, blockSize);
 
 	return NO_ERROR;
 
 }
 
 
-unsigned int addNewBlock(fileHandleType fh) {
+unsigned int cgc_addNewBlock(cgc_fileHandleType fh) {
 
 unsigned int newBlockNum;
 void *catalogBlock;
@@ -1307,7 +1307,7 @@ int retval;
 	dirEntry = fileCursors[fh].dirEntryNum;
 
 	// read the catalog for this file
-	retval = readBlock(rootDir->entry[dirEntry].firstCatalogBlock, &catalogBlock);
+	retval = cgc_readBlock(rootDir->entry[dirEntry].firstCatalogBlock, &catalogBlock);
 
 	if (retval != 0) {
 
@@ -1327,28 +1327,28 @@ int retval;
 
 	}
 
-	if (findFreeBlock(&newBlockNum) != NO_ERROR) {
+	if (cgc_findFreeBlock(&newBlockNum) != NO_ERROR) {
 
 		return ERROR_NO_BLOCKS;
 
 	}
 
-	setBlockInUse(newBlockNum);
+	cgc_setBlockInUse(newBlockNum);
 
 	// add this new block to the catalog for this file
 	*((unsigned int *)catalogBlock+i) = newBlockNum;
 
-	// and write the block back 
-	writeBlock(catalogBlock, rootDir->entry[dirEntry].firstCatalogBlock);
+	// and cgc_write the block back 
+	cgc_writeBlock(catalogBlock, rootDir->entry[dirEntry].firstCatalogBlock);
 
-	// release the memory allocated by readBlock
+	// release the memory allocated by cgc_readBlock
 	deallocate(catalogBlock, masterBlocks->mblock0.blockSize);
 
 	return newBlockNum;
 
 }
 
-int makeMemoryFile(char *name, unsigned int address, unsigned int length, char accessType, securityIdType securityID ) {
+int cgc_makeMemoryFile(char *name, unsigned int address, unsigned int length, char accessType, cgc_securityIdType securityID ) {
 
 int i;
 unsigned int catalogBlock;
@@ -1374,7 +1374,7 @@ struct {
 	}
 
 	// if the file already exists, return error
-	if ( statusFile(name, 0) == 0 ) {
+	if ( cgc_statusFile(name, 0) == 0 ) {
 
 		return ERROR_FILE_EXISTS;
 
@@ -1386,7 +1386,7 @@ struct {
 
 		if ( rootDir->entry[i].name[0] == 0) {
 
-			strncpy(rootDir->entry[i].name, name, MAX_FILENAME_LEN);
+			cgc_strncpy(rootDir->entry[i].name, name, MAX_FILENAME_LEN);
 			rootDir->entry[i].fileSize = length;
 			rootDir->entry[i].fileType = 0x3 + accessType;
 			rootDir->entry[i].securityID = securityID;
@@ -1394,11 +1394,11 @@ struct {
 
 			// now allocate a block for its first catalog block
 
-			if (findFreeBlock(&catalogBlock) == 0 ) {
+			if (cgc_findFreeBlock(&catalogBlock) == 0 ) {
 
-				eraseBlock(catalogBlock);
+				cgc_eraseBlock(catalogBlock);
 
-				setBlockInUse(catalogBlock);
+				cgc_setBlockInUse(catalogBlock);
 
 				rootDir->entry[i].firstCatalogBlock = catalogBlock;
 
@@ -1411,17 +1411,17 @@ struct {
 
 			rootDir->numEntries++;
 
-			readBlock(catalogBlock, (void **)&memoryFileInfo);
+			cgc_readBlock(catalogBlock, (void **)&memoryFileInfo);
 
 			memoryFileInfo->address = address;
 			memoryFileInfo->size = length;
 			memoryFileInfo->accessType = accessType;
 
-			writeBlock(memoryFileInfo, catalogBlock);
+			cgc_writeBlock(memoryFileInfo, catalogBlock);
 
 			return NO_ERROR;
 
-		} // if strcmp
+		} // if cgc_strcmp
 
 	}  // for
 

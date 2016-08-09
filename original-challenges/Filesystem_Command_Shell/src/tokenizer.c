@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,11 +35,11 @@ THE SOFTWARE.
 
 
 // returns the number of tokens, and an array of pointers to the items in the original string argument
-int tokenize(char *string, char delimiter, char **args[]) {
+int cgc_tokenize(char *string, char delimiter, char **args[]) {
 int i;
 int count;
 
-	if (strlen(string) == 0) {
+	if (cgc_strlen(string) == 0) {
 
 		return 0;
 	}
@@ -50,7 +50,7 @@ int count;
 	// pass one is to just determine how many tokens there are so memory can be allocated
 	while(*(string+i) != 0) {
 		
-		while ( isspace(*(string+i)) && *(string+i) != 0)
+		while ( cgc_isspace(*(string+i)) && *(string+i) != 0)
 			++i;
 
 		if (*(string+i) == 0)
@@ -58,7 +58,7 @@ int count;
 
 		++count;
 
-		while ( !isspace(*(string+i)) && *(string+i) != 0)
+		while ( !cgc_isspace(*(string+i)) && *(string+i) != 0)
 			++i;
 
 		if (*(string+i) == 0 )
@@ -66,7 +66,7 @@ int count;
 	}
 
 
-	*args = malloc(count * sizeof(char *));
+	*args = cgc_malloc(count * sizeof(char *));
 
 
 	if (*args == 0 )
@@ -77,7 +77,7 @@ int count;
 
 	while(*(string+i) != 0) {
 		
-		while ( isspace(*(string+i)) && *(string+i) != 0)
+		while ( cgc_isspace(*(string+i)) && *(string+i) != 0)
 			++i;
 
 		if (*(string+i) == 0)
@@ -86,7 +86,7 @@ int count;
 		(*args)[count] = (string+i);
 		++count;
 
-		while ( !isspace(*(string+i)) && *(string+i) != 0)
+		while ( !cgc_isspace(*(string+i)) && *(string+i) != 0)
 			++i;
 
 

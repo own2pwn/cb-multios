@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -44,7 +44,7 @@ const char RIDER_STATS[4]           =   {'\x44','\x11','\x33','\x55'};
 static char OK[4] = {0};
 static char ERR[4] = {0};
 
-typedef struct request Request;
+typedef struct request cgc_Request;
 struct request {
     char cmd[4];
 };
@@ -53,7 +53,7 @@ struct request {
 /**
  * Create a checksum of the flag page to use as the OK/ERR byte strings
  */
-void gen_result_bufs(void) {
+void cgc_gen_result_bufs(void) {
     const char *fp = (char *)FLAG_PAGE;
     for (unsigned int idx = 0; idx < 4095; idx+=2) {
         OK[idx % 4] ^= fp[idx];
@@ -63,40 +63,40 @@ void gen_result_bufs(void) {
 
 int main(void) {
 
-    ssize_t ret = 0;
+    cgc_ssize_t ret = 0;
 
-    gen_result_bufs();
+    cgc_gen_result_bufs();
 
     while (TRUE) {
-        Request req;
-        RECV(&req, sizeof(Request));
+        cgc_Request req;
+        RECV(&req, sizeof(cgc_Request));
 
-        if (0 == memcmp(LOAD_DIGRAPH, (const char *)req.cmd, sizeof(LOAD_DIGRAPH))) {
-            ret = load_resort_digraph();
-        } else if (0 == memcmp(LOAD_RIDER_GROUP, (const char *)req.cmd, sizeof(LOAD_RIDER_GROUP))) {
-            ret = load_rider_group();
-        } else if (0 == memcmp(LOAD_RIDER_SINGLE, (const char *)req.cmd, sizeof(LOAD_RIDER_SINGLE))) {
-            ret = load_rider_single();
-        } else if (0 == memcmp(UNLOAD_RIDERS, (const char *)req.cmd, sizeof(UNLOAD_RIDERS))) {
-            ret = unload_riders();
-        } else if (0 == memcmp(START, (const char *)req.cmd, sizeof(START))) {
-            ret = start_simulation();
-        } else if (0 == memcmp(RESET, (const char *)req.cmd, sizeof(RESET))) {
-            ret = reset_simulation();
-        } else if (0 == memcmp(LIFT_STATS, (const char *)req.cmd, sizeof(LIFT_STATS))) {
-            ret = lift_stats();
-        } else if (0 == memcmp(TRAIL_STATS, (const char *)req.cmd, sizeof(TRAIL_STATS))) {
-            ret = trail_stats();
-        } else if (0 == memcmp(RIDER_STATS, (const char *)req.cmd, sizeof(RIDER_STATS))) {
-            ret = rider_stats();
+        if (0 == cgc_memcmp(LOAD_DIGRAPH, (const char *)req.cmd, sizeof(LOAD_DIGRAPH))) {
+            ret = cgc_load_resort_digraph();
+        } else if (0 == cgc_memcmp(LOAD_RIDER_GROUP, (const char *)req.cmd, sizeof(LOAD_RIDER_GROUP))) {
+            ret = cgc_load_rider_group();
+        } else if (0 == cgc_memcmp(LOAD_RIDER_SINGLE, (const char *)req.cmd, sizeof(LOAD_RIDER_SINGLE))) {
+            ret = cgc_load_rider_single();
+        } else if (0 == cgc_memcmp(UNLOAD_RIDERS, (const char *)req.cmd, sizeof(UNLOAD_RIDERS))) {
+            ret = cgc_unload_riders();
+        } else if (0 == cgc_memcmp(START, (const char *)req.cmd, sizeof(START))) {
+            ret = cgc_start_simulation();
+        } else if (0 == cgc_memcmp(RESET, (const char *)req.cmd, sizeof(RESET))) {
+            ret = cgc_reset_simulation();
+        } else if (0 == cgc_memcmp(LIFT_STATS, (const char *)req.cmd, sizeof(LIFT_STATS))) {
+            ret = cgc_lift_stats();
+        } else if (0 == cgc_memcmp(TRAIL_STATS, (const char *)req.cmd, sizeof(TRAIL_STATS))) {
+            ret = cgc_trail_stats();
+        } else if (0 == cgc_memcmp(RIDER_STATS, (const char *)req.cmd, sizeof(RIDER_STATS))) {
+            ret = cgc_rider_stats();
         } else  {
             ret = -1;
         }
 
         if (0 == ret) {
-            send(OK, sizeof(OK));
+            cgc_send(OK, sizeof(OK));
         } else {
-            send(ERR, sizeof(ERR));
+            cgc_send(ERR, sizeof(ERR));
 	        break;
         }
 

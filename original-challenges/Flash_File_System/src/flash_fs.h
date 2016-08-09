@@ -57,124 +57,124 @@ THE SOFTWARE.
 #define OBJ_INUSE	(0x02)
 
 // A flash file system
-class CFlashFS
+class cgc_CFlashFS
 {
 public:
-	CFlashFS( );
-	~CFlashFS( );
+	cgc_CFlashFS( );
+	~cgc_CFlashFS( );
 
-	bool Init( CNORFlash *pFlash );
+	bool cgc_Init( cgc_CNORFlash *pFlash );
 
-	int32_t WriteFile( int32_t fd, uint8_t *pData, uint32_t dataLen );
-	int32_t ReadFile( int32_t fd, uint8_t *pData, uint32_t dataLen );
+	cgc_int32_t cgc_WriteFile( cgc_int32_t fd, cgc_uint8_t *pData, cgc_uint32_t dataLen );
+	cgc_int32_t cgc_ReadFile( cgc_int32_t fd, cgc_uint8_t *pData, cgc_uint32_t dataLen );
 
-	int32_t DeleteFile( const char *pszFilename );
+	cgc_int32_t cgc_DeleteFile( const char *pszFilename );
 
-	int32_t OpenFile( const char *pszFilename, uint8_t openAttributes );
-	int32_t CloseFile( int32_t fd );
+	cgc_int32_t cgc_OpenFile( const char *pszFilename, cgc_uint8_t openAttributes );
+	cgc_int32_t cgc_CloseFile( cgc_int32_t fd );
 	
 
 protected:
 	// Header for the entire flash FS
-	typedef struct FLASH_FS_HEADER
+	typedef struct cgc_FLASH_FS_HEADER
 	{
-		uint8_t version;
-		uint16_t fileTableBlockIdx;
-		uint16_t fileTableBlockOffset;
-	} __attribute__((packed)) tFlashFSHdr;
+		cgc_uint8_t version;
+		cgc_uint16_t fileTableBlockIdx;
+		cgc_uint16_t fileTableBlockOffset;
+	} __attribute__((packed)) cgc_tFlashFSHdr;
 
-	typedef struct FLASH_FILE_TABLE_OBJ
+	typedef struct cgc_FLASH_FILE_TABLE_OBJ
 	{
-		uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
-		uint16_t objID;		// ID for header block
-	} __attribute__((packed)) tFlashFileTableObj;
+		cgc_uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
+		cgc_uint16_t objID;		// ID for header block
+	} __attribute__((packed)) cgc_tFlashFileTableObj;
 
-	typedef struct FLASH_FILE_HEADER
+	typedef struct cgc_FLASH_FILE_HEADER
 	{
-		uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
-		uint16_t dataID;	// Same as the block index -- every file is a block on the device
-		uint32_t objSize;	// The size of the object (file size)
-		uint8_t fileNameLen;
-	} __attribute__((packed)) tFlashFileHdr;
+		cgc_uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
+		cgc_uint16_t dataID;	// Same as the block index -- every file is a block on the device
+		cgc_uint32_t objSize;	// The size of the object (file size)
+		cgc_uint8_t fileNameLen;
+	} __attribute__((packed)) cgc_tFlashFileHdr;
 
-	typedef struct FLASH_DATA_HEADER
+	typedef struct cgc_FLASH_DATA_HEADER
 	{
-		uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
-		uint16_t prevDataID;	// Prev ID for data object
-		uint16_t nextDataID;	// Next ID for data object
-	} __attribute__((packed)) tFlashDataHdr;
+		cgc_uint8_t objBits;	// Current state (INUSE, ERASE, UNINIT)
+		cgc_uint16_t prevDataID;	// Prev ID for data object
+		cgc_uint16_t nextDataID;	// Next ID for data object
+	} __attribute__((packed)) cgc_tFlashDataHdr;
 
 	typedef struct FLASH_SECTOR_HEADER
 	{
-		uint16_t sectorMask;	
-	} __attribute__((packed)) tFlashSectorHeader;
+		cgc_uint16_t sectorMask;	
+	} __attribute__((packed)) cgc_tFlashSectorHeader;
 
-	typedef struct FILE_DESCRIPTOR_TABLE
+	typedef struct cgc_FILE_DESCRIPTOR_TABLE
 	{
-		uint16_t hdrID;		// Same as a block index -- every file is a block on the device
-		uint32_t filePos;
-	} tFileDescriptorTable;
+		cgc_uint16_t hdrID;		// Same as a block index -- every file is a block on the device
+		cgc_uint32_t filePos;
+	} cgc_tFileDescriptorTable;
 
-	typedef struct FILE_TABLE_STRUCT
+	typedef struct cgc_FILE_TABLE_STRUCT
 	{
-		uint16_t fileTableID;
-		uint16_t hdrID;
-	} tFileTableData;
+		cgc_uint16_t fileTableID;
+		cgc_uint16_t hdrID;
+	} cgc_tFileTableData;
 
 protected:
-	bool FindFileDescriptorData( int16_t fd, tFileDescriptorTable *pFDData );
+	bool cgc_FindFileDescriptorData( cgc_int16_t fd, cgc_tFileDescriptorTable *pFDData );
 
-	bool FindFileInFlashTable( const char *pszFilename, uint16_t *pObjID, uint32_t *pObjSize );
+	bool cgc_FindFileInFlashTable( const char *pszFilename, cgc_uint16_t *pObjID, cgc_uint32_t *pObjSize );
 
-	uint32_t GetFileTableAddress( void );
+	cgc_uint32_t cgc_GetFileTableAddress( void );
 
-	bool CreateNewFile( const char *pszFilename, uint16_t *pObjID, uint32_t *pObjSize );
+	bool cgc_CreateNewFile( const char *pszFilename, cgc_uint16_t *pObjID, cgc_uint32_t *pObjSize );
 
-	uint32_t GetAddressForHeaderID( uint16_t objID );
-	uint32_t GetAddressForFileTableID( uint16_t objID );
-	uint32_t GetAddressForDataID( uint16_t objID );
-	uint32_t GetAddressForSector( uint16_t sectorNum );
+	cgc_uint32_t cgc_GetAddressForHeaderID( cgc_uint16_t objID );
+	cgc_uint32_t cgc_GetAddressForFileTableID( cgc_uint16_t objID );
+	cgc_uint32_t cgc_GetAddressForDataID( cgc_uint16_t objID );
+	cgc_uint32_t cgc_GetAddressForSector( cgc_uint16_t sectorNum );
 
-	uint16_t GetNewFileTableID( void );
-	uint16_t GetNewObjHeaderID( void );
+	cgc_uint16_t cgc_GetNewFileTableID( void );
+	cgc_uint16_t cgc_GetNewObjHeaderID( void );
 
-	uint16_t GetNextDataBlockID( void );
+	cgc_uint16_t cgc_GetNextDataBlockID( void );
 
-	bool CleanFileTable( void );
-	bool CleanObjHeaderTable( void );
-	bool CleanDataBlocks( void );
+	bool cgc_CleanFileTable( void );
+	bool cgc_CleanObjHeaderTable( void );
+	bool cgc_CleanDataBlocks( void );
 
-	uint16_t GetNextScratchSector( void );
+	cgc_uint16_t cgc_GetNextScratchSector( void );
 
-	bool CreateNewObject( const char *pszObjectName, uint16_t fileTableID, uint16_t hdrID );
+	bool cgc_CreateNewObject( const char *pszObjectName, cgc_uint16_t fileTableID, cgc_uint16_t hdrID );
 
-	int32_t GetNewFileDescriptor( void );
+	cgc_int32_t cgc_GetNewFileDescriptor( void );
 
 private:
-	uint8_t m_tempBlock[512];
+	cgc_uint8_t m_tempBlock[512];
 
-	CNORFlash *m_pFlash;
+	cgc_CNORFlash *m_pFlash;
 
 	// Max file descriptors available
-	tFileDescriptorTable m_fileDescriptorTable[MAX_FILE_DESCRIPTORS];
+	cgc_tFileDescriptorTable m_fileDescriptorTable[MAX_FILE_DESCRIPTORS];
 
-	uint16_t m_fileDescriptorCount;
+	cgc_uint16_t m_fileDescriptorCount;
 
-	tFlashFSHdr m_fsHdr;
-	uint32_t m_fileTableAddress;
+	cgc_tFlashFSHdr m_fsHdr;
+	cgc_uint32_t m_fileTableAddress;
 
-	tFileTableData m_fileTable[MAX_FILES];
-	uint16_t m_fileTableCount;
-	uint16_t m_fileTableIDNext;
+	cgc_tFileTableData m_fileTable[MAX_FILES];
+	cgc_uint16_t m_fileTableCount;
+	cgc_uint16_t m_fileTableIDNext;
 
-	uint16_t m_fileTableIDMax;
-	uint16_t m_objHeaderIDMax;
+	cgc_uint16_t m_fileTableIDMax;
+	cgc_uint16_t m_objHeaderIDMax;
 
-	uint16_t m_objHeaderIDNext;
-	uint16_t m_scratchSectorCur;	// Current scratch sector
+	cgc_uint16_t m_objHeaderIDNext;
+	cgc_uint16_t m_scratchSectorCur;	// Current scratch sector
 
-	uint16_t m_lastDataBlockID;
-	uint16_t m_maxDataBlockID;	// Max data block ID
+	cgc_uint16_t m_lastDataBlockID;
+	cgc_uint16_t m_maxDataBlockID;	// Max data block ID
 };
 
 #endif // __FLASH_FS_H__

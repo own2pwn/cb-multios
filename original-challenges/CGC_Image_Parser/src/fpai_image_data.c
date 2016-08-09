@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 #include "fpai_image_data.h"
 
-int fpai_add_pixel( pfpai_image_data fid, char *image, int x, int y, char pixel)
+int cgc_fpai_add_pixel( cgc_pfpai_image_data fid, char *image, int x, int y, char pixel)
 {
 	int index = 0;
 	int midx;
@@ -69,11 +69,11 @@ int fpai_add_pixel( pfpai_image_data fid, char *image, int x, int y, char pixel)
 	}
 
 	image[index] = pixel;
-	//printf("index: @d\n", index);
+	//cgc_printf("index: @d\n", index);
 	return 1;
 }
 
-int fpai_display_img( pfpai_image_data fid )
+int cgc_fpai_display_img( cgc_pfpai_image_data fid )
 {
 	int x;
 	int y;
@@ -92,33 +92,33 @@ int fpai_display_img( pfpai_image_data fid )
 		return 0;
 	}
 
-	if ( fpai_read_magic( fid ) == 0 ) {
+	if ( cgc_fpai_read_magic( fid ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpai_read_xaxis( fid ) == 0 ) {
+	if ( cgc_fpai_read_xaxis( fid ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpai_read_yaxis( fid ) == 0 ) {
+	if ( cgc_fpai_read_yaxis( fid ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpai_read_axist( fid ) == 0 ) {
+	if ( cgc_fpai_read_axist( fid ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpai_read_cksum( fid, &ts) == 0 ) {
+	if ( cgc_fpai_read_cksum( fid, &ts) == 0 ) {
 		return 0;
 	}
 
 	/// Skip reserve bit
-	if ( fpai_read_nbits( fid, 1, &x ) == 0 ) {
+	if ( cgc_fpai_read_nbits( fid, 1, &x ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpai_calc_cksum( fid ) == 0 ) {
-		printf("[ERROR] Checksum failed\n");
+	if ( cgc_fpai_calc_cksum( fid ) == 0 ) {
+		cgc_printf("[ERROR] Checksum failed\n");
 		return 0;
 	}
 
@@ -165,44 +165,44 @@ int fpai_display_img( pfpai_image_data fid )
 		return 0;
 	}
 
-	memset( image, ' ', image_length );
+	cgc_memset( image, ' ', image_length );
 	image[image_length] = '\x00';
 
-	//printf("minx: @d maxx: @d miny: @d maxy: @d\n", minx, maxx, miny, maxy);
-	//printf("x: @d y: @d axis: @d csum: @d\n", fid->xlen, fid->ylen, fid->axist, fid->checksum);
+	//cgc_printf("minx: @d maxx: @d miny: @d maxy: @d\n", minx, maxx, miny, maxy);
+	//cgc_printf("x: @d y: @d axis: @d csum: @d\n", fid->xlen, fid->ylen, fid->axist, fid->checksum);
 
-	while ( fpai_read_pixel( fid, &x, &y, &pchar) != 0 ) {
-		//printf("x: @d y: @d pchar: @c\n", x,y,pchar);
+	while ( cgc_fpai_read_pixel( fid, &x, &y, &pchar) != 0 ) {
+		//cgc_printf("x: @d y: @d pchar: @c\n", x,y,pchar);
 		if ( x < minx || x > maxx ) {
-			printf("X out of bounds\n");
+			cgc_printf("X out of bounds\n");
 			return 0;
 		}
 
 		if ( y < miny || y > maxy ) {
-			printf("Y out of bounds\n");
+			cgc_printf("Y out of bounds\n");
 			return 0;
 		}
 
-		if ( fpai_add_pixel( fid, image, x, y, (char)pchar) == 0 ) {
-			printf("pixel placement failed\n");
+		if ( cgc_fpai_add_pixel( fid, image, x, y, (char)pchar) == 0 ) {
+			cgc_printf("pixel placement failed\n");
 			return 0;
 		}
 	}
 
         for (int i = 0; i < image_length; i++) {
                 if (i%fid->xlen == 0 && i != 0) {
-                        printf("\n");
+                        cgc_printf("\n");
                 }
 
-                printf("@c", image[i]);
+                cgc_printf("@c", image[i]);
         }
 
-	printf("\n");
+	cgc_printf("\n");
 	return 1;
 
 }
 
-int fpai_read_check( pfpai_image_data fid, int bitcount )
+int cgc_fpai_read_check( cgc_pfpai_image_data fid, int bitcount )
 {
 	int total_bits;
 	int bits_read;
@@ -229,7 +229,7 @@ int fpai_read_check( pfpai_image_data fid, int bitcount )
 	return 0;
 }
 
-int fpai_read_nbits( pfpai_image_data fid, int bitcount, int *value)
+int cgc_fpai_read_nbits( cgc_pfpai_image_data fid, int bitcount, int *value)
 {
 	int bits;
 
@@ -260,7 +260,7 @@ int fpai_read_nbits( pfpai_image_data fid, int bitcount, int *value)
 	return 1;
 }
 
-int fpai_read_magic( pfpai_image_data fid )
+int cgc_fpai_read_magic( cgc_pfpai_image_data fid )
 {
 	int magic = 0;
 
@@ -268,11 +268,11 @@ int fpai_read_magic( pfpai_image_data fid )
 		return magic;
 	}
 
-	if ( !fpai_read_check( fid, 32 ) ) {
+	if ( !cgc_fpai_read_check( fid, 32 ) ) {
 		return magic;
 	}
 
-	if ( !fpai_read_nbits( fid, 32, &magic) ) {
+	if ( !cgc_fpai_read_nbits( fid, 32, &magic) ) {
 		magic = 0;
 		return magic;
 	}
@@ -296,15 +296,15 @@ int fpai_read_magic( pfpai_image_data fid )
 	return 1;
 }
 
-int fpai_read_xaxis( pfpai_image_data fid )
+int cgc_fpai_read_xaxis( cgc_pfpai_image_data fid )
 {
 	int xaxis;
 
-	if ( !fpai_read_check( fid, 6 ) ) {
+	if ( !cgc_fpai_read_check( fid, 6 ) ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 6, &xaxis) ) {
+	if ( !cgc_fpai_read_nbits( fid, 6, &xaxis) ) {
 		return 0;
 	}
 
@@ -313,7 +313,7 @@ int fpai_read_xaxis( pfpai_image_data fid )
 	return xaxis;
 }
 
-int fpai_read_yaxis( pfpai_image_data fid )
+int cgc_fpai_read_yaxis( cgc_pfpai_image_data fid )
 {
 	int yaxis = 0;
 
@@ -321,11 +321,11 @@ int fpai_read_yaxis( pfpai_image_data fid )
 		return 0;
 	}
 
-	if ( !fpai_read_check( fid, 6 ) ) {
+	if ( !cgc_fpai_read_check( fid, 6 ) ) {
 		return yaxis;
 	}
 
-	if ( !fpai_read_nbits( fid, 6, &yaxis) ) {
+	if ( !cgc_fpai_read_nbits( fid, 6, &yaxis) ) {
 		return 0;
 	}
 
@@ -334,7 +334,7 @@ int fpai_read_yaxis( pfpai_image_data fid )
 	return yaxis;
 }
 
-int fpai_read_axist( pfpai_image_data fid )
+int cgc_fpai_read_axist( cgc_pfpai_image_data fid )
 {
 	int axist;
 
@@ -342,11 +342,11 @@ int fpai_read_axist( pfpai_image_data fid )
 		return 0;
 	}
 
-	if ( !fpai_read_check( fid, 3 ) ) {
+	if ( !cgc_fpai_read_check( fid, 3 ) ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 3, &axist ) ) {
+	if ( !cgc_fpai_read_nbits( fid, 3, &axist ) ) {
 		return 0;
 	}
 
@@ -359,15 +359,15 @@ int fpai_read_axist( pfpai_image_data fid )
 	return axist;
 }
 
-int fpai_read_cksum( pfpai_image_data fid, short *cksum)
+int cgc_fpai_read_cksum( cgc_pfpai_image_data fid, short *cksum)
 {
 	int checksum = 0;
 
-	if ( !fpai_read_check(fid, 16) ) {
+	if ( !cgc_fpai_read_check(fid, 16) ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 16, &checksum) ) {
+	if ( !cgc_fpai_read_nbits( fid, 16, &checksum) ) {
 		return 0;
 	}
 
@@ -376,7 +376,7 @@ int fpai_read_cksum( pfpai_image_data fid, short *cksum)
 	return 1;
 }
 
-int fpai_calc_cksum( pfpai_image_data fid )
+int cgc_fpai_calc_cksum( cgc_pfpai_image_data fid )
 {
 	short *items = NULL;
 	short cksum = 0;
@@ -410,14 +410,14 @@ int fpai_calc_cksum( pfpai_image_data fid )
 	}
 
 	if ( cksum != fid->checksum ) {
-		printf("[ERROR] Checksum failed\n");
+		cgc_printf("[ERROR] Checksum failed\n");
 		return 0;
 	}
 
 	return 1;
 }
 
-int fpai_read_pixel( pfpai_image_data fid, int *x, int*y, int*pixel)
+int cgc_fpai_read_pixel( cgc_pfpai_image_data fid, int *x, int*y, int*pixel)
 {
 	int signx;
 	int px;
@@ -429,43 +429,43 @@ int fpai_read_pixel( pfpai_image_data fid, int *x, int*y, int*pixel)
 		return 0;
 	}
 
-	if ( fpai_read_check( fid, 1 ) == 0 ) {
+	if ( cgc_fpai_read_check( fid, 1 ) == 0 ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 1, &signx) ) {
+	if ( !cgc_fpai_read_nbits( fid, 1, &signx) ) {
 		return 0;
 	}
 
-	if ( fpai_read_check( fid, 6 ) == 0 ) {
+	if ( cgc_fpai_read_check( fid, 6 ) == 0 ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 6, &px) ) {
+	if ( !cgc_fpai_read_nbits( fid, 6, &px) ) {
 		return 0;
 	}
 
-	if ( fpai_read_check( fid, 1 ) == 0 ) {
+	if ( cgc_fpai_read_check( fid, 1 ) == 0 ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 1, &signy) ) {
+	if ( !cgc_fpai_read_nbits( fid, 1, &signy) ) {
 		return 0;
 	}
 
-	if ( fpai_read_check( fid, 6 ) == 0 ) {
+	if ( cgc_fpai_read_check( fid, 6 ) == 0 ) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 6, &py) ) {
+	if ( !cgc_fpai_read_nbits( fid, 6, &py) ) {
 		return 0;
 	}
 
-	if ( !fpai_read_check( fid, 7 )) {
+	if ( !cgc_fpai_read_check( fid, 7 )) {
 		return 0;
 	}
 
-	if ( !fpai_read_nbits( fid, 7, &pc ) ) {
+	if ( !cgc_fpai_read_nbits( fid, 7, &pc ) ) {
 		return 0;
 	}
 

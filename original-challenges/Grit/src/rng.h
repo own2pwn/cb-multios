@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,12 +24,12 @@
 
 #include <cstdint.h>
 
-class Random
+class cgc_Random
 {
 public:
-    Random();
-    void addEntropy(const uint8_t *entropy, unsigned int count);
-    int32_t randomInt32();
+    cgc_Random();
+    void cgc_addEntropy(const cgc_uint8_t *entropy, unsigned int count);
+    cgc_int32_t cgc_randomInt32();
 private:
     unsigned long long state;
 };

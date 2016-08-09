@@ -34,7 +34,7 @@ THE SOFTWARE.
 #define STACKBASE 0xBAA8B000
 #define STACKSIZE 0x20000
 
-int validatePtr(void *ptr);
-void validateRet();
+int cgc_validatePtr(void *ptr);
+void cgc_validateRet();
 
 #endif

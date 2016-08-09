@@ -26,44 +26,44 @@
 #include "service.h"
 
 int main(void) {
-	Stack programStack ={-1, 0, 0, NULL};
+	cgc_Stack programStack ={-1, 0, 0, NULL};
 
 	while(1) {
 		char buf[1024] ={0};
 		int bytes_read =0;
 		int arg_pos =0;
 
-		bytes_read = recvline(STDIN, buf, sizeof(buf)-1);
+		bytes_read = cgc_recvline(STDIN, buf, sizeof(buf)-1);
 		if (bytes_read <= 0)
 			_terminate(1);
 
 		if(programStack.numElements <= 0)
-				initStack(&programStack, MAX_PROGRAM_STACK_SIZE, sizeof(Program *));
+				cgc_initStack(&programStack, MAX_PROGRAM_STACK_SIZE, sizeof(cgc_Program *));
 
-		if((arg_pos = parseCmd(NEW_PROGRAM_CMD_STR, buf))  > 0) {
-			Program* program = NULL;
+		if((arg_pos = cgc_parseCmd(NEW_PROGRAM_CMD_STR, buf))  > 0) {
+			cgc_Program* program = NULL;
 
-			initProgram(&program, STDIN);
+			cgc_initProgram(&program, STDIN);
 			if(program != NULL)
-				pushElement(&programStack, &program);
-		} else if((arg_pos = parseCmd(EXECUTE_PROGRAM_CMD_STR, buf))  > 0) {
+				cgc_pushElement(&programStack, &program);
+		} else if((arg_pos = cgc_parseCmd(EXECUTE_PROGRAM_CMD_STR, buf))  > 0) {
 			int program_num;
 			int ret;
 
-			program_num = strn2int(buf+arg_pos, 10);
+			program_num = cgc_strn2int(buf+arg_pos, 10);
 #ifdef PATCHED
 		if(program_num > programStack.top || program_num < 0) {
 #else		
 			if(program_num > programStack.top) {
 #endif
-				ret = transmit_all(STDOUT, INVALID_PROGRAM_STR, sizeof(TOO_MANY_LINES_STR));
+				ret = cgc_transmit_all(STDOUT, INVALID_PROGRAM_STR, sizeof(TOO_MANY_LINES_STR));
 				if (ret != 0)
     				_terminate(13);
     		} else {
 
-				Program **program_ptr;
-				program_ptr = programStack.elements+(program_num*sizeof(Program *));
-				executeProgram(*program_ptr);
+				cgc_Program **program_ptr;
+				program_ptr = programStack.elements+(program_num*sizeof(cgc_Program *));
+				cgc_executeProgram(*program_ptr);
 			}
 		}
 	}

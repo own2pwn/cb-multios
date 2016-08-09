@@ -35,13 +35,13 @@ THE SOFTWARE.
 #include "genericParsers.h"
 #include "countyParsers.h"
 
-void initTerritory( pTerritory ty);
-int territoryMenu( pTerritory ty );
-void freeTerritory( pTerritory ty );
-void printTerritoryInfo( pTerritory ty );
-pTerritory territoryTopLevel( pstring str);
-int extractEstablished( pstring str );
-char *extractFounder( pstring str );
+void cgc_initTerritory( cgc_pTerritory ty);
+int cgc_territoryMenu( cgc_pTerritory ty );
+void cgc_freeTerritory( cgc_pTerritory ty );
+void cgc_printTerritoryInfo( cgc_pTerritory ty );
+cgc_pTerritory cgc_territoryTopLevel( cgc_pstring str);
+int cgc_extractEstablished( cgc_pstring str );
+char *cgc_extractFounder( cgc_pstring str );
 
 #endif
 

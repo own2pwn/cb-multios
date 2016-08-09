@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include <math.h>
 #include <libcgc.h>
 
-double round( double val )
+double cgc_round( double val )
 {
-	// Default -- round away from zero
+	// Default -- cgc_round away from zero
 	if ( val < 0.0 )
 		return (double)rint( (val - 0.5) );
 	else if ( val > 0.0 )
@@ -37,7 +37,7 @@ double round( double val )
 		return val;
 }
 
-double floor( double val )
+double cgc_floor( double val )
 {
 	if ( val < 0.0 )
 		return (double)rint( (val - 0.5) ) + 1.0;

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,15 +26,15 @@
 
 
 
-struct deck *create_deck() {
+struct deck *cgc_create_deck() {
 
 	struct deck *d = NULL;
-	d = calloc(sizeof(struct deck));
+	d = cgc_calloc(sizeof(struct deck));
 
-	uint8_t idx = 0;
-	for (uint8_t s = 1; s < 5; s++) {
-		for (uint8_t r = 1; r < 14; r++) {
-			d->cards[idx] = create_card(s, r);
+	cgc_uint8_t idx = 0;
+	for (cgc_uint8_t s = 1; s < 5; s++) {
+		for (cgc_uint8_t r = 1; r < 14; r++) {
+			d->cards[idx] = cgc_create_card(s, r);
 			d->count++;
 			idx++;
 		}
@@ -43,20 +43,20 @@ struct deck *create_deck() {
 	return d;
 }
 
-int shuffle_deck(struct deck *d, uint8_t seed) {
+int cgc_shuffle_deck(struct deck *d, cgc_uint8_t seed) {
 	if (NULL == d) {
 		return ERR_UNINITIALIZED_DECK;
 	}
 
-	uint8_t idx = 0; 	// loop index walks through the deck
-	uint8_t rand_idx = 0; 	// index of card to swap with card at the loop index
+	cgc_uint8_t idx = 0; 	// loop index walks through the deck
+	cgc_uint8_t rand_idx = 0; 	// index of card to swap with card at the loop index
 	struct card *temp_card = NULL;
 
 	idx = seed % 52; // index in deck where algorithm will start
 
 	for (int i = 0; i < 52; i++) {
 		idx = (idx + i) % 52;
-		rand_idx = (rand_idx + prng_get_next()) % 52;
+		rand_idx = (rand_idx + cgc_prng_get_next()) % 52;
 
 		// swap card at rand_idx with card at idx
 		if (idx != rand_idx) {
@@ -68,14 +68,14 @@ int shuffle_deck(struct deck *d, uint8_t seed) {
 	return SUCCESS;
 }
 
-struct deck *get_shuffled_deck(uint8_t seed) {
+struct deck *cgc_get_shuffled_deck(cgc_uint8_t seed) {
     struct deck *d;
-    d = create_deck();
-    shuffle_deck(d, seed);
+    d = cgc_create_deck();
+    cgc_shuffle_deck(d, seed);
     return d;
 }
 
-struct card *pop(struct deck *d) {
+struct card *cgc_pop(struct deck *d) {
 	if (NULL == d) {
 		return NULL;
 	}
@@ -90,7 +90,7 @@ struct card *pop(struct deck *d) {
 	return c;
 }
 
-int is_deck_empty(struct deck *d) {
+int cgc_is_deck_empty(struct deck *d) {
 	if (NULL == d) {
 		return ERR_UNINITIALIZED_DECK;
 	}

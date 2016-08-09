@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -25,40 +25,40 @@
 #include "gofish.h"
 
 
-struct game_state *create_game(char *player_name) {
+struct game_state *cgc_create_game(char *player_name) {
 	struct game_state *game = NULL;
-	game = calloc(sizeof(struct game_state));
+	game = cgc_calloc(sizeof(struct game_state));
 
 	game->whos_turn =  0; // remote player goes first
-	uint8_t seed = 0;
+	cgc_uint8_t seed = 0;
 	// would be a good vuln, but too easy for fuzzer to hit.
 	if ('\0' != player_name[0]) {
 		seed = player_name[0];
 	}
-	game->pool = get_shuffled_deck(seed); // seed: first byte of player_name
-	game->p_remote = create_player(0, player_name);
+	game->pool = cgc_get_shuffled_deck(seed); // seed: first byte of player_name
+	game->p_remote = cgc_create_player(0, player_name);
 	char *bot = NULL;
-	bot = calloc(4);
-	strncpy(bot, "Bot", 3);
+	bot = cgc_calloc(4);
+	cgc_strncpy(bot, "Bot", 3);
 
-	game->p_bot = create_player(1, bot);
+	game->p_bot = cgc_create_player(1, bot);
 
 	return game;
 }
 
-int deal(struct game_state *game) {
+int cgc_deal(struct game_state *game) {
 	if (NULL == game) {
 		return ERR_UNINITIALIZED_GAME;
 	}
 
 	int ret = 0;
 
-	for (uint8_t card_cnt = 0; card_cnt < get_hand_size(); card_cnt++) {
-		ret = take_top_card(game->p_remote, game->pool);
+	for (cgc_uint8_t card_cnt = 0; card_cnt < cgc_get_hand_size(); card_cnt++) {
+		ret = cgc_take_top_card(game->p_remote, game->pool);
 		if (0 > ret) {
 			return ret;
 		}
-		ret = take_top_card(game->p_bot, game->pool);
+		ret = cgc_take_top_card(game->p_bot, game->pool);
 		if (0 > ret) {
 			return ret;
 		}
@@ -67,11 +67,11 @@ int deal(struct game_state *game) {
 	return SUCCESS;
 }
 
-int get_hand_size() {
+int cgc_get_hand_size() {
 	return 7;
 }
 
-int turn_complete(struct game_state *game) {
+int cgc_turn_complete(struct game_state *game) {
 	if (NULL == game) {
 		return ERR_UNINITIALIZED_GAME;
 	}
@@ -80,7 +80,7 @@ int turn_complete(struct game_state *game) {
 	return SUCCESS;
 }
 
-int is_player_turn(struct game_state *game) {
+int cgc_is_player_turn(struct game_state *game) {
 	if (NULL == game) {
 		return ERR_UNINITIALIZED_GAME;
 	}
@@ -93,14 +93,14 @@ int is_player_turn(struct game_state *game) {
 	}
 }
 
-int is_game_over(struct game_state *game) {
+int cgc_is_game_over(struct game_state *game) {
 	if (NULL == game) {
 		return ERR_UNINITIALIZED_GAME;
 	}
 
-	if ((TRUE == is_deck_empty(game->pool)) &&
-		(TRUE == is_player_hand_empty(game->p_remote)) &&
-		(TRUE == is_player_hand_empty(game->p_bot))) {
+	if ((TRUE == cgc_is_deck_empty(game->pool)) &&
+		(TRUE == cgc_is_player_hand_empty(game->p_remote)) &&
+		(TRUE == cgc_is_player_hand_empty(game->p_bot))) {
 		return TRUE;
 	} else {
 		return FALSE;

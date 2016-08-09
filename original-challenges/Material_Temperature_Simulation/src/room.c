@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,9 +33,9 @@ THE SOFTWARE.
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)
 
 // room dimensions
-uint32_t X;
-uint32_t Y;
-uint32_t Z;
+cgc_uint32_t X;
+cgc_uint32_t Y;
+cgc_uint32_t Z;
 
 // temperature grid
 double *TGrid;
@@ -49,10 +49,10 @@ double TC[8];
 // Heat capacities
 double HC[8];
 
-int ValidStr(char *buf, char *AllowedChars) {
+int cgc_ValidStr(char *buf, char *AllowedChars) {
 
 	for (; *buf; buf++) {
-		if (!strchr(AllowedChars, *buf)) {
+		if (!cgc_strchr(AllowedChars, *buf)) {
 			return(0);
 		}
 	}
@@ -60,43 +60,43 @@ int ValidStr(char *buf, char *AllowedChars) {
 	return(1);
 }
 
-int ParseDimensions(char *buf) {
+int cgc_ParseDimensions(char *buf) {
 	char DimensionChars[] = "0123456789,. ";
 	char *x = buf;
 	char *y;
 	char *z;
 
 	// make sure we got a valid string
-	if (!ValidStr(buf, DimensionChars)) {
-		puts("Invalid characters in dimensions");
+	if (!cgc_ValidStr(buf, DimensionChars)) {
+		cgc_puts("Invalid characters in dimensions");
 		return(-1);
 	}
 
 	// read the X dimension
-	if ((x = strtok(buf, ",")) == NULL) {
-		puts("Invalid X dimension\n");
+	if ((x = cgc_strtok(buf, ",")) == NULL) {
+		cgc_puts("Invalid X dimension\n");
 		return(-1);
 	}
-	X = atoi(x);
+	X = cgc_atoi(x);
 
 	// read the Y dimension
-	if ((y = strtok(NULL, ",")) == NULL) {
-		puts("Invalid Y dimension\n");
+	if ((y = cgc_strtok(NULL, ",")) == NULL) {
+		cgc_puts("Invalid Y dimension\n");
 		return(-1);
 	}
-	Y = atoi(y);
+	Y = cgc_atoi(y);
 
 	// read the Z dimension
-	if ((z = strtok(NULL, ",")) == NULL) {
-		puts("Invalid Z dimension\n");
+	if ((z = cgc_strtok(NULL, ",")) == NULL) {
+		cgc_puts("Invalid Z dimension\n");
 		return(-1);
 	}
-	Z = atoi(z);
+	Z = cgc_atoi(z);
 	
 	return(0);
 }
 
-void InitAir(void) {
+void cgc_InitAir(void) {
 
 	TC[0] = .0000; // 0 K
 	TC[1] = .0072; // 80 K
@@ -120,7 +120,7 @@ void InitAir(void) {
 	return;
 }
 
-void InitAluminum(void) {
+void cgc_InitAluminum(void) {
 
 	TC[0] = 4110; // 0 K
 	TC[1] = 432.0; // 80 K
@@ -144,7 +144,7 @@ void InitAluminum(void) {
 	return;
 }
 
-void InitCopper(void) {
+void cgc_InitCopper(void) {
 
 	TC[0] = 24900.0; // 9 K
 	TC[1] = 557.0; // 80 K
@@ -169,25 +169,25 @@ void InitCopper(void) {
 }
 
 // set a custom Thermal Conductivity for the given temperature
-void SetTC(uint32_t i, char *buf) {
+void cgc_SetTC(cgc_uint32_t i, char *buf) {
 	double val;
 
-	val = cgcatof(buf);
+	val = cgc_cgcatof(buf);
 	TC[i] = val;
 }
 
 // set a custom Heat Capacity for the given temperature
-void SetHC(uint32_t i, char *buf) {
+void cgc_SetHC(cgc_uint32_t i, char *buf) {
 	double val;
 
-	val = cgcatof(buf);
+	val = cgc_cgcatof(buf);
 	HC[i] = val;
 }
 
 // define a custom material
 #define RELATIVE_PCT (.25)
-void InitCustom(void) {
-	uint32_t i;
+void cgc_InitCustom(void) {
+	cgc_uint32_t i;
 	char *temps[] = { 
 		"-264.15", 
 		"-193.15", 
@@ -201,20 +201,20 @@ void InitCustom(void) {
 	double val;
 	int valid;
 
-	puts("Enter the thermal conductivities in W/(m*K) for your material at the following temperatures (Celcius):");
+	cgc_puts("Enter the thermal conductivities in W/(m*K) for your material at the following temperatures (Celcius):");
 	for (i = 0; i < 8; i++) {
 		valid = 0;
 		while (!valid) {
 			valid = 1;
-			printf("@s: ", temps[i]);
-			if (read_until(buf, "\n", 99) == -1) {
+			cgc_printf("@s: ", temps[i]);
+			if (cgc_read_until(buf, "\n", 99) == -1) {
 				_terminate(-1);
 			}
 
-			val = cgcatof(buf);
+			val = cgc_cgcatof(buf);
 #ifdef PATCHED
 			if (val < 0) {
-				puts("Invalid value...must be greater than zero");
+				cgc_puts("Invalid value...must be greater than zero");
 				valid = 0;
                 return;
 			}
@@ -240,30 +240,30 @@ void InitCustom(void) {
 				}
 
 				if (!valid) {
-					printf("Invalid value...must be within @d% of the previous value\n", (int)(RELATIVE_PCT*100.0));
+					cgc_printf("Invalid value...must be within @d% of the previous value\n", (int)(RELATIVE_PCT*100.0));
 				}
 			}
 		}
 
 		// Set the Thermal Conductivity
-		SetTC(i, buf);
+		cgc_SetTC(i, buf);
 	}
 
-	puts("Enter the heat capacity in J/(m^3*K) for your material when it is at the following temperatures (Celcius):");
+	cgc_puts("Enter the heat capacity in J/(m^3*K) for your material when it is at the following temperatures (Celcius):");
 	for (i = 0; i < 8; i++) {
 		valid = 0;
 		while (!valid) {
 			valid = 1;
-			printf("@s: ", temps[i]);
-			if (read_until(buf, "\n", 99) == -1) {
+			cgc_printf("@s: ", temps[i]);
+			if (cgc_read_until(buf, "\n", 99) == -1) {
 				_terminate(-1);
 			}
 	
-			val = cgcatof(buf);
+			val = cgc_cgcatof(buf);
 
 #ifdef PATCHED
 			if (val < 0) {
-				puts("Invalid value...must be greater than zero");
+				cgc_puts("Invalid value...must be greater than zero");
 				valid = 0;
                 return;
 			}
@@ -290,23 +290,23 @@ void InitCustom(void) {
 				}
 
 				if (!valid) {
-					printf("Invalid value...must be within @d% of the previous value\n", (int)(RELATIVE_PCT*100.0));
+					cgc_printf("Invalid value...must be within @d% of the previous value\n", (int)(RELATIVE_PCT*100.0));
 				}
 			}
 		}
 
 		// Set the Heat Capacity
-		SetHC(i, buf);
+		cgc_SetHC(i, buf);
 	}
 
 	return;
 }
 
 // allocate an array large enough to hold a temperature grid for the particular material size
-int32_t AllocateGrid(double **grid, uint32_t x, uint32_t y, uint32_t z) {
-	size_t malloc_size = x*y*z*sizeof(double);
+cgc_int32_t cgc_AllocateGrid(double **grid, cgc_uint32_t x, cgc_uint32_t y, cgc_uint32_t z) {
+	cgc_size_t malloc_size = x*y*z*sizeof(double);
 
-	if ((*grid = calloc(malloc_size, 1)) == NULL) {
+	if ((*grid = cgc_calloc(malloc_size, 1)) == NULL) {
 		return(-1);
 	}
 
@@ -314,61 +314,61 @@ int32_t AllocateGrid(double **grid, uint32_t x, uint32_t y, uint32_t z) {
 
 }
 
-int InitMaterial(void) {
+int cgc_InitMaterial(void) {
 	char buf[100];
-	uint32_t x,y,z;
-	int8_t isothermic;
-	int8_t heat;
+	cgc_uint32_t x,y,z;
+	cgc_int8_t isothermic;
+	cgc_int8_t heat;
 	double temperature;
-	size_t malloc_size;
-	int8_t material;
+	cgc_size_t malloc_size;
+	cgc_int8_t material;
 
 	material = 0;
-	puts("For what material would you like to run this simulation?");
-	puts("  1. Air");
-	puts("  2. Aluminum");
-	puts("  3. Copper");
-	puts("  4. Custom");
+	cgc_puts("For what material would you like to run this simulation?");
+	cgc_puts("  1. Air");
+	cgc_puts("  2. Aluminum");
+	cgc_puts("  3. Copper");
+	cgc_puts("  4. Custom");
 	while (material < 1 || material > 4) {
-		printf("Selection: ");
-		if (read_until(buf, "\n", 99) == -1) {
+		cgc_printf("Selection: ");
+		if (cgc_read_until(buf, "\n", 99) == -1) {
 			// failed to read the input
 			return(-1);
 		}
 
-		material = atoi(buf);
+		material = cgc_atoi(buf);
 	}
 
 	// set up the thermal conductivity and heat capacities 
 	switch(material) {
 		case 1:
-			InitAir();
+			cgc_InitAir();
 			break;
 		case 2:
-			InitAluminum();
+			cgc_InitAluminum();
 			break;
 		case 3:
-			InitCopper();
+			cgc_InitCopper();
 			break;
 		case 4:
-			InitCustom();
+			cgc_InitCustom();
 			break;
 		default:
 			return(-1);
 	}
 
 	// flush any remaining chars from stdin
-	flush_stdin();
+	cgc_flush_stdin();
 
 	// Determine the dimensions
 	malloc_size = X*Y*Z*sizeof(double);
 	while (X == 0 || Y == 0 || Z == 0 || malloc_size > MAX_MALLOC) {
-		printf("How large is the material (X,Y,Z meters): ");
-		if (read_until(buf, "\n", 99) == -1) {
+		cgc_printf("How large is the material (X,Y,Z meters): ");
+		if (cgc_read_until(buf, "\n", 99) == -1) {
 			// failed to read the input
 			return(-1);
 		}
-		if (ParseDimensions(buf)) {
+		if (cgc_ParseDimensions(buf)) {
 			return(-1);
 		}
 
@@ -376,30 +376,30 @@ int InitMaterial(void) {
 	}
 
 	// flush any remaining chars from stdin
-	flush_stdin();
+	cgc_flush_stdin();
 
 #ifdef PATCHED
-	// one last check to make sure we didn't overflow size_t
-	if ( (pow(2, 8*sizeof(size_t)) / ((sizeof(double) * X * Y)) <= Z) ||
-		(pow(2, 8*sizeof(size_t)) / ((sizeof(double) * Y * Z)) <= X) ||
-		(pow(2, 8*sizeof(size_t)) / ((sizeof(double) * X * Z)) <= Y) ) {
-		puts("Invalid room dimensions");
+	// one last check to make sure we didn't overflow cgc_size_t
+	if ( (pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * X * Y)) <= Z) ||
+		(pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * Y * Z)) <= X) ||
+		(pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * X * Z)) <= Y) ) {
+		cgc_puts("Invalid room dimensions");
 		return(-1);
 	}
 #endif
 
 	// Allocate space for the temperature grid
-	if (AllocateGrid(&TGrid, X,Y,Z)) {
+	if (cgc_AllocateGrid(&TGrid, X,Y,Z)) {
 		return(-1);
 	}
 
 	// See if they want to start with an isothermic temperature
 	isothermic = -1;
 	while (isothermic < 0) {
-		printf("Should the material be isothermic? (y,n): ");
-		if (read_until(buf, "\n", 3) == -1) {
+		cgc_printf("Should the material be isothermic? (y,n): ");
+		if (cgc_read_until(buf, "\n", 3) == -1) {
 			// failed to read the input
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 		if (buf[0] == 'y' || buf[0] == 'Y') {
@@ -410,23 +410,23 @@ int InitMaterial(void) {
 	}
 
 	// flush any remaining chars from stdin
-	flush_stdin();
+	cgc_flush_stdin();
 
 	if (isothermic) {	
 		// isothermic, so what temperature value?
 		temperature = -274.0;
 		while (temperature < MIN_TEMP || temperature > MAX_TEMP) {
-			printf("  What temperature? (@f - @f degrees C): ", MIN_TEMP, MAX_TEMP);
-			if (read_until(buf, "\n", 99) == -1) {
+			cgc_printf("  What temperature? (@f - @f degrees C): ", MIN_TEMP, MAX_TEMP);
+			if (cgc_read_until(buf, "\n", 99) == -1) {
 				// failed to read the input
-				free(TGrid);
+				cgc_free(TGrid);
 				return(-1);
 			}
-			temperature = cgcatof(buf);
+			temperature = cgc_cgcatof(buf);
 		}
 
 		// flush any remaining chars from stdin
-		flush_stdin();
+		cgc_flush_stdin();
 
 		// set the room up with that temperature
 		for (x = 0; x < X; x++) {
@@ -441,10 +441,10 @@ int InitMaterial(void) {
 	} else {
 		// Otherwise, read in a blob of data and use it to populate
 		// the TGrid
-		printf("  Send the grid temperatures as a comma separated list of Celcius decimal values.\n");
-		printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
-		if (read_temps(TGrid)) {
-			free(TGrid);
+		cgc_printf("  Send the grid temperatures as a comma separated list of Celcius decimal values.\n");
+		cgc_printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
+		if (cgc_read_temps(TGrid)) {
+			cgc_free(TGrid);
 			return(-1);
 		}
 	}
@@ -452,10 +452,10 @@ int InitMaterial(void) {
 	// Are there any constant engergy/heat sources in the room?
 	heat = -1;
 	while (heat < 0) {
-		printf("Are there any constant energy sources in the room? (y,n): ");
-		if (read_until(buf, "\n", 3) == -1) {
+		cgc_printf("Are there any constant energy sources in the room? (y,n): ");
+		if (cgc_read_until(buf, "\n", 3) == -1) {
 			// failed to read the input
-			free(TGrid);
+			cgc_free(TGrid);
 			return(-1);
 		}
 		if (buf[0] == 'y' || buf[0] == 'Y') {
@@ -466,22 +466,22 @@ int InitMaterial(void) {
 	}
 
 	// flush any remaining chars from stdin
-	flush_stdin();
+	cgc_flush_stdin();
 
 	if (heat) {
 		// allocate a grid to hold the heat source data
-		if (AllocateGrid(&HGrid,X,Y,Z)) {
-			free(TGrid);
+		if (cgc_AllocateGrid(&HGrid,X,Y,Z)) {
+			cgc_free(TGrid);
 			return(-1);
 		}
 
 		// read in the data
-		printf("  Send the heat sources as temperatures in a comma separated list of Celcius decimal values.\n");
-		printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
-		printf("  Send @f for any grid location which doesn't have a heat source.\n", NO_HEAT);
-		if (read_temps(HGrid)) {
-			free(TGrid);
-			free(HGrid);
+		cgc_printf("  Send the heat sources as temperatures in a comma separated list of Celcius decimal values.\n");
+		cgc_printf("  The program will populate the X, then Y, then Z dimensions of the room.\n");
+		cgc_printf("  Send @f for any grid location which doesn't have a heat source.\n", NO_HEAT);
+		if (cgc_read_temps(HGrid)) {
+			cgc_free(TGrid);
+			cgc_free(HGrid);
 			return(-1);
 		}
 	}

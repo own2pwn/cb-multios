@@ -30,7 +30,7 @@
         unsigned char * __array = (unsigned char *)(_array); \
         for (int _i=0; _i < (_size); _i++) \
         { \
-            printf(ESC "c", (__array)[_i]); \
+            cgc_printf(ESC "c", (__array)[_i]); \
         } \
     } while (0)
 
@@ -39,7 +39,7 @@
         unsigned char * __array = (unsigned char *)(_array); \
         for (int _i=0; _i < (_size); _i++) \
         { \
-            printf("\\x" ESC "02x", (__array)[_i]); \
+            cgc_printf("\\x" ESC "02x", (__array)[_i]); \
         } \
     } while (0)
 

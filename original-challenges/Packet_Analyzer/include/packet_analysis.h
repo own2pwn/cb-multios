@@ -51,45 +51,45 @@ THE SOFTWARE.
 
 
 typedef struct Statistics_s {
-  uint32_t num_packets;
-  uint32_t start_time;
-  uint32_t end_time;
-  uint32_t largest_packet;
-  uint32_t smallest_packet;
-  uint32_t num_positive_filters;
-  uint32_t num_negative_filters;
-  uint32_t num_packets_shown;
-  uint32_t num_malformed;
-  uint8_t num_option_headers;
+  cgc_uint32_t num_packets;
+  cgc_uint32_t start_time;
+  cgc_uint32_t end_time;
+  cgc_uint32_t largest_packet;
+  cgc_uint32_t smallest_packet;
+  cgc_uint32_t num_positive_filters;
+  cgc_uint32_t num_negative_filters;
+  cgc_uint32_t num_packets_shown;
+  cgc_uint32_t num_malformed;
+  cgc_uint8_t num_option_headers;
   struct OptionHeader_s *option_headers;
-} Statistics;
+} cgc_Statistics;
 
 typedef struct PacketFilter_s {
-  uint16_t size;
-  uint8_t type;
-  uint8_t *mask;
-  uint8_t *content;
-} PacketFilter;
+  cgc_uint16_t size;
+  cgc_uint8_t type;
+  cgc_uint8_t *mask;
+  cgc_uint8_t *content;
+} cgc_PacketFilter;
 
 typedef struct Packet_s {
-  uint32_t timestamp;
-  uint16_t size;
-  uint8_t *data;
-  uint16_t original_size;
-  uint8_t *original_data;
-} Packet;
+  cgc_uint32_t timestamp;
+  cgc_uint16_t size;
+  cgc_uint8_t *data;
+  cgc_uint16_t original_size;
+  cgc_uint8_t *original_data;
+} cgc_Packet;
 
 typedef struct OptionHeader_s {
-  uint8_t type;
-  uint8_t length;
+  cgc_uint8_t type;
+  cgc_uint8_t length;
   struct OptionHeader_s *next;
   char *value;
-} OptionHeader;
+} cgc_OptionHeader;
 
 
-void TransmitOptionHeader(OptionHeader *header);
-void DisplayStatistics(SystemState *state);
-int AnalyzePacket(SystemState *state, Packet *packet);
-void ProcessAllFilters(Packet *packet, SystemState *state, int *negative_match, int *positive_match);
-int FilterMatch(PacketFilter *filter, Packet *packet);
+void cgc_TransmitOptionHeader(cgc_OptionHeader *header);
+void cgc_DisplayStatistics(cgc_SystemState *state);
+int cgc_AnalyzePacket(cgc_SystemState *state, cgc_Packet *packet);
+void cgc_ProcessAllFilters(cgc_Packet *packet, cgc_SystemState *state, int *negative_match, int *positive_match);
+int cgc_FilterMatch(cgc_PacketFilter *filter, cgc_Packet *packet);
 #endif

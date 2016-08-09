@@ -31,6 +31,6 @@ THE SOFTWARE.
 #define FREQ_2400_IND	1
 #define FREQ_1200_IND	0
 
-uint8_t receive_sample( int8_t sample_in );
+cgc_uint8_t cgc_receive_sample( cgc_int8_t sample_in );
 
 #endif // __RX_H__

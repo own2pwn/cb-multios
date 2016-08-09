@@ -24,7 +24,7 @@
  */
 #include <libcgc.h>
 
-char *strchr(const char *s, int c)
+char *cgc_strchr(const char *s, int c)
 {
     while (s[0] != c && s[0] != '\0')
         s++;

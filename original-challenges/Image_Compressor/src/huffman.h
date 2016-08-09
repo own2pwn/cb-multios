@@ -1,8 +1,8 @@
 #include <stdint.h>
 
 typedef struct {
-    uint8_t sizes[256];
-    uint16_t codes[256];
-} ht_t;
+    cgc_uint8_t sizes[256];
+    cgc_uint16_t codes[256];
+} cgc_ht_t;
 
-void huffman_decode_table(ht_t *output, const uint8_t input[]);
+void cgc_huffman_decode_table(cgc_ht_t *output, const cgc_uint8_t input[]);

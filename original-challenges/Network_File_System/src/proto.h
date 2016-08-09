@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,18 +27,18 @@ THE SOFTWARE.
 #define SERVICE_H
 #include <libcgc.h>
 
-// Request
+// cgc_Request
 typedef struct _request {
-	uint8_t Type;
+	cgc_uint8_t Type;
 	char *Username;
 	char *Password;
 	char *Filename;
 	char *Filename2;
-	uint8_t DataLen;
+	cgc_uint8_t DataLen;
 	char *Data;
-	uint32_t Offset;
-	uint8_t ReadWriteLength;
-} Request, *pRequest;
+	cgc_uint32_t Offset;
+	cgc_uint8_t ReadWriteLength;
+} cgc_Request, *cgc_pRequest;
 
 // Responses
 #define RESP_SUCCESS (0)
@@ -51,68 +51,68 @@ typedef struct _request {
 // packet formats
 #define RESPONSE_HEADER_LEN (4)
 typedef struct __attribute__((__packed__)) _response {
-	uint8_t Type;
-	uint8_t Code;
-	uint16_t DataLen;
+	cgc_uint8_t Type;
+	cgc_uint8_t Code;
+	cgc_uint16_t DataLen;
 	char *Data;
-} Response, *pResponse;
+} cgc_Response, *cgc_pResponse;
 
 #define REQUEST_HEADER_LEN (1)
 typedef struct _request_header {
-	uint8_t Type;
-} RequestHeader, *pRequestHeader;
+	cgc_uint8_t Type;
+} cgc_RequestHeader, *cgc_pRequestHeader;
 
 // login type
 #define CFS_LOGIN (0)
 typedef struct _login_header {
-	uint8_t UsernameLen;
-	uint8_t PasswordLen;
+	cgc_uint8_t UsernameLen;
+	cgc_uint8_t PasswordLen;
 	// char Username[UsernameLen];
 	// char Password[UsernameLen];
-} LoginHeader, *pLoginHeader;
+} cgc_LoginHeader, *cgc_pLoginHeader;
 
-// Request Directory Listing
+// cgc_Request Directory Listing
 #define CFS_DIR (1)
 
 // Read from file
 #define CFS_READ (2)
 typedef struct __attribute__((__packed__)) _read_header {
-	uint32_t Offset;	
-	uint8_t Length;
-	uint8_t FilenameLen;
+	cgc_uint32_t Offset;	
+	cgc_uint8_t Length;
+	cgc_uint8_t FilenameLen;
 	// char Filename[FilenameLen]
-} ReadHeader, *pReadHeader;
+} cgc_ReadHeader, *cgc_pReadHeader;
 
 // Write to file
 #define CFS_WRITE (3)
 #define CFS_WRITE_APPEND (4)
 typedef struct __attribute__((__packed__)) _write_header {
-	uint8_t Length;
-	uint8_t FilenameLen;
+	cgc_uint8_t Length;
+	cgc_uint8_t FilenameLen;
 	// char Filename[FilenameLen]
 	// char Data[Length]
-} WriteHeader, *pWriteHeader;
+} cgc_WriteHeader, *cgc_pWriteHeader;
 
 // Remove file
 #define CFS_DEL (5)
 typedef struct __attribute__((__packed__)) _del_header {
-	uint8_t FilenameLen;
+	cgc_uint8_t FilenameLen;
 	// char Filename[FilenameLen]
-} DelHeader, *pDelHeader;
+} cgc_DelHeader, *cgc_pDelHeader;
 
 // Rename file
 #define CFS_RENAME (6)
 typedef struct __attribute__((__packed__)) _rename_header {
-	uint8_t OldFilenameLen;
-	uint8_t NewFilenameLen;
+	cgc_uint8_t OldFilenameLen;
+	cgc_uint8_t NewFilenameLen;
 	// char OldFilename[FilenameLen]
 	// char newFilename[FilenameLen]
-} RenameHeader, *pRenameHeader;
+} cgc_RenameHeader, *cgc_pRenameHeader;
 
-pRequest ReceiveRequest(void);
-pResponse HandleRequest(pRequest pReq);
-uint8_t SendResponse(pResponse pResp);
-uint8_t FreeRequest(pRequest pReq);
-uint8_t FreeResponse(pResponse pResp);
+cgc_pRequest cgc_ReceiveRequest(void);
+cgc_pResponse cgc_HandleRequest(cgc_pRequest pReq);
+cgc_uint8_t cgc_SendResponse(cgc_pResponse pResp);
+cgc_uint8_t cgc_FreeRequest(cgc_pRequest pReq);
+cgc_uint8_t cgc_FreeResponse(cgc_pResponse pResp);
 
 #endif

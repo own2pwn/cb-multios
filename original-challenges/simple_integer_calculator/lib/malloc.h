@@ -4,14 +4,14 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
+of this software cgc_and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+to use, copy, modify, merge, publish, distribute, sublicense, cgc_and/or sell
+copies of the Software, cgc_and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
+The above copyright notice cgc_and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -35,23 +35,23 @@ THE SOFTWARE.
 
 typedef struct MALLOC_ALLOC_HDR
 {
-    size_t  alloc_size;
-} tMallocAllocHdr;
+    cgc_size_t  alloc_size;
+} cgc_tMallocAllocHdr;
 
-// Only free blocks have these headers (minimum allocation size is therefore 8-bytes)
+// Only cgc_free blocks have these headers (minimum allocation size is therefore 8-bytes)
 typedef struct MALLOC_ALLOC_FTR
 {
     struct MALLOC_ALLOC_HDR *pNext;
     struct MALLOC_ALLOC_HDR *pPrev;
-} tMallocAllocFtr;
+} cgc_tMallocAllocFtr;
 
 typedef struct MALLOC_MANAGER
 {
     void *pFreeList;
-} tMallocManager;
+} cgc_tMallocManager;
 
-void* calloc( size_t count, size_t obj_size );
-void* malloc( size_t alloc_size );
-void free( void *pMem );
+void* cgc_calloc( cgc_size_t count, cgc_size_t obj_size );
+void* cgc_malloc( cgc_size_t alloc_size );
+void cgc_free( void *pMem );
 
 #endif // __MALLOC_H__

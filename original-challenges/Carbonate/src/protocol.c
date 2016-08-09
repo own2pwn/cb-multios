@@ -27,12 +27,12 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "protocol.h"
 
-void receive_eventually(int fd, void* destination, size_t expected);
-void send_eventually(int fd, void* payload, size_t expected);
+void cgc_receive_eventually(int fd, void* destination, cgc_size_t expected);
+void cgc_send_eventually(int fd, void* payload, cgc_size_t expected);
 
-protocol_frame* allocate_frame(protocol_frame template) {
-  protocol_frame* candidate;
-  if (allocate(sizeof(protocol_frame), 0, (void**)(&candidate))) {
+cgc_protocol_frame* cgc_allocate_frame(cgc_protocol_frame template) {
+  cgc_protocol_frame* candidate;
+  if (allocate(sizeof(cgc_protocol_frame), 0, (void**)(&candidate))) {
     _terminate(-1);
   }
 
@@ -48,8 +48,8 @@ protocol_frame* allocate_frame(protocol_frame template) {
   return candidate;
 }
 
-protocol_frame* expect_frame(uint8 type) {
-  protocol_frame* candidate = receive_frame();
+cgc_protocol_frame* cgc_expect_frame(cgc_uint8 type) {
+  cgc_protocol_frame* candidate = cgc_receive_frame();
   if (candidate->type != type) {
     _terminate(-1);
   }
@@ -57,22 +57,22 @@ protocol_frame* expect_frame(uint8 type) {
   return candidate;
 }
 
-protocol_frame* receive_frame() {
-  protocol_frame candidate;
+cgc_protocol_frame* cgc_receive_frame() {
+  cgc_protocol_frame candidate;
   candidate.type = candidate.length = 0;
 
-  size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
-  size_t actual_received = 0;
+  cgc_size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
+  cgc_size_t actual_received = 0;
 
-  receive_eventually(STDIN,
+  cgc_receive_eventually(STDIN,
                      &candidate,
                      sizeof(candidate.type) + sizeof(candidate.length));
 
-  protocol_frame* payload = allocate_frame(candidate);
+  cgc_protocol_frame* payload = cgc_allocate_frame(candidate);
 
   if (payload->length == 0) return payload;
 
-  receive_eventually(STDIN,
+  cgc_receive_eventually(STDIN,
                      payload->value,
                      payload->length);
 
@@ -80,33 +80,33 @@ protocol_frame* receive_frame() {
   return payload;
 }
 
-void send_frame(protocol_frame* payload) {
-  size_t sent_bytes;
-  send_eventually(STDOUT,
+void cgc_send_frame(cgc_protocol_frame* payload) {
+  cgc_size_t sent_bytes;
+  cgc_send_eventually(STDOUT,
                       (void*)(payload),
                       sizeof(payload->type) + sizeof(payload->length));
 
 
-  send_eventually(STDOUT,
+  cgc_send_eventually(STDOUT,
                       (void*)(payload->value),
                       payload->length);
 
 }
 
-void send_empty_frame(uint8 type) {
-  protocol_frame payload;
+void cgc_send_empty_frame(cgc_uint8 type) {
+  cgc_protocol_frame payload;
   payload.type = type;
   payload.length = 0;
   payload.value = NULL;
-  send_frame(&payload);
+  cgc_send_frame(&payload);
 };
 
-void expect_empty_frame(uint8 type) {
-  protocol_frame* payload = expect_frame(type);
-  free_frame(payload);
+void cgc_expect_empty_frame(cgc_uint8 type) {
+  cgc_protocol_frame* payload = cgc_expect_frame(type);
+  cgc_free_frame(payload);
 }
 
-void free_frame(protocol_frame* fr) {
+void cgc_free_frame(cgc_protocol_frame* fr) {
   if (fr->value != NULL) {
     if (deallocate(fr->value, fr->length)) {
       _terminate(-1);
@@ -118,13 +118,13 @@ void free_frame(protocol_frame* fr) {
   }
 }
 
-void send_eventually(int fd, void* payload, size_t expected) {
-  size_t actual = 0;
+void cgc_send_eventually(int fd, void* payload, cgc_size_t expected) {
+  cgc_size_t actual = 0;
   void* buf = payload;
 
   while (actual < expected){
     int errcode = 0;
-    size_t count = 0;
+    cgc_size_t count = 0;
     errcode = transmit(fd, buf, expected - actual, &count);
     
     if (errcode) _terminate(-1);
@@ -134,13 +134,13 @@ void send_eventually(int fd, void* payload, size_t expected) {
   }
 }
 
-void receive_eventually(int fd, void* destination, size_t expected) {
-  size_t actual = 0;
+void cgc_receive_eventually(int fd, void* destination, cgc_size_t expected) {
+  cgc_size_t actual = 0;
   void* buf = destination;
 
   while (actual < expected) {
     int errcode = 0;
-    size_t count = 0;
+    cgc_size_t count = 0;
     errcode = receive(fd, buf, expected - actual, &count);
 
     if (errcode) _terminate(-1);

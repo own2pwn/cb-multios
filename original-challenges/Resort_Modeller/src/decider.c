@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,8 +28,8 @@
 #include "rider.h"
 #include "decider.h"
 
-static uint8_t *fp = (uint8_t *)FLAG_PAGE;
-static uint16_t fp_idx = 0;
+static cgc_uint8_t *fp = (cgc_uint8_t *)FLAG_PAGE;
+static cgc_uint16_t fp_idx = 0;
 
 /**
  * Create and initialize a new transport option
@@ -38,8 +38,8 @@ static uint16_t fp_idx = 0;
  * @param o_type 	Type of transport option
  * @param transport Transport
  */
-void option_new(TOption **to, toption_t o_type, void *transport) {
-	TOption *new = calloc(sizeof(TOption));
+void cgc_option_new(cgc_TOption **to, cgc_toption_t o_type, void *transport) {
+	cgc_TOption *new = cgc_calloc(sizeof(cgc_TOption));
 	MALLOC_OK(new);
 
 	new->o_type = o_type;
@@ -54,8 +54,8 @@ void option_new(TOption **to, toption_t o_type, void *transport) {
  * @param options 	List of options
  * @param new 		New option
  */
-void option_append_new(TOption **options, TOption *new) {
-	TOption *prev = *options;
+void cgc_option_append_new(cgc_TOption **options, cgc_TOption *new) {
+	cgc_TOption *prev = *options;
 	if (NULL == prev) { // this is the first one
 		*options = new;
 	} else { // other chairs exist
@@ -72,11 +72,11 @@ void option_append_new(TOption **options, TOption *new) {
  * @param options 	List of transport options
  * @return pointer to transport option or NULL if none
  */
-TOption *option_pop(TOption **options) {
+cgc_TOption *cgc_option_pop(cgc_TOption **options) {
 	if (NULL == *options) {
 		return NULL;
 	}
-	TOption *to = *options;
+	cgc_TOption *to = *options;
 	*options = to->next;
 	to->next = NULL;
 	return to;
@@ -87,23 +87,23 @@ TOption *option_pop(TOption **options) {
  *
  * @param to 	Transport option
  */
-void option_destroy_single(TOption **to) {
+void cgc_option_destroy_single(cgc_TOption **to) {
 
-	// Do not destroy the transport itself, would cause use-after-free issues
+	// Do not destroy the transport itself, would cause use-after-cgc_free issues
 	// Destroy them from the lift and trail master lists in the Resort.
 
 	// switch(to->o_type) {
 	// 	case LIFT:
-	// 		lift_destroy((Lift **)&to->transport);
+	// 		cgc_lift_destroy((cgc_Lift **)&to->transport);
 	// 		break;
 	// 	case TRAIL:
-	// 		trail_destroy((Trail **)&to->transport);
+	// 		cgc_trail_destroy((cgc_Trail **)&to->transport);
 	// 		break;
 	// 	default:
 	// 		break;
 	// }
 
-	free(*to);
+	cgc_free(*to);
 	*to = NULL;
 }
 
@@ -112,11 +112,11 @@ void option_destroy_single(TOption **to) {
  *
  * @param options 	List of transport options
  */
-void option_destroy_list(TOption **options) {
-	TOption *to = NULL;
+void cgc_option_destroy_list(cgc_TOption **options) {
+	cgc_TOption *to = NULL;
 	while (NULL != *options) {
-		to = option_pop(options);
-		option_destroy_single(&to);
+		to = cgc_option_pop(options);
+		cgc_option_destroy_single(&to);
 	}
 }
 
@@ -125,8 +125,8 @@ void option_destroy_list(TOption **options) {
  *
  * @return fp idx
  */
-uint16_t get_next_fp_idx(void) {
-	uint16_t idx = fp_idx;
+cgc_uint16_t cgc_get_next_fp_idx(void) {
+	cgc_uint16_t idx = fp_idx;
 	fp_idx = (fp_idx + 1) % 4096;
 	return idx;
 }
@@ -134,13 +134,13 @@ uint16_t get_next_fp_idx(void) {
 /**
  * Get a random transport option
  *
- * @param d 	Decider
+ * @param d 	cgc_Decider
  * @return pointer to option or NULL if none
  */
-TOption *decider_select_option(Decider *d) {
-	uint8_t selection_idx = fp[get_next_fp_idx()] % d->option_count;
-	TOption *to = d->t_options;
-	for (uint8_t i = 0; i < selection_idx; i++) {
+cgc_TOption *cgc_decider_select_option(cgc_Decider *d) {
+	cgc_uint8_t selection_idx = fp[cgc_get_next_fp_idx()] % d->option_count;
+	cgc_TOption *to = d->t_options;
+	for (cgc_uint8_t i = 0; i < selection_idx; i++) {
 		to = to->next;
 	}
 	return to;
@@ -149,14 +149,14 @@ TOption *decider_select_option(Decider *d) {
 /**
  * Add a transport option to the decider
  *
- * @param d 		Decider
+ * @param d 		cgc_Decider
  * @param o_type 	Transport option type
  * @param transport Transport
  */
-void decider_add_option(Decider *d, toption_t o_type, void *transport) {
-	TOption *to = NULL;
-	option_new(&to, o_type, transport);
-	option_append_new(&d->t_options, to);
+void cgc_decider_add_option(cgc_Decider *d, cgc_toption_t o_type, void *transport) {
+	cgc_TOption *to = NULL;
+	cgc_option_new(&to, o_type, transport);
+	cgc_option_append_new(&d->t_options, to);
 	d->option_count++;
 
 }
@@ -164,57 +164,57 @@ void decider_add_option(Decider *d, toption_t o_type, void *transport) {
 /**
  * Add rider to the queue
  *
- * @param d 	Decider
- * @param r 	Rider
+ * @param d 	cgc_Decider
+ * @param r 	cgc_Rider
  */
-void decider_embark(Decider *d, Rider *r) {
-	rider_append(&d->queue, r);
+void cgc_decider_embark(cgc_Decider *d, cgc_Rider *r) {
+	cgc_rider_append(&d->queue, r);
 }
 
 /**
  * Move all riders from queue to a transport option
  *
- * @param d 	Decider
+ * @param d 	cgc_Decider
  * @return Number of riders disembarked
  */
-uint32_t decider_disembark(Decider *d) {
-	Rider *r = NULL;
-	Trail *t = NULL;
-	TOption *to = NULL;
-	uint32_t count = 0;
+cgc_uint32_t cgc_decider_disembark(cgc_Decider *d) {
+	cgc_Rider *r = NULL;
+	cgc_Trail *t = NULL;
+	cgc_TOption *to = NULL;
+	cgc_uint32_t count = 0;
 
 	if (0 == d->option_count) {
 		return count;
 	}
 
-	while (NULL != (r = rider_pop(&d->queue))) {
-		to = decider_select_option(d);
+	while (NULL != (r = cgc_rider_pop(&d->queue))) {
+		to = cgc_decider_select_option(d);
 		if (NULL == to) {
-			rider_append(&d->queue, r);
+			cgc_rider_append(&d->queue, r);
 			break;
 		}
 		switch(to->o_type) {
 			case LIFT:
 				if (0 == r->energy_level) {
 					r->health_check(r, r->id);
-					rider_append(&d->quitters, r);
+					cgc_rider_append(&d->quitters, r);
 				} else {
-					lift_enqueue_riders((Lift *)to->transport, &r);
+					cgc_lift_enqueue_riders((cgc_Lift *)to->transport, &r);
 				}
 				count++;
 				break;
 			case TRAIL:
-				t = (Trail *)to->transport;
+				t = (cgc_Trail *)to->transport;
 				if (t->difficulty > r->energy_level) {
 					r->health_check(r, r->id);
-					rider_append(&d->quitters, r);					
+					cgc_rider_append(&d->quitters, r);					
 				} else {
 					t->embark(t, r);
 				}
 				count++;
 				break;
 			default:
-				rider_append(&d->queue, r);
+				cgc_rider_append(&d->queue, r);
 				break;
 		}
 	}
@@ -222,24 +222,24 @@ uint32_t decider_disembark(Decider *d) {
 }
 
 /**
- * Create and initialize a new Decider
+ * Create and initialize a new cgc_Decider
  *
  * @param d 		Pointer to store new decider
  * @param settings 	Settings for new decider
  * @return ID of decider else -1 on error
  */
-int32_t decider_new(Decider **d, uint32_t settings[2]) {
+cgc_int32_t cgc_decider_new(cgc_Decider **d, cgc_uint32_t settings[2]) {
 
-	Decider *new = calloc(sizeof(Decider));
+	cgc_Decider *new = cgc_calloc(sizeof(cgc_Decider));
 	MALLOC_OK(new);
 
 	new->id = settings[0];
 	new->altitude = settings[1];
-	new->embark = decider_embark;
-	new->disembark = decider_disembark;
+	new->embark = cgc_decider_embark;
+	new->disembark = cgc_decider_disembark;
 
 	if (0 == new->altitude) {
-		free(new);
+		cgc_free(new);
 		return -1;
 	}
 
@@ -250,16 +250,16 @@ int32_t decider_new(Decider **d, uint32_t settings[2]) {
 /**
  * Reset the decider to the initial state
  *
- * @param d 		Decider
+ * @param d 		cgc_Decider
  * @param riders 	List to store riders into
  */
-void decider_reset(Decider *d, Rider **riders) {
+void cgc_decider_reset(cgc_Decider *d, cgc_Rider **riders) {
 
 	// get riders out of queue
-	rider_append(riders, d->queue);
+	cgc_rider_append(riders, d->queue);
 	d->queue = NULL;
 	// get riders out of quitters
-	rider_append(riders, d->quitters);
+	cgc_rider_append(riders, d->quitters);
 	d->quitters = NULL;
 
 	// The caller should reset transport options separately via the Resort lists
@@ -268,24 +268,24 @@ void decider_reset(Decider *d, Rider **riders) {
 /**
  * Destroy the decider. The caller must destroy any lifts/trails assigned to this decider.
  *
- * @param d 	Decider
+ * @param d 	cgc_Decider
  */
-void decider_destroy(Decider **d, Rider **riders) {
-	Decider *this = *d;
+void cgc_decider_destroy(cgc_Decider **d, cgc_Rider **riders) {
+	cgc_Decider *this = *d;
 	// return riders in queue
 	if (NULL != this->queue) {
-		rider_append(riders, this->queue);
+		cgc_rider_append(riders, this->queue);
 	}
 	// return riders in quitters
 	if (NULL != this->quitters) {
-		rider_append(riders, this->quitters);
+		cgc_rider_append(riders, this->quitters);
 	}
 
 	// destroy transport options
-	TOption *to = this->t_options;
-	option_destroy_list(&to);
+	cgc_TOption *to = this->t_options;
+	cgc_option_destroy_list(&to);
 
-	free(*d);
+	cgc_free(*d);
 	*d = NULL;
 }
 

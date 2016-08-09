@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,7 +23,7 @@
 #include "num_gen.h"
 #include <cstdio.h>
 
-NumGen::NumGen(unsigned char *pool)
+cgc_NumGen::cgc_NumGen(unsigned char *pool)
 {
     rand_pool_ = pool;
     rand_idx_ = 0;
@@ -33,7 +33,7 @@ NumGen::NumGen(unsigned char *pool)
         numbers_[i] = UNUSED;
 }
 
-int NumGen::GetRandomNumber()
+int cgc_NumGen::cgc_GetRandomNumber()
 {
     if (!nums_available_)
         return 0;
@@ -55,7 +55,7 @@ int NumGen::GetRandomNumber()
     return 0;
 }
 
-bool NumGen::ReinstateNumber(int number)
+bool cgc_NumGen::cgc_ReinstateNumber(int number)
 {
     --number;
     if (numbers_[number] == USED)
@@ -67,22 +67,22 @@ bool NumGen::ReinstateNumber(int number)
     return false;
 }
 
-void NumGen::CacheNumber(int number)
+void cgc_NumGen::cgc_CacheNumber(int number)
 {
     cached_numbers_[cache_len_++] = number;
 }
 
-void NumGen::FlushCache(int flush_count)
+void cgc_NumGen::cgc_FlushCache(int flush_count)
 {
     flush_count = flush_count > cache_len_ ? cache_len_ : flush_count;
 
     for (int i = 1; i <= flush_count; i++)
-        ReinstateNumber(cached_numbers_[cache_len_ - i]);
+        cgc_ReinstateNumber(cached_numbers_[cache_len_ - i]);
 
     cache_len_ -= flush_count;
 }
 
-void NumGen::Reset()
+void cgc_NumGen::cgc_Reset()
 {
     cache_len_ = 0;
     nums_available_ = NUM_CELLS;
@@ -90,7 +90,7 @@ void NumGen::Reset()
         numbers_[i] = UNUSED;
 }
 
-int NumGen::AvailableNumbers()
+int cgc_NumGen::cgc_AvailableNumbers()
 {
     return nums_available_;
 }

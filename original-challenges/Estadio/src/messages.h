@@ -30,40 +30,40 @@ THE SOFTWARE.
 
 #define HELLO_ID 0
 #define HELLO_EXPECTED_LENGTH 0
-void* extract_hello(protocol_frame* frame);
+void* cgc_extract_hello(cgc_protocol_frame* frame);
 
 #define SEED_REQ_ID 1
 #define SEED_REQ_EXPECTED_LENGTH 32
-void* extract_seed_req(protocol_frame* frame);
+void* cgc_extract_seed_req(cgc_protocol_frame* frame);
 
 #define SEED_RESP_ID 2
 #define SEED_RESP_EXPECTED_LENGTH 0
-void* extract_seed_resp(protocol_frame* frame);
+void* cgc_extract_seed_resp(cgc_protocol_frame* frame);
 
 #define QUIT_REQ_ID 9
 #define QUIT_REQ_EXPECTED_LENGTH 0
-void* extract_quit_req(protocol_frame* frame);
+void* cgc_extract_quit_req(cgc_protocol_frame* frame);
 
 #define RAND_REQ_ID 10
 #define RAND_REQ_EXPECTED_LENGTH 1
-void* extract_rand_req(protocol_frame* frame);
+void* cgc_extract_rand_req(cgc_protocol_frame* frame);
 
 #define RAND_RESP_ID 11
 #define RAND_RESP_EXPECTED_LENGTH -1
-void* extract_rand_resp(protocol_frame* frame);
+void* cgc_extract_rand_resp(cgc_protocol_frame* frame);
 
 #define GUESS_REQ_ID 20
 #define GUESS_REQ_EXPECTED_LENGTH 8
-void* extract_guess_req(protocol_frame* frame);
+void* cgc_extract_guess_req(cgc_protocol_frame* frame);
 
 #define GUESS_RESP_ID 21
 #define GUESS_RESP_EXPECTED_LENGTH 0
-void* extract_guess_resp(protocol_frame* frame);
+void* cgc_extract_guess_resp(cgc_protocol_frame* frame);
 
 #define ECHO_REQ_ID 30
 #define ECHO_REQ_EXPECTED_LENGTH -1
-void* extract_echo_req(protocol_frame* frame);
+void* cgc_extract_echo_req(cgc_protocol_frame* frame);
 
 #define ECHO_RESP_ID 31
 #define ECHO_RESP_EXPECTED_LENGTH -1
-void* extract_echo_resp(protocol_frame* frame);
+void* cgc_extract_echo_resp(cgc_protocol_frame* frame);

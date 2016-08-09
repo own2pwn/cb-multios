@@ -23,7 +23,7 @@
 
 #include "random.h"
 
-int randint(int min, int max)
+int cgc_randint(int min, int max)
 {
     static unsigned long long seed = 1;
     seed *= 3249286849523012805ULL;

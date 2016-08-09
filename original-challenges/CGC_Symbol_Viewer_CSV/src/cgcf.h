@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -46,7 +46,7 @@ typedef struct {
   unsigned short  e_shentsize;
   unsigned short  e_shnum;
   unsigned short  e_shstrndx;
-} cgcf_Ehdr;
+} cgc_cgcf_Ehdr;
 
 // CGC Section header
 typedef struct {
@@ -61,7 +61,7 @@ typedef struct {
   unsigned int    sh_addralign;
   unsigned int    sh_entsize;
   char *          sh_name_str;
-} cgcf_Shdr;
+} cgc_cgcf_Shdr;
 
 // Section Type
 #define SHT_NULL            0
@@ -92,7 +92,7 @@ typedef struct {
   unsigned char   st_other;
   unsigned short  st_shndx;
   char *          st_name_str;
-} cgcf_Sym;
+} cgc_cgcf_Sym;
 
 // Symbol Info
 // bind
@@ -110,11 +110,11 @@ typedef struct {
 #define STT_TLS     6
 #define STT_NUM     7
 
-char* cgcf_section_type2str(unsigned int type);
-char* cgcf_symbol_bind2str(unsigned char bind);
-char* cgcf_symbol_type2str(unsigned char type);
-int cgcf_is_valid(cgcf_Ehdr *hdr);
-int cgcf_parse_file_header(const char *buf, size_t buf_len, cgcf_Ehdr *hdr);
-int cgcf_parse_section_header(const char *buf, size_t buf_len, short idx, cgcf_Shdr *shdr);
+char* cgc_cgcf_section_type2str(unsigned int type);
+char* cgc_cgcf_symbol_bind2str(unsigned char bind);
+char* cgc_cgcf_symbol_type2str(unsigned char type);
+int cgc_cgcf_is_valid(cgc_cgcf_Ehdr *hdr);
+int cgc_cgcf_parse_file_header(const char *buf, cgc_size_t buf_len, cgc_cgcf_Ehdr *hdr);
+int cgc_cgcf_parse_section_header(const char *buf, cgc_size_t buf_len, short idx, cgc_cgcf_Shdr *shdr);
 
 #endif

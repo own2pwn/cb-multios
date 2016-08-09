@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -38,13 +38,13 @@ enum utf8_decode_state {
     FOUR_BYTE
 };
 
-typedef unsigned char utf8char;
-typedef unsigned int ucscodepoint;
+typedef unsigned char cgc_utf8char;
+typedef unsigned int cgc_ucscodepoint;
 
-enum utf8_decode_state utf8_decode(enum utf8_decode_state state, utf8char c, ucscodepoint *out);
-ssize_t utf8_encode(ucscodepoint in, utf8char *out, size_t size);
+enum utf8_decode_state cgc_utf8_decode(enum utf8_decode_state state, cgc_utf8char c, cgc_ucscodepoint *out);
+cgc_ssize_t cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, cgc_size_t size);
 
-size_t utf8_canonicalize(utf8char *dst, const utf8char *src, size_t n);
+cgc_size_t cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, cgc_size_t n);
 
 #endif /* UTF8_H_ */
 

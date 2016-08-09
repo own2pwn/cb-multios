@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,6 +31,6 @@
  * @param cnt Number of bytes to compare
  * @return 0 if equal, 1 if s1 > s2, else -1
  */
-int memcmp(void *s1, void *s2, unsigned int cnt);
+int cgc_memcmp(void *s1, void *s2, unsigned int cnt);
 
 #endif

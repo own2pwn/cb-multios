@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,13 +23,13 @@
 
 #pragma once
 
-class CReward
+class cgc_CReward
 {
-    friend class CMission;
+    friend class cgc_CMission;
 
     public:
-        CReward(int exp, int supply);
-        ~CReward();
+        cgc_CReward(int exp, int supply);
+        ~cgc_CReward();
 
     private:
         int m_exp;

@@ -35,75 +35,75 @@ int main(void)
 	char inbuf[80];
 	char *key, *value;
 	int status;
-	employee temporary_record;
+	cgc_employee temporary_record;
 	int week;
 	int blank_line = 1;
 	int query = 0;
-	// Store of all employee data
-	employee employee_list[NUMBER_OF_EMPLOYEES];
+	// Store of all cgc_employee data
+	cgc_employee employee_list[NUMBER_OF_EMPLOYEES];
 
 	for( i=0; i<NUMBER_OF_EMPLOYEES; i++)
 	{
-		initialize_employee(&employee_list[i]);
+		cgc_initialize_employee(&employee_list[i]);
 	}
 
-	initialize_employee(&temporary_record);
+	cgc_initialize_employee(&temporary_record);
 	week = 0;
 
 	// Process input and respond to queries until a blank line is received
 	while(1)
 	{
 		// Read input from network in the form of key-value pairs
-		status = get_key_value((char *)&inbuf, sizeof(inbuf), &key, &value);
+		status = cgc_get_key_value((char *)&inbuf, sizeof(inbuf), &key, &value);
 		switch (status)
 		{
 			case READ_ERROR:
-				print("ERROR: on receive\n");
+				cgc_print("ERROR: on receive\n");
 				_terminate(1);
 				break;
 			case NEWLINE_RECEIVED:
 			// Process the input line by merging the temporary record with the global record
 				if (blank_line == 1)
 				{
-					print("Exiting\n");
+					cgc_print("Exiting\n");
 					_terminate(0);
 				}
 				if (query > 0)
 				{
-					process_query(query, (employee *)&employee_list, &temporary_record, week);
+					cgc_process_query(query, (cgc_employee *)&employee_list, &temporary_record, week);
 				}
 				else if ((temporary_record.id >= 0) && (temporary_record.id < NUMBER_OF_EMPLOYEES))
 				{
-					merge_employee_records(&employee_list[temporary_record.id], &temporary_record);
+					cgc_merge_employee_records(&employee_list[temporary_record.id], &temporary_record);
 				}
 				// Get ready to process a new line
-				initialize_employee(&temporary_record);
+				cgc_initialize_employee(&temporary_record);
 				week = 0;
 				blank_line = 1;
 				query = 0;
 				break;			
 			case KEY_VALUE_RECEIVED:
 				// If this is a query line remember it for processing later
-				if ((blank_line == 1) && (equals(key, "query")))
+				if ((blank_line == 1) && (cgc_equals(key, "query")))
 				{
-					if (equals(value, "all"))
+					if (cgc_equals(value, "all"))
 						query = QUERY_ALL;
-					else if (equals(value, "one"))
+					else if (cgc_equals(value, "one"))
 						query = QUERY_ONE;
-					else if (equals(value, "week"))
+					else if (cgc_equals(value, "week"))
 						query = QUERY_WEEK;
-					else if (equals(value, "week_all"))
+					else if (cgc_equals(value, "week_all"))
 						query = QUERY_WEEK_ALL;
 					else
 						query = 0;
 				}
 				blank_line = 0;
 				// Add the key_value information to a temporary record
-				process_key_value(&temporary_record, key, value, &week);
+				cgc_process_key_value(&temporary_record, key, value, &week);
 				break;
 			case OTHER_INPUT_RECEIVED:
 			default:
-				print("ERROR: invalid input\n");
+				cgc_print("ERROR: invalid input\n");
 				_terminate(1);
 				break;
 		}

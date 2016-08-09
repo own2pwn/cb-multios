@@ -31,11 +31,11 @@
 #define FILE_BUFFER_SIZE 4096
 
 typedef struct {
-	size_t fd;
-	size_t index;
-	size_t num;
+	cgc_size_t fd;
+	cgc_size_t index;
+	cgc_size_t num;
 	unsigned char buffer[FILE_BUFFER_SIZE];
-} File;
+} cgc_File;
 
 /**
 * Read from the socket until either a delimeter is ditected or n bytes are read
@@ -47,7 +47,7 @@ typedef struct {
 * @param read The number of total bytes read
 * @return 0 if successful, -1 if the receive call returns an error, -2 if the receive call does not read a byte
 */
-int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t size, size_t* read);
+int cgc_read_until_delim_or_n(unsigned int socket, char* buffer, char delim, cgc_size_t size, cgc_size_t* read);
 
 /**
 * Read exactly n bytes from the socket
@@ -58,7 +58,7 @@ int read_until_delim_or_n(unsigned int socket, char* buffer, char delim, size_t 
 * @param read The number of total bytes read
 * @return 0 if successful, -1 if the receive call returns an error, -2 if the receive call does not read a byte
 */
-int read_n_bytes(unsigned int socket, char* buffer, size_t size, size_t* read);
+int cgc_read_n_bytes(unsigned int socket, char* buffer, cgc_size_t size, cgc_size_t* read);
 
 /**
 * Send size bytes to the socket
@@ -68,4 +68,4 @@ int read_n_bytes(unsigned int socket, char* buffer, size_t size, size_t* read);
 * @param size The maximum number of bytes to send
 * @return 0 if successful, -1 if the transmit call returns an error
 */
-int transmit_all(int fd, const void *buf, const size_t size);
+int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size);

@@ -26,30 +26,30 @@
 #include "t_operation.h"
 #endif
 
-list_t *haiku_list = NULL;
-uint32_t next_haiku_id = INIT_HAIKU_ID;
+cgc_list_t *haiku_list = NULL;
+cgc_uint32_t next_haiku_id = INIT_HAIKU_ID;
 
 /*
- * Receive 4 bytes as a uint32_t.
+ * Receive 4 bytes as a cgc_uint32_t.
  *
  * Returns:
- *  uint32_t >= 0
+ *  cgc_uint32_t >= 0
  */
-uint32_t recv_uint32() {
-    uint32_t num[1] = {0};
-    RECV(num, sizeof(uint32_t));
+cgc_uint32_t cgc_recv_uint32() {
+    cgc_uint32_t num[1] = {0};
+    RECV(num, sizeof(cgc_uint32_t));
 	return num[0];
 }
 
 /*
- * Receive 2 bytes as a uint16_t.
+ * Receive 2 bytes as a cgc_uint16_t.
  *
  * Returns:
- *  uint16_t >= 0
+ *  cgc_uint16_t >= 0
  */
-uint32_t recv_uint16() {
-    uint16_t num[1] = {0};
-    RECV(num, sizeof(uint16_t));
+cgc_uint32_t cgc_recv_uint16() {
+    cgc_uint16_t num[1] = {0};
+    RECV(num, sizeof(cgc_uint16_t));
 	return num[0];
 }
 
@@ -60,7 +60,7 @@ uint32_t recv_uint16() {
  *  exists: TRUE
  *  not exists: FALSE
  */
-uint8_t haiku_list_exists() {
+cgc_uint8_t cgc_haiku_list_exists() {
 	if (NULL == haiku_list) {
 		return FALSE;
 	} else {
@@ -77,7 +77,7 @@ uint8_t haiku_list_exists() {
  *  is empty: TRUE
  *  not empty: FALSE
  */
-uint8_t is_haiku_list_empty() {
+cgc_uint8_t cgc_is_haiku_list_empty() {
 	if (0 == haiku_list->count) {
 		return TRUE;
 	} else {
@@ -88,9 +88,9 @@ uint8_t is_haiku_list_empty() {
 /*
  * Initialize the haiku list.
  */
-void init_haiku_list() {
-	if (FALSE == haiku_list_exists()) {
-		haiku_list = list_create();
+void cgc_init_haiku_list() {
+	if (FALSE == cgc_haiku_list_exists()) {
+		haiku_list = cgc_list_create();
 	}
 }
 
@@ -101,8 +101,8 @@ void init_haiku_list() {
  *  Success: >= 0
  *  Failure: ERR_LIST_NOT_EXIST
  */
-int get_count() {
-	if (TRUE == haiku_list_exists()) {
+int cgc_get_count() {
+	if (TRUE == cgc_haiku_list_exists()) {
 		return haiku_list->count;
 	} else {
 		return ERR_LIST_NOT_EXIST;
@@ -116,7 +116,7 @@ int get_count() {
  *  Success: >= 0
  *  Failure: ERR_EMPTY_NODE
  */
-uint32_t get_id_from_haiku(node_t *haiku) {
+cgc_uint32_t cgc_get_id_from_haiku(cgc_node_t *haiku) {
 	if (NULL != haiku->data) {
 		struct haiku *h = (struct haiku *) haiku->data;
 		return h->id;
@@ -128,7 +128,7 @@ uint32_t get_id_from_haiku(node_t *haiku) {
 /*
  * Get next available haiku id number.
  */
-uint32_t get_next_haiku_id() {
+cgc_uint32_t cgc_get_next_haiku_id() {
 	next_haiku_id++;
 	return next_haiku_id - 1;
 }
@@ -140,11 +140,11 @@ uint32_t get_next_haiku_id() {
  *  Success: SUCCESS
  *  Failure: ERR_LIST_NOT_EXIST, ERR_LIST_EMPTY, ERR_RAND_FAILED
  */
-int get_random_idx(uint32_t *idx) {
-	uint32_t random_idx = 0;
+int cgc_get_random_idx(cgc_uint32_t *idx) {
+	cgc_uint32_t random_idx = 0;
 	int ret = 0;
-	ret = rand((char *)&random_idx, 4);
-	int32_t count = get_count();
+	ret = cgc_rand((char *)&random_idx, 4);
+	cgc_int32_t count = cgc_get_count();
 
 	if (ERR_LIST_NOT_EXIST == count) {
 		return count;
@@ -153,7 +153,7 @@ int get_random_idx(uint32_t *idx) {
 	} else if (0 != ret) {
 		return ERR_RAND_FAILED;
 	} else {
-		*idx = random_idx % (uint32_t)count;
+		*idx = random_idx % (cgc_uint32_t)count;
 		return SUCCESS;
 	}
 }
@@ -165,13 +165,13 @@ int get_random_idx(uint32_t *idx) {
  *  Success: SUCCESS
  *  Failure: ERR_LIST_NOT_EXIST, ERR_LIST_EMPTY
  */
-int populate_array_with_haiku_ids(uint32_t id_arr[], uint32_t count) {
+int cgc_populate_array_with_haiku_ids(cgc_uint32_t id_arr[], cgc_uint32_t count) {
 
-	node_t *haiku_ptr = NULL;
+	cgc_node_t *haiku_ptr = NULL;
 	struct haiku *h = NULL;
-	uint32_t id = 0;
+	cgc_uint32_t id = 0;
 
-	if (TRUE == haiku_list_exists()) {
+	if (TRUE == cgc_haiku_list_exists()) {
 		haiku_ptr = haiku_list->tail;
 	} else {
 		return ERR_LIST_NOT_EXIST;
@@ -198,14 +198,14 @@ int populate_array_with_haiku_ids(uint32_t id_arr[], uint32_t count) {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_ID, ERR_LIST_NOT_EXIST, ERR_LIST_EMPTY
  */
-int find_haiku_with_id(struct haiku **h, uint32_t id) {
+int cgc_find_haiku_with_id(struct haiku **h, cgc_uint32_t id) {
 
-	node_t *haiku_ptr = NULL;
+	cgc_node_t *haiku_ptr = NULL;
 	struct haiku *tmp = NULL;
 	int count = 0;
-	bool_t found = FALSE;
+	cgc_bool_t found = FALSE;
 
-	count = get_count();
+	count = cgc_get_count();
 	if (0 < count) {
 		haiku_ptr = haiku_list->head;
 	} else if (0 == count) {
@@ -234,34 +234,34 @@ int find_haiku_with_id(struct haiku **h, uint32_t id) {
 /*
  * Send the struct haiku to client.
  */
-void send_haiku(struct haiku *h) {
-	uint32_t id = h->id;
+void cgc_send_haiku(struct haiku *h) {
+	cgc_uint32_t id = h->id;
 	char *content = h->content;
-	uint16_t length = h->length;
+	cgc_uint16_t length = h->length;
 
-	send((char *)&id, sizeof(uint32_t));
-	send((char *)&length, sizeof(uint16_t));
-	send(content, length);
+	cgc_send((char *)&id, sizeof(cgc_uint32_t));
+	cgc_send((char *)&length, sizeof(cgc_uint16_t));
+	cgc_send(content, length);
 }
 
 /*
  * Send the Ester Egg haiku to client.
  */
-void send_easter_egg_haiku() {
+void cgc_send_easter_egg_haiku() {
 
-	uint32_t id = EGG_ID;
+	cgc_uint32_t id = EGG_ID;
 	char *content = EGG_HAIKU;
-	uint16_t length = strlen(content);
+	cgc_uint16_t length = cgc_strlen(content);
 
-	send((char *)&id, sizeof(uint32_t));
-	send((char *)&length, sizeof(uint16_t));
-	send(content, length);
+	cgc_send((char *)&id, sizeof(cgc_uint32_t));
+	cgc_send((char *)&length, sizeof(cgc_uint16_t));
+	cgc_send(content, length);
 }
 
 /*
  * Send the id of the haiku to the client.
  */
-void send_haiku_id(uint32_t id) {
+void cgc_send_haiku_id(cgc_uint32_t id) {
 	SENDUI(id);
 }
 
@@ -272,10 +272,10 @@ void send_haiku_id(uint32_t id) {
  * Returns:
  *  Success: SUCCESS
  */
-int add_haiku_to_list(struct haiku *h) {
+int cgc_add_haiku_to_list(struct haiku *h) {
 
-	node_t *nd = node_create((void *)h);
-	return list_push(haiku_list, nd);
+	cgc_node_t *nd = cgc_node_create((void *)h);
+	return cgc_list_push(haiku_list, nd);
 }
 
 /*
@@ -284,15 +284,15 @@ int add_haiku_to_list(struct haiku *h) {
  * Returns:
  *  bytes written at haiku_content_ptr >= 0
  */
-int recv_haiku_line(char *haiku_content_ptr, int16_t bytes_remaining) {
+int cgc_recv_haiku_line(char *haiku_content_ptr, cgc_int16_t bytes_remaining) {
 
 	char temp_line_buf[MAX_HAIKU_LINE_LEN] = {0};
-	int16_t bytes_received = 0;
-	int16_t bytes_written = 0;
+	cgc_int16_t bytes_received = 0;
+	cgc_int16_t bytes_written = 0;
 
 	// bytes_received includes line termination char, 
 	//  but line term char is not written to temp_line_buf, a null is in its place.
-	bytes_received = recvline(STDIN, temp_line_buf, MAX_HAIKU_LINE_LEN);
+	bytes_received = cgc_recvline(STDIN, temp_line_buf, MAX_HAIKU_LINE_LEN);
 
 	//  this will make the creation of POV input harder to create 
 	//   since it will need line termination chars at set intervals.
@@ -305,7 +305,7 @@ int recv_haiku_line(char *haiku_content_ptr, int16_t bytes_remaining) {
 	//  to haiku_content_ptr for each line of input.
 
 	// +1 for trailing null
-	bytes_written = snprintf(haiku_content_ptr, bytes_remaining + 1, "~c\x07", temp_line_buf);
+	bytes_written = cgc_snprintf(haiku_content_ptr, bytes_remaining + 1, "~c\x07", temp_line_buf);
 
 	return bytes_written;
 }
@@ -316,14 +316,14 @@ int recv_haiku_line(char *haiku_content_ptr, int16_t bytes_remaining) {
  * Returns:
  *  VA of new struct haiku 
  */
-struct haiku *recv_haiku(uint16_t total_bytes) {
+struct haiku *cgc_recv_haiku(cgc_uint16_t total_bytes) {
 
 	struct haiku *h = NULL;
 	char *haiku_content_ptr = NULL;
-	int16_t bytes_remaining = 0;
-	int16_t bytes_written = 0;
+	cgc_int16_t bytes_remaining = 0;
+	cgc_int16_t bytes_written = 0;
 
-	bytes_remaining = (int16_t)total_bytes;
+	bytes_remaining = (cgc_int16_t)total_bytes;
 
 	ALLOC(sizeof(struct haiku) + total_bytes + 1, &h); // +1 for trailing null
 	haiku_content_ptr = h->content;
@@ -334,7 +334,7 @@ struct haiku *recv_haiku(uint16_t total_bytes) {
 #else
 	while (0 != bytes_remaining) {
 #endif
-		bytes_written = recv_haiku_line(haiku_content_ptr, bytes_remaining);
+		bytes_written = cgc_recv_haiku_line(haiku_content_ptr, bytes_remaining);
 		if (0 > bytes_written) { // ERR_INVALID_HAIKU
 			return NULL;
 		}
@@ -343,7 +343,7 @@ struct haiku *recv_haiku(uint16_t total_bytes) {
 		bytes_remaining -= bytes_written;
 	}
 
-	h->id = get_next_haiku_id();
+	h->id = cgc_get_next_haiku_id();
 	h->length = total_bytes;
 
 	return h;
@@ -357,8 +357,8 @@ struct haiku *recv_haiku(uint16_t total_bytes) {
  * Returns:
  *  haiku size uint16 >= 0
  */
-uint16_t recv_haiku_size() {
-	return recv_uint16(); 
+cgc_uint16_t cgc_recv_haiku_size() {
+	return cgc_recv_uint16(); 
 }
 
 // Operation functions
@@ -372,26 +372,26 @@ uint16_t recv_haiku_size() {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_HAIKU_LEN, ERR_INVALID_HAIKU
  */
-int add_haiku() {
+int cgc_add_haiku() {
 
 	int ret = SUCCESS;
-	uint16_t total_bytes = 0; // number of bytes in haiku, including line termination chars.
+	cgc_uint16_t total_bytes = 0; // number of bytes in haiku, including line termination chars.
 	struct haiku *h = NULL;
 
-	if (FALSE == haiku_list_exists()) {
-		init_haiku_list();
+	if (FALSE == cgc_haiku_list_exists()) {
+		cgc_init_haiku_list();
 	}
 
-	total_bytes	= recv_haiku_size();
+	total_bytes	= cgc_recv_haiku_size();
 
 	if ((0 < total_bytes) && (MAX_HAIKU_LEN > total_bytes)) {
-		h = recv_haiku(total_bytes);
+		h = cgc_recv_haiku(total_bytes);
 		if (NULL == h) {
 			ret = ERR_INVALID_HAIKU;
 		} else {
-			ret = add_haiku_to_list(h);
+			ret = cgc_add_haiku_to_list(h);
 
-			send_haiku_id(h->id);			
+			cgc_send_haiku_id(h->id);			
 		}
 	} else {
 		ret = ERR_INVALID_HAIKU_LEN;
@@ -407,21 +407,21 @@ int add_haiku() {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_ID, ERR_LIST_NOT_EXIST, ERR_LIST_EMPTY
  */
-int get_haiku_by_id() {
+int cgc_get_haiku_by_id() {
 	struct haiku *h = NULL;
-	uint32_t id = 0;
+	cgc_uint32_t id = 0;
 	int res = 0;
 
-	if (TRUE == haiku_list_exists()) {
+	if (TRUE == cgc_haiku_list_exists()) {
 
-		id = recv_uint32();
+		id = cgc_recv_uint32();
 
 		if (EGG_ID == id) {
-			send_easter_egg_haiku();
+			cgc_send_easter_egg_haiku();
 		} else {
-			res = find_haiku_with_id(&h, id);
+			res = cgc_find_haiku_with_id(&h, id);
 			if (SUCCESS == res) {
-				send_haiku(h);
+				cgc_send_haiku(h);
 			}
 		}
 	} else {
@@ -438,33 +438,33 @@ int get_haiku_by_id() {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_ID, ERR_LIST_NOT_EXIST, ERR_LIST_EMPTY, ERR_RAND_FAILED
  */
-int get_haiku_random() {
+int cgc_get_haiku_cgc_random() {
 
-	uint32_t random_idx = 0;
-	uint32_t count = 0;
-	uint32_t *id_arr = NULL;
+	cgc_uint32_t random_idx = 0;
+	cgc_uint32_t count = 0;
+	cgc_uint32_t *id_arr = NULL;
 	struct haiku *rand_haiku = NULL;
 	int res = SUCCESS;
 
-	if (TRUE == haiku_list_exists()) {
-		count = get_count();
+	if (TRUE == cgc_haiku_list_exists()) {
+		count = cgc_get_count();
 		if (0 == count) {
 			return ERR_LIST_EMPTY;
 		}
 
-		ALLOC(count * sizeof(uint32_t), &id_arr);
+		ALLOC(count * sizeof(cgc_uint32_t), &id_arr);
 
 		// these functions should not return error due to haiku_list existance or count <= 0.
-		res = populate_array_with_haiku_ids(id_arr, count);
-		res = get_random_idx(&random_idx);
+		res = cgc_populate_array_with_haiku_ids(id_arr, count);
+		res = cgc_get_random_idx(&random_idx);
 		if (ERR_RAND_FAILED != res) {
-			res = find_haiku_with_id(&rand_haiku, id_arr[random_idx]);
+			res = cgc_find_haiku_with_id(&rand_haiku, id_arr[random_idx]);
 		}
 
-		DEALLOC(id_arr, count * sizeof(uint32_t));
+		DEALLOC(id_arr, count * sizeof(cgc_uint32_t));
 
 		if (SUCCESS == res) {
-			send_haiku(rand_haiku);
+			cgc_send_haiku(rand_haiku);
 		}
 
 	} else {
@@ -481,10 +481,10 @@ int get_haiku_random() {
  *  Success: SUCCESS
  *  Failure: ERR_LIST_NOT_EXIST
  */
-int get_haiku_count() {
-	uint32_t count = 0;
-	if (TRUE == haiku_list_exists()) {
-		count = get_count();
+int cgc_get_haiku_count() {
+	cgc_uint32_t count = 0;
+	if (TRUE == cgc_haiku_list_exists()) {
+		count = cgc_get_count();
 		SENDUI(count);
 		return SUCCESS;
 	} else {
@@ -502,14 +502,14 @@ int get_haiku_count() {
  *  Success: SUCCESS
  *  Failure: ERR_LIST_NOT_EXIST
  */
-int get_haiku_ids() {
-	if (TRUE == haiku_list_exists()) {
-		uint32_t count = (uint32_t)get_count();
+int cgc_get_haiku_ids() {
+	if (TRUE == cgc_haiku_list_exists()) {
+		cgc_uint32_t count = (cgc_uint32_t)cgc_get_count();
 		SENDUI(count);
 
-		node_t *hl_ptr = haiku_list->head;
+		cgc_node_t *hl_ptr = haiku_list->head;
 		while(NULL != hl_ptr) {
-			uint32_t id = get_id_from_haiku(hl_ptr);
+			cgc_uint32_t id = cgc_get_id_from_haiku(hl_ptr);
 			SENDUI(id);
 			hl_ptr = hl_ptr->next;
 		}

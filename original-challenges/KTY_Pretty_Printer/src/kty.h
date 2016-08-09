@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -43,10 +43,10 @@ typedef enum kty_type {
   KTY_BOOLEAN = 5,
   KTY_NULL = 6,
   KTY_CAT = 7
-} kty_type_t;
+} cgc_kty_type_t;
 
 typedef struct kty_item {
-  kty_type_t type;
+  cgc_kty_type_t type;
   union data {
     char i_bool;
     int i_int;
@@ -55,25 +55,25 @@ typedef struct kty_item {
       char *s;
       int len;
     } i_string;
-    array_t *i_array;
-    htbl_t *i_object;
+    cgc_array_t *i_array;
+    cgc_htbl_t *i_object;
   } item;
-} kty_item_t;
+} cgc_kty_item_t;
 
-typedef void (kty_dumps_fn) (kty_item_t *kty);
-typedef kty_item_t* (kty_loads_fn) (char *str);
+typedef void (cgc_kty_dumps_fn) (cgc_kty_item_t *kty);
+typedef cgc_kty_item_t* (cgc_kty_loads_fn) (char *str);
 
 typedef struct kty_parser {
   unsigned int cats;
-  array_t *nyan_says;
-  kty_dumps_fn *dumps;
-  kty_loads_fn *loads;
-} kty_parser_t;
+  cgc_array_t *nyan_says;
+  cgc_kty_dumps_fn *dumps;
+  cgc_kty_loads_fn *loads;
+} cgc_kty_parser_t;
 
-int kty_init(kty_parser_t *parser);
-void free_kty_item(void *e);
+int cgc_kty_init(cgc_kty_parser_t *parser);
+void cgc_free_kty_item(void *e);
 
-void kty_dumps(kty_item_t *kty);
-kty_item_t* kty_loads(char *str);
+void cgc_kty_dumps(cgc_kty_item_t *kty);
+cgc_kty_item_t* cgc_kty_loads(char *str);
 
 #endif

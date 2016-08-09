@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,17 +27,17 @@
 #define	true 1
 
 
-typedef unsigned char uint8_t;
-typedef uint8_t byte_t;
-typedef unsigned short uint16_t; 
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
+typedef unsigned char cgc_uint8_t;
+typedef cgc_uint8_t cgc_byte_t;
+typedef unsigned short cgc_uint16_t; 
+typedef unsigned int cgc_uint32_t;
+typedef unsigned long long cgc_uint64_t;
 
-typedef char int8_t;
-typedef short int16_t;
-typedef int int32_t;
-typedef long long int64_t;
+typedef char cgc_int8_t;
+typedef short cgc_int16_t;
+typedef int cgc_int32_t;
+typedef long long cgc_int64_t;
 
-typedef uint8_t bool;
+typedef cgc_uint8_t cgc_bool;
 
 #endif

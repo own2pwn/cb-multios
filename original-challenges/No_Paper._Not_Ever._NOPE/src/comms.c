@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,12 +30,12 @@
 #include "comms.h"
 
 
-void session_append(Session **s_list, Session *s) {
-	Session *tmp = *s_list;
-	Session *prev = *s_list;
-	Session *new = calloc(sizeof(Session));
+void cgc_session_append(cgc_Session **s_list, cgc_Session *s) {
+	cgc_Session *tmp = *s_list;
+	cgc_Session *prev = *s_list;
+	cgc_Session *new = cgc_calloc(sizeof(cgc_Session));
 	MALLOC_OK(new);
-	memcpy(new, s, sizeof(Session) - 2*sizeof(char *));
+	cgc_memcpy(new, s, sizeof(cgc_Session) - 2*sizeof(char *));
 
 	if (NULL == tmp) {
 		*s_list = new;
@@ -48,12 +48,12 @@ void session_append(Session **s_list, Session *s) {
 	}
 }
 
-Session *session_remove(Session **s_list, Session *s) {
-	Session *tmp = *s_list;
-	Session *prev = *s_list;
+cgc_Session *cgc_session_remove(cgc_Session **s_list, cgc_Session *s) {
+	cgc_Session *tmp = *s_list;
+	cgc_Session *prev = *s_list;
 	while (NULL != tmp) {
 
-	    if (0 == memcmp(s->login.key, tmp->login.key, sizeof(tmp->login.key))) {
+	    if (0 == cgc_memcmp(s->login.key, tmp->login.key, sizeof(tmp->login.key))) {
 
 	    	if (tmp == prev) { // first node in list
 	    		*s_list = tmp->next;
@@ -71,11 +71,11 @@ Session *session_remove(Session **s_list, Session *s) {
 	return NULL;
 }
 
-Session *session_get_by_username(Session *s_list, Session *s) {
-    Session *s_result = NULL;
-    Session *tmp = s_list;
+cgc_Session *cgc_session_get_by_username(cgc_Session *s_list, cgc_Session *s) {
+    cgc_Session *s_result = NULL;
+    cgc_Session *tmp = s_list;
 	while (NULL != tmp) {
-	    if (0 == memcmp(s->login.username, tmp->login.username, sizeof(tmp->login.username))) {
+	    if (0 == cgc_memcmp(s->login.username, tmp->login.username, sizeof(tmp->login.username))) {
 	    	s_result = tmp;
 			break;
 	    }

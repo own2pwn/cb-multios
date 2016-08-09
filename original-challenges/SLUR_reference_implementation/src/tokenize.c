@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,54 +29,54 @@
 
 DEF_LIST_APPEND(tok, char *);
 
-static int ok_for_sym(char c)
+static int cgc_ok_for_sym(char c)
 {
-  if (c == '(' || c == ')' || isspace(c))
+  if (c == '(' || c == ')' || cgc_isspace(c))
     return 0;
   else
     return 1;
 }
 
-tok_list *tokenize(char *expr)
+cgc_tok_list *cgc_tokenize(char *expr)
 {
-  size_t len = strlen(expr);
-  size_t i = 0;
+  cgc_size_t len = cgc_strlen(expr);
+  cgc_size_t i = 0;
 
-  tok_list *l = malloc(sizeof(tok_list));
+  cgc_tok_list *l = cgc_malloc(sizeof(cgc_tok_list));
   if (l == NULL)
     return NULL;
   l->value = "START";
 
   while (i < len) {
-    while (isspace(expr[i]))
+    while (cgc_isspace(expr[i]))
       i++;
 
     if (expr[i] == '(' || expr[i] == ')') {
-      char *v = malloc(2);
+      char *v = cgc_malloc(2);
       if (v == NULL)
         return NULL;
       v[0] = expr[i];
       v[1] = '\0';
-      if (tok_list_append(l, v) < 0)
+      if (cgc_tok_list_append(l, v) < 0)
         return NULL;
       i++;
       continue;
     }
 
-    if (isalnum(expr[i])) {
-      size_t start = i;
+    if (cgc_isalnum(expr[i])) {
+      cgc_size_t start = i;
 
-      while (isalnum(expr[i]) && i < len)
+      while (cgc_isalnum(expr[i]) && i < len)
         i++;
 
       if (i < start)
         return NULL;
 
-      char *v = malloc(i - start + 1);
+      char *v = cgc_malloc(i - start + 1);
       if (v == NULL)
         return NULL;
-      strncpy(v, expr + start, i - start);
-      if (tok_list_append(l, v) < 0)
+      cgc_strncpy(v, expr + start, i - start);
+      if (cgc_tok_list_append(l, v) < 0)
         return NULL;
     } else{
       return NULL;

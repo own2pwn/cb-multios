@@ -22,20 +22,20 @@
  */
 #include "time.h"
 
-uint32_t ticks;
+cgc_uint32_t ticks;
 
-void Time::Reset(void)
+void Time::cgc_Reset(void)
 {
   ticks = 0;
 }
 
-uint32_t Time::GetTime(void)
+cgc_uint32_t Time::cgc_GetTime(void)
 {
   ticks++;
   return ticks;
 }
 
-void Time::Tick(void)
+void Time::cgc_Tick(void)
 {
   ++ticks;
 }

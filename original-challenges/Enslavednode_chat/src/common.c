@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,11 +26,11 @@
 #include <string.h>
 #include "error.h"
 
-int readline(int fd, char *buf, size_t max, size_t *nrx)
+int cgc_readline(int fd, char *buf, cgc_size_t max, cgc_size_t *nrx)
 {
 #define READ_SIZE 1024
   char tmp[READ_SIZE + 1];
-  size_t n;
+  cgc_size_t n;
 
   *nrx = 0;
   while (*nrx < max) {
@@ -38,10 +38,10 @@ int readline(int fd, char *buf, size_t max, size_t *nrx)
 
     if (ret < 0) {
       return -1;
-    } else if (ret == 0 && n == (size_t)NULL) {
+    } else if (ret == 0 && n == (cgc_size_t)NULL) {
       break;
-    } else if (ret == 0 && n != (size_t)NULL) {
-      char *nl = strchr(tmp, '\n');
+    } else if (ret == 0 && n != (cgc_size_t)NULL) {
+      char *nl = cgc_strchr(tmp, '\n');
 
       // just newline, i.e. input = "\n"
       if (*nrx == 0 && nl == tmp)
@@ -56,9 +56,9 @@ int readline(int fd, char *buf, size_t max, size_t *nrx)
         n = max - *nrx;
 
       *nrx += n;
-      memcpy(buf, tmp, n);
+      cgc_memcpy(buf, tmp, n);
       buf += n;
-      memset(tmp, '\0', READ_SIZE + 1);
+      cgc_memset(tmp, '\0', READ_SIZE + 1);
 
       if (nl)
         break;

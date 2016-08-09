@@ -32,11 +32,11 @@ THE SOFTWARE.
 #include "tpai_image_data.h"
 #include "tbir_image_data.h"
 
-typedef struct image_meta {
+typedef struct cgc_image_meta {
 	char name[16];
 	int len;
 	char *data;
-	struct image_meta *next;
-} image_meta, *pimage_meta;
+	struct cgc_image_meta *next;
+} cgc_image_meta, *cgc_pimage_meta;
 
 #endif

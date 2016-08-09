@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,12 +25,12 @@
 #include <string.h>
 #include "dict.h"
 
-dict_t** dict_new()
+cgc_dict_t** cgc_dict_new()
 {
-  return calloc(sizeof(dict_t *), TABLE_SIZE);
+  return cgc_calloc(sizeof(cgc_dict_t *), TABLE_SIZE);
 }
 
-unsigned int _hash(const char *str)
+unsigned int cgc__hash(const char *str)
 {
   unsigned int ret = 5419;
   if (str)
@@ -41,32 +41,32 @@ unsigned int _hash(const char *str)
   return ret % TABLE_SIZE;
 }
 
-void* dict_find(dict_t **dict, const char *name)
+void* cgc_dict_find(cgc_dict_t **dict, const char *name)
 {
-  dict_t *cur = dict[_hash(name)];
+  cgc_dict_t *cur = dict[cgc__hash(name)];
   while (cur)
   {
-    if (strcmp(cur->name, name) == 0)
+    if (cgc_strcmp(cur->name, name) == 0)
       return cur->value;
     cur = cur->next;
   }
   return NULL;
 }
 
-void dict_insert(dict_t **dict, const char *name, void *value)
+void cgc_dict_insert(cgc_dict_t **dict, const char *name, void *value)
 {
   unsigned int hash;
-  dict_t *cur = dict_find(dict, name);
+  cgc_dict_t *cur = cgc_dict_find(dict, name);
   if (cur == NULL)
   {
-    cur = (dict_t *) malloc(sizeof(dict_t));
+    cur = (cgc_dict_t *) cgc_malloc(sizeof(cgc_dict_t));
     if (cur == NULL)
       goto error;
-    cur->name = strdup(name);
+    cur->name = cgc_strdup(name);
     if (cur->name == NULL)
       goto error;
     cur->value = value;
-    hash = _hash(name);
+    hash = cgc__hash(name);
     cur->next = dict[hash];
     dict[hash] = cur;
   }
@@ -76,27 +76,27 @@ error:
   if (cur)
   {
     if (cur->name)
-      free(cur->name);
-    free(cur);
+      cgc_free(cur->name);
+    cgc_free(cur);
   }
 }
 
-void* dict_remove(dict_t **dict, const char *name)
+void* cgc_dict_remove(cgc_dict_t **dict, const char *name)
 {
   void *ret = NULL;
-  unsigned int hash = _hash(name);
-  dict_t *cur = dict[hash], *prev = NULL;
+  unsigned int hash = cgc__hash(name);
+  cgc_dict_t *cur = dict[hash], *prev = NULL;
   while (cur)
   {
-    if (strcmp(cur->name, name) == 0)
+    if (cgc_strcmp(cur->name, name) == 0)
     {
       if (prev == NULL)
         dict[hash] = cur->next;
       else
         prev->next = cur->next;
       ret = cur->value;
-      free(cur->name);
-      free(cur);
+      cgc_free(cur->name);
+      cgc_free(cur);
       break;
     }
     prev = cur;

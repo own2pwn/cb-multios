@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,15 +38,15 @@ enum
     RESP_ERROR = 0x42083b85
 };
 
-class Interface
+class cgc_Interface
 {
 private:
-    bool send_response(unsigned int resp);
+    bool cgc_send_response(unsigned int resp);
 public:
-    Interface(Engine &engine);
-    ~Interface();
+    cgc_Interface(cgc_Engine &engine);
+    ~cgc_Interface();
 
-    bool process(unsigned char *data, unsigned int len);
+    bool cgc_process(unsigned char *data, unsigned int len);
 private:
-    Engine &d_engine;
+    cgc_Engine &d_engine;
 };

@@ -46,12 +46,12 @@ THE SOFTWARE.
 
 int g_lasterror = 0;
 
-int readLine( int fd, char *buffer, size_t maxlen )
+int cgc_readLine( int fd, char *buffer, cgc_size_t maxlen )
 {
-    size_t pos;
+    cgc_size_t pos;
     char temp_buffer[2];
     int retvalue;
-    size_t rx_count;
+    cgc_size_t rx_count;
 
     for ( pos = 1; pos < maxlen; pos++ )
     {
@@ -74,7 +74,7 @@ int readLine( int fd, char *buffer, size_t maxlen )
     return pos;
 }
 
-int parse_float_pair( const char *buf, double* pair1, double* pair2 )
+int cgc_parse_float_pair( const char *buf, double* pair1, double* pair2 )
 {
     int pos;
     int buf_pos;
@@ -113,8 +113,8 @@ int parse_float_pair( const char *buf, double* pair1, double* pair2 )
 
     pair2_buf[buf_pos] = '\0';
 
-    *pair1 = atof( pair1_buf );
-    *pair2 = atof( pair2_buf );
+    *pair1 = cgc_atof( pair1_buf );
+    *pair2 = cgc_atof( pair2_buf );
 
     return 0;
 }
@@ -126,24 +126,24 @@ int main(void)
     int i;
 
     // Print banner
-    printf( BANNER_STR );
+    cgc_printf( BANNER_STR );
 
-    ret = readLine( STDIN, buf, sizeof(buf) );
+    ret = cgc_readLine( STDIN, buf, sizeof(buf) );
     if ( ret == -1 )
         _terminate(2);
 
-    int32_t particle_count = atoi( buf );
+    cgc_int32_t particle_count = cgc_atoi( buf );
 
     if ( particle_count == 0 )
     {
-        printf( "Goodbye\n" );
+        cgc_printf( "Goodbye\n" );
         _terminate(0);
     }
 
 
     if ( particle_count > MAX_PARTICLE_COUNT )
     {
-        printf( "Goodbye\n" );
+        cgc_printf( "Goodbye\n" );
         _terminate(3);
     }
 
@@ -153,94 +153,94 @@ int main(void)
         double vel_x, vel_y;
         double mass;
         double radius;
-        int32_t particle_num;
+        cgc_int32_t particle_num;
 
         // Get position
-        printf( PARTICLE_PROMPT_POSITION );
+        cgc_printf( PARTICLE_PROMPT_POSITION );
 
-        ret = readLine( STDIN, buf, sizeof(buf) );
+        ret = cgc_readLine( STDIN, buf, sizeof(buf) );
         if ( ret == -1 )
             _terminate(2);
 
-        if ( parse_float_pair( buf, &pos_x, &pos_y ) != 0 )
+        if ( cgc_parse_float_pair( buf, &pos_x, &pos_y ) != 0 )
         {
-            printf( BAD_POSITION_ERROR );
+            cgc_printf( BAD_POSITION_ERROR );
             continue;
         }
 
         // Get velocity
-        printf( PARTICLE_PROMPT_VELOCITY );
+        cgc_printf( PARTICLE_PROMPT_VELOCITY );
 
-        ret = readLine( STDIN, buf, sizeof(buf) );
+        ret = cgc_readLine( STDIN, buf, sizeof(buf) );
         if ( ret == -1 )
             _terminate(2);
 
-        if ( parse_float_pair( buf, &vel_x, &vel_y ) != 0 )
+        if ( cgc_parse_float_pair( buf, &vel_x, &vel_y ) != 0 )
         {
-            printf( BAD_VELOCITY_ERROR );
+            cgc_printf( BAD_VELOCITY_ERROR );
 
             continue;
         }
 
         // Get mass
-        printf( PARTICLE_PROMPT_MASS );
+        cgc_printf( PARTICLE_PROMPT_MASS );
 
-        ret = readLine( STDIN, buf, sizeof(buf) );
+        ret = cgc_readLine( STDIN, buf, sizeof(buf) );
         if ( ret == -1 )
             _terminate(2);
 
-        if ( (mass = atof( buf )) == 0.0 )
+        if ( (mass = cgc_atof( buf )) == 0.0 )
         {
-            printf( BAD_MASS_ERROR );
+            cgc_printf( BAD_MASS_ERROR );
             continue;
         }
 
         // Get radius
-        printf( PARTICLE_PROMPT_RADIUS );
+        cgc_printf( PARTICLE_PROMPT_RADIUS );
 
-        ret = readLine( STDIN, buf, sizeof(buf) );
+        ret = cgc_readLine( STDIN, buf, sizeof(buf) );
         if ( ret == -1 )
             _terminate(2);
 
-        if ( (radius = atof( buf )) == 0.0 )
+        if ( (radius = cgc_atof( buf )) == 0.0 )
         {
-            printf( BAD_RADIUS_ERROR );
+            cgc_printf( BAD_RADIUS_ERROR );
             continue;
         }
 
         // Now attempt to add to the simulation (this will validate the data sets)
-        if ( (particle_num = simulation_add_particle( pos_x, pos_y, vel_x, vel_y, mass, radius )) >= 0 )
+        if ( (particle_num = cgc_simulation_add_particle( pos_x, pos_y, vel_x, vel_y, mass, radius )) >= 0 )
         {
             // Particle added
             i++;
         }
         else
         {
-            printf( BAD_DATA_ERROR );
+            cgc_printf( BAD_DATA_ERROR );
             continue;
         }
 
-        printf( "Particle #@d added at (@f,@f) velocity(@f,@f) mass(@f) radius(@f).\n", particle_num, pos_x, pos_y, vel_x, vel_y, mass, radius );
+        cgc_printf( "Particle #@d added at (@f,@f) velocity(@f,@f) mass(@f) radius(@f).\n", particle_num, pos_x, pos_y, vel_x, vel_y, mass, radius );
     }
 
-    printf( "Running simulation with...\n" );
+    cgc_printf( "Running simulation with...\n" );
     // Initialize render grid
-    init_render_grid();
+    cgc_init_render_grid();
 
     // Display start information
-    display_simulation_data( );
+    cgc_display_simulation_data( );
 
     // Run the simulation for the desired amount of time
-    simulation_run( 10 );
+    cgc_simulation_run( 10 );
 
     // Print out simple statistics
-    printf( "Simulation complete, @d collisions simulated over @d seconds in @d frames.\n", get_collision_count(), get_simulation_time(), get_simulation_frames() );
+    cgc_printf( "Simulation complete, @d collisions simulated over @d seconds in @d frames.\n", cgc_get_collision_count(), cgc_get_simulation_time(), cgc_get_simulation_frames() );
 
     // Output end information
-    display_simulation_data( );
+    cgc_display_simulation_data( );
 
     // Exit
-    printf( "Goodbye\n" );
+    cgc_printf( "Goodbye\n" );
 
     // Exit
     _terminate( 0 );

@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,16 +31,16 @@ typedef struct link_s {
   int type;
   struct link_s *prev;
   struct link_s *next;
-} link;
+} cgc_link;
 
 typedef struct linkedList_s {
   int   type;
-  link  *root;
-} linkedList;
+  cgc_link  *root;
+} cgc_linkedList;
 
-linkedList *NewList(int type);
-int AddToList(linkedList *list, void *object, int type);
-int RemoveFromList(linkedList *list, void *object);
-void DumpList(linkedList *list);
+cgc_linkedList *cgc_NewList(int type);
+int cgc_AddToList(cgc_linkedList *list, void *object, int type);
+int cgc_RemoveFromList(cgc_linkedList *list, void *object);
+void cgc_DumpList(cgc_linkedList *list);
 
 #endif

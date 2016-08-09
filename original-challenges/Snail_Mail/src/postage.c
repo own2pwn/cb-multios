@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -45,52 +45,52 @@ struct list stamp_roll;
  * @param s2	Pointer to data element of node 2 (stamp2)
  * @return TRUE if s1->serial == s2->serial, else FALSE
  */
-static unsigned char stamp_cmp(const void *s1, void *s2) {
-	stamp_t *stamp1 = (stamp_t *)s1;
-	stamp_t *stamp2 = (stamp_t *)s2;
+static unsigned char cgc_stamp_cmp(const void *s1, void *s2) {
+	cgc_stamp_t *stamp1 = (cgc_stamp_t *)s1;
+	cgc_stamp_t *stamp2 = (cgc_stamp_t *)s2;
 
-	return (0 == memcmp(stamp1->serial, stamp2->serial, STAMP_SIZE));
+	return (0 == cgc_memcmp(stamp1->serial, stamp2->serial, STAMP_SIZE));
 }
 
-void init_stamp_roll(void) {
-	list_init(&stamp_roll, free);
+void cgc_init_stamp_roll(void) {
+	cgc_list_init(&stamp_roll, cgc_free);
 }
 
-stamp_t *get_new_stamp(void) {
+cgc_stamp_t *cgc_get_new_stamp(void) {
 	// create a stamp
-	stamp_t *s = malloc(sizeof(stamp_t));
+	cgc_stamp_t *s = cgc_malloc(sizeof(cgc_stamp_t));
 	MALLOC_OK(s);
 
 	// make sure no valid stamp has the serial of BAD_STAMP
 	do {
 #ifndef PATCHED_1
-		if (sizeof(stamp_t) != memcpy(s->serial, &seed[seed_idx], sizeof(stamp_t)))
+		if (sizeof(cgc_stamp_t) != cgc_memcpy(s->serial, &seed[seed_idx], sizeof(cgc_stamp_t)))
 			return NULL;
 		seed_idx = (seed_idx + 3) % SEED_MAX;
 #else
-		for (int i = 0; i < sizeof(stamp_t); i++) {
-			rand((char *)&seed_idx, 2);
+		for (int i = 0; i < sizeof(cgc_stamp_t); i++) {
+			cgc_rand((char *)&seed_idx, 2);
 			s->serial[i] = seed[seed_idx % SEED_MAX];
 		}
 #endif
-	} while (0 == memcmp(s->serial, (void *)BAD_STAMP, sizeof(BAD_STAMP)));
+	} while (0 == cgc_memcmp(s->serial, (void *)BAD_STAMP, sizeof(BAD_STAMP)));
 
 	// add to stamp roll
-	list_insert_at_end(&stamp_roll, s);
+	cgc_list_insert_at_end(&stamp_roll, s);
 
 	return s;
 }
 
-int use_stamp(stamp_t *s) {
+int cgc_use_stamp(cgc_stamp_t *s) {
 	// determine if stamp is valid
-	struct node *s_on_roll = list_find_node_with_data(&stamp_roll, stamp_cmp, s);
+	struct node *s_on_roll = cgc_list_find_node_with_data(&stamp_roll, cgc_stamp_cmp, s);
 	if (NULL == s_on_roll) return -1;
 
 	// remove stamp from stamp_roll
-	list_remove_node(&stamp_roll, s_on_roll);
+	cgc_list_remove_node(&stamp_roll, s_on_roll);
 
 	// destroy used stamp
-	list_destroy_node(&stamp_roll, &s_on_roll);
+	cgc_list_destroy_node(&stamp_roll, &s_on_roll);
 
 	return SUCCESS;
 }

@@ -36,9 +36,9 @@ THE SOFTWARE.
 
 typedef struct _GLOBAL_MEMORY_LAYOUT
 {
-    tItemStack parseStack[MAX_PARSE_STACKSIZE];
-    tExceptionFrame exceptionFrameList[MAX_EXCEPTION_FRAME_SIZE];
-    uint8_t mem_reserve[MEM_RESERVE_SIZE];
-} tGlobalMemoryLayout;
+    cgc_tItemStack parseStack[MAX_PARSE_STACKSIZE];
+    cgc_tExceptionFrame exceptionFrameList[MAX_EXCEPTION_FRAME_SIZE];
+    cgc_uint8_t mem_reserve[MEM_RESERVE_SIZE];
+} cgc_tGlobalMemoryLayout;
 
 #endif // __MEMGLOBAL_H__

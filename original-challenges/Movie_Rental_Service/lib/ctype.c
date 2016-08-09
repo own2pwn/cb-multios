@@ -80,57 +80,57 @@ static const unsigned char _ctypes[128] = {
     CTYPE_PUNCT, CTYPE_PUNCT, CTYPE_PUNCT, CTYPE_CNTRL
 };
 
-int isascii(int c)
+int cgc_isascii(int c)
 {
     return c >= 0 && c < 0x80;
 }
 
-int isprint(int c)
+int cgc_isprint(int c)
 {
-    return isascii(c) && (_ctypes[c] & CTYPE_CNTRL) == 0;
+    return cgc_isascii(c) && (_ctypes[c] & CTYPE_CNTRL) == 0;
 }
 
-int isalnum(int c)
+int cgc_isalnum(int c)
 {
-    return isascii(c) && (_ctypes[c] & (CTYPE_LOWER|CTYPE_UPPER|CTYPE_DIGIT));
+    return cgc_isascii(c) && (_ctypes[c] & (CTYPE_LOWER|CTYPE_UPPER|CTYPE_DIGIT));
 }
 
-int isalpha(int c)
+int cgc_isalpha(int c)
 {
-    return isascii(c) && (_ctypes[c] & (CTYPE_LOWER|CTYPE_UPPER));
+    return cgc_isascii(c) && (_ctypes[c] & (CTYPE_LOWER|CTYPE_UPPER));
 }
 
-int islower(int c)
+int cgc_islower(int c)
 {
-    return isascii(c) && (_ctypes[c] & CTYPE_LOWER);
+    return cgc_isascii(c) && (_ctypes[c] & CTYPE_LOWER);
 }
 
-int isupper(int c)
+int cgc_isupper(int c)
 {
-    return isascii(c) && (_ctypes[c] & CTYPE_UPPER);
+    return cgc_isascii(c) && (_ctypes[c] & CTYPE_UPPER);
 }
 
-int isspace(int c)
+int cgc_isspace(int c)
 {
-    return isascii(c) && (_ctypes[c] & CTYPE_SPACE);
+    return cgc_isascii(c) && (_ctypes[c] & CTYPE_SPACE);
 }
 
-int ispunct(int c)
+int cgc_ispunct(int c)
 {
-    return isascii(c) && (_ctypes[c] & CTYPE_PUNCT);
+    return cgc_isascii(c) && (_ctypes[c] & CTYPE_PUNCT);
 }
 
-int tolower(int c)
+int cgc_tolower(int c)
 {
-    if (isupper(c))
+    if (cgc_isupper(c))
         return c + 0x20;
     else
         return c;
 }
 
-int toupper(int c)
+int cgc_toupper(int c)
 {
-    if (islower(c))
+    if (cgc_islower(c))
         return c - 0x20;
     else
         return c;

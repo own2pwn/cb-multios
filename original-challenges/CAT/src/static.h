@@ -25,7 +25,7 @@
 
 #include <libcgc.h>
 
-#define STATIC_MAX_SWITCH 0x10000-sizeof(size_t)
+#define STATIC_MAX_SWITCH 0x10000-sizeof(cgc_size_t)
 
 /**
  * A massive switch statement that maps idx to a 4B return value.
@@ -33,7 +33,7 @@
  * @param idx Which random 4Bs we want.
  * @return The 4B requested at idx.
  */
-size_t static_switch(size_t idx);
+cgc_size_t cgc_static_switch(cgc_size_t idx);
 
 
 #endif /* STATIC_H */

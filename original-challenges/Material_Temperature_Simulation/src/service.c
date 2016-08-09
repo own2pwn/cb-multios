@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,9 +33,9 @@ THE SOFTWARE.
 
 extern double *TGrid;
 extern double *HGrid;
-extern uint32_t X;
-extern uint32_t Y;
-extern uint32_t Z;
+extern cgc_uint32_t X;
+extern cgc_uint32_t Y;
+extern cgc_uint32_t Z;
 
 int main(void) {
 
@@ -47,25 +47,25 @@ int main(void) {
 	Z = 0;
 
 	// Init Material
-	if (InitMaterial()) {
+	if (cgc_InitMaterial()) {
 		_terminate(-1);
 	}
 
 	// Determine length of simulation
-	if (GetSimLength()) {
+	if (cgc_GetSimLength()) {
 		_terminate(-1);
 	}
 
 	// Print Starting Temps
-	GraphTemps(TGrid);
-	printf("At 0.00000 seconds\n");
-	kbhit();
+	cgc_GraphTemps(TGrid);
+	cgc_printf("At 0.00000 seconds\n");
+	cgc_kbhit();
 
 	// Run the simulation
-	RunSim();
+	cgc_RunSim();
 
 	// Output the results
-	GraphTemps(TGrid);
+	cgc_GraphTemps(TGrid);
 
 	return(0);
 }

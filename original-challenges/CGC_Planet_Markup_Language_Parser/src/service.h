@@ -45,7 +45,7 @@ THE SOFTWARE.
 
 #define CITYBORDERMAX 10
 
-typedef enum element {
+typedef enum cgc_element {
 	planet = 0,
 	name,
 	period,
@@ -72,16 +72,16 @@ typedef enum element {
 	mayor,
 	url,
 	error
-} element, *pelement;
+} cgc_element, *cgc_pelement;
 
-typedef struct Border {
+typedef struct cgc_Border {
 	double latStart;
 	double lngStart;
 	double latEnd;
 	double lngEnd;
-} Border, *pBorder;
+} cgc_Border, *cgc_pBorder;
 
-typedef struct City {
+typedef struct cgc_City {
 	char name[20];
 	char mayor[30];
 
@@ -89,11 +89,11 @@ typedef struct City {
 	int population;
 
 	int border_count;
-	pBorder borders[CITYBORDERMAX];
+	cgc_pBorder borders[CITYBORDERMAX];
 	
-} City, *pCity;
+} cgc_City, *cgc_pCity;
 
-typedef struct County {
+typedef struct cgc_County {
 	char name[20];
 	char seat[20];
 	
@@ -102,14 +102,14 @@ typedef struct County {
 	double density;
 
 	int city_count;
-	pCity cities[ COUNTYCITYMAX ];
+	cgc_pCity cities[ COUNTYCITYMAX ];
 
 	int border_count;
-	pBorder borders[ COUNTYBORDERMAX ];
+	cgc_pBorder borders[ COUNTYBORDERMAX ];
 
-} County, *pCounty;
+} cgc_County, *cgc_pCounty;
 
-typedef struct Territory {
+typedef struct cgc_Territory {
 	char name[20];
 	char founder[30];
 
@@ -117,14 +117,14 @@ typedef struct Territory {
 	int established;
 
 	int border_count;
-	pBorder borders[TERRITORYBORDERMAX];
+	cgc_pBorder borders[TERRITORYBORDERMAX];
 	
 	int county_count;
-	pCounty counties[TERRITORYCOUNTYMAX];
+	cgc_pCounty counties[TERRITORYCOUNTYMAX];
 
-} Territory, *pTerritory;
+} cgc_Territory, *cgc_pTerritory;
 
-typedef struct Country {
+typedef struct cgc_Country {
 	char name[20];
 	char capitol[20];
 
@@ -134,13 +134,13 @@ typedef struct Country {
 	char *languages[COUNTRYLANGUAGEMAX];
 
 	int border_count;
-	pBorder borders[COUNTRYBORDERMAX];
+	cgc_pBorder borders[COUNTRYBORDERMAX];
 
 	int territory_count;
-	pTerritory territories[COUNTRYTERRITORYMAX];
-} Country, *pCountry;
+	cgc_pTerritory territories[COUNTRYTERRITORYMAX];
+} cgc_Country, *cgc_pCountry;
 
-typedef struct Planet {
+typedef struct cgc_Planet {
 	char name[20];
 	double period;
 	double orbitspeed;
@@ -153,7 +153,7 @@ typedef struct Planet {
 	int population;
 
 	int country_count;
-	pCountry countries[COUNTRYMAX];
-} Planet, *pPlanet;
+	cgc_pCountry countries[COUNTRYMAX];
+} cgc_Planet, *cgc_pPlanet;
 
 #endif

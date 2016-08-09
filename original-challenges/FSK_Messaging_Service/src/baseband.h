@@ -48,43 +48,43 @@ THE SOFTWARE.
 
 typedef struct
 {
-	uint8_t cdrState;	// Clock Data Recovery state
+	cgc_uint8_t cdrState;	// Clock Data Recovery state
 
-	uint8_t lastBitValue;	// The last bit value received (0 or 1)
+	cgc_uint8_t lastBitValue;	// The last bit value received (0 or 1)
 
 	double samplesPerClock;	// Number of samples per clock
 	double clocksForNextSymbol;	// Number of clock cycles until sampling next symbol	
-	uint32_t symbolsSinceLastTransition;	// Number of samples since last transition	
-	uint32_t sampleCounter;	// Number of samples recorded between different symbols
-	uint32_t preambleCounter;	// Number of preamble bits received
-} tCDRState;
+	cgc_uint32_t symbolsSinceLastTransition;	// Number of samples since last transition	
+	cgc_uint32_t sampleCounter;	// Number of samples recorded between different symbols
+	cgc_uint32_t preambleCounter;	// Number of preamble bits received
+} cgc_tCDRState;
 
 typedef struct
 {
-	uint8_t packetState;	// Packet receiver state machine
+	cgc_uint8_t packetState;	// Packet receiver state machine
 
-	uint8_t lastPreambleBit;// Last bit received for preamble before sync word
-	uint8_t syncBitPos;	// Position in the sync word	
+	cgc_uint8_t lastPreambleBit;// Last bit received for preamble before sync word
+	cgc_uint8_t syncBitPos;	// Position in the sync word	
 	
-	uint8_t packetDataLen; 		// Length of the packet data
-	uint8_t packetDataBytePos;	// Current position in the receiving packet data
-	uint8_t packetDataBitPos;	// Current bit position in the receiving packet data
-	uint8_t packetData[256];	// Packet data as being received
+	cgc_uint8_t packetDataLen; 		// Length of the packet data
+	cgc_uint8_t packetDataBytePos;	// Current position in the receiving packet data
+	cgc_uint8_t packetDataBitPos;	// Current bit position in the receiving packet data
+	cgc_uint8_t packetData[256];	// Packet data as being received
 
-	uint16_t packetCRC;		// Received packet CRC
-} tPacketState;
+	cgc_uint16_t packetCRC;		// Received packet CRC
+} cgc_tPacketState;
 
 typedef struct
 {
-	tCDRState cdrState;
-	tPacketState packetState;
-} tBasebandState;
+	cgc_tCDRState cdrState;
+	cgc_tPacketState packetState;
+} cgc_tBasebandState;
 
-void init_baseband( tBasebandState *pState );
-void reset_baseband_state( tBasebandState *pState );
+void cgc_init_baseband( cgc_tBasebandState *pState );
+void cgc_reset_baseband_state( cgc_tBasebandState *pState );
 
-void run_cdr( tBasebandState *pState, uint8_t sample_in );
-void process_sample( tBasebandState *pCurState, uint8_t symbol_in ); 
-void do_sample( tBasebandState *pState, uint8_t symbol_in );
+void cgc_run_cdr( cgc_tBasebandState *pState, cgc_uint8_t sample_in );
+void cgc_process_sample( cgc_tBasebandState *pCurState, cgc_uint8_t symbol_in ); 
+void cgc_do_sample( cgc_tBasebandState *pState, cgc_uint8_t symbol_in );
 
 #endif // __BASEBAND_H__

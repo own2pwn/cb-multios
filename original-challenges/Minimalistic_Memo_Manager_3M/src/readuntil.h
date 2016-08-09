@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,7 +27,7 @@
 #include <wrapper.h>
 #include <libcgc.h>
 
-int read_until(int fd, char *buf, size_t len, char delim);
-const char* readall_until(int fd, char delim);
+int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim);
+const char* cgc_readall_until(int fd, char delim);
 
 #endif

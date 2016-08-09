@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -21,37 +21,37 @@
 */
 #define FLAG_PAGE 0x4347C000
 
-#define TOKEN_AUTH_TYPE  "Token"
+#define TOKEN_AUTH_TYPE  "cgc_Token"
 
 #define TOKEN_CMD "newTokens"
-#define REFRESH_CMD "refreshToken"
+#define REFRESH_CMD "cgc_refreshToken"
 #define REVOKE_TOKEN_CMD "revokeT"
 
-#define TOKEN_HDR "Token"
+#define TOKEN_HDR "cgc_Token"
 #define TOKEN_EXP_HDR "Expiration"
 #define TOKEN_USE_HDR "Use"
 #define TOKEN_VALUE_SIZE 8
 
 #define COMMAND_HDR "Command"
 
-#define RESPONSE_ERR_EXP_TOK "Expired Token"
-#define RESPONSE_ERR_NO_TOK "Invalid Token"
-#define RESPONSE_TOKEN_REVOKED "Token Revoked"
+#define RESPONSE_ERR_EXP_TOK "Expired cgc_Token"
+#define RESPONSE_ERR_NO_TOK "Invalid cgc_Token"
+#define RESPONSE_TOKEN_REVOKED "cgc_Token Revoked"
 
 typedef struct {
 	unsigned int expiration;
 	char* use;
 	unsigned int value;
 	void* next;
-} Token;
+} cgc_Token;
 
-Token *tokenStore;
+cgc_Token *tokenStore;
 
-Token* parseToken(char* body);
-int validateToken(Token* token, unsigned int* expiration_date);
-int checkTokenUse(char* command, char* useList);
-int isTokenCommand(char* command);
+cgc_Token* cgc_parseToken(char* body);
+int cgc_validateToken(cgc_Token* token, unsigned int* expiration_date);
+int cgc_checkTokenUse(char* command, char* useList);
+int cgc_isTokenCommand(char* command);
 
-void requestToken(int id, char* body, unsigned int* expiration_date);
-void refreshToken(int id, char* body, unsigned int* expiration_date);
-void revokeToken(int id, char* body, unsigned int* expiration_date);
+void cgc_requestToken(int id, char* body, unsigned int* expiration_date);
+void cgc_refreshToken(int id, char* body, unsigned int* expiration_date);
+void cgc_revokeToken(int id, char* body, unsigned int* expiration_date);

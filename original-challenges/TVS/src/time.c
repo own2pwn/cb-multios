@@ -29,16 +29,16 @@
 
 unsigned long long current_time = INITIAL_TIME;
 
-int handle_msg_time(void *data, unsigned int n)
+int cgc_handle_msg_time(void *data, unsigned int n)
 {
-    uint32_t fractional, secs;
+    cgc_uint32_t fractional, secs;
     unsigned long long new_time;
 
     if (n < 8)
         return 0;
 
-    fractional = betoh32(*(uint32_t *)(data));
-    secs = betoh32(*(uint32_t *)(data + 4));
+    fractional = betoh32(*(cgc_uint32_t *)(data));
+    secs = betoh32(*(cgc_uint32_t *)(data + 4));
 
     new_time = (secs * 1000ULL) + ((fractional * 1000ULL) >> 32);
     if (new_time < current_time || (new_time - current_time) > MAX_DIST)

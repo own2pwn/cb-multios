@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -76,8 +76,8 @@ THE SOFTWARE.
 #define CGCMB_DIALECT_2   0x4155
 #define CGCMB_DIALECT_3   0x2671
 
-typedef enum {INITIAL, NEGOTIATE, SESSION, CLOSED} CGCMBServerStates_t;
-typedef enum {CONNECTION_OPEN, CONNECTION_CLOSED} CGCMBConnectionStates_t;
+typedef enum {INITIAL, NEGOTIATE, SESSION, CLOSED} cgc_CGCMBServerStates_t;
+typedef enum {CONNECTION_OPEN, CONNECTION_CLOSED} cgc_CGCMBConnectionStates_t;
 
 #define MAX_CONNECTIONS 32
 #define MAX_OPEN_FILES 16
@@ -86,118 +86,118 @@ typedef enum {CONNECTION_OPEN, CONNECTION_CLOSED} CGCMBConnectionStates_t;
 #define MAX_WRITE_SIZE  2048
 
 typedef struct CGCMB_Connection_s {
-  uint32_t connectionID;
-  CGCMBConnectionStates_t state;
-  fs_tree *openTree;
-  fs_file *openFiles[MAX_OPEN_FILES];
-} CGCMB_Connection;
+  cgc_uint32_t connectionID;
+  cgc_CGCMBConnectionStates_t state;
+  cgc_fs_tree *openTree;
+  cgc_fs_file *openFiles[MAX_OPEN_FILES];
+} cgc_CGCMB_Connection;
 
 typedef struct CGCMB_ServerState_s {
-  CGCMBServerStates_t state;
-  uint16_t dialect;
-  uint32_t sessionKey;
-  uint16_t userID;
-  CGCMB_Connection *connections[MAX_CONNECTIONS];
-} CGCMB_ServerState;
+  cgc_CGCMBServerStates_t state;
+  cgc_uint16_t dialect;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_CGCMB_Connection *connections[MAX_CONNECTIONS];
+} cgc_CGCMB_ServerState;
 
-extern CGCMB_ServerState *mbServerState;
+extern cgc_CGCMB_ServerState *mbServerState;
 
 typedef struct CGCMB_Header_s {
-  uint32_t protocol;
-  uint8_t command;
-  uint8_t status;
-  uint8_t flags;
-  uint8_t security[8];
-} CGCMB_Header;
+  cgc_uint32_t protocol;
+  cgc_uint8_t command;
+  cgc_uint8_t status;
+  cgc_uint8_t flags;
+  cgc_uint8_t security[8];
+} cgc_CGCMB_Header;
 
 typedef struct CGCMB_Data_s {
-  uint16_t count;
-  uint8_t *data;
-  uint16_t currentOffset;
-} CGCMB_Data;
+  cgc_uint16_t count;
+  cgc_uint8_t *data;
+  cgc_uint16_t currentOffset;
+} cgc_CGCMB_Data;
 
 typedef struct CGCMB_Message_s {
-  CGCMB_Header *header;
-  CGCMB_Data *parameters;
-  CGCMB_Data *data;
+  cgc_CGCMB_Header *header;
+  cgc_CGCMB_Data *parameters;
+  cgc_CGCMB_Data *data;
   void *parsed;
-} CGCMB_Message;
+} cgc_CGCMB_Message;
 
 typedef struct CGCMB_NEGOTIATE_s {
-  uint32_t numDialects;
-  uint16_t  *dialects;
-} CGCMB_NEGOTIATE_Message;
+  cgc_uint32_t numDialects;
+  cgc_uint16_t  *dialects;
+} cgc_CGCMB_NEGOTIATE_Message;
 
 typedef struct CGCMB_SESSION_SETUP_s {
-  uint32_t sessionKey;
-  uint32_t reserved;
-  uint8_t *password;
-  uint8_t *accountName;
-} CGCMB_SESSION_SETUP_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint32_t reserved;
+  cgc_uint8_t *password;
+  cgc_uint8_t *accountName;
+} cgc_CGCMB_SESSION_SETUP_Message;
 
 typedef struct CGCMB_TREE_CONNECT_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint8_t *password;
-  uint8_t *path;
-  uint8_t *service;
-} CGCMB_TREE_CONNECT_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint8_t *password;
+  cgc_uint8_t *path;
+  cgc_uint8_t *service;
+} cgc_CGCMB_TREE_CONNECT_Message;
 
 typedef struct CGCMB_TREE_DISCONNECT_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-} CGCMB_TREE_DISCONNECT_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+} cgc_CGCMB_TREE_DISCONNECT_Message;
 
 typedef struct CGCMB_FILE_CREATE_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-  uint32_t mode;
-  uint8_t *filename;
-} CGCMB_FILE_CREATE_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+  cgc_uint32_t mode;
+  cgc_uint8_t *filename;
+} cgc_CGCMB_FILE_CREATE_Message;
 
 typedef struct CGCMB_FILE_CLOSE_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-  uint16_t fileID;
-} CGCMB_FILE_CLOSE_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+  cgc_uint16_t fileID;
+} cgc_CGCMB_FILE_CLOSE_Message;
 
 typedef struct CGCMB_FILE_READ_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-  uint16_t fileID;
-  uint16_t bytesToRead;
-  uint32_t readOffset;
-} CGCMB_FILE_READ_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+  cgc_uint16_t fileID;
+  cgc_uint16_t bytesToRead;
+  cgc_uint32_t readOffset;
+} cgc_CGCMB_FILE_READ_Message;
 
 typedef struct CGCMB_FILE_WRITE_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-  uint16_t fileID;
-  uint8_t  mode;
-  uint16_t bytesToWrite;
-  uint32_t writeOffset;
-  uint8_t *bytes;
-} CGCMB_FILE_WRITE_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+  cgc_uint16_t fileID;
+  cgc_uint8_t  mode;
+  cgc_uint16_t bytesToWrite;
+  cgc_uint32_t writeOffset;
+  cgc_uint8_t *bytes;
+} cgc_CGCMB_FILE_WRITE_Message;
 
 typedef struct CGCMB_TRANSACTION_s {
-  uint32_t sessionKey;
-  uint16_t userID;
-  uint32_t connectionID;
-  uint16_t fileID;
-} CGCMB_TRANSACTION_Message;
+  cgc_uint32_t sessionKey;
+  cgc_uint16_t userID;
+  cgc_uint32_t connectionID;
+  cgc_uint16_t fileID;
+} cgc_CGCMB_TRANSACTION_Message;
 
-int ReceiveCGCMBMessage(TransportMessage *tpMessage, CGCMB_Message **pmbMessage);
-void DestroyCGCMBMessage(CGCMB_Message **pmbMessage);
-int ParseCGCMBMessage(CGCMB_Message *mbMessage);
-int HandleCGCMBMessage(CGCMB_Message *mbMessage);
-void TransmitCGCMBMessage(CGCMB_Message *mbMessage);
-CGCMB_Message *CreateBlankCGCMBMessage();
-int VerifyCGCMBMessage(CGCMB_Message *mbMessage);
-int ReadFromData(uint8_t *dest, CGCMB_Data *source, uint32_t length);
-void SendErrorResponse(uint32_t errorCode);
+int cgc_ReceiveCGCMBMessage(cgc_TransportMessage *tpMessage, cgc_CGCMB_Message **pmbMessage);
+void cgc_DestroyCGCMBMessage(cgc_CGCMB_Message **pmbMessage);
+int cgc_ParseCGCMBMessage(cgc_CGCMB_Message *mbMessage);
+int cgc_HandleCGCMBMessage(cgc_CGCMB_Message *mbMessage);
+void cgc_TransmitCGCMBMessage(cgc_CGCMB_Message *mbMessage);
+cgc_CGCMB_Message *cgc_CreateBlankCGCMBMessage();
+int cgc_VerifyCGCMBMessage(cgc_CGCMB_Message *mbMessage);
+int cgc_ReadFromData(cgc_uint8_t *dest, cgc_CGCMB_Data *source, cgc_uint32_t length);
+void cgc_SendErrorResponse(cgc_uint32_t errorCode);
 #endif

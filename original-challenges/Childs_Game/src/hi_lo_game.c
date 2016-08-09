@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@
 static const int *secret = (const int *)0x4347C000;
 static int idx = 0;
 
-static int set_bits_high(unsigned int num)
+static int cgc_set_bits_high(unsigned int num)
 {
     int bits = 0;
     while (num != 0) {
@@ -45,61 +45,61 @@ static int set_bits_high(unsigned int num)
     return num;
 }
 
-static int get_random(unsigned int *upper_limit)
+static int cgc_get_cgc_random(unsigned int *upper_limit)
 {
     idx %= 1024;
     int max_input = 256;
     int upper = UPPER_RAND_MAX + 1;
     unsigned int winner = secret[idx++];
-    char *input = malloc(max_input);
+    char *input = cgc_malloc(max_input);
 #ifdef PATCHED_1
     while (upper < 0 || upper > UPPER_RAND_MAX) {
 #else
     while (upper > UPPER_RAND_MAX) {
 #endif
-        printf("Enter max value (Default=%d): ", UPPER_RAND_MAX);
-        if (freaduntil(input, max_input, '\n', stdin) == -1)
+        cgc_printf("Enter max value (Default=%d): ", UPPER_RAND_MAX);
+        if (cgc_freaduntil(input, max_input, '\n', stdin) == -1)
             continue;
-        upper = strtol(input, NULL, 10);
-        upper = set_bits_high(upper);
+        upper = cgc_strtol(input, NULL, 10);
+        upper = cgc_set_bits_high(upper);
     }
 
     if (upper == 0) {
         upper = UPPER_RAND_MAX;
     } else {
-        printf("We've changed the max value to %d.\n", upper);
-        printf("Keep in mind only the games using the default max value are scored.\n");
+        cgc_printf("We've changed the max value to %d.\n", upper);
+        cgc_printf("Keep in mind only the games using the default max value are scored.\n");
     }
 
     if (winner > upper)
         winner &=  upper;
 
-    free(input);
+    cgc_free(input);
     *upper_limit = upper;
     return winner;
 }
 
-int play_hi_lo()
+int cgc_play_hi_lo()
 {
     int max_input = 256;
     int guess = 0;
 
     unsigned int upper_limit;
-    int winning_number = get_random(&upper_limit);
+    int winning_number = cgc_get_cgc_random(&upper_limit);
     unsigned int guesses_left = log2f(upper_limit) + 1;
-    char *input = malloc(max_input);
+    char *input = cgc_malloc(max_input);
     while (guesses_left) {
-        printf("Guess the number [%d guesses left]: ", guesses_left);
-        if (freaduntil(input, max_input, '\n', stdin) == -1)
+        cgc_printf("Guess the number [%d guesses left]: ", guesses_left);
+        if (cgc_freaduntil(input, max_input, '\n', stdin) == -1)
             continue;
-        guess = strtol(input, NULL, 10);
+        guess = cgc_strtol(input, NULL, 10);
         if (guess < winning_number) {
-            printf("Too Low\n");
+            cgc_printf("Too Low\n");
         } else if (guess > winning_number) {
-            printf("Too High\n");
+            cgc_printf("Too High\n");
         } else {
-            printf("You won!\n");
-            free(input);
+            cgc_printf("You won!\n");
+            cgc_free(input);
             if (upper_limit == UPPER_RAND_MAX)
                 return 1000;
             else
@@ -108,8 +108,8 @@ int play_hi_lo()
         guesses_left--;
     }
 
-    printf("Sorry, you lost. Try practicing with a lower max value.\n");
-    //printf("The number was: %d\n", winning_number);
-    free(input);
+    cgc_printf("Sorry, you lost. Try practicing with a lower max value.\n");
+    //cgc_printf("The number was: %d\n", winning_number);
+    cgc_free(input);
     return 0;
 }

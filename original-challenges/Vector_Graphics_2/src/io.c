@@ -31,9 +31,9 @@ THE SOFTWARE.
 
 // Transmit the entire contents of a buffer to STDOUT 
 // Returns 0 for success, -1 for failure 
-int SendAll(const void *buffer, size_t length) {
-  size_t tx_count;
-  size_t bytes_sent = 0;
+int cgc_SendAll(const void *buffer, cgc_size_t length) {
+  cgc_size_t tx_count;
+  cgc_size_t bytes_sent = 0;
   int return_value;
 
   while (bytes_sent < length) {
@@ -48,10 +48,10 @@ int SendAll(const void *buffer, size_t length) {
 
 // Transmit null bytes to STDOUT
 // Returns 0 for success, -1 for failure 
-int SendNull(size_t length) {
+int cgc_SendNull(cgc_size_t length) {
   char null_byte = '\0';
-  size_t bytes_sent = 0;
-  size_t tx_count;
+  cgc_size_t bytes_sent = 0;
+  cgc_size_t tx_count;
   int return_value;
 
   while (bytes_sent < length) {
@@ -66,9 +66,9 @@ int SendNull(size_t length) {
 
 // Receive a fixed length buffer from STDIN
 // Returns 0 for success, -1 for failure 
-int ReceiveAll(void *buffer, size_t length) {
-  size_t total_bytes_read = 0;
-  size_t bytes_read;
+int cgc_ReceiveAll(void *buffer, cgc_size_t length) {
+  cgc_size_t total_bytes_read = 0;
+  cgc_size_t bytes_read;
   int return_value;
   
   while (total_bytes_read < length) {

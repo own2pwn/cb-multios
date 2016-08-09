@@ -31,26 +31,26 @@ THE SOFTWARE.
 #include "io.h"
 
 int main() {
-  SystemState state;
+  cgc_SystemState state;
   
   // Initialize Parser
-  if (ReceiveAndVerifyInitializationPacket(&state) != 0) {
+  if (cgc_ReceiveAndVerifyInitializationPacket(&state) != 0) {
     return -1;
   }
 
   // Setup Filters
-  if (ReceiveAndVerifyFilters(&state) != 0) {
+  if (cgc_ReceiveAndVerifyFilters(&state) != 0) {
     return -1;
   }
 
   // Parse packets
   switch (state.mode) {
     case MODE_FILE: {
-      ReceiveAndProcessFile(&state);
+      cgc_ReceiveAndProcessFile(&state);
       break;
     }
     case MODE_STREAM: {
-      ReceiveAndProcessStream(&state);
+      cgc_ReceiveAndProcessStream(&state);
       break;
     }
     default: {
@@ -60,9 +60,9 @@ int main() {
 
   // Display statistics
   if (state.display_flags & DISPLAY_STATS) {
-    DisplayStatistics(&state);
+    cgc_DisplayStatistics(&state);
   }
-  TransmitFormattedBytes("Goodbye.\n");
+  cgc_TransmitFormattedBytes("Goodbye.\n");
 
   return 0;
 }

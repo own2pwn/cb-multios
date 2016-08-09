@@ -24,7 +24,7 @@
  */
 #include <libcgc.h>
 
-static int root64_decode_char(char input)
+static int cgc_root64_decode_char(char input)
 {
     if (input >= '0' && input <= '9')
         return input - '0';
@@ -40,14 +40,14 @@ static int root64_decode_char(char input)
         return -1;
 }
 
-size_t root64_decode(char *output, const char *input)
+cgc_size_t cgc_root64_decode(char *output, const char *input)
 {
-    size_t n = 0;
+    cgc_size_t n = 0;
     int byte = 0;
     int bits_needed = 8;
     while (*input != 0)
     {
-        int decoded = root64_decode_char(*input++);
+        int decoded = cgc_root64_decode_char(*input++);
         if (decoded == -1)
             break;
         int new_bits = 6;
@@ -67,11 +67,11 @@ size_t root64_decode(char *output, const char *input)
     return n;
 }
 
-size_t root64_encode(char *output, const char *input)
+cgc_size_t cgc_root64_encode(char *output, const char *input)
 {
     const static char map[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:;";
 
-    size_t n = 0;
+    cgc_size_t n = 0;
     int byte = 0;
     int leftover_bits = 0;
     while (*input != 0)

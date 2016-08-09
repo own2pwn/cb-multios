@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -56,14 +56,14 @@ struct time_bucket Bucket[4];
 Once the pcm file has been decoded into dit and dah symbols
 parse those into corresponding english letters
 */
-void ParseCode(char *buf, char *output) {
+void cgc_ParseCode(char *buf, char *output) {
   int i = 0;
   int o = 0;
   struct language *lp = &lh;
 
   while (buf[i] != '\0') {
     if (o > MAX_SYMBOLS-1) {
-      puts("message too long\n");
+      cgc_puts("message too long\n");
       _terminate(UNABLE_TO_PARSE_PCM);
     }
 
@@ -74,7 +74,7 @@ void ParseCode(char *buf, char *output) {
           output[o++] = lp->c;
           lp = &lh;
         } else {
-          puts("unknown character\n");
+          cgc_puts("unknown character\n");
           _terminate(UNABLE_TO_PARSE_PCM);
         }
         break;
@@ -87,7 +87,7 @@ void ParseCode(char *buf, char *output) {
           lp = &lh;
           output[o++] = ' ';
         } else {
-          puts("unknown character\n");
+          cgc_puts("unknown character\n");
           _terminate(UNABLE_TO_PARSE_PCM);
         }
         break;
@@ -96,7 +96,7 @@ void ParseCode(char *buf, char *output) {
         if (lp) {
           lp = lp->dit;
         } else {
-          puts("unknown character\n");
+          cgc_puts("unknown character\n");
           _terminate(UNABLE_TO_PARSE_PCM);
         }
         break;
@@ -105,7 +105,7 @@ void ParseCode(char *buf, char *output) {
         if (lp) {
           lp = lp->dah;
         } else {
-          puts("unknown character\n");
+          cgc_puts("unknown character\n");
           _terminate(UNABLE_TO_PARSE_PCM);
         }
         break;
@@ -114,7 +114,7 @@ void ParseCode(char *buf, char *output) {
         break;
 
       default:
-        puts("invalid symbol\n");
+        cgc_puts("invalid symbol\n");
         _terminate(UNABLE_TO_PARSE_PCM);
     }
 
@@ -124,7 +124,7 @@ void ParseCode(char *buf, char *output) {
     output[o++] = lp->c;
     lp = &lh;
   } else {
-    puts("unknown character\n");
+    cgc_puts("unknown character\n");
     _terminate(UNABLE_TO_PARSE_PCM);
   }
 }
@@ -132,9 +132,9 @@ void ParseCode(char *buf, char *output) {
 /*
  * receive all requested bytes
  */
-int recv(int fd, void *buf, size_t count, size_t *rx_bytes) {
-	size_t total_bytes = 0;
-	size_t rx;
+int cgc_recv(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+	cgc_size_t total_bytes = 0;
+	cgc_size_t rx;
 	int rval;	
 
 	while (total_bytes < count) {
@@ -155,36 +155,36 @@ int recv(int fd, void *buf, size_t count, size_t *rx_bytes) {
 /*
 Read the pcm file from stdin
 */
-unsigned char *ReadWav(unsigned char *pcm) {
-  size_t size;
+unsigned char *cgc_ReadWav(unsigned char *pcm) {
+  cgc_size_t size;
   unsigned int total_size;
   struct pcm_header *p;
 
   // read in the pcm header
-  if (recv(STDIN, pcm, 12, &size) != 0) {
-    puts("Read error\n");
+  if (cgc_recv(STDIN, pcm, 12, &size) != 0) {
+    cgc_puts("Read error\n");
     _terminate(READ_ERROR);
   }
 
   // use our pcm_header struct to check some input values
   p = (struct pcm_header *)pcm;
   if (p->ID != PCM) {
-      puts("Invalid PCM format\n");
+      cgc_puts("Invalid PCM format\n");
       _terminate(INVALID_PCM_FMT);
   }
   if (p->NumSamples > MAX_SAMPLES) {
-      puts("Invalid PCM length\n");
+      cgc_puts("Invalid PCM length\n");
     _terminate(INVALID_PCM_LEN);
   }
   if (p->NumSamples == 0) {
-      puts("Invalid PCM format\n");
+      cgc_puts("Invalid PCM format\n");
     _terminate(INVALID_PCM_FMT);
   }
 
 #ifdef PATCHED
   // make sure the SampleSize value is valid
   if (p->DataSize*8.0 / p->NumSamples != 16.0) {
-    puts("Invalid PCM length\n");
+    cgc_puts("Invalid PCM length\n");
     _terminate(INVALID_PCM_LEN);
   }
 #else
@@ -193,7 +193,7 @@ unsigned char *ReadWav(unsigned char *pcm) {
   // floating point which leads to an incorrectly
   // checked DataSize
   if (p->DataSize*8/p->NumSamples != 16) {
-    puts("Invalid PCM length\n");
+    cgc_puts("Invalid PCM length\n");
     _terminate(INVALID_PCM_LEN);
   }
 #endif
@@ -202,11 +202,11 @@ unsigned char *ReadWav(unsigned char *pcm) {
   total_size = 0;
   while (total_size != p->DataSize) {
     if (receive(STDIN, pcm+12+total_size, (p->DataSize-total_size), &size) != 0) {
-      puts("Read error\n");
+      cgc_puts("Read error\n");
       _terminate(READ_ERROR);
       }
     if (size == 0) {
-      puts("Read error\n");
+      cgc_puts("Read error\n");
       _terminate(READ_ERROR);
     }
     total_size +=  size;
@@ -220,7 +220,7 @@ For a given symbol detected in the pcm file,
 assign it to a paritcular bucket of similar
 symbol length.
 */
-int AssignToBucket(unsigned int symbol_time) {
+int cgc_AssignToBucket(unsigned int symbol_time) {
   int i;
 
   // find a valid bucket to hold this symbol
@@ -244,7 +244,7 @@ int AssignToBucket(unsigned int symbol_time) {
       }
   }
 
-  puts("Couldn't find a bucket\n");
+  cgc_puts("Couldn't find a bucket\n");
   _terminate(UNABLE_TO_PARSE_PCM);
 }
 
@@ -252,16 +252,16 @@ int AssignToBucket(unsigned int symbol_time) {
 Check that the symbol bucket times are
 at the correct ratios
 */
-void CheckLimits(int dit, int dah, int word) {
+void cgc_CheckLimits(int dit, int dah, int word) {
   if (Bucket[dah].time < Bucket[dit].time*3*MIN_VARIANCE || Bucket[dah].time > Bucket[dit].time*3*MAX_VARIANCE) {
     // Bucket dah is outside of our limits
-    puts("Too much variance in symbol times\n");
+    cgc_puts("Too much variance in symbol times\n");
     _terminate(UNABLE_TO_PARSE_PCM);
   }
   if (word) {
     if (Bucket[word].time < Bucket[dit].time*7*MIN_VARIANCE || Bucket[word].time > Bucket[dit].time*7*MAX_VARIANCE) {
       // Bucket word is outside of our limits
-      puts("Too much variance in symbol times\n");
+      cgc_puts("Too much variance in symbol times\n");
       _terminate(UNABLE_TO_PARSE_PCM);
     }
   }
@@ -271,7 +271,7 @@ void CheckLimits(int dit, int dah, int word) {
 Figure out how the pcm symbol timings correlate
 to morse-like symbols
 */
-void ValidateBuckets(void) {
+void cgc_ValidateBuckets(void) {
   int dit = 0;
   int dah = 0;
   int word = 0;
@@ -323,7 +323,7 @@ void ValidateBuckets(void) {
       dit = 1;
     }
   } else {
-      puts("Insufficient symbol diversity\n");
+      cgc_puts("Insufficient symbol diversity\n");
       _terminate(INVALID_PCM_FMT);
   }
 
@@ -333,14 +333,14 @@ void ValidateBuckets(void) {
   Bucket[dah].gap = '|';
   Bucket[dit].mark = '.';
   Bucket[dit].gap = '\0';
-  CheckLimits(dit,dah,word);
+  cgc_CheckLimits(dit,dah,word);
 }
 
 /*
 Read the samples in the pcm file looking
 for periods of tones and silence
 */
-void ParseWav(unsigned char *pcm) {
+void cgc_ParseWav(unsigned char *pcm) {
   unsigned char *pcm_pos;
   unsigned char *end_pcm;
   unsigned int symbol_start;
@@ -359,8 +359,8 @@ void ParseWav(unsigned char *pcm) {
   int first = 1;
 
   // init some vars
-  bzero(Symbols, MAX_SYMBOLS);
-  bzero(output, MAX_SYMBOLS);
+  cgc_bzero(Symbols, MAX_SYMBOLS);
+  cgc_bzero(output, MAX_SYMBOLS);
   sp = 0;
   Bucket[1].valid = 0;
   Bucket[2].valid = 0;
@@ -413,7 +413,7 @@ void ParseWav(unsigned char *pcm) {
       symbol_start = symbol_end-(50*2);
 
       // Assign to a symbol bucket
-      Symbols[sp++] = AssignToBucket(symbol_time);
+      Symbols[sp++] = cgc_AssignToBucket(symbol_time);
 
     } else if ((s < -10 || s > 10) && (silence || first)) {
       // got a new tone
@@ -447,7 +447,7 @@ void ParseWav(unsigned char *pcm) {
       symbol_start = symbol_end-(50*2);
 
       // Assign to a symbol bucket
-      Symbols[sp++] = AssignToBucket(symbol_time) * -1;
+      Symbols[sp++] = cgc_AssignToBucket(symbol_time) * -1;
     } else {
       count = 0;
     }
@@ -458,11 +458,11 @@ void ParseWav(unsigned char *pcm) {
   symbol_end = (int)(pcm_pos-pcm);
   symbol_time = ((short)(symbol_end-symbol_start))/2;
   if (!silence) {
-    Symbols[sp++] = AssignToBucket(symbol_time);
+    Symbols[sp++] = cgc_AssignToBucket(symbol_time);
   }
 
   // validate the buckets we discovered
-  ValidateBuckets();
+  cgc_ValidateBuckets();
 
   // now that we've parsed the tones and silences
   // use that data to build the symbol string
@@ -489,11 +489,11 @@ void ParseWav(unsigned char *pcm) {
   output[sp++] = '\n';
 
   // parse the symbols back to characters
-  ParseCode(output, output2);
+  cgc_ParseCode(output, output2);
 
   // output the resulting message
-  puts(output2);
-  puts("\n");
+  cgc_puts(output2);
+  cgc_puts("\n");
 
 }
 
@@ -501,16 +501,16 @@ int main(void) {
     unsigned char pcm[MAX_PCM_SIZE];
 
     // zero the pcm var
-    bzero(pcm, MAX_PCM_SIZE);
+    cgc_bzero(pcm, MAX_PCM_SIZE);
 
     // init the language data structures
-    InitLang(&lh, NULL);
+    cgc_InitLang(&lh, NULL);
 
     // read in the pcm file
-    ReadWav(pcm);
+    cgc_ReadWav(pcm);
 
     // Read in each symbol
-    ParseWav(pcm);
+    cgc_ParseWav(pcm);
 
     return(0);
 }

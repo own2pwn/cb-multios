@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,63 +25,63 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CUserEntry::CUserEntry( const String &sUserName, const String &sPassword )
+cgc_CUserEntry::cgc_CUserEntry( const cgc_String &sUserName, const cgc_String &sPassword )
     : m_pLastUnreadMessage( NULL ), m_sUserName( sUserName ), m_sPassword( sPassword )
 {
 
 }
 
-CUserEntry::~CUserEntry( )
+cgc_CUserEntry::~cgc_CUserEntry( )
 {
 
 }
 
-bool CUserEntry::DeleteMessage( CUserMessage *pCur )
+bool cgc_CUserEntry::cgc_DeleteMessage( cgc_CUserMessage *pCur )
 {
     if ( !pCur )
         return (false);
 
 #if PATCHED
     if ( m_pLastUnreadMessage == pCur )
-        m_pLastUnreadMessage = (CUserMessage *)m_oMessageQueue.GetPrev( pCur );
+        m_pLastUnreadMessage = (cgc_CUserMessage *)m_oMessageQueue.cgc_GetPrev( pCur );
 
-    m_oMessageQueue.DeleteItem( pCur );
+    m_oMessageQueue.cgc_DeleteItem( pCur );
 
 #else
     // BUG:: Update the last unread message if we need to
-    m_oMessageQueue.DeleteItem( pCur );
+    m_oMessageQueue.cgc_DeleteItem( pCur );
 #endif
 
     return (true);
 }
 
-CUserMessage *CUserEntry::GetFirstMessage( void )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetFirstMessage( void )
 {
-    return (CUserMessage *)(m_oMessageQueue.GetFirst());
+    return (cgc_CUserMessage *)(m_oMessageQueue.cgc_GetFirst());
 }
 
-CUserMessage *CUserEntry::GetNextMessage( CUserMessage *pCur )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetNextMessage( cgc_CUserMessage *pCur )
 {
     if ( !pCur )
         return (NULL);
 
-    return (CUserMessage *)(m_oMessageQueue.GetNext( pCur ));
+    return (cgc_CUserMessage *)(m_oMessageQueue.cgc_GetNext( pCur ));
 }
 
-CUserMessage *CUserEntry::GetFirstUnreadMessage( void )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetFirstUnreadMessage( void )
 {
     if ( m_pLastUnreadMessage == NULL )
         return (NULL);
 
-    return (CUserMessage *)(m_oMessageQueue.GetFirst());
+    return (cgc_CUserMessage *)(m_oMessageQueue.cgc_GetFirst());
 }
 
-CUserMessage *CUserEntry::GetLastUnreadMessage( void )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetLastUnreadMessage( void )
 {
     return (m_pLastUnreadMessage);
 }
 
-CUserMessage *CUserEntry::GetNextUnreadMessage( CUserMessage *pCur )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetNextUnreadMessage( cgc_CUserMessage *pCur )
 {
     if ( m_pLastUnreadMessage == NULL )
         return (NULL);
@@ -89,15 +89,15 @@ CUserMessage *CUserEntry::GetNextUnreadMessage( CUserMessage *pCur )
     if ( pCur == m_pLastUnreadMessage )
         return (NULL);
 
-    return (CUserMessage *)(m_oMessageQueue.GetNext( pCur ));
+    return (cgc_CUserMessage *)(m_oMessageQueue.cgc_GetNext( pCur ));
 }
 
-void CUserEntry::ClearUnreadMessages( void )
+void cgc_CUserEntry::cgc_ClearUnreadMessages( void )
 {
     m_pLastUnreadMessage = NULL;
 }
 
-bool CUserEntry::AddMessage( CUserMessage *pNewMessage )
+bool cgc_CUserEntry::cgc_AddMessage( cgc_CUserMessage *pNewMessage )
 {
     if ( !pNewMessage )
         return (false);
@@ -105,24 +105,24 @@ bool CUserEntry::AddMessage( CUserMessage *pNewMessage )
     if ( m_pLastUnreadMessage == NULL )
         m_pLastUnreadMessage = pNewMessage;
 
-    m_oMessageQueue.PushFront( pNewMessage );
+    m_oMessageQueue.cgc_PushFront( pNewMessage );
 
     return (true);
 }
 
-uint32_t CUserEntry::GetMessageCount( void )
+cgc_uint32_t cgc_CUserEntry::cgc_GetMessageCount( void )
 {
-    return (m_oMessageQueue.GetCount());
+    return (m_oMessageQueue.cgc_GetCount());
 }
 
-uint32_t CUserEntry::GetUnreadMessageCount( void )
+cgc_uint32_t cgc_CUserEntry::cgc_GetUnreadMessageCount( void )
 {
     if ( m_pLastUnreadMessage == NULL )
         return (0);
 
-    uint32_t msgCount = 0;
+    cgc_uint32_t msgCount = 0;
 
-    for ( CUserMessage *pCur = (CUserMessage *)m_oMessageQueue.GetFirst(); pCur; pCur = (CUserMessage *)m_oMessageQueue.GetNext( pCur ) )
+    for ( cgc_CUserMessage *pCur = (cgc_CUserMessage *)m_oMessageQueue.cgc_GetFirst(); pCur; pCur = (cgc_CUserMessage *)m_oMessageQueue.cgc_GetNext( pCur ) )
     {
         msgCount++;
 
@@ -133,11 +133,11 @@ uint32_t CUserEntry::GetUnreadMessageCount( void )
     return (msgCount);
 }
 
-CUserMessage *CUserEntry::GetMessageByIndex( uint32_t idx )
+cgc_CUserMessage *cgc_CUserEntry::cgc_GetMessageByIndex( cgc_uint32_t idx )
 {
-    uint32_t cur_idx = 0;
+    cgc_uint32_t cur_idx = 0;
 
-    for ( CUserMessage *pCur = (CUserMessage *)m_oMessageQueue.GetFirst(); pCur; pCur = (CUserMessage *)m_oMessageQueue.GetNext( pCur ) )
+    for ( cgc_CUserMessage *pCur = (cgc_CUserMessage *)m_oMessageQueue.cgc_GetFirst(); pCur; pCur = (cgc_CUserMessage *)m_oMessageQueue.cgc_GetNext( pCur ) )
     {
         if ( cur_idx == idx )
             return (pCur);
@@ -148,38 +148,38 @@ CUserMessage *CUserEntry::GetMessageByIndex( uint32_t idx )
     return (NULL);
 }
 
-CUserDatabase::CUserDatabase()
+cgc_CUserDatabase::cgc_CUserDatabase()
 {
-    for ( uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
+    for ( cgc_uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         m_userTable[idx] = NULL;
     }
 }
 
-CUserDatabase::~CUserDatabase()
+cgc_CUserDatabase::~cgc_CUserDatabase()
 {
-    for ( uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
+    for ( cgc_uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         if ( m_userTable[idx] )
             delete m_userTable[idx];
     }
 }
 
-bool CUserDatabase::CreateUser( const String &sUserName, const String &sUserPassword )
+bool cgc_CUserDatabase::cgc_CreateUser( const cgc_String &sUserName, const cgc_String &sUserPassword )
 {
     // Do we have another user???
-    if ( FindUserByName( sUserName ) )
+    if ( cgc_FindUserByName( sUserName ) )
         return (false);
 
-    if ( GetUserCount() >= MAX_USER_ENTRIES )
+    if ( cgc_GetUserCount() >= MAX_USER_ENTRIES )
         return (false);
 
     // Add User
-    for ( uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
+    for ( cgc_uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         if ( m_userTable[idx] == NULL )
         {
-            m_userTable[idx] = new CUserEntry( sUserName, sUserPassword );
+            m_userTable[idx] = new cgc_CUserEntry( sUserName, sUserPassword );
 
             return (true);
         }
@@ -188,13 +188,13 @@ bool CUserDatabase::CreateUser( const String &sUserName, const String &sUserPass
     return (false);
 }
 
-CUserEntry *CUserDatabase::FindUserByName( const String &sUserName ) const
+cgc_CUserEntry *cgc_CUserDatabase::cgc_FindUserByName( const cgc_String &sUserName ) const
 {
-    for ( uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
+    for ( cgc_uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         if ( m_userTable[idx] )
         {
-            if ( m_userTable[idx]->GetUserName() == sUserName )
+            if ( m_userTable[idx]->cgc_GetUserName() == sUserName )
                 return (m_userTable[idx]);
         }
     }
@@ -202,10 +202,10 @@ CUserEntry *CUserDatabase::FindUserByName( const String &sUserName ) const
     return (NULL);
 }
 
-CUserEntry *CUserDatabase::GetUserForIndex( uint32_t idx ) const
+cgc_CUserEntry *cgc_CUserDatabase::cgc_GetUserForIndex( cgc_uint32_t idx ) const
 {
-    uint32_t cur_idx = 0;
-    for ( uint32_t cur = 0; cur < MAX_USER_ENTRIES; cur++ )
+    cgc_uint32_t cur_idx = 0;
+    for ( cgc_uint32_t cur = 0; cur < MAX_USER_ENTRIES; cur++ )
     {
         if ( m_userTable[cur] )
         {
@@ -219,15 +219,15 @@ CUserEntry *CUserDatabase::GetUserForIndex( uint32_t idx ) const
     return (NULL);
 }
 
-bool CUserDatabase::DeleteUserByName( const String &sUserName )
+bool cgc_CUserDatabase::cgc_DeleteUserByName( const cgc_String &sUserName )
 {
-    uint32_t idx;
+    cgc_uint32_t idx;
 
     for ( idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         if ( m_userTable[idx] )
         {
-            if ( m_userTable[idx]->GetUserName() == sUserName )
+            if ( m_userTable[idx]->cgc_GetUserName() == sUserName )
             {
                 delete m_userTable[idx];
                 m_userTable[idx] = NULL;
@@ -240,10 +240,10 @@ bool CUserDatabase::DeleteUserByName( const String &sUserName )
     return (false);
 }
 
-uint32_t CUserDatabase::GetUserCount( void ) const
+cgc_uint32_t cgc_CUserDatabase::cgc_GetUserCount( void ) const
 {
-    uint32_t userCount = 0;
-    for ( uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
+    cgc_uint32_t userCount = 0;
+    for ( cgc_uint32_t idx = 0; idx < MAX_USER_ENTRIES; idx++ )
     {
         if ( m_userTable[idx] )
             userCount++;

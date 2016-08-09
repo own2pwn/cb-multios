@@ -4,7 +4,7 @@ Author: James Connor <jymbo@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,59 +38,59 @@ THE SOFTWARE.
 
 typedef struct intersection_s {
 	char FLAG[32];
-	pdListNode self;
+	cgc_pdListNode self;
 	struct road_s *other_road;
 	struct intersection_s *prevIntersection;
 	double distance_to_prev;
 	struct intersection_s *nextIntersection;
 	double distance_to_next;
-} intersection, *pintersection;
+} cgc_intersection, *cgc_pintersection;
 
 typedef struct road_s {
 	char FLAG[16];
-	pdListNode self;
+	cgc_pdListNode self;
 	char name[32];
-	pdList addressList;
-	pdList intersectionList; 
+	cgc_pdList addressList;
+	cgc_pdList intersectionList; 
 	double length;
-}road, *proad;
+}cgc_road, *cgc_proad;
 
 typedef struct map_s {
 	char name[32];
-	pdList roadList;
-}map, *pmap;
+	cgc_pdList roadList;
+}cgc_map, *cgc_pmap;
 
 
 typedef struct address_s {
 	char FLAG[8];
-	pdListNode self;
+	cgc_pdListNode self;
 	int number;
 	char resident[32];
-	proad thisRoad;
-	pintersection prevIntersection;
+	cgc_proad thisRoad;
+	cgc_pintersection prevIntersection;
 	double distance_to_prev;
-	pintersection nextIntersection;
+	cgc_pintersection nextIntersection;
 	double distance_to_next;
-}address, *paddress;
+}cgc_address, *cgc_paddress;
 
 typedef struct routeList_s {
-	proad thisRoad;//pointer to the newly discovered unique road
-	struct routeList_s *parent;//parent is the road that was being explored when this is pushed on the list.
+	cgc_proad thisRoad;//pointer to the newly discovered unique cgc_road
+	struct routeList_s *parent;//parent is the cgc_road that was being explored when this is pushed on the list.
 	char filler[120];//data[4088],  501 fits 8(503+8)=4088..9 to crash,247 fits 16(247+8)=4080..18 to crash ,119 fits 32(119+8)=4064..121 to crash 
-} routeList, *prouteList;
+} cgc_routeList, *cgc_prouteList;
 
-pmap init_map(char mapName[32]);
-proad add_road(pmap thisMap, char roadName[32], double roadLength);
-void print_roads(pmap thisMap);
-paddress add_address ( int number, char resident[32], proad thisRoad, pintersection prevIntersection,
- 						double distance_to_prev, pintersection nextIntersection, double distance_to_next );
-void print_addresses(proad thisRoad);
-pintersection add_intersection ( proad thisRoad, proad other_road, pintersection prevIntersection, double distance_to_prev, double distance_to_next );
-void print_intersections(proad thisRoad);
-pintersection delete_intersection(proad thisRoad, pintersection deletedIntersection);
+cgc_pmap cgc_init_map(char mapName[32]);
+cgc_proad cgc_add_road(cgc_pmap thisMap, char roadName[32], double roadLength);
+void cgc_print_roads(cgc_pmap thisMap);
+cgc_paddress cgc_add_address ( int number, char resident[32], cgc_proad thisRoad, cgc_pintersection prevIntersection,
+ 						double distance_to_prev, cgc_pintersection nextIntersection, double distance_to_next );
+void cgc_print_addresses(cgc_proad thisRoad);
+cgc_pintersection cgc_add_intersection ( cgc_proad thisRoad, cgc_proad other_road, cgc_pintersection prevIntersection, double distance_to_prev, double distance_to_next );
+void cgc_print_intersections(cgc_proad thisRoad);
+cgc_pintersection cgc_delete_intersection(cgc_proad thisRoad, cgc_pintersection deletedIntersection);
 //new
-psList init_turnList();
-psList get_route(pmap thisMap, psList turnList, proad targetRoad, proad startRoad);
+cgc_psList cgc_init_turnList();
+cgc_psList cgc_get_route(cgc_pmap thisMap, cgc_psList turnList, cgc_proad targetRoad, cgc_proad startRoad);
 
 
 #endif 

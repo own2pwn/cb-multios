@@ -27,7 +27,7 @@
 #define IS_ALPHA(c) (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')))
 #define IS_UPPER(c) ((c >= 'A') && (c <= 'Z'))
 
-long int strtol(const char *nptr, char **endptr, int base)
+long int cgc_strtol(const char *nptr, char **endptr, int base)
 {
     int limit;
     int neg = 0, val = 0, consumed = 0, n, a;
@@ -121,7 +121,7 @@ done:
 
 }
 
-long unsigned int strtoul(const char *nptr, char **endptr, int base)
+long unsigned int cgc_strtoul(const char *nptr, char **endptr, int base)
 {
-    return (long unsigned int)strtol(nptr, endptr, base);
+    return (long unsigned int)cgc_strtol(nptr, endptr, base);
 }

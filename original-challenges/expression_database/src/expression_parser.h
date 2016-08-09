@@ -48,32 +48,32 @@ typedef enum
     SYM_BIRTHDATE,
     SYM_NOTFOUND,
     SYM_END
-} eParserSymbol;
+} cgc_eParserSymbol;
 
 typedef enum
 {
     ITEM_TYPE_SYMBOL,
     ITEM_TYPE_RESULT,
     ITEM_TYPE_EMPTY
-} eItemType;
+} cgc_eItemType;
 
 typedef struct _PARSER_SYMBOL_TABLE
 {
     char *text;
-    eParserSymbol symbol;
-} tParserSymbolTable;
+    cgc_eParserSymbol symbol;
+} cgc_tParserSymbolTable;
 
 typedef struct _RESULT_ITEM_STACK
 {
-    eItemType type;
+    cgc_eItemType type;
     union
     {
-        eParserSymbol symbol;
-        uint8_t result_list[MAX_DDAP_RECORDS];
+        cgc_eParserSymbol symbol;
+        cgc_uint8_t result_list[MAX_DDAP_RECORDS];
     } data;
-    uint8_t result_list_size;
-} tItemStack;
+    cgc_uint8_t result_list_size;
+} cgc_tItemStack;
 
-void parse_search_expression( char *pszTemp );
+void cgc_parse_search_expression( char *pszTemp );
 
 #endif // EXPRESSION_PARSER_H__

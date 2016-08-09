@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,34 +26,34 @@
 #include "list.h"
 #include "trie.h"
 
-typedef struct search_machine search_machine;
-struct search_machine
+typedef struct cgc_search_machine cgc_search_machine;
+struct cgc_search_machine
 {
-  // Root of trie we built form signatures
-  trie* Trie;
+  // Root of cgc_trie we built form signatures
+  cgc_trie* Trie;
 
   // Out :: Map TrieIdentifier [Trie]
-  list** Out;
+  cgc_list** Out;
 
   // Out :: Map TrieIdentifier Trie
-  trie** Fail;
+  cgc_trie** Fail;
 
   // Goto :: Map (TrieIdentifier, Char)  Trie
-  trie*** Goto;
+  cgc_trie*** Goto;
 };
 
-typedef struct match match;
-struct match
+typedef struct cgc_match cgc_match;
+struct cgc_match
 {
   // Location in search input where pattern matches
-  size_t Point;
+  cgc_size_t Point;
 
   // List of matching strings
-  list* List;
+  cgc_list* List;
 };
 
-int InitializeSearchMachine(search_machine* SearchMachine, trie* Trie);
-void FreeSearchMachine(search_machine* SearchMachine);
-match* FindMatches(search_machine *SearchMachine, trie_unit* Data, size_t DataSize, size_t* NumMatches);
+int cgc_InitializeSearchMachine(cgc_search_machine* SearchMachine, cgc_trie* Trie);
+void cgc_FreeSearchMachine(cgc_search_machine* SearchMachine);
+cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Data, cgc_size_t DataSize, cgc_size_t* NumMatches);
 
 #endif /* __SEARCH_MACHINE_H */

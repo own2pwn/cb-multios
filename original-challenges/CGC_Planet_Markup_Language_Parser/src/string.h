@@ -33,31 +33,31 @@ THE SOFTWARE.
 /**
  * Structure to maintain the buffer and index
  **/
-typedef struct string {
+typedef struct cgc_string {
         /// Pointer to the data
         char *buffer;
 
-        /// Total length of the string
+        /// Total length of the cgc_string
         int maxlength;
 
         /// Current index being examined
         int index;
-} string, *pstring;
+} cgc_string, *cgc_pstring;
 
-void freeString(pstring str );
-int skipAlpha( pstring str );
-int incChar( pstring st );
-pstring initString( char *data );
-int skipWhiteSpace( pstring st );
-int atChar( pstring st, char c );
-int skipTo( pstring st, char c );
-int skipLength( pstring st, int count );
-int skipToNonAlphaNum( pstring str );
-int skipToNonAlphaNumSpace( pstring str );
-char *copyData( pstring str, int start, int end );
-int skipFloat( pstring str );
-int skipInt( pstring str );
-int getIndex( pstring str, int *outIndex );
-int skipUrl( pstring str );
+void cgc_freeString(cgc_pstring str );
+int cgc_skipAlpha( cgc_pstring str );
+int cgc_incChar( cgc_pstring st );
+cgc_pstring cgc_initString( char *data );
+int cgc_skipWhiteSpace( cgc_pstring st );
+int cgc_atChar( cgc_pstring st, char c );
+int cgc_skipTo( cgc_pstring st, char c );
+int cgc_skipLength( cgc_pstring st, int count );
+int cgc_skipToNonAlphaNum( cgc_pstring str );
+int cgc_skipToNonAlphaNumSpace( cgc_pstring str );
+char *cgc_copyData( cgc_pstring str, int start, int end );
+int cgc_skipFloat( cgc_pstring str );
+int cgc_skipInt( cgc_pstring str );
+int cgc_getIndex( cgc_pstring str, int *outIndex );
+int cgc_skipUrl( cgc_pstring str );
 
 #endif

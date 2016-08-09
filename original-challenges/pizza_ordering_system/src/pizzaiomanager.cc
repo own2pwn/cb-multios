@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,17 +29,17 @@
 #include "meat.h"
 #include "veggie.h"
 
-PizzaIoManager::PizzaIoManager(Pizza *_pizza)
+cgc_PizzaIoManager::cgc_PizzaIoManager(cgc_Pizza *_pizza)
 {
     pizza = _pizza;
 }
 
-PizzaIoManager::~PizzaIoManager()
+cgc_PizzaIoManager::~cgc_PizzaIoManager()
 {
     pizza = NULL;
 }
 
-bool PizzaIoManager::create_pizza_pie()
+bool cgc_PizzaIoManager::cgc_create_pizza_pie()
 {
     int choice;
     while (true) {
@@ -49,7 +49,7 @@ bool PizzaIoManager::create_pizza_pie()
         printf("3. Large\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         if (choice < 1 || choice > 3) {
             printf("Bad Selection\n");
             continue;
@@ -57,16 +57,16 @@ bool PizzaIoManager::create_pizza_pie()
         break;
     }
 
-    pizza = new PizzaPie(choice);
+    pizza = new cgc_PizzaPie(choice);
     if (!pizza) {
         printf("Error creating a pizza right now. Please try again later\n");
         return false;
     }
-    printf("Successfully added a new Pizza Pie!\n");
+    printf("Successfully added a new cgc_Pizza Pie!\n");
     return true;
 }
 
-bool PizzaIoManager::create_pizza_sub()
+bool cgc_PizzaIoManager::cgc_create_pizza_sub()
 {
     int sub_size, bread_type, choice;
     while (true) {
@@ -75,7 +75,7 @@ bool PizzaIoManager::create_pizza_sub()
         printf("2. 12 inch\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         if (choice < 1 || choice > 2) {
             printf("Bad Selection\n");
             continue;
@@ -90,7 +90,7 @@ bool PizzaIoManager::create_pizza_sub()
         printf("2. Wheat\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         if (choice < 1 || choice > 2) {
             printf("Bad Selection\n");
             continue;
@@ -99,16 +99,16 @@ bool PizzaIoManager::create_pizza_sub()
         break;
     }
 
-    pizza = new PizzaSub(sub_size, bread_type);
+    pizza = new cgc_PizzaSub(sub_size, bread_type);
     if (!pizza) {
         printf("Error creating a pizza right now. Please try again later\n");
         return false;
     }
-    printf("Successfully added a new Pizza Sub!\n");
+    printf("Successfully added a new cgc_Pizza Sub!\n");
     return true;
 }
 
-bool PizzaIoManager::create_pizza_bowl()
+bool cgc_PizzaIoManager::cgc_create_pizza_bowl()
 {
     int choice;
     bool side_of_bread;
@@ -118,7 +118,7 @@ bool PizzaIoManager::create_pizza_bowl()
         printf("2. No\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         switch (choice) {
         case 1:
             side_of_bread = true; break;
@@ -131,52 +131,52 @@ bool PizzaIoManager::create_pizza_bowl()
         break;
     }
 
-    pizza = new PizzaBowl(side_of_bread);
+    pizza = new cgc_PizzaBowl(side_of_bread);
     if (!pizza) {
         printf("Error creating a pizza right now. Please try again later\n");
         return false;
     }
-    printf("Successfully added a new Pizza Bowl!\n");
+    printf("Successfully added a new cgc_Pizza Bowl!\n");
     return true;
 }
 
-void PizzaIoManager::add_toppings()
+void cgc_PizzaIoManager::cgc_add_toppings()
 {
-    Topping *topping = NULL;
+    cgc_Topping *topping = NULL;
     int choice;
     bool done_adding_toppings = false;
 
     while(!done_adding_toppings) {
         printf("Select topping type:\n");
-        printf("1. Cheese\n");
-        printf("2. Meat\n");
+        printf("1. cgc_Cheese\n");
+        printf("2. cgc_Meat\n");
         printf("3. Veggies\n");
         printf("4. No More Toppings\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         switch(choice) {
         case 1:
-            Cheese::list_options();
+            cgc_Cheese::cgc_list_options();
             printf("Enter topping name: ");
-            if(readline())
-                topping = Cheese::select_cheese(get_last_input());
+            if(cgc_readline())
+                topping = cgc_Cheese::cgc_select_cheese(cgc_get_last_input());
             else
                 printf("Failed reading input\n");
             break;
         case 2:
-            Meat::list_options();
+            cgc_Meat::cgc_list_options();
             printf("Enter topping name: ");
-            if(readline())
-                topping = Meat::add_meat(get_last_input());
+            if(cgc_readline())
+                topping = cgc_Meat::cgc_add_meat(cgc_get_last_input());
             else
                 printf("Failed reading input\n");
             break;
         case 3:
-            Veggie::list_options();
+            cgc_Veggie::cgc_list_options();
             printf("Enter topping name: ");
-            if(readline())
-                topping = Veggie::pick_veggie(get_last_input());
+            if(cgc_readline())
+                topping = cgc_Veggie::cgc_pick_veggie(cgc_get_last_input());
             else
                 printf("Failed reading input\n");
             break;
@@ -189,7 +189,7 @@ void PizzaIoManager::add_toppings()
         }
 
         if (topping) {
-            pizza->add_topping(topping);
+            pizza->cgc_add_topping(topping);
             printf("Added topping\n");
         } else {
             printf("Bad topping name\n");
@@ -197,54 +197,54 @@ void PizzaIoManager::add_toppings()
     }
 }
 
-void PizzaIoManager::remove_toppings()
+void cgc_PizzaIoManager::cgc_remove_toppings()
 {
     int choice;
     bool done_removing_toppings = false;
 
     while (!done_removing_toppings) {
-        if (!pizza->get_num_toppings()) {
-            printf("No Toppings to remove\n");
+        if (!pizza->cgc_get_num_toppings()) {
+            printf("No Toppings to cgc_remove\n");
             return;
         }
 
         printf("Toppings Added\n");
         printf("\t0. Cancel\n");
-        pizza->print_toppings();
+        pizza->cgc_print_toppings();
         printf("Choice: ");
-        choice = readnum();
+        choice = cgc_readnum();
 
         if (choice == 0) {
             printf("Finished removing toppings\n");
             return;
-        } else if (choice > pizza->get_num_toppings()) {
+        } else if (choice > pizza->cgc_get_num_toppings()) {
             printf("Bad Selection\n");
         } else {
             printf("Removed Topping\n");
-            pizza->remove_topping(--choice);
+            pizza->cgc_remove_topping(--choice);
         }
     }
 }
 
-void PizzaIoManager::add_sauces()
+void cgc_PizzaIoManager::cgc_add_sauces()
 {
-    Sauce *sauce = NULL;
+    cgc_Sauce *sauce = NULL;
     int choice;
     bool done_adding_sauces = false;
 
     while(!done_adding_sauces) {
         printf("Select an option:\n");
-        printf("1. Add Sauce\n");
+        printf("1. Add cgc_Sauce\n");
         printf("2. No More Sauces\n");
         printf("Choice: ");
 
-        choice = readnum();
+        choice = cgc_readnum();
         switch(choice) {
         case 1:
-            Sauce::list_options();
+            cgc_Sauce::cgc_list_options();
             printf("Enter sauce name: ");
-            if(readline())
-                sauce = Sauce::pour_sauce(get_last_input());
+            if(cgc_readline())
+                sauce = cgc_Sauce::cgc_pour_sauce(cgc_get_last_input());
             else
                 printf("Failed reading input\n");
             break;
@@ -256,7 +256,7 @@ void PizzaIoManager::add_sauces()
         }
 
         if (sauce) {
-            pizza->add_sauce(sauce);
+            pizza->cgc_add_sauce(sauce);
             printf("Added sauce\n");
         } else {
             printf("Bad sauce name\n");
@@ -264,53 +264,53 @@ void PizzaIoManager::add_sauces()
     }
 }
 
-void PizzaIoManager::remove_sauces()
+void cgc_PizzaIoManager::cgc_remove_sauces()
 {
     int choice;
     bool done_removing_sauces = false;
 
     while (!done_removing_sauces) {
-        if (!pizza->get_num_sauces()) {
-            printf("No sauces to remove\n");
+        if (!pizza->cgc_get_num_sauces()) {
+            printf("No sauces to cgc_remove\n");
             return;
         }
 
         printf("Sauces on the side\n");
         printf("\t0. Cancel\n");
-        pizza->print_sauces();
+        pizza->cgc_print_sauces();
         printf("Choice: ");
-        choice = readnum();
+        choice = cgc_readnum();
 
         if (choice == 0) {
             printf("Finished removing sauces\n");
             return;
-        } else if (choice > pizza->get_num_sauces()) {
+        } else if (choice > pizza->cgc_get_num_sauces()) {
             printf("Bad Selection\n");
         } else {
             printf("Removed sauce\n");
-            pizza->remove_sauce(--choice);
+            pizza->cgc_remove_sauce(--choice);
         }
     }
 }
 
-bool PizzaIoManager::new_pizza()
+bool cgc_PizzaIoManager::cgc_new_pizza()
 {
     int choice;
 
     while (true) {
         printf("Choose what the kind of pizza\n");
-        printf("1. Pizza Pie - The classic!\n");
-        printf("2. Pizza Sub - All the fun, on a bun\n");
-        printf("3. Pizza Bowl - Our own twist\n");
+        printf("1. cgc_Pizza Pie - The classic!\n");
+        printf("2. cgc_Pizza Sub - All the fun, on a bun\n");
+        printf("3. cgc_Pizza Bowl - Our own twist\n");
         printf("Choice: ");
-        choice = readnum();
+        choice = cgc_readnum();
         switch(choice) {
         case 1:
-            create_pizza_pie(); break;
+            cgc_create_pizza_pie(); break;
         case 2:
-            create_pizza_sub(); break;
+            cgc_create_pizza_sub(); break;
         case 3:
-            create_pizza_bowl(); break;
+            cgc_create_pizza_bowl(); break;
         default:
             printf("Bad Choice\n");
             continue;
@@ -319,7 +319,7 @@ bool PizzaIoManager::new_pizza()
         break;
     }
 
-    if (edit_pizza()) {
+    if (cgc_edit_pizza()) {
         printf("Successfully added pizza!\n");
         return true;
     } else {
@@ -328,13 +328,13 @@ bool PizzaIoManager::new_pizza()
     }
 }
 
-bool PizzaIoManager::edit_pizza(Pizza *_pizza)
+bool cgc_PizzaIoManager::cgc_edit_pizza(cgc_Pizza *_pizza)
 {
     if (_pizza)
         pizza = _pizza;
 
     if (!pizza) {
-        printf("No Pizza to edit\n");
+        printf("No cgc_Pizza to edit\n");
         return false;
     }
 
@@ -344,20 +344,20 @@ bool PizzaIoManager::edit_pizza(Pizza *_pizza)
         printf("Select an option:\n");
         printf("1. Add Toppings\n");
         printf("2. Remove Toppings\n");
-        printf("3. Add Sauce\n");
-        printf("4. Remove Sauce\n");
-        printf("5. Finished With Pizza\n");
+        printf("3. Add cgc_Sauce\n");
+        printf("4. Remove cgc_Sauce\n");
+        printf("5. Finished With cgc_Pizza\n");
         printf("Choice: ");
-        choice = readnum();
+        choice = cgc_readnum();
         switch(choice) {
         case 1:
-            add_toppings(); break;
+            cgc_add_toppings(); break;
         case 2:
-            remove_toppings(); break;
+            cgc_remove_toppings(); break;
         case 3:
-            add_sauces(); break;
+            cgc_add_sauces(); break;
         case 4:
-            remove_sauces(); break;
+            cgc_remove_sauces(); break;
         case 5:
             done_editing = true; break;
         default:
@@ -369,9 +369,9 @@ bool PizzaIoManager::edit_pizza(Pizza *_pizza)
     return true;
 }
 
-Pizza *PizzaIoManager::get_pizza()
+cgc_Pizza *cgc_PizzaIoManager::cgc_get_pizza()
 {
-    Pizza *ppizza = pizza;
+    cgc_Pizza *ppizza = pizza;
     pizza = NULL;
     return ppizza;
 }

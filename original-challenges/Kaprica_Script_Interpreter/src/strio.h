@@ -5,11 +5,11 @@ typedef struct {
     char *buf;
     int pos;
     int length;
-} strio_t;
+} cgc_strio_t;
 
-int strio_init(strio_t *s);
-void strio_free(strio_t *s);
-char *strio_dup(strio_t *s);
-int strio_append_char(strio_t *s, char c);
+int cgc_strio_init(cgc_strio_t *s);
+void cgc_strio_free(cgc_strio_t *s);
+char *cgc_strio_dup(cgc_strio_t *s);
+int cgc_strio_append_char(cgc_strio_t *s, char c);
 
 #endif

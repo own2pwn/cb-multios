@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,9 +31,9 @@ typedef struct {
     float x, y, z;
     float speed;
     float rpm;
-} state_t;
+} cgc_state_t;
 
-DEFINE_QUEUE(state_t, stateq)
+DEFINE_QUEUE(cgc_state_t, cgc_stateq)
 
 typedef struct {
     unsigned char type;
@@ -56,7 +56,7 @@ typedef struct {
             unsigned int extra;
         } error;
     };
-} __attribute__((__packed__)) pkt_t;
+} __attribute__((__packed__)) cgc_pkt_t;
 
 enum {
     TYPE_ERROR = 0,
@@ -87,15 +87,15 @@ static const float max_speed = 250.0;
 static const float min_speed = 0.0;
 static const unsigned int max_time_delta = 100;
 
-static stateq_t *g_history;
+static cgc_stateq_t *g_history;
 
 static unsigned char txbuf[1024];
 static unsigned int txcnt;
 static int txfd;
 
-void writeflush()
+void cgc_writeflush()
 {
-    size_t i = 0, n;
+    cgc_size_t i = 0, n;
 
     while (i < txcnt)
     {
@@ -107,44 +107,44 @@ void writeflush()
     txcnt = 0;
 }
 
-void write(int fd, void *data, size_t len)
+void cgc_write(int fd, void *data, cgc_size_t len)
 {
     if (len + txcnt > sizeof(txbuf) || txfd != fd)
-        writeflush();
+        cgc_writeflush();
     txfd = fd;
-    memcpy(&txbuf[txcnt], data, len);
+    cgc_memcpy(&txbuf[txcnt], data, len);
     txcnt += len;
 }
 
-void send_error(unsigned int ec, unsigned int extra)
+void cgc_send_error(unsigned int ec, unsigned int extra)
 {
-    pkt_t pkt;
+    cgc_pkt_t pkt;
 
-    memset(&pkt, 0, sizeof(pkt));
+    cgc_memset(&pkt, 0, sizeof(pkt));
     pkt.type = TYPE_ERROR;
     pkt.error.code = ec;
     pkt.error.extra = extra;
 
-    write(STDOUT, &pkt, sizeof(pkt));
+    cgc_write(STDOUT, &pkt, sizeof(pkt));
 }
 
-void send_aggregate(unsigned int timestamp)
+void cgc_send_aggregate(unsigned int timestamp)
 {
     unsigned int i;
-    pkt_t pkt;
-    state_t state;
+    cgc_pkt_t pkt;
+    cgc_state_t state;
 
-    if (stateq_empty(g_history))
+    if (cgc_stateq_empty(g_history))
         return;
 
-    memset(&state, 0, sizeof(state_t));
+    cgc_memset(&state, 0, sizeof(cgc_state_t));
     state.timestamp = timestamp;
 
     /* aggregate history into a complete state */
-    for (i = stateq_length(g_history); i > 0; i--)
+    for (i = cgc_stateq_length(g_history); i > 0; i--)
     {
         unsigned int flags;
-        state_t *pstate = stateq_get(g_history, i - 1);
+        cgc_state_t *pstate = cgc_stateq_get(g_history, i - 1);
 
         flags = pstate->flags & ~state.flags;
 
@@ -167,20 +167,20 @@ void send_aggregate(unsigned int timestamp)
         }
     }
 
-    memset(&pkt, 0, sizeof(pkt));
+    cgc_memset(&pkt, 0, sizeof(pkt));
     pkt.timestamp = state.timestamp;
 
     if (state.flags & FLAG_SPEED)
     {
         pkt.type = TYPE_SPEED;
         pkt.speed.speed = state.speed;
-        write(STDOUT, &pkt, sizeof(pkt));
+        cgc_write(STDOUT, &pkt, sizeof(pkt));
     }
     if (state.flags & FLAG_RPM)
     {
         pkt.type = TYPE_RPM;
         pkt.rpm.rpm = state.rpm;
-        write(STDOUT, &pkt, sizeof(pkt));
+        cgc_write(STDOUT, &pkt, sizeof(pkt));
     }
     if (state.flags & FLAG_LOCATION)
     {
@@ -188,17 +188,17 @@ void send_aggregate(unsigned int timestamp)
         pkt.loc.x = state.x;
         pkt.loc.y = state.y;
         pkt.loc.z = state.z;
-        write(STDOUT, &pkt, sizeof(pkt));
+        cgc_write(STDOUT, &pkt, sizeof(pkt));
     }
 }
 
-float calculate_speed(pkt_t *pkt)
+float cgc_calculate_speed(cgc_pkt_t *pkt)
 {
     unsigned int i;
 
-    for (i = stateq_length(g_history); i > 0; i--)
+    for (i = cgc_stateq_length(g_history); i > 0; i--)
     {
-        state_t *pstate = stateq_get(g_history, i - 1);
+        cgc_state_t *pstate = cgc_stateq_get(g_history, i - 1);
         if (pstate->timestamp == pkt->timestamp)
             continue;
 
@@ -213,9 +213,9 @@ float calculate_speed(pkt_t *pkt)
     return 0.0;
 }
 
-int do_mix(state_t *state, pkt_t *pkt)
+int cgc_do_mix(cgc_state_t *state, cgc_pkt_t *pkt)
 {
-    state_t *prev;
+    cgc_state_t *prev;
 
     /* verify in absolute bounds */
     switch (pkt->type)
@@ -225,14 +225,14 @@ int do_mix(state_t *state, pkt_t *pkt)
     case TYPE_SPEED:
         if (pkt->speed.speed < min_speed || pkt->speed.speed >= max_speed)
         {
-            send_error(EC_INVALID, TYPE_SPEED);
+            cgc_send_error(EC_INVALID, TYPE_SPEED);
             return 0;
         }
         break;
     case TYPE_RPM:
         if (pkt->rpm.rpm < min_rpm || pkt->rpm.rpm >= max_rpm)
         {
-            send_error(EC_INVALID, TYPE_RPM);
+            cgc_send_error(EC_INVALID, TYPE_RPM);
             return 0;
         }
         break;
@@ -241,10 +241,10 @@ int do_mix(state_t *state, pkt_t *pkt)
     }
 
     /* get previous state */
-    if (!stateq_empty(g_history) && stateq_tail(g_history)->timestamp != pkt->timestamp)
-        prev = stateq_tail(g_history);
-    else if (stateq_length(g_history) >= 2)
-        prev = stateq_get(g_history, stateq_length(g_history) - 2);
+    if (!cgc_stateq_empty(g_history) && cgc_stateq_tail(g_history)->timestamp != pkt->timestamp)
+        prev = cgc_stateq_tail(g_history);
+    else if (cgc_stateq_length(g_history) >= 2)
+        prev = cgc_stateq_get(g_history, cgc_stateq_length(g_history) - 2);
     else
         prev = NULL;
 
@@ -254,9 +254,9 @@ int do_mix(state_t *state, pkt_t *pkt)
         switch (pkt->type)
         {
         case TYPE_LOCATION:
-            if (calculate_speed(pkt) > max_speed)
+            if (cgc_calculate_speed(pkt) > max_speed)
             {
-                send_error(EC_INVALID, TYPE_LOCATION);
+                cgc_send_error(EC_INVALID, TYPE_LOCATION);
                 return 0;
             }
             break;
@@ -285,12 +285,12 @@ int do_mix(state_t *state, pkt_t *pkt)
     return 1;
 }
 
-static unsigned int do_hash(const unsigned char *_data, unsigned int len)
+static unsigned int cgc_do_hash(const unsigned char *_data, unsigned int len)
 {
-    unsigned char *data = malloc(len);
+    unsigned char *data = cgc_malloc(len);
     unsigned int i, hash = 0, xform = 0x12345678;
 
-    memcpy(data, _data, len);
+    cgc_memcpy(data, _data, len);
 
     /* transform */
     for (i = 0; i < len - 3; i += 4)
@@ -305,60 +305,60 @@ static unsigned int do_hash(const unsigned char *_data, unsigned int len)
     for (i = 0; i < len - 3; i += 4)
         hash += *(unsigned int *)(data + i);
 
-    free(data);
+    cgc_free(data);
     return hash;
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
-    pkt_t pkt;
-    state_t cur_state;
+    cgc_pkt_t pkt;
+    cgc_state_t cur_state;
     void *secret_page = (void *)secret_page_i;
     unsigned int secret_hash;
 
-    secret_hash = do_hash(secret_page, 0x1000);
+    secret_hash = cgc_do_hash(secret_page, 0x1000);
 
-    stateq_init(&g_history, hist_size);
+    cgc_stateq_init(&g_history, hist_size);
 
-    memset(&cur_state, 0, sizeof(cur_state));
+    cgc_memset(&cur_state, 0, sizeof(cur_state));
     cur_state.timestamp = secret_hash;
-    stateq_push(g_history, &cur_state);
+    cgc_stateq_push(g_history, &cur_state);
 
     while (1)
     {
-        state_t *last_state;
+        cgc_state_t *last_state;
 
-        writeflush();
-        if (fread((char *)&pkt, sizeof(pkt), stdin) != sizeof(pkt))
+        cgc_writeflush();
+        if (cgc_fread((char *)&pkt, sizeof(pkt), stdin) != sizeof(pkt))
             break;
 
         if (pkt.type == TYPE_RESET)
         {
-            stateq_clear(g_history);
+            cgc_stateq_clear(g_history);
             continue;
         }
 
-        last_state = stateq_tail(g_history);
+        last_state = cgc_stateq_tail(g_history);
         if (last_state && pkt.timestamp < last_state->timestamp)
         {
-            unsigned int len = stateq_length(g_history);
+            unsigned int len = cgc_stateq_length(g_history);
             if (len < 2
                 /* check if last packet might be invalid */
-                || (last_state->timestamp - stateq_get(g_history, len - 2)->timestamp) < max_time_delta
+                || (last_state->timestamp - cgc_stateq_get(g_history, len - 2)->timestamp) < max_time_delta
                 /* check that current packet would be valid if last packet dropped */
-                || pkt.timestamp < stateq_get(g_history, len - 2)->timestamp)
+                || pkt.timestamp < cgc_stateq_get(g_history, len - 2)->timestamp)
             {
-                send_error(EC_TIMESTAMP, last_state->timestamp);
+                cgc_send_error(EC_TIMESTAMP, last_state->timestamp);
                 continue;
             }
             
             /* last packet was bad, drop it */
-            stateq_pop_tail(g_history, &cur_state);
+            cgc_stateq_pop_tail(g_history, &cur_state);
 #ifdef PATCHED_1
-            cur_state = *stateq_tail(g_history);
+            cur_state = *cgc_stateq_tail(g_history);
 #endif
-            send_error(EC_DROPPED, cur_state.timestamp);
+            cgc_send_error(EC_DROPPED, cur_state.timestamp);
 
-            last_state = stateq_tail(g_history);
+            last_state = cgc_stateq_tail(g_history);
         }
 
         if (last_state && (last_state->flags & FLAG_TENTATIVE))
@@ -368,28 +368,28 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
 
         if (last_state && pkt.timestamp == last_state->timestamp)
         {
-            if (do_mix(last_state, &pkt))
-                send_aggregate(pkt.timestamp);
+            if (cgc_do_mix(last_state, &pkt))
+                cgc_send_aggregate(pkt.timestamp);
         }
         else
         {
-            memset(&cur_state, 0, sizeof(cur_state));
+            cgc_memset(&cur_state, 0, sizeof(cur_state));
             cur_state.timestamp = pkt.timestamp;
             if (last_state && pkt.timestamp >= last_state->timestamp + max_time_delta)
                 cur_state.flags |= FLAG_TENTATIVE;
 
             /* add it to history, dropping old one if needed */
-            if (stateq_full(g_history))
-                stateq_pop(g_history, NULL);
-            stateq_push(g_history, &cur_state);
+            if (cgc_stateq_full(g_history))
+                cgc_stateq_pop(g_history, NULL);
+            cgc_stateq_push(g_history, &cur_state);
 
-            if (do_mix(stateq_tail(g_history), &pkt))
-                send_aggregate(pkt.timestamp);
+            if (cgc_do_mix(cgc_stateq_tail(g_history), &pkt))
+                cgc_send_aggregate(pkt.timestamp);
         }
     }
 
-    writeflush();
-    stateq_destroy(&g_history);
+    cgc_writeflush();
+    cgc_stateq_destroy(&g_history);
 
     return 0;
 }

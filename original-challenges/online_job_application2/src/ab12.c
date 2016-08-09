@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -55,11 +55,11 @@ static const char *valid_suffixes[] = {
   "Jr", "Sr", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Other", NULL
 };
 
-int contains(const char *arr[], char *e)
+int cgc_contains(const char *arr[], char *e)
 {
   const char **cur = arr;
   while (*cur != NULL) {
-    if (strncmp((char *)*cur, e, strlen(*cur)) == 0) {
+    if (cgc_strncmp((char *)*cur, e, cgc_strlen(*cur)) == 0) {
       return 1;
     } else {
       cur++;
@@ -69,101 +69,101 @@ int contains(const char *arr[], char *e)
   return 0;
 }
 
-int validate_edu(char *input)
+int cgc_validate_edu(char *input)
 {
-  return contains(valid_education_levels, input);
+  return cgc_contains(valid_education_levels, input);
 }
 
-int validate_eye_color(char *input)
+int cgc_validate_eye_color(char *input)
 {
-  return contains(valid_eye_colors, input);
+  return cgc_contains(valid_eye_colors, input);
 }
 
-int validate_hair_color(char *input)
+int cgc_validate_hair_color(char *input)
 {
-  return contains(valid_hair_colors, input);
+  return cgc_contains(valid_hair_colors, input);
 }
 
-int validate_state(char *input)
+int cgc_validate_state(char *input)
 {
-  return contains(valid_states, input);
+  return cgc_contains(valid_states, input);
 }
 
-int validate_suffix(char *input)
+int cgc_validate_suffix(char *input)
 {
-  return contains(valid_suffixes, input);
+  return cgc_contains(valid_suffixes, input);
 }
 
 
-int within(int min, int max, int x)
+int cgc_within(int min, int max, int x)
 {
   return x >= min && x <= max;
 }
 
-int all_digits(char *input)
+int cgc_all_digits(char *input)
 {
-  for (size_t i = 0; i < strlen(input); i++)
-    if (!isdigit(input[i])) {
+  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+    if (!cgc_isdigit(input[i])) {
       return 0;
     }
 
   return 1;
 }
 
-int validate_day(char *input)
+int cgc_validate_day(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(1, 31, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(1, 31, cgc_strtol(input, NULL, 10));
 }
 
-int validate_month(char *input)
+int cgc_validate_month(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(1, 12, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(1, 12, cgc_strtol(input, NULL, 10));
 }
 
-int validate_year(char *input)
+int cgc_validate_year(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(1900, 2014, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(1900, 2014, cgc_strtol(input, NULL, 10));
 }
 
-int validate_height_inches(char *input)
+int cgc_validate_height_inches(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(0, 11, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(0, 11, cgc_strtol(input, NULL, 10));
 }
 
-int validate_height_feet(char *input)
+int cgc_validate_height_feet(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(1, 9, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(1, 9, cgc_strtol(input, NULL, 10));
 }
 
-int validate_weight(char *input)
+int cgc_validate_weight(char *input)
 {
-  if (!all_digits(input)) return 0;
-  return within(50, 500, strtol(input, NULL, 10));
+  if (!cgc_all_digits(input)) return 0;
+  return cgc_within(50, 500, cgc_strtol(input, NULL, 10));
 }
 
-int validate_name(char *input)
+int cgc_validate_name(char *input)
 {
-  for (size_t i = 0; i < strlen(input); i++)
-    if (!isprint(input[i]) && input[i] != '\'')
+  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+    if (!cgc_isprint(input[i]) && input[i] != '\'')
       return 0;
 
   return 1;
 }
 
-int validate_email(char *input)
+int cgc_validate_email(char *input)
 {
   int has_at = 0;
   char c;
 
-  if (strlen(input) < 3 || strlen(input) > 64)
+  if (cgc_strlen(input) < 3 || cgc_strlen(input) > 64)
     return 0;
 
-  for (size_t i = 0; i < strlen(input); i++) {
+  for (cgc_size_t i = 0; i < cgc_strlen(input); i++) {
     c = input[i];
 
     if (c == '@') {
@@ -175,52 +175,52 @@ int validate_email(char *input)
       }
     }
 
-    if (!(isalnum(c) || c == '.' || c == '-' || c == '_'))
+    if (!(cgc_isalnum(c) || c == '.' || c == '-' || c == '_'))
       return 0;
   }
 
   return has_at;
 }
 
-int validate_street(char *input)
+int cgc_validate_street(char *input)
 {
-  if (strlen(input) > 32 || strlen(input) < 3)
+  if (cgc_strlen(input) > 32 || cgc_strlen(input) < 3)
     return 0;
 
-  for (size_t i = 0; i < strlen(input); i++)
-    if (!(isalnum(input[i]) || isspace(input[i]) || ispunct(input[i])))
+  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+    if (!(cgc_isalnum(input[i]) || cgc_isspace(input[i]) || cgc_ispunct(input[i])))
       return 0;
 
   return 1;
 }
 
-int validate_city(char *input)
+int cgc_validate_city(char *input)
 {
-  if (strlen(input) > 32 || strlen(input) < 4)
+  if (cgc_strlen(input) > 32 || cgc_strlen(input) < 4)
     return 0;
 
-  for (size_t i = 0; i < strlen(input); i++)
-    if (!(isalnum(input[i]) || isspace(input[i]) || ispunct(input[i])))
+  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+    if (!(cgc_isalnum(input[i]) || cgc_isspace(input[i]) || cgc_ispunct(input[i])))
       return 0;
 
   return 1;
 }
 
-int validate_zip(char *input)
+int cgc_validate_zip(char *input)
 {
-  if (strlen(input) != 5)
+  if (cgc_strlen(input) != 5)
     return 0;
 
   for (int i = 0; i < 5; i++)
-    if (!isdigit(input[i]))
+    if (!cgc_isdigit(input[i]))
       return 0;
 
   return 1;
 }
 
-int validate_phone(char *input)
+int cgc_validate_phone(char *input)
 {
-  if (strlen(input) != 12)
+  if (cgc_strlen(input) != 12)
     return 0;
 
   for (int i = 0; i < 12; i++)
@@ -228,16 +228,16 @@ int validate_phone(char *input)
       if (input[i] != '-')
         return 0;
     } else {
-      if (!isdigit(input[i]))
+      if (!cgc_isdigit(input[i]))
         return 0;
     }
 
   return 1;
 }
 
-int validate_sex(char *input)
+int cgc_validate_sex(char *input)
 {
-  if (strlen(input) != 1)
+  if (cgc_strlen(input) != 1)
     return 0;
 
   if (input[0] != 'M' && input[0] != 'F')
@@ -246,9 +246,9 @@ int validate_sex(char *input)
   return 1;
 }
 
-int validate_yes_no(char *input)
+int cgc_validate_yes_no(char *input)
 {
-  if (strlen(input) != 1)
+  if (cgc_strlen(input) != 1)
     return 0;
 
   if (input[0] != 'Y' && input[0] != 'N')
@@ -257,16 +257,16 @@ int validate_yes_no(char *input)
   return 1;
 }
 
-int validate_gpa(char *input)
+int cgc_validate_gpa(char *input)
 {
-  if (strlen(input) != 4)
+  if (cgc_strlen(input) != 4)
     return 0;
 
   for (int i = 0; i < 4; i++) {
     if (i == 1) {
       if (input[i] != '.')
         return 0;
-    } else if (!isdigit(input[i]))
+    } else if (!cgc_isdigit(input[i]))
       return 0;
   }
 
@@ -275,68 +275,68 @@ int validate_gpa(char *input)
 
 // Questions
 // Personal
-DEC_Q(last_name, "Last Name", NULL, 0, validate_name);
-DEC_Q(first_name, "First Name", NULL, 0, validate_name);
-DEC_Q(middle_name, "Middle Name", " [MI or Middle Name]", 1, validate_name);
-DEC_Q(suffix, "Suffix", " [Jr, Sr, II, etc]", 1, validate_suffix);
-DEC_Q(dob_month, "DOB Month", " [MM]", 0, validate_month);
-DEC_Q(dob_day, "DOB Day", " [DD]", 0, validate_day);
-DEC_Q(dob_year, "DOB Year", " [YYYY]", 0, validate_year);
-DEC_Q(height_feet, "Height-Feet", " [1-9]", 0, validate_height_feet);
-DEC_Q(height_inches, "Height-Inches", " [0-11]", 0, validate_height_inches);
-DEC_Q(weight, "Weight", NULL, 0, validate_weight);
-DEC_Q(sex, "Sex", NULL, 0, validate_sex);
-DEC_Q(hair_color, "Hair Color", NULL, 0, validate_hair_color);
-DEC_Q(eye_color, "Eye Color", NULL, 0, validate_eye_color);
+DEC_Q(last_name, "Last Name", NULL, 0, cgc_validate_name);
+DEC_Q(first_name, "First Name", NULL, 0, cgc_validate_name);
+DEC_Q(middle_name, "Middle Name", " [MI or Middle Name]", 1, cgc_validate_name);
+DEC_Q(suffix, "Suffix", " [Jr, Sr, II, etc]", 1, cgc_validate_suffix);
+DEC_Q(dob_month, "DOB Month", " [MM]", 0, cgc_validate_month);
+DEC_Q(dob_day, "DOB Day", " [DD]", 0, cgc_validate_day);
+DEC_Q(dob_year, "DOB Year", " [YYYY]", 0, cgc_validate_year);
+DEC_Q(height_feet, "Height-Feet", " [1-9]", 0, cgc_validate_height_feet);
+DEC_Q(height_inches, "Height-Inches", " [0-11]", 0, cgc_validate_height_inches);
+DEC_Q(weight, "Weight", NULL, 0, cgc_validate_weight);
+DEC_Q(sex, "Sex", NULL, 0, cgc_validate_sex);
+DEC_Q(hair_color, "Hair Color", NULL, 0, cgc_validate_hair_color);
+DEC_Q(eye_color, "Eye Color", NULL, 0, cgc_validate_eye_color);
 
 // Contact
-DEC_Q(pemail, "Personal e-mail", NULL, 0, validate_email);
-DEC_Q(wemail, "Work e-mail", NULL, 1, validate_email);
-DEC_Q(hphone, "Home telephone number", " [XXX-XXX-XXXX]", 0, validate_phone);
-DEC_Q(wphone, "Work telephone number", " [XXX-XXX-XXXX]", 1, validate_phone);
+DEC_Q(pemail, "Personal e-mail", NULL, 0, cgc_validate_email);
+DEC_Q(wemail, "Work e-mail", NULL, 1, cgc_validate_email);
+DEC_Q(hphone, "Home telephone number", " [XXX-XXX-XXXX]", 0, cgc_validate_phone);
+DEC_Q(wphone, "Work telephone number", " [XXX-XXX-XXXX]", 1, cgc_validate_phone);
 
 // Address
-DEC_Q(mim, "Move-In Month", " [MM]", 0, validate_month);
-DEC_Q(miy, "Move-In Year", " [YYYY]", 0, validate_year);
-DEC_Q(street, "Street", NULL, 0, validate_street);
-DEC_Q(city, "City", NULL, 0, validate_city);
-DEC_Q(state, "State", NULL, 0, validate_state);
-DEC_Q(zip, "Zip Code", NULL, 0, validate_zip);
-DEC_Q(owned, "Owned by you", "? [Y/N]", 0, validate_yes_no);
+DEC_Q(mim, "Move-In Month", " [MM]", 0, cgc_validate_month);
+DEC_Q(miy, "Move-In Year", " [YYYY]", 0, cgc_validate_year);
+DEC_Q(street, "Street", NULL, 0, cgc_validate_street);
+DEC_Q(city, "City", NULL, 0, cgc_validate_city);
+DEC_Q(state, "State", NULL, 0, cgc_validate_state);
+DEC_Q(zip, "Zip Code", NULL, 0, cgc_validate_zip);
+DEC_Q(owned, "Owned by you", "? [Y/N]", 0, cgc_validate_yes_no);
 
 // Education
-DEC_Q(highest_edu, "Highest Education", " [HS/COLLEGE/ADV]", 0, validate_edu);
-DEC_Q(esm, "Start Month", " [MM]", 0, validate_month);
-DEC_Q(esy, "Start Year", " [YYYY]", 0, validate_year);
-DEC_Q(eem, "End Month", " [MM]", 0, validate_month);
-DEC_Q(eey, "End Year", " [YYYY]", 0, validate_year);
-DEC_Q(school_name, "School Name", NULL, 0, validate_name);
-DEC_Q(estreet, "Street", NULL, 0, validate_street);
-DEC_Q(ecity, "City", NULL, 0, validate_city);
-DEC_Q(estate, "State", NULL, 0, validate_state);
-DEC_Q(ezip, "Zip Code", NULL, 0, validate_zip);
-DEC_Q(gpa, "GPA", " [X.XX]", 0, validate_gpa);
-DEC_Q(major, "Major", " [NA for HS]", 0, validate_name);
+DEC_Q(highest_edu, "Highest Education", " [HS/COLLEGE/ADV]", 0, cgc_validate_edu);
+DEC_Q(esm, "Start Month", " [MM]", 0, cgc_validate_month);
+DEC_Q(esy, "Start Year", " [YYYY]", 0, cgc_validate_year);
+DEC_Q(eem, "End Month", " [MM]", 0, cgc_validate_month);
+DEC_Q(eey, "End Year", " [YYYY]", 0, cgc_validate_year);
+DEC_Q(school_name, "School Name", NULL, 0, cgc_validate_name);
+DEC_Q(estreet, "Street", NULL, 0, cgc_validate_street);
+DEC_Q(ecity, "City", NULL, 0, cgc_validate_city);
+DEC_Q(estate, "State", NULL, 0, cgc_validate_state);
+DEC_Q(ezip, "Zip Code", NULL, 0, cgc_validate_zip);
+DEC_Q(gpa, "GPA", " [X.XX]", 0, cgc_validate_gpa);
+DEC_Q(major, "Major", " [NA for HS]", 0, cgc_validate_name);
 
 // Last Employer
-DEC_Q(employeer, "Most Recent Employer", NULL, 0, validate_name);
-DEC_Q(wsm, "Start Month", " [MM]", 0, validate_month);
-DEC_Q(wsy, "Start Year", " [YYYY]", 0, validate_year);
-DEC_Q(wem, "End Month", " [MM]", 1, validate_month);
-DEC_Q(wey, "End Year", " [YYYY]", 1, validate_year);
-DEC_Q(wstreet, "Street", NULL, 0, validate_street);
-DEC_Q(wcity, "City", NULL, 0, validate_city);
-DEC_Q(wstate, "State", NULL, 0, validate_state);
-DEC_Q(wzip, "Zip Code", NULL, 0, validate_zip);
-DEC_Q(sup_last_name, "Supervisor Last Name", NULL, 0, validate_name);
-DEC_Q(sup_first_name, "Supervisor First Name", NULL, 0, validate_name);
-DEC_Q(sup_title, "Supervisor Title", NULL, 0, validate_name);
-DEC_Q(sphone, "Supervisor Telephone Number", " [XXX-XXX-XXXX]", 0, validate_phone);
-DEC_Q(semail, "Supervisor e-mail", NULL, 1, validate_email);
+DEC_Q(employeer, "Most Recent Employer", NULL, 0, cgc_validate_name);
+DEC_Q(wsm, "Start Month", " [MM]", 0, cgc_validate_month);
+DEC_Q(wsy, "Start Year", " [YYYY]", 0, cgc_validate_year);
+DEC_Q(wem, "End Month", " [MM]", 1, cgc_validate_month);
+DEC_Q(wey, "End Year", " [YYYY]", 1, cgc_validate_year);
+DEC_Q(wstreet, "Street", NULL, 0, cgc_validate_street);
+DEC_Q(wcity, "City", NULL, 0, cgc_validate_city);
+DEC_Q(wstate, "State", NULL, 0, cgc_validate_state);
+DEC_Q(wzip, "Zip Code", NULL, 0, cgc_validate_zip);
+DEC_Q(sup_last_name, "Supervisor Last Name", NULL, 0, cgc_validate_name);
+DEC_Q(sup_first_name, "Supervisor First Name", NULL, 0, cgc_validate_name);
+DEC_Q(sup_title, "Supervisor Title", NULL, 0, cgc_validate_name);
+DEC_Q(sphone, "Supervisor Telephone Number", " [XXX-XXX-XXXX]", 0, cgc_validate_phone);
+DEC_Q(semail, "Supervisor e-mail", NULL, 1, cgc_validate_email);
 
 // Final
-DEC_Q(drugz, "Drug Test", "? [Y/N]", 0, validate_yes_no);
-DEC_Q(background, "Background Investigation", "? [Y/N]", 0, validate_yes_no);
+DEC_Q(drugz, "Drug Test", "? [Y/N]", 0, cgc_validate_yes_no);
+DEC_Q(background, "Background Investigation", "? [Y/N]", 0, cgc_validate_yes_no);
 
 // Pages
 DEC_P(candidate, "Candidate Info");
@@ -347,7 +347,7 @@ DEC_P(employment, "Employment");
 DEC_P(final, "Final Questions");
 DEC_P(fin, NULL);
 
-void init_af86(void)
+void cgc_init_af86(void)
 {
   // Pages
   LINK(candidate, NULL, &contact);
@@ -425,11 +425,11 @@ void init_af86(void)
   LINK(background, &drugz, NULL);
 }
 
-form_t af86 = {
+cgc_form_t af86 = {
   .ending = "\n\n"
     "You have completed your application with the Sea Eye Association.\nYou "
     "may review the form. Navigate through the application with **prev and "
-    "**next.\nOnce your are satisfied type **exit to exit and submit the "
+    "**next.\nOnce your are satisfied type **cgc_exit to cgc_exit and submit the "
     "form\nIf you wish to discard your application, please use Control-C\n",
 
   .greeting = "\n\n"
@@ -445,16 +445,16 @@ form_t af86 = {
     "**next <Move to the next page>\n"
     "**update [id] <Update field, ex: \"Update First Name\">\n"
     "**help <Print this dialogue>\n"
-    "**exit <Exit application>\n",
+    "**cgc_exit <Exit application>\n",
 
-  .init = init_af86,
+  .init = cgc_init_af86,
 
   .handlers = {
-    handle_next,
-    handle_prev,
-    handle_update,
-    handle_help,
-    handle_exit
+    cgc_handle_next,
+    cgc_handle_prev,
+    cgc_handle_update,
+    cgc_handle_help,
+    cgc_handle_exit
   },
 
   .pages = &candidate,

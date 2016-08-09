@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,10 +30,10 @@ THE SOFTWARE.
 #include "service.h"
 
 
-void makeAirportCode( unsigned char *readPtr, char apCode[4]);
-char *findAirportCodebyNumber(airportInfoType *airports, int connectionNum);
+void cgc_makeAirportCode( unsigned char *readPtr, char apCode[4]);
+char *cgc_findAirportCodebyNumber(cgc_airportInfoType *airports, int connectionNum);
 
-int loadDB(airportInfoType **airports) {
+int cgc_loadDB(cgc_airportInfoType **airports) {
 
 
 unsigned char *readPtr;
@@ -43,7 +43,7 @@ unsigned int i;
 char airportCode[4];
 char *code;
 
-airportInfoType *tmpPtr;
+cgc_airportInfoType *tmpPtr;
 struct connectionList *tmpConnectionPtr;
 int connectionCount;
 int connectionNum;
@@ -59,7 +59,7 @@ int connectionNum;
 	airportCount = *readPtr % 16 + 5;
 
 
-	*airports = malloc(sizeof(airportInfoType));
+	*airports = cgc_malloc(sizeof(cgc_airportInfoType));
 
 	if (*airports == 0)
 		return -1;
@@ -70,10 +70,10 @@ int connectionNum;
 
 		while (1) {
 
-			makeAirportCode(readPtr+offset, airportCode);
+			cgc_makeAirportCode(readPtr+offset, airportCode);
 			offset+=3;
 
-			if (check4Code(*airports, airportCode)== -1) {
+			if (cgc_check4Code(*airports, airportCode)== -1) {
 
 				continue;
 			}
@@ -84,12 +84,12 @@ int connectionNum;
 
 		} // while(1)	
 		
-		strcpy(tmpPtr->code, airportCode);
+		cgc_strcpy(tmpPtr->code, airportCode);
 
-		// if this isn't the last one, malloc memory for the next
+		// if this isn't the last one, cgc_malloc memory for the next
 		if (i < airportCount -1 ) {
 
-			tmpPtr->next = malloc(sizeof(airportInfoType));
+			tmpPtr->next = cgc_malloc(sizeof(cgc_airportInfoType));
 
 			if (tmpPtr->next == 0)
 				return -1;
@@ -110,7 +110,7 @@ int connectionNum;
 		connectionCount = *(readPtr + offset) % (airportCount/2) + 1;
 		offset++;
 
-		tmpPtr->connections = malloc(sizeof(connectionListType));
+		tmpPtr->connections = cgc_malloc(sizeof(cgc_connectionListType));
 
 		if (tmpPtr->connections == 0)
 			return -1;
@@ -124,13 +124,13 @@ int connectionNum;
 			offset++;
 
 
-			code = findAirportCodebyNumber(*airports, connectionNum);
+			code = cgc_findAirportCodebyNumber(*airports, connectionNum);
 
 
-			if (check4ConnectionCode(tmpPtr->connections, code) == -1) {
+			if (cgc_check4ConnectionCode(tmpPtr->connections, code) == -1) {
 
 
-				strcpy(tmpConnectionPtr->destCode, code);
+				cgc_strcpy(tmpConnectionPtr->destCode, code);
 
 				tmpConnectionPtr->cost = *(unsigned char *)(readPtr+offset);
 				++offset;
@@ -142,7 +142,7 @@ int connectionNum;
 
 				if (i < connectionCount) {
 
-					tmpConnectionPtr->next = malloc(sizeof(connectionListType));
+					tmpConnectionPtr->next = cgc_malloc(sizeof(cgc_connectionListType));
 
 					if (tmpConnectionPtr->next == 0)
 						return -1;
@@ -163,7 +163,7 @@ int connectionNum;
 }
 
 // map the random bytes from the magic page into the uppercase alphabet to make an airport code
-void makeAirportCode(unsigned char *readPtr, char apCode[4]) {
+void cgc_makeAirportCode(unsigned char *readPtr, char apCode[4]) {
 
 unsigned char tmpchar;
 int i;
@@ -182,7 +182,7 @@ int i;
 }
 
 // returns 0 if its not found in the list, -1 if it is.
-int check4Code(airportInfoType *airports, char apCode[4]) {
+int cgc_check4Code(cgc_airportInfoType *airports, char apCode[4]) {
 
 
 	// if the airport list is empty, this is a fine code obviously
@@ -205,7 +205,7 @@ int check4Code(airportInfoType *airports, char apCode[4]) {
 }
 
 // returns -1 if the code is not found, or its position in the list otherwise
-int check4ConnectionCode(connectionListType *connections, char apCode[4]) {
+int cgc_check4ConnectionCode(cgc_connectionListType *connections, char apCode[4]) {
 
 int count;
 
@@ -230,7 +230,7 @@ int count;
 }
 
 
-char *findAirportCodebyNumber(airportInfoType *airports, int connectionNum) {
+char *cgc_findAirportCodebyNumber(cgc_airportInfoType *airports, int connectionNum) {
 
 int i;
 

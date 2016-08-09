@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,16 +32,16 @@
 #define MAX_NUM_SEGS 10
 
 typedef struct seg {
-    size_t size;
+    cgc_size_t size;
     char name[16];
     char desc[112];
-    uint8_t code[4096];
-} seg_t;
+    cgc_uint8_t code[4096];
+} cgc_seg_t;
 
-typedef struct segnode segnode_t;
+typedef struct segnode cgc_segnode_t;
 struct segnode {
-    segnode_t *next;
-    seg_t *s;
+    cgc_segnode_t *next;
+    cgc_seg_t *s;
     int (*f)();
 };
 
@@ -53,7 +53,7 @@ struct segnode {
  * @param size Size of input buffer
  * @return Verification code in out buffer
  */
-void scramble(uint8_t *in, uint8_t *out, size_t len);
+void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, cgc_size_t len);
 
 /**
  * Run a SEG
@@ -61,7 +61,7 @@ void scramble(uint8_t *in, uint8_t *out, size_t len);
  * @param curnode segnode to start at
  * @return 0, terminates on error
  */
-int run_seg(segnode_t *curnode);
+int cgc_run_seg(cgc_segnode_t *curnode);
 
 /**
  * Load a SEG
@@ -69,7 +69,7 @@ int run_seg(segnode_t *curnode);
  * @param curnode segnode to start at
  * @return 0
  */
-int load_seg(segnode_t *curnode);
+int cgc_load_seg(cgc_segnode_t *curnode);
 
 /**
  * Ensure name and desc lengths > 0
@@ -77,7 +77,7 @@ int load_seg(segnode_t *curnode);
  * @param s seg to check
  * @return 1 if seg name or desc > 0, 0 if not
  */
-int sanitycheck(seg_t *s);
+int cgc_sanitycheck(cgc_seg_t *s);
 
 /**
  * Validate a SEG
@@ -85,12 +85,12 @@ int sanitycheck(seg_t *s);
  * @param curnode segnode to start at
  * @return 0 if valid, 1 if not
  */
-int validate_seg(segnode_t *curnode);
+int cgc_validate_seg(cgc_segnode_t *curnode);
 
 /**
  * Receive a SEG
  *
  * @return First node in segnode list, terminates on error
  */
-segnode_t *recv_seg();
+cgc_segnode_t *cgc_recv_seg();
 #endif

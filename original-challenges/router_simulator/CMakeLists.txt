@@ -1,0 +1,6 @@
+set( SERVICE_ID "00007" )
+set( AUTHOR_ID "KPRCA" )
+set( POLLS_RELEASE_SEED "1597909308" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -Os -g  -Wno-overlength-strings -Wno-packed" )
+set( POLLS_TESTING_SEED "618544215" )
+buildCB(${CFLAGS})

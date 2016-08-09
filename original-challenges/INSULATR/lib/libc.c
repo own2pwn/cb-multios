@@ -23,8 +23,8 @@
 #include "libc.h"
 
 // VERBATIM from GREATVIEW
-void * memset(void *dst, char c, size_t n) {
-    size_t i;
+void * cgc_memset(void *dst, char c, cgc_size_t n) {
+    cgc_size_t i;
     for (i=0; i<n; i++) {
         *((uint8_t*)dst+i) = c;
     }
@@ -32,7 +32,7 @@ void * memset(void *dst, char c, size_t n) {
 }
 
 // BASED ON from GREATVIEW (returns number of bytes written)
-int uint2str32(char* str_buf, int buf_size, uint32_t i) {
+int cgc_uint2str32(char* str_buf, int buf_size, uint32_t i) {
 
     int idx = 0;
     uint32_t tmp = 0;
@@ -71,8 +71,8 @@ int uint2str32(char* str_buf, int buf_size, uint32_t i) {
 }
 
 // VERBATIM from GREATVIEW
-int memcmp(void *a, void *b, size_t n) {
-    size_t i;
+int cgc_memcmp(void *a, void *b, cgc_size_t n) {
+    cgc_size_t i;
     for (i=0; i < n; i++)
         if ( *(uint8_t*)(a+i) != *(uint8_t*)(b+i))
             return -1;
@@ -83,7 +83,7 @@ int memcmp(void *a, void *b, size_t n) {
 // Attempts to converts into a uint32_t.  If the value exceeds max_val, it 
 // spits back an error message.  result and max_val are uint64_ts as a poor 
 // man's uint32_t overflow check (when max_val == MAX_UINT32)
-int str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32_t *out) {
+int cgc_str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32_t *out) {
 
   int ret = SUCCESS;
   uint64_t result = 0;
@@ -103,7 +103,7 @@ int str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, uint32
       }
     } else {
 #ifdef DEBUG
-      fprintf(stderr, "[E] str2unt32n | encountered non-decimal in conversion: '%c'\n", str_buf[i]);
+      fprintf(stderr, "[E] cgc_str2unt32n | encountered non-decimal in conversion: '%c'\n", str_buf[i]);
 #endif 
       ret = ERRNO_NON_DECIMAL_IN_CONVERSION;
       goto bail;
@@ -120,7 +120,7 @@ bail:
 }
 
 // VERBATIM from GREATVIEW
-size_t strncpy(char *s1, char *s2, size_t n) {
+cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
     char *tmp = s1;
     while ((tmp-s1 < n) && *s2) {
         *tmp = *s2;
@@ -132,7 +132,7 @@ size_t strncpy(char *s1, char *s2, size_t n) {
 }
 
 // Based on GREATVIEW
-char * strnchr(char *str, char c, uint32_t n) {
+char * cgc_strnchr(char *str, char c, uint32_t n) {
    char *tmp = str;
    while (*tmp && n) {
       if (*tmp == c)
@@ -146,11 +146,11 @@ char * strnchr(char *str, char c, uint32_t n) {
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // VERBATIM to JUSTINTIME, INTERPRETTHIS
-int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  size_t bytes_left = count;
-  size_t rx_bytes_local = 0;
+  cgc_size_t bytes_left = count;
+  cgc_size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -158,7 +158,7 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
     if (SUCCESS != (ret = receive(STDIN, buf+(count-bytes_left), bytes_left, &rx_bytes_local))) {
 #ifdef DEBUG
-      fprintf(stderr, "[E] receive () call within receive_all() failed\n");
+      fprintf(stderr, "[E] receive () call within cgc_receive_all() failed\n");
 #endif
       goto bail;
     }
@@ -182,14 +182,14 @@ bail:
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // VERBATIM to JUSTINTIME, INTERPRETTHIS
-int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
 
    int ret = SUCCESS;
-   size_t bytes_left = count;
-   size_t tx_bytes_local = 0;
+   cgc_size_t bytes_left = count;
+   cgc_size_t tx_bytes_local = 0;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] transmit_all | sending: '%s'\n", buf);
+    fprintf(stderr, "[D] cgc_transmit_all | sending: '%s'\n", buf);
 #endif  
 
    while (bytes_left) {
@@ -198,7 +198,7 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
       if (SUCCESS != (ret = transmit(STDOUT, buf, bytes_left, &tx_bytes_local))) {
 #ifdef DEBUG
-         fprintf(stderr, "[E] transmit () call within transmit_all() failed\n");
+         fprintf(stderr, "[E] transmit () call within cgc_transmit_all() failed\n");
 #endif
          goto bail;
       }
@@ -295,8 +295,8 @@ int toupper(int c) {
    return c;
 }
 
-size_t strlen(const char *str) {
-   size_t res = 0;
+cgc_size_t strlen(const char *str) {
+   cgc_size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

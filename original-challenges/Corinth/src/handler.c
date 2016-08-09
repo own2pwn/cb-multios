@@ -30,29 +30,29 @@ THE SOFTWARE.
 #include "messages.h"
 #include "monte.h"
 
-void handle_unrecognized_id(uint8 id);
-void handle_check(protocol_frame* rq);
-void handle_query();
-void handle_double(protocol_frame* frame);
+void cgc_handle_unrecognized_id(cgc_uint8 id);
+void cgc_handle_check(cgc_protocol_frame* rq);
+void cgc_handle_query();
+void cgc_handle_double(cgc_protocol_frame* frame);
 
-void run_loop() {
+void cgc_run_loop() {
   while (1) {
-    protocol_with_recv_frame(^uint8 (protocol_frame* frame) {
+    cgc_protocol_with_recv_frame(^cgc_uint8 (cgc_protocol_frame* frame) {
         switch (frame->id) {
         case TERMINATE_ID:
           _terminate(0);
           break;
         case CHECK_REQ_ID:
-          handle_check(frame);
+          cgc_handle_check(frame);
           break;
         case QUERY_REQ_ID:
-          handle_query();
+          cgc_handle_query();
           break;
         case DOUBLE_REQ_ID:
-          handle_double(frame);
+          cgc_handle_double(frame);
           break;
         default:
-          handle_unrecognized_id(frame->id);
+          cgc_handle_unrecognized_id(frame->id);
           return 0;
         };
 
@@ -61,58 +61,58 @@ void run_loop() {
   }
 }
 
-void handle_unrecognized_id(uint8 id) {
-  unrecognized_id_error_contents e;
+void cgc_handle_unrecognized_id(cgc_uint8 id) {
+  cgc_unrecognized_id_error_contents e;
   e.pos0 = id;
-  protocol_frame f;
+  cgc_protocol_frame f;
   f.id = UNRECOGNIZED_ID_ERROR_ID;
   f.length = UNRECOGNIZED_ID_ERROR_EXPECTED_LENGTH;
   f.value = (void*)&e;
-  protocol_send(&f);
+  cgc_protocol_send(&f);
   _terminate(-1);
 }
 
-void handle_check(protocol_frame* frame) {
-  check_req_contents *rq = extract_check_req(frame);
+void cgc_handle_check(cgc_protocol_frame* frame) {
+  cgc_check_req_contents *rq = cgc_extract_check_req(frame);
 
-  float64 splatter = rq->pos0;
-  float64 scaler = rq->pos1;
+  cgc_float64 splatter = rq->pos0;
+  cgc_float64 scaler = rq->pos1;
 
-  monte_adjust(splatter, scaler);
+  cgc_monte_adjust(splatter, scaler);
 
-  check_resp_contents e;
-  e.pos0 = monte_happy();
+  cgc_check_resp_contents e;
+  e.pos0 = cgc_monte_happy();
 
-  protocol_frame f;
+  cgc_protocol_frame f;
   f.id = CHECK_RESP_ID;
   f.length = CHECK_RESP_EXPECTED_LENGTH;
   f.value = (void*)&e;
 
-  protocol_send(&f);
+  cgc_protocol_send(&f);
 }
 
-void handle_query() {
-  query_resp_contents e;
-  e.pos0 = monte_gen();
-  protocol_frame f;
+void cgc_handle_query() {
+  cgc_query_resp_contents e;
+  e.pos0 = cgc_monte_gen();
+  cgc_protocol_frame f;
   f.id = QUERY_RESP_ID;
   f.length = QUERY_RESP_EXPECTED_LENGTH;
   f.value = (void*)&e;
-  protocol_send(&f);
+  cgc_protocol_send(&f);
 }
 
-void bufcpy(uint8 len, char* in, char* out) {
-  for (uint8 i = 0; i < len; i++) {
+void cgc_bufcpy(cgc_uint8 len, char* in, char* out) {
+  for (cgc_uint8 i = 0; i < len; i++) {
     out[i] = in[i];
     out[i + len] = in[i];
   }
 }
 
-void double_body(protocol_frame* frame,
+void cgc_double_body(cgc_protocol_frame* frame,
                  char* output_buf_addr,
-                 uint8 output_buf_len) {
-  protocol_frame f;
-  uint16 input_buf_len = frame->length;
+                 cgc_uint8 output_buf_len) {
+  cgc_protocol_frame f;
+  cgc_uint16 input_buf_len = frame->length;
 
   f.id = DOUBLE_RESP_ID;
   f.length = input_buf_len * 2;
@@ -130,17 +130,17 @@ void double_body(protocol_frame* frame,
 
   char* input_buf = (char*)(frame->value);
 
-  bufcpy(input_buf_len, input_buf, output_buf_addr);
+  cgc_bufcpy(input_buf_len, input_buf, output_buf_addr);
 
-  protocol_send(&f);
+  cgc_protocol_send(&f);
 
 }
 
-void handle_double(protocol_frame* frame) {
-  uint8 intermediate_len = monte_happy() * 2;
-  uint8 output_buf_len = intermediate_len - (intermediate_len % 8);
+void cgc_handle_double(cgc_protocol_frame* frame) {
+  cgc_uint8 intermediate_len = cgc_monte_happy() * 2;
+  cgc_uint8 output_buf_len = intermediate_len - (intermediate_len % 8);
   char output_buf[output_buf_len];
   char* output_buf_addr = (char*) &output_buf;
 
-  double_body(frame, output_buf_addr, output_buf_len);
+  cgc_double_body(frame, output_buf_addr, output_buf_len);
 }

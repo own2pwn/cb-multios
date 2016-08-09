@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,8 +28,8 @@
 #define ECC_SIZE 127 // number of bits
 #define ECC_PARITY_SIZE 28 // number of parity bits
 
-void ecc_init();
-int ecc_decode(uint8_t *bits);
-int ecc_encode(uint8_t *bits);
+void cgc_ecc_init();
+int cgc_ecc_decode(cgc_uint8_t *bits);
+int cgc_ecc_encode(cgc_uint8_t *bits);
 
 #endif

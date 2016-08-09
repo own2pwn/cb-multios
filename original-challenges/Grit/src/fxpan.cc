@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,23 +23,23 @@
 #include "fxpan.h"
 #include "gain.h"
 
-FxPan::FxPan(int32_t pan_) : pan(pan_)
+cgc_FxPan::cgc_FxPan(cgc_int32_t pan_) : pan(pan_)
 {
 }
 
-void FxPan::apply(AudioTrack &track) const
+void cgc_FxPan::cgc_apply(cgc_AudioTrack &track) const
 {
-    if (!track.getStereo())
+    if (!track.cgc_getStereo())
         return;
 
-    apply(*track.getChannel(0), Gain::fromPanLeft(pan));
-    apply(*track.getChannel(1), Gain::fromPanRight(pan));
+    cgc_apply(*track.cgc_getChannel(0), cgc_Gain::cgc_fromPanLeft(pan));
+    cgc_apply(*track.cgc_getChannel(1), cgc_Gain::cgc_fromPanRight(pan));
 }
 
-void FxPan::apply(AudioStream &stream, Gain gain) const
+void cgc_FxPan::cgc_apply(cgc_AudioStream &stream, cgc_Gain gain) const
 {
-    for (unsigned int i = 0; i < stream.getLength(); i++)
+    for (unsigned int i = 0; i < stream.cgc_getLength(); i++)
     {
-        stream.setSample(i, gain.adjustSample(stream.getSample(i)));
+        stream.cgc_setSample(i, gain.cgc_adjustSample(stream.cgc_getSample(i)));
     }
 }

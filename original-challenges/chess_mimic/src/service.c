@@ -49,7 +49,7 @@ char (*ptr_array)[WIDTH][HEIGHT]; // pointer to board array
 char current_team = WHITE_TEAM;  // white/black
 
 // Returns color of piece (BLACK_PIECE, WHITE_PIECE, or EMPTY)
-int getColor(char piece)
+int cgc_getColor(char piece)
 {
 	if (piece <= QUEEN_WHITE && piece >= PAWN_WHITE)
 		return WHITE_PIECE;
@@ -59,7 +59,7 @@ int getColor(char piece)
 }
 
 // display contents of board
-void displayboard(void)
+void cgc_displayboard(void)
 {
     for(int i = HEIGHT - 1; i >= 0; i--)
     {
@@ -67,12 +67,12 @@ void displayboard(void)
         {
             transmit(0, (char*)&(*ptr_array)[j][i], 1, NULL);
         }
-        printf("\n");
+        cgc_printf("\n");
     }
 }
 
 // place all the pieces on the board
-void initboard()
+void cgc_initboard()
 {
 	// all the empty squares get a '.'
 	for(int i = 0; i < HEIGHT; i++)
@@ -123,28 +123,28 @@ void initboard()
 }
 
 // returns the piece at the given location
-char getPiece(Location loc)
+char cgc_getPiece(cgc_Location loc)
 {
 	return (*ptr_array)[loc.x][loc.y];
 }
 
 // Checks for a collision
 // returns COLLISION or NO_COLLISION
-int checkNoCollision(Move move)
+int cgc_checkNoCollision(cgc_Move move)
 {
-	Location src = move.src;
-	Location dst = move.dst;
+	cgc_Location src = move.src;
+	cgc_Location dst = move.dst;
 
 	int squares[WIDTH][2]; // squares between src and dst
 	int square_cnt = 0; 
 
-	char piece = getPiece(move.src);
+	char piece = cgc_getPiece(move.src);
 
 	// pieces cannot pass through each other (except KNIGHT)
 	if (piece == KNIGHT_WHITE || piece == KNIGHT_BLACK)
 	{
 		// make sure the knight isn't landing on a piece of its own color
-		if (getColor(piece) != getColor(getPiece(dst)))
+		if (cgc_getColor(piece) != cgc_getColor(cgc_getPiece(dst)))
 			return NO_COLLISION;
 		else
 		{
@@ -152,11 +152,11 @@ int checkNoCollision(Move move)
 		}
 	}
 	// if piece is white and the destination is white, collision
-	if (getColor(piece) == WHITE_PIECE && getColor(getPiece(move.dst)) == WHITE_PIECE )
+	if (cgc_getColor(piece) == WHITE_PIECE && cgc_getColor(cgc_getPiece(move.dst)) == WHITE_PIECE )
 		return COLLISION;
 
 	// if piece is black and the destination is black, collision
-	if (getColor(piece) == BLACK_PIECE && getColor(getPiece(move.dst)) == BLACK_PIECE)
+	if (cgc_getColor(piece) == BLACK_PIECE && cgc_getColor(cgc_getPiece(move.dst)) == BLACK_PIECE)
 		return COLLISION;
 
 	// determine squares between src and dst on a FILE
@@ -198,8 +198,8 @@ int checkNoCollision(Move move)
 	else
 	{ 
 		// determine squares between src and dst on a DIAGONAL
-		int num = abs(move.dst.x - move.src.x);
-		if (num == abs(move.dst.y - move.src.y))
+		int num = cgc_abs(move.dst.x - move.src.x);
+		if (num == cgc_abs(move.dst.y - move.src.y))
 		{
 			for (int i = 1; i <= num; i++)
 			{
@@ -236,15 +236,15 @@ int checkNoCollision(Move move)
 		if (boop >= 1)
 			return COLLISION;
 
-		Location loc = {squares[i][0], squares[i][1]};
-		char spot = getPiece(loc);
+		cgc_Location loc = {squares[i][0], squares[i][1]};
+		char spot = cgc_getPiece(loc);
 
 		if (spot == EMPTY)
 		{
 			continue; // no penalty for empty squares. keep going
 		}
 
-		if (getColor(piece) != getColor(spot))
+		if (cgc_getColor(piece) != cgc_getColor(spot))
 		{
 			boop++; // we ran into one enemy piece. track that we did, becuase we can't go through 2 or more
 		}
@@ -260,16 +260,16 @@ int checkNoCollision(Move move)
 // Attemps to perform the move, pieces are swapped if landed on
 // Returns 1 if the move succeded
 // Returns 0 if the move was illegal (based on the piece moved and the state of board)
-int performMove(Move move)
+int cgc_performMove(cgc_Move move)
 {
-	Location src = move.src;
-	Location dst = move.dst;
-	int piece = getPiece(src);
+	cgc_Location src = move.src;
+	cgc_Location dst = move.dst;
+	int piece = cgc_getPiece(src);
 
 	if (current_team == WHITE_TEAM)	
 	{
 		// WHITE's turn
-		if (getColor(piece) == BLACK_PIECE)
+		if (cgc_getColor(piece) == BLACK_PIECE)
 		{
 			return 0; // trying to move a black piece during white's turn
 		}
@@ -277,7 +277,7 @@ int performMove(Move move)
 	else
 	{
 		// BLACK's turn
-		if (getColor(piece) == WHITE_PIECE)
+		if (cgc_getColor(piece) == WHITE_PIECE)
 		{
 			return 0; // trying to move a white piece during black's turn
 		}
@@ -293,9 +293,9 @@ int performMove(Move move)
 		{
 			if (dst.y == src.y + 1 || dst.y == src.y - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -304,9 +304,9 @@ int performMove(Move move)
 		{
 			if (dst.x == src.x + 1 || dst.x == src.x - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -326,9 +326,9 @@ int performMove(Move move)
 	{
 		if (dst.x == src.x && dst.y == (src.y + 1))
 		{
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
@@ -339,9 +339,9 @@ int performMove(Move move)
 	{
 		if (dst.x == src.x && dst.y == (src.y - 1))
 		{
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
@@ -357,9 +357,9 @@ int performMove(Move move)
 		{
 			if (dst.y == src.y + 1 || dst.y == src.y - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -368,9 +368,9 @@ int performMove(Move move)
 		{
 			if (dst.x == src.x + 1 || dst.x == src.x - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -385,9 +385,9 @@ int performMove(Move move)
 		{
 			if (dst.y == src.y + 1 || dst.y == src.y - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -396,9 +396,9 @@ int performMove(Move move)
 		{
 			if (dst.x == src.x + 1 || dst.x == src.x - 1)
 			{
-				if (checkNoCollision(move))
+				if (cgc_checkNoCollision(move))
 				{
-					swap(move);
+					cgc_swap(move);
 					return 1;
 				}
 			}
@@ -408,12 +408,12 @@ int performMove(Move move)
 	if (piece == BISHOP_WHITE || piece == BISHOP_BLACK)
 	{
 		// bishop traveling to the right
-		int num = abs(dst.x - src.x);
-		if (num == abs(dst.y - src.y))
+		int num = cgc_abs(dst.x - src.x);
+		if (num == cgc_abs(dst.y - src.y))
 		{	// good
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
@@ -421,22 +421,22 @@ int performMove(Move move)
 	}
 	if (piece == QUEEN_WHITE || piece == QUEEN_BLACK)
 	{
-		int num = abs(dst.x - src.x);
+		int num = cgc_abs(dst.x - src.x);
 		// moving diagonal
-		if (num == abs(dst.y - src.y))
+		if (num == cgc_abs(dst.y - src.y))
 		{	// good
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
 		// moving on RANK or FILE
 		if (dst.x == src.x || dst.y == src.y)
 		{
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
@@ -448,12 +448,12 @@ int performMove(Move move)
 		int diffy = dst.y - src.y;
 
 		// king can only move 1 square.
-		if (abs(diffx) > 1 || abs(diffy) > 1)
+		if (cgc_abs(diffx) > 1 || cgc_abs(diffy) > 1)
 			return 0;
 
-		if (checkNoCollision(move))
+		if (cgc_checkNoCollision(move))
 		{
-			swap(move);
+			cgc_swap(move);
 			return 1;
 		}
 		return 0;
@@ -463,9 +463,9 @@ int performMove(Move move)
 		// moving on RANK or FILE
 		if (dst.x == src.x || dst.y == src.y)
 		{
-			if (checkNoCollision(move))
+			if (cgc_checkNoCollision(move))
 			{
-				swap(move);
+				cgc_swap(move);
 				return 1;
 			}
 		}
@@ -475,8 +475,8 @@ int performMove(Move move)
 	return 0;
 }
 
-// swap two array locations
-void swap(Move move)
+// cgc_swap two array locations
+void cgc_swap(cgc_Move move)
 {
 	char tmp;
     tmp = (*ptr_array)[move.dst.x][move.dst.y];
@@ -487,7 +487,7 @@ void swap(Move move)
 // Verifies input is in correct move format x,y x,y
 // return 1 if format is correct
 // return 0 otherwise
-int verifyFormat(char *buf, int len)
+int cgc_verifyFormat(char *buf, int len)
 {
 	
 	buf[len] = '\x00';
@@ -508,15 +508,15 @@ int verifyFormat(char *buf, int len)
 // return GOOD_INPUT for good input
 // return INVALID_INPUT for bad input
 // return DISPLAY_BOARD for request to display board
-int parseUserInput(Move *movers)
+int cgc_parseUserInput(cgc_Move *movers)
 {
-	size_t size = 0; // number of bytes user input
+	cgc_size_t size = 0; // number of bytes user input
 	char buf[15]; // will hold user input
 	int num = 0;
 
-	Move tmp = {77,77,77,77}; // arbitrary default values. used later to ensure we received values
+	cgc_Move tmp = {77,77,77,77}; // arbitrary default values. used later to ensure we received values
 
-	bzero(buf,15);
+	cgc_bzero(buf,15);
 	int status;
 	status = receive(STDIN, buf, sizeof(buf) - 1, &size);
 	if (status != 0)
@@ -548,13 +548,13 @@ int parseUserInput(Move *movers)
 	}
 	else if (size != 7) 
 	{
-		printf("incorrect input\n");
+		cgc_printf("incorrect input\n");
 		return INVALID_INPUT;
 	}
 
-	if (!verifyFormat(buf, size))
+	if (!cgc_verifyFormat(buf, size))
 	{
-		printf("incorrect input\n");
+		cgc_printf("incorrect input\n");
 		return INVALID_INPUT;
 	}
 
@@ -563,13 +563,13 @@ int parseUserInput(Move *movers)
 		if (buf[i] <= '9' && buf[i] >= '0')
 		{
 			if (i == 0)
-				tmp.src.x = atoi(&buf[i]);
+				tmp.src.x = cgc_atoi(&buf[i]);
 			else if (i == 2)
-				tmp.src.y = atoi(&buf[i]);
+				tmp.src.y = cgc_atoi(&buf[i]);
 			else if (i == 4)
-				tmp.dst.x = atoi(&buf[i]);
+				tmp.dst.x = cgc_atoi(&buf[i]);
 			else if (i == 6)
-				tmp.dst.y = atoi(&buf[i]);
+				tmp.dst.y = cgc_atoi(&buf[i]);
 		}
 	}
 	
@@ -592,27 +592,27 @@ int main(void)
 	// chess board
 	char array[WIDTH][HEIGHT];
 
-	displayer = displayboard;
+	displayer = cgc_displayboard;
 	ptr_array = &array;
 
-	initboard();
+	cgc_initboard();
 	displayer();
 
-	Move move;
+	cgc_Move move;
 	
 	while(1)
 	{
 		// print prompt
 		if (current_team == WHITE_TEAM)
-			printf(PROMPT_WHITE);
+			cgc_printf(PROMPT_WHITE);
 		else
-			printf(PROMPT_BLACK);
+			cgc_printf(PROMPT_BLACK);
 
 		// receive: x,y x,y
-		int ret = parseUserInput(&move);
+		int ret = cgc_parseUserInput(&move);
 		if (ret == INVALID_INPUT)
 		{
-			printf(WARNING);
+			cgc_printf(WARNING);
 			continue;
 		}
 		else if (ret == DISPLAY_BOARD)
@@ -622,7 +622,7 @@ int main(void)
 		}
 		else if (ret == END_GAME)
 		{
-			printf("good game\n");
+			cgc_printf("good game\n");
 			_terminate(0);
 		}
 		else if (ret == INPUT_ERROR)
@@ -630,10 +630,10 @@ int main(void)
 			_terminate(0);
 		}
 
-		if(performMove(move))
+		if(cgc_performMove(move))
 		{
-			// Move suceeded
-			printf(OK);
+			// cgc_Move suceeded
+			cgc_printf(OK);
 
 			// Switch teams
 			if (current_team == WHITE_TEAM)
@@ -643,8 +643,8 @@ int main(void)
 		}
 		else
 		{
-			// Move was illegal
-			printf(NO);
+			// cgc_Move was illegal
+			cgc_printf(NO);
 		}
 	}
 

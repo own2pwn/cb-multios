@@ -21,7 +21,7 @@
 */
 #include "strncpy.h"
  
-char *strncpy(char *dest, const char *src, size_t size) {
+char *cgc_strncpy(char *dest, const char *src, cgc_size_t size) {
 
     unsigned int idx = 0;
     for (; idx < size && src[idx] != '\0'; idx++) {

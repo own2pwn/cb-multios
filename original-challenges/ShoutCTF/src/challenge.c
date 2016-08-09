@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,7 +25,7 @@
 
 #include "challenge.h"
 
-const char* chal_cat_to_string(category_t cat)
+const char* cgc_chal_cat_to_string(cgc_category_t cat)
 {
     switch (cat)
     {
@@ -48,7 +48,7 @@ const char* chal_cat_to_string(category_t cat)
     }
 }
 
-const char* chal_status_to_string(chal_stat_t stat)
+const char* cgc_chal_status_to_string(cgc_chal_stat_t stat)
 {
     switch (stat)
     {

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,38 +22,38 @@
  */
 #include "mixer.h"
 
-Mixer::Mixer()
-    : nextTrackId(0), tracks(LinkedList<AudioTrack *>::deleteDestructor)
+cgc_Mixer::cgc_Mixer()
+    : nextTrackId(0), tracks(cgc_LinkedList<cgc_AudioTrack *>::cgc_deleteDestructor)
 {
 }
 
-Mixer::~Mixer()
+cgc_Mixer::~cgc_Mixer()
 {
 }
 
-unsigned int Mixer::getLength() const
+unsigned int cgc_Mixer::cgc_getLength() const
 {
     unsigned int length = 0;
-    for (auto it = tracks.begin(); !it.empty(); it.next())
+    for (auto it = tracks.cgc_begin(); !it.cgc_empty(); it.cgc_next())
     {
-        unsigned int trackLength = it.value()->getLength();
+        unsigned int trackLength = it.cgc_value()->cgc_getLength();
         if (trackLength > length)
             length = trackLength;
     }
     return length;
 }
 
-void Mixer::addTrack(AudioTrack *track)
+void cgc_Mixer::cgc_addTrack(cgc_AudioTrack *track)
 {
     track->id = nextTrackId++;
-    tracks.append(track);
+    tracks.cgc_append(track);
 }
 
-AudioTrack *Mixer::getTrack(unsigned int id) const
+cgc_AudioTrack *cgc_Mixer::cgc_getTrack(unsigned int id) const
 {
-    for (auto it = tracks.begin(); !it.empty(); it.next())
+    for (auto it = tracks.cgc_begin(); !it.cgc_empty(); it.cgc_next())
     {
-        AudioTrack *track = it.value();
+        cgc_AudioTrack *track = it.cgc_value();
         if (track->id == id)
             return track;
     }
@@ -61,72 +61,72 @@ AudioTrack *Mixer::getTrack(unsigned int id) const
     return NULL;
 }
 
-void Mixer::removeTrack(unsigned int id)
+void cgc_Mixer::cgc_removeTrack(unsigned int id)
 {
-    for (auto it = tracks.begin(); !it.empty(); it.next())
+    for (auto it = tracks.cgc_begin(); !it.cgc_empty(); it.cgc_next())
     {
-        AudioTrack *track = it.value();
+        cgc_AudioTrack *track = it.cgc_value();
         if (track->id == id)
         {
-            tracks.removeAt(it);
+            tracks.cgc_removeAt(it);
             delete track;
             return;
         }
     }
 }
 
-bool Mixer::splitTrack(unsigned int id)
+bool cgc_Mixer::cgc_splitTrack(unsigned int id)
 {
-    AudioTrack *track = getTrack(id);
-    if (track == NULL || !track->getStereo())
+    cgc_AudioTrack *track = cgc_getTrack(id);
+    if (track == NULL || !track->cgc_getStereo())
         return false;
 
-    track = track->toMono();
-    addTrack(track);
+    track = track->cgc_toMono();
+    cgc_addTrack(track);
     return true;
 }
 
-bool Mixer::combineTracks(unsigned int leftId, unsigned int rightId)
+bool cgc_Mixer::cgc_combineTracks(unsigned int leftId, unsigned int rightId)
 {
-    AudioTrack *left, *right;
-    left = getTrack(leftId);
-    if (left == NULL || left->getStereo())
+    cgc_AudioTrack *left, *right;
+    left = cgc_getTrack(leftId);
+    if (left == NULL || left->cgc_getStereo())
         return false;
-    for (auto it = tracks.begin(); !it.empty(); it.next())
+    for (auto it = tracks.cgc_begin(); !it.cgc_empty(); it.cgc_next())
     {
-        right = it.value();
+        right = it.cgc_value();
         if (right->id == rightId)
         {
-            if (right->getStereo())
+            if (right->cgc_getStereo())
                 return false;
-            if (!left->toStereo(right))
+            if (!left->cgc_toStereo(right))
                 return false;
-            tracks.removeAt(it);
+            tracks.cgc_removeAt(it);
             return true;
         }
     }
     return false;
 }
 
-AudioTrack *Mixer::exportMix()
+cgc_AudioTrack *cgc_Mixer::cgc_exportMix()
 {
-    unsigned int length = getLength();
-    AudioTrack *output = new AudioTrack(AudioStream::fromSilence(length), AudioStream::fromSilence(length));
-    for (auto it = tracks.begin(); !it.empty(); it.next())
+    unsigned int length = cgc_getLength();
+    cgc_AudioTrack *output = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSilence(length), cgc_AudioStream::cgc_fromSilence(length));
+    for (auto it = tracks.cgc_begin(); !it.cgc_empty(); it.cgc_next())
     {
-        AudioTrack *track = it.value();
-        output->mix(*track);
+        cgc_AudioTrack *track = it.cgc_value();
+        output->cgc_mix(*track);
     }
     return output;
 }
 
-AudioStream *Mixer::generateWhiteNoise(unsigned int length)
+cgc_AudioStream *cgc_Mixer::cgc_generateWhiteNoise(unsigned int length)
 {
-    rng.addEntropy((uint8_t *)0x4347C000, 0x1000);
-    AudioStream *stream = AudioStream::fromSilence(length);
+    rng.cgc_addEntropy((cgc_uint8_t *)0x4347C000, 0x1000);
+    cgc_AudioStream *stream = cgc_AudioStream::cgc_fromSilence(length);
     for (unsigned int i = 0; i < length; i++)
     {
-        stream->setSample(i, rng.randomInt32() >> 1);
+        stream->cgc_setSample(i, rng.cgc_randomInt32() >> 1);
     }
     return stream;
 }

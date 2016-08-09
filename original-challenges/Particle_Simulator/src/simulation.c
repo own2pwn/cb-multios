@@ -29,12 +29,12 @@ THE SOFTWARE.
 #include "simulation.h"
 #include "render.h"
 
-int32_t g_particleCount = 0;
-uint32_t g_collisionTotal = 0;
-uint32_t g_simulationTime = 0;
-uint32_t g_simulationFrames = 0;
+cgc_int32_t g_particleCount = 0;
+cgc_uint32_t g_collisionTotal = 0;
+cgc_uint32_t g_simulationTime = 0;
+cgc_uint32_t g_simulationFrames = 0;
 
-tParticleData g_particles[MAX_PARTICLE_COUNT];
+cgc_tParticleData g_particles[MAX_PARTICLE_COUNT];
 
 #define fp_add( l, r )      (l+r)
 #define fp_sub( l, r )      (l-r)
@@ -43,19 +43,19 @@ tParticleData g_particles[MAX_PARTICLE_COUNT];
 #define fp_sqrt( l )        (sqrt(l))
 #define fp_fconst( l )      ((double)l)
 #define fp_iconst( l )      ((double)l)
-#define fp_toint( l )       ((uint32_t)l)
+#define fp_toint( l )       ((cgc_uint32_t)l)
 #define fp_todouble( l )    ((double)l)
 
-int32_t simulation_add_particle( double x_pos, double y_pos, double x_vel, double y_vel, double mass, double radius )
+cgc_int32_t cgc_simulation_add_particle( double x_pos, double y_pos, double x_vel, double y_vel, double mass, double radius )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
-    x_pos = ((double)((int32_t)(x_pos * 100))) / 100;
-    y_pos = ((double)((int32_t)(y_pos * 100))) / 100;
-    x_vel = ((double)((int32_t)(x_vel * 100))) / 100;
-    y_vel = ((double)((int32_t)(y_vel * 100))) / 100;
-    mass = ((double)((int32_t)(mass * 100))) / 100;
-    radius = ((double)((int32_t)(radius * 100))) / 100;
+    x_pos = ((double)((cgc_int32_t)(x_pos * 100))) / 100;
+    y_pos = ((double)((cgc_int32_t)(y_pos * 100))) / 100;
+    x_vel = ((double)((cgc_int32_t)(x_vel * 100))) / 100;
+    y_vel = ((double)((cgc_int32_t)(y_vel * 100))) / 100;
+    mass = ((double)((cgc_int32_t)(mass * 100))) / 100;
+    radius = ((double)((cgc_int32_t)(radius * 100))) / 100;
 
     // Limit the number of particles in the simulation
     if ( g_particleCount >= MAX_PARTICLE_COUNT )
@@ -101,7 +101,7 @@ int32_t simulation_add_particle( double x_pos, double y_pos, double x_vel, doubl
     // Check particle data to make sure it isn't colliding with another particle
     for ( i = 0; i < g_particleCount; i++ )
     {
-        if ( is_colliding( &g_particles[i], &g_particles[g_particleCount]) )
+        if ( cgc_is_colliding( &g_particles[i], &g_particles[g_particleCount]) )
                 return -1;
     }
 
@@ -111,12 +111,12 @@ int32_t simulation_add_particle( double x_pos, double y_pos, double x_vel, doubl
     return (g_particleCount);
 }
 
-void simulation_reset( void )
+void cgc_simulation_reset( void )
 {
     g_particleCount = 0;
 }
 
-int32_t is_colliding( tParticleData *p1, tParticleData *p2 )
+cgc_int32_t cgc_is_colliding( cgc_tParticleData *p1, cgc_tParticleData *p2 )
 {
     // Perform collision detection between the two particles
     double x_delta = fp_sub( p1->x_pos, p2->x_pos );
@@ -135,7 +135,7 @@ int32_t is_colliding( tParticleData *p1, tParticleData *p2 )
         return 0;
 }
 
-void do_collision( tParticleData *p1, tParticleData *p2 )
+void cgc_do_collision( cgc_tParticleData *p1, cgc_tParticleData *p2 )
 {
     // Collide the two particles in an elastic collision (vector math)
     double delta_x = fp_sub( p1->x_pos, p2->x_pos );
@@ -225,7 +225,7 @@ void do_collision( tParticleData *p1, tParticleData *p2 )
     p2->y_vel = new_vel_2_y;
 }
 
-void do_wall_collision( tParticleData *p1 )
+void cgc_do_wall_collision( cgc_tParticleData *p1 )
 {
 
     double x_position_high = fp_add( p1->x_pos, p1->radius );
@@ -294,13 +294,13 @@ void do_wall_collision( tParticleData *p1 )
 }
 
 
-void simulation_run( uint32_t second_count )
+void cgc_simulation_run( cgc_uint32_t second_count )
 {
-    uint32_t i,j;
-    uint32_t last_frames_per_second;
-    uint32_t frames_remaining;
-    uint32_t cur_frame;
-    uint32_t collision_count;
+    cgc_uint32_t i,j;
+    cgc_uint32_t last_frames_per_second;
+    cgc_uint32_t frames_remaining;
+    cgc_uint32_t cur_frame;
+    cgc_uint32_t collision_count;
 
     frames_remaining = (1 * second_count);
     last_frames_per_second = 1;
@@ -317,18 +317,18 @@ void simulation_run( uint32_t second_count )
     for ( cur_frame = 0; cur_frame < frames_remaining; cur_frame++ )
     {
 
-    uint32_t max_frames_per_second = 1;
-    uint32_t frames_per_second = 1;
+    cgc_uint32_t max_frames_per_second = 1;
+    cgc_uint32_t frames_per_second = 1;
     for ( i = 0; i < g_particleCount; i++ )
     {
         if ( fabs( g_particles[i].x_vel ) > g_particles[i].radius )
-            frames_per_second = ((uint32_t)fp_toint( fp_div( fabs(g_particles[i].x_vel), g_particles[i].radius ))) + 1;
+            frames_per_second = ((cgc_uint32_t)fp_toint( fp_div( fabs(g_particles[i].x_vel), g_particles[i].radius ))) + 1;
 
         if ( frames_per_second > max_frames_per_second )
             max_frames_per_second = frames_per_second;
 
         if ( fabs( g_particles[i].y_vel ) > g_particles[i].radius )
-            frames_per_second = ((uint32_t)fp_toint( fp_div( fabs(g_particles[i].y_vel), g_particles[i].radius))) + 1;
+            frames_per_second = ((cgc_uint32_t)fp_toint( fp_div( fabs(g_particles[i].y_vel), g_particles[i].radius))) + 1;
 
         if ( frames_per_second > max_frames_per_second )
             max_frames_per_second = frames_per_second;
@@ -368,15 +368,15 @@ void simulation_run( uint32_t second_count )
             if ( i == j )
                 continue;
 
-            if ( is_colliding( &g_particles[i], &g_particles[j] ) )
+            if ( cgc_is_colliding( &g_particles[i], &g_particles[j] ) )
             {
-                do_collision( &g_particles[i], &g_particles[j] );
+                cgc_do_collision( &g_particles[i], &g_particles[j] );
 
                 collision_count++;
             }
         }
 
-        do_wall_collision( &g_particles[i] );
+        cgc_do_wall_collision( &g_particles[i] );
     }
     g_collisionTotal += collision_count;
 
@@ -386,29 +386,29 @@ void simulation_run( uint32_t second_count )
     g_simulationFrames = cur_frame;
 }
 
-uint32_t get_collision_count( void )
+cgc_uint32_t cgc_get_collision_count( void )
 {
     return (g_collisionTotal);
 }
 
-uint32_t get_simulation_time( void )
+cgc_uint32_t cgc_get_simulation_time( void )
 {
     return (g_simulationTime);
 }
 
-uint32_t get_simulation_frames( void )
+cgc_uint32_t cgc_get_simulation_frames( void )
 {
     return (g_simulationFrames);
 }
 
-void display_simulation_data( void )
+void cgc_display_simulation_data( void )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     // Reset render grid
-    clear_render_grid();
+    cgc_clear_render_grid();
 
-    printf( "@d total particles:\n", g_particleCount );
+    cgc_printf( "@d total particles:\n", g_particleCount );
 
     for ( i = 0; i < g_particleCount; i++ )
     {
@@ -419,11 +419,11 @@ void display_simulation_data( void )
         double mass = fp_todouble( g_particles[i].mass );
         double radius = fp_todouble( g_particles[i].radius );
 
-        printf( "@d: Position (@f,@f) Velocity (@f,@f) mass (@f) radius (@f).\n", i, x_pos, y_pos, x_vel, y_vel, mass, radius );
+        cgc_printf( "@d: Position (@f,@f) Velocity (@f,@f) mass (@f) radius (@f).\n", i, x_pos, y_pos, x_vel, y_vel, mass, radius );
 
         // Add particle into render grid
-        add_render_grid( &g_particles[i] );
+        cgc_add_render_grid( &g_particles[i] );
     }
 
-    display_render_grid();
+    cgc_display_render_grid();
 }

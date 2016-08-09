@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,7 +32,7 @@ int g_randIdx = 0;
 char *g_rand = NULL;
 bool g_hidden = true;
 
-CFortress g_fort;
+cgc_CFortress g_fort;
 const char *banner = "\
 \n\
  _______  _______  _______ _________ _______  _______  _______  _______\n\
@@ -47,7 +47,7 @@ const char *banner = "\
 \n\
 ";
 
-void CreateMoreMissions()
+void cgc_CreateMoreMissions()
 {
     int i, j;
     int r = (g_rand[g_randIdx % 4096] & 0xFF) % 4 + 1;
@@ -58,7 +58,7 @@ void CreateMoreMissions()
         int nn = sizeof(g_skills) / sizeof(g_skills[0]);
         int group = (g_rand[g_randIdx % 4096] & 0xFF) % 3 + 1;
         g_randIdx += 2;
-        CRequirement::Type type = CRequirement::Type::NOTHING;
+        cgc_CRequirement::Type type = cgc_CRequirement::Type::NOTHING;
         for (j = 0; j < group; j++)
         {
             type |= g_skills[(g_rand[g_randIdx % 4096] & 0xFF) % nn].counter;
@@ -70,432 +70,432 @@ void CreateMoreMissions()
         g_randIdx += 2;
         if (group != 1)
             group--;
-        CRequirement req (type, g_fort.GetAvgLevel(), supply, duration, group);
-        CReward reward (g_fort.GetAvgLevel() * group * 100, supply * (supply % 4));
-        CMission *mission = new CMission(g_missions[(g_rand[g_randIdx % 4096] & 0xFF) % n].name, req, reward);
+        cgc_CRequirement req (type, g_fort.cgc_GetAvgLevel(), supply, duration, group);
+        cgc_CReward reward (g_fort.cgc_GetAvgLevel() * group * 100, supply * (supply % 4));
+        cgc_CMission *mission = new cgc_CMission(g_missions[(g_rand[g_randIdx % 4096] & 0xFF) % n].name, req, reward);
         g_randIdx += 2;
-        g_fort.GetMissions().Append(mission);
+        g_fort.cgc_GetMissions().cgc_Append(mission);
     }
 }
 
-void InitializeMissions()
+void cgc_InitializeMissions()
 {
-    CreateMoreMissions();
+    cgc_CreateMoreMissions();
 }
 
-void InitializeSkills()
+void cgc_InitializeSkills()
 {
     int i;
     for (i = 0; i < sizeof(g_skills) / sizeof(g_skills[0]); i++)
     {
-        CSkill *skill = new CSkill(g_skills[i].name, g_skills[i].counter, g_skills[i].price);
-        g_fort.GetSkills().Append(skill);
+        cgc_CSkill *skill = new cgc_CSkill(g_skills[i].name, g_skills[i].counter, g_skills[i].price);
+        g_fort.cgc_GetSkills().cgc_Append(skill);
     }
 }
 
-void InitializeExplorers()
+void cgc_InitializeExplorers()
 {
     int i;
-    CSkill *no_skill = new CSkill("No Skill", CRequirement::Type::NOTHING, 0);
+    cgc_CSkill *no_skill = new cgc_CSkill("No Skill", cgc_CRequirement::Type::NOTHING, 0);
     for (i = 0; i < sizeof(g_explorers) / sizeof(g_explorers[0]); i++)
     {
-        CExplorer *explorer = new CExplorer(g_explorers[i].name);
-        CList<CSkill *>& skills = g_fort.GetSkills();
-        int r = (g_rand[g_randIdx % 4096] & 0xFF) % (skills.GetSize());
+        cgc_CExplorer *explorer = new cgc_CExplorer(g_explorers[i].name);
+        cgc_CList<cgc_CSkill *>& skills = g_fort.cgc_GetSkills();
+        int r = (g_rand[g_randIdx % 4096] & 0xFF) % (skills.cgc_GetSize());
         g_randIdx += 2;
-        explorer->ReplaceSkill(skills.GetAt(r), 0);
-        explorer->ReplaceSkill(no_skill, 1);
-        g_fort.GetExplorers().Append(explorer);
+        explorer->cgc_ReplaceSkill(skills.cgc_GetAt(r), 0);
+        explorer->cgc_ReplaceSkill(no_skill, 1);
+        g_fort.cgc_GetExplorers().cgc_Append(explorer);
     }
 }
 
-void PrintWelcomeBanner(char c)
+void cgc_PrintWelcomeBanner(char c)
 {
-    fprintf(stdout, banner, c);
+    cgc_fprintf(stdout, banner, c);
 }
 
-void PrintMainMenu()
+void cgc_PrintMainMenu()
 {
     int n, numMissions;
-    fbuffered(stdout, 1);
-    numMissions = g_fort.GetMissions().GetSize() - g_fort.GetNumAvailableMissions();
-    n = fprintf(stdout, "\nDay-%03d => [%d mission] | [%d explorer] | [%d supply]\n", g_fort.GetDay(), numMissions, g_fort.GetNumHiredExplorers(), g_fort.GetSupply());
+    cgc_fbuffered(stdout, 1);
+    numMissions = g_fort.cgc_GetMissions().cgc_GetSize() - g_fort.cgc_GetNumAvailableMissions();
+    n = cgc_fprintf(stdout, "\nDay-%03d => [%d mission] | [%d explorer] | [%d supply]\n", g_fort.cgc_GetDay(), numMissions, g_fort.cgc_GetNumHiredExplorers(), g_fort.cgc_GetSupply());
     for (; n > 1; n--)
-        fprintf(stdout, "-");
-    fprintf(stdout, "\n");
-    fprintf(stdout, "0. Next day!\n");
-    fprintf(stdout, "1. Missions\n");
-    fprintf(stdout, "2. Explorers\n");
-    fprintf(stdout, "3. Give up\n");
-    fbuffered(stdout, 0);
+        cgc_fprintf(stdout, "-");
+    cgc_fprintf(stdout, "\n");
+    cgc_fprintf(stdout, "0. Next day!\n");
+    cgc_fprintf(stdout, "1. Missions\n");
+    cgc_fprintf(stdout, "2. Explorers\n");
+    cgc_fprintf(stdout, "3. Give up\n");
+    cgc_fbuffered(stdout, 0);
 }
 
-void PrintMissionMenu()
+void cgc_PrintMissionMenu()
 {
-    fbuffered(stdout, 1);
-    fprintf(stdout, "\n]]] Missions [[[\n");
-    fprintf(stdout, "1. Send mission (%d available)\n", g_fort.GetNumAvailableMissions());
-    fprintf(stdout, "2. View current missions\n");
-    fprintf(stdout, "3. Back\n");
-    fbuffered(stdout, 0);
+    cgc_fbuffered(stdout, 1);
+    cgc_fprintf(stdout, "\n]]] Missions [[[\n");
+    cgc_fprintf(stdout, "1. Send mission (%d available)\n", g_fort.cgc_GetNumAvailableMissions());
+    cgc_fprintf(stdout, "2. View current missions\n");
+    cgc_fprintf(stdout, "3. Back\n");
+    cgc_fbuffered(stdout, 0);
 }
 
-void PrintExplorerMenu()
+void cgc_PrintExplorerMenu()
 {
-    fbuffered(stdout, 1);
-    fprintf(stdout, "\n]]] Explorers [[[\n");
-    fprintf(stdout, "1. Hire explorer\n");
-    fprintf(stdout, "2. View current explorers\n");
-    fprintf(stdout, "3. Remove explorer\n");
-    fprintf(stdout, "4. Learn skills\n");
-    fprintf(stdout, "5. Back\n");
+    cgc_fbuffered(stdout, 1);
+    cgc_fprintf(stdout, "\n]]] Explorers [[[\n");
+    cgc_fprintf(stdout, "1. Hire explorer\n");
+    cgc_fprintf(stdout, "2. View current explorers\n");
+    cgc_fprintf(stdout, "3. cgc_Remove explorer\n");
+    cgc_fprintf(stdout, "4. Learn skills\n");
+    cgc_fprintf(stdout, "5. Back\n");
     if (!g_hidden)
-        fprintf(stdout, "6. Change explorer name\n");
-    fbuffered(stdout, 0);
+        cgc_fprintf(stdout, "6. Change explorer name\n");
+    cgc_fbuffered(stdout, 0);
 }
 
-void PrintMissions(CList<CMission *>& missions)
+void cgc_PrintMissions(cgc_CList<cgc_CMission *>& missions)
 {
     int i;
-    for (i = 0; i < missions.GetSize(); i++)
+    for (i = 0; i < missions.cgc_GetSize(); i++)
     {
-        CMission *m = missions.GetAt(i);
-        char *s = m->GetReqTypeString();
-        fprintf(stdout, "%d. %s [LVL %d] [GRP %d] [DUR %d] [COST %d] <%s>\n", i, m->GetName(), m->GetReqLevel(), m->GetReqGroup(), m->GetDuration(), m->GetReqSupply(), s);
-        fprintf(stdout, "   ==> +%d supply, +%d experience\n", m->GetRewardSupply(), m->GetRewardExp());
-        free(s);
+        cgc_CMission *m = missions.cgc_GetAt(i);
+        char *s = m->cgc_GetReqTypeString();
+        cgc_fprintf(stdout, "%d. %s [LVL %d] [GRP %d] [DUR %d] [COST %d] <%s>\n", i, m->cgc_GetName(), m->cgc_GetReqLevel(), m->cgc_GetReqGroup(), m->cgc_GetDuration(), m->cgc_GetReqSupply(), s);
+        cgc_fprintf(stdout, "   ==> +%d supply, +%d experience\n", m->cgc_GetRewardSupply(), m->cgc_GetRewardExp());
+        cgc_free(s);
     }
 }
 
-void PrintExplorers(CList<CExplorer *>& explorers)
+void cgc_PrintExplorers(cgc_CList<cgc_CExplorer *>& explorers)
 {
     int i;
-    fbuffered(stdout, 1);
-    for (i = 0; i < explorers.GetSize(); i++)
+    cgc_fbuffered(stdout, 1);
+    for (i = 0; i < explorers.cgc_GetSize(); i++)
     {
-        CExplorer *e = explorers.GetAt(i);
-        int totalExp = e->GetExp() + e->GetNextExp();
-        fprintf(stdout, "%d. %s [LVL %d] [EXP %d/%d] (%s)\n", i, e->GetName(), e->GetLevel(), e->GetExp(), totalExp, e->IsHired() ? "hired" : "not-hired");
-        CSkill** skills = e->GetSkills();
-        char *s = CRequirement::ReqTypeToString(skills[0]->GetCounter());
-        fprintf(stdout, "   ==> Skill #1: %s <%s>\n", skills[0]->GetName(), strcmp(s, "") == 0 ? "None" : s);
-        free(s);
-        s = CRequirement::ReqTypeToString(skills[1]->GetCounter());
-        fprintf(stdout, "   ==> Skill #2: %s <%s>\n", skills[1]->GetName(), strcmp(s, "") == 0 ? "None" : s);
-        free(s);
+        cgc_CExplorer *e = explorers.cgc_GetAt(i);
+        int totalExp = e->cgc_GetExp() + e->cgc_GetNextExp();
+        cgc_fprintf(stdout, "%d. %s [LVL %d] [EXP %d/%d] (%s)\n", i, e->cgc_GetName(), e->cgc_GetLevel(), e->cgc_GetExp(), totalExp, e->cgc_IsHired() ? "hired" : "not-hired");
+        cgc_CSkill** skills = e->cgc_GetSkills();
+        char *s = cgc_CRequirement::cgc_ReqTypeToString(skills[0]->cgc_GetCounter());
+        cgc_fprintf(stdout, "   ==> Skill #1: %s <%s>\n", skills[0]->cgc_GetName(), cgc_strcmp(s, "") == 0 ? "None" : s);
+        cgc_free(s);
+        s = cgc_CRequirement::cgc_ReqTypeToString(skills[1]->cgc_GetCounter());
+        cgc_fprintf(stdout, "   ==> Skill #2: %s <%s>\n", skills[1]->cgc_GetName(), cgc_strcmp(s, "") == 0 ? "None" : s);
+        cgc_free(s);
     }
-    fbuffered(stdout, 0);
+    cgc_fbuffered(stdout, 0);
 }
 
-void HandleSendMission()
+void cgc_HandleSendMission()
 {
     char buf[64];
-    if (g_fort.GetNumAvailableMissions() == 0)
+    if (g_fort.cgc_GetNumAvailableMissions() == 0)
     {
-        fprintf(stdout, "\nNo missions available. Check back later.\n");
+        cgc_fprintf(stdout, "\nNo missions available. cgc_Check back later.\n");
         return;
     }
     int i;
-    CList<CMission *>& missions = g_fort.GetMissions();
-    CList<CMission *> availMissions;
-    for (i = 0; i < missions.GetSize(); i++)
+    cgc_CList<cgc_CMission *>& missions = g_fort.cgc_GetMissions();
+    cgc_CList<cgc_CMission *> availMissions;
+    for (i = 0; i < missions.cgc_GetSize(); i++)
     {
-        CMission *m = missions.GetAt(i);
-        if (m->IsAvail())
-            availMissions.Append(m);
+        cgc_CMission *m = missions.cgc_GetAt(i);
+        if (m->cgc_IsAvail())
+            availMissions.cgc_Append(m);
     }
-    fprintf(stdout, "\n... Available missions ...\n");
-    PrintMissions(availMissions);
-    if (g_fort.GetNumAvailableExplorers() == 0)
+    cgc_fprintf(stdout, "\n... Available missions ...\n");
+    cgc_PrintMissions(availMissions);
+    if (g_fort.cgc_GetNumAvailableExplorers() == 0)
     {
-        fprintf(stdout, "\nNo explorers available.\n");
+        cgc_fprintf(stdout, "\nNo explorers available.\n");
         return;
     }
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    int idx = strtoul(buf, NULL, 10);
-    if (idx >= availMissions.GetSize())
-        fprintf(stdout, "Invalid mission.\n");
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    int idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= availMissions.cgc_GetSize())
+        cgc_fprintf(stdout, "Invalid mission.\n");
     else
     {
         int n;
-        CMission *m = availMissions.GetAt(idx);
-        if (m->GetReqSupply() > g_fort.GetSupply())
+        cgc_CMission *m = availMissions.cgc_GetAt(idx);
+        if (m->cgc_GetReqSupply() > g_fort.cgc_GetSupply())
         {
-            fprintf(stdout, "You don't have enough supply.\n");
+            cgc_fprintf(stdout, "You don't have enough supply.\n");
             return;
         }
-        CList<CExplorer *> selectedExps;
-        CList<CExplorer *> availExps;
-        CList<CExplorer *>& explorers = g_fort.GetExplorers();
-        for (i = 0; i < explorers.GetSize(); i++)
+        cgc_CList<cgc_CExplorer *> selectedExps;
+        cgc_CList<cgc_CExplorer *> availExps;
+        cgc_CList<cgc_CExplorer *>& explorers = g_fort.cgc_GetExplorers();
+        for (i = 0; i < explorers.cgc_GetSize(); i++)
         {
-            CExplorer *e = explorers.GetAt(i);
-            if (e->IsAvail() && e->IsHired())
-                availExps.Append(e);
+            cgc_CExplorer *e = explorers.cgc_GetAt(i);
+            if (e->cgc_IsAvail() && e->cgc_IsHired())
+                availExps.cgc_Append(e);
         }
-        fprintf(stdout, "\n... Available explorers ...\n");
-        PrintExplorers(availExps);
-        fprintf(stdout, "\nselect> ");
-        if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-            exit(0);
+        cgc_fprintf(stdout, "\n... Available explorers ...\n");
+        cgc_PrintExplorers(availExps);
+        cgc_fprintf(stdout, "\nselect> ");
+        if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+            cgc_exit(0);
         char *tmp = buf, *id = NULL;
-        while ((id = strsep(&tmp, ",")))
+        while ((id = cgc_strsep(&tmp, ",")))
         {
-            if (strlen(id) == 0)
+            if (cgc_strlen(id) == 0)
                 continue;
-            idx = strtoul(id, NULL, 10);
-            if (idx >= availExps.GetSize())
+            idx = cgc_strtoul(id, NULL, 10);
+            if (idx >= availExps.cgc_GetSize())
                 continue;
-            CExplorer *e = availExps.GetAt(idx);
-            if (!selectedExps.Has(e))
-                selectedExps.Append(e);
+            cgc_CExplorer *e = availExps.cgc_GetAt(idx);
+            if (!selectedExps.cgc_Has(e))
+                selectedExps.cgc_Append(e);
         }
-        if (selectedExps.GetSize() == 0)
+        if (selectedExps.cgc_GetSize() == 0)
         {
-            fprintf(stdout, "No explorer is selected.\n");
+            cgc_fprintf(stdout, "No explorer is selected.\n");
             return;
         }
 
         char *s;
-        fbuffered(stdout, 1);
-        CMissionEstimate* est = m->Check(selectedExps);
-        fprintf(stdout, "\n////////////////////////////\n");
-        fprintf(stdout, "%s\n", m->GetName());
-        fprintf(stdout, "////////////////////////////\n");
-        fprintf(stdout, " - Success: %d%%\n", est->GetSuccessRate());
-        s = CRequirement::ReqTypeToString(est->GetMissingTypes());
-        fprintf(stdout, " - Missing: %s\n", strcmp(s, "") == 0 ? "None" : s);
-        free(s);
-        fprintf(stdout, " - Needed: %d\n", est->GetGroupNeeded());
-        fprintf(stdout, " - Supplied: %d\n", est->GetGroupSupplied());
-        fprintf(stdout, "////////////////////////////\n");
-        fprintf(stdout, "confirm?> ");
-        fbuffered(stdout, 0);
-        if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-            exit(0);
-        if (strcmp(buf, "y") == 0 || strcmp(buf, "Y") == 0)
+        cgc_fbuffered(stdout, 1);
+        cgc_CMissionEstimate* est = m->cgc_Check(selectedExps);
+        cgc_fprintf(stdout, "\n////////////////////////////\n");
+        cgc_fprintf(stdout, "%s\n", m->cgc_GetName());
+        cgc_fprintf(stdout, "////////////////////////////\n");
+        cgc_fprintf(stdout, " - Success: %d%%\n", est->cgc_GetSuccessRate());
+        s = cgc_CRequirement::cgc_ReqTypeToString(est->cgc_GetMissingTypes());
+        cgc_fprintf(stdout, " - Missing: %s\n", cgc_strcmp(s, "") == 0 ? "None" : s);
+        cgc_free(s);
+        cgc_fprintf(stdout, " - Needed: %d\n", est->cgc_GetGroupNeeded());
+        cgc_fprintf(stdout, " - Supplied: %d\n", est->cgc_GetGroupSupplied());
+        cgc_fprintf(stdout, "////////////////////////////\n");
+        cgc_fprintf(stdout, "confirm?> ");
+        cgc_fbuffered(stdout, 0);
+        if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+            cgc_exit(0);
+        if (cgc_strcmp(buf, "y") == 0 || cgc_strcmp(buf, "Y") == 0)
         {
-            m->Execute(selectedExps);
-            m->SetSuccessRate(est->GetSuccessRate());
-            g_fort.SubSupply(m->GetReqSupply());
+            m->cgc_Execute(selectedExps);
+            m->cgc_SetSuccessRate(est->cgc_GetSuccessRate());
+            g_fort.cgc_SubSupply(m->cgc_GetReqSupply());
         }
         delete est;
     }
 }
 
-void HandleViewMissions()
+void cgc_HandleViewMissions()
 {
     int i, n = 0;
-    CList<CMission *>& missions = g_fort.GetMissions();
-    fprintf(stdout, "\n... Current missions ...\n");
-    for (i = 0; i < missions.GetSize(); i++)
+    cgc_CList<cgc_CMission *>& missions = g_fort.cgc_GetMissions();
+    cgc_fprintf(stdout, "\n... Current missions ...\n");
+    for (i = 0; i < missions.cgc_GetSize(); i++)
     {
-        CMission *m = missions.GetAt(i);
-        if (!m->IsAvail())
+        cgc_CMission *m = missions.cgc_GetAt(i);
+        if (!m->cgc_IsAvail())
         {
-            fprintf(stdout, "%d. %s [%d%%] -- %d days left\n", n, m->GetName(), m->GetSuccessRate(), m->GetDuration());
-            fprintf(stdout, "   ==> +%d supply, +%d experience\n", m->GetRewardSupply(), m->GetRewardExp());
+            cgc_fprintf(stdout, "%d. %s [%d%%] -- %d days left\n", n, m->cgc_GetName(), m->cgc_GetSuccessRate(), m->cgc_GetDuration());
+            cgc_fprintf(stdout, "   ==> +%d supply, +%d experience\n", m->cgc_GetRewardSupply(), m->cgc_GetRewardExp());
             n++;
         }
     }
     if (n == 0)
-        fprintf(stdout, "No missions :(\n");
+        cgc_fprintf(stdout, "No missions :(\n");
 }
 
-void HandleHireExplorer()
+void cgc_HandleHireExplorer()
 {
     int i;
     char buf[32];
-    CList<CExplorer *>& exps = g_fort.GetExplorers();
-    fprintf(stdout, "\n... Available explorers ...\n");
-    if (exps.GetSize() == 0 || g_fort.GetNumHiredExplorers() == exps.GetSize())
+    cgc_CList<cgc_CExplorer *>& exps = g_fort.cgc_GetExplorers();
+    cgc_fprintf(stdout, "\n... Available explorers ...\n");
+    if (exps.cgc_GetSize() == 0 || g_fort.cgc_GetNumHiredExplorers() == exps.cgc_GetSize())
     {
-        fprintf(stdout, "No explorers to hire :(\n");
+        cgc_fprintf(stdout, "No explorers to hire :(\n");
         return;
     }
-    if (g_fort.GetNumHiredExplorers() == g_fort.k_maxNumExplorers)
+    if (g_fort.cgc_GetNumHiredExplorers() == g_fort.k_maxNumExplorers)
     {
-        fprintf(stdout, "Can't hire more :(\n");
+        cgc_fprintf(stdout, "Can't hire more :(\n");
         return;
     }
-    CList<CExplorer *> unhiredExps;
-    for (i = 0; i < exps.GetSize(); i++)
+    cgc_CList<cgc_CExplorer *> unhiredExps;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
     {
-        CExplorer *e = exps.GetAt(i);
-        if (!e->IsHired())
-            unhiredExps.Append(e);
+        cgc_CExplorer *e = exps.cgc_GetAt(i);
+        if (!e->cgc_IsHired())
+            unhiredExps.cgc_Append(e);
     }
-    PrintExplorers(unhiredExps);
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    int idx = strtoul(buf, NULL, 10);
-    if (idx >= unhiredExps.GetSize())
+    cgc_PrintExplorers(unhiredExps);
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    int idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= unhiredExps.cgc_GetSize())
     {
-        fprintf(stdout, "Invalid explorer.\n");
+        cgc_fprintf(stdout, "Invalid explorer.\n");
         return;
     }
-    CExplorer *e = unhiredExps.GetAt(idx);
-    e->SetHired(true);
+    cgc_CExplorer *e = unhiredExps.cgc_GetAt(idx);
+    e->cgc_SetHired(true);
 }
 
-void HandleViewExplorers()
+void cgc_HandleViewExplorers()
 {
     int i;
-    CList<CExplorer *>& exps = g_fort.GetExplorers();
-    CList<CExplorer *> hiredExps;
-    for (i = 0; i < exps.GetSize(); i++)
+    cgc_CList<cgc_CExplorer *>& exps = g_fort.cgc_GetExplorers();
+    cgc_CList<cgc_CExplorer *> hiredExps;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
     {
-        CExplorer *e = exps.GetAt(i);
-        if (e->IsHired())
-            hiredExps.Append(e);
+        cgc_CExplorer *e = exps.cgc_GetAt(i);
+        if (e->cgc_IsHired())
+            hiredExps.cgc_Append(e);
     }
-    fprintf(stdout, "\n... Current explorers (%d/%d) ...\n", hiredExps.GetSize(), g_fort.k_maxNumExplorers);
-    if (hiredExps.GetSize() == 0)
+    cgc_fprintf(stdout, "\n... Current explorers (%d/%d) ...\n", hiredExps.cgc_GetSize(), g_fort.k_maxNumExplorers);
+    if (hiredExps.cgc_GetSize() == 0)
     {
-        fprintf(stdout, "No explorers :(\n");
+        cgc_fprintf(stdout, "No explorers :(\n");
         return;
     }
-    PrintExplorers(hiredExps);
+    cgc_PrintExplorers(hiredExps);
 }
 
-void HandleRemoveExplorer()
-{
-    int i;
-    char buf[8];
-    CList<CExplorer *>& exps = g_fort.GetExplorers();
-    CList<CExplorer *> hiredExps;
-    for (i = 0; i < exps.GetSize(); i++)
-    {
-        CExplorer *e = exps.GetAt(i);
-        if (e->IsHired() && e->IsAvail())
-            hiredExps.Append(e);
-    }
-    fprintf(stdout, "\n... Removable explorers ...\n");
-    if (hiredExps.GetSize() == 0)
-    {
-        fprintf(stdout, "No explorers :(\n");
-        return;
-    }
-    PrintExplorers(hiredExps);
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    int idx = strtoul(buf, NULL, 10);
-    if (idx >= hiredExps.GetSize())
-    {
-        fprintf(stdout, "Invalid explorer.\n");
-        return;
-    }
-    CExplorer *e = hiredExps.GetAt(idx);
-    e->SetHired(false);
-}
-
-void HandleLearnSkills()
+void cgc_HandleRemoveExplorer()
 {
     int i;
     char buf[8];
-    CList<CExplorer *>& exps = g_fort.GetExplorers();
-    CList<CExplorer *> availExps;
-    for (i = 0; i < exps.GetSize(); i++)
+    cgc_CList<cgc_CExplorer *>& exps = g_fort.cgc_GetExplorers();
+    cgc_CList<cgc_CExplorer *> hiredExps;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
     {
-        CExplorer *e = exps.GetAt(i);
-        if (e->IsHired() && e->IsAvail())
-            availExps.Append(e);
+        cgc_CExplorer *e = exps.cgc_GetAt(i);
+        if (e->cgc_IsHired() && e->cgc_IsAvail())
+            hiredExps.cgc_Append(e);
     }
-    fprintf(stdout, "\n... Available explorers ...\n");
-    if (availExps.GetSize() == 0)
+    cgc_fprintf(stdout, "\n... Removable explorers ...\n");
+    if (hiredExps.cgc_GetSize() == 0)
     {
-        fprintf(stdout, "No explorers :(\n");
+        cgc_fprintf(stdout, "No explorers :(\n");
         return;
     }
-    PrintExplorers(availExps);
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    int idx = strtoul(buf, NULL, 10);
-    if (idx >= availExps.GetSize())
+    cgc_PrintExplorers(hiredExps);
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    int idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= hiredExps.cgc_GetSize())
     {
-        fprintf(stdout, "Invalid explorer.\n");
+        cgc_fprintf(stdout, "Invalid explorer.\n");
         return;
     }
-    CExplorer *e = availExps.GetAt(idx);
-    CList<CSkill *>& skills = g_fort.GetSkills();
-    fprintf(stdout, "\n... Skills ...\n");
-    for (i = 0; i < skills.GetSize(); i++)
+    cgc_CExplorer *e = hiredExps.cgc_GetAt(idx);
+    e->cgc_SetHired(false);
+}
+
+void cgc_HandleLearnSkills()
+{
+    int i;
+    char buf[8];
+    cgc_CList<cgc_CExplorer *>& exps = g_fort.cgc_GetExplorers();
+    cgc_CList<cgc_CExplorer *> availExps;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
     {
-        CSkill *s = skills.GetAt(i);
-        char *str = CRequirement::ReqTypeToString(s->GetCounter());
-        fprintf(stdout, "%d. [%s] (counters <%s>) - %d supply\n", i, s->GetName(), str, s->GetPrice());
-        free(str);
+        cgc_CExplorer *e = exps.cgc_GetAt(i);
+        if (e->cgc_IsHired() && e->cgc_IsAvail())
+            availExps.cgc_Append(e);
     }
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    idx = strtoul(buf, NULL, 10);
-    if (idx >= skills.GetSize())
+    cgc_fprintf(stdout, "\n... Available explorers ...\n");
+    if (availExps.cgc_GetSize() == 0)
     {
-        fprintf(stdout, "Invalid skill.\n");
+        cgc_fprintf(stdout, "No explorers :(\n");
         return;
     }
-    CSkill *s = skills.GetAt(idx);
-    if (s->GetPrice() > g_fort.GetSupply())
+    cgc_PrintExplorers(availExps);
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    int idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= availExps.cgc_GetSize())
     {
-        fprintf(stdout, "Insufficient supply.\n");
+        cgc_fprintf(stdout, "Invalid explorer.\n");
         return;
     }
-    fprintf(stdout, "\nslot? (1,2)> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    idx = strtoul(buf, NULL, 10);
+    cgc_CExplorer *e = availExps.cgc_GetAt(idx);
+    cgc_CList<cgc_CSkill *>& skills = g_fort.cgc_GetSkills();
+    cgc_fprintf(stdout, "\n... Skills ...\n");
+    for (i = 0; i < skills.cgc_GetSize(); i++)
+    {
+        cgc_CSkill *s = skills.cgc_GetAt(i);
+        char *str = cgc_CRequirement::cgc_ReqTypeToString(s->cgc_GetCounter());
+        cgc_fprintf(stdout, "%d. [%s] (counters <%s>) - %d supply\n", i, s->cgc_GetName(), str, s->cgc_GetPrice());
+        cgc_free(str);
+    }
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= skills.cgc_GetSize())
+    {
+        cgc_fprintf(stdout, "Invalid skill.\n");
+        return;
+    }
+    cgc_CSkill *s = skills.cgc_GetAt(idx);
+    if (s->cgc_GetPrice() > g_fort.cgc_GetSupply())
+    {
+        cgc_fprintf(stdout, "Insufficient supply.\n");
+        return;
+    }
+    cgc_fprintf(stdout, "\nslot? (1,2)> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    idx = cgc_strtoul(buf, NULL, 10);
     if (idx != 1 && idx != 2)
     {
-        fprintf(stdout, "Invalid slot.\n");
+        cgc_fprintf(stdout, "Invalid slot.\n");
         return;
     }
-    e->ReplaceSkill(s, idx - 1);
-    g_fort.SubSupply(s->GetPrice());
+    e->cgc_ReplaceSkill(s, idx - 1);
+    g_fort.cgc_SubSupply(s->cgc_GetPrice());
 }
 
-void HandleChangeName()
+void cgc_HandleChangeName()
 {
     int i;
     char buf[8], name[512];
-    CList<CExplorer *>& exps = g_fort.GetExplorers();
-    CList<CExplorer *> availExps;
-    for (i = 0; i < exps.GetSize(); i++)
+    cgc_CList<cgc_CExplorer *>& exps = g_fort.cgc_GetExplorers();
+    cgc_CList<cgc_CExplorer *> availExps;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
     {
-        CExplorer *e = exps.GetAt(i);
-        if (e->IsHired() && e->IsAvail())
-            availExps.Append(e);
+        cgc_CExplorer *e = exps.cgc_GetAt(i);
+        if (e->cgc_IsHired() && e->cgc_IsAvail())
+            availExps.cgc_Append(e);
     }
-    fprintf(stdout, "\n... Available explorers ...\n");
-    if (availExps.GetSize() == 0)
+    cgc_fprintf(stdout, "\n... Available explorers ...\n");
+    if (availExps.cgc_GetSize() == 0)
     {
-        fprintf(stdout, "No explorers :(\n");
+        cgc_fprintf(stdout, "No explorers :(\n");
         return;
     }
-    for (i = 0; i < availExps.GetSize(); i++)
-        fprintf(stdout, "%d. %s\n", i, availExps.GetAt(i)->GetName());
-    fprintf(stdout, "\nselect> ");
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
-        exit(0);
-    int idx = strtoul(buf, NULL, 10);
-    if (idx >= availExps.GetSize())
+    for (i = 0; i < availExps.cgc_GetSize(); i++)
+        cgc_fprintf(stdout, "%d. %s\n", i, availExps.cgc_GetAt(i)->cgc_GetName());
+    cgc_fprintf(stdout, "\nselect> ");
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_exit(0);
+    int idx = cgc_strtoul(buf, NULL, 10);
+    if (idx >= availExps.cgc_GetSize())
     {
-        fprintf(stdout, "Invalid explorer.\n");
+        cgc_fprintf(stdout, "Invalid explorer.\n");
         return;
     }
-    CExplorer *e = availExps.GetAt(idx);
-    fprintf(stdout, "\nNew name? ");
-    if (freaduntil(name, sizeof(name), '\n', stdin) < 0)
-        exit(0);
+    cgc_CExplorer *e = availExps.cgc_GetAt(idx);
+    cgc_fprintf(stdout, "\nNew name? ");
+    if (cgc_freaduntil(name, sizeof(name), '\n', stdin) < 0)
+        cgc_exit(0);
 #ifdef PATCHED_1
-    name[CExplorer::k_maxNameLength] = '\0';
+    name[cgc_CExplorer::k_maxNameLength] = '\0';
 #endif
-    e->ChangeName(name);
+    e->cgc_ChangeName(name);
 }
 
 extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
@@ -504,87 +504,87 @@ extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 
     g_rand = (char *) secret_page_i;
 
-    if (freaduntil(nameBuf, sizeof(nameBuf), '\n', stdin) < 0)
-        exit(0);
-    g_fort.SetOwner(nameBuf);
+    if (cgc_freaduntil(nameBuf, sizeof(nameBuf), '\n', stdin) < 0)
+        cgc_exit(0);
+    g_fort.cgc_SetOwner(nameBuf);
 
-    PrintWelcomeBanner(g_fort.GetOwner()[0]);
-    InitializeMissions();
-    InitializeSkills();
-    InitializeExplorers();
+    cgc_PrintWelcomeBanner(g_fort.cgc_GetOwner()[0]);
+    cgc_InitializeMissions();
+    cgc_InitializeSkills();
+    cgc_InitializeExplorers();
 
     while (1)
     {
-        PrintMainMenu();
-        g_hidden = !(g_fort.GetSupply() == 1337 && g_fort.GetDay() == 1);
-        if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_PrintMainMenu();
+        g_hidden = !(g_fort.cgc_GetSupply() == 1337 && g_fort.cgc_GetDay() == 1);
+        if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
             break;
-        if (strcmp(buf, "0") == 0)
+        if (cgc_strcmp(buf, "0") == 0)
         {
-            g_fort.NextDay(1);
-            if (g_fort.GetNumAvailableMissions() < 3)
-                CreateMoreMissions();
+            g_fort.cgc_NextDay(1);
+            if (g_fort.cgc_GetNumAvailableMissions() < 3)
+                cgc_CreateMoreMissions();
         }
-        else if (strtoul(buf, NULL, 10) == 1)
+        else if (cgc_strtoul(buf, NULL, 10) == 1)
         {
             while (1)
             {
-                PrintMissionMenu();
-                if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+                cgc_PrintMissionMenu();
+                if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
                     break;
-                if (strcmp(buf, "1") == 0)
-                    HandleSendMission();
-                else if (strcmp(buf, "2") == 0)
-                    HandleViewMissions();
-                else if (strcmp(buf, "3") == 0)
+                if (cgc_strcmp(buf, "1") == 0)
+                    cgc_HandleSendMission();
+                else if (cgc_strcmp(buf, "2") == 0)
+                    cgc_HandleViewMissions();
+                else if (cgc_strcmp(buf, "3") == 0)
                     break;
                 else
-                    fprintf(stdout, "Invalid option.\n");
+                    cgc_fprintf(stdout, "Invalid option.\n");
             }
         }
-        else if (memcmp(buf, "2\0", 2) == 0)
+        else if (cgc_memcmp(buf, "2\0", 2) == 0)
         {
             while (1)
             {
-                PrintExplorerMenu();
-                if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+                cgc_PrintExplorerMenu();
+                if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
                     break;
-                if (strcmp(buf, "1") == 0)
-                    HandleHireExplorer();
-                else if (strcmp(buf, "2") == 0)
-                    HandleViewExplorers();
-                else if (strcmp(buf, "3") == 0)
-                    HandleRemoveExplorer();
-                else if (strcmp(buf, "4") == 0)
-                    HandleLearnSkills();
-                else if (strcmp(buf, "5") == 0)
+                if (cgc_strcmp(buf, "1") == 0)
+                    cgc_HandleHireExplorer();
+                else if (cgc_strcmp(buf, "2") == 0)
+                    cgc_HandleViewExplorers();
+                else if (cgc_strcmp(buf, "3") == 0)
+                    cgc_HandleRemoveExplorer();
+                else if (cgc_strcmp(buf, "4") == 0)
+                    cgc_HandleLearnSkills();
+                else if (cgc_strcmp(buf, "5") == 0)
                     break;
                 else
                 {
-                    if (!g_hidden && strcmp(buf, "6") == 0)
-                        HandleChangeName();
+                    if (!g_hidden && cgc_strcmp(buf, "6") == 0)
+                        cgc_HandleChangeName();
                     else
-                        fprintf(stdout, "Invalid option.\n");
+                        cgc_fprintf(stdout, "Invalid option.\n");
                 }
             }
         }
-        else if (strcmp(buf, "3") == 0)
+        else if (cgc_strcmp(buf, "3") == 0)
         {
-            fprintf(stdout, "Boo.\n");
-            exit(0);
+            cgc_fprintf(stdout, "Boo.\n");
+            cgc_exit(0);
         }
         else
         {
-            if (buf[0] == '-' && memcmp(&buf[1], "1337\0", 5) == 0)
+            if (buf[0] == '-' && cgc_memcmp(&buf[1], "1337\0", 5) == 0)
             {
-                if (g_fort.GetSupply() < strtoul(&buf[1], NULL, 10))
-                    g_fort.AddSupply(1287);
-                if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+                if (g_fort.cgc_GetSupply() < cgc_strtoul(&buf[1], NULL, 10))
+                    g_fort.cgc_AddSupply(1287);
+                if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
                     break;
-                g_fort.NextDay(strtoul(buf, NULL, 10));
+                g_fort.cgc_NextDay(cgc_strtoul(buf, NULL, 10));
             }
             else
-                fprintf(stdout, "Invalid option.\n");
+                cgc_fprintf(stdout, "Invalid option.\n");
         }
     }
     return 0;

@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,11 +29,11 @@ THE SOFTWARE.
 #include "service.h"
 
 
-Recipe_Type *recipe_book=0;
+cgc_Recipe_Type *recipe_book=0;
 
 int main(void) {
     
-size_t size;
+cgc_size_t size;
 char buffer[10];
 int command;
 char buffer1[100];
@@ -43,37 +43,37 @@ char buffer2[100];
     // loop forever receiving command strings from STDIN.
     while (1) {
 
-        print_main_menu();
+        cgc_print_main_menu();
 
-        size=getline(buffer, sizeof(buffer));
+        size=cgc_getline(buffer, sizeof(buffer));
 
         // ignore that a blank line was entered
         if (size==0)
             continue;
 
-        command=atoi(buffer);
+        command=cgc_atoi(buffer);
 
         switch (command) {
 
 
             case 1:
 
-                new_recipe(&recipe_book);
+                cgc_new_recipe(&recipe_book);
                 break;
 
             case 2:
 
-                find_recipe(recipe_book);
+                cgc_find_recipe(recipe_book);
                 break;
 
             case 3:
 
-                print_all_tagged(recipe_book);
+                cgc_print_all_tagged(recipe_book);
                 break;
 
             case 4:
 
-                print_shopping_list(recipe_book);
+                cgc_print_shopping_list(recipe_book);
                 break;
             case 5:
 
@@ -82,7 +82,7 @@ char buffer2[100];
 
             default:
 
-                printf("Invalid command\n");
+                cgc_printf("Invalid command\n");
 
 
         } // switch

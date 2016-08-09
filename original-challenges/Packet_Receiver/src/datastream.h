@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,31 +27,31 @@ THE SOFTWARE.
 #define __DATA_STREAM_H__
 
 // Used to receive incoming data (bit stream)
-class CDataStream
+class cgc_CDataStream
 {
 public:
-    CDataStream();
-    ~CDataStream();
+    cgc_CDataStream();
+    ~cgc_CDataStream();
 
-    void Setup( int32_t socketNumber );
+    void cgc_Setup( cgc_int32_t socketNumber );
 
-    uint8_t ReadBit( void );
-    uint8_t ReadByte( void );
+    cgc_uint8_t cgc_ReadBit( void );
+    cgc_uint8_t cgc_ReadByte( void );
 
-    uint32_t BytesReceived( void ) const
+    cgc_uint32_t cgc_BytesReceived( void ) const
     {
         return (m_bytesRxCount);
     }
 
 private:
-    void RefillBuffer( void );
+    void cgc_RefillBuffer( void );
 
 private:
-    uint32_t m_bytesRxCount;
-    int32_t m_socketNumber;
+    cgc_uint32_t m_bytesRxCount;
+    cgc_int32_t m_socketNumber;
 
-    uint8_t m_bitpos;
-    uint8_t m_buffer;
+    cgc_uint8_t m_bitpos;
+    cgc_uint8_t m_buffer;
 };
 
 #endif // __DATA_STREAM_H__

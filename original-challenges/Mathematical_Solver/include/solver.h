@@ -26,10 +26,10 @@ THE SOFTWARE.
 #ifndef SOLVER_H_DEFINED
 #define SOLVER_H_DEFINED
 
-void run_tests();
-int evaluate(int a, char op, int b, int *answer);
-int satisfy_paren();
-int solve_equation(char* str, int *answer);
+void cgc_run_tests();
+int cgc_evaluate(int a, char op, int b, int *answer);
+int cgc_satisfy_paren();
+int cgc_solve_equation(char* str, int *answer);
 
 
 #endif // SOLVER_H_DEFINED

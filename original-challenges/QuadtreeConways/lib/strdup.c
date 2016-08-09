@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *strdup(const char *str)
+char *cgc_strdup(const char *str)
 {
-    size_t n = strlen(str) + 1;
-    char *dup = malloc(n);
+    cgc_size_t n = cgc_strlen(str) + 1;
+    char *dup = cgc_malloc(n);
     if (dup == NULL)
         return NULL;
-    memcpy(dup, str, n);
+    cgc_memcpy(dup, str, n);
     return dup;
 }

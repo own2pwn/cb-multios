@@ -26,23 +26,23 @@ THE SOFTWARE.
 #ifndef __CLF_H__
 #define __CLF_H__
 
-class CCLF
+class cgc_CCLF
 {
 public:
-	friend class CVM;
+	friend class cgc_CVM;
 
 public:
-	CCLF();
-	~CCLF();
+	cgc_CCLF();
+	~cgc_CCLF();
 
-	bool LoadFile( uint8_t *pFileData, uint32_t fileSize );
+	bool cgc_LoadFile( cgc_uint8_t *pFileData, cgc_uint32_t fileSize );
 
 public:
-	static const uint32_t MAX_LOADER_FILE_SIZE = 64000;
+	static const cgc_uint32_t MAX_LOADER_FILE_SIZE = 64000;
 
-	static const uint32_t CLF_HEADER_MAGIC = 0xc3585c51;	// push ecx, pop esp, pop eax, ret
+	static const cgc_uint32_t CLF_HEADER_MAGIC = 0xc3585c51;	// push ecx, pop esp, pop eax, ret
 
-	static const uint32_t CLF_MAX_SECTION_COUNT = 10;
+	static const cgc_uint32_t CLF_MAX_SECTION_COUNT = 10;
 
 private:
 	enum 
@@ -55,24 +55,24 @@ private:
 	// Section file header
 	typedef struct SECTION_FILE_HEADER
 	{
-		uint8_t sectionType;
-		uint16_t sectionSize;
-		uint16_t sectionAddress;
-		uint32_t fileOffset;
-	} __attribute__((packed))  tSectionFileHeader;
+		cgc_uint8_t sectionType;
+		cgc_uint16_t sectionSize;
+		cgc_uint16_t sectionAddress;
+		cgc_uint32_t fileOffset;
+	} __attribute__((packed))  cgc_tSectionFileHeader;
 
 	// Section headers define loadable sections, such as execute, data, and comment
-	typedef struct SECTION_DATA
+	typedef struct cgc_SECTION_DATA
 	{
-		uint8_t sectionType;
-		uint16_t sectionSize;
-		uint16_t sectionAddress;
-		uint8_t *pSectionData;	
-	} tSectionData;
+		cgc_uint8_t sectionType;
+		cgc_uint16_t sectionSize;
+		cgc_uint16_t sectionAddress;
+		cgc_uint8_t *pSectionData;	
+	} cgc_tSectionData;
 
-	tSectionData *m_pSections;
-	uint8_t m_sectionCount;
-	uint16_t m_entryAddress;
+	cgc_tSectionData *m_pSections;
+	cgc_uint8_t m_sectionCount;
+	cgc_uint16_t m_entryAddress;
 };
 
 #endif // __CLF_H__

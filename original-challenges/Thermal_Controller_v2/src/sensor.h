@@ -30,29 +30,29 @@ THE SOFTWARE.
 #include "cutil_list.h" // custom linked list
 
 
-class Sensor
+class cgc_Sensor
 {
 	// create
 	// destroy
 	
 private:
-	uint16_t m_type;
-	uint32_t m_address;
-	uint32_t m_coefficient;
+	cgc_uint16_t m_type;
+	cgc_uint32_t m_address;
+	cgc_uint32_t m_coefficient;
 	bool m_enabled;
 
 public:
-	Sensor();
-	Sensor( int, int, int, bool );
-	~Sensor();
+	cgc_Sensor();
+	cgc_Sensor( int, int, int, bool );
+	~cgc_Sensor();
 
-	void SetType( int val ) { m_type = val; }
-	int GetType() { return m_type; }
+	void cgc_SetType( int val ) { m_type = val; }
+	int cgc_GetType() { return m_type; }
 
-	void SetEnabled( bool val ) { m_enabled = val; }
-	bool GetEnabled() { return m_enabled; }
+	void cgc_SetEnabled( bool val ) { m_enabled = val; }
+	bool cgc_GetEnabled() { return m_enabled; }
 
-	CUtil::DLL_LINK( Sensor ) m_sensorLink;
+	CUtil::DLL_LINK( cgc_Sensor ) m_sensorLink;
 };
 
 #endif

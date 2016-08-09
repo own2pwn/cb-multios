@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,33 +23,33 @@
 #include "ptrlist.h"
 #include <string.h>
 
-ptrlist_t *create_ptrlist()
+cgc_ptrlist_t *cgc_create_ptrlist()
 {
-    ptrlist_t *ptrlist = calloc(1, sizeof(ptrlist_t));
+    cgc_ptrlist_t *ptrlist = cgc_calloc(1, sizeof(cgc_ptrlist_t));
     if (ptrlist == NULL)
         return NULL;
 
     ptrlist->size = 8;
     ptrlist->length = 0;
-    ptrlist->datalist = calloc(1, sizeof(void *) * (ptrlist->size));
+    ptrlist->datalist = cgc_calloc(1, sizeof(void *) * (ptrlist->size));
     if (ptrlist->datalist == NULL)
         return NULL;
 
     return ptrlist;
 }
 
-int add_item(ptrlist_t *ptrlist, void *pdata)
+int cgc_add_item(cgc_ptrlist_t *ptrlist, void *pdata)
 {
     if (!ptrlist || !pdata)
         return -1;
 
     if (ptrlist->size == ptrlist->length) {
-        void *expanded_list = malloc(sizeof(void *) * (ptrlist->size * 2));
+        void *expanded_list = cgc_malloc(sizeof(void *) * (ptrlist->size * 2));
         if (!expanded_list )
             return -1;
 
-        memcpy(expanded_list , ptrlist->datalist, sizeof(void *) * (ptrlist->size));
-        free(ptrlist->datalist);
+        cgc_memcpy(expanded_list , ptrlist->datalist, sizeof(void *) * (ptrlist->size));
+        cgc_free(ptrlist->datalist);
         ptrlist->size *= 2;
         ptrlist->datalist = expanded_list ;
     }
@@ -58,7 +58,7 @@ int add_item(ptrlist_t *ptrlist, void *pdata)
     return 0;
 }
 
-void *get_pdata(ptrlist_t *ptrlist, size_t idx)
+void *cgc_get_pdata(cgc_ptrlist_t *ptrlist, cgc_size_t idx)
 {
     if (!ptrlist || idx > ptrlist->length)
         return NULL;

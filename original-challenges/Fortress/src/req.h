@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,9 +23,9 @@
 
 #pragma once
 
-class CRequirement
+class cgc_CRequirement
 {
-    friend class CMission;
+    friend class cgc_CMission;
 
     public:
         enum class Type : int
@@ -39,35 +39,35 @@ class CRequirement
             RESCUE_OP = 0x20
         };
 
-        CRequirement(CRequirement::Type type, int level, int supply, int duration, int group);
-        ~CRequirement();
-        static char* ReqTypeToString(CRequirement::Type type);
+        cgc_CRequirement(cgc_CRequirement::Type type, int level, int supply, int duration, int group);
+        ~cgc_CRequirement();
+        static char* cgc_ReqTypeToString(cgc_CRequirement::Type type);
 
     private:
-        CRequirement::Type m_type;
+        cgc_CRequirement::Type m_type;
         int m_level;
         int m_supply;
         int m_duration;
         int m_group;
 };
 
-inline CRequirement::Type operator | (CRequirement::Type lhs, CRequirement::Type rhs)
+inline cgc_CRequirement::Type operator | (cgc_CRequirement::Type lhs, cgc_CRequirement::Type rhs)
 {
-    return (CRequirement::Type)(static_cast<int>(lhs) | static_cast<int>(rhs));
+    return (cgc_CRequirement::Type)(static_cast<int>(lhs) | static_cast<int>(rhs));
 }
 
-inline CRequirement::Type& operator |= (CRequirement::Type& lhs, CRequirement::Type rhs)
+inline cgc_CRequirement::Type& operator |= (cgc_CRequirement::Type& lhs, cgc_CRequirement::Type rhs)
 {
-    lhs = (CRequirement::Type)(static_cast<int>(lhs) | static_cast<int>(rhs));
+    lhs = (cgc_CRequirement::Type)(static_cast<int>(lhs) | static_cast<int>(rhs));
     return lhs;
 }
 
-inline CRequirement::Type operator & (CRequirement::Type lhs, CRequirement::Type rhs)
+inline cgc_CRequirement::Type operator & (cgc_CRequirement::Type lhs, cgc_CRequirement::Type rhs)
 {
-    return (CRequirement::Type)(static_cast<int>(lhs) & static_cast<int>(rhs));
+    return (cgc_CRequirement::Type)(static_cast<int>(lhs) & static_cast<int>(rhs));
 }
 
-inline CRequirement::Type operator ~ (CRequirement::Type type)
+inline cgc_CRequirement::Type operator ~ (cgc_CRequirement::Type type)
 {
-    return (CRequirement::Type)(~static_cast<int>(type));
+    return (cgc_CRequirement::Type)(~static_cast<int>(type));
 }

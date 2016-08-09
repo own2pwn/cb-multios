@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,7 +35,7 @@
 #define MAX_FILE_NAME_LENGTH 16
 
 struct directory {
-    utf8char name[MAX_FILE_NAME_LENGTH];
+    cgc_utf8char name[MAX_FILE_NAME_LENGTH];
     struct directory *parent;
     struct list subdirectories;
     struct list files;
@@ -43,9 +43,9 @@ struct directory {
 };
 
 struct file {
-    utf8char name[MAX_FILE_NAME_LENGTH];
+    cgc_utf8char name[MAX_FILE_NAME_LENGTH];
     struct directory *parent;
-    size_t size;
+    cgc_size_t size;
     unsigned char *contents;
     struct list_node list;
 };
@@ -54,18 +54,18 @@ struct vfs {
     struct directory *root;
 };
 
-int vfs_init(struct vfs *vfs);
-void vfs_destroy(struct vfs *vfs);
+int cgc_vfs_init(struct vfs *vfs);
+void cgc_vfs_destroy(struct vfs *vfs);
 
-struct directory *lookup_dir(const struct vfs *vfs, const utf8char *path);
-struct file *lookup_file(const struct vfs *vfs, const utf8char *path);
+struct directory *cgc_lookup_dir(const struct vfs *vfs, const cgc_utf8char *path);
+struct file *cgc_lookup_file(const struct vfs *vfs, const cgc_utf8char *path);
 
-struct directory *create_dir(struct vfs *vfs, const utf8char *path);
-struct directory *create_dir_in_dir(struct vfs *vfs, struct directory *dir, const utf8char *name);
-struct file *create_file(struct vfs *vfs, const utf8char *path);
-struct file *create_file_in_dir(struct vfs *vfs, struct directory *dir, const utf8char *name);
+struct directory *cgc_create_dir(struct vfs *vfs, const cgc_utf8char *path);
+struct directory *cgc_create_dir_in_dir(struct vfs *vfs, struct directory *dir, const cgc_utf8char *name);
+struct file *cgc_create_file(struct vfs *vfs, const cgc_utf8char *path);
+struct file *cgc_create_file_in_dir(struct vfs *vfs, struct directory *dir, const cgc_utf8char *name);
 
-void delete_file(struct vfs *vfs, struct file *file);
+void cgc_delete_file(struct vfs *vfs, struct file *file);
 
 #ifdef DEBUG
 void dump_vfs(const struct vfs *vfs);

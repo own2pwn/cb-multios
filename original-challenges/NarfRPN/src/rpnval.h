@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -20,7 +20,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /**
- * @file rpnval.h
+ * @file cgc_rpnval.h
  *
  * Types and utility functions for manipulating rpnvals.
  */
@@ -30,7 +30,7 @@
 
 #include <libcgc.h>
 
-typedef double rpnval;
+typedef double cgc_rpnval;
 
 struct matrix {
     unsigned int width, height;
@@ -51,13 +51,13 @@ enum rpnval_type {
 };
 
 /**
- * Return the type of the rpnval.
+ * Return the type of the cgc_rpnval.
  *
- * @param val The rpnval
+ * @param val The cgc_rpnval
  * @return The type of val
  */
 static inline enum rpnval_type
-get_type(rpnval val)
+cgc_get_type(cgc_rpnval val)
 {
     int type = GET_TYPE(val);
 
@@ -72,19 +72,19 @@ get_type(rpnval val)
 }
 
 /**
- * Get the integer value of an rpnval.
+ * Get the integer value of an cgc_rpnval.
  *
- * @param val The rpnval
+ * @param val The cgc_rpnval
  * @param out Output pointer
  * @return 0 if successful, -1 if not
  */
 static inline int
-as_integer(rpnval val, int *out)
+cgc_as_integer(cgc_rpnval val, int *out)
 {
     if (out == NULL)
         return -1;
 
-    if (get_type(val) != INTEGER)
+    if (cgc_get_type(val) != INTEGER)
         return -1;
 
     *out = GET_VALUE(val);
@@ -97,13 +97,13 @@ as_integer(rpnval val, int *out)
 }
 
 /**
- * Set the value of an rpnval to a given integer.
+ * Set the value of an cgc_rpnval to a given integer.
  *
  * @param val_ The integer value to set
  * @param out_ Output pointer
  */
 static inline void
-set_integer(int val_, rpnval *out_)
+cgc_set_integer(int val_, cgc_rpnval *out_)
 {
     unsigned long long *out = (unsigned long long *)out_;
     unsigned long long tag = (unsigned long long)INTEGER << 32;
@@ -113,19 +113,19 @@ set_integer(int val_, rpnval *out_)
 }
 
 /**
- * Get the matrix value of an rpnval.
+ * Get the matrix value of an cgc_rpnval.
  * 
- * @param val The rpnval
+ * @param val The cgc_rpnval
  * @param out Output pointer
  * @return 0 if successful, -1 if not
  */
 static inline int
-as_matrix(rpnval val, struct matrix **out)
+cgc_as_matrix(cgc_rpnval val, struct matrix **out)
 {
     if (out == NULL)
         return -1;
 
-    if (get_type(val) != MATRIX)
+    if (cgc_get_type(val) != MATRIX)
         return -1;
 
     *out = (struct matrix *)GET_VALUE(val);
@@ -133,13 +133,13 @@ as_matrix(rpnval val, struct matrix **out)
 }
 
 /**
- * Set the value of an rpnval to a given matrix.
+ * Set the value of an cgc_rpnval to a given matrix.
  *
  * @param val_ The matrix value to set
  * @param out_ Output pointer
  */
 static inline void
-set_matrix(struct matrix *val_, rpnval *out_)
+cgc_set_matrix(struct matrix *val_, cgc_rpnval *out_)
 {
     unsigned long long *out = (unsigned long long *)out_;
     unsigned long long tag = (unsigned long long)MATRIX << 32;
@@ -149,19 +149,19 @@ set_matrix(struct matrix *val_, rpnval *out_)
 }
 
 /**
- * Get the double value of an rpnval.
+ * Get the double value of an cgc_rpnval.
  *
- * @param val The rpnval
+ * @param val The cgc_rpnval
  * @param out Output pointer
  * @return 0 if successful, -1 of not
  */
 static inline int
-as_double(rpnval val, double *out)
+cgc_as_double(cgc_rpnval val, double *out)
 {
     if (out == NULL)
         return -1;
 
-    if (get_type(val) != DOUBLE)
+    if (cgc_get_type(val) != DOUBLE)
         return -1;
 
     *out = val;
@@ -169,13 +169,13 @@ as_double(rpnval val, double *out)
 }
 
 /**
- * Set the value of an rpnval to a given double.
+ * Set the value of an cgc_rpnval to a given double.
  *
  * @param val The double value to set
  * @param out Ouput pointer
  */
 static inline void
-set_double(double val, rpnval *out)
+cgc_set_double(double val, cgc_rpnval *out)
 {
     *out = val;
 }

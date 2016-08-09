@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,33 +29,33 @@ THE SOFTWARE.
 #include "service.h"
 #include "menu.h"
 
-logbook_type logbook;
+cgc_logbook_type logbook;
 
 int main(void) {
     
-    menu_item menu[] = {
+    cgc_menu_item menu[] = {
 
-    	{"Change Diver Info","Cc", edit_diver },
-   		{"Log a New Dive","Ll", log_dives },
-   		{"Download Dive Data","Dd", download_dive },
-   		{"Edit Dives", "Ee", edit_dives },
-   		{"Print Dive Logs","Pp", print_dives },
-   		{"Remove Dives", "Rr", remove_dives },
-   		{"Diver Statistics","Ss", dive_statistics },
-   		{"Exit Application", "Xx", exit_app}
+    	{"Change Diver Info","Cc", cgc_edit_diver },
+   		{"Log a New Dive","Ll", cgc_log_dives },
+   		{"Download Dive Data","Dd", cgc_download_dive },
+   		{"Edit Dives", "Ee", cgc_edit_dives },
+   		{"Print Dive Logs","Pp", cgc_print_dives },
+   		{"Remove Dives", "Rr", cgc_remove_dives },
+   		{"Diver Statistics","Ss", cgc_dive_statistics },
+   		{"Exit Application", "Xx", cgc_exit_app}
 
    };
 
 
-  	bzero((void *)&logbook, sizeof(logbook));
+  	cgc_bzero((void *)&logbook, sizeof(logbook));
 
-  	process_menu(menu, sizeof(menu)/ sizeof(menu_item));
+  	cgc_process_menu(menu, sizeof(menu)/ sizeof(cgc_menu_item));
 
  
 }  // main  
 
 
-int exit_app(int ret_code)
+int cgc_exit_app(int ret_code)
 {
 
 	_terminate(ret_code);

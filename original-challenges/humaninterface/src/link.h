@@ -13,10 +13,10 @@ typedef struct __attribute__ ((__packed__)) {
     unsigned length : 9;
     unsigned sbz : 4;
     unsigned char payload[];
-} link_hdr_t;
+} cgc_link_hdr_t;
 
-void link_send(unsigned channel, unsigned length, const unsigned char *payload);
+void cgc_link_send(unsigned channel, unsigned length, const unsigned char *payload);
 // sizeof payload buffer should be >= LINK_PACKET_SIZE
-int link_recv(unsigned *channel, unsigned *length, unsigned char *payload);
+int cgc_link_recv(unsigned *channel, unsigned *length, unsigned char *payload);
 
 #endif

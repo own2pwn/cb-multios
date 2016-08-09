@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -43,16 +43,16 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 	void *secret_page = (void *)secret_page_i;
 
 	// Use magic page to run random number generator
-	CPRNG oRNG( (uint32_t *)((uint8_t*)secret_page+SKIP_ID_SIZE), (MAGIC_PAGE_SIZE-SKIP_ID_SIZE) );
+	cgc_CPRNG oRNG( (cgc_uint32_t *)((cgc_uint8_t*)secret_page+SKIP_ID_SIZE), (MAGIC_PAGE_SIZE-SKIP_ID_SIZE) );
 
 	// Pass secret page for debug access for poller
-	CPackageTracker oTracker( secret_page );
+	cgc_CPackageTracker oTracker( secret_page );
 
 	// Seed the simulation with RNG data
-	oTracker.SeedSimulation( &oRNG );
+	oTracker.cgc_SeedSimulation( &oRNG );
 
-	// Run GPS Tracker
-	oTracker.Run();
+	// cgc_Run GPS Tracker
+	oTracker.cgc_Run();
 
 	return 0;
 }

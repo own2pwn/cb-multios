@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,8 +25,8 @@
 
 
 // return number of chars in str, not counting the '\0'
-size_t strlen(const char *str) {
-    size_t count = 0;
+cgc_size_t cgc_strlen(const char *str) {
+    cgc_size_t count = 0;
     while(*str != '\0') {
         count++;
         str++;

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -33,7 +33,7 @@
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_digit(const unsigned char ch);
+unsigned char cgc_is_digit(const unsigned char ch);
 
 /**
  * Is the char a hex digit.
@@ -43,7 +43,7 @@ unsigned char is_digit(const unsigned char ch);
  * @return TRUE if yes, FALSE if no
  */
 
-unsigned char is_hexdigit(const unsigned char ch);
+unsigned char cgc_is_hexdigit(const unsigned char ch);
 
 /**
  * Is the char a letter.
@@ -52,7 +52,7 @@ unsigned char is_hexdigit(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_letter(const unsigned char ch);
+unsigned char cgc_is_letter(const unsigned char ch);
 
 /**
  * Is the char an ASCII printable symbol
@@ -61,7 +61,7 @@ unsigned char is_letter(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_symbol(const unsigned char ch);
+unsigned char cgc_is_symbol(const unsigned char ch);
 
 /**
  * Is the char an upper case letter.
@@ -70,7 +70,7 @@ unsigned char is_symbol(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_upper(const unsigned char ch);
+unsigned char cgc_is_upper(const unsigned char ch);
 
 /**
  * Is the char a lower case letter.
@@ -79,7 +79,7 @@ unsigned char is_upper(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_lower(const unsigned char ch);
+unsigned char cgc_is_lower(const unsigned char ch);
 
 /**
  * Is the char non-printable
@@ -88,7 +88,7 @@ unsigned char is_lower(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_non_printable(const unsigned char ch);
+unsigned char cgc_is_non_printable(const unsigned char ch);
 
 /**
  * Is the char ASCII printable
@@ -97,7 +97,7 @@ unsigned char is_non_printable(const unsigned char ch);
  * @param ch Char to test
  * @return TRUE if yes, FALSE if no
  */
-unsigned char is_printable(const unsigned char ch);
+unsigned char cgc_is_printable(const unsigned char ch);
 
 
 /**
@@ -106,7 +106,7 @@ unsigned char is_printable(const unsigned char ch);
  * @param c The char to examine
  * @return c as an uppercase alphabet character if possible, else c
  */
-int toupper(int c);
+int cgc_toupper(int c);
 
 /**
  * Convert c to a lowercase alphabet character if possible.
@@ -114,7 +114,7 @@ int toupper(int c);
  * @param c The char to examine
  * @return c as a lowercase alphabet character if possible, else c
  */
-int tolower(int c);
+int cgc_tolower(int c);
 
 /**
  * Convert value to a digit in a given base if possible, e.g. 0-15 -> '0'-'f' in
@@ -124,7 +124,7 @@ int tolower(int c);
  * @param base The base to use
  * @return The character representing value in base, or '\0'
  */
-char todigit(unsigned int value, unsigned int base);
+char cgc_todigit(unsigned int value, unsigned int base);
 
 /**
  * Convert c to a value in a given base if possible, e.g. '0'-'f' -> 0-15 in
@@ -134,7 +134,7 @@ char todigit(unsigned int value, unsigned int base);
  * @param base The base to use
  * @return The value of digit in base, or ERRNO_CONV
  */
-int fromdigit(char digit, unsigned int base);
+int cgc_fromdigit(char digit, unsigned int base);
 
 /**
  * Convert an unsigned int to an ASCII string.
@@ -146,7 +146,7 @@ int fromdigit(char digit, unsigned int base);
  * @param term String termination char
  * @return 0, -1 on error
  */
-int utostr(char* str, unsigned int n, unsigned int i, const char term);
+int cgc_utostr(char* str, unsigned int n, unsigned int i, const char term);
 
 /**
  * Convert an int to an ASCII string.
@@ -158,7 +158,7 @@ int utostr(char* str, unsigned int n, unsigned int i, const char term);
  * @param term String termination char
  * @return 0, -1 on error
  */
-int itostr(char *str, unsigned int n, int i, const char term);
+int cgc_itostr(char *str, unsigned int n, int i, const char term);
 
 /**
  * Convert string representation of a number in base to an unsigned int value.
@@ -168,7 +168,7 @@ int itostr(char *str, unsigned int n, int i, const char term);
  * @param result Pointer to output result to
  * @return Characters used from str on success, else ERRNO_CONV
  */
-ssize_t strtou(const char *str, unsigned int base, unsigned int *result);
+cgc_ssize_t cgc_strtou(const char *str, unsigned int base, unsigned int *result);
 
 /**
  * Convert string representation of a number in base to an int value.
@@ -178,6 +178,6 @@ ssize_t strtou(const char *str, unsigned int base, unsigned int *result);
  * @param result Pointer to output result to
  * @return Characters used from str on success, else ERRNO_CONV
  */
-ssize_t strtoi(const char *str, unsigned int base, int *result);
+cgc_ssize_t cgc_strtoi(const char *str, unsigned int base, int *result);
 
 #endif

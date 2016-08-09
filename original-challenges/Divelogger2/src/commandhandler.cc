@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,401 +32,401 @@ extern "C" {
 
 #include "common.h"
 
-CommandHandler::CommandHandler() :
+cgc_CommandHandler::cgc_CommandHandler() :
     m_bDiverInitialized( false )
 {
 
 }
 
-CommandHandler::~CommandHandler()
+cgc_CommandHandler::~cgc_CommandHandler()
 {
 
 }
 
-bool CommandHandler::CmdChangeDiverInfo( void )
+bool cgc_CommandHandler::cgc_CmdChangeDiverInfo( void )
 {
-    printf( "\n" );
+    cgc_printf( "\n" );
 
     if ( m_bDiverInitialized )
     {
-        String sFirstName;
-        String sLastName;
-        String sStreet;
-        String sCity;
-        String sState;
-        String sZipCode;
-        String sPhoneNumber;
-        String sPadiNumber;
-        String sPadiDate;
+        cgc_String sFirstName;
+        cgc_String sLastName;
+        cgc_String sStreet;
+        cgc_String sCity;
+        cgc_String sState;
+        cgc_String sZipCode;
+        cgc_String sPhoneNumber;
+        cgc_String sPadiNumber;
+        cgc_String sPadiDate;
 
-        printf( "First Name (@s): ", m_oDiver.GetFirstName().c_str() );
-        ReadLine( sFirstName );
-        sFirstName.Trim( 20 );
+        cgc_printf( "First Name (@s): ", m_oDiver.cgc_GetFirstName().cgc_c_str() );
+        cgc_ReadLine( sFirstName );
+        sFirstName.cgc_Trim( 20 );
 
-        printf( "Last Name (@s): ", m_oDiver.GetLastName().c_str() );
-        ReadLine( sLastName );
-        sLastName.Trim( 20 );
+        cgc_printf( "Last Name (@s): ", m_oDiver.cgc_GetLastName().cgc_c_str() );
+        cgc_ReadLine( sLastName );
+        sLastName.cgc_Trim( 20 );
 
-        printf( "Street (@s): ", m_oDiver.GetStreet().c_str() );
-        ReadLine( sStreet );
-        sStreet.Trim( 29 );
+        cgc_printf( "Street (@s): ", m_oDiver.cgc_GetStreet().cgc_c_str() );
+        cgc_ReadLine( sStreet );
+        sStreet.cgc_Trim( 29 );
 
-        printf( "City (@s): ", m_oDiver.GetCity().c_str() );
-        ReadLine( sCity );
-        sCity.Trim( 19 );
+        cgc_printf( "City (@s): ", m_oDiver.cgc_GetCity().cgc_c_str() );
+        cgc_ReadLine( sCity );
+        sCity.cgc_Trim( 19 );
 
-        printf( "State (@s): ", m_oDiver.GetState().c_str() );
-        ReadLine( sState );
-        sState.Trim( 2 );
+        cgc_printf( "State (@s): ", m_oDiver.cgc_GetState().cgc_c_str() );
+        cgc_ReadLine( sState );
+        sState.cgc_Trim( 2 );
 
-        printf( "Zip Code (@s): ", m_oDiver.GetZipCode().c_str() );
-        ReadLine( sZipCode );
-        sZipCode.Trim( 10 );
+        cgc_printf( "Zip Code (@s): ", m_oDiver.cgc_GetZipCode().cgc_c_str() );
+        cgc_ReadLine( sZipCode );
+        sZipCode.cgc_Trim( 10 );
 
-        printf( "Phone Number (@s): ", m_oDiver.GetPhoneNumber().c_str() );
-        ReadLine( sPhoneNumber );
-        sPhoneNumber.Trim( 15 );
+        cgc_printf( "Phone Number (@s): ", m_oDiver.cgc_GetPhoneNumber().cgc_c_str() );
+        cgc_ReadLine( sPhoneNumber );
+        sPhoneNumber.cgc_Trim( 15 );
 
-        printf( "PADI Diver Number (@s): ", m_oDiver.GetPadiNumber().c_str() );
-        ReadLine( sPadiNumber );
-        sPadiNumber.Trim( 19 );
+        cgc_printf( "PADI Diver Number (@s): ", m_oDiver.cgc_GetPadiNumber().cgc_c_str() );
+        cgc_ReadLine( sPadiNumber );
+        sPadiNumber.cgc_Trim( 19 );
 
-        printf( "PADI Cert Date (@s): ", m_oDiver.GetPadiDate().c_str() );
-        ReadLine( sPadiDate );
-        sPadiDate.Trim( 10 );
+        cgc_printf( "PADI Cert cgc_Date (@s): ", m_oDiver.cgc_GetPadiDate().cgc_c_str() );
+        cgc_ReadLine( sPadiDate );
+        sPadiDate.cgc_Trim( 10 );
 
         // Only change them if they entered information
         if ( sFirstName != "" )
-            m_oDiver.SetFirstName( sFirstName );
+            m_oDiver.cgc_SetFirstName( sFirstName );
 
         if ( sLastName != "" )
-            m_oDiver.SetLastName( sLastName );
+            m_oDiver.cgc_SetLastName( sLastName );
 
         if ( sStreet != "" )
-            m_oDiver.SetStreet( sStreet );
+            m_oDiver.cgc_SetStreet( sStreet );
 
         if ( sCity != "" )
-            m_oDiver.SetCity( sCity );
+            m_oDiver.cgc_SetCity( sCity );
 
         if ( sState != "" )
-            m_oDiver.SetState( sState );
+            m_oDiver.cgc_SetState( sState );
 
         if ( sZipCode != "" )
-            m_oDiver.SetZipCode( sZipCode );
+            m_oDiver.cgc_SetZipCode( sZipCode );
 
         if ( sPhoneNumber != "" )
-            m_oDiver.SetPhoneNumber( sPhoneNumber );
+            m_oDiver.cgc_SetPhoneNumber( sPhoneNumber );
 
         if ( sPadiNumber != "" )
-            m_oDiver.SetPadiNumber( sPadiNumber );
+            m_oDiver.cgc_SetPadiNumber( sPadiNumber );
 
         if ( sPadiDate != "" )
-            m_oDiver.SetPadiDate( sPadiDate );
+            m_oDiver.cgc_SetPadiDate( sPadiDate );
     }
     else
     {
-        String sFirstName;
-        String sLastName;
-        String sStreet;
-        String sCity;
-        String sState;
-        String sZipCode;
-        String sPhoneNumber;
-        String sPadiNumber;
-        String sPadiDate;
+        cgc_String sFirstName;
+        cgc_String sLastName;
+        cgc_String sStreet;
+        cgc_String sCity;
+        cgc_String sState;
+        cgc_String sZipCode;
+        cgc_String sPhoneNumber;
+        cgc_String sPadiNumber;
+        cgc_String sPadiDate;
 
-        printf( "First Name: " );
-        ReadLine( sFirstName );
-        sFirstName.Trim( 20 );
+        cgc_printf( "First Name: " );
+        cgc_ReadLine( sFirstName );
+        sFirstName.cgc_Trim( 20 );
 
-        printf( "Last Name: " );
-        ReadLine( sLastName );
-        sLastName.Trim( 20 );
+        cgc_printf( "Last Name: " );
+        cgc_ReadLine( sLastName );
+        sLastName.cgc_Trim( 20 );
 
-        printf( "Street: " );
-        ReadLine( sStreet );
-        sStreet.Trim( 29 );
+        cgc_printf( "Street: " );
+        cgc_ReadLine( sStreet );
+        sStreet.cgc_Trim( 29 );
 
-        printf( "City: " );
-        ReadLine( sCity );
-        sCity.Trim( 19 );
+        cgc_printf( "City: " );
+        cgc_ReadLine( sCity );
+        sCity.cgc_Trim( 19 );
 
-        printf( "State: " );
-        ReadLine( sState );
-        sState.Trim( 2 );
+        cgc_printf( "State: " );
+        cgc_ReadLine( sState );
+        sState.cgc_Trim( 2 );
 
-        printf( "Zip Code: " );
-        ReadLine( sZipCode );
-        sZipCode.Trim( 10 );
+        cgc_printf( "Zip Code: " );
+        cgc_ReadLine( sZipCode );
+        sZipCode.cgc_Trim( 10 );
 
-        printf( "Phone Number: " );
-        ReadLine( sPhoneNumber );
-        sPhoneNumber.Trim( 15 );
+        cgc_printf( "Phone Number: " );
+        cgc_ReadLine( sPhoneNumber );
+        sPhoneNumber.cgc_Trim( 15 );
 
-        printf( "PADI Diver Number: " );
-        ReadLine( sPadiNumber );
-        sPadiNumber.Trim( 19 );
+        cgc_printf( "PADI Diver Number: " );
+        cgc_ReadLine( sPadiNumber );
+        sPadiNumber.cgc_Trim( 19 );
 
-        printf( "PADI Cert Date: " );
-        ReadLine( sPadiDate );
-        sPadiDate.Trim( 10 );
+        cgc_printf( "PADI Cert cgc_Date: " );
+        cgc_ReadLine( sPadiDate );
+        sPadiDate.cgc_Trim( 10 );
 
-        m_oDiver.SetFirstName( sFirstName );
-        m_oDiver.SetLastName( sLastName );
-        m_oDiver.SetStreet( sStreet );
-        m_oDiver.SetCity( sCity );
-        m_oDiver.SetState( sState );
-        m_oDiver.SetZipCode( sZipCode );
-        m_oDiver.SetPhoneNumber( sPhoneNumber );
-        m_oDiver.SetPadiNumber( sPadiNumber );
-        m_oDiver.SetPadiDate( sPadiDate );
+        m_oDiver.cgc_SetFirstName( sFirstName );
+        m_oDiver.cgc_SetLastName( sLastName );
+        m_oDiver.cgc_SetStreet( sStreet );
+        m_oDiver.cgc_SetCity( sCity );
+        m_oDiver.cgc_SetState( sState );
+        m_oDiver.cgc_SetZipCode( sZipCode );
+        m_oDiver.cgc_SetPhoneNumber( sPhoneNumber );
+        m_oDiver.cgc_SetPadiNumber( sPadiNumber );
+        m_oDiver.cgc_SetPadiDate( sPadiDate );
     }
 
     m_bDiverInitialized = true;
 
-    PrintDiverInfo();
+    cgc_PrintDiverInfo();
 
     return (false);
 }
 
-bool CommandHandler::CmdLogNewDive( void )
+bool cgc_CommandHandler::cgc_CmdLogNewDive( void )
 {
-    String sDiveSite;
-    String sDate;
-    String sTime;
-    String sLocation;
-    String sMaxDepth;
-    String sAvgDepth;
-    String sDiveDuration;
-    String sO2Percentage;
-    String sPressureIn;
-    String sPressureOut;
+    cgc_String sDiveSite;
+    cgc_String sDate;
+    cgc_String sTime;
+    cgc_String sLocation;
+    cgc_String sMaxDepth;
+    cgc_String sAvgDepth;
+    cgc_String sDiveDuration;
+    cgc_String sO2Percentage;
+    cgc_String sPressureIn;
+    cgc_String sPressureOut;
 
     // Capture dive information
-    printf( "\n" );
+    cgc_printf( "\n" );
 
-    printf( "Dive Site: " );
-    ReadLine( sDiveSite );
-    sDiveSite.Trim( 25 );
+    cgc_printf( "cgc_Dive Site: " );
+    cgc_ReadLine( sDiveSite );
+    sDiveSite.cgc_Trim( 25 );
 
-    printf( "Date: " );
-    ReadLine( sDate );
-    sDate.Trim( 10 );
+    cgc_printf( "cgc_Date: " );
+    cgc_ReadLine( sDate );
+    sDate.cgc_Trim( 10 );
 
-    printf( "Time: " );
-    ReadLine( sTime );
-    sTime.Trim( 8 );
+    cgc_printf( "cgc_Time: " );
+    cgc_ReadLine( sTime );
+    sTime.cgc_Trim( 8 );
 
-    printf( "Location (area/city): " );
-    ReadLine( sLocation );
-    sLocation.Trim( 25 );
+    cgc_printf( "Location (area/city): " );
+    cgc_ReadLine( sLocation );
+    sLocation.cgc_Trim( 25 );
 
-    printf( "Max Depth in ft: " );
-    ReadLine( sMaxDepth );
+    cgc_printf( "Max Depth in ft: " );
+    cgc_ReadLine( sMaxDepth );
 
-    printf( "Avg Depth in ft: " );
-    ReadLine( sAvgDepth );
+    cgc_printf( "Avg Depth in ft: " );
+    cgc_ReadLine( sAvgDepth );
 
-    printf( "Dive Duration (mins): " );
-    ReadLine( sDiveDuration );
+    cgc_printf( "cgc_Dive Duration (mins): " );
+    cgc_ReadLine( sDiveDuration );
 
-    printf( "O2 Percentage: " );
-    ReadLine( sO2Percentage );
+    cgc_printf( "O2 Percentage: " );
+    cgc_ReadLine( sO2Percentage );
 
-    printf( "Pressure In (psi): " );
-    ReadLine( sPressureIn );
+    cgc_printf( "Pressure In (psi): " );
+    cgc_ReadLine( sPressureIn );
 
-    printf( "Pressure Out (psi): " );
-    ReadLine( sPressureOut );
+    cgc_printf( "Pressure Out (psi): " );
+    cgc_ReadLine( sPressureOut );
 
     // Add new dive to dive table -- parse data formats
-    Dive *pNewDive = new Dive();
+    cgc_Dive *pNewDive = new cgc_Dive();
 
-    Date oDiveDate;
-    oDiveDate.SetDate( sDate );
+    cgc_Date oDiveDate;
+    oDiveDate.cgc_SetDate( sDate );
 
-    Time oDiveTime;
-    oDiveTime.SetTime( sTime );
+    cgc_Time oDiveTime;
+    oDiveTime.cgc_SetTime( sTime );
 
-    pNewDive->SetDate( oDiveDate );
-    pNewDive->SetTime( oDiveTime );
-    pNewDive->SetDiveSite( sDiveSite );
-    pNewDive->SetLocation( sLocation );
-    pNewDive->SetMaxDepth( StringToInt( sMaxDepth ) );
-    pNewDive->SetAvgDepth( StringToInt( sAvgDepth ) );
-    pNewDive->SetDuration( StringToInt( sDiveDuration ) );
-    pNewDive->SetO2Percentage( StringToInt( sO2Percentage ) );
-    pNewDive->SetStartPressure( StringToInt( sPressureIn ) );
-    pNewDive->SetEndPressure( StringToInt( sPressureOut ) );
+    pNewDive->cgc_SetDate( oDiveDate );
+    pNewDive->cgc_SetTime( oDiveTime );
+    pNewDive->cgc_SetDiveSite( sDiveSite );
+    pNewDive->cgc_SetLocation( sLocation );
+    pNewDive->cgc_SetMaxDepth( cgc_StringToInt( sMaxDepth ) );
+    pNewDive->cgc_SetAvgDepth( cgc_StringToInt( sAvgDepth ) );
+    pNewDive->cgc_SetDuration( cgc_StringToInt( sDiveDuration ) );
+    pNewDive->cgc_SetO2Percentage( cgc_StringToInt( sO2Percentage ) );
+    pNewDive->cgc_SetStartPressure( cgc_StringToInt( sPressureIn ) );
+    pNewDive->cgc_SetEndPressure( cgc_StringToInt( sPressureOut ) );
 
-    m_diveQueue.AddLast( pNewDive );
+    m_diveQueue.cgc_AddLast( pNewDive );
 
     return (false);
 }
 
-bool CommandHandler::CmdDownloadDiveData( void )
+bool cgc_CommandHandler::cgc_CmdDownloadDiveData( void )
 {
-    // Get download data (timeval and depth as uint32 values)
-    printf( "\n" );
+    // Get download data (cgc_timeval and depth as uint32 values)
+    cgc_printf( "\n" );
 
-    Dive *pNewDive = new Dive();
+    cgc_Dive *pNewDive = new cgc_Dive();
 
     // Begin reading samples
     bool bDone = false;
-    uint32_t timeval, depth;
+    cgc_uint32_t cgc_timeval, depth;
 
     // Always get first sample
-    ReadUint32( timeval );
-    ReadUint32( depth );
-    pNewDive->AddDiveBin( timeval, depth );
+    cgc_ReadUint32( cgc_timeval );
+    cgc_ReadUint32( depth );
+    pNewDive->cgc_AddDiveBin( cgc_timeval, depth );
 
-    // Get remaining samples (exit on timeval of 0)
+    // Get remaining samples (exit on cgc_timeval of 0)
     for (;;)
     {
-        ReadUint32( timeval );
+        cgc_ReadUint32( cgc_timeval );
 
-        if ( timeval == 0 )
+        if ( cgc_timeval == 0 )
             break;
 
-        ReadUint32( depth );
-        pNewDive->AddDiveBin( timeval, depth );
+        cgc_ReadUint32( depth );
+        pNewDive->cgc_AddDiveBin( cgc_timeval, depth );
     }
 
     // Collect information about the dives
-    uint32_t binIndex;
+    cgc_uint32_t binIndex;
 
-    uint32_t maxDepth = 0;
-    uint32_t depthSum = 0;
-    for ( binIndex = 0; binIndex < pNewDive->GetBinCount(); binIndex++ )
+    cgc_uint32_t maxDepth = 0;
+    cgc_uint32_t depthSum = 0;
+    for ( binIndex = 0; binIndex < pNewDive->cgc_GetBinCount(); binIndex++ )
     {
-        if ( pNewDive->GetDiveBin( binIndex ).GetDepth() > maxDepth )
-            maxDepth = pNewDive->GetDiveBin( binIndex ).GetDepth();
+        if ( pNewDive->cgc_GetDiveBin( binIndex ).cgc_GetDepth() > maxDepth )
+            maxDepth = pNewDive->cgc_GetDiveBin( binIndex ).cgc_GetDepth();
 
-        depthSum += pNewDive->GetDiveBin( binIndex ).GetDepth();
+        depthSum += pNewDive->cgc_GetDiveBin( binIndex ).cgc_GetDepth();
     }
 
-    uint32_t depthAvg = (depthSum / pNewDive->GetBinCount());
+    cgc_uint32_t depthAvg = (depthSum / pNewDive->cgc_GetBinCount());
 
     // Get start time
-    uint32_t startTime = pNewDive->GetDiveBin( 0 ).GetTimeVal();
-    uint32_t endTime = pNewDive->GetDiveBin( pNewDive->GetBinCount()-1 ).GetTimeVal();
+    cgc_uint32_t startTime = pNewDive->cgc_GetDiveBin( 0 ).cgc_GetTimeVal();
+    cgc_uint32_t endTime = pNewDive->cgc_GetDiveBin( pNewDive->cgc_GetBinCount()-1 ).cgc_GetTimeVal();
 
-    uint32_t diveDurationInSeconds = endTime - startTime;
-    uint32_t diveDurationInMinutes = (diveDurationInSeconds / 60);
+    cgc_uint32_t diveDurationInSeconds = endTime - startTime;
+    cgc_uint32_t diveDurationInMinutes = (diveDurationInSeconds / 60);
 
-    Date oDate;
-    Time oTime;
+    cgc_Date oDate;
+    cgc_Time oTime;
 
-    oDate.FromUnixTimeval( startTime );
-    oTime.FromUnixTimeval( startTime );
+    oDate.cgc_FromUnixTimeval( startTime );
+    oTime.cgc_FromUnixTimeval( startTime );
 
     // Start collecting the rest of the dive information
-    String sDiveSite;
-    String sDate;
-    String sTime;
-    String sLocation;
-    String sMaxDepth;
-    String sAvgDepth;
-    String sDiveDuration;
-    String sO2Percentage;
-    String sPressureIn;
-    String sPressureOut;
+    cgc_String sDiveSite;
+    cgc_String sDate;
+    cgc_String sTime;
+    cgc_String sLocation;
+    cgc_String sMaxDepth;
+    cgc_String sAvgDepth;
+    cgc_String sDiveDuration;
+    cgc_String sO2Percentage;
+    cgc_String sPressureIn;
+    cgc_String sPressureOut;
 
     // Capture dive information
-    printf( "Dive Site: " );
-    ReadLine( sDiveSite );
-    sDiveSite.Trim( 25 );
+    cgc_printf( "cgc_Dive Site: " );
+    cgc_ReadLine( sDiveSite );
+    sDiveSite.cgc_Trim( 25 );
 
-    printf( "Date (@s): ", oDate.GetString().c_str() );
-    ReadLine( sDate );
-    sDate.Trim( 10 );
+    cgc_printf( "cgc_Date (@s): ", oDate.cgc_GetString().cgc_c_str() );
+    cgc_ReadLine( sDate );
+    sDate.cgc_Trim( 10 );
 
-    printf( "Time (@s): ", oTime.GetString().c_str() );
-    ReadLine( sTime );
-    sTime.Trim( 8 );
+    cgc_printf( "cgc_Time (@s): ", oTime.cgc_GetString().cgc_c_str() );
+    cgc_ReadLine( sTime );
+    sTime.cgc_Trim( 8 );
 
-    printf( "Location (area/city): " );
-    ReadLine( sLocation );
-    sLocation.Trim( 25 );
+    cgc_printf( "Location (area/city): " );
+    cgc_ReadLine( sLocation );
+    sLocation.cgc_Trim( 25 );
 
-    printf( "Max Depth in ft (@d): ", maxDepth );
-    ReadLine( sMaxDepth );
+    cgc_printf( "Max Depth in ft (@d): ", maxDepth );
+    cgc_ReadLine( sMaxDepth );
 
-    printf( "Avg Depth in ft (@d): ", depthAvg );
-    ReadLine( sAvgDepth );
+    cgc_printf( "Avg Depth in ft (@d): ", depthAvg );
+    cgc_ReadLine( sAvgDepth );
 
-    printf( "Dive Duration (mins) (@d): ", diveDurationInMinutes );
-    ReadLine( sDiveDuration );
+    cgc_printf( "cgc_Dive Duration (mins) (@d): ", diveDurationInMinutes );
+    cgc_ReadLine( sDiveDuration );
 
-    printf( "O2 Percentage: " );
-    ReadLine( sO2Percentage );
+    cgc_printf( "O2 Percentage: " );
+    cgc_ReadLine( sO2Percentage );
 
-    printf( "Pressure In (psi): " );
-    ReadLine( sPressureIn );
+    cgc_printf( "Pressure In (psi): " );
+    cgc_ReadLine( sPressureIn );
 
-    printf( "Pressure Out (psi): " );
-    ReadLine( sPressureOut );
+    cgc_printf( "Pressure Out (psi): " );
+    cgc_ReadLine( sPressureOut );
 
     // Update fields as necessary
     if ( sDate != "" )
-        oDate.SetDate( sDate );
+        oDate.cgc_SetDate( sDate );
 
     if ( sTime != "" )
-        oTime.SetTime( sTime );
+        oTime.cgc_SetTime( sTime );
 
     if ( sMaxDepth != "" )
-        maxDepth = StringToInt( sMaxDepth );
+        maxDepth = cgc_StringToInt( sMaxDepth );
 
     if ( sAvgDepth != "" )
-        depthAvg = StringToInt( sAvgDepth );
+        depthAvg = cgc_StringToInt( sAvgDepth );
 
     if ( sDiveDuration != "" )
-        diveDurationInMinutes = StringToInt( sDiveDuration );
+        diveDurationInMinutes = cgc_StringToInt( sDiveDuration );
 
     // Add data
-    pNewDive->SetDate( oDate );
-    pNewDive->SetTime( oTime );
-    pNewDive->SetDiveSite( sDiveSite );
-    pNewDive->SetLocation( sLocation );
-    pNewDive->SetMaxDepth( maxDepth );
-    pNewDive->SetAvgDepth( depthAvg );
-    pNewDive->SetDuration( diveDurationInMinutes );
-    pNewDive->SetO2Percentage( StringToInt( sO2Percentage ) );
-    pNewDive->SetStartPressure( StringToInt( sPressureIn ) );
-    pNewDive->SetEndPressure( StringToInt( sPressureOut ) );
+    pNewDive->cgc_SetDate( oDate );
+    pNewDive->cgc_SetTime( oTime );
+    pNewDive->cgc_SetDiveSite( sDiveSite );
+    pNewDive->cgc_SetLocation( sLocation );
+    pNewDive->cgc_SetMaxDepth( maxDepth );
+    pNewDive->cgc_SetAvgDepth( depthAvg );
+    pNewDive->cgc_SetDuration( diveDurationInMinutes );
+    pNewDive->cgc_SetO2Percentage( cgc_StringToInt( sO2Percentage ) );
+    pNewDive->cgc_SetStartPressure( cgc_StringToInt( sPressureIn ) );
+    pNewDive->cgc_SetEndPressure( cgc_StringToInt( sPressureOut ) );
 
-    m_diveQueue.AddLast( pNewDive );
+    m_diveQueue.cgc_AddLast( pNewDive );
 
     return (false);
 }
 
-bool CommandHandler::CmdEditDives( void )
+bool cgc_CommandHandler::cgc_CmdEditDives( void )
 {
-    if ( m_diveQueue.GetCount() == 0 )
+    if ( m_diveQueue.cgc_GetCount() == 0 )
     {
-        printf( "\n\nDive Log is empty\n" );
+        cgc_printf( "\n\nDive Log is cgc_empty\n" );
         return (false);
     }
 
-    PrintDiveList();
+    cgc_PrintDiveList();
 
-    printf( "\nEnter Dive # to edit: " );
+    cgc_printf( "\nEnter cgc_Dive # to edit: " );
 
-    String sDiveNumber;
+    cgc_String sDiveNumber;
 
-    ReadLine( sDiveNumber );
+    cgc_ReadLine( sDiveNumber );
 
-    uint32_t diveNumber = StringToInt( sDiveNumber );
+    cgc_uint32_t diveNumber = cgc_StringToInt( sDiveNumber );
 
-    if ( diveNumber == 0 || diveNumber > m_diveQueue.GetCount() )
+    if ( diveNumber == 0 || diveNumber > m_diveQueue.cgc_GetCount() )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
-    Dive *pCur;
-    uint32_t curPos = 1;
-    for ( pCur = (Dive *)m_diveQueue.GetFirst(); pCur; pCur = (Dive *)pCur->GetNext() )
+    cgc_Dive *pCur;
+    cgc_uint32_t curPos = 1;
+    for ( pCur = (cgc_Dive *)m_diveQueue.cgc_GetFirst(); pCur; pCur = (cgc_Dive *)pCur->cgc_GetNext() )
     {
         if ( diveNumber == curPos )
             break;
@@ -436,105 +436,105 @@ bool CommandHandler::CmdEditDives( void )
 
     if ( pCur == NULL )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
-    String sDiveSite;
-    String sDate;
-    String sTime;
-    String sLocation;
-    String sMaxDepth;
-    String sAvgDepth;
-    String sDiveDuration;
-    String sO2Percentage;
-    String sPressureIn;
-    String sPressureOut;
+    cgc_String sDiveSite;
+    cgc_String sDate;
+    cgc_String sTime;
+    cgc_String sLocation;
+    cgc_String sMaxDepth;
+    cgc_String sAvgDepth;
+    cgc_String sDiveDuration;
+    cgc_String sO2Percentage;
+    cgc_String sPressureIn;
+    cgc_String sPressureOut;
 
     // Capture dive information
-    printf( "Editing dive number @d\n", diveNumber );
+    cgc_printf( "Editing dive number @d\n", diveNumber );
 
-    printf( "Dive Site (@s): ", pCur->GetDiveSite().c_str() );
-    ReadLine( sDiveSite );
-    sDiveSite.Trim( 25 );
+    cgc_printf( "cgc_Dive Site (@s): ", pCur->cgc_GetDiveSite().cgc_c_str() );
+    cgc_ReadLine( sDiveSite );
+    sDiveSite.cgc_Trim( 25 );
 
-    printf( "Date (@s): ", pCur->GetDate().GetString().c_str() );
-    ReadLine( sDate );
-    sDate.Trim( 10 );
+    cgc_printf( "cgc_Date (@s): ", pCur->cgc_GetDate().cgc_GetString().cgc_c_str() );
+    cgc_ReadLine( sDate );
+    sDate.cgc_Trim( 10 );
 
-    printf( "Time (@s): ", pCur->GetTime().GetString().c_str() );
-    ReadLine( sTime );
-    sTime.Trim( 8 );
+    cgc_printf( "cgc_Time (@s): ", pCur->cgc_GetTime().cgc_GetString().cgc_c_str() );
+    cgc_ReadLine( sTime );
+    sTime.cgc_Trim( 8 );
 
-    printf( "Location (area/city) (@s): ", pCur->GetLocation().c_str() );
-    ReadLine( sLocation );
-    sLocation.Trim( 25 );
+    cgc_printf( "Location (area/city) (@s): ", pCur->cgc_GetLocation().cgc_c_str() );
+    cgc_ReadLine( sLocation );
+    sLocation.cgc_Trim( 25 );
 
-    printf( "Max Depth in ft (@d): ", pCur->GetMaxDepth() );
-    ReadLine( sMaxDepth );
+    cgc_printf( "Max Depth in ft (@d): ", pCur->cgc_GetMaxDepth() );
+    cgc_ReadLine( sMaxDepth );
 
-    printf( "Avg Depth in ft (@d): ", pCur->GetAvgDepth() );
-    ReadLine( sAvgDepth );
+    cgc_printf( "Avg Depth in ft (@d): ", pCur->cgc_GetAvgDepth() );
+    cgc_ReadLine( sAvgDepth );
 
-    printf( "Dive Duration (mins) (@d): ", pCur->GetDuration() );
-    ReadLine( sDiveDuration );
+    cgc_printf( "cgc_Dive Duration (mins) (@d): ", pCur->cgc_GetDuration() );
+    cgc_ReadLine( sDiveDuration );
 
-    printf( "O2 Percentage (@d): ", pCur->GetO2Percentage() );
-    ReadLine( sO2Percentage );
+    cgc_printf( "O2 Percentage (@d): ", pCur->cgc_GetO2Percentage() );
+    cgc_ReadLine( sO2Percentage );
 
-    printf( "Pressure In (psi) (@d): ", pCur->GetStartPressure() );
-    ReadLine( sPressureIn );
+    cgc_printf( "Pressure In (psi) (@d): ", pCur->cgc_GetStartPressure() );
+    cgc_ReadLine( sPressureIn );
 
-    printf( "Pressure Out (psi) (@d): ", pCur->GetEndPressure() );
-    ReadLine( sPressureOut );
+    cgc_printf( "Pressure Out (psi) (@d): ", pCur->cgc_GetEndPressure() );
+    cgc_ReadLine( sPressureOut );
 
-    Date oDiveDate;
-    oDiveDate.SetDate( sDate );
+    cgc_Date oDiveDate;
+    oDiveDate.cgc_SetDate( sDate );
 
-    Time oDiveTime;
-    oDiveTime.SetTime( sTime );
+    cgc_Time oDiveTime;
+    oDiveTime.cgc_SetTime( sTime );
 
-    pCur->SetDate( oDiveDate );
-    pCur->SetTime( oDiveTime );
-    pCur->SetDiveSite( sDiveSite );
-    pCur->SetLocation( sLocation );
-    pCur->SetMaxDepth( StringToInt( sMaxDepth ) );
-    pCur->SetAvgDepth( StringToInt( sAvgDepth ) );
-    pCur->SetDuration( StringToInt( sDiveDuration ) );
-    pCur->SetO2Percentage( StringToInt( sO2Percentage ) );
-    pCur->SetStartPressure( StringToInt( sPressureIn ) );
-    pCur->SetEndPressure( StringToInt( sPressureOut ) );
+    pCur->cgc_SetDate( oDiveDate );
+    pCur->cgc_SetTime( oDiveTime );
+    pCur->cgc_SetDiveSite( sDiveSite );
+    pCur->cgc_SetLocation( sLocation );
+    pCur->cgc_SetMaxDepth( cgc_StringToInt( sMaxDepth ) );
+    pCur->cgc_SetAvgDepth( cgc_StringToInt( sAvgDepth ) );
+    pCur->cgc_SetDuration( cgc_StringToInt( sDiveDuration ) );
+    pCur->cgc_SetO2Percentage( cgc_StringToInt( sO2Percentage ) );
+    pCur->cgc_SetStartPressure( cgc_StringToInt( sPressureIn ) );
+    pCur->cgc_SetEndPressure( cgc_StringToInt( sPressureOut ) );
 
     return (false);
 }
 
-bool CommandHandler::CmdPrintDiveLogs( void )
+bool cgc_CommandHandler::cgc_CmdPrintDiveLogs( void )
 {
-    if ( m_diveQueue.GetCount() == 0 )
+    if ( m_diveQueue.cgc_GetCount() == 0 )
     {
-        printf( "\n\nDive Log is empty\n" );
+        cgc_printf( "\n\nDive Log is cgc_empty\n" );
         return (false);
     }
 
-    PrintDiveList();
+    cgc_PrintDiveList();
 
-    printf( "\nEnter Dive # to display: " );
+    cgc_printf( "\nEnter cgc_Dive # to display: " );
 
-    String sDiveNumber;
+    cgc_String sDiveNumber;
 
-    ReadLine( sDiveNumber );
+    cgc_ReadLine( sDiveNumber );
 
-    uint32_t diveNumber = StringToInt( sDiveNumber );
+    cgc_uint32_t diveNumber = cgc_StringToInt( sDiveNumber );
 
-    if ( diveNumber == 0 || diveNumber > m_diveQueue.GetCount() )
+    if ( diveNumber == 0 || diveNumber > m_diveQueue.cgc_GetCount() )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
-    Dive *pCur;
-    uint32_t curPos = 1;
-    for ( pCur = (Dive *)m_diveQueue.GetFirst(); pCur; pCur = (Dive *)pCur->GetNext() )
+    cgc_Dive *pCur;
+    cgc_uint32_t curPos = 1;
+    for ( pCur = (cgc_Dive *)m_diveQueue.cgc_GetFirst(); pCur; pCur = (cgc_Dive *)pCur->cgc_GetNext() )
     {
         if ( diveNumber == curPos )
             break;
@@ -544,43 +544,43 @@ bool CommandHandler::CmdPrintDiveLogs( void )
 
     if ( pCur == NULL )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
-    printf( "\n" );
-    printf( "          Date: @s\n", pCur->GetDate().GetString().c_str() );
-    printf( "          Time: @s\n", pCur->GetTime().GetString().c_str() );
-    printf( "     Dive Site: @s\n", pCur->GetDiveSite().c_str() );
-    printf( "      Location: @s\n", pCur->GetLocation().c_str() );
-    printf( "     Max Depth: @d\n", pCur->GetMaxDepth() );
-    printf( "     Avg Depth: @d\n", pCur->GetAvgDepth() );
-    printf( "      Duration: @d\n", pCur->GetDuration() );
-    printf( "    O2 Percent: @d\n", pCur->GetO2Percentage() );
-    printf( "Start Pressure: @d\n", pCur->GetStartPressure() );
-    printf( "  End Pressure: @d\n", pCur->GetEndPressure() );
-    printf( "     Bin Count: @d\n", pCur->GetBinCount() );
-    printf( "\n" );
+    cgc_printf( "\n" );
+    cgc_printf( "          cgc_Date: @s\n", pCur->cgc_GetDate().cgc_GetString().cgc_c_str() );
+    cgc_printf( "          cgc_Time: @s\n", pCur->cgc_GetTime().cgc_GetString().cgc_c_str() );
+    cgc_printf( "     cgc_Dive Site: @s\n", pCur->cgc_GetDiveSite().cgc_c_str() );
+    cgc_printf( "      Location: @s\n", pCur->cgc_GetLocation().cgc_c_str() );
+    cgc_printf( "     Max Depth: @d\n", pCur->cgc_GetMaxDepth() );
+    cgc_printf( "     Avg Depth: @d\n", pCur->cgc_GetAvgDepth() );
+    cgc_printf( "      Duration: @d\n", pCur->cgc_GetDuration() );
+    cgc_printf( "    O2 Percent: @d\n", pCur->cgc_GetO2Percentage() );
+    cgc_printf( "Start Pressure: @d\n", pCur->cgc_GetStartPressure() );
+    cgc_printf( "  End Pressure: @d\n", pCur->cgc_GetEndPressure() );
+    cgc_printf( "     Bin Count: @d\n", pCur->cgc_GetBinCount() );
+    cgc_printf( "\n" );
 
     return (false);
 }
 
-bool CommandHandler::CmdRemoveDives( void )
+bool cgc_CommandHandler::cgc_CmdRemoveDives( void )
 {
-    if ( m_diveQueue.GetCount() == 0 )
+    if ( m_diveQueue.cgc_GetCount() == 0 )
     {
-        printf( "\n\nDive Log is empty\n" );
+        cgc_printf( "\n\nDive Log is cgc_empty\n" );
         return (false);
     }
 
-    PrintDiveList();
+    cgc_PrintDiveList();
 
-    printf( "\nEnter Dive # to delete or blank to abort: " );
+    cgc_printf( "\nEnter cgc_Dive # to delete or blank to abort: " );
 
-    String sDiveNumber;
+    cgc_String sDiveNumber;
 
     // Read input
-    ReadLine( sDiveNumber );
+    cgc_ReadLine( sDiveNumber );
 
     // Check for abort
     if ( sDiveNumber == "" )
@@ -589,17 +589,17 @@ bool CommandHandler::CmdRemoveDives( void )
         return (false);
     }
 
-    uint32_t diveNumber = StringToInt( sDiveNumber );
+    cgc_uint32_t diveNumber = cgc_StringToInt( sDiveNumber );
 
-    if ( diveNumber == 0 || diveNumber > m_diveQueue.GetCount() )
+    if ( diveNumber == 0 || diveNumber > m_diveQueue.cgc_GetCount() )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
-    Dive *pCur;
-    uint32_t curPos = 1;
-    for ( pCur = (Dive *)m_diveQueue.GetFirst(); pCur; pCur = (Dive *)pCur->GetNext() )
+    cgc_Dive *pCur;
+    cgc_uint32_t curPos = 1;
+    for ( pCur = (cgc_Dive *)m_diveQueue.cgc_GetFirst(); pCur; pCur = (cgc_Dive *)pCur->cgc_GetNext() )
     {
         if ( diveNumber == curPos )
             break;
@@ -609,12 +609,12 @@ bool CommandHandler::CmdRemoveDives( void )
 
     if ( pCur == NULL )
     {
-        printf( "Invalid dive number entered\n" );
+        cgc_printf( "Invalid dive number entered\n" );
         return (false);
     }
 
     // Remove the item from the dive queue
-    m_diveQueue.RemoveItem( pCur );
+    m_diveQueue.cgc_RemoveItem( pCur );
 
     // Delete it
     delete pCur;
@@ -622,73 +622,73 @@ bool CommandHandler::CmdRemoveDives( void )
     return (false);
 }
 
-bool CommandHandler::CmdDiverStatistics( void )
+bool cgc_CommandHandler::cgc_CmdDiverStatistics( void )
 {
-    if ( m_diveQueue.GetCount() == 0 )
+    if ( m_diveQueue.cgc_GetCount() == 0 )
     {
-        printf( "\n\nNo dives are logged\n" );
+        cgc_printf( "\n\nNo dives are logged\n" );
         return (false);
     }
 
-    uint32_t depthTotal = 0;
-    uint32_t lengthTotal = 0;
+    cgc_uint32_t depthTotal = 0;
+    cgc_uint32_t lengthTotal = 0;
 
-    Dive *pCur;
+    cgc_Dive *pCur;
 
-    for ( pCur = (Dive *)m_diveQueue.GetFirst(); pCur; pCur = (Dive *)pCur->GetNext() )
+    for ( pCur = (cgc_Dive *)m_diveQueue.cgc_GetFirst(); pCur; pCur = (cgc_Dive *)pCur->cgc_GetNext() )
     {
-        depthTotal += pCur->GetMaxDepth();
-        lengthTotal += pCur->GetDuration();
+        depthTotal += pCur->cgc_GetMaxDepth();
+        lengthTotal += pCur->cgc_GetDuration();
     }
 
-    printf( "\n\n" );
-    printf( "Dives logged: @d\n", m_diveQueue.GetCount() );
-    printf( "Average Max Depth: @d\n", (depthTotal / m_diveQueue.GetCount()) );
-    printf( "Average Dive Length: @d\n", (lengthTotal / m_diveQueue.GetCount()) );
+    cgc_printf( "\n\n" );
+    cgc_printf( "Dives logged: @d\n", m_diveQueue.cgc_GetCount() );
+    cgc_printf( "Average Max Depth: @d\n", (depthTotal / m_diveQueue.cgc_GetCount()) );
+    cgc_printf( "Average cgc_Dive Length: @d\n", (lengthTotal / m_diveQueue.cgc_GetCount()) );
 
     return (false);
 }
 
-bool CommandHandler::CmdExitApplication( void )
+bool cgc_CommandHandler::cgc_CmdExitApplication( void )
 {
     // Return true to exit application
     return (true);
 }
 
-void CommandHandler::PrintDiverInfo( void )
+void cgc_CommandHandler::cgc_PrintDiverInfo( void )
 {
-    printf( "\n" );
-    printf( "     Name: @s @s\n", m_oDiver.GetFirstName().c_str(), m_oDiver.GetLastName().c_str() );
-    printf( "  Address: @s\n", m_oDiver.GetStreet().c_str() );
-    printf( "     City: @s\n", m_oDiver.GetCity().c_str() );
-    printf( "    State: @s\n", m_oDiver.GetState().c_str() );
-    printf( " Zip Code: @s\n", m_oDiver.GetZipCode().c_str() );
-    printf( "    Phone: @s\n", m_oDiver.GetPhoneNumber().c_str() );
-    printf( " PADI Num: @s\n", m_oDiver.GetPadiNumber().c_str() );
-    printf( "Cert Date: @s\n", m_oDiver.GetPadiDate().c_str() );
-    printf( "\n" );
+    cgc_printf( "\n" );
+    cgc_printf( "     Name: @s @s\n", m_oDiver.cgc_GetFirstName().cgc_c_str(), m_oDiver.cgc_GetLastName().cgc_c_str() );
+    cgc_printf( "  Address: @s\n", m_oDiver.cgc_GetStreet().cgc_c_str() );
+    cgc_printf( "     City: @s\n", m_oDiver.cgc_GetCity().cgc_c_str() );
+    cgc_printf( "    State: @s\n", m_oDiver.cgc_GetState().cgc_c_str() );
+    cgc_printf( " Zip Code: @s\n", m_oDiver.cgc_GetZipCode().cgc_c_str() );
+    cgc_printf( "    Phone: @s\n", m_oDiver.cgc_GetPhoneNumber().cgc_c_str() );
+    cgc_printf( " PADI Num: @s\n", m_oDiver.cgc_GetPadiNumber().cgc_c_str() );
+    cgc_printf( "Cert cgc_Date: @s\n", m_oDiver.cgc_GetPadiDate().cgc_c_str() );
+    cgc_printf( "\n" );
 }
 
-void CommandHandler::PrintCommandTable( tCommandFunction *pCommandTable )
+void cgc_CommandHandler::cgc_PrintCommandTable( cgc_tCommandFunction *pCommandTable )
 {
-    printf( "\n" );
-    for ( uint32_t i = 0; pCommandTable[i].pCmdFunc != NULL; i++ )
-        printf( "@s - @s\n", pCommandTable[i].szCommand, pCommandTable[i].szDescription );
+    cgc_printf( "\n" );
+    for ( cgc_uint32_t i = 0; pCommandTable[i].pCmdFunc != NULL; i++ )
+        cgc_printf( "@s - @s\n", pCommandTable[i].szCommand, pCommandTable[i].szDescription );
 
-    printf( ":" );
+    cgc_printf( ":" );
 }
 
-void CommandHandler::ParserLoop( void )
+void cgc_CommandHandler::cgc_ParserLoop( void )
 {
-    tCommandFunction oCmdTable[] = {
-        { "C", "Change Diver Info", &CommandHandler::CmdChangeDiverInfo },
-        { "L", "Log a New Dive", &CommandHandler::CmdLogNewDive },
-        { "D", "Download Dive Data", &CommandHandler::CmdDownloadDiveData },
-        { "E", "Edit Dives", &CommandHandler::CmdEditDives },
-        { "P", "Print Dive Logs", &CommandHandler::CmdPrintDiveLogs },
-        { "R", "Remove Dives", &CommandHandler::CmdRemoveDives },
-        { "S", "Diver Statistics", &CommandHandler::CmdDiverStatistics },
-        { "X", "Exit Application", &CommandHandler::CmdExitApplication },
+    cgc_tCommandFunction oCmdTable[] = {
+        { "C", "Change Diver Info", &cgc_CommandHandler::cgc_CmdChangeDiverInfo },
+        { "L", "Log a New cgc_Dive", &cgc_CommandHandler::cgc_CmdLogNewDive },
+        { "D", "Download cgc_Dive Data", &cgc_CommandHandler::cgc_CmdDownloadDiveData },
+        { "E", "Edit Dives", &cgc_CommandHandler::cgc_CmdEditDives },
+        { "P", "Print cgc_Dive Logs", &cgc_CommandHandler::cgc_CmdPrintDiveLogs },
+        { "R", "Remove Dives", &cgc_CommandHandler::cgc_CmdRemoveDives },
+        { "S", "Diver Statistics", &cgc_CommandHandler::cgc_CmdDiverStatistics },
+        { "X", "Exit Application", &cgc_CommandHandler::cgc_CmdExitApplication },
         { "", "", NULL }
     };
 
@@ -696,16 +696,16 @@ void CommandHandler::ParserLoop( void )
     while ( !bDone )
     {
         // Print table
-        PrintCommandTable( oCmdTable );
+        cgc_PrintCommandTable( oCmdTable );
 
         // Read a line
-        String inputLine;
-        ReadLine( inputLine );
+        cgc_String inputLine;
+        cgc_ReadLine( inputLine );
 
         // Parse command
-        for ( uint32_t i = 0; oCmdTable[i].pCmdFunc != NULL; i++ )
+        for ( cgc_uint32_t i = 0; oCmdTable[i].pCmdFunc != NULL; i++ )
         {
-            if ( inputLine.lower() == String( oCmdTable[i].szCommand ).lower() )
+            if ( inputLine.cgc_lower() == cgc_String( oCmdTable[i].szCommand ).cgc_lower() )
             {
                 if ( (this->*(oCmdTable[i].pCmdFunc))() )
                     bDone = true;
@@ -716,17 +716,17 @@ void CommandHandler::ParserLoop( void )
     }
 }
 
-void CommandHandler::PrintDiveList( void )
+void cgc_CommandHandler::cgc_PrintDiveList( void )
 {
-    Dive *pCur;
-    printf( "\n\n" );
-    printf( "Dive# Date       Time     Dive Site                 Location                 \n" );
+    cgc_Dive *pCur;
+    cgc_printf( "\n\n" );
+    cgc_printf( "cgc_Dive# cgc_Date       cgc_Time     cgc_Dive Site                 Location                 \n" );
 
-    uint32_t curPos = 1;
-    for ( pCur = (Dive *)m_diveQueue.GetFirst(); pCur; pCur = (Dive *)pCur->GetNext() )
+    cgc_uint32_t curPos = 1;
+    for ( pCur = (cgc_Dive *)m_diveQueue.cgc_GetFirst(); pCur; pCur = (cgc_Dive *)pCur->cgc_GetNext() )
     {
-        printf( "@4d: @-10s @-8s @-25s @-25s\n", curPos, pCur->GetDate().GetString().c_str(),
-                pCur->GetTime().GetString().c_str(), pCur->GetDiveSite().c_str(), pCur->GetLocation().c_str() );
+        cgc_printf( "@4d: @-10s @-8s @-25s @-25s\n", curPos, pCur->cgc_GetDate().cgc_GetString().cgc_c_str(),
+                pCur->cgc_GetTime().cgc_GetString().cgc_c_str(), pCur->cgc_GetDiveSite().cgc_c_str(), pCur->cgc_GetLocation().cgc_c_str() );
         curPos++;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,44 +30,44 @@ extern "C" {
 #define BREAD_CALORIES 180
 #define BREAD_CARBS 26
 
-PizzaBowl::PizzaBowl(bool _side_of_bread)
+cgc_PizzaBowl::cgc_PizzaBowl(bool _side_of_bread)
 {
     side_of_bread = _side_of_bread;
 }
 
-PizzaBowl::~PizzaBowl()
+cgc_PizzaBowl::~cgc_PizzaBowl()
 {
 }
 
-void PizzaBowl::add_side_of_bread()
+void cgc_PizzaBowl::cgc_add_side_of_bread()
 {
     side_of_bread = true;
 }
 
-void PizzaBowl::remove_side_of_bread()
+void cgc_PizzaBowl::cgc_remove_side_of_bread()
 {
     side_of_bread = false;
 }
 
-int PizzaBowl::get_calories()
+int cgc_PizzaBowl::cgc_get_calories()
 {
-    size_t bread_calories = side_of_bread ? BREAD_CALORIES : 0;
-    return Pizza::get_calories() + bread_calories;
+    cgc_size_t bread_calories = side_of_bread ? BREAD_CALORIES : 0;
+    return cgc_Pizza::cgc_get_calories() + bread_calories;
 }
 
 
-int PizzaBowl::get_carbs()
+int cgc_PizzaBowl::cgc_get_carbs()
 {
-    size_t bread_carbs = side_of_bread ? BREAD_CARBS : 0;
-    return Pizza::get_carbs() + bread_carbs;
+    cgc_size_t bread_carbs = side_of_bread ? BREAD_CARBS : 0;
+    return cgc_Pizza::cgc_get_carbs() + bread_carbs;
 }
 
-int PizzaBowl::get_prep_time()
+int cgc_PizzaBowl::cgc_get_prep_time()
 {
-    return Pizza::get_prep_time() + BOWL_PREP_TIME;
+    return cgc_Pizza::cgc_get_prep_time() + BOWL_PREP_TIME;
 }
 
-void PizzaBowl::print_pizza()
+void cgc_PizzaBowl::cgc_print_pizza()
 {
     const char *bread_side = "WHOOPS";
     if (side_of_bread)
@@ -75,6 +75,6 @@ void PizzaBowl::print_pizza()
     else
         bread_side = "Nah";
 
-    printf("The Famous Pizza Bowl. Bread on the side? - %s\n", bread_side);
-    Pizza::print_pizza();
+    printf("The Famous cgc_Pizza Bowl. Bread on the side? - %s\n", bread_side);
+    cgc_Pizza::cgc_print_pizza();
 }

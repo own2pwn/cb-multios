@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,17 +32,17 @@ extern "C"
 
 #include "comms.h"
 
-uint32_t CommReadBytes( uint8_t *pDest, uint32_t readLen )
+cgc_uint32_t cgc_CommReadBytes( cgc_uint8_t *pDest, cgc_uint32_t readLen )
 {
 	if ( !pDest )
 		return (0);
 
-	uint32_t readRemaining = readLen;
-	uint32_t destPos = 0;
+	cgc_uint32_t readRemaining = readLen;
+	cgc_uint32_t destPos = 0;
 
 	while ( readRemaining > 0 )
 	{
-		size_t readBytes;
+		cgc_size_t readBytes;
 
 		if ( receive( STDIN, pDest+destPos, readRemaining, &readBytes ) != 0 )
 			_terminate( -1 );	// Read error
@@ -58,17 +58,17 @@ uint32_t CommReadBytes( uint8_t *pDest, uint32_t readLen )
 	return (destPos);	
 }
 
-uint32_t CommSendBytes( uint8_t *pData, uint32_t sendLen )
+cgc_uint32_t cgc_CommSendBytes( cgc_uint8_t *pData, cgc_uint32_t sendLen )
 {
 	if ( !pData )
 		return (0);
 
-	uint32_t sendRemaining = sendLen;
-	uint32_t fromPos = 0;
+	cgc_uint32_t sendRemaining = sendLen;
+	cgc_uint32_t fromPos = 0;
 
 	while ( sendRemaining > 0 )
 	{
-		size_t sentBytes;
+		cgc_size_t sentBytes;
 
 		if ( transmit( STDOUT, pData+fromPos, sendRemaining, &sentBytes ) != 0 )
 			_terminate( -1 );	// Send error

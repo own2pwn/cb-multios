@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -50,14 +50,14 @@ struct sentence_struct {
  * @param ss Pointer to sentence struct.
  * @return SUCCESS if sucessful parse, else ERR_INVALID_SENTENCE on error.
  */
-int parse_sentence(const char *buf, struct sentence_struct *ss);
+int cgc_parse_sentence(const char *buf, struct sentence_struct *ss);
 
 /**
  * Set the sentence_struct to all 0's.
  *
  * @param sentence_struct Pointer to sentence struct.
  */
-void reset_sentence_struct(struct sentence_struct *ss);
+void cgc_reset_sentence_struct(struct sentence_struct *ss);
 
 /**
  * Find the start of the sentence in the string str.
@@ -66,7 +66,7 @@ void reset_sentence_struct(struct sentence_struct *ss);
  * @param start Store a pointer to the start of the sentence.
  * @return SUCCESS if start is found, else ERR_INVALID_SENTENCE
  */
-int get_sentence_start(const char *str, const char **start);
+int cgc_get_sentence_start(const char *str, const char **start);
 
 /**
  * Calculate the checksum and compare with the value provided at the 
@@ -76,7 +76,7 @@ int get_sentence_start(const char *str, const char **start);
  * @return TRUE if checksum is correct, FALSE if incorrect,
  *	or ERR_INVALID_SENTENCE on error
  */
-int is_checksum_correct(const char *str);
+int cgc_is_checksum_correct(const char *str);
 
 /**
  * Convert a field in the sentence to a uint.
@@ -86,7 +86,7 @@ int is_checksum_correct(const char *str);
  * @return SUCCESS if conversion succeeded, else -1 if it failed. int_val
  *	content is undefined on failure.
  */
-int field_to_uint(const char *str, unsigned int *int_val);
+int cgc_field_to_uint(const char *str, unsigned int *int_val);
 
 /**
  * Get a pointer to the start of the next field.
@@ -94,7 +94,7 @@ int field_to_uint(const char *str, unsigned int *int_val);
  * @param str Pointer to anywhere within a sentence.
  * @return address of first char of next field, NULL if at end of str.
  */
-const char * get_next_field(const char *str);
+const char * cgc_get_next_field(const char *str);
 
 /**
  * Copy count bytes of field from the sentence into a buffer.
@@ -104,7 +104,7 @@ const char * get_next_field(const char *str);
  * @ param n Number of bytes to copy.
  * @return VA of last char written to buf (usually '\0')
  */
-char *fieldncpy(const char *str, char *buf, int n);
+char *cgc_fieldncpy(const char *str, char *buf, int n);
 
 
 #endif

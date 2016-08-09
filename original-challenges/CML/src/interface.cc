@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -40,329 +40,329 @@ enum class Op
     VERSION_CHECK = 8
 };
 
-static uint16_t swap16(uint16_t x)
+static cgc_uint16_t cgc_swap16(cgc_uint16_t x)
 {
     return (x >> 8) | (x << 8);
 }
 
 #ifdef DEBUG
-static void print_node(Node *root, int depth)
+static void print_node(cgc_Node *root, int depth)
 {
     char tmp[32];
-    Attribute **pattr = nullptr;
-    memset(tmp, '\t', depth);
+    cgc_Attribute **pattr = nullptr;
+    cgc_memset(tmp, '\t', depth);
     tmp[depth] = 0;
-    fprintf(stderr, "%s+ %08X [%s] %s\n", tmp, root, root->ns() == nullptr ? "default" : root->ns()->cstr(), root->tag()->cstr());
-    if (root->cls() == NodeClass::TEXTNODE)
-        fprintf(stderr, "%s  \"%s\"\n", tmp, reinterpret_cast<TextNode*>(root)->text());
-    while ((pattr = root->attr().next(pattr)) != nullptr)
+    cgc_fprintf(stderr, "%s+ %08X [%s] %s\n", tmp, root, root->cgc_ns() == nullptr ? "default" : root->cgc_ns()->cgc_cstr(), root->cgc_tag()->cgc_cstr());
+    if (root->cgc_cls() == NodeClass::TEXTNODE)
+        cgc_fprintf(stderr, "%s  \"%s\"\n", tmp, reinterpret_cast<TextNode*>(root)->text());
+    while ((pattr = root->cgc_attr().cgc_next(pattr)) != nullptr)
     {
-        fprintf(stderr, "%s  %s = \"%s\"\n", tmp, (*pattr)->name()->cstr(), (*pattr)->get()->cstr());
+        cgc_fprintf(stderr, "%s  %s = \"%s\"\n", tmp, (*pattr)->cgc_name()->cgc_cstr(), (*pattr)->cgc_get()->cgc_cstr());
     }
-    for (Node *child = root->first(); child != nullptr; child = child->next())
+    for (cgc_Node *child = root->cgc_first(); child != nullptr; child = child->cgc_next())
     {
         print_node(child, depth + 1);
     }
 }
 #endif
 
-Interface::Interface(FILE *input, FILE *output)
+cgc_Interface::cgc_Interface(cgc_FILE *input, cgc_FILE *output)
     : d_in(input), d_out(output), d_next(0)
 {
-    fbuffered(d_out, 1);
+    cgc_fbuffered(d_out, 1);
 }
 
-void Interface::send_descriptor(unsigned int desc)
+void cgc_Interface::cgc_send_descriptor(unsigned int desc)
 {
-    fwrite(&desc, sizeof(desc), d_out);
+    cgc_fwrite(&desc, sizeof(desc), d_out);
 }
 
-void Interface::send_error(Error error)
+void cgc_Interface::cgc_send_error(Error cgc_error)
 {
-    unsigned char code = static_cast<unsigned char>(error);
-    fwrite(&code, sizeof(code), d_out);
+    unsigned char code = static_cast<unsigned char>(cgc_error);
+    cgc_fwrite(&code, sizeof(code), d_out);
 }
 
-void Interface::send_string(const char *str)
+void cgc_Interface::cgc_send_string(const char *str)
 {
-    uint16_t size = strlen(str);
-    uint16_t size_s = swap16(size);
-    fwrite(&size_s, sizeof(size_s), d_out);
-    fwrite(str, size, d_out);
+    cgc_uint16_t cgc_size = cgc_strlen(str);
+    cgc_uint16_t size_s = cgc_swap16(cgc_size);
+    cgc_fwrite(&size_s, sizeof(size_s), d_out);
+    cgc_fwrite(str, cgc_size, d_out);
 }
 
-Node *Interface::get_node()
+cgc_Node *cgc_Interface::cgc_get_node()
 {
     unsigned int desc;
-    if (fread(&desc, sizeof(desc), d_in) != sizeof(desc))
+    if (cgc_fread(&desc, sizeof(desc), d_in) != sizeof(desc))
         return nullptr;
-    Node **result = d_descriptors.lookup(desc);
+    cgc_Node **result = d_descriptors.cgc_lookup(desc);
     return result == nullptr ? nullptr : *result;
 }
 
-unsigned char *Interface::get_string_binary(uint16_t *psize)
+unsigned char *cgc_Interface::cgc_get_string_binary(cgc_uint16_t *psize)
 {
-    uint16_t size;
+    cgc_uint16_t cgc_size;
     unsigned char *data;
-    if (fread(&size, sizeof(size), d_in) != sizeof(size))
+    if (cgc_fread(&cgc_size, sizeof(cgc_size), d_in) != sizeof(cgc_size))
         return nullptr;
-    size = swap16(size);
-    data = static_cast<unsigned char *>(safe_malloc(size));
-    if (fread(data, size, d_in) != size)
+    cgc_size = cgc_swap16(cgc_size);
+    data = static_cast<unsigned char *>(cgc_safe_malloc(cgc_size));
+    if (cgc_fread(data, cgc_size, d_in) != cgc_size)
     {
-        free(data);
+        cgc_free(data);
         return nullptr;
     }
-    *psize = size;
+    *psize = cgc_size;
     return data;
 }
 
-char *Interface::get_string()
+char *cgc_Interface::cgc_get_string()
 {
-    uint16_t size;
+    cgc_uint16_t cgc_size;
     char *data;
-    if (fread(&size, sizeof(size), d_in) != sizeof(size))
+    if (cgc_fread(&cgc_size, sizeof(cgc_size), d_in) != sizeof(cgc_size))
         return nullptr;
-    size = swap16(size);
-    data = static_cast<char *>(safe_malloc(size + 1));
-    if (fread(data, size, d_in) != size)
+    cgc_size = cgc_swap16(cgc_size);
+    data = static_cast<char *>(cgc_safe_malloc(cgc_size + 1));
+    if (cgc_fread(data, cgc_size, d_in) != cgc_size)
     {
-        free(data);
+        cgc_free(data);
         return nullptr;
     }
-    data[size] = 0;
+    data[cgc_size] = 0;
     return data;
 }
 
-unsigned int Interface::new_descriptor(Node *node)
+unsigned int cgc_Interface::cgc_new_descriptor(cgc_Node *node)
 {
     unsigned int desc = ++d_next;
-    d_descriptors.insert(desc, node);
+    d_descriptors.cgc_insert(desc, node);
     return desc;
 }
 
-bool Interface::process()
+bool cgc_Interface::cgc_process()
 {
     unsigned char op;
-    if (fread(&op, sizeof(op), d_in) != sizeof(op))
+    if (cgc_fread(&op, sizeof(op), d_in) != sizeof(op))
         return false;
 #define DO_OP(x, y) case Op::x: if (! y ()) return false; break;
     switch (static_cast<Op>(op))
     {
-    DO_OP(INIT, op_init_parser)
-    DO_OP(LOAD_DATA, op_load_data)
-    DO_OP(GET_ATTR, op_get_attr)
-    DO_OP(SET_ATTR, op_set_attr)
-    DO_OP(LIST_ATTR, op_list_attr)
-    DO_OP(GET_TAG, op_get_tag)
-    DO_OP(GET_NS, op_get_ns)
-    DO_OP(QUERY, op_query)
-    DO_OP(VERSION_CHECK, op_version_check)
+    DO_OP(INIT, cgc_op_init_parser)
+    DO_OP(LOAD_DATA, cgc_op_load_data)
+    DO_OP(GET_ATTR, cgc_op_get_attr)
+    DO_OP(SET_ATTR, cgc_op_set_attr)
+    DO_OP(LIST_ATTR, cgc_op_list_attr)
+    DO_OP(GET_TAG, cgc_op_get_tag)
+    DO_OP(GET_NS, cgc_op_get_ns)
+    DO_OP(QUERY, cgc_op_query)
+    DO_OP(VERSION_CHECK, cgc_op_version_check)
     default:
-        send_error(Error::INVALID_OP);
+        cgc_send_error(Error::INVALID_OP);
         break;
     }
 #undef DO_OP
-    fflush(d_out);
+    cgc_fflush(d_out);
     return true;
 }
 
-bool Interface::op_load_data()
+bool cgc_Interface::cgc_op_load_data()
 {
     char *data;
-    Node *node;
-    data = get_string();
+    cgc_Node *node;
+    data = cgc_get_string();
     if (data == nullptr)
     {
         return false;
     }
     if (d_parser == nullptr)
     {
-        send_error(Error::NOT_READY);
+        cgc_send_error(Error::NOT_READY);
         goto done;
     }
-    node = d_parser->parse(data);
+    node = d_parser->cgc_parse(data);
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DATA);
+        cgc_send_error(Error::INVALID_DATA);
         goto done;
     }
-    send_error(Error::SUCCESS);
-    send_descriptor(new_descriptor(node));
+    cgc_send_error(Error::SUCCESS);
+    cgc_send_descriptor(cgc_new_descriptor(node));
 done:
-    free(data);
+    cgc_free(data);
     return true;
 }
 
-bool Interface::op_get_attr()
+bool cgc_Interface::cgc_op_get_attr()
 {
-    Node *node = get_node();
-    char *name = get_string();
+    cgc_Node *node = cgc_get_node();
+    char *cgc_name = cgc_get_string();
     if (node == nullptr)
     {
-        free(name);
-        send_error(Error::INVALID_DESC);
+        cgc_free(cgc_name);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    if (name == nullptr)
+    if (cgc_name == nullptr)
         return false;
-    Attribute *attr = node->get_attr(name);
-    free(name);
-    if (attr == nullptr)
+    cgc_Attribute *cgc_attr = node->cgc_get_attr(cgc_name);
+    cgc_free(cgc_name);
+    if (cgc_attr == nullptr)
     {
-        send_error(Error::NOT_FOUND);
+        cgc_send_error(Error::NOT_FOUND);
         return true;
     }
-    send_error(Error::SUCCESS);
-    send_string(attr->get()->cstr());
+    cgc_send_error(Error::SUCCESS);
+    cgc_send_string(cgc_attr->cgc_get()->cgc_cstr());
     return true;
 }
 
-bool Interface::op_set_attr()
+bool cgc_Interface::cgc_op_set_attr()
 {
-    Node *node = get_node();
-    char *name = get_string();
-    char *value = get_string();
+    cgc_Node *node = cgc_get_node();
+    char *cgc_name = cgc_get_string();
+    char *value = cgc_get_string();
     if (node == nullptr)
     {
-        free(name);
-        free(value);
-        send_error(Error::INVALID_DESC);
+        cgc_free(cgc_name);
+        cgc_free(value);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    if (name == nullptr || value == nullptr)
+    if (cgc_name == nullptr || value == nullptr)
         return false;
-    node->set_attr(name, String::create(value));
-    free(name);
-    free(value);
-    send_error(Error::SUCCESS);
+    node->cgc_set_attr(cgc_name, cgc_String::cgc_create(value));
+    cgc_free(cgc_name);
+    cgc_free(value);
+    cgc_send_error(Error::SUCCESS);
     return true;
 }
 
-bool Interface::op_init_parser()
+bool cgc_Interface::cgc_op_init_parser()
 {
     unsigned char chr[6];
-    if (fread(chr, sizeof(chr), d_in) != sizeof(chr))
+    if (cgc_fread(chr, sizeof(chr), d_in) != sizeof(chr))
         return false;
     // check for duplicates
     for (unsigned int i = 0; i < sizeof(chr) - 1; i++)
     {
-        if (memchr(&chr[i + 1], chr[i], sizeof(chr) - i - 1) != nullptr)
+        if (cgc_memchr(&chr[i + 1], chr[i], sizeof(chr) - i - 1) != nullptr)
         {
-            send_error(Error::INVALID_DATA);
+            cgc_send_error(Error::INVALID_DATA);
             return true;
         }
     }
-    d_parser = new Parser(chr[0], chr[1], chr[2], chr[3], chr[4], chr[5]);
-    send_error(Error::SUCCESS);
+    d_parser = new cgc_Parser(chr[0], chr[1], chr[2], chr[3], chr[4], chr[5]);
+    cgc_send_error(Error::SUCCESS);
     return true;
 }
 
-bool Interface::op_list_attr()
+bool cgc_Interface::cgc_op_list_attr()
 {
-    Node *node = get_node();
+    cgc_Node *node = cgc_get_node();
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DESC);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    uint16_t size = node->attr().length();
-    uint16_t size_s = swap16(size);
-    send_error(Error::SUCCESS);
-    fwrite(&size_s, sizeof(size_s), d_out);
-    Attribute **pattr = nullptr;
-    while ((pattr = node->attr().next(pattr)) != nullptr)
+    cgc_uint16_t cgc_size = node->cgc_attr().cgc_length();
+    cgc_uint16_t size_s = cgc_swap16(cgc_size);
+    cgc_send_error(Error::SUCCESS);
+    cgc_fwrite(&size_s, sizeof(size_s), d_out);
+    cgc_Attribute **pattr = nullptr;
+    while ((pattr = node->cgc_attr().cgc_next(pattr)) != nullptr)
     {
-        send_string((*pattr)->name()->cstr());
+        cgc_send_string((*pattr)->cgc_name()->cgc_cstr());
     }
     return true;
 }
 
-bool Interface::op_get_tag()
+bool cgc_Interface::cgc_op_get_tag()
 {
-    Node *node = get_node();
+    cgc_Node *node = cgc_get_node();
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DESC);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    send_error(Error::SUCCESS);
-    send_string(node->tag()->cstr());
+    cgc_send_error(Error::SUCCESS);
+    cgc_send_string(node->cgc_tag()->cgc_cstr());
     return true;
 }
 
-bool Interface::op_get_ns()
+bool cgc_Interface::cgc_op_get_ns()
 {
-    Node *node = get_node();
+    cgc_Node *node = cgc_get_node();
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DESC);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    if (node->ns() == nullptr)
+    if (node->cgc_ns() == nullptr)
     {
-        send_error(Error::NOT_FOUND);
+        cgc_send_error(Error::NOT_FOUND);
     }
     else
     {
-        send_error(Error::SUCCESS);
-        send_string(node->ns()->cstr());
+        cgc_send_error(Error::SUCCESS);
+        cgc_send_string(node->cgc_ns()->cgc_cstr());
     }
     return true;
 }
 
-bool Interface::op_query()
+bool cgc_Interface::cgc_op_query()
 {
-    Node *node = get_node();
+    cgc_Node *node = cgc_get_node();
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DESC);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    uint16_t size;
-    unsigned char *data = get_string_binary(&size);
+    cgc_uint16_t cgc_size;
+    unsigned char *data = cgc_get_string_binary(&cgc_size);
     if (data == nullptr)
     {
         return false;
     }
-    Query qs(data, size);
-    if (qs.error() != Query::Error::SUCCESS)
+    cgc_Query qs(data, cgc_size);
+    if (qs.cgc_error() != cgc_Query::Error::SUCCESS)
     {
-        send_error(Error::INVALID_DATA);
+        cgc_send_error(Error::INVALID_DATA);
         return true;
     }
-    Node *result = qs.match(node);
-    if (result == nullptr || qs.error() != Query::Error::SUCCESS)
+    cgc_Node *result = qs.cgc_match(node);
+    if (result == nullptr || qs.cgc_error() != cgc_Query::Error::SUCCESS)
     {
-        send_error(Error::NOT_FOUND);
+        cgc_send_error(Error::NOT_FOUND);
         return true;
     }
-    send_error(Error::SUCCESS);
-    send_descriptor(new_descriptor(result));
+    cgc_send_error(Error::SUCCESS);
+    cgc_send_descriptor(cgc_new_descriptor(result));
     return true;
 }
 
-bool Interface::op_version_check()
+bool cgc_Interface::cgc_op_version_check()
 {
-    Node *node = get_node();
+    cgc_Node *node = cgc_get_node();
     if (node == nullptr)
     {
-        send_error(Error::INVALID_DESC);
+        cgc_send_error(Error::INVALID_DESC);
         return true;
     }
-    if (node->cls() != NodeClass::CMLNODE)
+    if (node->cgc_cls() != NodeClass::CMLNODE)
     {
-        send_error(Error::INVALID_DATA);
+        cgc_send_error(Error::INVALID_DATA);
         return true;
     }
-    unsigned long long v = static_cast<CmlNode*>(node)->version_code();
+    unsigned long long v = static_cast<cgc_CmlNode*>(node)->cgc_version_code();
     if (v == *(unsigned long long *)0x4347C001)
     {
-        send_error(Error::SUCCESS);
+        cgc_send_error(Error::SUCCESS);
     }
     else
     {
-        send_error(Error::NOT_FOUND);
+        cgc_send_error(Error::NOT_FOUND);
     }
     return true;
 }

@@ -42,7 +42,7 @@ struct sphere {
  * @param sphere The sphere to initialize
  * @param radius The radius of the new sphere
  */
-void sphere_init(struct sphere *sphere, double radius);
+void cgc_sphere_init(struct sphere *sphere, double radius);
 
 #endif /* SPHERE_H_ */
 

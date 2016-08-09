@@ -28,16 +28,16 @@ THE SOFTWARE.
 #include "utility.h"
 #include "gamestate.h"
 
-extern gamestate *state;
+extern cgc_gamestate *state;
 
-char *renderBoard(gamestate *state);
-char *pickaword(gamestate *state);
+char *cgc_renderBoard(cgc_gamestate *state);
+char *cgc_pickaword(cgc_gamestate *state);
 
-char *pickaword(gamestate *state) {
-	return words[hugsnextrand(state) % (sizeof(words) / 4)];
+char *cgc_pickaword(cgc_gamestate *state) {
+	return words[cgc_hugsnextrand(state) % (sizeof(words) / 4)];
 }
 
-void hangman() {
+void cgc_hangman() {
 	char *toguess;
 	int i;
 	char correct[128];
@@ -47,33 +47,33 @@ void hangman() {
 	int correctcount = 0;
 	unsigned int wagered = 0;
 
-	bzero(correct, 128);
-	toguess = pickaword(state);
-	len = strlen(toguess);
+	cgc_bzero(correct, 128);
+	toguess = cgc_pickaword(state);
+	len = cgc_strlen(toguess);
 	state->hangmanguess = 0;
 
-	wagered = getBet(state);
+	wagered = cgc_getBet(state);
 	if(wagered == -1)
 		return;
 
 	while(state->hangmanguess < 5)
 	{
 		right = 0;
-		bzero(guess, 4);
-		put(renderBoard(state));
+		cgc_bzero(guess, 4);
+		cgc_put(cgc_renderBoard(state));
 		for(i=0;i<len;i++)
 		{
 			if(correct[i] == 0)
-				put("_");
+				cgc_put("_");
 			else {
-				put(&correct[i]);
-				i+= strlen(&correct[i])-1;
+				cgc_put(&correct[i]);
+				i+= cgc_strlen(&correct[i])-1;
 			}
 		}
 
-		put("\n");
-		put("Please enter a guess: ");
-		recvUntil(0, guess, 3, '\n');
+		cgc_put("\n");
+		cgc_put("Please enter a guess: ");
+		cgc_recvUntil(0, guess, 3, '\n');
 		for(i=0;i<len;i++)
 		{
 			if(guess[0] == toguess[i])
@@ -85,16 +85,16 @@ void hangman() {
 		}
 		if(right == 0)
 			state->hangmanguess++;
-		if(strlen(correct) == strlen(toguess))
+		if(cgc_strlen(correct) == cgc_strlen(toguess))
 		{
-			handleOutcome(state, 1, wagered);
+			cgc_handleOutcome(state, 1, wagered);
 			return;
 		}
 	}
-	handleOutcome(state, 0, wagered);
+	cgc_handleOutcome(state, 0, wagered);
 }
 
-char * renderBoard(gamestate *state) {
+char * cgc_renderBoard(cgc_gamestate *state) {
 	switch(state->hangmanguess) {
 		case 0:
 		return "|---|\n\

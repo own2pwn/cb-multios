@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,18 +25,18 @@
 #include "compfour.h"
 #include "compeight.h"
 
-Compression::~Compression()
+cgc_Compression::~cgc_Compression()
 {
 }
 
-Compression *Compression::fromId(unsigned int id)
+cgc_Compression *cgc_Compression::cgc_fromId(unsigned int id)
 {
     if (id == COMPRESSION_32)
-        return new Compression32();
+        return new cgc_Compression32();
     if (id == COMPRESSION_4)
-        return new CompressionFour();
+        return new cgc_CompressionFour();
     if (id == COMPRESSION_8)
-        return new CompressionEight();
+        return new cgc_CompressionEight();
 
     return NULL;
 }

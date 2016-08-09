@@ -37,21 +37,21 @@
 #define ELIZBUF "Elizabeth: "
 #define JOHNBUF "John: "
 #define EBUF "ERROR: input too large"
-#define SEND(b,s,o) o=sendall(STDOUT,b,s); if (o<=0) _terminate(1);
-#define SENDL(b,s,o) o=sendline(STDOUT,b,s); if (o<=0) _terminate(1);
-#define RECV(b,s,o) o=recvline(STDIN,b,s); if(o<0){SENDL(EBUF,sizeof(EBUF)-1,o);  _terminate(2);}
+#define SEND(b,s,o) o=cgc_sendall(STDOUT,b,s); if (o<=0) _terminate(1);
+#define SENDL(b,s,o) o=cgc_sendline(STDOUT,b,s); if (o<=0) _terminate(1);
+#define RECV(b,s,o) o=cgc_recvline(STDIN,b,s); if(o<0){SENDL(EBUF,sizeof(EBUF)-1,o);  _terminate(2);}
 #define ALLOC(s,x,a,o) o=allocate(s,x,a); if(o!=0) _terminate(3);
 
-typedef struct htreq {
-    size_t resplen;
+typedef struct cgc_htreq {
+    cgc_size_t resplen;
     char recv[1044];
     char resp[1024];
-    void (*match)(struct htreq*);
-    void (*nomatch)(struct htreq*);
+    void (*match)(struct cgc_htreq*);
+    void (*nomatch)(struct cgc_htreq*);
         
-} htreq;
+} cgc_htreq;
 
-int prompt(char *pmpt, char *buf, size_t size);
+int cgc_prompt(char *pmpt, char *buf, cgc_size_t size);
 int main(void);
 
 #endif

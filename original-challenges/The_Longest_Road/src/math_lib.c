@@ -4,7 +4,7 @@ Author: James Nuttall (james@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,16 +27,16 @@ THE SOFTWARE.
 
 #include "math_lib.h"
 
-// Accepts user input to seed the prng
-int seed_prng()
+// Accepts user input to seed the cgc_prng
+int cgc_seed_prng()
 {
 	char buf[256];
-	bzero(buf, sizeof(buf));
+	cgc_bzero(buf, sizeof(buf));
  	int status;
- 	size_t bytes_received;
- 	printf("Enter crypto seed\n");
+ 	cgc_size_t bytes_received;
+ 	cgc_printf("Enter crypto seed\n");
 
- 	status = receive_until(buf, '\n', 255);
+ 	status = cgc_receive_until(buf, '\n', 255);
 	if (status < 2)
 	{
 		// Error on receive
@@ -44,12 +44,12 @@ int seed_prng()
 	}
 
 	// create the seed number here
-	uint64_t seed = -1;
+	cgc_uint64_t seed = -1;
 	for (int p = 0; p<status; p++)
 	{
 		seed = ((seed << 4) | (seed >> 60)) ^ buf[p];
 	}
-	sprng(seed);
+	cgc_sprng(seed);
 
 	return status;
 }

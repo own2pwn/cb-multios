@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,31 +27,31 @@
 #define MAX_STATES 1000
 
 static unsigned int g_id = 0;
-static state_t **g_all_states = NULL;
+static cgc_state_t **g_all_states = NULL;
 
-void init_trex()
+void cgc_init_trex()
 {
     if (g_all_states)
         return;
 
-    g_all_states = malloc(sizeof(state_t*) * MAX_STATES);
+    g_all_states = cgc_malloc(sizeof(cgc_state_t*) * MAX_STATES);
     g_id = 0;
 }
 
-void clear_trex() {
+void cgc_clear_trex() {
     unsigned int i;
     for (i = 0; i < g_id; i++)
-        free(g_all_states[i]);
+        cgc_free(g_all_states[i]);
 
     g_id = 0;
 }
 
-state_t *create_state(unsigned char input)
+cgc_state_t *cgc_create_state(unsigned char input)
 {
     if (g_id >= MAX_STATES)
         return NULL;
 
-    state_t *s0 = malloc(sizeof(state_t));
+    cgc_state_t *s0 = cgc_malloc(sizeof(cgc_state_t));
     s0->id = g_id;
     s0->input = input;
     s0->is_accepting_state = TRUE;
@@ -80,7 +80,7 @@ state_t *create_state(unsigned char input)
 
 
 
-state_t *op_concat(state_t *s1, state_t *s2)
+cgc_state_t *cgc_op_concat(cgc_state_t *s1, cgc_state_t *s2)
 {
     s1->is_accepting_state = FALSE;
     APPEND_STATE(s1, s2);
@@ -89,10 +89,10 @@ state_t *op_concat(state_t *s1, state_t *s2)
 }
 
 
-state_t *op_union(state_t *s1, state_t *s2)
+cgc_state_t *cgc_op_union(cgc_state_t *s1, cgc_state_t *s2)
 {
-    state_t *s0 = create_state(EPSILON);
-    state_t *s3 = create_state(EPSILON);
+    cgc_state_t *s0 = cgc_create_state(EPSILON);
+    cgc_state_t *s3 = cgc_create_state(EPSILON);
     if (!s0 || !s3)
         return NULL;
 
@@ -109,12 +109,12 @@ state_t *op_union(state_t *s1, state_t *s2)
     return s0;
 }
 
-state_t *op_star(state_t *s1)
+cgc_state_t *cgc_op_star(cgc_state_t *s1)
 {
     if (s1->end_state == s1)
         return s1;
 
-    state_t *s0 = create_state(EPSILON);
+    cgc_state_t *s0 = cgc_create_state(EPSILON);
     if (!s0)
         return NULL;
 
@@ -128,10 +128,10 @@ state_t *op_star(state_t *s1)
     return s0;
 }
 
-state_t *op_qmark(state_t *s1)
+cgc_state_t *cgc_op_qmark(cgc_state_t *s1)
 {
-    state_t *s0 = create_state(EPSILON);
-    state_t *s2 = create_state(EPSILON);
+    cgc_state_t *s0 = cgc_create_state(EPSILON);
+    cgc_state_t *s2 = cgc_create_state(EPSILON);
     if (!s0 || !s2)
         return NULL;
 
@@ -146,9 +146,9 @@ state_t *op_qmark(state_t *s1)
     return s0;
 }
 
-state_t *op_plus(state_t *s1)
+cgc_state_t *cgc_op_plus(cgc_state_t *s1)
 {
-    state_t *s2 = create_state(EPSILON);
+    cgc_state_t *s2 = cgc_create_state(EPSILON);
     if (!s2)
         return NULL;
 

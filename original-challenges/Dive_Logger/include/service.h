@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,13 +38,13 @@ typedef struct DiveEntry_s {
 	long int PressureIn;
 	long int PressureOut;
 	int Dive_BinCount;
-} sDiveEntry, *pDiveEntry;
+} cgc_sDiveEntry, *cgc_pDiveEntry;
 
 typedef struct DiveEntryListNode_s {
 	struct DiveEntryListNode_s *prev;
-	pDiveEntry DiveEntry;
+	cgc_pDiveEntry DiveEntry;
 	struct DiveEntryListNode_s *next;
-} sDiveEntryListNode, *pDiveEntryListNode;
+} cgc_sDiveEntryListNode, *cgc_pDiveEntryListNode;
 
 typedef struct DiverInfo_s {
 	char FName[32];
@@ -56,11 +56,11 @@ typedef struct DiverInfo_s {
 	char Phone[32];
 	char PADINum[32];
 	char PADIDate[32];
-	pDiveEntryListNode DiveEntryList;
+	cgc_pDiveEntryListNode DiveEntryList;
 	int DiveEntryCount;
-} sDiverInfo, *pDiverInfo;
+} cgc_sDiverInfo, *cgc_pDiverInfo;
 
-pDiveEntry AddDive( pDiverInfo );
-pDiveEntryListNode DeleteDive( pDiverInfo, pDiveEntryListNode );
-void destroy_data( pDiverInfo );
+cgc_pDiveEntry cgc_AddDive( cgc_pDiverInfo );
+cgc_pDiveEntryListNode cgc_DeleteDive( cgc_pDiverInfo, cgc_pDiveEntryListNode );
+void cgc_destroy_data( cgc_pDiverInfo );
 #endif

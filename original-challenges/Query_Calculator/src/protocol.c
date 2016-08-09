@@ -29,37 +29,37 @@ THE SOFTWARE.
 
 #include "protocol.h"
 
-void tx(char* bytes, size_t count);
-void rx(char* byte_buf, size_t count);
+void cgc_tx(char* bytes, cgc_size_t count);
+void cgc_rx(char* byte_buf, cgc_size_t count);
 
-void protocol_send_str(char* str) {
-  uint16 len = strlen(str);
+void cgc_protocol_send_str(char* str) {
+  cgc_uint16 len = cgc_strlen(str);
   
-  tx((char*)&(len), sizeof(len));
-  tx(str, len);
+  cgc_tx((char*)&(len), sizeof(len));
+  cgc_tx(str, len);
 }
 
-void protocol_with_recv_string(void (^block)(uint16 len, char* str)) {
-  char  len_buf[sizeof(uint16)];
+void cgc_protocol_with_recv_string(void (^block)(cgc_uint16 len, char* str)) {
+  char  len_buf[sizeof(cgc_uint16)];
   char* len_buf_ptr = (char*)&len_buf;
 
-  rx(len_buf_ptr, sizeof(uint16));
+  cgc_rx(len_buf_ptr, sizeof(cgc_uint16));
 
-  uint16 len = *((uint16*) len_buf_ptr);
+  cgc_uint16 len = *((cgc_uint16*) len_buf_ptr);
   
   char  str_buf[len];
   char* str_buf_ptr = (char*)&str_buf;
 
-  rx(str_buf_ptr, len);
+  cgc_rx(str_buf_ptr, len);
 
   block(len, str_buf_ptr);
 }
 
-void tx(char* bytes, size_t count) {
-  size_t total_sent = 0;
+void cgc_tx(char* bytes, cgc_size_t count) {
+  cgc_size_t total_sent = 0;
 
   while(total_sent < count) {
-    size_t sent_this_time = 0;
+    cgc_size_t sent_this_time = 0;
 
     int status = transmit(STDOUT,
                           bytes + total_sent,
@@ -73,11 +73,11 @@ void tx(char* bytes, size_t count) {
   }
 }
 
-void rx(char* byte_buf, size_t count) {
-  size_t total_rcvd = 0;
+void cgc_rx(char* byte_buf, cgc_size_t count) {
+  cgc_size_t total_rcvd = 0;
 
   while(total_rcvd < count) {
-    size_t rcvd_this_time = 0;
+    cgc_size_t rcvd_this_time = 0;
 
     int status = receive(STDIN,
                          byte_buf + total_rcvd,

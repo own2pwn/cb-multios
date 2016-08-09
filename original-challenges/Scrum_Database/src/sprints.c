@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,10 +33,10 @@ THE SOFTWARE.
 #include "commands.h"
 #include "malloc.h"
 
-int create_sprint( productDefType *database, newSprintMessageType *message) {
+int cgc_create_sprint( cgc_productDefType *database, cgc_newSprintMessageType *message) {
 
-sprintEntryType *newSprint;
-sprintEntryType *sprintPtr;
+cgc_sprintEntryType *newSprint;
+cgc_sprintEntryType *sprintPtr;
 
 
 	// first find the product ID 
@@ -51,21 +51,21 @@ sprintEntryType *sprintPtr;
 
 
 	// allocate memory for the new sprint
-	newSprint = (sprintEntryType *)calloc(sizeof(sprintEntryType));
+	newSprint = (cgc_sprintEntryType *)cgc_calloc(sizeof(cgc_sprintEntryType));
 
 	if (newSprint == 0)
 		_terminate(-1);
 
 	newSprint->ID = message->sprintID;
 
-	// add an extra byte since strlen doesn't count the null terminator
-	newSprint->title = calloc(strlen((char *)&message->title)+1);
+	// add an extra byte since cgc_strlen doesn't count the null terminator
+	newSprint->title = cgc_calloc(cgc_strlen((char *)&message->title)+1);
 
 	if (newSprint->title == 0)
 		_terminate(-1);
 
 
-	strncpy(newSprint->title, &message->title, strlen(&message->title));
+	cgc_strncpy(newSprint->title, &message->title, cgc_strlen(&message->title));
 
 	// set the default values, all 0 in this case
 	newSprint->duration = 0;
@@ -95,11 +95,11 @@ return 0;
 }
 
 
-int delete_sprint( productDefType *database, deleteSprintMessageType *message) {
+int cgc_delete_sprint( cgc_productDefType *database, cgc_deleteSprintMessageType *message) {
 
 
-sprintEntryType *sprintPtr;
-sprintEntryType *prevPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_sprintEntryType *prevPtr;
 
 
 	// find the product id 
@@ -130,9 +130,9 @@ sprintEntryType *prevPtr;
 
 		// does it have a title?  Free that memory first
 		if (sprintPtr->title)
-			free(sprintPtr->title);
+			cgc_free(sprintPtr->title);
 
-		free(sprintPtr);
+		cgc_free(sprintPtr);
 		return 0;
 
 	}
@@ -165,10 +165,10 @@ sprintEntryType *prevPtr;
 
 	// does it have a title?  Free that memory first
 	if (sprintPtr->title)
-		free(sprintPtr->title);
+		cgc_free(sprintPtr->title);
 		
 	// now delete the sprint's memory
-	free(sprintPtr);
+	cgc_free(sprintPtr);
 
 
 	return 0;

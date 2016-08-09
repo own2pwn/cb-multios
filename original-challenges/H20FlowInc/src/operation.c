@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,77 +26,77 @@
 #include "operation.h"
 #include "tank.h"
 
-int create_tanks(struct tankset **t, uint8_t qty) {
+int cgc_create_tanks(struct tankset **t, cgc_uint8_t qty) {
 	if (0 == qty) {
 		return ERR_INVALID_QTY;
 	}
 
-	*t = calloc(sizeof(struct tankset) + qty * sizeof(struct tank *));
+	*t = cgc_calloc(sizeof(struct tankset) + qty * sizeof(struct tank *));
 
 	for (int i = 0; i < qty; i++) {
-		(*t)->tanks[i] = create_tank(i + 1, TANK_CAP);
+		(*t)->tanks[i] = cgc_create_tank(i + 1, TANK_CAP);
 		(*t)->count++;
 	}
 
 	return SUCCESS;
 }
 
-int update_drain_factors(struct tankset *t) {
-	uint8_t factor = 0;
+int cgc_update_drain_factors(struct tankset *t) {
+	cgc_uint8_t factor = 0;
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 	int ret = 0;
 	for (int idx = 0; idx < t->count; idx++) {
-		if ((FALSE == is_end_of_life(t->tanks[idx])) && (TRUE == is_in_service(t->tanks[idx]))) {
-			factor = prng_get_next();
+		if ((FALSE == cgc_is_end_of_life(t->tanks[idx])) && (TRUE == cgc_is_in_service(t->tanks[idx]))) {
+			factor = cgc_prng_get_next();
 			if (0 == factor % 2) {
-				FAILBAIL(set_drain_rate(t->tanks[idx], 2 * factor));
+				FAILBAIL(cgc_set_drain_rate(t->tanks[idx], 2 * factor));
 			} else {
-				FAILBAIL(set_drain_rate(t->tanks[idx], factor));
+				FAILBAIL(cgc_set_drain_rate(t->tanks[idx], factor));
 			}
 		}
 	}
 	return SUCCESS;
 }
 
-int update_water_levels(struct tankset *t) {
+int cgc_update_water_levels(struct tankset *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 
 	int ret = 0;
 	for (int idx = 0; idx < t->count; idx++) {
-		if (FALSE == is_end_of_life(t->tanks[idx])) {
-			FAILBAIL(do_drain(t->tanks[idx]));
-			FAILBAIL(do_fill(t->tanks[idx]));
+		if (FALSE == cgc_is_end_of_life(t->tanks[idx])) {
+			FAILBAIL(cgc_do_drain(t->tanks[idx]));
+			FAILBAIL(cgc_do_fill(t->tanks[idx]));
 		}
 	}
 	return SUCCESS;
 }
 
-int check_levels(struct tankset *t) {
+int cgc_check_levels(struct tankset *t) {
 	if (NULL == t) {
 		return ERR_UNINITIALIZED_TANK;
 	}
 
 	int ret = 0;
 	for (int idx = 0; idx < t->count; idx++) {
-		if (FALSE == is_end_of_life(t->tanks[idx])) {
+		if (FALSE == cgc_is_end_of_life(t->tanks[idx])) {
 
-			// check critical low level, if so, send alert msg
-			if (TRUE == is_level_crit_low(t->tanks[idx])) {
+			// check critical low level, if so, cgc_send alert msg
+			if (TRUE == cgc_is_level_crit_low(t->tanks[idx])) {
 #if PATCHED
-				syslog(LOG_ERROR, "Tank ~n level below critical level", t->tanks[idx]->id);
+				cgc_syslog(LOG_ERROR, "Tank ~n level below critical level", t->tanks[idx]->id);
 #else
 				// VULN: null ptr de-ref
-				syslog(LOG_ERROR, "Tank ~n level below critical level", t->tanks[TANK_QTY]->id);
+				cgc_syslog(LOG_ERROR, "Tank ~n level below critical level", t->tanks[TANK_QTY]->id);
 #endif
 			}
 
 			// check low level, if so, fill above low level marker
-			if (TRUE == is_level_low(t->tanks[idx])) {
-				FAILBAIL(add_water(t->tanks[idx], 1 + LOW_LEVEL - t->tanks[idx]->level));
+			if (TRUE == cgc_is_level_low(t->tanks[idx])) {
+				FAILBAIL(cgc_add_water(t->tanks[idx], 1 + LOW_LEVEL - t->tanks[idx]->level));
 			}
 		}
 	}
@@ -104,13 +104,13 @@ int check_levels(struct tankset *t) {
 	return SUCCESS;
 }
 
-int rxtx(struct tankset *t) {
-	uint8_t valve_pos = 0;
+int cgc_rxtx(struct tankset *t) {
+	cgc_uint8_t valve_pos = 0;
 	int ret = 0;
 	for (int idx = 0; idx < t->count; idx++) {
-		FAILBAIL(send((char *)t->tanks[idx], 8));
+		FAILBAIL(cgc_send((char *)t->tanks[idx], 8));
 
-		if (1 != (ret = recv_all((char *)&valve_pos, 1))) {
+		if (1 != (ret = cgc_recv_all((char *)&valve_pos, 1))) {
 			if (0 == ret) {
 				return ERR_END_OF_FILE;
 			} else {
@@ -120,21 +120,21 @@ int rxtx(struct tankset *t) {
 
 		switch(valve_pos) {
 			case OPEN_VALVE:
-				FAILBAIL(open_valve(t->tanks[idx]));
+				FAILBAIL(cgc_open_valve(t->tanks[idx]));
 				break;
 			case CLOSE_VALVE:
-				FAILBAIL(close_valve(t->tanks[idx]));
+				FAILBAIL(cgc_close_valve(t->tanks[idx]));
 				break;
 			case NO_CHANGE:
 				break;
 			case SET_IN_SERVICE:
-				FAILBAIL(set_in_service(t->tanks[idx]));
+				FAILBAIL(cgc_set_in_service(t->tanks[idx]));
 				break;
 			case SET_OUT_OF_SERVICE:
-				FAILBAIL(set_out_of_service(t->tanks[idx]));
+				FAILBAIL(cgc_set_out_of_service(t->tanks[idx]));
 				break;
 			case SET_END_OF_LIFE:
-				FAILBAIL(set_end_of_life(t->tanks[idx]));
+				FAILBAIL(cgc_set_end_of_life(t->tanks[idx]));
 				break;
 			default:
 				return ERR_INVALID_VALVE_POS;

@@ -30,13 +30,13 @@
 
 #include "list.h"
 
-typedef unsigned long uintptr_t;
+typedef unsigned long cgc_uintptr_t;
 #define PAGE_SIZE (1 << 12)
 
 struct freeblk;
 
 struct pool {
-    size_t size;
+    cgc_size_t size;
     LIST_OF(struct freeblk) freelist;
 };
 
@@ -46,7 +46,7 @@ struct pool {
  * @param pool The memory pool
  * @param size The size of each chunk allocated from the pool
  */
-void pool_init(struct pool *pool, size_t size);
+void cgc_pool_init(struct pool *pool, cgc_size_t size);
 
 /**
  * Destroy a memory pool, reclaiming memory where possible.
@@ -54,7 +54,7 @@ void pool_init(struct pool *pool, size_t size);
  * @param pool The memory pool
  * return 0 on success, negative on error
  */
-int pool_destroy(struct pool *pool);
+int cgc_pool_destroy(struct pool *pool);
 
 /**
  * Allocate a chunk from a pool
@@ -62,7 +62,7 @@ int pool_destroy(struct pool *pool);
  * @param pool The memory pool
  * @return The address of the newly allocated chunk
  */
-void *pool_alloc(struct pool *pool);
+void *cgc_pool_alloc(struct pool *pool);
 
 /**
  * Free a chunk, returning to a pool
@@ -70,7 +70,7 @@ void *pool_alloc(struct pool *pool);
  * @param pool The memory pool
  * @param addr The chunk to free
  */
-void pool_free(struct pool *pool, void *addr);
+void cgc_pool_free(struct pool *pool, void *addr);
 
 #endif /* POOL_H_ */
 

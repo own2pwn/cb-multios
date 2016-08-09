@@ -9,27 +9,27 @@
 
 struct server;
 
-typedef unsigned char byte;
-typedef byte boolean;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
+typedef unsigned char cgc_byte;
+typedef cgc_byte cgc_boolean;
+typedef cgc_uint32_t cgc_uint32;
+typedef cgc_uint64_t cgc_uint64;
 
-typedef int (*service_handler_t) (struct server *, byte);
+typedef int (*cgc_service_handler_t) (struct server *, cgc_byte);
 
 typedef struct {
     char *username;
     char *password;
-} cred_t;
+} cgc_cred_t;
 
 typedef struct server {
-    cred_t credentials[NUM_CREDS];
-    byte packet[PACKET_SIZE];
+    cgc_cred_t credentials[NUM_CREDS];
+    cgc_byte packet[PACKET_SIZE];
     unsigned int packet_idx, packet_len;
     unsigned int packet_seq;
 
-    service_handler_t service_handler;
-    boolean is_auth;
-} server_t;
+    cgc_service_handler_t service_handler;
+    cgc_boolean is_auth;
+} cgc_server_t;
 
 enum {
     MSG_DISCONNECT = 100,
@@ -44,43 +44,43 @@ enum {
     MSG_USERAUTH_PASSWD_CHANGEREQ = 120,
 };
 
-static size_t mystrndup(const char *str, size_t n, char **out)
+static cgc_size_t cgc_mystrndup(const char *str, cgc_size_t n, char **out)
 {
     char *result;
 
-    if (strlen(str) < n)
-        n = strlen(str);
+    if (cgc_strlen(str) < n)
+        n = cgc_strlen(str);
 
-    if (n == 0 || (result = malloc(n + 1)) == NULL)
+    if (n == 0 || (result = cgc_malloc(n + 1)) == NULL)
         return 0;
 
-    memcpy(result, str, n);
+    cgc_memcpy(result, str, n);
     result[n] = 0;
     *out = result;
 
     return str[n] == 0 ? n+1 : n;
 }
 
-static void init_creds(server_t *server, const char *secrets)
+static void cgc_init_creds(cgc_server_t *server, const char *secrets)
 {
-    size_t i, n, count = 0;
+    cgc_size_t i, n, count = 0;
 
     for (i = 0; i < NUM_CREDS; i++)
     {
         char *s;
-        while ((n = mystrndup(&secrets[count], 8, &s)) == 0) count++;
+        while ((n = cgc_mystrndup(&secrets[count], 8, &s)) == 0) count++;
         count += n;
         server->credentials[i].username = s;
 
-        while ((n = mystrndup(&secrets[count], 8, &s)) == 0) count++;
+        while ((n = cgc_mystrndup(&secrets[count], 8, &s)) == 0) count++;
         count += n;
         server->credentials[i].password = s;
     }
 }
 
-static uint32 recv_bytes(server_t *server, uint32 count)
+static cgc_uint32 cgc_recv_bytes(cgc_server_t *server, cgc_uint32 count)
 {
-    /* align to 8-byte boundary */
+    /* align to 8-cgc_byte boundary */
     if (count & 7)
         count = (count + 7) & ~7;
 
@@ -89,7 +89,7 @@ static uint32 recv_bytes(server_t *server, uint32 count)
     if (count > PACKET_SIZE)
         return 0;
 
-    if (fread((char *)&server->packet[server->packet_len], count, stdin) != count)
+    if (cgc_fread((char *)&server->packet[server->packet_len], count, stdin) != count)
         return 0;
 
     server->packet_len += count;
@@ -97,22 +97,22 @@ static uint32 recv_bytes(server_t *server, uint32 count)
     return count;
 }
 
-static void clear_packet(server_t *server)
+static void cgc_clear_packet(cgc_server_t *server)
 {
     server->packet_idx = 0;
     server->packet_len = 0;
 }
 
-static void init_packet(server_t *server)
+static void cgc_init_packet(cgc_server_t *server)
 {
-    clear_packet(server);
+    cgc_clear_packet(server);
 
     /* reserve space for the header */
     server->packet_idx += 5;
     server->packet_len += 5;
 }
 
-static int get_byte(server_t *server, byte *out)
+static int cgc_get_byte(cgc_server_t *server, cgc_byte *out)
 {
     if (server->packet_idx + 1 > server->packet_len)
         return 0;
@@ -121,14 +121,14 @@ static int get_byte(server_t *server, byte *out)
     return 1;
 }
 
-static int get_boolean(server_t *server, boolean *out)
+static int cgc_get_boolean(cgc_server_t *server, cgc_boolean *out)
 {
-    return get_byte(server, out);
+    return cgc_get_byte(server, out);
 }
 
-static int get_uint32(server_t *server, uint32 *out)
+static int cgc_get_uint32(cgc_server_t *server, cgc_uint32 *out)
 {
-    uint32 result = 0;
+    cgc_uint32 result = 0;
 
     if (server->packet_idx + 4 > server->packet_len)
         return 0;
@@ -144,9 +144,9 @@ static int get_uint32(server_t *server, uint32 *out)
     return 1;
 }
 
-static int get_uint64(server_t *server, uint64 *out)
+static int cgc_get_uint64(cgc_server_t *server, cgc_uint64 *out)
 {
-    uint64 result = 0;
+    cgc_uint64 result = 0;
 
     if (server->packet_idx + 8 > server->packet_len)
         return 0;
@@ -170,7 +170,7 @@ static int get_uint64(server_t *server, uint64 *out)
     return 1;
 }
 
-static int write_byte(server_t *server, byte b)
+static int cgc_write_byte(cgc_server_t *server, cgc_byte b)
 {
     if (server->packet_len + 1 > PACKET_SIZE)
         return 0;
@@ -181,12 +181,12 @@ static int write_byte(server_t *server, byte b)
     return 1;
 }
 
-static int write_boolean(server_t *server, boolean b)
+static int cgc_write_boolean(cgc_server_t *server, cgc_boolean b)
 {
-    return write_byte(server, b);
+    return cgc_write_byte(server, b);
 }
 
-static int write_uint32(server_t *server, uint32 x)
+static int cgc_write_uint32(cgc_server_t *server, cgc_uint32 x)
 {
     if (server->packet_len + 4 > PACKET_SIZE)
         return 0;
@@ -200,7 +200,7 @@ static int write_uint32(server_t *server, uint32 x)
     return 1;
 }
 
-static int write_uint64(server_t *server, uint64 x)
+static int cgc_write_uint64(cgc_server_t *server, cgc_uint64 x)
 {
     if (server->packet_len + 8 > PACKET_SIZE)
         return 0;
@@ -218,42 +218,42 @@ static int write_uint64(server_t *server, uint64 x)
     return 1;
 }
 
-static int write_string(server_t *server, const char *s, uint32 length)
+static int cgc_write_string(cgc_server_t *server, const char *s, cgc_uint32 length)
 {
-    if (!write_uint32(server, length))
+    if (!cgc_write_uint32(server, length))
         return 0;
 
     if (server->packet_len + length > PACKET_SIZE)
         return 0;
 
-    memcpy(&server->packet[server->packet_idx], s, length);
+    cgc_memcpy(&server->packet[server->packet_idx], s, length);
     server->packet_idx += length;
     if (server->packet_idx > server->packet_len)
         server->packet_len = server->packet_idx;
     return 1;
 }
 
-static int safe_memcpy(server_t *server, char *dst, unsigned short n)
+static int cgc_safe_memcpy(cgc_server_t *server, char *dst, unsigned short n)
 {
     /* prevent reading past end of buffer */
     if (server->packet_idx + n > PACKET_SIZE)
         n = PACKET_SIZE - server->packet_idx;
-    memcpy(dst, &server->packet[server->packet_idx], n);
+    cgc_memcpy(dst, &server->packet[server->packet_idx], n);
     server->packet_idx += n;
     return 1;
 }
 
-static int safe_strdup(server_t *server, char **out, unsigned short n)
+static int cgc_safe_strdup(cgc_server_t *server, char **out, unsigned short n)
 {
     char *result;
 
-    result = malloc(n + 1);
+    result = cgc_malloc(n + 1);
     if (result == NULL)
         return 0;
 
-    if (!safe_memcpy(server, result, n))
+    if (!cgc_safe_memcpy(server, result, n))
     {
-        free(result);
+        cgc_free(result);
         return 0;
     }
     result[n] = 0;
@@ -262,11 +262,11 @@ static int safe_strdup(server_t *server, char **out, unsigned short n)
     return 1;
 }
 
-static int get_string(server_t *server, char *out, size_t n)
+static int cgc_get_string(cgc_server_t *server, char *out, cgc_size_t n)
 {
-    uint32 length;
+    cgc_uint32 length;
 
-    if (!get_uint32(server, &length))
+    if (!cgc_get_uint32(server, &length))
         return 0;
 
     if (length + 1 > n)
@@ -280,7 +280,7 @@ static int get_string(server_t *server, char *out, size_t n)
         return 0;
 #endif
 
-    if (safe_memcpy(server, out, length))
+    if (cgc_safe_memcpy(server, out, length))
     {
         out[length] = 0;
         return 1;
@@ -289,11 +289,11 @@ static int get_string(server_t *server, char *out, size_t n)
     return 0;
 }
 
-static int get_string_alloc(server_t *server, char **out)
+static int cgc_get_string_alloc(cgc_server_t *server, char **out)
 {
-    uint32 length;
+    cgc_uint32 length;
 
-    if (!get_uint32(server, &length))
+    if (!cgc_get_uint32(server, &length))
         return 0;
 
     if (server->packet_idx + length > server->packet_len)
@@ -304,40 +304,40 @@ static int get_string_alloc(server_t *server, char **out)
         return 0;
 #endif
 
-    return safe_strdup(server, out, length);
+    return cgc_safe_strdup(server, out, length);
 }
 
-static uint32 recv_packet(server_t *server)
+static cgc_uint32 cgc_recv_packet(cgc_server_t *server)
 {
-    uint32 packet_len;
-    byte padding_len;
+    cgc_uint32 packet_len;
+    cgc_byte padding_len;
 
-    clear_packet(server);
+    cgc_clear_packet(server);
 
-    if (!recv_bytes(server, 8))
+    if (!cgc_recv_bytes(server, 8))
         return 0;
 
-    if (!get_uint32(server, &packet_len))
+    if (!cgc_get_uint32(server, &packet_len))
         return 0;
-    if (!get_byte(server, &padding_len))
+    if (!cgc_get_byte(server, &padding_len))
         return 0;
 
     if (packet_len < 1 || padding_len + 1 > packet_len)
         return 0;
 
-    if (packet_len > 4 && !recv_bytes(server, packet_len - 4))
+    if (packet_len > 4 && !cgc_recv_bytes(server, packet_len - 4))
         return 0;
 
-    packet_len--; /* remove padding length byte */
+    packet_len--; /* remove padding length cgc_byte */
     /* remove padding bytes */
     server->packet_len -= padding_len;
     return server->packet_len - server->packet_idx;
 }
 
-static int send_packet(server_t *server)
+static int cgc_send_packet(cgc_server_t *server)
 {
-    size_t bytes;
-    byte padding_len;
+    cgc_size_t bytes;
+    cgc_byte padding_len;
 
     if (server->packet_len > 32768)
         return 0;
@@ -346,162 +346,162 @@ static int send_packet(server_t *server)
     padding_len = 8 - (server->packet_len % 8);
 
     /* append padding */
-    random(&server->packet[server->packet_len], padding_len, &bytes);
+    cgc_random(&server->packet[server->packet_len], padding_len, &bytes);
     server->packet_len += padding_len;
 
     /* fix header */
     server->packet_idx = 0;
-    write_uint32(server, server->packet_len - 4);
-    write_byte(server, padding_len);
+    cgc_write_uint32(server, server->packet_len - 4);
+    cgc_write_byte(server, padding_len);
 
-    fwrite((char *)server->packet, server->packet_len, stdout);
+    cgc_fwrite((char *)server->packet, server->packet_len, stdout);
     return 1;
 }
 
-static int send_unrecognized(server_t *server)
+static int cgc_send_unrecognized(cgc_server_t *server)
 {
-    init_packet(server);
-    write_byte(server, MSG_UNRECOGNIZED);
-    write_uint32(server, server->packet_seq - 1);
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_UNRECOGNIZED);
+    cgc_write_uint32(server, server->packet_seq - 1);
+    return cgc_send_packet(server);
 }
 
-static int send_disconnect(server_t *server)
+static int cgc_send_disconnect(cgc_server_t *server)
 {
-    init_packet(server);
-    write_byte(server, MSG_DISCONNECT);
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_DISCONNECT);
+    return cgc_send_packet(server);
 }
 
-static int send_service_accept(server_t *server, const char *service_name)
+static int cgc_send_service_accept(cgc_server_t *server, const char *service_name)
 {
-    init_packet(server);
-    write_byte(server, MSG_SERVICE_ACCEPT);
-    write_string(server, service_name, strlen(service_name));
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_SERVICE_ACCEPT);
+    cgc_write_string(server, service_name, cgc_strlen(service_name));
+    return cgc_send_packet(server);
 }
 
-static int send_userauth_failure(server_t *server)
+static int cgc_send_userauth_failure(cgc_server_t *server)
 {
-    init_packet(server);
-    write_byte(server, MSG_USERAUTH_FAILURE);
-    write_string(server, "password", 8);
-    write_boolean(server, 0);
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_USERAUTH_FAILURE);
+    cgc_write_string(server, "password", 8);
+    cgc_write_boolean(server, 0);
+    return cgc_send_packet(server);
 }
 
-static int send_userauth_success(server_t *server)
+static int cgc_send_userauth_success(cgc_server_t *server)
 {
-    init_packet(server);
-    write_byte(server, MSG_USERAUTH_SUCCESS);
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_USERAUTH_SUCCESS);
+    return cgc_send_packet(server);
 }
 
-static int send_userauth_changereq(server_t *server, const char *prompt)
+static int cgc_send_userauth_changereq(cgc_server_t *server, const char *prompt)
 {
-    init_packet(server);
-    write_byte(server, MSG_USERAUTH_PASSWD_CHANGEREQ);
-    write_string(server, prompt, strlen(prompt));
-    return send_packet(server);
+    cgc_init_packet(server);
+    cgc_write_byte(server, MSG_USERAUTH_PASSWD_CHANGEREQ);
+    cgc_write_string(server, prompt, cgc_strlen(prompt));
+    return cgc_send_packet(server);
 }
 
-static int userauth_password(server_t *server, const char *username, const char *service_name)
+static int cgc_userauth_password(cgc_server_t *server, const char *username, const char *service_name)
 {
     int res = 0, i;
     char *password = NULL, *new_password = NULL;
-    cred_t *cred = NULL;
-    boolean mode, success = 0;
+    cgc_cred_t *cred = NULL;
+    cgc_boolean mode, success = 0;
 
-    if (!get_boolean(server, &mode))
+    if (!cgc_get_boolean(server, &mode))
         return 0;
 
-    if (!get_string_alloc(server, &password))
+    if (!cgc_get_string_alloc(server, &password))
         goto done;
 
-    if (mode && !get_string_alloc(server, &new_password))
+    if (mode && !cgc_get_string_alloc(server, &new_password))
         goto done;
 
     /* lookup user */
     for (i = 0; i < NUM_CREDS; i++)
-        if (strcmp(username, server->credentials[i].username) == 0)
+        if (cgc_strcmp(username, server->credentials[i].username) == 0)
             cred = &server->credentials[i];
 
-    fprintf(stderr, "Found user %x (username=%s)\n", cred, username);
+    cgc_fprintf(stderr, "Found user %x (username=%s)\n", cred, username);
 
     /* compare user's password (order matters to prevent timing attack) */
-    success = strcmp(password, cred == NULL ? "fakepassword" : cred->password) == 0 && cred != NULL;
+    success = cgc_strcmp(password, cred == NULL ? "fakepassword" : cred->password) == 0 && cred != NULL;
 
     /* if successful, check if new_password is compliant and change it */
     if (success && new_password)
     {
-        if (strlen(new_password) < MIN_PASSWD)
-            res = send_userauth_changereq(server, "Too short");
+        if (cgc_strlen(new_password) < MIN_PASSWD)
+            res = cgc_send_userauth_changereq(server, "Too short");
         else
         {
-            free(cred->password);
+            cgc_free(cred->password);
             cred->password = new_password;
             new_password = NULL;
 
-            res = send_userauth_success(server);
+            res = cgc_send_userauth_success(server);
             server->is_auth = 1;
         }
     }
     else if (success)
     {
-        res = send_userauth_success(server);
+        res = cgc_send_userauth_success(server);
         server->is_auth = 1;
     }
     else
     {
-        res = send_userauth_failure(server);
+        res = cgc_send_userauth_failure(server);
     }
 
 done:
-    free(password);
-    free(new_password);
+    cgc_free(password);
+    cgc_free(new_password);
     return res;
 }
 
-static int userauth_handler(server_t *server, byte type)
+static int cgc_userauth_handler(cgc_server_t *server, cgc_byte type)
 {
     int res = 0;
     char *username = NULL, *service_name = NULL, *auth_name = NULL;
 
     if (type != MSG_USERAUTH_REQUEST)
-        return send_unrecognized(server);
+        return cgc_send_unrecognized(server);
 
-    if (!get_string_alloc(server, &username))
+    if (!cgc_get_string_alloc(server, &username))
         goto done;
 
-    if (!get_string_alloc(server, &service_name))
+    if (!cgc_get_string_alloc(server, &service_name))
         goto done;
 
-    if (!get_string_alloc(server, &auth_name))
+    if (!cgc_get_string_alloc(server, &auth_name))
         goto done;
 
-    if (strcmp(auth_name, "password") == 0)
-        res = userauth_password(server, username, service_name);
+    if (cgc_strcmp(auth_name, "password") == 0)
+        res = cgc_userauth_password(server, username, service_name);
     else
-        res = send_userauth_failure(server);
+        res = cgc_send_userauth_failure(server);
 
 done:
-    free(username);
-    free(service_name);
-    free(auth_name);
+    cgc_free(username);
+    cgc_free(service_name);
+    cgc_free(auth_name);
     return res;
 }
 
-static int handle_service_request(server_t *server)
+static int cgc_handle_service_request(cgc_server_t *server)
 {
     char service_name[256];
 
-    if (!get_string(server, service_name, sizeof(service_name)))
+    if (!cgc_get_string(server, service_name, sizeof(service_name)))
         return 0;
 
-    if (strcmp(service_name, "userauth") == 0)
+    if (cgc_strcmp(service_name, "userauth") == 0)
     {
-        server->service_handler = userauth_handler;
-        return send_service_accept(server, "userauth");
+        server->service_handler = cgc_userauth_handler;
+        return cgc_send_service_accept(server, "userauth");
     }
 
     return 0;
@@ -510,21 +510,21 @@ static int handle_service_request(server_t *server)
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
     void *secret_page = (void *)secret_page_i;
-    server_t server;
+    cgc_server_t server;
 
-    memset(&server, 0, sizeof(server));
-    init_creds(&server, secret_page);
+    cgc_memset(&server, 0, sizeof(server));
+    cgc_init_creds(&server, secret_page);
 
     while (1)
     {
-        byte msg;
-        uint32 n = recv_packet(&server);
+        cgc_byte msg;
+        cgc_uint32 n = cgc_recv_packet(&server);
         if (n == 0)
             break;
 
         server.packet_seq++;
 
-        if (!get_byte(&server, &msg))
+        if (!cgc_get_byte(&server, &msg))
             break;
         if (msg == MSG_DISCONNECT)
         {
@@ -536,7 +536,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
         }
         else if (msg == MSG_SERVICE_REQUEST)
         {
-            if (!handle_service_request(&server))
+            if (!cgc_handle_service_request(&server))
                 break;
         }
         else if (server.service_handler)
@@ -546,10 +546,10 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
         }
         else
         {
-            send_unrecognized(&server);
+            cgc_send_unrecognized(&server);
         }
     }
 
-    send_disconnect(&server);
+    cgc_send_disconnect(&server);
     return 0;
 }

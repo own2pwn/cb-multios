@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -29,7 +29,7 @@
  * @param digit A character
  * @return TRUE if yes, FALSE if not a hex digit.
  */
-int is_hex_digit(char digit);
+int cgc_is_hex_digit(char digit);
 
 
 /**
@@ -38,7 +38,7 @@ int is_hex_digit(char digit);
  * @param hex_digit An ASCII char
  * @return 0 - 15 if valid hex_digit, -1 on error.
  */
-char ascii_hex_to_bin(char hex_digit);
+char cgc_ascii_hex_to_bin(char hex_digit);
 
 
 #endif

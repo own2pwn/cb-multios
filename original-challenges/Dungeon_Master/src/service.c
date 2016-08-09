@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,15 +32,15 @@ unsigned int flag_index = 0;
  * case alpha characters.
  * @return      The address of the new random name
  */
-char* getRandomName() {
+char* cgc_getRandomName() {
 	char* string;
 	unsigned int idx=0;
 	const unsigned char *randomBuffer = (const unsigned char*) FLAG_PAGE;
 
-	if(!(string = malloc(11)))
+	if(!(string = cgc_malloc(11)))
 		return NULL;
 
-	bzero(string, 11);
+	cgc_bzero(string, 11);
 
 
 	for(int c=0; c<10; c++) {
@@ -70,12 +70,12 @@ char* getRandomName() {
 *
 * @return A char representing the next move of the player
 */
-char getMove() {
+char cgc_getMove() {
 	char tmp[4];
-	size_t bytes;
-	bzero(tmp, 4);
+	cgc_size_t bytes;
+	cgc_bzero(tmp, 4);
 
-	if(read_n_bytes(STDIN, tmp, 2, &bytes))
+	if(cgc_read_n_bytes(STDIN, tmp, 2, &bytes))
 		_terminate(READ_ERROR);
 
 	if(bytes)
@@ -95,18 +95,18 @@ char getMove() {
 *
 * @return None
 */
-void sendGameDescription(Dungeon dungeon) {
+void cgc_sendGameDescription(cgc_Dungeon dungeon) {
 	char buffer[1024];
-	size_t len=0;
+	cgc_size_t len=0;
 	int ret=0;
 
-	bzero(buffer, 1024);
-	sprintf(buffer, "Game moves\n----------\nLeft: !C\nRight: !C\nJump: !C\nJump Left: !C\nJump Right: !C\nWait: !C\nQuit game: !C\n",
+	cgc_bzero(buffer, 1024);
+	cgc_sprintf(buffer, "Game moves\n----------\nLeft: !C\nRight: !C\nJump: !C\nJump Left: !C\nJump Right: !C\nWait: !C\nQuit game: !C\n",
 					dungeon.moveTypes.left, dungeon.moveTypes.right, dungeon.moveTypes.jump, dungeon.moveTypes.jumpleft,
 					dungeon.moveTypes.jumpright, dungeon.moveTypes.wait, dungeon.moveTypes.quit);
 
-	len = strlen(buffer);
-	if((ret = transmit_all(STDOUT, buffer, len)))
+	len = cgc_strlen(buffer);
+	if((ret = cgc_transmit_all(STDOUT, buffer, len)))
 		_terminate(TRANSMIT_ERROR);
 }
 
@@ -120,17 +120,17 @@ void sendGameDescription(Dungeon dungeon) {
 *
 * @return None
 */
-void sendMenuInstruction(Dungeon dungeon) {
+void cgc_sendMenuInstruction(cgc_Dungeon dungeon) {
 	char buffer[1024];
-	size_t len=0;
+	cgc_size_t len=0;
 	int ret=0;
 
-	bzero(buffer, 1024);
-	sprintf(buffer, "Menu\n-----\nPlay game: !C\nGet instructions: !C\nHigh Scores: !C\nQuit game: !C\n",
+	cgc_bzero(buffer, 1024);
+	cgc_sprintf(buffer, "Menu\n-----\nPlay game: !C\nGet instructions: !C\nHigh Scores: !C\nQuit game: !C\n",
 			dungeon.moveTypes.play, dungeon.moveTypes.instructions, dungeon.moveTypes.scores, dungeon.moveTypes.quit);
 
-	len = strlen(buffer);
-	if((ret = transmit_all(STDOUT, buffer, len)))
+	len = cgc_strlen(buffer);
+	if((ret = cgc_transmit_all(STDOUT, buffer, len)))
 		_terminate(TRANSMIT_ERROR);
 }
 
@@ -143,24 +143,24 @@ void sendMenuInstruction(Dungeon dungeon) {
 *         RESULT_DIE if the player has died in the game
 *         else 0
 */
-int playGame(Dungeon* dungeon) {
+int cgc_playGame(cgc_Dungeon* dungeon) {
 	char move=0;
 	int result=0;
 
-	sendCurrentDungeonView(dungeon->start);
+	cgc_sendCurrentDungeonView(dungeon->start);
 
 	while(1) {
-		move = getMove();
+		move = cgc_getMove();
 		if(move == dungeon->moveTypes.quit) {
 			return RESULT_QUIT;
 		} else {
-			result = makeMove(dungeon, move);
+			result = cgc_makeMove(dungeon, move);
 			if(result == RESULT_WIN) {
-				playerWon(dungeon);
+				cgc_playerWon(dungeon);
 				return RESULT_WIN;
 			}
 			else if (result == RESULT_DIE) {
-				playerDied(*dungeon);
+				cgc_playerDied(*dungeon);
 				return RESULT_DIE;
 			}
 
@@ -177,41 +177,41 @@ int playGame(Dungeon* dungeon) {
 *
 * @return None
 */
-void sendHighScores(Score* scoreList) {
+void cgc_sendHighScores(cgc_Score* scoreList) {
 #ifdef PATCHED_2
 	char buffer[sizeof(MASTER_MSG)+MAX_NAME_SIZE+10];
-	bzero((char*)buffer, sizeof(MASTER_MSG)+MAX_NAME_SIZE+10);
+	cgc_bzero((char*)buffer, sizeof(MASTER_MSG)+MAX_NAME_SIZE+10);
 #else
 	char buffer[10+MAX_NAME_SIZE+1];
-	bzero((char*)buffer, 10+MAX_NAME_SIZE+1);
+	cgc_bzero((char*)buffer, 10+MAX_NAME_SIZE+1);
 #endif
-	Score* highScore = scoreList;
+	cgc_Score* highScore = scoreList;
 	int num=2;
 
 	if(!highScore) {
 
-		if(transmit_all(STDOUT, NO_SCORES_MSG, strlen(NO_SCORES_MSG)))
+		if(cgc_transmit_all(STDOUT, NO_SCORES_MSG, cgc_strlen(NO_SCORES_MSG)))
 			_terminate(TRANSMIT_ERROR);
 
 		return;
 	}
 
-	sprintf((char*)buffer, MASTER_MSG, highScore->score, highScore->name);
-	if(transmit_all(STDOUT, buffer, strlen((char*)buffer)))
+	cgc_sprintf((char*)buffer, MASTER_MSG, highScore->score, highScore->name);
+	if(cgc_transmit_all(STDOUT, buffer, cgc_strlen((char*)buffer)))
 			_terminate(TRANSMIT_ERROR);
 
-	if(transmit_all(STDOUT, HIGHSCORE_HDR, strlen(HIGHSCORE_HDR)))
+	if(cgc_transmit_all(STDOUT, HIGHSCORE_HDR, cgc_strlen(HIGHSCORE_HDR)))
 		_terminate(TRANSMIT_ERROR);
 
-	for(Score* score=highScore->next; score!=NULL; score=score->next) {
+	for(cgc_Score* score=highScore->next; score!=NULL; score=score->next) {
 #ifdef PATCHED_2
-		bzero((char*)buffer, sizeof(MASTER_MSG)+MAX_NAME_SIZE+10);
+		cgc_bzero((char*)buffer, sizeof(MASTER_MSG)+MAX_NAME_SIZE+10);
 #else
-		bzero((char*)buffer, 10+MAX_NAME_SIZE+1);
+		cgc_bzero((char*)buffer, 10+MAX_NAME_SIZE+1);
 #endif
-		sprintf((char*)buffer, "!U. !U  !X\n", num, score->score, score->name);
+		cgc_sprintf((char*)buffer, "!U. !U  !X\n", num, score->score, score->name);
 		num++;
-		if(transmit_all(STDOUT, buffer, strlen((char*)buffer)))
+		if(cgc_transmit_all(STDOUT, buffer, cgc_strlen((char*)buffer)))
 			_terminate(TRANSMIT_ERROR);		
 	}
 }
@@ -223,58 +223,58 @@ void sendHighScores(Score* scoreList) {
 *
 * @return None
 */
-void initScoreboard(Dungeon* dungeon) {
-	Score* newScore;
+void cgc_initScoreboard(cgc_Dungeon* dungeon) {
+	cgc_Score* newScore;
 
 
-	if(!(newScore = malloc(sizeof(Score)))) 
+	if(!(newScore = cgc_malloc(sizeof(cgc_Score)))) 
 		_terminate(ALLOCATE_ERROR);
-	bzero((char*)newScore, sizeof(Score));
-	newScore->name = getRandomName();
+	cgc_bzero((char*)newScore, sizeof(cgc_Score));
+	newScore->name = cgc_getRandomName();
 	newScore->score = 600;
 	newScore->next = NULL;
-	dungeon->highScores = insertNewScore(dungeon->highScores, newScore);
+	dungeon->highScores = cgc_insertNewScore(dungeon->highScores, newScore);
 
-	if(!(newScore = malloc(sizeof(Score)))) 
+	if(!(newScore = cgc_malloc(sizeof(cgc_Score)))) 
 		_terminate(ALLOCATE_ERROR);
-	bzero((char*)newScore, sizeof(Score));
-	newScore->name = getRandomName();
+	cgc_bzero((char*)newScore, sizeof(cgc_Score));
+	newScore->name = cgc_getRandomName();
 	newScore->score = 601;
 	newScore->next = NULL;
-	dungeon->highScores = insertNewScore(dungeon->highScores, newScore);
+	dungeon->highScores = cgc_insertNewScore(dungeon->highScores, newScore);
 
-	if(!(newScore = malloc(sizeof(Score)))) 
+	if(!(newScore = cgc_malloc(sizeof(cgc_Score)))) 
 		_terminate(ALLOCATE_ERROR);
-	bzero((char*)newScore, sizeof(Score));
-	newScore->name = getRandomName();
+	cgc_bzero((char*)newScore, sizeof(cgc_Score));
+	newScore->name = cgc_getRandomName();
 	newScore->score = 999999;
 	newScore->next = NULL;
-	dungeon->highScores = insertNewScore(dungeon->highScores, newScore);
+	dungeon->highScores = cgc_insertNewScore(dungeon->highScores, newScore);
 }
 
 
 int main(void) {
-Dungeon dungeon;
+cgc_Dungeon dungeon;
 char move=0;
 int result=0;
 
-	buildDungeon(&dungeon);
-	initScoreboard(&dungeon);
+	cgc_buildDungeon(&dungeon);
+	cgc_initScoreboard(&dungeon);
 
 	while(1) {
-		sendMenuInstruction(dungeon);		
-		move = getMove();
+		cgc_sendMenuInstruction(dungeon);		
+		move = cgc_getMove();
 		if(move == dungeon.moveTypes.play) {
-			result = playGame(&dungeon);
+			result = cgc_playGame(&dungeon);
 			if(result == RESULT_QUIT)
 				return 0;
 
-			destroyDungeon(&dungeon);
-			buildDungeon(&dungeon);
+			cgc_destroyDungeon(&dungeon);
+			cgc_buildDungeon(&dungeon);
 		} else if(move == dungeon.moveTypes.instructions) {
-			sendGameDescription(dungeon);
+			cgc_sendGameDescription(dungeon);
 		} else if(move == dungeon.moveTypes.scores) {
-			sendHighScores(dungeon.highScores);
+			cgc_sendHighScores(dungeon.highScores);
 		} else if(move == dungeon.moveTypes.quit) {
 			return 0;	
 		}		

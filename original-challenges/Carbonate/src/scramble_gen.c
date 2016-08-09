@@ -27,7 +27,7 @@ THE SOFTWARE.
 // Generated at 2015-01-25 15:11:01 -0500
 #include "scramble_gen.h"
 
-scramble_item phase_0(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_0(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = log2(i.f * j.f * 1.8725730085700691);
   j.f = tan(i.f * j.f * 2.9105350093912783);
   j.f = cos(i.f * j.f * 0.5371365912333178);
@@ -63,7 +63,7 @@ scramble_item phase_0(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_1(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_1(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = tan(i.f * j.f * 0.8951928480997888);
   j.f = sin(i.f * j.f * 1.4067434105099248);
   j.f = cos(i.f * j.f * 2.26763385535229);
@@ -99,7 +99,7 @@ scramble_item phase_1(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_2(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_2(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = sin(i.f * j.f * 2.648975931219137);
   j.f = cos(i.f * j.f * 2.1009826379524017);
   j.f = cos(i.f * j.f * 2.663949502499673);
@@ -135,7 +135,7 @@ scramble_item phase_2(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_3(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_3(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = sin(i.f * j.f * 3.031871027095739);
   j.f = sin(i.f * j.f * 3.0931806625902523);
   j.f = cos(i.f * j.f * 2.3748923372681134);
@@ -171,7 +171,7 @@ scramble_item phase_3(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_4(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_4(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = tan(i.f * j.f * 3.1317598665029824);
   j.f = sin(i.f * j.f * 0.7218053275121088);
   j.f = tan(i.f * j.f * 1.379561907159936);
@@ -207,7 +207,7 @@ scramble_item phase_4(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_5(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_5(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = sin(i.f * j.f * 2.2618385737043707);
   j.f = cos(i.f * j.f * 0.3361406796559725);
   j.f = log2(i.f * j.f * 0.460105286159878);
@@ -243,7 +243,7 @@ scramble_item phase_5(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_6(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_6(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = sin(i.f * j.f * 1.5071431053764);
   j.f = log2(i.f * j.f * 0.871900227590951);
   j.f = sin(i.f * j.f * 1.0307915698091092);
@@ -279,7 +279,7 @@ scramble_item phase_6(scramble_item i, scramble_item j) {
   return i;
 }
 
-scramble_item phase_7(scramble_item i, scramble_item j) {
+cgc_scramble_item cgc_phase_7(cgc_scramble_item i, cgc_scramble_item j) {
   j.f = tan(i.f * j.f * 0.34586086055073345);
   j.f = tan(i.f * j.f * 0.17447386509416535);
   j.f = cos(i.f * j.f * 0.8781802005265427);

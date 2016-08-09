@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "jlib.h"
 
-char sort_n_sum(char *array, unsigned int len) {
+char cgc_sort_n_sum(char *array, unsigned int len) {
 	int swapped = 1;
 	char t;
 	int i;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,39 +23,39 @@
 #include "list.h"
 #include "safe.h"
 
-void AllocateAndInitializeListHead(list** List, void* Value)
+void cgc_AllocateAndInitializeListHead(cgc_list** List, void* Value)
 {
   if (!List)
     return;
 
-  *List = xcalloc(1, sizeof(list));
+  *List = cgc_xcalloc(1, sizeof(cgc_list));
   (*List)->Value = Value;
 }
 
-void FreeList(list* List)
+void cgc_FreeList(cgc_list* List)
 {
   if (List)
   {
     if (List->Next)
     {
-      FreeList(List->Next);
+      cgc_FreeList(List->Next);
       List->Next = NULL;
     }
 
-    free(List);
+    cgc_free(List);
   }
 }
 
-size_t LenList(list* List)
+cgc_size_t cgc_LenList(cgc_list* List)
 {
-  size_t Len = 0;
+  cgc_size_t Len = 0;
   for (; List; Len++)
     List = List->Next;
 
   return Len;
 }
 
-void AppendToList(list* List, void* Value)
+void cgc_AppendToList(cgc_list* List, void* Value)
 {
   if (!List)
     return;
@@ -63,11 +63,11 @@ void AppendToList(list* List, void* Value)
   while (List->Next)
     List = List->Next;
 
-  List->Next = xcalloc(1, sizeof(list));
+  List->Next = cgc_xcalloc(1, sizeof(cgc_list));
   List->Next->Value = Value;
 }
 
-void UniqAppendToList(list* List, void* Value)
+void cgc_UniqAppendToList(cgc_list* List, void* Value)
 {
   while (List->Next)
   {
@@ -78,13 +78,13 @@ void UniqAppendToList(list* List, void* Value)
   }
 
   if (List->Value != Value)
-    AppendToList(List, Value);
+    cgc_AppendToList(List, Value);
 }
 
-list* UniqExtendList(list* L1, list* L2)
+cgc_list* cgc_UniqExtendList(cgc_list* L1, cgc_list* L2)
 {
-  list* Ret;
-  list* L1Walker;
+  cgc_list* Ret;
+  cgc_list* L1Walker;
   if (!L1 && L2)
   {
     return L2;
@@ -116,7 +116,7 @@ list* UniqExtendList(list* L1, list* L2)
       // Didn't find L2 value in L1.
       if (!L1Walker)
       {
-        AppendToList(L1, L2->Value);
+        cgc_AppendToList(L1, L2->Value);
       }
 
       // Move onto next value in L2 that we want to add.
@@ -131,12 +131,12 @@ list* UniqExtendList(list* L1, list* L2)
   }
 }
 
-int CheckForCycle(list* List)
+int cgc_CheckForCycle(cgc_list* List)
 {
   if (!List)
     return 0;
 
-  list* Speedy = List->Next;
+  cgc_list* Speedy = List->Next;
 
   while (Speedy && List)
   {
@@ -153,14 +153,14 @@ int CheckForCycle(list* List)
   return 0;
 }
 
-void PrintList(FILE* Stream, list *List)
+void cgc_PrintList(cgc_FILE* Stream, cgc_list *List)
 {
   while (List)
   {
     if (List->Next)
-      fprintf(Stream, "%x:%s ", List, List->Value);
+      cgc_fprintf(Stream, "%x:%s ", List, List->Value);
     else
-      fprintf(Stream, "%x:%s\n", List, List->Value);
+      cgc_fprintf(Stream, "%x:%s\n", List, List->Value);
 
     List = List->Next;
   }

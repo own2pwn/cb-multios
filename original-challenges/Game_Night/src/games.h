@@ -68,7 +68,7 @@ extern struct game_state game_state;
 /**
  * Initialize the cookie protecting the main game structure.
  */
-void init_cookie(void);
+void cgc_init_cookie(void);
 
 /**
  * Verify the cookie protecting the main game structure.
@@ -76,56 +76,56 @@ void init_cookie(void);
  * @param cookie The value of the cookie to check
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int check_cookie(unsigned int cookie);
+int cgc_check_cookie(unsigned int cookie);
 
 /** 
  * Play a game of hugman.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_hugman(void);
+int cgc_do_hugman(void);
 
 /** 
  * Play a game of chess.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_chess(void);
+int cgc_do_chess(void);
 
 /** 
  * Play a game of sudoku.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_sudoku(void);
+int cgc_do_sudoku(void);
 
 /** 
  * Play a game of gallon challenge.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_gallon_challenge(void);
+int cgc_do_gallon_challenge(void);
 
 /** 
  * Play a game of safari zone.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_safari_zone(void);
+int cgc_do_safari_zone(void);
 
 /** 
  * Play a game of chance of survival.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_chance_of_survival(void);
+int cgc_do_chance_of_survival(void);
 
 /** 
  * Play a game of lesson in futility.
  *
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int do_lesson_in_futility(void);
+int cgc_do_lesson_in_futility(void);
 
 #endif /* GAMES_H_ */
 

@@ -26,19 +26,19 @@
 #include <stdlib.h>
 
 #define DEF_LIST(name, data_type)                               \
-  typedef struct name##_list {                                  \
+  typedef struct cgc_##name##_list {                                  \
     data_type value;                                            \
-    struct name##_list *prev;                                   \
-    struct name##_list *next;                                   \
-  } name##_list;                                                \
+    struct cgc_##name##_list *prev;                                   \
+    struct cgc_##name##_list *next;                                   \
+  } cgc_##name##_list;                                                \
 
 #define DEF_LIST_APPEND(name, data_type)                        \
-  int name##_list_append(name##_list *list, data_type value) {  \
+  int cgc_##name##_list_append(cgc_##name##_list *list, data_type value) {  \
     if (list == NULL)                                           \
       return -1;                                                \
-    name##_list *n = malloc(sizeof(name##_list));               \
+    cgc_##name##_list *n = cgc_malloc(sizeof(cgc_##name##_list));               \
     if (n == NULL)                                              \
-      exit(1);                                                  \
+      cgc_exit(1);                                                  \
     while (list->next != NULL)                                  \
       list = list->next;                                        \
     list->next = n;                                             \

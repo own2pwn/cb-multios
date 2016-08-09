@@ -26,15 +26,15 @@ THE SOFTWARE.
 #ifndef __CTYPE_H__
 #define __CTYPE_H__
 
-int isdigit( int c );
-int islower( int c );
-int isupper( int c );
-int isalpha( int c );
-int isalnum( int c );
-int isprint( int c );
-int isspace( int c );
+int cgc_isdigit( int c );
+int cgc_islower( int c );
+int cgc_isupper( int c );
+int cgc_isalpha( int c );
+int cgc_isalnum( int c );
+int cgc_isprint( int c );
+int cgc_isspace( int c );
 
-int toupper( int c );
-int tolower( int c );
+int cgc_toupper( int c );
+int cgc_tolower( int c );
 
 #endif // __CTYPE_H__

@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,63 +26,63 @@ THE SOFTWARE.
 
 #include "common.h"
 
-CMessageFragmentList::CFragmentData *CMessageFragmentList::GetFragmentForSequenceNumber( uint16_t sequenceNumber )
+cgc_CMessageFragmentList::cgc_CFragmentData *cgc_CMessageFragmentList::cgc_GetFragmentForSequenceNumber( cgc_uint16_t sequenceNumber )
 {
-    CFragmentData *pCur;
+    cgc_CFragmentData *pCur;
 
-    for ( pCur = (CFragmentData *)m_fragmentList.GetFirst(); pCur; pCur = (CFragmentData *)pCur->GetNext() )
+    for ( pCur = (cgc_CFragmentData *)m_fragmentList.cgc_GetFirst(); pCur; pCur = (cgc_CFragmentData *)pCur->cgc_GetNext() )
     {
-        if ( pCur->GetSequenceNumber() == sequenceNumber )
+        if ( pCur->cgc_GetSequenceNumber() == sequenceNumber )
             return (pCur);
     }
 
     return (NULL);
 }
 
-uint32_t CMessageFragmentList::CFragmentData::GetAssembledMessageSize( void ) const
+cgc_uint32_t cgc_CMessageFragmentList::cgc_CFragmentData::cgc_GetAssembledMessageSize( void ) const
 {
     // Assemble size
-    uint32_t messageFullSize = 0;
-    for ( uint32_t i = 0; i < m_fragmentTotalCount; i++ )
+    cgc_uint32_t messageFullSize = 0;
+    for ( cgc_uint32_t i = 0; i < m_fragmentTotalCount; i++ )
     {
         if ( m_pMessageFragments[i] )
-            messageFullSize += m_pMessageFragments[i]->GetDataLength( );
+            messageFullSize += m_pMessageFragments[i]->cgc_GetDataLength( );
     }
 
     return (messageFullSize);
 }
 
-CFullMessage *CMessageFragmentList::CFragmentData::AssembleFragments( void ) const
+cgc_CFullMessage *cgc_CMessageFragmentList::cgc_CFragmentData::cgc_AssembleFragments( void ) const
 {
     // Allocate buffer for full message
-    uint8_t *pFullMessageData = new uint8_t[GetAssembledMessageSize()];
+    cgc_uint8_t *pFullMessageData = new cgc_uint8_t[cgc_GetAssembledMessageSize()];
 
-    uint32_t fullMessagePos = 0;
+    cgc_uint32_t fullMessagePos = 0;
 
     // BUG:: Message full size was calculated using only up to m_fragmentCount where as this will count fragments that were ABOVE the last fragment number
 #ifdef PATCHED
-    for ( uint32_t i = 0; i < m_fragmentTotalCount; i++ )
+    for ( cgc_uint32_t i = 0; i < m_fragmentTotalCount; i++ )
 #else
-    for ( uint32_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
+    for ( cgc_uint32_t i = 0; i < MAX_MESSAGE_FRAGMENTS; i++ )
 #endif
     {
         if ( m_pMessageFragments[i] )
         {
             // Copy data
-            memcpy( pFullMessageData+fullMessagePos, (void *)m_pMessageFragments[i]->GetData(), m_pMessageFragments[i]->GetDataLength() );
+            cgc_memcpy( pFullMessageData+fullMessagePos, (void *)m_pMessageFragments[i]->cgc_GetData(), m_pMessageFragments[i]->cgc_GetDataLength() );
 
             // Update full message position
-            fullMessagePos += m_pMessageFragments[i]->GetDataLength();
+            fullMessagePos += m_pMessageFragments[i]->cgc_GetDataLength();
         }
     }
 
     // In this case don't pass true to third argument of constructor (so it will not copy full data)
-    CFullMessage *pNewFullMessage = new CFullMessage( pFullMessageData, fullMessagePos );
+    cgc_CFullMessage *pNewFullMessage = new cgc_CFullMessage( pFullMessageData, fullMessagePos );
 
     return (pNewFullMessage);
 }
 
-bool CMessageFragmentList::AddFragment( CMessagePacket *pPacket, CFullMessage *&pNewFullMessage )
+bool cgc_CMessageFragmentList::cgc_AddFragment( cgc_CMessagePacket *pPacket, cgc_CFullMessage *&pNewFullMessage )
 {
     // This will be set if all the fragments are assembled
     pNewFullMessage = NULL;
@@ -95,31 +95,31 @@ bool CMessageFragmentList::AddFragment( CMessagePacket *pPacket, CFullMessage *&
     if ( m_fragmentCount >= MESSAGE_FRAGMENT_LIST_MAX )
         return (false);
 
-    if ( !pPacket->IsFragmented() )
+    if ( !pPacket->cgc_IsFragmented() )
         return (false);
 
     // Get sequence number
-    uint16_t currentSeqNumber = pPacket->GetSequenceNumber();
+    cgc_uint16_t currentSeqNumber = pPacket->cgc_GetSequenceNumber();
 
-    CFragmentData *pOtherFragments = GetFragmentForSequenceNumber( currentSeqNumber );
+    cgc_CFragmentData *pOtherFragments = cgc_GetFragmentForSequenceNumber( currentSeqNumber );
     if ( pOtherFragments == NULL )
     {
         // No other fragments -- lets add a new one at the tail of the list
-        CFragmentData *pNewFragmentData = new CFragmentData( currentSeqNumber );
+        cgc_CFragmentData *pNewFragmentData = new cgc_CFragmentData( currentSeqNumber );
 
-        if ( pPacket->IsLastFragment() )
+        if ( pPacket->cgc_IsLastFragment() )
         {
             // Last fragment -- set the total count
-            pNewFragmentData->SetTotalFragmentCount( pPacket->GetFragmentNumber()+1 );
+            pNewFragmentData->cgc_SetTotalFragmentCount( pPacket->cgc_GetFragmentNumber()+1 );
         }
 
-        pNewFragmentData->AddFragmentData( pPacket, pPacket->GetFragmentNumber() );
+        pNewFragmentData->cgc_AddFragmentData( pPacket, pPacket->cgc_GetFragmentNumber() );
 
         // Check if all fragments are available (this is a special case where only 1 packet is received that is the last fragment...)
-        if ( pNewFragmentData->HasAllFragments() )
+        if ( pNewFragmentData->cgc_HasAllFragments() )
         {
             // Assemble message
-            pNewFullMessage = pNewFragmentData->AssembleFragments( );
+            pNewFullMessage = pNewFragmentData->cgc_AssembleFragments( );
 
             // Free memory
             delete pNewFragmentData;
@@ -127,7 +127,7 @@ bool CMessageFragmentList::AddFragment( CMessagePacket *pPacket, CFullMessage *&
         else
         {
             // More fragments needed -- add it to the fragment list
-            m_fragmentList.InsertTail( pNewFragmentData );
+            m_fragmentList.cgc_InsertTail( pNewFragmentData );
 
             // Update the list tracking the number of sequence numbers we are tracking in fragments
             m_fragmentCount++;
@@ -137,21 +137,21 @@ bool CMessageFragmentList::AddFragment( CMessagePacket *pPacket, CFullMessage *&
     {
         // Other fragments present -- add onto the list (add possibly assemble)
 
-        if ( pPacket->IsLastFragment() )
+        if ( pPacket->cgc_IsLastFragment() )
         {
             // Last fragment -- set total count
-            pOtherFragments->SetTotalFragmentCount( pPacket->GetFragmentNumber()+1 );
+            pOtherFragments->cgc_SetTotalFragmentCount( pPacket->cgc_GetFragmentNumber()+1 );
         }
 
-        pOtherFragments->AddFragmentData( pPacket, pPacket->GetFragmentNumber() );
+        pOtherFragments->cgc_AddFragmentData( pPacket, pPacket->cgc_GetFragmentNumber() );
 
-        if ( pOtherFragments->HasAllFragments() )
+        if ( pOtherFragments->cgc_HasAllFragments() )
         {
             // Build a new assembled message, unlink from fragment list, and delete the fragment data
-            pNewFullMessage = pOtherFragments->AssembleFragments( );
+            pNewFullMessage = pOtherFragments->cgc_AssembleFragments( );
 
             // Remove from fragment list
-            m_fragmentList.Unlink( pOtherFragments );
+            m_fragmentList.cgc_Unlink( pOtherFragments );
 
             // Free memory
             delete pOtherFragments;
@@ -164,13 +164,13 @@ bool CMessageFragmentList::AddFragment( CMessagePacket *pPacket, CFullMessage *&
     return (true);
 }
 
-CFullMessage::CFullMessage( uint8_t *pMessageData, uint32_t messageLength, bool bDataCopy )
+cgc_CFullMessage::cgc_CFullMessage( cgc_uint8_t *pMessageData, cgc_uint32_t messageLength, bool bDataCopy )
 {
     if ( bDataCopy )
     {
-        m_pMessageData = new uint8_t[messageLength];
+        m_pMessageData = new cgc_uint8_t[messageLength];
 
-        memcpy( m_pMessageData, pMessageData, messageLength );
+        cgc_memcpy( m_pMessageData, pMessageData, messageLength );
     }
     else
         m_pMessageData = pMessageData;
@@ -178,32 +178,32 @@ CFullMessage::CFullMessage( uint8_t *pMessageData, uint32_t messageLength, bool 
     m_messageLen = messageLength;
 }
 
-CFullMessage::~CFullMessage( )
+cgc_CFullMessage::~cgc_CFullMessage( )
 {
     if ( m_pMessageData )
         delete m_pMessageData;
 }
 
-CMessageHandler::CMessageHandler( )
+cgc_CMessageHandler::cgc_CMessageHandler( )
 {
 
 }
 
-CMessageHandler::~CMessageHandler( )
+cgc_CMessageHandler::~cgc_CMessageHandler( )
 {
 
 }
 
-void CMessageHandler::ReceivePacket( CMessagePacket *pPacket )
+void cgc_CMessageHandler::cgc_ReceivePacket( cgc_CMessagePacket *pPacket )
 {
     if ( pPacket == NULL )
         return;
 
-    if ( pPacket->IsFragmented() )
+    if ( pPacket->cgc_IsFragmented() )
     {
-        CFullMessage *pFullMessage = NULL;
+        cgc_CFullMessage *pFullMessage = NULL;
 
-        if ( !m_messageFragmentList.AddFragment( pPacket, pFullMessage ) )
+        if ( !m_messageFragmentList.cgc_AddFragment( pPacket, pFullMessage ) )
         {
             // Fragment reassembly failed -- drop message
             delete pPacket;
@@ -214,34 +214,34 @@ void CMessageHandler::ReceivePacket( CMessagePacket *pPacket )
         if ( pFullMessage )
         {
             // Add full message into list for processing
-            m_fullMessageList.InsertTail( pFullMessage );
+            m_fullMessageList.cgc_InsertTail( pFullMessage );
         }
     }
     else
     {
         // Generate a full message
-        CFullMessage *pNewFullMessage = new CFullMessage( (uint8_t *)pPacket->GetData(), pPacket->GetDataLength(), true );
+        cgc_CFullMessage *pNewFullMessage = new cgc_CFullMessage( (cgc_uint8_t *)pPacket->cgc_GetData(), pPacket->cgc_GetDataLength(), true );
 
         // Delete packet
         delete pPacket;
 
-        m_fullMessageList.InsertTail( pNewFullMessage );
+        m_fullMessageList.cgc_InsertTail( pNewFullMessage );
     }
 }
 
-bool CMessageHandler::IsMsgAvailable( void )
+bool cgc_CMessageHandler::cgc_IsMsgAvailable( void )
 {
-    return (m_fullMessageList.GetFirst() != NULL);
+    return (m_fullMessageList.cgc_GetFirst() != NULL);
 }
 
-CFullMessage *CMessageHandler::PopFirstMessage( void )
+cgc_CFullMessage *cgc_CMessageHandler::cgc_PopFirstMessage( void )
 {
-    if ( !IsMsgAvailable() )
+    if ( !cgc_IsMsgAvailable() )
         return (NULL);
 
-    CFullMessage *pFirstMsg = (CFullMessage *)m_fullMessageList.GetFirst();
+    cgc_CFullMessage *pFirstMsg = (cgc_CFullMessage *)m_fullMessageList.cgc_GetFirst();
 
-    m_fullMessageList.Unlink( pFirstMsg );
+    m_fullMessageList.cgc_Unlink( pFirstMsg );
 
     return (pFirstMsg);
 }

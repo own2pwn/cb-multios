@@ -41,45 +41,45 @@ extern "C"
 #include "tcm.h"
 #include "common.h"
 
-void RunSimulation( uint8_t *pSecretPage )
+void cgc_RunSimulation( cgc_uint8_t *pSecretPage )
 {
-	CSimulation oSim;
+	cgc_CSimulation oSim;
 
-	uint64_t ecmEquipmentID = *((uint64_t*)(pSecretPage));
-	uint64_t tcmEquipmentID = *((uint64_t*)(pSecretPage+8));
+	cgc_uint64_t ecmEquipmentID = *((cgc_uint64_t*)(pSecretPage));
+	cgc_uint64_t tcmEquipmentID = *((cgc_uint64_t*)(pSecretPage+8));
 
 #if 0 
-	printf( "Equipment ID ECM: " );
-	PrintHexBytes( pSecretPage, 8 );
-	printf( "Equipment ID TCM: " );
-	PrintHexBytes( pSecretPage+8, 8 );
+	cgc_printf( "Equipment ID ECM: " );
+	cgc_PrintHexBytes( pSecretPage, 8 );
+	cgc_printf( "Equipment ID TCM: " );
+	cgc_PrintHexBytes( pSecretPage+8, 8 );
 #endif
 
-	oSim.AddSimulationComponent( new CECM( oSim.GetLanBus(), ecmEquipmentID ) );
-	oSim.AddSimulationComponent( new CTCM( oSim.GetLanBus(), tcmEquipmentID ) );
+	oSim.cgc_AddSimulationComponent( new cgc_CECM( oSim.cgc_GetLanBus(), ecmEquipmentID ) );
+	oSim.cgc_AddSimulationComponent( new cgc_CTCM( oSim.cgc_GetLanBus(), tcmEquipmentID ) );
 
-	oSim.SetupSimulation();
+	oSim.cgc_SetupSimulation();
 
-	// Run simulation
-	oSim.RunSimulation();	
+	// cgc_Run simulation
+	oSim.cgc_RunSimulation();	
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
 {
 	void *secret_page = (void *)secret_page_i;
 
-	uint32_t *pPageArray = (uint32_t*)secret_page;
-	uint32_t ts = pPageArray[0] + pPageArray[1] + pPageArray[2] + pPageArray[3];
-	uint32_t idx = 0;
+	cgc_uint32_t *pPageArray = (cgc_uint32_t*)secret_page;
+	cgc_uint32_t ts = pPageArray[0] + pPageArray[1] + pPageArray[2] + pPageArray[3];
+	cgc_uint32_t idx = 0;
 
 	ts &= 0x7FFFF;
 
-	printf( "START::TS=$d\n", ts+1452975600 );
+	cgc_printf( "START::TS=$d\n", ts+1452975600 );
 	
 	bool bDone = false;
 	do
 	{
-		RunSimulation( (uint8_t*)secret_page );
+		cgc_RunSimulation( (cgc_uint8_t*)secret_page );
 
 		for (;;)
 		{
@@ -92,10 +92,10 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 
 			idx++;
 
-			printf( "Run another simulation (TS=$d) (y/n)? ", ts+1452975600 );
-			CUtil::String sLine;
+			cgc_printf( "cgc_Run another simulation (TS=$d) (y/n)? ", ts+1452975600 );
+			CUtil::cgc_String sLine;
 
-			sLine = ReadLine();
+			sLine = cgc_ReadLine();
 
 			if ( sLine[0] == 'n' )
 			{

@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,11 +33,11 @@ typedef struct {
 	char *prompt;
 	char *command;
 	int (* Action)();
-} menu_item;
+} cgc_menu_item;
 
 
-int process_menu(menu_item *, int);
-int find_char(char c, char *string);
+int cgc_process_menu(cgc_menu_item *, int);
+int cgc_find_char(char c, char *string);
 
 
 #endif

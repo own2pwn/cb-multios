@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,14 +26,14 @@
 
 #include "convert.h"
 
-char *ftoa(double value, char *str, size_t size) {
+char *cgc_ftoa(double value, char *str, cgc_size_t size) {
     if (size <= 1)
         return NULL;
 
     if (isinf(value) || isnan(value))
         return NULL;
 
-    size_t i = 0;
+    cgc_size_t i = 0;
     int negative = 0;
 
     if (value < 0) {

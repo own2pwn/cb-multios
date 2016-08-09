@@ -1,0 +1,6 @@
+set( SERVICE_ID "00094" )
+set( AUTHOR_ID "KPRCA" )
+set( POLLS_RELEASE_MAX_DEPTH "1500" )
+set( CFLAGS "-fno-builtin -Wno-int-to-pointer-cast -Wno-writable-strings  -O3 -g  -Wno-overlength-strings -Wno-packed -DPRINTF_CHAR=59" )
+set( VULN_COUNT "1" )
+buildCB(${CFLAGS})

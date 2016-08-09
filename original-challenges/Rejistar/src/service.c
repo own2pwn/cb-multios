@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -43,18 +43,18 @@
 *
 * @return None
 */
-void addService(Service** services, char* name, void (* callback)(int, char*, unsigned int*)) {
-	size_t size;
-	Service* newService;
-	if(!(newService = malloc(sizeof(Service))))
+void cgc_addService(cgc_Service** services, char* name, void (* callback)(int, char*, unsigned int*)) {
+	cgc_size_t size;
+	cgc_Service* newService;
+	if(!(newService = cgc_malloc(sizeof(cgc_Service))))
 		_terminate(ALLOCATE_ERROR);
-	bzero((char *) newService, sizeof(Service));
+	cgc_bzero((char *) newService, sizeof(cgc_Service));
 	newService->callback = callback;
-	size = strlen(name);
-	if(!(newService->name = malloc(size+1)))
+	size = cgc_strlen(name);
+	if(!(newService->name = cgc_malloc(size+1)))
 		_terminate(ALLOCATE_ERROR);
-	bzero(newService->name, size+1);
-	memcpy(newService->name, name, size);
+	cgc_bzero(newService->name, size+1);
+	cgc_memcpy(newService->name, name, size);
 	newService->next = *services;
 	*services = newService;
 }
@@ -66,15 +66,15 @@ void addService(Service** services, char* name, void (* callback)(int, char*, un
 *
 * @return None
 */
-void initServices(Service** services) {
+void cgc_initServices(cgc_Service** services) {
 
-	addService(services, TOKEN_CMD, requestToken);
-	addService(services, ENROLL_CMD, enroll);
-	addService(services, REENROLL_CMD, reenroll);
-	addService(services, CERTS_CMD, crls);
-	addService(services, REVOKE_CERT_CMD, revokeCert);
-	addService(services, REVOKE_TOKEN_CMD, revokeToken);
-	addService(services, REFRESH_CMD, refreshToken);
+	cgc_addService(services, TOKEN_CMD, cgc_requestToken);
+	cgc_addService(services, ENROLL_CMD, cgc_enroll);
+	cgc_addService(services, REENROLL_CMD, cgc_reenroll);
+	cgc_addService(services, CERTS_CMD, cgc_crls);
+	cgc_addService(services, REVOKE_CERT_CMD, cgc_revokeCert);
+	cgc_addService(services, REVOKE_TOKEN_CMD, cgc_revokeToken);
+	cgc_addService(services, REFRESH_CMD, cgc_refreshToken);
 
 }
 
@@ -85,10 +85,10 @@ void initServices(Service** services) {
 *
 * @return None
 */
-void freeMessage(Message *message) {
-	free(message->credential);
-	free(message->body);
-	free(message);
+void cgc_freeMessage(cgc_Message *message) {
+	cgc_free(message->credential);
+	cgc_free(message->body);
+	cgc_free(message);
 }
 
 /**
@@ -96,77 +96,77 @@ void freeMessage(Message *message) {
 * 
 * @return The address of the message received
 */
-Message* getMessage() {
-	size_t bytes, size;
-	Message *message;
+cgc_Message* cgc_getMessage() {
+	cgc_size_t bytes, size;
+	cgc_Message *message;
 	char *cmd_str, *auth_str, *id_str, *cred_str, *body_str;
 	char buffer[1024];
-	bzero(buffer,1024);
+	cgc_bzero(buffer,1024);
 
-	if(!(message = malloc(sizeof(Message))))
+	if(!(message = cgc_malloc(sizeof(cgc_Message))))
 		_terminate(ALLOCATE_ERROR);
-	bzero((char *)message, sizeof(Message));
+	cgc_bzero((char *)message, sizeof(cgc_Message));
 	if(!message) 
 		_terminate(1);
 
-	if(read_until_delim_or_n(STDIN, buffer, '!', sizeof(buffer), &bytes))
+	if(cgc_read_until_delim_or_n(STDIN, buffer, '!', sizeof(buffer), &bytes))
 		_terminate(2);
 
-	cmd_str = strtok(buffer, ",");
+	cmd_str = cgc_strtok(buffer, ",");
 	if(!cmd_str)
 		return NULL;
 
-	size = strlen(cmd_str);
+	size = cgc_strlen(cmd_str);
 
 	if(size > MAX_CMD_SIZE)
 		size = MAX_CMD_SIZE;
 
-	if(!(message->command = malloc(size+1)))
+	if(!(message->command = cgc_malloc(size+1)))
 		_terminate(ALLOCATE_ERROR);
-	bzero(message->command, size+1);
-	memcpy(message->command, cmd_str, size);
+	cgc_bzero(message->command, size+1);
+	cgc_memcpy(message->command, cmd_str, size);
 
-	auth_str = strtok(0, ",");
+	auth_str = cgc_strtok(0, ",");
 	if(!auth_str) 
 		return NULL;
 
-	size = strlen(auth_str);
+	size = cgc_strlen(auth_str);
 
 	if(size > MAX_AUTH_TYPE_SIZE)
 		size = MAX_AUTH_TYPE_SIZE;
 
-	memcpy(message->auth, auth_str, size);
+	cgc_memcpy(message->auth, auth_str, size);
 
-	id_str = strtok(0, ",");
+	id_str = cgc_strtok(0, ",");
 
 	if(id_str)
-		message->id = atoi(id_str);
+		message->id = cgc_atoi(id_str);
 	else
 		return NULL;
 
-	cred_str = strtok(0, ",");
+	cred_str = cgc_strtok(0, ",");
 	if(!cred_str)
 		return NULL;
 
-	size = strlen(cred_str);
-	if(!(message->credential = malloc(size+1)))
+	size = cgc_strlen(cred_str);
+	if(!(message->credential = cgc_malloc(size+1)))
 		_terminate(ALLOCATE_ERROR);
 
-	bzero(message->credential, size+1);
-	memcpy(message->credential, cred_str, size);
+	cgc_bzero(message->credential, size+1);
+	cgc_memcpy(message->credential, cred_str, size);
 
-	body_str = strtok(0, "!");
+	body_str = cgc_strtok(0, "!");
 	if(body_str) {
-		size = strlen(body_str);
+		size = cgc_strlen(body_str);
 #ifdef PATCHED_1
-		if(!(message->body = malloc(size+1)))
+		if(!(message->body = cgc_malloc(size+1)))
 			_terminate(ALLOCATE_ERROR);
 #else
-		if(!(message->body = malloc(size)))
+		if(!(message->body = cgc_malloc(size)))
 			_terminate(ALLOCATE_ERROR);
 #endif
-		bzero(message->body, size+1);
-		memcpy(message->body, body_str, size);		
+		cgc_bzero(message->body, size+1);
+		cgc_memcpy(message->body, body_str, size);		
 	}
 
 	return message;
@@ -177,48 +177,48 @@ Message* getMessage() {
 * 
 * @param command The command that is requested
 * @param auth_type The type of authentication used
-* @param credential The credential used to authenticate
+* @param credential The credential used to cgc_authenticate
 *
 * @return 1 if authenticated, 0 if not
 */
-int authenticate(char* command, char* auth_type, char* credential) {
-	if(!strncmp(auth_type, CERT_AUTH_TYPE, strlen(CERT_AUTH_TYPE))
-		&& isCertCommand(command)) {
-		Certificate *cert;
-		cert = parseCertificate(credential);
+int cgc_authenticate(char* command, char* auth_type, char* credential) {
+	if(!cgc_strncmp(auth_type, CERT_AUTH_TYPE, cgc_strlen(CERT_AUTH_TYPE))
+		&& cgc_isCertCommand(command)) {
+		cgc_Certificate *cert;
+		cert = cgc_parseCertificate(credential);
 
-		if(!checkCertUse(command, cert->use)) {
+		if(!cgc_checkCertUse(command, cert->use)) {
 			return 0;
 		}
 
-		if(validateCert(cert, command, &expiration_date)) {
+		if(cgc_validateCert(cert, command, &expiration_date)) {
 			return 1;
 		}
 
 		return 0;
 
-	} else if(!strncmp(auth_type, TOKEN_AUTH_TYPE, strlen(TOKEN_AUTH_TYPE))) {
-		Token *token;
-		token = parseToken(credential);
+	} else if(!cgc_strncmp(auth_type, TOKEN_AUTH_TYPE, cgc_strlen(TOKEN_AUTH_TYPE))) {
+		cgc_Token *token;
+		token = cgc_parseToken(credential);
 		
-		if(!checkTokenUse(command, token->use)) {
+		if(!cgc_checkTokenUse(command, token->use)) {
 			return 0;
 		}
 
-		if(validateToken(token, &expiration_date)) {
+		if(cgc_validateToken(token, &expiration_date)) {
 			return 1;
 		}
 
 		return 0;
 
-	} else if(!strncmp(auth_type, UP_AUTH_TYPE, strlen(UP_AUTH_TYPE))
-		&& !strncmp(command, TOKEN_CMD, strlen(TOKEN_CMD))) {
+	} else if(!cgc_strncmp(auth_type, UP_AUTH_TYPE, cgc_strlen(UP_AUTH_TYPE))
+		&& !cgc_strncmp(command, TOKEN_CMD, cgc_strlen(TOKEN_CMD))) {
 		char *user, *pass;
 
-		user = strtok(credential, "/");
-		if(!strncmp(user, DEFAULT_USER, strlen(DEFAULT_USER))) {
-			pass = strtok(0,"!");
-			if(!strncmp(pass, DEFAULT_PASS, strlen(DEFAULT_PASS))) {
+		user = cgc_strtok(credential, "/");
+		if(!cgc_strncmp(user, DEFAULT_USER, cgc_strlen(DEFAULT_USER))) {
+			pass = cgc_strtok(0,"!");
+			if(!cgc_strncmp(pass, DEFAULT_PASS, cgc_strlen(DEFAULT_PASS))) {
 				return 1;
 			}
 		}
@@ -230,63 +230,63 @@ int authenticate(char* command, char* auth_type, char* credential) {
 }
 
 /**
-* Run the service requested
+* cgc_Run the service requested
 * 
 * @param serviceList The list of services
 * @param message The requesting message
 *
 * @return None
 */
-void runService(Service* serviceList, Message *message) {
-	Service* service;
+void cgc_runService(cgc_Service* serviceList, cgc_Message *message) {
+	cgc_Service* service;
 	for(service = serviceList; service!=NULL; service=service->next) {
-		if(!strncmp(message->command, service->name, strlen(service->name))) {
-			if(authenticate(message->command, message->auth, message->credential)) {
+		if(!cgc_strncmp(message->command, service->name, cgc_strlen(service->name))) {
+			if(cgc_authenticate(message->command, message->auth, message->credential)) {
 				service->callback(message->id, message->body, &expiration_date);				
 			}
 			else {
-				sendErrorResponse(RESPONSE_ERR_NO_AUTH);				
+				cgc_sendErrorResponse(RESPONSE_ERR_NO_AUTH);				
 			}
 			return;
 		}
 
 	}
 
-	sendErrorResponse(RESPONSE_ERR_NO_SERVICE);
+	cgc_sendErrorResponse(RESPONSE_ERR_NO_SERVICE);
 	return;
 
 }
 
 int main(void) {
-	size_t bytes;
-	size_t size=0;
+	cgc_size_t bytes;
+	cgc_size_t size=0;
 	char* vuln_buf;
 	char* out;
 	char* filler_buf[510];
 	int ret;
-	Service* serviceList = NULL;
-	Message* message;
+	cgc_Service* serviceList = NULL;
+	cgc_Message* message;
 
-	if((ret = random(private_key, sizeof(private_key), &bytes)))
+	if((ret = cgc_random(private_key, sizeof(private_key), &bytes)))
 		_terminate(1);
 
-	initServices(&serviceList);
+	cgc_initServices(&serviceList);
 
 	while(1) {
-		if(!(message = getMessage())) {
-			sendErrorResponse(RESPONSE_ERR_NO_MESSAGE);
+		if(!(message = cgc_getMessage())) {
+			cgc_sendErrorResponse(RESPONSE_ERR_NO_MESSAGE);
 			return 0;
 		}
 
-		if(!strncmp(message->command, QUIT_CMD, strlen(QUIT_CMD))) {
+		if(!cgc_strncmp(message->command, QUIT_CMD, cgc_strlen(QUIT_CMD))) {
 
-			if((ret = transmit(STDOUT, "!", strlen("!"), &bytes))) 
+			if((ret = transmit(STDOUT, "!", cgc_strlen("!"), &bytes))) 
 				_terminate(1);
 			return 0;
 		}
 
-		runService(serviceList, message);
-		freeMessage(message);
+		cgc_runService(serviceList, message);
+		cgc_freeMessage(message);
 	}
 
 	return 0;

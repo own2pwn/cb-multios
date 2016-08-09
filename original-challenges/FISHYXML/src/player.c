@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,19 +26,19 @@
 #include "hand.h"
 #include "player.h"
 
-struct player *create_player(uint8_t id, char *name) {
+struct player *cgc_create_player(cgc_uint8_t id, char *name) {
 
 	struct player *p = NULL;
-	p = calloc(sizeof(struct player));
+	p = cgc_calloc(sizeof(struct player));
 
 	p->name = name;
 	p->id = id;
 	p->book_count = 0;
-	p->h = create_hand();
+	p->h = cgc_create_hand();
 	return p;
 }
 
-int take_top_card(struct player *p, struct deck *d) {
+int cgc_take_top_card(struct player *p, struct deck *d) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
@@ -46,23 +46,23 @@ int take_top_card(struct player *p, struct deck *d) {
 		return ERR_UNINITIALIZED_DECK;
 	}
 
- 	return add_card_to_hand(p->h, pop(d));
+ 	return cgc_add_card_to_hand(p->h, cgc_pop(d));
 }
 
-int have_cards_of_rank(struct player *p, uint8_t rank, struct card *cards[]) {
+int cgc_have_cards_of_rank(struct player *p, cgc_uint8_t rank, struct card *cards[]) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
 
-	return get_all_of_rank_from_hand(p->h, rank, cards);
+	return cgc_get_all_of_rank_from_hand(p->h, rank, cards);
 }
 
-int play_books(struct player *p) {
+int cgc_play_books(struct player *p) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
 
-	if (4 > get_count_cards_in_hand(p->h)) {
+	if (4 > cgc_get_count_cards_in_hand(p->h)) {
 		return 0;
 	}
 
@@ -72,15 +72,15 @@ int play_books(struct player *p) {
 	struct card *cards[4] = {0};
 
 	for (int rank = 1; rank < 14; rank++) {
-		if (0 > (qty = qty_of_rank_in_hand(p->h, rank))) {return qty;}
+		if (0 > (qty = cgc_qty_of_rank_in_hand(p->h, rank))) {return qty;}
 
 		if (4 == qty) {
-			if (0 > (ret = get_all_of_rank_from_hand(p->h, rank, cards))) {return ret;}
+			if (0 > (ret = cgc_get_all_of_rank_from_hand(p->h, rank, cards))) {return ret;}
 
-			destroy_card(cards[3]);
-			destroy_card(cards[2]);
-			destroy_card(cards[1]);
-			destroy_card(cards[0]);
+			cgc_destroy_card(cards[3]);
+			cgc_destroy_card(cards[2]);
+			cgc_destroy_card(cards[1]);
+			cgc_destroy_card(cards[0]);
 
 			p->book_count++;
 			book_count++;
@@ -90,19 +90,19 @@ int play_books(struct player *p) {
 	return book_count;
 }
 
-int is_player_hand_empty(struct player *p) {
+int cgc_is_player_hand_empty(struct player *p) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
 
-	if (TRUE == is_hand_empty(p->h)) {
+	if (TRUE == cgc_is_hand_empty(p->h)) {
 		return TRUE;
 	} else {
 		return FALSE;
 	}
 }
 
-int draw_new_hand(struct player *p, struct deck *d, uint8_t qty) {
+int cgc_draw_new_hand(struct player *p, struct deck *d, cgc_uint8_t qty) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
@@ -116,7 +116,7 @@ int draw_new_hand(struct player *p, struct deck *d, uint8_t qty) {
 	int ret = 0;
 	int cnt = 0;
 	for (; cnt < qty; cnt++) {
-		ret = take_top_card(p, d);
+		ret = cgc_take_top_card(p, d);
 		if (0 > ret) {
 			return ret; // ERR_NULL_CARD when no more cards in pool (deck)
 		}
@@ -125,19 +125,19 @@ int draw_new_hand(struct player *p, struct deck *d, uint8_t qty) {
 	return cnt;
 }
 
-int select_random_card(struct player *p) {
+int cgc_select_random_card(struct player *p) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
 
-	if (0 == get_count_cards_in_hand(p->h)) {
+	if (0 == cgc_get_count_cards_in_hand(p->h)) {
 		return ERR_HAND_EMPTY;
 	}
 
-	return get_rank_of_random_card_in_hand(p->h);
+	return cgc_get_rank_of_random_card_in_hand(p->h);
 }
 
-int accept_cards(struct player *p, struct card *cards[], uint8_t qty) {
+int cgc_accept_cards(struct player *p, struct card *cards[], cgc_uint8_t qty) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
@@ -145,10 +145,10 @@ int accept_cards(struct player *p, struct card *cards[], uint8_t qty) {
 		return ERR_UNINITIALIZED_ARRAY;
 	}
 
-	return add_cards_to_hand(p->h, cards, qty);
+	return cgc_add_cards_to_hand(p->h, cards, qty);
 }
 
-int get_players_newest_card(struct player *p, struct card **card) {
+int cgc_get_players_newest_card(struct player *p, struct card **card) {
 	if (NULL == p) {
 		return ERR_UNINITIALIZED_PLAYER;
 	}
@@ -156,6 +156,6 @@ int get_players_newest_card(struct player *p, struct card **card) {
 		return ERR_UNINITIALIZED_ARRAY;
 	}
 
-	return get_latest_card(p->h, card);
+	return cgc_get_latest_card(p->h, card);
 }
 

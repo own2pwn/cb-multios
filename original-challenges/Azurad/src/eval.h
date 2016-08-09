@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -28,8 +28,8 @@
 #include "pair.h"
 #include "unique_ptr.h"
 
-class Evaluator;
-class Scope;
+class cgc_Evaluator;
+class cgc_Scope;
 
 enum class VarType
 {
@@ -37,135 +37,135 @@ enum class VarType
     Proc,
     String,
     Number,
-    Array
+    cgc_Array
 };
 
-class Var
+class cgc_Var
 {
 public:
-    Var() : Var(VarType::Nil) {}
-    Var(VarType type);
-    virtual ~Var();
+    cgc_Var() : cgc_Var(VarType::Nil) {}
+    cgc_Var(VarType type);
+    virtual ~cgc_Var();
 
-    VarType getType() const { return type; }
-    virtual Var* copy() { return new Var(type); }
+    VarType cgc_getType() const { return type; }
+    virtual cgc_Var* cgc_copy() { return new cgc_Var(type); }
 protected:
     VarType type;
 };
 
-class Procedure : public Var
+class cgc_Procedure : public cgc_Var
 {
 public:
-    Procedure(Scope &scope, Node *arglist, Node *block, unsigned int indent);
-    ~Procedure();
+    cgc_Procedure(cgc_Scope &scope, cgc_Node *arglist, cgc_Node *block, unsigned int indent);
+    ~cgc_Procedure();
 
-    Procedure(const Procedure &other)
-        : Var(other.type), scope(other.scope)
+    cgc_Procedure(const cgc_Procedure &other)
+        : cgc_Var(other.type), scope(other.scope)
     {
         block = other.block;
         indent = other.indent;
         args = other.args;
     }
-    Procedure& operator=(const Procedure &) = delete;
+    cgc_Procedure& operator=(const cgc_Procedure &) = delete;
 
-    Var* copy();
+    cgc_Var* cgc_copy();
 
-    const vector<CString>& getArguments() const { return args; }
-    Node *getBlock() { return block; }
-    unsigned int getIndent() { return indent; }
-    Scope& getScope() { return scope; }
+    const cgc_vector<cgc_CString>& cgc_getArguments() const { return args; }
+    cgc_Node *cgc_getBlock() { return block; }
+    unsigned int cgc_getIndent() { return indent; }
+    cgc_Scope& cgc_getScope() { return scope; }
 private:
-    Scope &scope;
-    Node *block;
+    cgc_Scope &scope;
+    cgc_Node *block;
     unsigned int indent;
-    vector<CString> args;
+    cgc_vector<cgc_CString> args;
 };
 
-class NumberVar : public Var
+class cgc_NumberVar : public cgc_Var
 {
 public:
-    NumberVar(unsigned int val);
-    ~NumberVar();
+    cgc_NumberVar(unsigned int val);
+    ~cgc_NumberVar();
 
-    NumberVar(const NumberVar &other)
-        : Var(other.type)
+    cgc_NumberVar(const cgc_NumberVar &other)
+        : cgc_Var(other.type)
     {
         value = other.value;
     }
-    NumberVar& operator=(const NumberVar &) = delete;
+    cgc_NumberVar& operator=(const cgc_NumberVar &) = delete;
 
-    static void registerOps(Evaluator &);
-    Var* copy();
+    static void cgc_registerOps(cgc_Evaluator &);
+    cgc_Var* cgc_copy();
 
-    unsigned int getValue() { return value; }
+    unsigned int cgc_getValue() { return value; }
 private:
     unsigned int value;
 };
 
-class StringVar : public Var
+class cgc_StringVar : public cgc_Var
 {
 public:
-    StringVar();
-    ~StringVar();
+    cgc_StringVar();
+    ~cgc_StringVar();
 
-    StringVar(const StringVar &other)
-        : Var(other.type)
+    cgc_StringVar(const cgc_StringVar &other)
+        : cgc_Var(other.type)
     {
         data = other.data;
     }
-    StringVar& operator=(const StringVar &) = delete;
+    cgc_StringVar& operator=(const cgc_StringVar &) = delete;
 
-    static void registerOps(Evaluator &);
-    Var* copy();
+    static void cgc_registerOps(cgc_Evaluator &);
+    cgc_Var* cgc_copy();
 
-    char *getBuffer() { return data.length() == 0 ? nullptr : &data[0]; }
-    unsigned int getLength() { return data.length(); }
-    void resize(unsigned int length) { data.resize(length); }
+    char *cgc_getBuffer() { return data.cgc_length() == 0 ? nullptr : &data[0]; }
+    unsigned int cgc_getLength() { return data.cgc_length(); }
+    void cgc_resize(unsigned int cgc_length) { data.cgc_resize(cgc_length); }
 private:
-    vector<char> data;
+    cgc_vector<char> data;
 };
 
-class Scope
+class cgc_Scope
 {
-    friend class Evaluator;
+    friend class cgc_Evaluator;
 public:
-    Scope(Scope *parent);
-    ~Scope();
+    cgc_Scope(cgc_Scope *parent);
+    ~cgc_Scope();
 
-    unique_ptr<Var>* findName(const CString& name);
+    cgc_unique_ptr<cgc_Var>* cgc_findName(const cgc_CString& name);
 
-    Scope *parent, *procScope;
-    map<CString, unique_ptr<Var>> names;
-    unique_ptr<Var> retval;
+    cgc_Scope *parent, *procScope;
+    cgc_map<cgc_CString, cgc_unique_ptr<cgc_Var>> names;
+    cgc_unique_ptr<cgc_Var> retval;
     bool breaking;
     bool returning;
 };
 
-class Evaluator
+class cgc_Evaluator
 {
 public:
-    typedef bool (*External) (void *arg, Evaluator& eval, const vector<unique_ptr<Var>>& args, unique_ptr<Var>& result);
-    typedef bool (*OpFunc) (const CString& op, Var* a, Var* b, unique_ptr<Var>& result);
+    typedef bool (*cgc_External) (void *arg, cgc_Evaluator& eval, const cgc_vector<cgc_unique_ptr<cgc_Var>>& args, cgc_unique_ptr<cgc_Var>& result);
+    typedef bool (*cgc_OpFunc) (const cgc_CString& op, cgc_Var* a, cgc_Var* b, cgc_unique_ptr<cgc_Var>& result);
 
-    Evaluator(Node *root);
-    ~Evaluator();
+    cgc_Evaluator(cgc_Node *root);
+    ~cgc_Evaluator();
 
-    bool run();
-    void addExternal(const char *identifier, External func, void *arg);
-    void addExternal(const char *identifier, External func) { addExternal(identifier, func, nullptr); }
-    void addOp(const CString& op, VarType a, VarType b, OpFunc func);
+    bool cgc_run();
+    void cgc_addExternal(const char *identifier, cgc_External func, void *arg);
+    void cgc_addExternal(const char *identifier, cgc_External func) { cgc_addExternal(identifier, func, nullptr); }
+    void cgc_addOp(const cgc_CString& op, VarType a, VarType b, cgc_OpFunc func);
 private:
-    bool eval_block(Scope& scope, Node *node, unsigned int indent);
-    bool eval_expr(Scope& scope, Node *node, unique_ptr<Var>& outresult);
-    bool eval_op(const CString& op, Var* a, Var* b, unique_ptr<Var>& outresult);
+    bool cgc_eval_block(cgc_Scope& scope, cgc_Node *node, unsigned int indent);
+    bool cgc_eval_expr(cgc_Scope& scope, cgc_Node *node, cgc_unique_ptr<cgc_Var>& outresult);
+    bool cgc_eval_op(const cgc_CString& op, cgc_Var* a, cgc_Var* b, cgc_unique_ptr<cgc_Var>& outresult);
 private:
-    struct _Op
+    struct cgc__Op
     {
         VarType a;
         VarType b;
-        OpFunc fn;
+        cgc_OpFunc fn;
     };
-    Node *root;
-    map<CString, pair<External, void *>> externals;
-    map<CString, vector<_Op>> operators;
+    cgc_Node *root;
+    cgc_map<cgc_CString, cgc_pair<cgc_External, void *>> externals;
+    cgc_map<cgc_CString, cgc_vector<cgc__Op>> operators;
 };

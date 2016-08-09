@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 #include "types.h"
 
 #ifdef DEBUG
-  #define DBG(s, ...) fprintf(stderr, "DEBUG:\t" s "\n", ##__VA_ARGS__)
+  #define DBG(s, ...) cgc_fprintf(stderr, "DEBUG:\t" s "\n", ##__VA_ARGS__)
 #else
   #define DBG(s, ...)
 #endif
@@ -36,32 +36,32 @@
 #define ASSERT(x, msg, ...) ({ \
     if (!(x)) \
     { \
-      fprintf(stderr, "Assertion Failed: " msg "\n",  ##__VA_ARGS__); \
+      cgc_fprintf(stderr, "Assertion Failed: " msg "\n",  ##__VA_ARGS__); \
       _terminate(1); \
     } \
   })
 
-static void WaitForInput(FILE* Stream, char* Input, u32 Max)
+static void cgc_WaitForInput(cgc_FILE* Stream, char* Input, cgc_u32 cgc_Max)
 {
-  fflush(stdout);
-  memset(Input, Max, '\0');
-  if (freaduntil(Input, Max, '\n', Stream) <= 0)
+  cgc_fflush(stdout);
+  cgc_memset(Input, cgc_Max, '\0');
+  if (cgc_freaduntil(Input, cgc_Max, '\n', Stream) <= 0)
   {
-    exit(0);
+    cgc_exit(0);
   }
 }
 
-static inline u8 CharToNum(char c)
+static inline cgc_u8 cgc_CharToNum(char c)
 {
-  return digittoint(c);
+  return cgc_digittoint(c);
 }
 
-static int CanBeDecimal(char* Token)
+static int cgc_CanBeDecimal(char* Token)
 {
   if (*Token == '-')
     Token++;
 
-  while (Token && *Token && (isdigit((char)*Token) || isspace((char)*Token)))
+  while (Token && *Token && (cgc_isdigit((char)*Token) || cgc_isspace((char)*Token)))
       Token++;
 
   if (Token && *Token == '\0')
@@ -70,12 +70,12 @@ static int CanBeDecimal(char* Token)
     return 0;
 }
 
-static int CanBeHex(char* Token)
+static int cgc_CanBeHex(char* Token)
 {
   if (*Token == '-')
     Token++;
 
-  while (Token && *Token && (isxdigit((char)*Token) || isspace((char)*Token)))
+  while (Token && *Token && (cgc_isxdigit((char)*Token) || cgc_isspace((char)*Token)))
       Token++;
 
   if (Token && *Token == '\0')
@@ -84,12 +84,12 @@ static int CanBeHex(char* Token)
     return 0;
 }
 
-static int CanBeOctal(char* Token)
+static int cgc_CanBeOctal(char* Token)
 {
   if (*Token == '-')
     Token++;
 
-  while (Token && *Token && ((isdigit((char)*Token) && CharToNum(*Token) < 8) || isspace(*Token)))
+  while (Token && *Token && ((cgc_isdigit((char)*Token) && cgc_CharToNum(*Token) < 8) || cgc_isspace(*Token)))
       Token++;
 
   if (Token && *Token == '\0')
@@ -98,11 +98,11 @@ static int CanBeOctal(char* Token)
     return 0;
 }
 
-static int ParseInt(char* Token, s32* Value)
+static int cgc_ParseInt(char* Token, cgc_s32* Value)
 {
-  long AsBase10 = CanBeDecimal(Token) ? strtol(Token, NULL, 10) : LONG_MIN;
-  long AsBase16 = CanBeHex(Token) ? strtol(Token, NULL, 16) : LONG_MIN;
-  long AsBase8 = CanBeOctal(Token) ? strtol(Token, NULL, 8) : LONG_MIN;
+  long AsBase10 = cgc_CanBeDecimal(Token) ? cgc_strtol(Token, NULL, 10) : LONG_MIN;
+  long AsBase16 = cgc_CanBeHex(Token) ? cgc_strtol(Token, NULL, 16) : LONG_MIN;
+  long AsBase8 = cgc_CanBeOctal(Token) ? cgc_strtol(Token, NULL, 8) : LONG_MIN;
 
   if (AsBase10 != LONG_MIN && AsBase10 != LONG_MAX)
     *Value = AsBase10;
@@ -117,14 +117,14 @@ static int ParseInt(char* Token, s32* Value)
 }
 
 template <typename t1>
-struct Vector
+struct cgc_Vector
 {
   t1* _Storage;
-  u32 _Capacity;
-  u32 _Size;
-  u32 _StepSize;
+  cgc_u32 _Capacity;
+  cgc_u32 _Size;
+  cgc_u32 _StepSize;
 
-  Vector()
+  cgc_Vector()
   {
     _Size = 0;
     _StepSize = 10;
@@ -132,7 +132,7 @@ struct Vector
     _Storage = new t1[sizeof(t1) * _Capacity];
   }
 
-  Vector(u32 Cap) : _Capacity(Cap)
+  cgc_Vector(cgc_u32 Cap) : _Capacity(Cap)
   {
     _Size = 0;
     _StepSize = 10;
@@ -140,86 +140,86 @@ struct Vector
     _Storage = new t1[sizeof(t1) * _Capacity];
   }
 
-  ~Vector()
+  ~cgc_Vector()
   {
     if (_Storage)
       delete[] _Storage;
   }
 
-  t1& operator[] (const s32 StorageIndex)
+  t1& operator[] (const cgc_s32 StorageIndex)
   {
     return _Storage[StorageIndex];
   }
 
-  void Append(t1 Value)
+  void cgc_Append(t1 Value)
   {
     if (_Size == _Capacity)
     {
-      _Grow();
+      cgc__Grow();
     }
 
     _Storage[_Size] = Value;
     _Size += 1;
   }
 
-  t1 Head(void)
+  t1 cgc_Head(void)
   {
     ASSERT(_Size, "Getting head of empty vector");
     return _Storage[0];
   }
 
-  t1 Last(void)
+  t1 cgc_Last(void)
   {
     ASSERT(_Size, "Getting last of empty vector");
     return _Storage[_Size - 1];
   }
 
-  t1 RemoveLast(void)
+  t1 cgc_RemoveLast(void)
   {
-    t1 Ret = Last();
+    t1 Ret = cgc_Last();
     _Size--;
 
     if (_Capacity - _Size > _StepSize)
     {
-      _Shrink();
+      cgc__Shrink();
     }
 
     return Ret;
   }
 
-  int Empty(void)
+  int cgc_Empty(void)
   {
     return _Size == 0;
   }
 
-  Vector* Copy(void)
+  cgc_Vector* cgc_Copy(void)
   {
-    Vector* VectorCopy = new Vector<t1>(_Capacity);
+    cgc_Vector* VectorCopy = new cgc_Vector<t1>(_Capacity);
     VectorCopy->_Capacity = _Capacity;
     VectorCopy->_Size = _Size;
     VectorCopy->_StepSize = _StepSize;
-    memcpy(VectorCopy->_Storage, _Storage, _Capacity * sizeof(t1));
+    cgc_memcpy(VectorCopy->_Storage, _Storage, _Capacity * sizeof(t1));
     return VectorCopy;
   }
 
-  void _Grow(void)
+  void cgc__Grow(void)
   {
-    u32 NewCapacity = ((_Capacity / _StepSize) + 1) * _StepSize;
+    cgc_u32 NewCapacity = ((_Capacity / _StepSize) + 1) * _StepSize;
     t1* NewStorage = new t1[sizeof(t1) * NewCapacity];
 
-    memcpy(NewStorage, _Storage, sizeof(t1) * _Capacity);
+    cgc_memcpy(NewStorage, _Storage, sizeof(t1) * _Capacity);
 
     delete[] _Storage;
     _Storage = NewStorage;
     _Capacity = NewCapacity;
   }
 
-  void _Shrink(void)
+  void cgc__Shrink(void)
   {
-    u32 NewCapacity = _Capacity - _StepSize;
+    cgc_u32 NewCapacity = _Capacity - _StepSize;
     t1* NewStorage = new t1[sizeof(t1) * NewCapacity];
 
-    memcpy(NewStorage, _Storage, sizeof(t1) * NewCapacity);
+    cgc_memcpy(NewStorage, _Storage, sizeof(t1) * NewCapacity);
 
     delete[] _Storage;
     _Storage = NewStorage;
@@ -228,70 +228,70 @@ struct Vector
 };
 
 template <typename t1>
-struct Stack
+struct cgc_Stack
 {
-  Vector<t1>* _BackingVector;
+  cgc_Vector<t1>* _BackingVector;
 
-  void Push(t1 Value)
+  void cgc_Push(t1 Value)
   {
-    _BackingVector->Append(Value);
+    _BackingVector->cgc_Append(Value);
   }
 
-  int Empty(void)
+  int cgc_Empty(void)
   {
-    return _BackingVector->Empty();
+    return _BackingVector->cgc_Empty();
   }
 
-  int Size(void)
+  int cgc_Size(void)
   {
     return _BackingVector->_Size;
   }
 
-  t1 Pop(void)
+  t1 cgc_Pop(void)
   {
-    ASSERT(!Empty(), "Popping off empty stack");
-    return _BackingVector->RemoveLast();
+    ASSERT(!cgc_Empty(), "Popping off empty stack");
+    return _BackingVector->cgc_RemoveLast();
   }
 
-  t1 Peek(void)
+  t1 cgc_Peek(void)
   {
-    ASSERT(!Empty(), "Peeking off empty stack");
-    return _BackingVector->Last();
+    ASSERT(!cgc_Empty(), "Peeking off empty stack");
+    return _BackingVector->cgc_Last();
   }
 
-  t1& operator[] (const s32 StorageIndex)
+  t1& operator[] (const cgc_s32 StorageIndex)
   {
     return (*_BackingVector)[_BackingVector->_Size - StorageIndex - 1];
   }
 
-  Stack* Copy(void)
+  cgc_Stack* cgc_Copy(void)
   {
-    Stack<t1>* StackCopy = (Stack<t1> *)malloc(sizeof(Stack<t1>));
-    StackCopy->_BackingVector = _BackingVector->Copy();
+    cgc_Stack<t1>* StackCopy = (cgc_Stack<t1> *)cgc_malloc(sizeof(cgc_Stack<t1>));
+    StackCopy->_BackingVector = _BackingVector->cgc_Copy();
     return StackCopy;
   }
 
-  void Invert(void)
+  void cgc_Invert(void)
   {
-    for (size_t Index = 0; Index < Size() / 2; ++Index)
+    for (cgc_size_t Index = 0; Index < cgc_Size() / 2; ++Index)
     {
       t1 Temp = _BackingVector->_Storage[Index];
-      _BackingVector->_Storage[Index] = _BackingVector->_Storage[Size() - Index - 1];
-      _BackingVector->_Storage[Size() - Index - 1] = Temp;
+      _BackingVector->_Storage[Index] = _BackingVector->_Storage[cgc_Size() - Index - 1];
+      _BackingVector->_Storage[cgc_Size() - Index - 1] = Temp;
     }
   }
 
-  Stack(u32 Cap)
+  cgc_Stack(cgc_u32 Cap)
   {
-    _BackingVector = new Vector<t1>(Cap);
+    _BackingVector = new cgc_Vector<t1>(Cap);
   }
 
-  Stack()
+  cgc_Stack()
   {
-    _BackingVector = new Vector<t1>();
+    _BackingVector = new cgc_Vector<t1>();
   }
 
-  ~Stack()
+  ~cgc_Stack()
   {
     if (_BackingVector)
     {
@@ -300,14 +300,14 @@ struct Stack
   }
 };
 
-struct VC
+struct cgc_VC
 {
 #define MAX_INPUT_SIZE 256
-  u16 _MinHeight = 80;
-  u16 _Width = 120;
+  cgc_u16 _MinHeight = 80;
+  cgc_u16 _Width = 120;
 
-  FILE* In;
-  FILE* Out;
+  cgc_FILE* In;
+  cgc_FILE* Out;
 
   char _InputBuffer[MAX_INPUT_SIZE];
   char _ErrorBuffer[MAX_INPUT_SIZE];
@@ -319,140 +319,140 @@ struct VC
     ERROR,
   };
 
-  struct CommandEntry {
+  struct cgc_CommandEntry {
     const char* Name;
-    u8 Arity;
-    CommandReturn (VC::*F0)();
-    CommandReturn (VC::*F1)(s32 v1);
-    CommandReturn (VC::*F2)(s32 v1, s32 v2);
+    cgc_u8 Arity;
+    CommandReturn (cgc_VC::*F0)();
+    CommandReturn (cgc_VC::*F1)(cgc_s32 v1);
+    CommandReturn (cgc_VC::*F2)(cgc_s32 v1, cgc_s32 v2);
   };
 
-  struct HistElem
+  struct cgc_HistElem
   {
-    Stack<s32>* CalcStack;
-    const CommandEntry* Entry;
+    cgc_Stack<cgc_s32>* CalcStack;
+    const cgc_CommandEntry* Entry;
   };
 
-  Stack<s32>* CalcStack = new Stack<s32>();
-  Stack<HistElem>* HistStack = new Stack<HistElem>(64);
+  cgc_Stack<cgc_s32>* CalcStack = new cgc_Stack<cgc_s32>();
+  cgc_Stack<cgc_HistElem>* HistStack = new cgc_Stack<cgc_HistElem>(64);
 
-  static const u8 NumCommands = 29;
-  const CommandEntry CommandTable[NumCommands] = {
-    {"push", 1, NULL, &VC::ManualPush, NULL},
+  static const cgc_u8 NumCommands = 29;
+  const cgc_CommandEntry CommandTable[NumCommands] = {
+    {"push", 1, NULL, &cgc_VC::cgc_ManualPush, NULL},
 
-    { "+", 0, &VC::Add, NULL, NULL},
-    { "-", 0, &VC::Sub, NULL, NULL},
-    { "*", 0, &VC::Mul, NULL, NULL},
-    { "/", 0, &VC::Div, NULL, NULL},
-    { "!", 0, &VC::Fact, NULL, NULL},
-    { "neg", 0, &VC::Neg, NULL, NULL},
-    { "abs", 0, &VC::Abs, NULL, NULL},
-    { "mod", 0, &VC::Mod, NULL, NULL},
-    { "&", 0, &VC::And, NULL, NULL},
-    { "|", 0, &VC::Or, NULL, NULL},
-    { "^", 0, &VC::Xor, NULL, NULL},
-    { "~", 0, &VC::Not, NULL, NULL},
-    { "sum", 0, &VC::Sum, NULL, NULL},
-    { "avg", 0, &VC::Avg, NULL, NULL},
-    { "dup", 0, &VC::Dup, NULL, NULL},
-    { "dupn", 0, &VC::DupN, NULL, NULL},
-    { "dupn", 0, NULL, &VC::DupN, NULL},
-    { "dupr", 0, &VC::DupR, NULL, NULL},
-    { "dupr", 2, NULL, NULL, &VC::DupR},
-    { "min", 0, &VC::Min, NULL, NULL},
-    { "max", 0, &VC::Max, NULL, NULL},
-    {"depth", 0, &VC::Depth, NULL, NULL},
-    {"drop", 0, &VC::Drop, NULL, NULL},
-    {"dropn", 0, &VC::DropN, NULL, NULL},
-    {"dropn", 1, NULL, &VC::DropN, NULL},
-    {"undo", 0, &VC::Undo, NULL, NULL},
-    {"ivrt", 0, &VC::Invert, NULL, NULL},
-    {"shuf", 0, &VC::Shuffle, NULL, NULL},
+    { "+", 0, &cgc_VC::cgc_Add, NULL, NULL},
+    { "-", 0, &cgc_VC::cgc_Sub, NULL, NULL},
+    { "*", 0, &cgc_VC::cgc_Mul, NULL, NULL},
+    { "/", 0, &cgc_VC::cgc_Div, NULL, NULL},
+    { "!", 0, &cgc_VC::cgc_Fact, NULL, NULL},
+    { "neg", 0, &cgc_VC::cgc_Neg, NULL, NULL},
+    { "abs", 0, &cgc_VC::cgc_Abs, NULL, NULL},
+    { "mod", 0, &cgc_VC::cgc_Mod, NULL, NULL},
+    { "&", 0, &cgc_VC::cgc_And, NULL, NULL},
+    { "|", 0, &cgc_VC::cgc_Or, NULL, NULL},
+    { "^", 0, &cgc_VC::cgc_Xor, NULL, NULL},
+    { "~", 0, &cgc_VC::cgc_Not, NULL, NULL},
+    { "sum", 0, &cgc_VC::cgc_Sum, NULL, NULL},
+    { "avg", 0, &cgc_VC::cgc_Avg, NULL, NULL},
+    { "dup", 0, &cgc_VC::cgc_Dup, NULL, NULL},
+    { "dupn", 0, &cgc_VC::cgc_DupN, NULL, NULL},
+    { "dupn", 0, NULL, &cgc_VC::cgc_DupN, NULL},
+    { "dupr", 0, &cgc_VC::cgc_DupR, NULL, NULL},
+    { "dupr", 2, NULL, NULL, &cgc_VC::cgc_DupR},
+    { "min", 0, &cgc_VC::cgc_Min, NULL, NULL},
+    { "max", 0, &cgc_VC::cgc_Max, NULL, NULL},
+    {"depth", 0, &cgc_VC::cgc_Depth, NULL, NULL},
+    {"drop", 0, &cgc_VC::cgc_Drop, NULL, NULL},
+    {"dropn", 0, &cgc_VC::cgc_DropN, NULL, NULL},
+    {"dropn", 1, NULL, &cgc_VC::cgc_DropN, NULL},
+    {"undo", 0, &cgc_VC::cgc_Undo, NULL, NULL},
+    {"ivrt", 0, &cgc_VC::cgc_Invert, NULL, NULL},
+    {"shuf", 0, &cgc_VC::cgc_Shuffle, NULL, NULL},
   };
 
-  VC(FILE* In, FILE* Out) : In(In), Out(Out)
+  cgc_VC(cgc_FILE* In, cgc_FILE* Out) : In(In), Out(Out)
   {
-    memset(_InputBuffer, '\0', MAX_INPUT_SIZE);
-    memset(_ErrorBuffer, '\0', MAX_INPUT_SIZE);
+    cgc_memset(_InputBuffer, '\0', MAX_INPUT_SIZE);
+    cgc_memset(_ErrorBuffer, '\0', MAX_INPUT_SIZE);
     HasError = 0;
   }
 
-  ~VC()
+  ~cgc_VC()
   {
 
-    while (!CalcStack->Empty())
+    while (!CalcStack->cgc_Empty())
     {
-      CalcStack->Pop();
+      CalcStack->cgc_Pop();
     }
 
-    fprintf(Out, "Bye bye\n");
-    fflush(Out);
+    cgc_fprintf(Out, "Bye bye\n");
+    cgc_fflush(Out);
   }
 
-  void ClearScreen(void)
+  void cgc_ClearScreen(void)
   {
-    fprintf(Out, "\033[2J\033[H");
+    cgc_fprintf(Out, "\033[2J\033[H");
   }
 
-  void DrawScreen(void)
+  void cgc_DrawScreen(void)
   {
-    ClearScreen();
-    s32 Height = _MinHeight > CalcStack->Size() ? _MinHeight : CalcStack->Size();
-    for (s32 LineIndex = Height - 1; LineIndex >= 0; --LineIndex)
+    cgc_ClearScreen();
+    cgc_s32 Height = _MinHeight > CalcStack->cgc_Size() ? _MinHeight : CalcStack->cgc_Size();
+    for (cgc_s32 LineIndex = Height - 1; LineIndex >= 0; --LineIndex)
     {
-      DrawLine(LineIndex);
+      cgc_DrawLine(LineIndex);
     }
 
     if (HasError)
     {
-      printf("%s", _ErrorBuffer);
+      cgc_printf("%s", _ErrorBuffer);
       HasError = 0;
     }
     else
     {
-      DrawFooter();
+      cgc_DrawFooter();
     }
   }
 
-  void DrawLine(u32 LineIndex)
+  void cgc_DrawLine(cgc_u32 LineIndex)
   {
-    fprintf(Out, "%03d:\t", LineIndex);
+    cgc_fprintf(Out, "%03d:\t", LineIndex);
 
-    if (CalcStack->Size() > LineIndex)
+    if (CalcStack->cgc_Size() > LineIndex)
     {
-      fprintf(Out, "%d", (*CalcStack)[LineIndex]);
+      cgc_fprintf(Out, "%d", (*CalcStack)[LineIndex]);
     }
 
-    fprintf(Out, "\n");
+    cgc_fprintf(Out, "\n");
   }
 
-  void DrawFooter(void)
+  void cgc_DrawFooter(void)
   {
-    for (u32 Index = 0; Index < _Width; ++Index)
+    for (cgc_u32 Index = 0; Index < _Width; ++Index)
     {
-      fprintf(Out, "-");
+      cgc_fprintf(Out, "-");
     }
-    fprintf(Out, "\n");
+    cgc_fprintf(Out, "\n");
   }
 
-  const CommandEntry* FindCommand(char* Command, u8 Arity)
+  const cgc_CommandEntry* cgc_FindCommand(char* Command, cgc_u8 Arity)
   {
-    for (u8 CommandIndex = 0; CommandIndex < NumCommands; ++CommandIndex)
+    for (cgc_u8 CommandIndex = 0; CommandIndex < NumCommands; ++CommandIndex)
     {
-      if (Arity == CommandTable[CommandIndex].Arity && strcmp(Command, CommandTable[CommandIndex].Name) == 0)
+      if (Arity == CommandTable[CommandIndex].Arity && cgc_strcmp(Command, CommandTable[CommandIndex].Name) == 0)
         return &CommandTable[CommandIndex];
     }
 
     return NULL;
   }
 
-  void HandleCallResult(CommandReturn Value, const CommandEntry* Entry, HistElem* Hist)
+  void cgc_HandleCallResult(CommandReturn Value, const cgc_CommandEntry* Entry, cgc_HistElem* Hist)
   {
     switch (Value)
     {
       case ADD_HISTORY:
         {
-          HistStack->Push(*Hist);
+          HistStack->cgc_Push(*Hist);
           break;
         }
       case NO_HISTORY:
@@ -466,445 +466,445 @@ struct VC
     }
   }
 
-  void HandleCall(const CommandEntry* Entry, s32 V1, s32 V2)
+  void cgc_HandleCall(const cgc_CommandEntry* Entry, cgc_s32 V1, cgc_s32 V2)
   {
-    HistElem Hist = HistElem{CalcStack->Copy(), Entry};
-    HandleCallResult(CallCommand(Entry, V1, V2), Entry, &Hist);
+    cgc_HistElem Hist = cgc_HistElem{CalcStack->cgc_Copy(), Entry};
+    cgc_HandleCallResult(cgc_CallCommand(Entry, V1, V2), Entry, &Hist);
   }
 
-  void HandleCall(const CommandEntry* Entry, s32 V1)
+  void cgc_HandleCall(const cgc_CommandEntry* Entry, cgc_s32 V1)
   {
-    HistElem Hist = HistElem{CalcStack->Copy(), Entry};
-    HandleCallResult(CallCommand(Entry, V1), Entry, &Hist);
+    cgc_HistElem Hist = cgc_HistElem{CalcStack->cgc_Copy(), Entry};
+    cgc_HandleCallResult(cgc_CallCommand(Entry, V1), Entry, &Hist);
   }
 
-  void HandleCall(const CommandEntry* Entry)
+  void cgc_HandleCall(const cgc_CommandEntry* Entry)
   {
-    HistElem Hist = HistElem{CalcStack->Copy(), Entry};
-    HandleCallResult(CallCommand(Entry), Entry, &Hist);
+    cgc_HistElem Hist = cgc_HistElem{CalcStack->cgc_Copy(), Entry};
+    cgc_HandleCallResult(cgc_CallCommand(Entry), Entry, &Hist);
   }
 
-  CommandReturn CallCommand(const CommandEntry* Entry)
+  CommandReturn cgc_CallCommand(const cgc_CommandEntry* Entry)
   {
     return (this->*Entry->F0)();
   }
 
-  CommandReturn CallCommand(const CommandEntry* Entry, s32 V1)
+  CommandReturn cgc_CallCommand(const cgc_CommandEntry* Entry, cgc_s32 V1)
   {
     return (this->*Entry->F1)(V1);
   }
 
-  CommandReturn CallCommand(const CommandEntry* Entry, s32 V1, s32 V2)
+  CommandReturn cgc_CallCommand(const cgc_CommandEntry* Entry, cgc_s32 V1, cgc_s32 V2)
   {
     return (this->*Entry->F2)(V1, V2);
   }
 
-  void ErrorTooFewArgs(const char* Command)
+  void cgc_ErrorTooFewArgs(const char* Command)
   {
-    sprintf(_ErrorBuffer, "Error: Too few arguments for '%s' command\n", Command);
+    cgc_sprintf(_ErrorBuffer, "Error: Too few arguments for '%s' command\n", Command);
     HasError = 1;
   }
 
-  void ErrorInvalidInput(void)
+  void cgc_ErrorInvalidInput(void)
   {
-    sprintf(_ErrorBuffer, "Error: Invalid input\n");
+    cgc_sprintf(_ErrorBuffer, "Error: Invalid input\n");
     HasError = 1;
   }
 
 
-  void PushValue(s32 Value)
+  void cgc_PushValue(cgc_s32 Value)
   {
-    CalcStack->Push(Value);
+    CalcStack->cgc_Push(Value);
   }
 
-  CommandReturn ManualPush(s32 Value)
+  CommandReturn cgc_ManualPush(cgc_s32 Value)
   {
-    CalcStack->Push(Value);
+    CalcStack->cgc_Push(Value);
     return ADD_HISTORY;
   }
 
-  CommandReturn Add(void)
+  CommandReturn cgc_Add(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("+");
+      cgc_ErrorTooFewArgs("+");
       return ERROR;
     }
 
-    PushValue(CalcStack->Pop() + CalcStack->Pop());
-
-    return ADD_HISTORY;
-  }
-
-  CommandReturn Sub(void)
-  {
-    if (CalcStack->Size() < 2)
-    {
-      ErrorTooFewArgs("-");
-      return ERROR;
-    }
-
-    s32 V1 = CalcStack->Pop();
-    s32 V2 = CalcStack->Pop();
-    PushValue(V2 - V1);
+    cgc_PushValue(CalcStack->cgc_Pop() + CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Mul(void)
+  CommandReturn cgc_Sub(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("*");
+      cgc_ErrorTooFewArgs("-");
       return ERROR;
     }
 
-    PushValue(CalcStack->Pop() * CalcStack->Pop());
+    cgc_s32 V1 = CalcStack->cgc_Pop();
+    cgc_s32 V2 = CalcStack->cgc_Pop();
+    cgc_PushValue(V2 - V1);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Div(void)
+  CommandReturn cgc_Mul(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("/");
+      cgc_ErrorTooFewArgs("*");
       return ERROR;
     }
 
-    s32 V1 = CalcStack->Pop();
-    s32 V2 = CalcStack->Pop();
+    cgc_PushValue(CalcStack->cgc_Pop() * CalcStack->cgc_Pop());
+
+    return ADD_HISTORY;
+  }
+
+  CommandReturn cgc_Div(void)
+  {
+    if (CalcStack->cgc_Size() < 2)
+    {
+      cgc_ErrorTooFewArgs("/");
+      return ERROR;
+    }
+
+    cgc_s32 V1 = CalcStack->cgc_Pop();
+    cgc_s32 V2 = CalcStack->cgc_Pop();
 
     if (V1 == 0)
     {
-      ErrorInvalidInput();
-      PushValue(V2);
-      PushValue(V1);
+      cgc_ErrorInvalidInput();
+      cgc_PushValue(V2);
+      cgc_PushValue(V1);
       return ERROR;
     }
 
-    PushValue(V2 / V1);
+    cgc_PushValue(V2 / V1);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Neg(void)
+  CommandReturn cgc_Neg(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("neg");
+      cgc_ErrorTooFewArgs("neg");
       return ERROR;
     }
 
-    PushValue(-CalcStack->Pop());
+    cgc_PushValue(-CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Fact(void)
+  CommandReturn cgc_Fact(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("!");
+      cgc_ErrorTooFewArgs("!");
       return ERROR;
     }
 
 
-    s32 Value = CalcStack->Pop();
+    cgc_s32 Value = CalcStack->cgc_Pop();
 
     if (Value < 0 || Value > 1000)
     {
-      ErrorInvalidInput();
-      PushValue(Value);
+      cgc_ErrorInvalidInput();
+      cgc_PushValue(Value);
       return ERROR;
     }
 
-    s32 Res = 1;
+    cgc_s32 Res = 1;
 
     while (Value > 0)
       Res *= Value--;
 
-    PushValue(Res);
+    cgc_PushValue(Res);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Abs(void)
+  CommandReturn cgc_Abs(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("abs");
+      cgc_ErrorTooFewArgs("abs");
       return ERROR;
     }
 
-    s32 Value = CalcStack->Pop();
+    cgc_s32 Value = CalcStack->cgc_Pop();
     if (Value <= 0)
-      PushValue(-Value);
+      cgc_PushValue(-Value);
     else
-      PushValue(Value);
+      cgc_PushValue(Value);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Mod(void)
+  CommandReturn cgc_Mod(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("mod");
+      cgc_ErrorTooFewArgs("mod");
       return ERROR;
     }
 
-    s32 Modulus = CalcStack->Pop();
-    s32 Value = CalcStack->Pop();
+    cgc_s32 Modulus = CalcStack->cgc_Pop();
+    cgc_s32 Value = CalcStack->cgc_Pop();
 
     if (Modulus == 0)
     {
-      ErrorInvalidInput();
-      PushValue(Value);
-      PushValue(Modulus);
+      cgc_ErrorInvalidInput();
+      cgc_PushValue(Value);
+      cgc_PushValue(Modulus);
       return ERROR;
     }
 
-    PushValue(Value % Modulus);
+    cgc_PushValue(Value % Modulus);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Xor(void)
+  CommandReturn cgc_Xor(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("^");
+      cgc_ErrorTooFewArgs("^");
       return ERROR;
     }
 
-    PushValue(CalcStack->Pop() ^ CalcStack->Pop());
+    cgc_PushValue(CalcStack->cgc_Pop() ^ CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Or(void)
+  CommandReturn cgc_Or(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("|");
+      cgc_ErrorTooFewArgs("|");
       return ERROR;
     }
 
-    PushValue(CalcStack->Pop() | CalcStack->Pop());
+    cgc_PushValue(CalcStack->cgc_Pop() | CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn And(void)
+  CommandReturn cgc_And(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("&");
+      cgc_ErrorTooFewArgs("&");
       return ERROR;
     }
 
-    PushValue(CalcStack->Pop() & CalcStack->Pop());
+    cgc_PushValue(CalcStack->cgc_Pop() & CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Not(void)
+  CommandReturn cgc_Not(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("~");
+      cgc_ErrorTooFewArgs("~");
       return ERROR;
     }
 
-    PushValue(~CalcStack->Pop());
+    cgc_PushValue(~CalcStack->cgc_Pop());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Sum(void)
+  CommandReturn cgc_Sum(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("sum");
+      cgc_ErrorTooFewArgs("sum");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
-    if (CalcStack->Size() < N || N < 0)
+    if (CalcStack->cgc_Size() < N || N < 0)
     {
-      ErrorTooFewArgs("sum");
-      PushValue(N);
+      cgc_ErrorTooFewArgs("sum");
+      cgc_PushValue(N);
       return ERROR;
     }
 
-    s32 Accum = 0;
+    cgc_s32 Accum = 0;
     while (N-- > 0)
     {
-      Accum += CalcStack->Pop();
+      Accum += CalcStack->cgc_Pop();
     }
 
-    PushValue(Accum);
+    cgc_PushValue(Accum);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Avg(void)
+  CommandReturn cgc_Avg(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("avg");
+      cgc_ErrorTooFewArgs("avg");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
     if (N == 0)
     {
-      ErrorInvalidInput();
-      PushValue(N);
+      cgc_ErrorInvalidInput();
+      cgc_PushValue(N);
       return ERROR;
     }
 
-    if (CalcStack->Size() < N || N < 0)
+    if (CalcStack->cgc_Size() < N || N < 0)
     {
-      ErrorTooFewArgs("avg");
-      PushValue(N);
+      cgc_ErrorTooFewArgs("avg");
+      cgc_PushValue(N);
       return ERROR;
     }
 
-    s32 Accum = 0;
-    for (s32 Count = 0; Count < N; Count++)
+    cgc_s32 Accum = 0;
+    for (cgc_s32 Count = 0; Count < N; Count++)
     {
-      Accum += CalcStack->Pop();
+      Accum += CalcStack->cgc_Pop();
     }
 
-    PushValue(Accum / N);
+    cgc_PushValue(Accum / N);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Dup(void)
+  CommandReturn cgc_Dup(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("dup");
+      cgc_ErrorTooFewArgs("dup");
       return ERROR;
     }
 
-    PushValue(CalcStack->Peek());
+    cgc_PushValue(CalcStack->cgc_Peek());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn DupN(s32 N)
+  CommandReturn cgc_DupN(cgc_s32 N)
   {
-    if (CalcStack->Size() < N || N <= 0)
+    if (CalcStack->cgc_Size() < N || N <= 0)
     {
-      ErrorTooFewArgs("dupn");
+      cgc_ErrorTooFewArgs("dupn");
       return ERROR;
     }
 
-    Stack<s32>* TempStack = new Stack<s32>();
-    for (size_t Index = 0; Index < N; ++Index)
+    cgc_Stack<cgc_s32>* TempStack = new cgc_Stack<cgc_s32>();
+    for (cgc_size_t Index = 0; Index < N; ++Index)
     {
-      TempStack->Push((*CalcStack)[Index]);
+      TempStack->cgc_Push((*CalcStack)[Index]);
     }
 
-    while (!TempStack->Empty())
+    while (!TempStack->cgc_Empty())
     {
-      CalcStack->Push(TempStack->Pop());
+      CalcStack->cgc_Push(TempStack->cgc_Pop());
     }
 
     delete TempStack;
     return ADD_HISTORY;
   }
 
-  CommandReturn DupN(void)
+  CommandReturn cgc_DupN(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("dupn");
+      cgc_ErrorTooFewArgs("dupn");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
-    CommandReturn Return = DupN(N);
+    CommandReturn Return = cgc_DupN(N);
 
     if (Return == ERROR)
     {
-      CalcStack->Push(N);
+      CalcStack->cgc_Push(N);
     }
 
     return Return;
   }
 
-  CommandReturn DupR(void)
+  CommandReturn cgc_DupR(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("dupr");
+      cgc_ErrorTooFewArgs("dupr");
       return ERROR;
     }
 
-    s32 Len = CalcStack->Pop();
-    s32 Pos = CalcStack->Pop();
+    cgc_s32 Len = CalcStack->cgc_Pop();
+    cgc_s32 Pos = CalcStack->cgc_Pop();
 
-    CommandReturn Return = DupR(Pos, Len);
+    CommandReturn Return = cgc_DupR(Pos, Len);
 
     if  (Return == ERROR)
     {
-      CalcStack->Push(Pos);
-      CalcStack->Push(Len);
+      CalcStack->cgc_Push(Pos);
+      CalcStack->cgc_Push(Len);
     }
 
     return Return;
   }
 
-  CommandReturn DupR(s32 Pos, s32 Len)
+  CommandReturn cgc_DupR(cgc_s32 Pos, cgc_s32 Len)
   {
-    u16 Pos_ = (u16)Pos;
-    u16 Len_ = (u16)Len;
+    cgc_u16 Pos_ = (cgc_u16)Pos;
+    cgc_u16 Len_ = (cgc_u16)Len;
 
 #ifdef PATCHED_1
-    if (CalcStack->Size() < Pos_ || CalcStack->Size() < Len_ || CalcStack->Size() < Pos_ + Len_)
+    if (CalcStack->cgc_Size() < Pos_ || CalcStack->cgc_Size() < Len_ || CalcStack->cgc_Size() < Pos_ + Len_)
 #else
-    if (CalcStack->Size() < Pos_ && CalcStack->Size() < Len_ && CalcStack->Size() < Pos_ + Len_)
+    if (CalcStack->cgc_Size() < Pos_ && CalcStack->cgc_Size() < Len_ && CalcStack->cgc_Size() < Pos_ + Len_)
 #endif
     {
-      ErrorInvalidInput();
+      cgc_ErrorInvalidInput();
       return ERROR;
     }
 
-    for (u16 Index = Pos_; Index < Pos_ + Len_; ++Index)
+    for (cgc_u16 Index = Pos_; Index < Pos_ + Len_; ++Index)
     {
-      CalcStack->Push((*CalcStack)[Index]);
+      CalcStack->cgc_Push((*CalcStack)[Index]);
     }
 
     return NO_HISTORY;
   }
 
-  CommandReturn Shuffle(void)
+  CommandReturn cgc_Shuffle(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorInvalidInput();
+      cgc_ErrorInvalidInput();
       return ERROR;
     }
 
-    u8* RBuf = new u8[CalcStack->Size()];
-    memcpy(RBuf, (u8 *)0x4347C000, CalcStack->Size());
-    for (u32 Index = 1; Index < CalcStack->Size(); ++Index)
+    cgc_u8* RBuf = new cgc_u8[CalcStack->cgc_Size()];
+    cgc_memcpy(RBuf, (cgc_u8 *)0x4347C000, CalcStack->cgc_Size());
+    for (cgc_u32 Index = 1; Index < CalcStack->cgc_Size(); ++Index)
     {
       RBuf[Index] ^= (Index % 0xff);
     }
 
-    for (u32 Index = CalcStack->Size() - 1; Index >= 1; Index--)
+    for (cgc_u32 Index = CalcStack->cgc_Size() - 1; Index >= 1; Index--)
     {
-      u32 RIndex = RBuf[Index] % (Index + 1);
-      s32 Temp = (*CalcStack)[Index];
+      cgc_u32 RIndex = RBuf[Index] % (Index + 1);
+      cgc_s32 Temp = (*CalcStack)[Index];
       (*CalcStack)[Index] = (*CalcStack)[RIndex];
       (*CalcStack)[RIndex] = Temp;
     }
@@ -913,181 +913,181 @@ struct VC
     return ADD_HISTORY;
   }
 
-  CommandReturn Min(void)
+  CommandReturn cgc_Min(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("min");
+      cgc_ErrorTooFewArgs("min");
       return ERROR;
     }
 
-    s32 A = CalcStack->Pop();
-    s32 B = CalcStack->Pop();
-    PushValue(A < B ? A : B);
+    cgc_s32 A = CalcStack->cgc_Pop();
+    cgc_s32 B = CalcStack->cgc_Pop();
+    cgc_PushValue(A < B ? A : B);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Max(void)
+  CommandReturn cgc_Max(void)
   {
-    if (CalcStack->Size() < 2)
+    if (CalcStack->cgc_Size() < 2)
     {
-      ErrorTooFewArgs("max");
+      cgc_ErrorTooFewArgs("max");
       return ERROR;
     }
 
-    s32 A = CalcStack->Pop();
-    s32 B = CalcStack->Pop();
-    PushValue(A > B ? A : B);
+    cgc_s32 A = CalcStack->cgc_Pop();
+    cgc_s32 B = CalcStack->cgc_Pop();
+    cgc_PushValue(A > B ? A : B);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn MinN(void)
+  CommandReturn cgc_MinN(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("minr");
+      cgc_ErrorTooFewArgs("minr");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
-    if (CalcStack->Size() < N)
+    if (CalcStack->cgc_Size() < N)
     {
-      ErrorTooFewArgs("minr");
-      PushValue(N);
+      cgc_ErrorTooFewArgs("minr");
+      cgc_PushValue(N);
       return ERROR;
     }
 
-    s32 LocalMin = CalcStack->Pop();
-    for (s32 Count = 1; Count < N; Count++)
+    cgc_s32 LocalMin = CalcStack->cgc_Pop();
+    for (cgc_s32 Count = 1; Count < N; Count++)
     {
-      s32 Value = CalcStack->Pop();
+      cgc_s32 Value = CalcStack->cgc_Pop();
       if (Value < LocalMin)
         LocalMin = Value;
     }
 
-    PushValue(LocalMin);
+    cgc_PushValue(LocalMin);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn MaxN(void)
+  CommandReturn cgc_MaxN(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("maxn");
+      cgc_ErrorTooFewArgs("maxn");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
-    if (CalcStack->Size() < N)
+    if (CalcStack->cgc_Size() < N)
     {
-      ErrorTooFewArgs("maxn");
-      PushValue(N);
+      cgc_ErrorTooFewArgs("maxn");
+      cgc_PushValue(N);
       return ERROR;
     }
 
-    s32 LocalMax = CalcStack->Pop();
-    for (s32 Count = 1; Count < N; Count++)
+    cgc_s32 LocalMax = CalcStack->cgc_Pop();
+    for (cgc_s32 Count = 1; Count < N; Count++)
     {
-      s32 Value = CalcStack->Pop();
+      cgc_s32 Value = CalcStack->cgc_Pop();
       if (Value > LocalMax)
         LocalMax = Value;
     }
 
-    PushValue(LocalMax);
+    cgc_PushValue(LocalMax);
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Drop(void)
+  CommandReturn cgc_Drop(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("drop");
+      cgc_ErrorTooFewArgs("drop");
       return ERROR;
     }
 
-    CalcStack->Pop();
+    CalcStack->cgc_Pop();
 
     return ADD_HISTORY;
   }
 
-  CommandReturn DropN(s32 N)
+  CommandReturn cgc_DropN(cgc_s32 N)
   {
-    if (CalcStack->Size() < N || N < 0)
+    if (CalcStack->cgc_Size() < N || N < 0)
     {
-      ErrorTooFewArgs("dropn");
+      cgc_ErrorTooFewArgs("dropn");
       return ERROR;
     }
 
     while (N-- > 0)
     {
-      CalcStack->Pop();
+      CalcStack->cgc_Pop();
     }
 
     return ADD_HISTORY;
   }
 
-  CommandReturn DropN(void)
+  CommandReturn cgc_DropN(void)
   {
-    if (CalcStack->Size() < 1)
+    if (CalcStack->cgc_Size() < 1)
     {
-      ErrorTooFewArgs("dropn");
+      cgc_ErrorTooFewArgs("dropn");
       return ERROR;
     }
 
-    s32 N = CalcStack->Pop();
+    cgc_s32 N = CalcStack->cgc_Pop();
 
-    CommandReturn Return = DropN(N);
+    CommandReturn Return = cgc_DropN(N);
 
     if  (Return == ERROR)
     {
-      CalcStack->Push(N);
+      CalcStack->cgc_Push(N);
     }
 
     return Return;
   }
 
-  CommandReturn Depth(void)
+  CommandReturn cgc_Depth(void)
   {
-    CalcStack->Push(CalcStack->Size());
+    CalcStack->cgc_Push(CalcStack->cgc_Size());
 
     return ADD_HISTORY;
   }
 
-  CommandReturn Undo(void)
+  CommandReturn cgc_Undo(void)
   {
-    if (HistStack->Size() < 1)
+    if (HistStack->cgc_Size() < 1)
     {
-      ErrorInvalidInput();
+      cgc_ErrorInvalidInput();
       return ERROR;
     }
-    HistElem Past = HistStack->Pop();
+    cgc_HistElem Past = HistStack->cgc_Pop();
     CalcStack = Past.CalcStack;
     return NO_HISTORY;
   }
 
-  CommandReturn Invert(void)
+  CommandReturn cgc_Invert(void)
   {
-    CalcStack->Invert();
+    CalcStack->cgc_Invert();
     return ADD_HISTORY;
   }
 
-  int ProcessInput(char Input[MAX_INPUT_SIZE])
+  int cgc_ProcessInput(char Input[MAX_INPUT_SIZE])
   {
 #define MAX_TOKENS 16
     char* Tokens[MAX_TOKENS];
-    memset(Tokens, NULL, sizeof(char *) * MAX_TOKENS);
+    cgc_memset(Tokens, NULL, sizeof(char *) * MAX_TOKENS);
     char* Current;
-    u8 NumTokens = 0;
+    cgc_u8 NumTokens = 0;
 
-    for (u8 TokenIndex = 0; TokenIndex < MAX_TOKENS; TokenIndex++)
+    for (cgc_u8 TokenIndex = 0; TokenIndex < MAX_TOKENS; TokenIndex++)
     {
-      Current = strsep((char **)&Input, " ");
+      Current = cgc_strsep((char **)&Input, " ");
       if (!Current)
       {
         NumTokens = TokenIndex;
@@ -1100,7 +1100,7 @@ struct VC
     ASSERT(NumTokens > 0, "No tokens parsed");
     ASSERT(NumTokens < 4, "Too many tokens parsed");
 
-    u8 Arity = NumTokens - 1;
+    cgc_u8 Arity = NumTokens - 1;
 
 #define ARITY_1 1
 #define ARITY_2 2
@@ -1110,17 +1110,17 @@ struct VC
       case ARITY_1:
         {
           char* CommandName = Tokens[0];
-          const CommandEntry* MatchingCommand = FindCommand(CommandName, Arity);
+          const cgc_CommandEntry* MatchingCommand = cgc_FindCommand(CommandName, Arity);
           if (!MatchingCommand)
           {
-            s32 Value;
-            if (ParseInt(Tokens[0], &Value) < 0)
+            cgc_s32 Value;
+            if (cgc_ParseInt(Tokens[0], &Value) < 0)
               return -1;
-            HandleCall(&CommandTable[0], Value);
+            cgc_HandleCall(&CommandTable[0], Value);
           }
           else
           {
-            HandleCall(MatchingCommand);
+            cgc_HandleCall(MatchingCommand);
           }
 
           break;
@@ -1128,33 +1128,33 @@ struct VC
       case ARITY_2:
         {
           char* CommandName = Tokens[0];
-          const CommandEntry* MatchingCommand = FindCommand(CommandName, Arity);
+          const cgc_CommandEntry* MatchingCommand = cgc_FindCommand(CommandName, Arity);
           if (!MatchingCommand)
               return -1;
 
-          s32 Value;
-          if (ParseInt(Tokens[1], &Value) < 0)
+          cgc_s32 Value;
+          if (cgc_ParseInt(Tokens[1], &Value) < 0)
             return -1;
 
-          HandleCall(MatchingCommand, Value);
+          cgc_HandleCall(MatchingCommand, Value);
           break;
         }
       case ARITY_3:
         {
           char* CommandName = Tokens[0];
-          s32 V1, V2;
+          cgc_s32 V1, V2;
 
-          const CommandEntry* MatchingCommand = FindCommand(CommandName, Arity);
+          const cgc_CommandEntry* MatchingCommand = cgc_FindCommand(CommandName, Arity);
           if (!MatchingCommand)
               return -1;
 
-          if (ParseInt(Tokens[1], &V1) < 0)
+          if (cgc_ParseInt(Tokens[1], &V1) < 0)
             return -1;
 
-          if (ParseInt(Tokens[2], &V2) < 0)
+          if (cgc_ParseInt(Tokens[2], &V2) < 0)
             return -1;
 
-          HandleCall(MatchingCommand, V1, V2);
+          cgc_HandleCall(MatchingCommand, V1, V2);
           break;
         }
       default:
@@ -1167,36 +1167,36 @@ struct VC
     return 0;
   }
 
-  void REPL(void)
+  void cgc_REPL(void)
   {
     for (;;)
     {
-      DrawScreen();
-      WaitForInput(In, _InputBuffer, MAX_INPUT_SIZE);
-      ASSERT(strlen(_InputBuffer) <= MAX_INPUT_SIZE, "Input too long");
-      if (strcmp((const char *)_InputBuffer, "quit") == 0)
+      cgc_DrawScreen();
+      cgc_WaitForInput(In, _InputBuffer, MAX_INPUT_SIZE);
+      ASSERT(cgc_strlen(_InputBuffer) <= MAX_INPUT_SIZE, "Input too long");
+      if (cgc_strcmp((const char *)_InputBuffer, "quit") == 0)
           break;
 
-      if (ProcessInput(_InputBuffer) < 0)
-        ErrorInvalidInput();
+      if (cgc_ProcessInput(_InputBuffer) < 0)
+        cgc_ErrorInvalidInput();
     }
   }
 };
 
-void check_seed()
+void cgc_check_seed()
 {
     unsigned int x = 0;
-    fread(&x, sizeof(x), stdin);
+    cgc_fread(&x, sizeof(x), stdin);
     if (x == *(unsigned int*)0x4347c000)
-        fwrite((void *)0x4347c000, 0x1000, stdout);
+        cgc_fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
 extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
-    VC VentureCalc(stdin, stdout);
+    cgc_VC VentureCalc(stdin, stdout);
 
-    fbuffered(stdout, 1);
-    check_seed();
-    VentureCalc.REPL();
+    cgc_fbuffered(stdout, 1);
+    cgc_check_seed();
+    VentureCalc.cgc_REPL();
     return 0;
 }

@@ -27,7 +27,7 @@
 #include "shape.h"
 
 void
-shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
+cgc_shape_init(struct shape *shape, enum shape_type type, enum surface_type material,
         struct vector position, struct vector color, struct vector emission)
 {
     shape->next = NULL;

@@ -26,7 +26,7 @@
 #include "rle.h"
 
 
-void decode(video *vid, char key){
+void cgc_decode(cgc_video *vid, char key){
     uint32_t i, csum = 0, j, cur;
 
     if (key != vid->key) {
@@ -55,7 +55,7 @@ void decode(video *vid, char key){
 
     ALLOC(0, (void**)&(vid->decbuf), vid->dlen);
 
-    //now, actually decode/decompress
+    //now, actually cgc_decode/decompress
     cur = 0;
     for (i=0; i < vid->elen; i+=2) {
         for(j=0; j <= (uint8_t)(vid->encbuf[i]^vid->key); j++)

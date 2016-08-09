@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,21 +33,21 @@ int main(void) {
 	unsigned char pkt[256];
 
 	// init the VARS
-	if (!InitVARS()) {
-		puts("InitVARS failure");
+	if (!cgc_InitVARS()) {
+		cgc_puts("cgc_InitVARS failure");
 		_terminate(-1);
 	}
 
 	// packet handler loop
 	while (1) {
-		if (ReceivePacket(pkt) == 0) {
+		if (cgc_ReceivePacket(pkt) == 0) {
 			break;
 		}
-		HandlePacket(pkt);
+		cgc_HandlePacket(pkt);
 	}
 
 	// destroy the VARS
-	DestroyVARS();
+	cgc_DestroyVARS();
 
 	return(0);
 }

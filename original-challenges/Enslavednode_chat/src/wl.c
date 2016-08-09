@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,40 +33,40 @@
 static char *chain_term = "\x15\x15";
 static char *word_sep = "\x89\x89";
 
-char *word_list_to_str(const list *l)
+char *cgc_word_list_to_str(const cgc_list *l)
 {
   if (!l)
     return NULL;
 
 #define START_SIZE 128
-  char *flat = calloc(1, START_SIZE);
-  size_t cur_size = START_SIZE;
+  char *flat = cgc_calloc(1, START_SIZE);
+  cgc_size_t cur_size = START_SIZE;
 
   if (!flat)
     error(EALLOC);
 
-  const list *p = l;
+  const cgc_list *p = l;
 
   while (p && p->d) {
-    size_t cur_len = strlen(flat);
-    if (strlen(flat) + strlen(p->d) + strlen(word_sep) + 1 > cur_size) {
-      cur_size = (strlen(flat) + strlen(p->d) + strlen(word_sep) + 1) * 2;
-      flat = realloc(flat, cur_size);
+    cgc_size_t cur_len = cgc_strlen(flat);
+    if (cgc_strlen(flat) + cgc_strlen(p->d) + cgc_strlen(word_sep) + 1 > cur_size) {
+      cur_size = (cgc_strlen(flat) + cgc_strlen(p->d) + cgc_strlen(word_sep) + 1) * 2;
+      flat = cgc_realloc(flat, cur_size);
       if (!flat)
         error(EALLOC);
 
-      memset(flat + cur_len, 0, cur_size - cur_len);
+      cgc_memset(flat + cur_len, 0, cur_size - cur_len);
     }
 
-    strcat(flat, p->d);
-    strcat(flat, word_sep);
+    cgc_strcat(flat, p->d);
+    cgc_strcat(flat, word_sep);
     p = p->n;
   }
 
   return flat;
 }
 
-HASH hash_str(char *s)
+HASH cgc_hash_str(char *s)
 {
   HASH h = 0xdeedacedfacedead;
   while (*s++)
@@ -74,144 +74,144 @@ HASH hash_str(char *s)
   return h;
 }
 
-list *split_words(const char *line, int add_term)
+cgc_list *cgc_split_words(const char *line, int add_term)
 {
   char *p = NULL;
   char *line_end = NULL;
-  list *words = NULL;
+  cgc_list *words = NULL;
 
   if (!line)
     return NULL;
 
-  p = calloc(1, strlen(line) + 1);
+  p = cgc_calloc(1, cgc_strlen(line) + 1);
   char *to_free = p;
   if (!p)
     error(EALLOC);
-  strncpy(p, line, strlen(line));
-  line_end = p + strlen(line);
+  cgc_strncpy(p, line, cgc_strlen(line));
+  line_end = p + cgc_strlen(line);
 
   while (p < line_end) {
-    while(isspace(*p))
+    while(cgc_isspace(*p))
       p++;
 
     char *word_start = p;
     char *word_end = p;
 
-    while (word_end < line_end && isprint(*word_end) && !isspace(*word_end))
+    while (word_end < line_end && cgc_isprint(*word_end) && !cgc_isspace(*word_end))
       word_end++;
     *word_end = '\0';
 
-    char *wc = calloc(1, strlen(word_start) + 1);
-    strcpy(wc, word_start);
-    append_list(&words, wc, 1);
+    char *wc = cgc_calloc(1, cgc_strlen(word_start) + 1);
+    cgc_strcpy(wc, word_start);
+    cgc_append_list(&words, wc, 1);
     p = word_end + 1;
   }
 
   if (add_term) {
-    char *wc = calloc(1, strlen(chain_term) + 1);
-    strcpy(wc, chain_term);
-    append_list(&words, chain_term, 1);
+    char *wc = cgc_calloc(1, cgc_strlen(chain_term) + 1);
+    cgc_strcpy(wc, chain_term);
+    cgc_append_list(&words, chain_term, 1);
   }
 
-  free(to_free);
+  cgc_free(to_free);
   return words;
 }
 
-list *chunk_words(list *words, size_t chunk_size)
+cgc_list *cgc_chunk_words(cgc_list *words, cgc_size_t chunk_size)
 {
-  size_t num_words = len_list(words);
-  list *chunks = NULL;
+  cgc_size_t num_words = cgc_len_list(words);
+  cgc_list *chunks = NULL;
 
   if (num_words <= chunk_size)
     return NULL;
 
-  size_t num_chunks = num_words - chunk_size;
+  cgc_size_t num_chunks = num_words - chunk_size;
   if (num_chunks > num_words)
     return NULL;
 
-  for (size_t i = 0; i < num_chunks; i++) {
-    list *chunk = copy_list(words, i, i + chunk_size + 1);
+  for (cgc_size_t i = 0; i < num_chunks; i++) {
+    cgc_list *chunk = cgc_copy_list(words, i, i + chunk_size + 1);
     if (!chunk)
       error(EALLOC);
-    append_list(&chunks, chunk, 1);
+    cgc_append_list(&chunks, chunk, 1);
   }
 
   return chunks;
 }
 
-list *upto_last(const list *l)
+cgc_list *cgc_upto_last(const cgc_list *l)
 {
-  if (!l || len_list(l) < 2)
+  if (!l || cgc_len_list(l) < 2)
     return NULL;
 
-  return copy_list(l, 0, len_list(l) - 1);
+  return cgc_copy_list(l, 0, cgc_len_list(l) - 1);
 }
 
-HASH key_from_wordlist(const list *l)
+HASH cgc_key_from_wordlist(const cgc_list *l)
 {
-  char *k = word_list_to_str(l);
+  char *k = cgc_word_list_to_str(l);
   if (!k)
     return 0;
 
-  HASH x = hash_str(k);
-  free(k);
+  HASH x = cgc_hash_str(k);
+  cgc_free(k);
   return x;
 }
 
-int insert_wordlist(const list *word_list, tree **t)
+int cgc_insert_wordlist(const cgc_list *word_list, cgc_tree **t)
 {
   if (!word_list || !t)
     return -1;
 
-  list *all_but_last = upto_last(word_list);
+  cgc_list *all_but_last = cgc_upto_last(word_list);
   if (!all_but_last)
     return 0;
 
-  HASH h = key_from_wordlist((list *)all_but_last);
+  HASH h = cgc_key_from_wordlist((cgc_list *)all_but_last);
   if (!h)
     return -1;
 
-  const DATA v = lindex((list *)word_list, -1);
+  const DATA v = cgc_lindex((cgc_list *)word_list, -1);
   if (!v)
     error(ELIST);
 
   if (!*t) {
-    *t = init_tree(h, v);
+    *t = cgc_init_tree(h, v);
   } else {
-    if (ins_tree(*t, h, v) < 0)
+    if (cgc_ins_tree(*t, h, v) < 0)
       error(ETREE);
   }
 
   return 0;
 }
 
-int insert_wordlists(const list *word_lists, tree **t)
+int cgc_insert_wordlists(const cgc_list *word_lists, cgc_tree **t)
 {
   if (!word_lists)
     return -1;
 
-  for (const list *it = word_lists; it; it = it->n)
-    if (insert_wordlist(it->d, t) < 0)
+  for (const cgc_list *it = word_lists; it; it = it->n)
+    if (cgc_insert_wordlist(it->d, t) < 0)
       return -1;
 
   return 0;
 }
 
-list *str_to_wordlists(const char *s)
+cgc_list *cgc_str_to_wordlists(const char *s)
 {
-  size_t len = strlen(s);
-  char *x = calloc(1, len + 1);
-  strncpy(x, s, len);
+  cgc_size_t len = cgc_strlen(s);
+  char *x = cgc_calloc(1, len + 1);
+  cgc_strncpy(x, s, len);
   x[len] = '\0';
 
-  list *words = split_words(x, 1);
+  cgc_list *words = cgc_split_words(x, 1);
   if (!words)
     return NULL;
 
-  free(x);
+  cgc_free(x);
 
 #define CHAIN_LENGTH 2
-  list *chunks = chunk_words(words, CHAIN_LENGTH);
+  cgc_list *chunks = cgc_chunk_words(words, CHAIN_LENGTH);
   if (!chunks)
     return NULL;
 

@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,18 +34,18 @@ THE SOFTWARE.
 // Runs the ASCII Content Server
 int main(void) {
   // Initialize server
-  if (InitializeTree() != 0) {
-    PrintErrorAndTerminate("Initialize server failed");
+  if (cgc_InitializeTree() != 0) {
+    cgc_PrintErrorAndTerminate("Initialize server failed");
   }  
   // Respond to commands
-  CommandStruct command;
+  cgc_CommandStruct command;
   int more_commands = 0;
   do {
-    if (ReceiveCommand(&command, &more_commands) != 0) {
-      PrintErrorAndTerminate("Receive command failed");
+    if (cgc_ReceiveCommand(&command, &more_commands) != 0) {
+      cgc_PrintErrorAndTerminate("Receive command failed");
     }
-    HandleCommand(&command);
-    DestroyCommand(&command);
+    cgc_HandleCommand(&command);
+    cgc_DestroyCommand(&command);
   } while (more_commands == 1); 
   return 0;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,7 +22,7 @@
  */
 #include "stdio_private.h"
 
-static unsigned int hash_seed(const char *seed)
+static unsigned int cgc_hash_seed(const char *seed)
 {
     unsigned int i;
     unsigned int H = 0x314abc86;
@@ -37,22 +37,22 @@ static unsigned int hash_seed(const char *seed)
     return H;
 }
 
-void fxlat(FILE *stream, const char *seed)
+void cgc_fxlat(cgc_FILE *stream, const char *seed)
 {
     unsigned int state, i;
     unsigned char *map, *map_inv;
 
     if (seed == NULL)
     {
-        free(stream->xlat_map);
+        cgc_free(stream->xlat_map);
         stream->xlat_map = NULL;
         stream->xlat_map_inv = NULL;
         return;
     }
     
-    map = stream->xlat_map = realloc(stream->xlat_map, 256);
-    map_inv = stream->xlat_map_inv = realloc(stream->xlat_map_inv, 256);
-    state = hash_seed(seed);
+    map = stream->xlat_map = cgc_realloc(stream->xlat_map, 256);
+    map_inv = stream->xlat_map_inv = cgc_realloc(stream->xlat_map_inv, 256);
+    state = cgc_hash_seed(seed);
 
     /* initialize map with identity */
     for (i = 0; i < 256; i++)

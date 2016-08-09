@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,29 +23,29 @@
 
 #include "file.h"
 
-BaseFile::~BaseFile() {}
+cgc_BaseFile::~cgc_BaseFile() {}
 
-File::File(const char* name, FileType type, size_t size, File* parent)
+cgc_File::cgc_File(const char* name, FileType type, cgc_size_t size, cgc_File* parent)
 {
-  strcpy(this->name, name);
+  cgc_strcpy(this->name, name);
   this->type = type;
   this->size = size;
   this->parent = parent;
   this->opened = false;
   this->info.content = 0;
   if (this->type == FT_DIR)
-    this->info.files = new List<File *>();
+    this->info.files = new cgc_List<cgc_File *>();
 }
 
-File::~File()
+cgc_File::~cgc_File()
 {
   if (type == FT_REG && info.content)
-    free(info.content);
+    cgc_free(info.content);
   else if (type == FT_DIR && info.files)
     delete info.files;
 }
 
-int File::Open()
+int cgc_File::cgc_Open()
 {
   if (opened)
     return 1;
@@ -53,7 +53,7 @@ int File::Open()
   return 0;
 }
 
-int File::Close()
+int cgc_File::cgc_Close()
 {
   if (!opened)
     return 1;
@@ -61,7 +61,7 @@ int File::Close()
   return 0;
 }
 
-int File::Read(size_t pos, size_t len, char **outBuf)
+int cgc_File::cgc_Read(cgc_size_t pos, cgc_size_t len, char **outBuf)
 {
   if (type != FT_REG)
     return -10;
@@ -76,14 +76,14 @@ int File::Read(size_t pos, size_t len, char **outBuf)
   if (len == 0)
     len = size;
   len = (len > size - pos) ? (size - pos) : len;
-  *outBuf = (char *) calloc(len, sizeof(char));
+  *outBuf = (char *) cgc_calloc(len, sizeof(char));
   if (!*outBuf)
     return -20;
-  memcpy(*outBuf, &info.content[pos], len);
+  cgc_memcpy(*outBuf, &info.content[pos], len);
   return len;
 }
 
-int File::Write(size_t pos, char *inBuf, size_t len)
+int cgc_File::cgc_Write(cgc_size_t pos, char *inBuf, cgc_size_t len)
 {
   if (type != FT_REG)
     return -10;
@@ -95,7 +95,7 @@ int File::Write(size_t pos, char *inBuf, size_t len)
     return 0;
   if (pos >= size || pos + len > size)
   {
-    info.content = (char *) realloc(info.content, pos + len);
+    info.content = (char *) cgc_realloc(info.content, pos + len);
     if (info.content == NULL)
     {
       size = 0;
@@ -103,11 +103,11 @@ int File::Write(size_t pos, char *inBuf, size_t len)
     }
     size = pos + len;
   }
-  memcpy(&info.content[pos], inBuf, len);
+  cgc_memcpy(&info.content[pos], inBuf, len);
   return len;
 }
 
-void File::PrintFileInfo()
+void cgc_File::cgc_PrintFileInfo()
 {
   if (type == FT_REG)
   {

@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,13 +44,13 @@ typedef struct {
 	char password[PASSWORD_LEN+1];
 	char fullname[REALNAME_LEN+1];
 
-} newUserMessageType;
+} cgc_newUserMessageType;
 
 typedef struct {
 
 	unsigned int responseCode;
 
-} responseMessageType;
+} cgc_responseMessageType;
 
 
 typedef struct {
@@ -58,26 +58,26 @@ typedef struct {
 	char name[USERNAME_LEN+1];
 	char password[PASSWORD_LEN+1];
 
-} loginMessageType;
+} cgc_loginMessageType;
 
 typedef struct {
 
 	unsigned int sessionToken;
 	char message[LOGINMESSAGE_LEN];
 
-} loginResponseMessageType;
+} cgc_loginResponseMessageType;
 
 typedef struct {
 
 	unsigned int sessionToken;
 
-}  feedRequestMessageType;
+}  cgc_feedRequestMessageType;
 
 typedef struct {
 
 	unsigned int postID;
 
-}  requestPostMessageType;
+}  cgc_requestPostMessageType;
 
 
 typedef struct {
@@ -87,14 +87,14 @@ typedef struct {
 	char post[MAXPOST_LEN];
 	char comment[COMMENT_LEN];
 
-} feedMessageType;
+} cgc_feedMessageType;
 
 typedef struct {
 
 	unsigned int sessionToken;
 	char post[MAXPOST_LEN];
 
-}  newPostMessageType;
+}  cgc_newPostMessageType;
 
 typedef struct {
 
@@ -102,16 +102,16 @@ typedef struct {
 	unsigned int commenterID;
 	char comment[COMMENT_LEN];
 
-}  addCommentMessageType;
+}  cgc_addCommentMessageType;
 
 
-int receiveMessage( void *message );
-int sendResponse( void *message, int length );
-int savePost(unsigned int nextPostID, unsigned int sessionToken, char *post);
-int saveComment(unsigned int postID, unsigned int commenterID, char *comment);
-int newFeedPost(unsigned int sessionToken, char **postMessage, int *messageSize );
-int retrievePost( unsigned int postID, int includeComments, char **postMessage, int *messageSize);
-int sendStickPost( unsigned int postID );
+int cgc_receiveMessage( void *message );
+int cgc_sendResponse( void *message, int length );
+int cgc_savePost(unsigned int nextPostID, unsigned int sessionToken, char *post);
+int cgc_saveComment(unsigned int postID, unsigned int commenterID, char *comment);
+int cgc_newFeedPost(unsigned int sessionToken, char **postMessage, int *messageSize );
+int cgc_retrievePost( unsigned int postID, int includeComments, char **postMessage, int *messageSize);
+int cgc_sendStickPost( unsigned int postID );
 
 
 #endif

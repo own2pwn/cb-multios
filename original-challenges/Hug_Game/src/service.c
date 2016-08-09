@@ -28,58 +28,58 @@ THE SOFTWARE.
 #include "libc.h"
 #include "utility.h"
 
-extern void coinflip();
-extern void hangman();
-extern void dicegame();
-extern void war();
+extern void cgc_coinflip();
+extern void cgc_hangman();
+extern void cgc_dicegame();
+extern void cgc_war();
 
-gamestate *state;
+cgc_gamestate *state;
 
 int main() {
     char choice[16];
     int seed;
     allocate(0x1000, 1, (void **)&state);
     if(state == NULL) {
-        put("Could not allocate space for gamestate. Terminating.");
+        cgc_put("Could not allocate space for cgc_gamestate. Terminating.");
         _terminate(-1);
     }
     state->hugcount = 1000;
-    put("Welcome to the hug gambling server.\n");
-    put("What is your name?\n");
-    bzero(state->name, 256);
-    recvUntil(0, state->name, 256, '\n');
-    put("Hi ");
-    put(state->name);
-    put(". ");
-    memcpy((char *)&seed, state->name, 4);
-    hugsrand(state, seed);
+    cgc_put("Welcome to the hug gambling server.\n");
+    cgc_put("What is your name?\n");
+    cgc_bzero(state->name, 256);
+    cgc_recvUntil(0, state->name, 256, '\n');
+    cgc_put("Hi ");
+    cgc_put(state->name);
+    cgc_put(". ");
+    cgc_memcpy((char *)&seed, state->name, 4);
+    cgc_hugsrand(state, seed);
     while(state->hugcount > 0) {
         if(state->hugcount > 1000000)
             state->hugcount = 1000000;
-        put("You have ");
-        put(itoa(state->hugcount));
-        put(" hugs. Shall we play a game?\n1. Coin Flip\n2. Hangman\n3. Dice game\n4. War\nq. Quit\n");
-        bzero(choice, 16);
-        recvUntil(0, choice, 15, '\n');
+        cgc_put("You have ");
+        cgc_put(cgc_itoa(state->hugcount));
+        cgc_put(" hugs. Shall we play a game?\n1. Coin Flip\n2. Hangman\n3. Dice game\n4. War\nq. Quit\n");
+        cgc_bzero(choice, 16);
+        cgc_recvUntil(0, choice, 15, '\n');
         switch(choice[0])
         {
             case '1':
-                coinflip();
+                cgc_coinflip();
                 break;
             case '2':
-                hangman();
+                cgc_hangman();
                 break;
             case '3':
-                dicegame();
+                cgc_dicegame();
                 break;
             case '4':
-                war();
+                cgc_war();
                 break;
             case 'q':
-                put("Thanks for playing! Don't spend all your hugs in one place.\n");
+                cgc_put("Thanks for playing! Don't spend all your hugs in one place.\n");
                 _terminate(0);
         }
     }
-    put("You're all out of hugs :(. Thanks for playing.\n");
+    cgc_put("You're all out of hugs :(. Thanks for playing.\n");
 
 }

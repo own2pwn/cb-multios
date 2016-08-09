@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,13 +25,13 @@
 #include "utf8.h"
 #include "vfs.h"
 
-static const utf8char pubroot_path[] = "/public/";
+static const cgc_utf8char pubroot_path[] = "/public/";
 static struct vfs vfs;
 static struct directory *pubroot = NULL;
 static struct directory *admin = NULL;
 
-#define MAX_FILE_SIZE (PAGE_SIZE - 2 * sizeof(size_t))
-#define MAX_PATH_LENGTH (sizeof(ucscodepoint) * (sizeof(pubroot_path) + MAX_FILE_NAME_LENGTH))
+#define MAX_FILE_SIZE (PAGE_SIZE - 2 * sizeof(cgc_size_t))
+#define MAX_PATH_LENGTH (sizeof(cgc_ucscodepoint) * (sizeof(pubroot_path) + MAX_FILE_NAME_LENGTH))
 
 enum fileserver_ops {
     READ_FILE,
@@ -40,73 +40,73 @@ enum fileserver_ops {
 };
 
 static int
-canonicalize_path(utf8char *dst, const utf8char *src)
+cgc_canonicalize_path(cgc_utf8char *dst, const cgc_utf8char *src)
 {
 #ifdef PATCHED
-    strncpy(dst, pubroot_path, sizeof(pubroot_path));
-    utf8_canonicalize(dst + sizeof(pubroot_path) - 1, src, MAX_PATH_LENGTH);
+    cgc_strncpy(dst, pubroot_path, sizeof(pubroot_path));
+    cgc_utf8_canonicalize(dst + sizeof(pubroot_path) - 1, src, MAX_PATH_LENGTH);
 
-    if (strchr(dst + sizeof(pubroot_path) - 1, '/') != NULL)
+    if (cgc_strchr(dst + sizeof(pubroot_path) - 1, '/') != NULL)
         return -1;
 #else
-    if (strchr(src, '/') != NULL)
+    if (cgc_strchr(src, '/') != NULL)
         return -1;
 
-    strncpy(dst, pubroot_path, sizeof(pubroot_path));
-    utf8_canonicalize(dst + sizeof(pubroot_path) - 1, src, MAX_PATH_LENGTH);
+    cgc_strncpy(dst, pubroot_path, sizeof(pubroot_path));
+    cgc_utf8_canonicalize(dst + sizeof(pubroot_path) - 1, src, MAX_PATH_LENGTH);
 #endif
 
     return 0;
 }
 
 static int
-read_file(void)
+cgc_read_file(void)
 {
     struct file *file;
-    utf8char filename[MAX_FILE_NAME_LENGTH + 1];
-    utf8char path[MAX_PATH_LENGTH];
+    cgc_utf8char filename[MAX_FILE_NAME_LENGTH + 1];
+    cgc_utf8char path[MAX_PATH_LENGTH];
 
-    if (read_all(STDIN, filename, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
+    if (cgc_read_all(STDIN, filename, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
         return -1;
     filename[MAX_FILE_NAME_LENGTH] = '\0';
 
-    if (canonicalize_path(path, filename) != 0)
+    if (cgc_canonicalize_path(path, filename) != 0)
         return -1;
 
-    if ((file = lookup_file(&vfs, path)) == NULL)
+    if ((file = cgc_lookup_file(&vfs, path)) == NULL)
         return -1;
 
-    if (write_all(STDOUT, file->contents, file->size) != file->size)
+    if (cgc_write_all(STDOUT, file->contents, file->size) != file->size)
         return -1;
 
     return 0;
 }
 
 static int
-write_file(void)
+cgc_write_file(void)
 {
     struct file *file;
-    size_t size;
-    utf8char filename[MAX_FILE_NAME_LENGTH + 1];
-    utf8char path[MAX_PATH_LENGTH];
+    cgc_size_t size;
+    cgc_utf8char filename[MAX_FILE_NAME_LENGTH + 1];
+    cgc_utf8char path[MAX_PATH_LENGTH];
 
-    if (read_all(STDIN, filename, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
+    if (cgc_read_all(STDIN, filename, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
         return -1;
     filename[MAX_FILE_NAME_LENGTH] = '\0';
 
-    if (read_all(STDIN, &size, sizeof(size)) != sizeof(size))
+    if (cgc_read_all(STDIN, &size, sizeof(size)) != sizeof(size))
         return -1;
 
     if (size > MAX_FILE_SIZE)
         return -1;
 
-    if (canonicalize_path(path, filename) != 0)
+    if (cgc_canonicalize_path(path, filename) != 0)
         return -1;
 
-    if (lookup_file(&vfs, path) != NULL)
+    if (cgc_lookup_file(&vfs, path) != NULL)
         return -1;
 
-    if ((file = create_file(&vfs, path)) == NULL)
+    if ((file = cgc_create_file(&vfs, path)) == NULL)
         return -1;
 
     file->size = size;
@@ -115,14 +115,14 @@ write_file(void)
     if (file->parent == admin) {
         file->contents = *(unsigned char **)filename;
     } else {
-        if ((file->contents = calloc(size)) == NULL) {
-            delete_file(&vfs, file);
+        if ((file->contents = cgc_calloc(size)) == NULL) {
+            cgc_delete_file(&vfs, file);
             return -1;
         }
     }
 
-    if (read_all(STDIN, file->contents, file->size) != file->size) {
-        delete_file(&vfs, file);
+    if (cgc_read_all(STDIN, file->contents, file->size) != file->size) {
+        cgc_delete_file(&vfs, file);
         return -1;
     }
 
@@ -130,12 +130,12 @@ write_file(void)
 }
 
 static int
-list_files(void)
+cgc_list_files(void)
 {
     struct file *cur;
 
     list_for_each_entry(struct file, list, &pubroot->files, cur)
-        if (write_all(STDOUT, cur->name, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
+        if (cgc_write_all(STDOUT, cur->name, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)
             return -1;
 
     return 0;
@@ -146,12 +146,12 @@ main(void) {
     int cmd, cmd_ret;
 
     // Set up filesystem
-    vfs_init(&vfs);
-    pubroot = create_dir(&vfs, pubroot_path);
-    admin = create_dir(&vfs, "/admin");
+    cgc_vfs_init(&vfs);
+    pubroot = cgc_create_dir(&vfs, pubroot_path);
+    admin = cgc_create_dir(&vfs, "/admin");
 
     while (1) {
-        if (read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
+        if (cgc_read_all(STDIN, &cmd, sizeof(cmd)) != sizeof(cmd))
             continue;
 
         if (cmd == -1)
@@ -159,22 +159,22 @@ main(void) {
 
         switch (cmd) {
         case READ_FILE:
-            cmd_ret = read_file();
+            cmd_ret = cgc_read_file();
             break;
         case WRITE_FILE:
-            cmd_ret = write_file();
+            cmd_ret = cgc_write_file();
             break;
         case LIST_FILES:
-            cmd_ret = list_files();
+            cmd_ret = cgc_list_files();
             break;
         default:
             continue;
         }
 
-        write_all(STDOUT, &cmd_ret, sizeof(cmd_ret));
+        cgc_write_all(STDOUT, &cmd_ret, sizeof(cmd_ret));
     }
 
-    vfs_destroy(&vfs);
+    cgc_vfs_destroy(&vfs);
 
     return 0;
 }

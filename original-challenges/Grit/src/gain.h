@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,73 +22,73 @@
  */
 #pragma once
 
-class Gain
+class cgc_Gain
 {
 public:
-    inline Gain() : value(0)
+    inline cgc_Gain() : cgc_value(0)
     {
     }
-    static inline Gain fromDouble(double d)
+    static inline cgc_Gain cgc_fromDouble(double d)
     {
         // only positive values are valid
         if (d < 0)
-            return Gain(0);
+            return cgc_Gain(0);
         if (d <= 0.01)
-            return Gain(INT32_MIN);
+            return cgc_Gain(INT32_MIN);
         if (d >= 10.0)
-            return Gain(INT32_MAX);
+            return cgc_Gain(INT32_MAX);
         if (d >= 1)
-            return Gain((d-1) / 10 * INT32_MAX);
+            return cgc_Gain((d-1) / 10 * INT32_MAX);
         else
-            return Gain(((1/d) - 1) / 10 * -INT32_MAX);
+            return cgc_Gain(((1/d) - 1) / 10 * -INT32_MAX);
     }
-    static inline Gain fromRational(int16_t numerator, int16_t denominator)
+    static inline cgc_Gain cgc_fromRational(cgc_int16_t numerator, cgc_int16_t denominator)
     {
         double tmp = (double)numerator / (double)denominator;
         tmp /= 10;
         tmp *= INT32_MAX;
-        return Gain((int)tmp);
+        return cgc_Gain((int)tmp);
     }
-    static inline Gain fromPanLeft(int32_t pan)
+    static inline cgc_Gain cgc_fromPanLeft(cgc_int32_t pan)
     {
         if (pan <= 0)
-            return Gain(0);
+            return cgc_Gain(0);
         else
-            return Gain(-pan);
+            return cgc_Gain(-pan);
     }
-    static inline Gain fromPanRight(int32_t pan)
+    static inline cgc_Gain cgc_fromPanRight(cgc_int32_t pan)
     {
         if (pan >= 0)
-            return Gain(0);
+            return cgc_Gain(0);
         else
-            return Gain(pan);
+            return cgc_Gain(pan);
     }
-    inline Gain operator*(const Gain &b) const
+    inline cgc_Gain operator*(const cgc_Gain &b) const
     {
-        return fromDouble(toDouble() * b.toDouble());
+        return cgc_fromDouble(cgc_toDouble() * b.cgc_toDouble());
     }
-    inline Gain operator+(const Gain &b) const
+    inline cgc_Gain operator+(const cgc_Gain &b) const
     {
-        long long tmp = value;
-        tmp += b.value;
+        long long tmp = cgc_value;
+        tmp += b.cgc_value;
         if (tmp > INT32_MAX)
             tmp = INT32_MAX;
         if (tmp < INT32_MIN)
             tmp = INT32_MIN;
         return tmp;
     }
-    inline int32_t adjustSample(int32_t sample) const
+    inline cgc_int32_t cgc_adjustSample(cgc_int32_t sample) const
     {
-        double tmp = sample * toDouble();
+        double tmp = sample * cgc_toDouble();
         if (tmp >= INT32_MAX)
             return INT32_MAX;
         if (tmp <= INT32_MIN)
             return INT32_MIN;
         return tmp;
     }
-    inline double toDouble() const
+    inline double cgc_toDouble() const
     {
-        double tmp = value;
+        double tmp = cgc_value;
         tmp *= 10.0 / INT32_MAX;
         if (tmp >= 0)
             return (tmp + 1);
@@ -96,8 +96,8 @@ public:
             return 1 / (-tmp + 1);
     }
 private:
-    inline Gain(int32_t value_) : value(value_)
+    inline cgc_Gain(cgc_int32_t value_) : cgc_value(value_)
     {
     }
-    int32_t value;
+    cgc_int32_t cgc_value;
 };

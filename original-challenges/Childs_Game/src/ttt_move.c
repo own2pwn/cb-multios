@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,7 +26,7 @@
 static const unsigned int *secret = (const unsigned int *)0x4347C000;
 static int idx = 0;
 
-static int find_minmax(board_t *board, int depth, int player, int *best_posy, int *best_posx)
+static int cgc_find_minmax(cgc_board_t *board, int depth, int player, int *best_posy, int *best_posx)
 {
     if (player == COMPUTER && board->num_moves == 0) {
         unsigned int corner = secret[idx++] % 4;
@@ -63,7 +63,7 @@ static int find_minmax(board_t *board, int depth, int player, int *best_posy, in
             if (board->ttt_board[i][j] != BLANK)
                 continue;
 
-            move_status = do_move(board, i, j, player);
+            move_status = cgc_do_move(board, i, j, player);
             if (move_status == WINNER_HUMAN) {
                 score = depth - 10;
             } else if (move_status == WINNER_COMP) {
@@ -71,12 +71,12 @@ static int find_minmax(board_t *board, int depth, int player, int *best_posy, in
             } else if (move_status == TIE) {
                 score =  0;
             } else if (move_status == GAME_IN_PROGRESS) {
-                score = find_minmax(board, depth+1, player * -1, best_posy, best_posx);
+                score = cgc_find_minmax(board, depth+1, player * -1, best_posy, best_posx);
             } else {
                 return -10000;
             }
 
-            if (undo_move(board, i, j) != SUCCESS) {
+            if (cgc_undo_move(board, i, j) != SUCCESS) {
                 return -10000;
             }
 
@@ -101,32 +101,32 @@ static int find_minmax(board_t *board, int depth, int player, int *best_posy, in
     return best_score;
 }
 
-int computer_move(board_t *board)
+int cgc_computer_move(cgc_board_t *board)
 {
     int best_posx = -1;
     int best_posy = -1;
 
-    find_minmax(board, 0, COMPUTER, &best_posy, &best_posx);
-    return do_move(board, best_posy, best_posx, COMPUTER);
+    cgc_find_minmax(board, 0, COMPUTER, &best_posy, &best_posx);
+    return cgc_do_move(board, best_posy, best_posx, COMPUTER);
 }
 
-int player_move(board_t *board)
+int cgc_player_move(cgc_board_t *board)
 {
     int max_input = 256;
     int posx = 0;
     int posy = 0;
-    char *input = malloc(max_input);
-    printf("Enter move [y,x]: ");
-    if (freaduntil(input, max_input, ',', stdin) == -1)
+    char *input = cgc_malloc(max_input);
+    cgc_printf("Enter move [y,x]: ");
+    if (cgc_freaduntil(input, max_input, ',', stdin) == -1)
         goto error;
-    posy = strtol(input, NULL, 10);
-    if (freaduntil(input, max_input, '\n', stdin) == -1)
+    posy = cgc_strtol(input, NULL, 10);
+    if (cgc_freaduntil(input, max_input, '\n', stdin) == -1)
         goto error;
-    posx = strtol(input, NULL, 10);
+    posx = cgc_strtol(input, NULL, 10);
 
-    free(input);
-    return do_move(board, posy, posx, HUMAN);
+    cgc_free(input);
+    return cgc_do_move(board, posy, posx, HUMAN);
 error:
-    free(input);
+    cgc_free(input);
     return BAD_MOVE;
 }

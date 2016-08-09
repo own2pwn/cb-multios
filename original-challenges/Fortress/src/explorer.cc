@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,13 +26,13 @@
 
 #include "explorer.h"
 
-CExplorer::CExplorer(const char *name) : m_exp(1000), m_level(1), m_skills(), m_avail(true), m_hired(false)
+cgc_CExplorer::cgc_CExplorer(const char *name) : m_exp(1000), m_level(1), m_skills(), m_avail(true), m_hired(false)
 {
-    char *tmp = strndup(name, k_maxNameLength);
-    strcpy(m_name, tmp);
+    char *tmp = cgc_strndup(name, k_maxNameLength);
+    cgc_strcpy(m_name, tmp);
 }
 
-int CExplorer::GetNextExp()
+int cgc_CExplorer::cgc_GetNextExp()
 {
     int i, exp = k_baseExp;
     double mult = 1.0;
@@ -42,14 +42,14 @@ int CExplorer::GetNextExp()
     return (exp - m_exp);
 }
 
-bool CExplorer::GainExp(int exp)
+bool cgc_CExplorer::cgc_GainExp(int exp)
 {
     if (m_level == k_maxLevel)
         return false;
     int oldLevel = m_level;
     while (m_level < k_maxLevel)
     {
-        int nextExp = GetNextExp();
+        int nextExp = cgc_GetNextExp();
         if (exp >= nextExp)
         {
             m_level++;
@@ -63,28 +63,28 @@ bool CExplorer::GainExp(int exp)
     return oldLevel < m_level;
 }
 
-void CExplorer::ReplaceSkill(CSkill* skill, int idx)
+void cgc_CExplorer::cgc_ReplaceSkill(cgc_CSkill* skill, int idx)
 {
     if (idx != 0 && idx != 1)
         return;
     m_skills[idx] = skill;
 }
 
-CRequirement::Type CExplorer::GetCounters()
+cgc_CRequirement::Type cgc_CExplorer::cgc_GetCounters()
 {
     int i;
-    CRequirement::Type type = CRequirement::Type::NOTHING;
+    cgc_CRequirement::Type type = cgc_CRequirement::Type::NOTHING;
     for (i = 0; i < 2; i++)
     {
         if (m_skills[i])
         {
-            type |= m_skills[i]->GetCounter();
+            type |= m_skills[i]->cgc_GetCounter();
         }
     }
     return type;
 }
 
-void CExplorer::ChangeName(const char *name)
+void cgc_CExplorer::cgc_ChangeName(const char *name)
 {
-    strcpy(m_name, name);
+    cgc_strcpy(m_name, name);
 }

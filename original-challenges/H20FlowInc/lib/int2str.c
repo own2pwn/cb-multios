@@ -25,7 +25,7 @@
 // takes an int32 and converts it to a string saved in str_buf
 // str_buf must be large enough to fit the sign, number(s), and '\0'
 // returns 0 on success, -1 if error due to buf_size
-int int2str(char* str_buf, int buf_size, int i) {
+int cgc_int2str(char* str_buf, int buf_size, int i) {
 
     int idx = 0;
     int tmp;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,106 +27,106 @@
 #include "course.h"
 #include "ptrlist.h"
 
-static ptrlist_t *g_all_depts = NULL;
+static cgc_ptrlist_t *g_all_depts = NULL;
 
-ptrlist_t *find_dept_courses_by_num(char *name, short course_num)
+cgc_ptrlist_t *cgc_find_dept_courses_by_num(char *name, short course_num)
 {
     if (!name)
         return NULL;
 
-    department_t *dept = get_department(name);
+    cgc_department_t *dept = cgc_get_department(name);
     if (!dept)
         return NULL;
 
     int i = 0;
-    course_t *iter;
-    ptrlist_t *courses = create_ptrlist();
+    cgc_course_t *iter;
+    cgc_ptrlist_t *courses = cgc_create_ptrlist();
     for (i = 0; i < dept->courses_available->length; i++) {
-        iter = get_item(course_t, dept->courses_available, i);
+        iter = get_item(cgc_course_t, dept->courses_available, i);
         if (course_num == iter->course_num)
-            add_item(courses, iter);
+            cgc_add_item(courses, iter);
     }
 
     return courses;
 }
 
-void add_department(department_t *dept)
+void cgc_add_department(cgc_department_t *dept)
 {
     if (!dept)
         return;
 
     if (!g_all_depts)
-        g_all_depts = create_ptrlist();
+        g_all_depts = cgc_create_ptrlist();
 
-    add_item(g_all_depts, dept);
+    cgc_add_item(g_all_depts, dept);
 }
 
-department_t *create_department(char *name)
+cgc_department_t *cgc_create_department(char *name)
 {
     if (!name)
         return NULL;
 
-    department_t *dept = malloc(sizeof(department_t));
+    cgc_department_t *dept = cgc_malloc(sizeof(cgc_department_t));
     if (!dept)
         return NULL;
 
-    dept->name = strdup(name);
-    dept->courses_available = create_ptrlist();
-    add_department(dept);
+    dept->name = cgc_strdup(name);
+    dept->courses_available = cgc_create_ptrlist();
+    cgc_add_department(dept);
 
     return dept;
 }
 
-void add_course_to_department(department_t *dept, course_t *course)
+void cgc_add_course_to_department(cgc_department_t *dept, cgc_course_t *course)
 {
     if(!dept || !course)
         return;
 
-    add_item(dept->courses_available, course);
+    cgc_add_item(dept->courses_available, course);
 }
 
-department_t *get_department(char *name)
+cgc_department_t *cgc_get_department(char *name)
 {
     if (!name || !g_all_depts)
         return NULL;
 
     int i = 0;
-    department_t *iter;
+    cgc_department_t *iter;
     for (i = 0; i < g_all_depts->length; i++) {
-        iter = get_item(department_t, g_all_depts, i);
-        if (strcasecmp(iter->name, name) == 0)
+        iter = get_item(cgc_department_t, g_all_depts, i);
+        if (cgc_strcasecmp(iter->name, name) == 0)
             return iter;
     }
 
     return NULL;
 }
 
-void list_departments()
+void cgc_list_departments()
 {
     if (!g_all_depts)
         return;
 
     int i = 0;
-    department_t *iter;
+    cgc_department_t *iter;
     printf("--All Departments--\n");
     for (i = 0; i < g_all_depts->length; i++) {
-        iter = get_item(department_t, g_all_depts, i);
+        iter = get_item(cgc_department_t, g_all_depts, i);
         printf("%s\n", iter->name);
     }
 }
 
-void list_dept_courses(department_t *dept)
+void cgc_list_dept_courses(cgc_department_t *dept)
 {
     if (!dept)
         return;
 
     int i;
-    course_t *iter;
+    cgc_course_t *iter;
     printf("--Department Availability--\n");
-    print_course_banner();
+    cgc_print_course_banner();
     for (i = 0; i < dept->courses_available->length; i++) {
         printf("#%d|", i+1);
-        iter = get_item(course_t, dept->courses_available, i);
+        iter = get_item(cgc_course_t, dept->courses_available, i);
         iter->print_course(iter);
     }
 }

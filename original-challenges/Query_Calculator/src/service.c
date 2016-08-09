@@ -11,63 +11,63 @@
 #define RANDOM_PAGE_ADDRESS 0x4347C000
 #define RANDOM_PAGE_LENGTH 0x1000
 
-void say_hello();
-void run_loop();
+void cgc_say_hello();
+void cgc_run_loop();
 
 int main(void) {
-  types_check();
-  lexer_test();
-  stack_test();
-  compiler_test();
-  eval_test();
+  cgc_types_check();
+  cgc_lexer_test();
+  cgc_stack_test();
+  cgc_compiler_test();
+  cgc_eval_test();
 
-  say_hello();
+  cgc_say_hello();
 
-  run_loop();
+  cgc_run_loop();
   
   return 0;
 }
 
-void say_hello() {
+void cgc_say_hello() {
   unsigned char* magic_page = (unsigned char*)RANDOM_PAGE_ADDRESS;
   char qry[80];
-  uint16 len = sprintf(qry, "FIND $d + $d + $d + $d FROM dual",
+  cgc_uint16 len = cgc_sprintf(qry, "FIND $d + $d + $d + $d FROM dual",
                        magic_page[0],
                        magic_page[1],
                        magic_page[2],
                        magic_page[3]);
-  lexer_list* ll = lex_string(len, qry);
-  compiler* clr = compile(ll);
-  sint32 result = eval(clr);
+  cgc_lexer_list* ll = cgc_lex_string(len, qry);
+  cgc_compiler* clr = cgc_compile(ll);
+  cgc_sint32 result = cgc_eval(clr);
   char result_buf[80];
-  len = sprintf(result_buf, "cqltor ready $d", result);
-  protocol_send_str(result_buf);
+  len = cgc_sprintf(result_buf, "cqltor ready $d", result);
+  cgc_protocol_send_str(result_buf);
 }
 
-void run_loop() {
+void cgc_run_loop() {
   while(1) {
-    protocol_with_recv_string(^void(uint16 len, char* str) {
-        if ((len == 4) && (strcmp("exit", str) == 0)) {
+    cgc_protocol_with_recv_string(^void(cgc_uint16 len, char* str) {
+        if ((len == 4) && (cgc_strcmp("exit", str) == 0)) {
           _terminate(0);
         }
         
-        lexer_list* ll = lex_string(len, str);
+        cgc_lexer_list* ll = cgc_lex_string(len, str);
         if (F_ERROR == ll->content->flavor) {
-          protocol_send_str("lexer error");
+          cgc_protocol_send_str("lexer error");
           return;
         }
 
-        compiler* clr = compile(ll);
+        cgc_compiler* clr = cgc_compile(ll);
         if (NULL != clr->error_lexeme) {
-          protocol_send_str("compiler error");
+          cgc_protocol_send_str("cgc_compiler error");
           return;
         }
 
-        sint32 result = eval(clr);
-        char* result_buf = calloc(16); //log10(2^32) < 16
-        uint64 count = sprintf(result_buf, "$d", result);
-        protocol_send_str(result_buf);
-        free(result_buf);
+        cgc_sint32 result = cgc_eval(clr);
+        char* result_buf = cgc_calloc(16); //log10(2^32) < 16
+        cgc_uint64 count = cgc_sprintf(result_buf, "$d", result);
+        cgc_protocol_send_str(result_buf);
+        cgc_free(result_buf);
       });
   }
 }

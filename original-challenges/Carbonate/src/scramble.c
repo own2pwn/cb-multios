@@ -31,15 +31,15 @@ THE SOFTWARE.
 #define STATE_BITS 8
 #define TARGET_MASK 0xff
 
-uint8 scramble_steps = 0;
-scramble_item state;
+cgc_uint8 scramble_steps = 0;
+cgc_scramble_item state;
 
-uint8 scramble_done() {
+cgc_uint8 cgc_scramble_done() {
   return scramble_steps >= PHASE_COUNT;
 }
 
-void scramble_add(uint16 payload) {
-  scramble_item current;
+void cgc_scramble_add(cgc_uint16 payload) {
+  cgc_scramble_item current;
   current.i = payload;
 
   if (scramble_steps == 0) {
@@ -48,28 +48,28 @@ void scramble_add(uint16 payload) {
 
   switch (scramble_steps) {
   case 0:
-    state = phase_0(current, state);
+    state = cgc_phase_0(current, state);
     break;
   case 1:
-    state = phase_1(state, current);
+    state = cgc_phase_1(state, current);
     break;
   case 2:
-    state = phase_2(current, state);
+    state = cgc_phase_2(current, state);
     break;
   case 3:
-    state = phase_3(state, current);
+    state = cgc_phase_3(state, current);
     break;
   case 4:
-    state = phase_4(current, state);
+    state = cgc_phase_4(current, state);
     break;
   case 5:
-    state = phase_5(state, current);
+    state = cgc_phase_5(state, current);
     break;
   case 6:
-    state = phase_6(current, state);
+    state = cgc_phase_6(current, state);
     break;
   case 7:
-    state = phase_7(state, current);
+    state = cgc_phase_7(state, current);
     break;
   default:
     _terminate(-1);
@@ -80,7 +80,7 @@ void scramble_add(uint16 payload) {
   scramble_steps++;
 }
 
-uint8 scramble_okay() {
+cgc_uint8 cgc_scramble_okay() {
   return (state.i & TARGET_MASK) == TARGET;
 }
 
@@ -88,42 +88,42 @@ uint8 scramble_okay() {
 #include "stdlib.h"
 
 int main() {
-  uint16 desired = TARGET;
-  scramble_item mst, current;
-  uint8 found;
+  cgc_uint16 desired = TARGET;
+  cgc_scramble_item mst, current;
+  cgc_uint8 found;
 
   for (int i = 7; i >= 0; i--) {
     printf("phase @d: desired @x\n", i, desired);
     found = 0;
 
-    for (uint32 j = 0; j <= UINT16_MAX; j++) {
+    for (cgc_uint32 j = 0; j <= UINT16_MAX; j++) {
         current.i = j >> STATE_BITS;
         mst.i = j & TARGET_MASK;
 
         switch (i) {
         case 0:
-          mst = phase_0(current, mst);
+          mst = cgc_phase_0(current, mst);
           break;
         case 1:
-          mst = phase_1(mst, current);
+          mst = cgc_phase_1(mst, current);
           break;
         case 2:
-          mst = phase_2(current, mst);
+          mst = cgc_phase_2(current, mst);
           break;
         case 3:
-          mst = phase_3(mst, current);
+          mst = cgc_phase_3(mst, current);
           break;
         case 4:
-          mst = phase_4(current, mst);
+          mst = cgc_phase_4(current, mst);
           break;
         case 5:
-          mst = phase_5(mst, current);
+          mst = cgc_phase_5(mst, current);
           break;
         case 6:
-          mst = phase_6(current, mst);
+          mst = cgc_phase_6(current, mst);
           break;
         case 7:
-          mst = phase_7(mst, current);
+          mst = cgc_phase_7(mst, current);
           break;
         default:
           _terminate(-1);

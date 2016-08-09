@@ -26,28 +26,28 @@ enum {
     EMPTY = NUM_PIECES
 };
 
-typedef uint64_t bboard_t;
-typedef uint8_t piece_t;
+typedef cgc_uint64_t cgc_bboard_t;
+typedef cgc_uint8_t cgc_piece_t;
 #define PIECE_MASK 0x0f
 #define COLOR_SHIFT 7
-#define PIECE_COLOR(p) ((piece_t)(p) >> COLOR_SHIFT)
+#define PIECE_COLOR(p) ((cgc_piece_t)(p) >> COLOR_SHIFT)
 typedef struct {
-    int8_t sr, sc, dr, dc;
-    uint8_t p, op, cap, prio;
-} move_t;
+    cgc_int8_t sr, sc, dr, dc;
+    cgc_uint8_t p, op, cap, prio;
+} cgc_move_t;
 
-void engine_destroy();
-int engine_get_random();
-void engine_go();
-int engine_init();
-void engine_move(move_t move);
-void engine_new();
-void engine_offer_draw();
-void engine_result();
-void engine_set_color(int);
-void engine_set_depth(int);
-void engine_set_go(int);
-void engine_set_random(int);
-void engine_undo();
+void cgc_engine_destroy();
+int cgc_engine_get_cgc_random();
+void cgc_engine_go();
+int cgc_engine_init();
+void cgc_engine_move(cgc_move_t move);
+void cgc_engine_new();
+void cgc_engine_offer_draw();
+void cgc_engine_result();
+void cgc_engine_set_color(int);
+void cgc_engine_set_depth(int);
+void cgc_engine_set_go(int);
+void cgc_engine_set_cgc_random(int);
+void cgc_engine_undo();
 
 #endif

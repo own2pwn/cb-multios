@@ -32,26 +32,26 @@ THE SOFTWARE.
 
 // Receives the initialization packet and checks format
 // Returns 0 for success, -1 for failure
-int ReceiveAndVerifyInitializationPacket(SystemState *state) {
+int cgc_ReceiveAndVerifyInitializationPacket(cgc_SystemState *state) {
 
-  uint32_t sync;
-  ReceiveBytes(&sync, sizeof(sync));
+  cgc_uint32_t sync;
+  cgc_ReceiveBytes(&sync, sizeof(sync));
   if (sync != 0xA55AA55A) {
-    FailAndTerminate("improper initialization format");
+    cgc_FailAndTerminate("improper initialization format");
   }
-  ReceiveBytes(&state->mode, sizeof(state->mode));
+  cgc_ReceiveBytes(&state->mode, sizeof(state->mode));
   if (state->mode > MODE_STREAM) {
-    FailAndTerminate("unsupported mode");
+    cgc_FailAndTerminate("unsupported mode");
   }
-  ReceiveBytes(&state->display_flags, sizeof(state->display_flags));
-  ReceiveBytes(&state->num_filters, sizeof(state->num_filters));
+  cgc_ReceiveBytes(&state->display_flags, sizeof(state->display_flags));
+  cgc_ReceiveBytes(&state->num_filters, sizeof(state->num_filters));
   if (state->num_filters > MAX_FILTERS) {
-    FailAndTerminate("too many filters");
+    cgc_FailAndTerminate("too many filters");
   }
-  if (allocate(sizeof(Statistics), 1, (void **)&state->stats) != 0) {
-    FailAndTerminate("Failed to allocate statistics");
+  if (allocate(sizeof(cgc_Statistics), 1, (void **)&state->stats) != 0) {
+    cgc_FailAndTerminate("Failed to allocate statistics");
   }
-  bzero((char *)state->stats, sizeof(Statistics));
+  cgc_bzero((char *)state->stats, sizeof(cgc_Statistics));
 
   return 0;
 }
@@ -59,37 +59,37 @@ int ReceiveAndVerifyInitializationPacket(SystemState *state) {
 
 // Receives packet filters and checks format
 // Returns 0 for success, -1 for failure
-int ReceiveAndVerifyFilters(SystemState *state) {
+int cgc_ReceiveAndVerifyFilters(cgc_SystemState *state) {
   // While filters remain:
   for (int current_filter = 0; current_filter < state->num_filters; current_filter++) {
     // Allocate data for one filter struct
-    PacketFilter *filter;
-    if (allocate(sizeof(PacketFilter), 1, (void **)&filter) != 0) {
-      FailAndTerminate("failed to allocate packet filter");
+    cgc_PacketFilter *filter;
+    if (allocate(sizeof(cgc_PacketFilter), 1, (void **)&filter) != 0) {
+      cgc_FailAndTerminate("failed to allocate packet filter");
     }
     state->filters[current_filter] = filter;
     // Receive header data for one filter
-    ReceiveBytes(&filter->size, sizeof(filter->size));
+    cgc_ReceiveBytes(&filter->size, sizeof(filter->size));
     if (filter->size > FILTER_MAX_SIZE) {
-      FailAndTerminate("filter too large");
+      cgc_FailAndTerminate("filter too large");
     }
-    ReceiveBytes(&filter->type, sizeof(filter->type));
+    cgc_ReceiveBytes(&filter->type, sizeof(filter->type));
     if (filter->type > FILTER_TYPE_EXCLUDE) {
-      FailAndTerminate("invalid filter type");
+      cgc_FailAndTerminate("invalid filter type");
     }
     // Allocate data for mask and filter
     if (allocate(filter->size, 1, (void **)&filter->mask) != 0) {
-      FailAndTerminate("failed allocating filter mask");
+      cgc_FailAndTerminate("failed allocating filter mask");
     }
-    bzero((char *)filter->mask, filter->size);
+    cgc_bzero((char *)filter->mask, filter->size);
     if (allocate(filter->size, 1, (void **)&filter->content) != 0) {
-      FailAndTerminate("failed allocating filter content");
+      cgc_FailAndTerminate("failed allocating filter content");
     }
-    bzero((char *)filter->content, filter->size);
+    cgc_bzero((char *)filter->content, filter->size);
     // Read mask
-    ReceiveBytes(filter->mask, filter->size);
+    cgc_ReceiveBytes(filter->mask, filter->size);
     // Read filter
-    ReceiveBytes(filter->content, filter->size);
+    cgc_ReceiveBytes(filter->content, filter->size);
     if (filter->type == FILTER_TYPE_INCLUDE) {
       state->stats->num_positive_filters++;
     }
@@ -102,68 +102,68 @@ int ReceiveAndVerifyFilters(SystemState *state) {
 
 // Receive entire DCAP file, analyze, and print output
 // Returns 0 for success, -1 for failure
-int ReceiveAndProcessFile(SystemState *state) {
+int cgc_ReceiveAndProcessFile(cgc_SystemState *state) {
   // Read file header
-  uint32_t magic;
-  ReceiveBytes(&magic, sizeof(magic));
+  cgc_uint32_t magic;
+  cgc_ReceiveBytes(&magic, sizeof(magic));
   if (magic != DCAP_FILE_MAGIC) {
-    FailAndTerminate("invalid DCAP file");
+    cgc_FailAndTerminate("invalid DCAP file");
   }
   // Process file header and populate state variable
-  ReceiveBytes(&state->stats->start_time, sizeof(state->stats->start_time));
-  ReceiveBytes(&state->stats->end_time, sizeof(state->stats->end_time));
-  ReceiveBytes(&state->stats->num_packets, sizeof(state->stats->num_packets));
+  cgc_ReceiveBytes(&state->stats->start_time, sizeof(state->stats->start_time));
+  cgc_ReceiveBytes(&state->stats->end_time, sizeof(state->stats->end_time));
+  cgc_ReceiveBytes(&state->stats->num_packets, sizeof(state->stats->num_packets));
   if (state->stats->num_packets > DCAP_FILE_MAX_PACKETS) {
-    FailAndTerminate("too many packets");
+    cgc_FailAndTerminate("too many packets");
   }
-  ReceiveBytes(&state->stats->num_option_headers, sizeof(state->stats->num_option_headers));
+  cgc_ReceiveBytes(&state->stats->num_option_headers, sizeof(state->stats->num_option_headers));
   if (state->stats->num_option_headers > OPTION_HEADERS_MAX_NUM) {
-    FailAndTerminate("too many option headers");
+    cgc_FailAndTerminate("too many option headers");
   }
   // Read optional headers
-  OptionHeader *option=NULL;
+  cgc_OptionHeader *option=NULL;
   for (int num=0; num < state->stats->num_option_headers; num++) {
     if (option == NULL) {
       // Allocate first option header
-      if (allocate(sizeof(OptionHeader), 1, (void **)&state->stats->option_headers) != 0) {
-        FailAndTerminate("error allocating first option header");
+      if (allocate(sizeof(cgc_OptionHeader), 1, (void **)&state->stats->option_headers) != 0) {
+        cgc_FailAndTerminate("error allocating first option header");
       }
       option = state->stats->option_headers;
     } else {
       // Allocate subsequent option headers
-      if (allocate(sizeof(OptionHeader), 1, (void **)&option->next) != 0) {
-        FailAndTerminate("error allocating option header");
+      if (allocate(sizeof(cgc_OptionHeader), 1, (void **)&option->next) != 0) {
+        cgc_FailAndTerminate("error allocating option header");
       }
       option = option->next;
     }
-    bzero((void *)option, sizeof(OptionHeader));
-    ReceiveBytes(&option->type, sizeof(option->type));
-    ReceiveBytes(&option->length, sizeof(option->length));
+    cgc_bzero((void *)option, sizeof(cgc_OptionHeader));
+    cgc_ReceiveBytes(&option->type, sizeof(option->type));
+    cgc_ReceiveBytes(&option->length, sizeof(option->length));
     // Allow 1 extra byte to ensure null termination 
     if (allocate(option->length + 1, 1, (void **)&option->value)) {
-      FailAndTerminate("failed to allocate option header value");
+      cgc_FailAndTerminate("failed to allocate option header value");
     }
-    bzero(option->value, option->length + 1);
-    ReceiveBytes(option->value, option->length);
+    cgc_bzero(option->value, option->length + 1);
+    cgc_ReceiveBytes(option->value, option->length);
   }
 
   // Receive and process all packets
   for (int num=0; num < state->stats->num_packets; num++) {
     // Get meta data
-    Packet packet;
+    cgc_Packet packet;
     // Receive timestamp and size
-    ReceiveBytes(&packet.timestamp, sizeof(packet.timestamp));
-    ReceiveBytes(&packet.size, sizeof(packet.size));
+    cgc_ReceiveBytes(&packet.timestamp, sizeof(packet.timestamp));
+    cgc_ReceiveBytes(&packet.size, sizeof(packet.size));
     if (packet.size > PACKET_MAX_SIZE) {
-      FailAndTerminate("packet too large");
+      cgc_FailAndTerminate("packet too large");
     }
     if (allocate(packet.size, 1, (void **)&packet.data) != 0) {
-      FailAndTerminate("Failed allocating packet data");
+      cgc_FailAndTerminate("Failed allocating packet data");
     }
-    ReceiveBytes(packet.data, packet.size);
+    cgc_ReceiveBytes(packet.data, packet.size);
     packet.original_size = packet.size;
     packet.original_data = packet.data;
-    AnalyzePacket(state, &packet);
+    cgc_AnalyzePacket(state, &packet);
     deallocate(packet.original_data, packet.original_size);
   }
   return 0;
@@ -172,25 +172,25 @@ int ReceiveAndProcessFile(SystemState *state) {
 // Receive packets in loop, analyze, and print output
 // Will exit upon error or receipt of special 'end packet'
 // Returns 0 for success, -1 for failure
-int ReceiveAndProcessStream(SystemState *state) {
-  Packet packet;
-  uint32_t counter = 1;
-  ReceiveBytes(&packet.size, sizeof(packet.size));
+int cgc_ReceiveAndProcessStream(cgc_SystemState *state) {
+  cgc_Packet packet;
+  cgc_uint32_t counter = 1;
+  cgc_ReceiveBytes(&packet.size, sizeof(packet.size));
   while (packet.size != 0) {
     if (packet.size > PACKET_MAX_SIZE) {
-      FailAndTerminate("packet too large");
+      cgc_FailAndTerminate("packet too large");
     }
     state->stats->num_packets++;
     if (allocate(packet.size, 1, (void **)&packet.data) != 0) {
-      FailAndTerminate("Failed allocating packet data");
+      cgc_FailAndTerminate("Failed allocating packet data");
     }
-    ReceiveBytes(packet.data, packet.size);
+    cgc_ReceiveBytes(packet.data, packet.size);
     packet.timestamp = counter++;
     packet.original_size = packet.size;
     packet.original_data = packet.data;
-    AnalyzePacket(state, &packet);
+    cgc_AnalyzePacket(state, &packet);
     deallocate(packet.data, packet.size);
-    ReceiveBytes(&packet.size, sizeof(packet.size));
+    cgc_ReceiveBytes(&packet.size, sizeof(packet.size));
   }
   return 0;
 }

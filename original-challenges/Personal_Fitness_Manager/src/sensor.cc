@@ -37,29 +37,29 @@ extern "C"
 #include "sensor.h"
 #include "common.h"
 
-uint8_t FitnessSensor::m_sensorArray[];
+cgc_uint8_t cgc_FitnessSensor::m_sensorArray[];
 
 //
 // Is this Sensor MAC type valid?
 // The first byte of the sensor's MAC should give the type of sensor
 //
-bool VerifyMacType( uint8_t type )
+bool cgc_VerifyMacType( cgc_uint8_t type )
 {
-	// Real version: look in the sensor array, which is initialized during startup by the magic page GenerateTypeValues
+	// Real version: look in the sensor array, which is initialized during startup by the magic page cgc_GenerateTypeValues
 	for( int i = 0; i < MAX_SENSOR_VALUE; i++ )
 	{
-		if ( type == FitnessSensor::m_sensorArray[ i ] )
+		if ( type == cgc_FitnessSensor::m_sensorArray[ i ] )
 			return true;
 	}
 
 	return false;
 }
 
-uint8_t GetMacType( uint8_t type )
+cgc_uint8_t cgc_GetMacType( cgc_uint8_t type )
 {
 	for( int i = 0; i < MAX_SENSOR_VALUE; i++ )
 	{
-		if ( type == FitnessSensor::m_sensorArray[ i ] )
+		if ( type == cgc_FitnessSensor::m_sensorArray[ i ] )
 			return i;
 	}
 	return 0xff;
@@ -68,12 +68,12 @@ uint8_t GetMacType( uint8_t type )
 //
 // sensor ID, sensor MAC
 //
-FitnessSensor::FitnessSensor( uint16_t id, uint32_t mac, uint8_t *data, uint32_t data_len )
+cgc_FitnessSensor::cgc_FitnessSensor( cgc_uint16_t id, cgc_uint32_t mac, cgc_uint8_t *data, cgc_uint32_t data_len )
 {
 	this->m_sensorID = id;
 
 	this->m_invalid = false;
-	if ( this->SetMAC( mac ) == false )
+	if ( this->cgc_SetMAC( mac ) == false )
 		this->m_invalid = true;
 
 	this->data = NULL;
@@ -81,38 +81,38 @@ FitnessSensor::FitnessSensor( uint16_t id, uint32_t mac, uint8_t *data, uint32_t
 	{
 		if (data_len != 0)
 		{
-			this->data = new uint8_t[ data_len + 1];
-			memcpy(this->data, data, data_len);
+			this->data = new cgc_uint8_t[ data_len + 1];
+			cgc_memcpy(this->data, data, data_len);
 		}
 	}
 
 
 }
 
-uint32_t swap_int ( uint32_t val )
+cgc_uint32_t cgc_swap_int ( cgc_uint32_t val )
 {
 	return ( val >> 24 ) | ( ( val << 8 ) & 0x00FF0000 ) | ( ( val >> 8 ) & 0x0000FF00 ) | ( val << 24 );
 }
 
-bool FitnessSensor::SetMAC( uint32_t mac )
+bool cgc_FitnessSensor::cgc_SetMAC( cgc_uint32_t mac )
 {
-	mac = swap_int(mac);
-	SensorMacFormat *mMac = ( SensorMacFormat* )&mac;
+	mac = cgc_swap_int(mac);
+	cgc_SensorMacFormat *mMac = ( cgc_SensorMacFormat* )&mac;
 
-	if ( VerifyMacType( mMac->Type ) == false )
+	if ( cgc_VerifyMacType( mMac->Type ) == false )
 	{
 		this->m_invalid = true;
 		return false;
 	}
-	this->m_sensorType = GetMacType( mMac->Type );
+	this->m_sensorType = cgc_GetMacType( mMac->Type );
  
 	this->m_sensorMAC = *mMac;
 	return true;
 }
 
-uint32_t FitnessSensor::GetMacAsInt()
+cgc_uint32_t cgc_FitnessSensor::cgc_GetMacAsInt()
 {
-	uint32_t val = 0;
+	cgc_uint32_t val = 0;
 
 	val = this->m_sensorMAC.Type << 24;
 	val += this->m_sensorMAC.Val_1 << 16;
@@ -127,7 +127,7 @@ uint32_t FitnessSensor::GetMacAsInt()
 // Allowed to have multiple owners own same sensor
 // Not allowed to have the same user own multiple sensor with smae ID
 //
-uint8_t FitnessSensor::SetUser( uint16_t user )
+cgc_uint8_t cgc_FitnessSensor::cgc_SetUser( cgc_uint16_t user )
 {
 	// if this is already registered to this user, return ERROR_REG_THIS_USER
 	if ( user == m_owner )
@@ -138,11 +138,11 @@ uint8_t FitnessSensor::SetUser( uint16_t user )
 }
 
 
-bool AlreadyInValues( uint8_t val )
+bool cgc_AlreadyInValues( cgc_uint8_t val )
 {
 	for ( int i = 0; i < MAX_SENSOR_VALUE; i++ )
 	{
-		if ( FitnessSensor::m_sensorArray[i] == val )
+		if ( cgc_FitnessSensor::m_sensorArray[i] == val )
 		{
 			return true;
 		}
@@ -153,18 +153,18 @@ bool AlreadyInValues( uint8_t val )
 //
 // Called during init to supply values from magic page
 //
-bool FitnessSensor::GenerateTypeValues()
+bool cgc_FitnessSensor::cgc_GenerateTypeValues()
 {
 	// use magic page to initialize the type values for: heart, bike, band, scale, run sensors
 
 	// Goal: Get magic values for each of the sensor values to be stored in m_sensorArray
 	// Algorithm: Use magic_page values as offsets into the magic_page to select a random assortment of values
 
-	uint8_t *magic_page = ( uint8_t* )MAGIC_PAGE;
+	cgc_uint8_t *magic_page = ( cgc_uint8_t* )MAGIC_PAGE;
 
-	uint16_t curr_offset = 0;
+	cgc_uint16_t curr_offset = 0;
 
-	uint8_t a = 0;
+	cgc_uint8_t a = 0;
 
 	for ( int i = 0; i < MAX_SENSOR_VALUE; i++ )
 	{
@@ -175,9 +175,9 @@ bool FitnessSensor::GenerateTypeValues()
 		{
 			a = magic_page[ curr_offset + j++ ];	
 		}
-		while ( AlreadyInValues( a ) == true );
+		while ( cgc_AlreadyInValues( a ) == true );
 
-		FitnessSensor::m_sensorArray[ i ] = a;
+		cgc_FitnessSensor::m_sensorArray[ i ] = a;
 		curr_offset = magic_page[ curr_offset + 1 ];
 	}
 	return true;
@@ -185,12 +185,12 @@ bool FitnessSensor::GenerateTypeValues()
 
 //
 // Used to retrieve the dynamic sensor's type value
-// The value was generated from GenerateTypeValues during startup
- bool FitnessSensor::GetSensorTypeValue( uint8_t lookup, uint8_t &val )
+// The value was generated from cgc_GenerateTypeValues during startup
+ bool cgc_FitnessSensor::cgc_GetSensorTypeValue( cgc_uint8_t lookup, cgc_uint8_t &val )
  {
   	for ( int i = 0; i < MAX_SENSOR_VALUE; i++ )
  	{
- 		if ( FitnessSensor::m_sensorArray[ i ] == lookup )
+ 		if ( cgc_FitnessSensor::m_sensorArray[ i ] == lookup )
  		{
  			val = i;
  			return true;
@@ -204,42 +204,42 @@ bool FitnessSensor::GenerateTypeValues()
 //1b sensor type
 //2b sensor id
 //*b sensor data
-uint16_t FitnessSensor::HandleHeartSensor( uint16_t beats )
+cgc_uint16_t cgc_FitnessSensor::cgc_HandleHeartSensor( cgc_uint16_t beats )
 {
 	// add these heartbeat to something
 	// 2b: heart rate
 	return beats;
 }
 
-uint16_t FitnessSensor::HandleStepSensor( uint16_t steps )
+cgc_uint16_t cgc_FitnessSensor::cgc_HandleStepSensor( cgc_uint16_t steps )
 {
 	return steps / 2;
 }
 
-uint16_t FitnessSensor::HandleScaleSensor( uint16_t weight )
+cgc_uint16_t cgc_FitnessSensor::cgc_HandleScaleSensor( cgc_uint16_t weight )
 {
 	// add weight to data points
 	// 2b: weight
 	return weight;
 }
 
-uint16_t FitnessSensor::HandleBikeSensor( uint16_t dist )
+cgc_uint16_t cgc_FitnessSensor::cgc_HandleBikeSensor( cgc_uint16_t dist )
 {
 	// calculate the equivalent 
-	uint16_t final_value = dist / 3;
+	cgc_uint16_t final_value = dist / 3;
 
 	return final_value;
 }
 
-uint16_t FitnessSensor::HandleRunSensor( uint16_t dist )
+cgc_uint16_t cgc_FitnessSensor::cgc_HandleRunSensor( cgc_uint16_t dist )
 {
 	return dist;
 }
 
 // test only. prints contents to screen
-void FitnessSensor::Print()
+void cgc_FitnessSensor::cgc_Print()
 {
-	printf( "SENSOR ID $x / TYPE: $x / OWNER: $x MAC: $x$x$x\n", this->m_sensorID, this->m_sensorType, this->m_owner, this->m_sensorMAC.Val_1, this->m_sensorMAC.Val_2, this->m_sensorMAC.Val_3 );
+	cgc_printf( "SENSOR ID $x / TYPE: $x / OWNER: $x MAC: $x$x$x\n", this->m_sensorID, this->m_sensorType, this->m_owner, this->m_sensorMAC.Val_1, this->m_sensorMAC.Val_2, this->m_sensorMAC.Val_3 );
 }
 
 

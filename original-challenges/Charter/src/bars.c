@@ -4,54 +4,54 @@
 #include "rand.h"
 #include "data.h"
 
-void draw_bars(data_package, uint32, uint32, uint32);
-void draw_row(char* chart_row_ptr, uint32 bar_character, uint32 use_columns);
+void cgc_draw_bars(cgc_data_package, cgc_uint32, cgc_uint32, cgc_uint32);
+void cgc_draw_row(char* chart_row_ptr, cgc_uint32 bar_character, cgc_uint32 use_columns);
 
-void bars(data_package data) {
-  uint32 max_value, column_count, bar_character;
+void cgc_bars(cgc_data_package data) {
+  cgc_uint32 max_value, column_count, bar_character;
 
-  read(&max_value, sizeof(max_value));
-  read(&column_count, sizeof(column_count));
-  read(&bar_character, sizeof(bar_character));
+  cgc_read(&max_value, sizeof(max_value));
+  cgc_read(&column_count, sizeof(column_count));
+  cgc_read(&bar_character, sizeof(bar_character));
 
-  draw_bars(data, max_value, column_count, bar_character);
+  cgc_draw_bars(data, max_value, column_count, bar_character);
 }
 
-void draw_bars(data_package data, 
-               uint32 max_value, 
-               uint32 column_count, 
-               uint32 bar_character) {
+void cgc_draw_bars(cgc_data_package data, 
+               cgc_uint32 max_value, 
+               cgc_uint32 column_count, 
+               cgc_uint32 bar_character) {
   if (column_count > (MAX_STACK_SIZE / 4)) {
     _terminate(-1);
   }
-  size_t row_size = (column_count * 4) + 16;
+  cgc_size_t row_size = (column_count * 4) + 16;
   row_size = row_size - (row_size % 16);
   char chart_row[row_size];
 
   __block char* chart_row_ptr = (char*)(chart_row + 0);
 
-  double scale_factor = bar_scale_factor(column_count, max_value);
+  double scale_factor = cgc_bar_scale_factor(column_count, max_value);
 
-  uint32 scrambler = rand();
+  cgc_uint32 scrambler = cgc_rand();
   scrambler %= 4;
   scrambler++;
 
   scale_factor *= scrambler;
 
-  each(data, ^(uint32 cur, uint32 datum) {
-      uint32 use_columns = bar_use_columns(datum, scale_factor, column_count);
+  cgc_each(data, ^(cgc_uint32 cur, cgc_uint32 datum) {
+      cgc_uint32 use_columns = cgc_bar_use_columns(datum, scale_factor, column_count);
 
-    draw_row(chart_row_ptr, bar_character, use_columns);
-    transmit_all(STDOUT, chart_row_ptr, use_columns + 1);
+    cgc_draw_row(chart_row_ptr, bar_character, use_columns);
+    cgc_transmit_all(STDOUT, chart_row_ptr, use_columns + 1);
     });
 }
 
-double bar_scale_factor(uint32 column_count, uint32 max_value) {
+double cgc_bar_scale_factor(cgc_uint32 column_count, cgc_uint32 max_value) {
   return (double)column_count / (double)max_value;
 }
 
-uint32 bar_use_columns(uint32 datum, double scale_factor, uint32 column_count) {
-  uint32 use_columns = (uint32)((double) datum * scale_factor);
+cgc_uint32 cgc_bar_use_columns(cgc_uint32 datum, double scale_factor, cgc_uint32 column_count) {
+  cgc_uint32 use_columns = (cgc_uint32)((double) datum * scale_factor);
   
 #ifdef PATCHED
   if (use_columns > column_count) use_columns = column_count;
@@ -60,8 +60,8 @@ uint32 bar_use_columns(uint32 datum, double scale_factor, uint32 column_count) {
   return use_columns;
 }
 
-void draw_row(char* chart_row_ptr, uint32 bar_character, uint32 use_columns) {
-  for (uint32 column = 0; column <= use_columns + 1; column++) {
+void cgc_draw_row(char* chart_row_ptr, cgc_uint32 bar_character, cgc_uint32 use_columns) {
+  for (cgc_uint32 column = 0; column <= use_columns + 1; column++) {
     char fill = '\n';
     if (column < use_columns) fill = bar_character;
     

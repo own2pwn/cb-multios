@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,23 +41,23 @@ enum {
 };
 
 typedef struct {
-    ht_t handlers;
-    silk_t silk;
-    ht_t products;
-} priv_t;
+    cgc_ht_t handlers;
+    cgc_silk_t silk;
+    cgc_ht_t products;
+} cgc_priv_t;
 
 typedef struct {
     char *name;
     char *seller;
     unsigned int price;
     unsigned int quantity;
-} product_t;
+} cgc_product_t;
 
-typedef int (*handler_t)(priv_t *priv, char *resource);
+typedef int (*cgc_handler_t)(cgc_priv_t *priv, char *resource);
 
-char *read_line(silk_t *silk)
+char *cgc_read_line(cgc_silk_t *silk)
 {
-    size_t cnt = 0, idx = 0;
+    cgc_size_t cnt = 0, idx = 0;
     char *result = NULL;
     
     do {
@@ -67,13 +67,13 @@ char *read_line(silk_t *silk)
                 goto fail;
             char *tmp;
             cnt += 1024;
-            tmp = realloc(result, cnt);
+            tmp = cgc_realloc(result, cnt);
             if (tmp == NULL)
                 goto fail;
             result = tmp;
         }
 
-        if (silk_recv(silk, (unsigned char *)&result[idx], 1) != SUCCESS)
+        if (cgc_silk_recv(silk, (unsigned char *)&result[idx], 1) != SUCCESS)
             goto fail;
     } while (result[idx++] != '\b');
 
@@ -81,7 +81,7 @@ char *read_line(silk_t *silk)
     {
         char *tmp;
         cnt++;
-        tmp = realloc(result, cnt);
+        tmp = cgc_realloc(result, cnt);
         if (tmp == NULL)
             goto fail;
         result = tmp;
@@ -90,17 +90,17 @@ char *read_line(silk_t *silk)
     return result;
 
 fail:
-    free(result);
+    cgc_free(result);
     return NULL;
 }
 
-static int parse_request(char *line, char **method, char **resource)
+static int cgc_parse_request(char *line, char **method, char **resource)
 {
     char *tmp;
-    tmp = strchr(line, '\t');
+    tmp = cgc_strchr(line, '\t');
     if (tmp == NULL)
     {
-        tmp = strchr(line, '\b');
+        tmp = cgc_strchr(line, '\b');
         if (tmp == NULL)
             return FAILURE;
         *tmp = 0;
@@ -113,61 +113,61 @@ static int parse_request(char *line, char **method, char **resource)
     *method = line;
     line = tmp+1;
 
-    tmp = strchr(line, '\b');
+    tmp = cgc_strchr(line, '\b');
     if (tmp != NULL)
         *tmp = 0;
     *resource = line;
     return SUCCESS;
 }
 
-static void free_product(product_t *p)
+static void cgc_free_product(cgc_product_t *p)
 {
-    free(p->seller);
-    free(p->name);
-    free(p);
+    cgc_free(p->seller);
+    cgc_free(p->name);
+    cgc_free(p);
 }
 
-static int send_response(priv_t *priv, unsigned int code, char *text)
+static int cgc_send_response(cgc_priv_t *priv, unsigned int code, char *text)
 {
     char tmp[1024];
-    if (strlen(text) + 64 < sizeof(tmp))
+    if (cgc_strlen(text) + 64 < sizeof(tmp))
     {
-        sprintf(tmp, "%d\t%s\b", code, text);
-        return silk_send(&priv->silk, (unsigned char *)tmp, strlen(tmp));
+        cgc_sprintf(tmp, "%d\t%s\b", code, text);
+        return cgc_silk_send(&priv->silk, (unsigned char *)tmp, cgc_strlen(tmp));
     }
     else
     {
-        char *tmp2 = malloc(strlen(text) + 64);
+        char *tmp2 = cgc_malloc(cgc_strlen(text) + 64);
         int result;
 
 #ifndef PATCHED
-        fdprintf(STDERR, "WARNING text is too long: ");
-        fdprintf(STDERR, text);
-        fdprintf(STDERR, "\n");
+        cgc_fdprintf(STDERR, "WARNING text is too long: ");
+        cgc_fdprintf(STDERR, text);
+        cgc_fdprintf(STDERR, "\n");
 #else
-        fdprintf(STDERR, "WARNING text is too long: %s\n", text);
+        cgc_fdprintf(STDERR, "WARNING text is too long: %s\n", text);
 #endif
 
         if (tmp2 == NULL)
             return FAILURE;
 
-        sprintf(tmp2, "%d\t%s\b", code, text);
-        result = silk_send(&priv->silk, (unsigned char *)tmp2, strlen(tmp2));
-        free(tmp2);
+        cgc_sprintf(tmp2, "%d\t%s\b", code, text);
+        result = cgc_silk_send(&priv->silk, (unsigned char *)tmp2, cgc_strlen(tmp2));
+        cgc_free(tmp2);
         return result;
     }
 }
 
 /* convert %XX to \xXX */
-static void unescape(char *s)
+static void cgc_unescape(char *s)
 {
-    unsigned int i, j, len = strlen(s);
+    unsigned int i, j, len = cgc_strlen(s);
     for (i = 0, j = 0; i < len; i++, j++)
     {
-        if (s[i] == '%' && i + 2 < len && isxdigit(s[i+1]) && isxdigit(s[i+2]))
+        if (s[i] == '%' && i + 2 < len && cgc_isxdigit(s[i+1]) && cgc_isxdigit(s[i+2]))
         {
-            int s1 = isdigit(s[i+1]) ? s[i+1] - '0' : tolower(s[i+1]) - 'a' + 10;
-            int s2 = isdigit(s[i+2]) ? s[i+2] - '0' : tolower(s[i+2]) - 'a' + 10;
+            int s1 = cgc_isdigit(s[i+1]) ? s[i+1] - '0' : cgc_tolower(s[i+1]) - 'a' + 10;
+            int s2 = cgc_isdigit(s[i+2]) ? s[i+2] - '0' : cgc_tolower(s[i+2]) - 'a' + 10;
             s[j] = (s1 << 4) | s2;
             i += 2;
         }
@@ -177,188 +177,188 @@ static void unescape(char *s)
     s[j] = 0;
 }
 
-int do_buy(priv_t *priv, char *resource)
+int cgc_do_buy(cgc_priv_t *priv, char *resource)
 {
-    product_t *p;
-    ht_node_t *node;
+    cgc_product_t *p;
+    cgc_ht_node_t *node;
 
-    unescape(resource);
+    cgc_unescape(resource);
 
-    if (ht_lookup(&priv->products, resource, &node) != SUCCESS)
+    if (cgc_ht_lookup(&priv->products, resource, &node) != SUCCESS)
     {
-        return send_response(priv, RESP_NOT_FOUND, "Name not found");
+        return cgc_send_response(priv, RESP_NOT_FOUND, "Name not found");
     }
-    p = ht_node_value(node);
+    p = cgc_ht_node_value(node);
     if (p->quantity < 1)
     {
-        return send_response(priv, RESP_NOT_FOUND, "Name not found");
+        return cgc_send_response(priv, RESP_NOT_FOUND, "Name not found");
     }
     p->quantity--;
     if (p->quantity == 0)
     {
-        ht_delete(&priv->products, resource, (void **)&p);
-        free_product(p);
+        cgc_ht_delete(&priv->products, resource, (void **)&p);
+        cgc_free_product(p);
     }
-    return send_response(priv, RESP_SUCCESS, "Success");
+    return cgc_send_response(priv, RESP_SUCCESS, "Success");
 }
 
-int do_sell(priv_t *priv, char *resource)
+int cgc_do_sell(cgc_priv_t *priv, char *resource)
 {
     char *name, *seller, *s_price, *s_quantity;
     unsigned int price, quantity;
-    ht_node_t *node;
-    product_t *p;
+    cgc_ht_node_t *node;
+    cgc_product_t *p;
 
     name = resource;
     
-    seller = strchr(name, ';');
+    seller = cgc_strchr(name, ';');
     if (seller == NULL)
         goto bad_request;
     *seller++ = 0;
 
-    s_price = strchr(seller, ';');
+    s_price = cgc_strchr(seller, ';');
     if (s_price == NULL)
         goto bad_request;
     *s_price++ = 0;
-    price = strtoul(s_price, NULL, 10);
+    price = cgc_strtoul(s_price, NULL, 10);
 
-    s_quantity = strchr(s_price, ';');
+    s_quantity = cgc_strchr(s_price, ';');
     if (s_quantity == NULL)
         goto bad_request;
     *s_quantity++ = 0;
-    quantity = strtoul(s_quantity, NULL, 10);
+    quantity = cgc_strtoul(s_quantity, NULL, 10);
 
-    unescape(seller);
-    unescape(name);
+    cgc_unescape(seller);
+    cgc_unescape(name);
 
-    if (ht_lookup(&priv->products, name, &node) == SUCCESS)
+    if (cgc_ht_lookup(&priv->products, name, &node) == SUCCESS)
     {
-        p = ht_node_value(node);
-        if (strcasecmp(p->seller, seller) != 0)
+        p = cgc_ht_node_value(node);
+        if (cgc_strcasecmp(p->seller, seller) != 0)
         {
-            return send_response(priv, RESP_NAME_IN_USE, "Name already in-use");
+            return cgc_send_response(priv, RESP_NAME_IN_USE, "Name already in-use");
         }
 
         p->price = price;
         p->quantity += quantity;
-        return send_response(priv, RESP_UPDATED, "Record updated");
+        return cgc_send_response(priv, RESP_UPDATED, "Record updated");
     }
     
-    p = malloc(sizeof(product_t));
+    p = cgc_malloc(sizeof(cgc_product_t));
     if (p == NULL)
         goto internal_error;
 
     p->price = price;
     p->quantity = quantity;
-    p->name = strdup(name);
-    p->seller = strdup(seller);
+    p->name = cgc_strdup(name);
+    p->seller = cgc_strdup(seller);
 
     if (p->name == NULL || p->seller == NULL)
     {
-        free_product(p);
+        cgc_free_product(p);
         goto internal_error;
     }
 
-    if (ht_insert(&priv->products, p->name, p) != SUCCESS)
+    if (cgc_ht_insert(&priv->products, p->name, p) != SUCCESS)
     {
-        free_product(p);
+        cgc_free_product(p);
         goto internal_error;
     }
 
-    return send_response(priv, RESP_SUCCESS, "Success");
+    return cgc_send_response(priv, RESP_SUCCESS, "Success");
 
 bad_request:
-    return send_response(priv, RESP_BAD_REQUEST, "Invalid request");
+    return cgc_send_response(priv, RESP_BAD_REQUEST, "Invalid request");
 
 internal_error:
-    return send_response(priv, RESP_INTERNAL_ERROR, "Internal error");
+    return cgc_send_response(priv, RESP_INTERNAL_ERROR, "Internal error");
 }
 
-int do_list(priv_t *priv, char *resource)
+int cgc_do_list(cgc_priv_t *priv, char *resource)
 {
     char tmp[64], *buf = NULL;
     unsigned int buf_size = 0;
-    ht_node_t *iter;
+    cgc_ht_node_t *iter;
 
-    sprintf(tmp, "%d", priv->products.tbl_count);
-    if (send_response(priv, RESP_SUCCESS, tmp) != SUCCESS)
+    cgc_sprintf(tmp, "%d", priv->products.tbl_count);
+    if (cgc_send_response(priv, RESP_SUCCESS, tmp) != SUCCESS)
         return FAILURE;
-    for (iter = ht_first(&priv->products); iter != NULL; iter = ht_next(&priv->products, iter))
+    for (iter = cgc_ht_first(&priv->products); iter != NULL; iter = cgc_ht_next(&priv->products, iter))
     {
-        product_t *p = ht_node_value(iter);
-        unsigned int new_buf_size = strlen(p->name) + strlen(p->seller) + 128;
+        cgc_product_t *p = cgc_ht_node_value(iter);
+        unsigned int new_buf_size = cgc_strlen(p->name) + cgc_strlen(p->seller) + 128;
         if (new_buf_size > buf_size)
         {
-            char *new_buf = realloc(buf, new_buf_size);
+            char *new_buf = cgc_realloc(buf, new_buf_size);
             if (new_buf == NULL)
                 break;
             buf = new_buf;
             buf_size = new_buf_size;
         }
-        sprintf(buf, "%s;%s;%d;%d", p->name, p->seller, p->price, p->quantity);
-        if (send_response(priv, RESP_CONTINUE, buf) != SUCCESS)
+        cgc_sprintf(buf, "%s;%s;%d;%d", p->name, p->seller, p->price, p->quantity);
+        if (cgc_send_response(priv, RESP_CONTINUE, buf) != SUCCESS)
             break;
-        //if (silk_send(&priv->silk, (unsigned char *)buf, strlen(buf)) != SUCCESS)
+        //if (cgc_silk_send(&priv->silk, (unsigned char *)buf, cgc_strlen(buf)) != SUCCESS)
         //    break;
     }
-    free(buf);
+    cgc_free(buf);
 
     if (iter != NULL)
-        return send_response(priv, RESP_INTERNAL_ERROR, "Internal error");
+        return cgc_send_response(priv, RESP_INTERNAL_ERROR, "Internal error");
 
     return SUCCESS;
 }
 
-int do_quit(priv_t *priv, char *resource)
+int cgc_do_quit(cgc_priv_t *priv, char *resource)
 {
-    send_response(priv, RESP_SUCCESS, "Success");
+    cgc_send_response(priv, RESP_SUCCESS, "Success");
     return FAILURE;
 }
 
 int main()
 {
-    ht_node_t *node;
-    priv_t priv;
+    cgc_ht_node_t *node;
+    cgc_priv_t priv;
 
-    if (ht_init(&priv.products) != SUCCESS)
+    if (cgc_ht_init(&priv.products) != SUCCESS)
         return 1;
 
-    if (ht_init(&priv.handlers) != SUCCESS)
+    if (cgc_ht_init(&priv.handlers) != SUCCESS)
         return 1;
 
-    if (ht_insert(&priv.handlers, "BUY", do_buy) != SUCCESS)
+    if (cgc_ht_insert(&priv.handlers, "BUY", cgc_do_buy) != SUCCESS)
         return 1;
 
-    if (ht_insert(&priv.handlers, "SELL", do_sell) != SUCCESS)
+    if (cgc_ht_insert(&priv.handlers, "SELL", cgc_do_sell) != SUCCESS)
         return 1;
 
-    if (ht_insert(&priv.handlers, "LIST", do_list) != SUCCESS)
+    if (cgc_ht_insert(&priv.handlers, "LIST", cgc_do_list) != SUCCESS)
         return 1;
 
-    if (ht_insert(&priv.handlers, "QUIT", do_quit) != SUCCESS)
+    if (cgc_ht_insert(&priv.handlers, "QUIT", cgc_do_quit) != SUCCESS)
         return 1;
 
-    if (silk_init(&priv.silk) != SUCCESS)
+    if (cgc_silk_init(&priv.silk) != SUCCESS)
         return 1;
 
-    if (silk_prepare(&priv.silk) != SUCCESS)
+    if (cgc_silk_prepare(&priv.silk) != SUCCESS)
         return 1;
 
     while (1)
     {
         char *line, *method, *resource;
-        handler_t handler;
-        ht_node_t *node;
+        cgc_handler_t handler;
+        cgc_ht_node_t *node;
 
-        line = read_line(&priv.silk);
+        line = cgc_read_line(&priv.silk);
         if (line == NULL)
             break;
 
-        if (parse_request(line, &method, &resource) == SUCCESS)
+        if (cgc_parse_request(line, &method, &resource) == SUCCESS)
         {
-            if (ht_lookup(&priv.handlers, method, &node) == SUCCESS)
+            if (cgc_ht_lookup(&priv.handlers, method, &node) == SUCCESS)
             {
-                handler = ht_node_value(node);
+                handler = cgc_ht_node_value(node);
                 if (handler(&priv, resource) != SUCCESS)
                     break;
             }
@@ -372,7 +372,7 @@ int main()
             // XXX
         }
 
-        free(line);
+        cgc_free(line);
     }
 
     return 0;

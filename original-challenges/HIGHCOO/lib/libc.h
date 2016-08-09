@@ -24,17 +24,17 @@
 #ifndef NARF_LIBC_H
 #define NARF_LIBC_H
 
-typedef signed int int32_t;
-typedef signed short int16_t;
-typedef signed char int8_t;
-typedef unsigned int uint32_t;
-typedef unsigned short uint16_t;
-typedef unsigned char uint8_t;
+typedef signed int cgc_int32_t;
+typedef signed short cgc_int16_t;
+typedef signed char cgc_int8_t;
+typedef unsigned int cgc_uint32_t;
+typedef unsigned short cgc_uint16_t;
+typedef unsigned char cgc_uint8_t;
 
 
 // VA defs for xxprintf functions
 #ifndef _VA_LIST
-typedef __builtin_va_list va_list;
+typedef __builtin_va_list cgc_va_list;
 #define _VA_LIST
 #endif
 #define va_start(al, lp)  __builtin_va_start(al, lp)
@@ -47,7 +47,7 @@ typedef __builtin_va_list va_list;
 typedef enum {
 	FALSE = 0,
 	TRUE = 1,
-} bool_t;
+} cgc_bool_t;
 
 // list errors
 #define ERRNO_LIST_PUSH 44
@@ -57,36 +57,36 @@ typedef struct node {
 	void * data;
 	struct node *next;
 	struct node *prev;
-} node_t;
+} cgc_node_t;
 // doubly-linked list
 
 typedef struct list {
-	node_t *head;
-	node_t *tail;
-	uint32_t count;
-} list_t;
+	cgc_node_t *head;
+	cgc_node_t *tail;
+	cgc_uint32_t count;
+} cgc_list_t;
 
 // List related
-list_t * list_create();
-int list_push(list_t *lst, node_t *nd);
+cgc_list_t * cgc_list_create();
+int cgc_list_push(cgc_list_t *lst, cgc_node_t *nd);
 
 // Node related
-node_t * node_create(void * data);
+cgc_node_t * cgc_node_create(void * data);
 
 // I/O
-int send(const char * buf, const size_t size);
-int sendall(int fd, const char * buf, const size_t size);
-unsigned int recv_all(char *res_buf, size_t res_buf_size);
-unsigned int read_all(int fd, char *buf, unsigned int size);
-int recvline(int fd, char *buf, size_t size);
+int cgc_send(const char * buf, const cgc_size_t size);
+int cgc_sendall(int fd, const char * buf, const cgc_size_t size);
+unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
+int cgc_recvline(int fd, char *buf, cgc_size_t size);
 
 // stdlib
-unsigned int strlen(const char * str);
-void * memset(void * str, int ch, unsigned int n);
-void * memcpy(void * dst, const void * src, size_t cnt);
-int rand(char *res, size_t len);
-int vsnprintf(char * buf, size_t buf_size, const char * fmt, va_list args);
-int snprintf(char * buf, size_t buf_size, const char * fmt, ...);
-int int2str(char * str_buf, int buf_size, int i);
+unsigned int cgc_strlen(const char * str);
+void * cgc_memset(void * str, int ch, unsigned int n);
+void * cgc_memcpy(void * dst, const void * src, cgc_size_t cnt);
+int cgc_rand(char *res, cgc_size_t len);
+int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char * fmt, cgc_va_list args);
+int cgc_snprintf(char * buf, cgc_size_t buf_size, const char * fmt, ...);
+int cgc_int2str(char * str_buf, int buf_size, int i);
 
 #endif

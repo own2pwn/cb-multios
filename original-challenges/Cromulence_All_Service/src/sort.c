@@ -1,7 +1,7 @@
 #include <libcgc.h>
 #include <stdlib.h>
 
-void sort_command( char *pszLine )
+void cgc_sort_command( char *pszLine )
 {
     int idx;
     int sortList[64];
@@ -9,27 +9,27 @@ void sort_command( char *pszLine )
 
     if ( pszLine == NULL )
     {
-        printf( "Empty command.\n" );
+        cgc_printf( "Empty command.\n" );
         return;
     }
 
     // BUG:: Overflow possible here
 #ifdef PATCHED
-    unsigned char itemCount = atoi( pszLine );
+    unsigned char itemCount = cgc_atoi( pszLine );
 #else
-    char itemCount = atoi( pszLine );
+    char itemCount = cgc_atoi( pszLine );
 #endif
 
     if ( itemCount == 0 )
     {
-        printf( "0 items sorted.\n" );
+        cgc_printf( "0 items sorted.\n" );
         return;
     }
     else if ( itemCount <= 64 )
-        printf( "Enter @d items to sort:\n", itemCount );
+        cgc_printf( "Enter @d items to sort:\n", itemCount );
     else
     {
-        printf( "Maximum of 64 items allowed to sort.\n" );
+        cgc_printf( "Maximum of 64 items allowed to sort.\n" );
 
         return;
     }
@@ -38,9 +38,9 @@ void sort_command( char *pszLine )
 
     for ( idx = 0; idx < itemTotal; idx++ )
     {
-        getline( szTempBuf, 128 );
+        cgc_getline( szTempBuf, 128 );
 
-        sortList[idx] = atoi( szTempBuf );
+        sortList[idx] = cgc_atoi( szTempBuf );
     }
 
     // Begin sorting
@@ -65,11 +65,11 @@ void sort_command( char *pszLine )
             break;
     }
 
-    printf( "@d items sorted.\n", itemTotal );
+    cgc_printf( "@d items sorted.\n", itemTotal );
 
     for ( idx = 0; idx < itemTotal; idx++ )
     {
-        printf( "@d\n", sortList[idx] );
+        cgc_printf( "@d\n", sortList[idx] );
     }
 
     // Exit

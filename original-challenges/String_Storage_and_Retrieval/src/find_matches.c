@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,9 +27,9 @@ THE SOFTWARE.
 #include "stdlib.h"
 
 
-void find_matches(bst_node_type *head, int arg_count, char **args)  {
+void cgc_find_matches(cgc_bst_node_type *head, int arg_count, char **args)  {
     
-    data_item_type *item;
+    cgc_data_item_type *item;
 
 
    	item=0;
@@ -37,14 +37,14 @@ void find_matches(bst_node_type *head, int arg_count, char **args)  {
 
     //use the built-in functionality of a BST and find by the key value
 
-    item=find_node_by_key(head, make_key_from_name(args[1]));
+    item=cgc_find_node_by_key(head, cgc_make_key_from_name(args[1]));
 
     if (item) {
 
         while (item!= 0) {
 
-            if (strcmp(args[1], item->name)==0 ) {
-                printf("@s\n", item->name);
+            if (cgc_strcmp(args[1], item->name)==0 ) {
+                cgc_printf("@s\n", item->name);
                 break;
             }
             else

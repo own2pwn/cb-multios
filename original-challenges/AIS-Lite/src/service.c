@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,17 +35,17 @@ int main(void) {
     int bytes_received = 0;
 
     struct sentence_struct ss;
-    ss.ais_msg = malloc(MAX_SENTENCE_LEN*sizeof(char));
-    reset_sentence_struct(&ss);
+    ss.ais_msg = cgc_malloc(MAX_SENTENCE_LEN*sizeof(char));
+    cgc_reset_sentence_struct(&ss);
 
     while (1) {
-        char *buf = calloc(MAX_SENTENCE_LEN*sizeof(char));
-        char *english = calloc(MAX_ENGLISH_LEN*sizeof(char));
+        char *buf = cgc_calloc(MAX_SENTENCE_LEN*sizeof(char));
+        char *english = cgc_calloc(MAX_ENGLISH_LEN*sizeof(char));
 
         char *outmsg = NULL;
         char reset = TRUE;
 
-        bytes_received = recv_until_delim(STDIN, buf, MAX_SENTENCE_LEN, '\x07');
+        bytes_received = cgc_recv_until_delim(STDIN, buf, MAX_SENTENCE_LEN, '\x07');
         if ((0 >= bytes_received) || ('\x07' != buf[bytes_received - 1])) {
             ret = -9;
             break;
@@ -53,9 +53,9 @@ int main(void) {
             buf[bytes_received - 1] = '\0';
         }
 
-        if (SUCCESS == parse_sentence(buf, &ss)) {
+        if (SUCCESS == cgc_parse_sentence(buf, &ss)) {
             if (DONE == ss.msg_status) {
-                if (SUCCESS == to_english(english, &ss)) {
+                if (SUCCESS == cgc_to_english(english, &ss)) {
                     outmsg = english;
                 } else {
                     outmsg = INVALID_MSG;
@@ -68,14 +68,14 @@ int main(void) {
             outmsg = INVALID_SENTENCE;
         }
 
-        send(outmsg, strlen(outmsg));
+        cgc_send(outmsg, cgc_strlen(outmsg));
 
         if (TRUE == reset) {
-            reset_sentence_struct(&ss);
+            cgc_reset_sentence_struct(&ss);
         }
 
-        free(english);
-        free(buf);
+        cgc_free(english);
+        cgc_free(buf);
     }
 
 	return ret;

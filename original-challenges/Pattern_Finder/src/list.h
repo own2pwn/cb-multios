@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,19 +25,19 @@
 
 #include <stdio.h>
 
-typedef struct list list;
-struct list
+typedef struct cgc_list cgc_list;
+struct cgc_list
 {
-  list* Next;
+  cgc_list* Next;
   void* Value;
 };
 
-void AllocateAndInitializeListHead(list** List, void* Value);
-void AppendToList(list* List, void* Value);
-void UniqAppendToList(list* List, void* Value);
-void FreeList(list* List);
-list* UniqExtendList(list* L1, list* L2);
-size_t LenList(list* List);
-int CheckForCycle(list *List);
+void cgc_AllocateAndInitializeListHead(cgc_list** List, void* Value);
+void cgc_AppendToList(cgc_list* List, void* Value);
+void cgc_UniqAppendToList(cgc_list* List, void* Value);
+void cgc_FreeList(cgc_list* List);
+cgc_list* cgc_UniqExtendList(cgc_list* L1, cgc_list* L2);
+cgc_size_t cgc_LenList(cgc_list* List);
+int cgc_CheckForCycle(cgc_list *List);
 
 #endif /* __LIST_H__ */

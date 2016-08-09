@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,21 +25,21 @@
 #include <stdio.h>
 #include "board.h"
 
-board_t *create_board()
+cgc_board_t *cgc_create_board()
 {
-    board_t *board = malloc(sizeof(board_t));
-    clear_board(board);
+    cgc_board_t *board = cgc_malloc(sizeof(cgc_board_t));
+    cgc_clear_board(board);
     return board;
 }
 
-void clear_board(board_t *board)
+void cgc_clear_board(cgc_board_t *board)
 {
-    memset(board->ttt_board, BLANK, BOARD_WIDTH * BOARD_HEIGHT * sizeof(char));
+    cgc_memset(board->ttt_board, BLANK, BOARD_WIDTH * BOARD_HEIGHT * sizeof(char));
     board->num_moves = 0;
     board->winner = 0;
 }
 
-int check_winning_board(board_t *board)
+int cgc_check_winning_board(cgc_board_t *board)
 {
     int temp_pos;
     if ((temp_pos = board->ttt_board[0][0]) != BLANK) {
@@ -86,7 +86,7 @@ winner:
     return board->winner;
 }
 
-int do_move(board_t *board, int posy, int posx, int player)
+int cgc_do_move(cgc_board_t *board, int posy, int posx, int player)
 {
     if (board->num_moves >= 9)
         return GAME_OVER;
@@ -100,10 +100,10 @@ int do_move(board_t *board, int posy, int posx, int player)
     board->ttt_board[posy][posx] = player;
     board->num_moves++;
 
-    return check_winning_board(board);
+    return cgc_check_winning_board(board);
 }
 
-int undo_move(board_t *board, int posy, int posx)
+int cgc_undo_move(cgc_board_t *board, int posy, int posx)
 {
     if (posx < 0 || posy < 0 || posx >3 || posy > 3)
         return BAD_MOVE;
@@ -118,12 +118,12 @@ int undo_move(board_t *board, int posy, int posx)
     return SUCCESS;
 }
 
-void print_board(board_t *board)
+void cgc_print_board(cgc_board_t *board)
 {
     int i, j;
     char *c;
     for (i = 0; i < BOARD_HEIGHT; i++) {
-        printf("|");
+        cgc_printf("|");
         for (j = 0; j < BOARD_WIDTH; j++) {
             switch(board->ttt_board[i][j]) {
             case HUMAN:
@@ -138,8 +138,8 @@ void print_board(board_t *board)
             default:
                 c = "%";
             }
-            printf("%s|", c);
+            cgc_printf("%s|", c);
         }
-        printf("\n");
+        cgc_printf("\n");
     }
 }

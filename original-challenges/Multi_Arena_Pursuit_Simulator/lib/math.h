@@ -31,7 +31,7 @@
 *
 * @return The natural log of the number
 */
-double ln(double x);
+double cgc_ln(double x);
 
 /**
 * Calculate e to an exponent
@@ -40,7 +40,7 @@ double ln(double x);
 *
 * @return The result of e to the exponent
 */
-double exponential(double x);
+double cgc_exponential(double x);
 
 /**
 * Calculate x to the n'th power
@@ -53,22 +53,22 @@ double exponential(double x);
 double pow(double x, double n);
 
 /**
-* Calculate the cosine of a number
+* Calculate the cgc_cosine of a number
 * 
-* @param x The number to calculate the cosine of
+* @param x The number to calculate the cgc_cosine of
 *
-* @return The cosine of x
+* @return The cgc_cosine of x
 */
-double cosine(double x);
+double cgc_cosine(double x);
 
 /**
-* Calculate the sine of a number
+* Calculate the cgc_sine of a number
 * 
-* @param x The number to calculate the sine of
+* @param x The number to calculate the cgc_sine of
 *
-* @return The sine of x
+* @return The cgc_sine of x
 */
-double sine(double x);
+double cgc_sine(double x);
 
 /**
 * Calculate the square root of a number
@@ -86,7 +86,7 @@ double sqrt(double x);
 *
 * @return The arctan of x
 */
-double atan(double x);
+double cgc_atan(double x);
 
 /**
 * Calculate the arctan2 of a number
@@ -95,4 +95,4 @@ double atan(double x);
 *
 * @return The arctan2 of x
 */
-double atanTwo(double y, double x);
+double cgc_atanTwo(double y, double x);

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,8 +35,8 @@
 #define NOT_LOADED "No File Loaded"
 
 
-static int readopt(int fd) {
-    size_t rx, i = 0;
+static int cgc_readopt(int fd) {
+    cgc_size_t rx, i = 0;
     char opt[MAX_INPUT];
 
     while (receive(fd, &opt[i], 1, &rx) == 0 && rx == 1 && i < MAX_INPUT) {
@@ -51,13 +51,13 @@ static int readopt(int fd) {
     if (i == MAX_INPUT)
         return 0;
 
-    return strtol(&opt[0], NULL, 10);
+    return cgc_strtol(&opt[0], NULL, 10);
 }
 
 int main()
 {
-    SFILE *lfile = NULL;
-    SFILE *rfile = NULL;
+    cgc_SFILE *lfile = NULL;
+    cgc_SFILE *rfile = NULL;
     char *lfilename = NOT_LOADED;
     char *rfilename = NOT_LOADED;
 
@@ -95,14 +95,14 @@ int main()
         printf("Ignore File Type, Treat as Ascii=%s\n", option_set);
         printf("::-> ");
 
-        option = readopt(STDIN);
+        option = cgc_readopt(STDIN);
         switch(option) {
         case 1:
-            clear_cache(1);
+            cgc_clear_cache(1);
             if (lfile)
-                close_sfile(&lfile);
+                cgc_close_sfile(&lfile);
 
-            lfile = open_sfile();
+            lfile = cgc_open_sfile();
             if (lfile) {
                 printf("Successfully Loaded File\n");
                 lfilename = lfile->name;
@@ -112,11 +112,11 @@ int main()
             }
             break;
         case 2:
-            clear_cache(2);
+            cgc_clear_cache(2);
             if (rfile)
-                close_sfile(&rfile);
+                cgc_close_sfile(&rfile);
 
-            rfile = open_sfile();
+            rfile = cgc_open_sfile();
             if (rfile) {
                 printf("Successfully Loaded File\n");
                 rfilename = rfile->name;
@@ -126,14 +126,14 @@ int main()
             }
             break;
         case 3:
-            clear_cache(0);
+            cgc_clear_cache(0);
             ignore_ws = !ignore_ws;
             break;
         case 4:
             treat_as_ascii = !treat_as_ascii;
             break;
         case 5:
-            compare_files(lfile, rfile, ignore_ws, treat_as_ascii);
+            cgc_compare_files(lfile, rfile, ignore_ws, treat_as_ascii);
             break;
         case 6:
             exited = 1;

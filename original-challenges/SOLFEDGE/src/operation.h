@@ -25,8 +25,8 @@
 #define OPERATION_H 1
 
 #define ALLOC(sz,p) if (SUCCESS != allocate(sz, 0, (void **)p)) {_terminate(ERRNO_ALLOC);}
-#define RECV(v,s) if(s != recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
-#define SENDSI(v) send((char *)&v, sizeof(int32_t));
+#define RECV(v,s) if(s != cgc_recv_all((char *)v, s)) {_terminate(ERR_RECV_FAILED);}
+#define SENDSI(v) cgc_send((char *)&v, sizeof(cgc_int32_t));
 
 // 4096 syllables bytes, assuming 2 bytes per syllable is 2048 syllables
 // this assumption is wrong because one syllable is 3 bytes.
@@ -71,7 +71,7 @@ enum {
 	ERR_NO_SYLLABLES = -907,
 };
 
-extern int to_syllables(char *syllables_buf, char *notes_buf);
-extern int to_notes(char *syllables_buf, char *notes_buf);
+extern int cgc_to_syllables(char *syllables_buf, char *notes_buf);
+extern int cgc_to_notes(char *syllables_buf, char *notes_buf);
 
 #endif

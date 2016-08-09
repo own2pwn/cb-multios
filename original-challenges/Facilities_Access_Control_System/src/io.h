@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -53,10 +53,10 @@ THE SOFTWARE.
 #define RESP_ALARM_OFF                  (11)
 #define RESP_LIST_ALARM_CODES           (12)
 
-size_t ReadBytes(unsigned char *Buf, size_t Max);
-size_t SendBytes(unsigned char *Buf, size_t Max);
-uint8_t SendResp(uint8_t Code, unsigned char *Data);
-uint8_t RecvCommand();
+cgc_size_t cgc_ReadBytes(unsigned char *Buf, cgc_size_t Max);
+cgc_size_t cgc_SendBytes(unsigned char *Buf, cgc_size_t Max);
+cgc_uint8_t cgc_SendResp(cgc_uint8_t Code, unsigned char *Data);
+cgc_uint8_t cgc_RecvCommand();
 
 #endif
 

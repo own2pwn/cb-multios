@@ -19,7 +19,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-unsigned char atox(char *buf)
+unsigned char cgc_atox(char *buf)
 {
 	unsigned char sixteens=0, ones=0, value;
 

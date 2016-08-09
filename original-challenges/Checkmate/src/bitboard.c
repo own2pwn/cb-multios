@@ -26,34 +26,34 @@
 #include "bitboard.h"
 
 #define PIECE_TO_INDEX(piece) ((piece.type) << 1 | (piece.color))
-#define INDEX_TO_PIECE(index) make_piece(index & 1, index >> 1)
+#define INDEX_TO_PIECE(index) cgc_make_piece(index & 1, index >> 1)
 
-static struct piece make_piece(enum color, enum type);
-static unsigned long long pawn_moves(struct bitboard *, enum color, int, int);
-static unsigned long long rook_moves(struct bitboard *, enum color, int, int);
-static unsigned long long knight_moves(struct bitboard *, enum color, int, int);
-static unsigned long long bishop_moves(struct bitboard *, enum color, int, int);
-static unsigned long long queen_moves(struct bitboard *, enum color, int, int);
-static unsigned long long king_moves(struct bitboard *, enum color, int, int);
+static struct piece cgc_make_piece(enum color, enum type);
+static unsigned long long cgc_pawn_moves(struct bitboard *, enum color, int, int);
+static unsigned long long cgc_rook_moves(struct bitboard *, enum color, int, int);
+static unsigned long long cgc_knight_moves(struct bitboard *, enum color, int, int);
+static unsigned long long cgc_bishop_moves(struct bitboard *, enum color, int, int);
+static unsigned long long cgc_queen_moves(struct bitboard *, enum color, int, int);
+static unsigned long long cgc_king_moves(struct bitboard *, enum color, int, int);
 
 static unsigned long long (*piece_moves[])(struct bitboard *, enum color, int, int) = {
-    pawn_moves,
-    rook_moves,
-    knight_moves,
-    bishop_moves,
-    queen_moves,
-    king_moves
+    cgc_pawn_moves,
+    cgc_rook_moves,
+    cgc_knight_moves,
+    cgc_bishop_moves,
+    cgc_queen_moves,
+    cgc_king_moves
 };
 
-static int is_at_risk(struct bitboard *, enum color, int, int, int);
-static int is_checkmate(struct bitboard *, enum color, int, int);
-static int is_stalemate(struct bitboard *, enum color);
-static int infer_src(struct bitboard *, struct move *);
-static int can_castle(struct bitboard *, enum color, enum castle_type);
-static int validate_move(struct bitboard *, struct move *);
+static int cgc_is_at_risk(struct bitboard *, enum color, int, int, int);
+static int cgc_is_checkmate(struct bitboard *, enum color, int, int);
+static int cgc_is_stalemate(struct bitboard *, enum color);
+static int cgc_infer_src(struct bitboard *, struct move *);
+static int cgc_can_castle(struct bitboard *, enum color, enum castle_type);
+static int cgc_validate_move(struct bitboard *, struct move *);
 
 static struct piece
-make_piece(enum color color, enum type type)
+cgc_make_piece(enum color color, enum type type)
 {
     struct piece ret = {
         color,
@@ -64,33 +64,33 @@ make_piece(enum color color, enum type type)
 }
 
 void
-init_bitboard(struct bitboard *board)
+cgc_init_bitboard(struct bitboard *board)
 {
     enum color color;
     unsigned int i;
 
-    memset(board, '\0', sizeof(struct bitboard));
-    board->can_castle[WHITE][KINGSIDE] = board->can_castle[BLACK][KINGSIDE] = 1;
-    board->can_castle[WHITE][QUEENSIDE] = board->can_castle[BLACK][QUEENSIDE] = 1;
+    cgc_memset(board, '\0', sizeof(struct bitboard));
+    board->cgc_can_castle[WHITE][KINGSIDE] = board->cgc_can_castle[BLACK][KINGSIDE] = 1;
+    board->cgc_can_castle[WHITE][QUEENSIDE] = board->cgc_can_castle[BLACK][QUEENSIDE] = 1;
     board->ep_row = board->ep_col = -1;
 
     for (color = WHITE; color < NUM_COLORS; color++) {
-        set_piece(board, 7 * color, 0, make_piece(color, ROOK));
-        set_piece(board, 7 * color, 1, make_piece(color, KNIGHT));
-        set_piece(board, 7 * color, 2, make_piece(color, BISHOP));
-        set_piece(board, 7 * color, 3, make_piece(color, QUEEN));
-        set_piece(board, 7 * color, 4, make_piece(color, KING));
-        set_piece(board, 7 * color, 5, make_piece(color, BISHOP));
-        set_piece(board, 7 * color, 6, make_piece(color, KNIGHT));
-        set_piece(board, 7 * color, 7, make_piece(color, ROOK));
+        cgc_set_piece(board, 7 * color, 0, cgc_make_piece(color, ROOK));
+        cgc_set_piece(board, 7 * color, 1, cgc_make_piece(color, KNIGHT));
+        cgc_set_piece(board, 7 * color, 2, cgc_make_piece(color, BISHOP));
+        cgc_set_piece(board, 7 * color, 3, cgc_make_piece(color, QUEEN));
+        cgc_set_piece(board, 7 * color, 4, cgc_make_piece(color, KING));
+        cgc_set_piece(board, 7 * color, 5, cgc_make_piece(color, BISHOP));
+        cgc_set_piece(board, 7 * color, 6, cgc_make_piece(color, KNIGHT));
+        cgc_set_piece(board, 7 * color, 7, cgc_make_piece(color, ROOK));
 
         for (i = 0; i < BOARD_SIZE; i++)
-            set_piece(board, color ? 6 : 1, i, make_piece(color, PAWN));
+            cgc_set_piece(board, color ? 6 : 1, i, cgc_make_piece(color, PAWN));
     }
 }
 
 void
-print_bitboard(struct bitboard *board, enum color color)
+cgc_print_bitboard(struct bitboard *board, enum color color)
 {
     char *c;
     int i, j, row, col;
@@ -140,33 +140,33 @@ print_bitboard(struct bitboard *board, enum color color)
 
     for (i = 0; i < BOARD_SIZE; i++) {
         row = color == WHITE ? i : BOARD_SIZE - i - 1;
-        printf("%d ", BOARD_SIZE - row);
+        cgc_printf("%d ", BOARD_SIZE - row);
 
         for (j = 0; j < BOARD_SIZE; j++) {
             col = color == WHITE ? j : BOARD_SIZE - j - 1;
 
-            if (get_piece(board, (BOARD_SIZE - row - 1), col, &piece) == 1)
-                printf("%s%s%s", COLOR(piece.color, ((row % 2) + (col % 2)) % 2),
+            if (cgc_get_piece(board, (BOARD_SIZE - row - 1), col, &piece) == 1)
+                cgc_printf("%s%s%s", COLOR(piece.color, ((row % 2) + (col % 2)) % 2),
                         PIECE(piece.color, piece.type), reset);
             else
-                printf("%s  %s", COLOR(0, ((row % 2) + (col % 2)) % 2), reset);
+                cgc_printf("%s  %s", COLOR(0, ((row % 2) + (col % 2)) % 2), reset);
         }
 
-        printf("\n");
+        cgc_printf("\n");
     }
 
-    printf("  ");
+    cgc_printf("  ");
     c = "abcdefgh";
     for (c += (color == WHITE ? 0 : 7); *c; c += (color == WHITE ? 1 : -1))
-        printf("%c ", *c);
-    printf("\n");
+        cgc_printf("%c ", *c);
+    cgc_printf("\n");
 
 #undef COLOR
 #undef PIECE
 }
     
 int
-set_piece(struct bitboard *board, int row, int col,
+cgc_set_piece(struct bitboard *board, int row, int col,
         struct piece piece)
 {
     if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE)
@@ -177,7 +177,7 @@ set_piece(struct bitboard *board, int row, int col,
 }
 
 int
-clear_piece(struct bitboard *board, int row, int col)
+cgc_clear_piece(struct bitboard *board, int row, int col)
 {
     unsigned int i;
 
@@ -191,7 +191,7 @@ clear_piece(struct bitboard *board, int row, int col)
 }
 
 int
-get_piece(struct bitboard *board, int row, int col,
+cgc_get_piece(struct bitboard *board, int row, int col,
         struct piece *piece)
 {
     unsigned int i;
@@ -209,26 +209,26 @@ get_piece(struct bitboard *board, int row, int col,
 }
 
 static unsigned long long
-pawn_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_pawn_moves(struct bitboard *board, enum color color, int row, int col)
 {
     unsigned long long ret = 0;
     struct piece piece;
 
     // Move one forward
-    if (get_piece(board, row + (color == WHITE ? 1 : -1), col, &piece) == 0)
+    if (cgc_get_piece(board, row + (color == WHITE ? 1 : -1), col, &piece) == 0)
         ret |= 1ull << ((row + (color == WHITE ? 1 : -1)) * BOARD_SIZE + col);
 
     // Move two forward
     if (ret && row == (color == WHITE ? 1 : 6) &&
-            get_piece(board, row + (color == WHITE ? 2 : -2), col, &piece) == 0)
+            cgc_get_piece(board, row + (color == WHITE ? 2 : -2), col, &piece) == 0)
         ret |= 1ull << ((row + (color == WHITE ? 2 : -2)) * BOARD_SIZE + col);
 
     // Capture
-    if (get_piece(board, row + (color == WHITE ? 1 : -1), col - 1, &piece) == 1 &&
+    if (cgc_get_piece(board, row + (color == WHITE ? 1 : -1), col - 1, &piece) == 1 &&
             piece.color != color)
         ret |= 1ull << ((row + (color == WHITE ? 1 : -1)) * BOARD_SIZE + col - 1);
 
-    if (get_piece(board, row + (color == WHITE ? 1 : -1), col + 1, &piece) == 1 &&
+    if (cgc_get_piece(board, row + (color == WHITE ? 1 : -1), col + 1, &piece) == 1 &&
             piece.color != color)
         ret |= 1ull << ((row + (color == WHITE ? 1 : -1)) * BOARD_SIZE + col + 1);
 
@@ -243,7 +243,7 @@ pawn_moves(struct bitboard *board, enum color color, int row, int col)
 }
 
 static unsigned long long
-rook_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_rook_moves(struct bitboard *board, enum color color, int row, int col)
 {
     unsigned int i;
     int j, k, found;
@@ -261,7 +261,7 @@ rook_moves(struct bitboard *board, enum color color, int row, int col)
         j = row + directions[i][0];
         k = col + directions[i][1];
 
-        while ((found = get_piece(board, j, k, &piece)) == 0) {
+        while ((found = cgc_get_piece(board, j, k, &piece)) == 0) {
             ret |= 1ull << (j * BOARD_SIZE + k);
             j += directions[i][0];
             k += directions[i][1];
@@ -274,7 +274,7 @@ rook_moves(struct bitboard *board, enum color color, int row, int col)
 }
 
 static unsigned long long
-knight_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_knight_moves(struct bitboard *board, enum color color, int row, int col)
 {
     unsigned int i;
     int found;
@@ -293,7 +293,7 @@ knight_moves(struct bitboard *board, enum color color, int row, int col)
     };
 
     for (i = 0; i < sizeof(moves) / sizeof(moves[0]); i++) {
-        found = get_piece(board, row + moves[i][0], col + moves[i][1], &piece);
+        found = cgc_get_piece(board, row + moves[i][0], col + moves[i][1], &piece);
         if (found == 0 || (found == 1 && piece.color != color))
             ret |= 1ull << ((row + moves[i][0]) * BOARD_SIZE + col + moves[i][1]);
     }
@@ -302,7 +302,7 @@ knight_moves(struct bitboard *board, enum color color, int row, int col)
 }
 
 static unsigned long long
-bishop_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_bishop_moves(struct bitboard *board, enum color color, int row, int col)
 {
     unsigned int i;
     int j, k, found;
@@ -320,7 +320,7 @@ bishop_moves(struct bitboard *board, enum color color, int row, int col)
         j = row + directions[i][0];
         k = col + directions[i][1];
 
-        while ((found = get_piece(board, j, k, &piece)) == 0) {
+        while ((found = cgc_get_piece(board, j, k, &piece)) == 0) {
             ret |= 1ull << (j * BOARD_SIZE + k);
             j += directions[i][0];
             k += directions[i][1];
@@ -333,13 +333,13 @@ bishop_moves(struct bitboard *board, enum color color, int row, int col)
 }
 
 static unsigned long long
-queen_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_queen_moves(struct bitboard *board, enum color color, int row, int col)
 {
-    return bishop_moves(board, color, row, col) | rook_moves(board, color, row, col);
+    return cgc_bishop_moves(board, color, row, col) | cgc_rook_moves(board, color, row, col);
 }
 
 static unsigned long long
-king_moves(struct bitboard *board, enum color color, int row, int col)
+cgc_king_moves(struct bitboard *board, enum color color, int row, int col)
 {
     unsigned int i;
     int found;
@@ -358,9 +358,9 @@ king_moves(struct bitboard *board, enum color color, int row, int col)
     };
 
     for (i = 0; i < sizeof(moves) / sizeof(moves[0]); i++) {
-        found = get_piece(board, row + moves[i][0], col + moves[i][1], &piece);
+        found = cgc_get_piece(board, row + moves[i][0], col + moves[i][1], &piece);
         if (found == 0 || (found == 1 && piece.color != color))
-            if (!is_at_risk(board, color, row + moves[i][0], col + moves[i][1], 1) &&
+            if (!cgc_is_at_risk(board, color, row + moves[i][0], col + moves[i][1], 1) &&
                     row + moves[i][0] >= 0 && row + moves[i][0] < BOARD_SIZE &&
                     col + moves[i][1] >= 0 && col + moves[i][1] < BOARD_SIZE)
                 ret |= 1ull << ((row + moves[i][0]) * BOARD_SIZE + col + moves[i][1]);
@@ -370,7 +370,7 @@ king_moves(struct bitboard *board, enum color color, int row, int col)
 }
 
 static int
-is_at_risk(struct bitboard *board, enum color color, int row, int col, int skip_kings)
+cgc_is_at_risk(struct bitboard *board, enum color color, int row, int col, int skip_kings)
 {
     unsigned int i;
     unsigned long long b, moves;
@@ -398,16 +398,16 @@ is_at_risk(struct bitboard *board, enum color color, int row, int col, int skip_
 }
 
 static int
-is_checkmate(struct bitboard *board, enum color color, int row, int col)
+cgc_is_checkmate(struct bitboard *board, enum color color, int row, int col)
 {
     // BUG: Doesn't check if checkmate can be avoidided by blocking with another
     // friendly piece, shouldn't meaningfully affect CB behavior.
-    return is_at_risk(board, color, row, col, 0) == 1 &&
-            king_moves(board, color, row, col) == 0;
+    return cgc_is_at_risk(board, color, row, col, 0) == 1 &&
+            cgc_king_moves(board, color, row, col) == 0;
 }
 
 static int
-is_stalemate(struct bitboard *board, enum color color)
+cgc_is_stalemate(struct bitboard *board, enum color color)
 {
     unsigned int i;
     unsigned long long b, moves = 0;
@@ -432,7 +432,7 @@ is_stalemate(struct bitboard *board, enum color color)
 }
     
 static int
-infer_src(struct bitboard *board, struct move *move)
+cgc_infer_src(struct bitboard *board, struct move *move)
 {
     unsigned int i;
     unsigned long long moves, b = board->boards[PIECE_TO_INDEX(move->piece)];
@@ -460,7 +460,7 @@ infer_src(struct bitboard *board, struct move *move)
 }
 
 static int
-can_castle(struct bitboard *board, enum color color, enum castle_type castle_type)
+cgc_can_castle(struct bitboard *board, enum color color, enum castle_type castle_type)
 {
     unsigned int i, start_col, end_col;
     int row, king_col, rook_col;
@@ -470,27 +470,27 @@ can_castle(struct bitboard *board, enum color color, enum castle_type castle_typ
     rook_col = castle_type == KINGSIDE ? 7 : 0;
     row = (color == WHITE ? 0 : 7);
 
-    if (!board->can_castle[color][castle_type])
+    if (!board->cgc_can_castle[color][castle_type])
         return 0;
 
-    if (get_piece(board, row, king_col, &piece) != 1 || piece.type != KING)
+    if (cgc_get_piece(board, row, king_col, &piece) != 1 || piece.type != KING)
         return 0;
 
-    if (get_piece(board, row, rook_col, &piece) != 1 || piece.type != ROOK)
+    if (cgc_get_piece(board, row, rook_col, &piece) != 1 || piece.type != ROOK)
         return 0;
 
     start_col = MIN(king_col, rook_col) + (castle_type == KINGSIDE ? 1 : 2);
     end_col = MAX(king_col, rook_col);
     for (i = start_col; i < end_col; i++)
-        if (get_piece(board, row, i, &piece) != 0 ||
-                is_at_risk(board, color, row, i, 0))
+        if (cgc_get_piece(board, row, i, &piece) != 0 ||
+                cgc_is_at_risk(board, color, row, i, 0))
             return 0;
 
     return 1;
 }
 
 static int
-validate_move(struct bitboard *board, struct move *move)
+cgc_validate_move(struct bitboard *board, struct move *move)
 {
     unsigned long long moves;
     struct piece piece;
@@ -499,7 +499,7 @@ validate_move(struct bitboard *board, struct move *move)
             move->dst_row == -1 || move->dst_col == -1)
         return 0;
 
-    if (get_piece(board, move->src_row, move->src_col, &piece) != 1 ||
+    if (cgc_get_piece(board, move->src_row, move->src_col, &piece) != 1 ||
             move->piece.color != piece.color || move->piece.type != piece.type)
         return 0;
 
@@ -508,14 +508,14 @@ validate_move(struct bitboard *board, struct move *move)
             (move->promotion_type > PAWN && move->promotion_type < QUEEN)))
         return 0;
 
-    if ((move->is_check || move->is_checkmate) && move->piece.type == KING)
+    if ((move->is_check || move->cgc_is_checkmate) && move->piece.type == KING)
         return 0;
 
     if (move->is_castle_kingside || move->is_castle_queenside)
-        return can_castle(board, move->piece.color,
+        return cgc_can_castle(board, move->piece.color,
                 move->is_castle_kingside ? KINGSIDE : QUEENSIDE);
 
-    if (move->is_capture && (get_piece(board, move->dst_row, move->dst_col, &piece) != 1 ||
+    if (move->is_capture && (cgc_get_piece(board, move->dst_row, move->dst_col, &piece) != 1 ||
             piece.color == move->piece.color)) {
 
         // Check if this is a possible en passant
@@ -533,77 +533,77 @@ validate_move(struct bitboard *board, struct move *move)
 }
 
 enum result
-make_move(struct bitboard *board, struct move *move)
+cgc_make_move(struct bitboard *board, struct move *move)
 {
     unsigned int i;
     unsigned long long b;
     struct piece piece;
 
-    if (!validate_move(board, move))
+    if (!cgc_validate_move(board, move))
         return ERROR;
 
     if (move->piece.type == PAWN ||
-            (get_piece(board, move->dst_row, move->dst_col, &piece) == 1 &&
+            (cgc_get_piece(board, move->dst_row, move->dst_col, &piece) == 1 &&
              piece.color != move->piece.color))
         board->stalemate_ctr = 0;
     else
         board->stalemate_ctr++;
 
     if (move->is_castle_kingside) {
-        clear_piece(board, move->piece.color == WHITE ? 0 : 7, 4);
-        clear_piece(board, move->piece.color == WHITE ? 0 : 7, 7);
-        set_piece(board, move->piece.color == WHITE ? 0 : 7, 6,
-                make_piece(move->piece.color, KING));
-        set_piece(board, move->piece.color == WHITE ? 0 : 7, 5,
-                make_piece(move->piece.color, ROOK));
-        board->can_castle[move->piece.color][KINGSIDE] = 0;
-        board->can_castle[move->piece.color][QUEENSIDE] = 0;
+        cgc_clear_piece(board, move->piece.color == WHITE ? 0 : 7, 4);
+        cgc_clear_piece(board, move->piece.color == WHITE ? 0 : 7, 7);
+        cgc_set_piece(board, move->piece.color == WHITE ? 0 : 7, 6,
+                cgc_make_piece(move->piece.color, KING));
+        cgc_set_piece(board, move->piece.color == WHITE ? 0 : 7, 5,
+                cgc_make_piece(move->piece.color, ROOK));
+        board->cgc_can_castle[move->piece.color][KINGSIDE] = 0;
+        board->cgc_can_castle[move->piece.color][QUEENSIDE] = 0;
     } else if (move->is_castle_queenside) {
-        clear_piece(board, move->piece.color == WHITE ? 0 : 7, 4);
-        clear_piece(board, move->piece.color == WHITE ? 0 : 7, 0);
-        set_piece(board, move->piece.color == WHITE ? 0 : 7, 2,
-                make_piece(move->piece.color, KING));
-        set_piece(board, move->piece.color == WHITE ? 0 : 7, 3,
-                make_piece(move->piece.color, ROOK));
-        board->can_castle[move->piece.color][KINGSIDE] = 0;
-        board->can_castle[move->piece.color][QUEENSIDE] = 0;
+        cgc_clear_piece(board, move->piece.color == WHITE ? 0 : 7, 4);
+        cgc_clear_piece(board, move->piece.color == WHITE ? 0 : 7, 0);
+        cgc_set_piece(board, move->piece.color == WHITE ? 0 : 7, 2,
+                cgc_make_piece(move->piece.color, KING));
+        cgc_set_piece(board, move->piece.color == WHITE ? 0 : 7, 3,
+                cgc_make_piece(move->piece.color, ROOK));
+        board->cgc_can_castle[move->piece.color][KINGSIDE] = 0;
+        board->cgc_can_castle[move->piece.color][QUEENSIDE] = 0;
     } else {
         // BUG: If you take the other player's king, call it game over. This
         // shouldn't meaningfully affect CB behavior
-        if (get_piece(board, move->dst_row, move->dst_col, &piece) == 1 &&
+        if (cgc_get_piece(board, move->dst_row, move->dst_col, &piece) == 1 &&
                 piece.color != move->piece.color && piece.type == KING)
             return CHECKMATE;
 
-        clear_piece(board, move->src_row, move->src_col);
-        clear_piece(board, move->dst_row, move->dst_col);
+        cgc_clear_piece(board, move->src_row, move->src_col);
+        cgc_clear_piece(board, move->dst_row, move->dst_col);
         if (move->is_promotion)
-            set_piece(board, move->dst_row, move->dst_col,
-                    make_piece(move->piece.color, move->promotion_type));
+            cgc_set_piece(board, move->dst_row, move->dst_col,
+                    cgc_make_piece(move->piece.color, move->promotion_type));
         else
-            set_piece(board, move->dst_row, move->dst_col, move->piece);
+            cgc_set_piece(board, move->dst_row, move->dst_col, move->piece);
 
         if (move->piece.type == KING) {
-            board->can_castle[move->piece.color][KINGSIDE] = 0;
-            board->can_castle[move->piece.color][QUEENSIDE] = 0;
+            board->cgc_can_castle[move->piece.color][KINGSIDE] = 0;
+            board->cgc_can_castle[move->piece.color][QUEENSIDE] = 0;
         }
 
         if (move->piece.type == ROOK) {
             if (move->src_row == (move->piece.color == WHITE ? 0 : 7) && move->src_col == 7)
-                board->can_castle[move->piece.color][KINGSIDE] = 0;
+                board->cgc_can_castle[move->piece.color][KINGSIDE] = 0;
             else if (move->src_row == (move->piece.color == WHITE ? 0 : 7) && move->src_col == 0)
-                board->can_castle[move->piece.color][QUEENSIDE] = 0;
+                board->cgc_can_castle[move->piece.color][QUEENSIDE] = 0;
         }
 
         if (move->piece.type == PAWN &&
                 move->dst_row == board->ep_row && move->dst_col == board->ep_col) {
             if (move->dst_row > move->src_row &&
-                    get_piece(board, move->dst_row - 1, move->dst_col, &piece) == 1 &&
+                    cgc_get_piece(board, move->dst_row - 1, move->dst_col, &piece) == 1 &&
                     piece.type == PAWN && piece.color != move->piece.color)
-                clear_piece(board, move->dst_row - 1, move->dst_col);
+                cgc_clear_piece(board, move->dst_row - 1, move->dst_col);
             else if (move->src_row > move->dst_row &&
-                    get_piece(board, move->dst_row + 1, move->dst_col, &piece) == 1 &&
+                    cgc_get_piece(board, move->dst_row + 1, move->dst_col, &piece) == 1 &&
                     piece.type == PAWN && piece.color != move->piece.color)
-                clear_piece(board, move->dst_row + 1, move->dst_col);
+                cgc_clear_piece(board, move->dst_row + 1, move->dst_col);
         }
 
         if (move->piece.type == PAWN && (move->dst_row - move->src_row == 2 ||
@@ -615,17 +615,17 @@ make_move(struct bitboard *board, struct move *move)
         }
     }
 
-    if (is_stalemate(board, move->piece.color))
+    if (cgc_is_stalemate(board, move->piece.color))
         return STALEMATE;
 
-    piece = make_piece(move->piece.color == WHITE ? BLACK : WHITE, KING);
+    piece = cgc_make_piece(move->piece.color == WHITE ? BLACK : WHITE, KING);
     b = board->boards[PIECE_TO_INDEX(piece)];
     for (i = 0; i < BOARD_SIZE * BOARD_SIZE; i++)
         if (b & (1ull << i))
             break;
 
-    if (is_at_risk(board, piece.color, i / BOARD_SIZE, i % BOARD_SIZE, 0) == 1) {
-        if (is_checkmate(board, piece.color, i / BOARD_SIZE, i % BOARD_SIZE))
+    if (cgc_is_at_risk(board, piece.color, i / BOARD_SIZE, i % BOARD_SIZE, 0) == 1) {
+        if (cgc_is_checkmate(board, piece.color, i / BOARD_SIZE, i % BOARD_SIZE))
             return CHECKMATE;
         else
             return CHECK;
@@ -635,7 +635,7 @@ make_move(struct bitboard *board, struct move *move)
 }
 
 int
-parse_san(struct bitboard *board, enum color color, char *san, struct move *move)
+cgc_parse_san(struct bitboard *board, enum color color, char *san, struct move *move)
 {
     char c;
     int processed_capture = 0;
@@ -651,13 +651,13 @@ parse_san(struct bitboard *board, enum color color, char *san, struct move *move
         DONE
     } state = PIECE;
 
-    memset(move, '\0', sizeof(struct move));
+    cgc_memset(move, '\0', sizeof(struct move));
     move->piece.color = color;
     move->src_row = move->src_col = -1;
     move->dst_row = move->dst_col = -1;
 
     // Castle kingside
-    if (strcmp(san, "O-O") == 0) {
+    if (cgc_strcmp(san, "O-O") == 0) {
         move->piece.type = KING;
         move->is_castle_kingside = 1;
         move->src_row = color ? 7 : 0;
@@ -668,7 +668,7 @@ parse_san(struct bitboard *board, enum color color, char *san, struct move *move
         return 0;
     }
 
-    if (strcmp(san, "O-O-O") == 0) {
+    if (cgc_strcmp(san, "O-O-O") == 0) {
         move->piece.type = KING;
         move->is_castle_queenside = 1;
         move->src_row = color ? 7 : 0;
@@ -777,7 +777,7 @@ parse_san(struct bitboard *board, enum color color, char *san, struct move *move
             break;
         case CHECKMATE:
             if (c == '#')
-                move->is_checkmate = 1;
+                move->cgc_is_checkmate = 1;
 
             state = DONE;
             break;
@@ -792,7 +792,7 @@ parse_san(struct bitboard *board, enum color color, char *san, struct move *move
         return -1;
 
     if (move->src_row == -1 || move->dst_col == -1)
-        if (infer_src(board, move) != 0)
+        if (cgc_infer_src(board, move) != 0)
             return -1;
 
     return 0;

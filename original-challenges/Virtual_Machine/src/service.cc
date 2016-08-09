@@ -38,52 +38,52 @@ extern "C"
 #include "vm.h"
 #include "peripheral.h"
 
-void InitRNG( void *secret_page )
+void cgc_InitRNG( void *secret_page )
 {
-	seed_prng_array( (uint32_t*)secret_page, 32 );
+	cgc_seed_prng_array( (cgc_uint32_t*)secret_page, 32 );
 }
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
 {
 	void *secret_page = (void *)secret_page_i;
 
-	InitRNG( secret_page );
+	cgc_InitRNG( secret_page );
 
-	CCLF oLoader;
+	cgc_CCLF oLoader;
 
-	uint32_t fileSize;
+	cgc_uint32_t fileSize;
 
-	ReadBytes( (uint8_t*)&fileSize, 4 );
+	cgc_ReadBytes( (cgc_uint8_t*)&fileSize, 4 );
 
-	if ( fileSize > CCLF::MAX_LOADER_FILE_SIZE )
+	if ( fileSize > cgc_CCLF::MAX_LOADER_FILE_SIZE )
 	{
-		printf( "Exiting\n" );
+		cgc_printf( "Exiting\n" );
 		return (-1);
 	}
 
-	uint8_t *pLoaderFile = new uint8_t[fileSize];
+	cgc_uint8_t *pLoaderFile = new cgc_uint8_t[fileSize];
 
-	ReadBytes( pLoaderFile, fileSize );
+	cgc_ReadBytes( pLoaderFile, fileSize );
 
 	// Begin loading
-	if ( !oLoader.LoadFile( pLoaderFile, fileSize ) )
+	if ( !oLoader.cgc_LoadFile( pLoaderFile, fileSize ) )
 	{
-		printf( "Exiting\n" );
+		cgc_printf( "Exiting\n" );
 		return (-1);
 	}
 
 	// Delete file -- not needed anymore
 	delete pLoaderFile;
 
-	CVM oVM( secret_page );
+	cgc_CVM oVM( secret_page );
 
-	if ( !oVM.Init( &oLoader ) )
+	if ( !oVM.cgc_Init( &oLoader ) )
 	{
-		printf( "Exiting\n" );
+		cgc_printf( "Exiting\n" );
 		return (-1);
 	}
 
-	oVM.Run( );
+	oVM.cgc_Run( );
 
 	return 0;
 }

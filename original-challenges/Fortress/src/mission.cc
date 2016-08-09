@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,121 +28,121 @@
 extern int g_randIdx;
 extern char *g_rand;
 
-CMission::CMission(const char *name, const CRequirement &req, const CReward &reward) : m_req(req), m_reward(reward), m_avail(true), m_successRate(0)
+cgc_CMission::cgc_CMission(const char *name, const cgc_CRequirement &req, const cgc_CReward &reward) : m_req(req), m_reward(reward), m_avail(true), m_successRate(0)
 {
-    m_name = strndup(name, k_maxNameLength);
+    m_name = cgc_strndup(name, k_maxNameLength);
 }
 
-CMission::~CMission()
+cgc_CMission::~cgc_CMission()
 {
-    free(m_name);
+    cgc_free(m_name);
     delete m_exps;
 }
 
-void CMission::SetRequirement(const CRequirement &req)
+void cgc_CMission::cgc_SetRequirement(const cgc_CRequirement &req)
 {
     m_req = req;
 }
 
-CRequirement& CMission::GetRequirement()
+cgc_CRequirement& cgc_CMission::cgc_GetRequirement()
 {
     return m_req;
 }
 
-void CMission::SetReward(const CReward &reward)
+void cgc_CMission::cgc_SetReward(const cgc_CReward &reward)
 {
     m_reward = reward;
 }
 
-CReward& CMission::GetReward()
+cgc_CReward& cgc_CMission::cgc_GetReward()
 {
     return m_reward;
 }
 
-bool CMission::IsAvail()
+bool cgc_CMission::cgc_IsAvail()
 {
     return m_avail;
 }
 
-const char* CMission::GetName()
+const char* cgc_CMission::cgc_GetName()
 {
     return m_name;
 }
 
-int CMission::GetReqLevel()
+int cgc_CMission::cgc_GetReqLevel()
 {
     return m_req.m_level;
 }
 
-int CMission::GetReqGroup()
+int cgc_CMission::cgc_GetReqGroup()
 {
     return m_req.m_group;
 }
 
-int CMission::GetReqSupply()
+int cgc_CMission::cgc_GetReqSupply()
 {
     return m_req.m_supply;
 }
 
-int CMission::GetDuration()
+int cgc_CMission::cgc_GetDuration()
 {
     return m_req.m_duration;
 }
 
-char* CMission::GetReqTypeString()
+char* cgc_CMission::cgc_GetReqTypeString()
 {
-    return CRequirement::ReqTypeToString(m_req.m_type);
+    return cgc_CRequirement::cgc_ReqTypeToString(m_req.m_type);
 }
 
-CRequirement::Type CMission::EvalCounters(const CList<CExplorer *> &exps)
+cgc_CRequirement::Type cgc_CMission::cgc_EvalCounters(const cgc_CList<cgc_CExplorer *> &exps)
 {
     int i;
-    CRequirement::Type type, all = CRequirement::Type::NOTHING;
-    for (i = 0; i < exps.GetSize(); i++)
-        all |= exps.GetAt(i)->GetCounters();
+    cgc_CRequirement::Type type, all = cgc_CRequirement::Type::NOTHING;
+    for (i = 0; i < exps.cgc_GetSize(); i++)
+        all |= exps.cgc_GetAt(i)->cgc_GetCounters();
     type = m_req.m_type & (~all);
     return type;
 }
 
-void CMission::Execute(const CList<CExplorer *> &explorers)
+void cgc_CMission::cgc_Execute(const cgc_CList<cgc_CExplorer *> &explorers)
 {
     m_avail = false;
-    m_exps = new CList<CExplorer *>(explorers);
+    m_exps = new cgc_CList<cgc_CExplorer *>(explorers);
     int i;
-    for (i = 0; i < m_exps->GetSize(); i++)
-        m_exps->GetAt(i)->SetAvail(false);
+    for (i = 0; i < m_exps->cgc_GetSize(); i++)
+        m_exps->cgc_GetAt(i)->cgc_SetAvail(false);
 }
 
-bool CMission::Complete()
+bool cgc_CMission::cgc_Complete()
 {
-    CMissionEstimate* est = this->Check(*m_exps);
+    cgc_CMissionEstimate* est = this->cgc_Check(*m_exps);
     int i, r = (g_rand[g_randIdx % 4096] & 0xFF) % 101;
     g_randIdx += 2;
     bool ret = false;
-    if (est->GetSuccessRate() != 0 && r <= est->GetSuccessRate())
+    if (est->cgc_GetSuccessRate() != 0 && r <= est->cgc_GetSuccessRate())
         ret = true;
-    for (i = 0; i < m_exps->GetSize(); i++)
-        m_exps->GetAt(i)->SetAvail(true);
+    for (i = 0; i < m_exps->cgc_GetSize(); i++)
+        m_exps->cgc_GetAt(i)->cgc_SetAvail(true);
     delete est;
     return ret;
 }
 
-CMissionEstimate* CMission::Check(const CList<CExplorer *> &explorers)
+cgc_CMissionEstimate* cgc_CMission::cgc_Check(const cgc_CList<cgc_CExplorer *> &explorers)
 {
-    CMissionEstimate *est = new CMissionEstimate();
-    est->m_missing = EvalCounters(explorers);
+    cgc_CMissionEstimate *est = new cgc_CMissionEstimate();
+    est->m_missing = cgc_EvalCounters(explorers);
     est->m_groupNeeded = m_req.m_group;
-    est->m_groupSupplied = explorers.GetSize();
+    est->m_groupSupplied = explorers.cgc_GetSize();
     est->m_successRate = 100;
-    if (est->m_missing != CRequirement::Type::NOTHING)
+    if (est->m_missing != cgc_CRequirement::Type::NOTHING)
     {
         int n = __builtin_popcount(static_cast<int>(est->m_missing));
         est->m_successRate -= n * 25;
     }
     int i;
-    for (i = 0; i < explorers.GetSize(); i++)
+    for (i = 0; i < explorers.cgc_GetSize(); i++)
     {
-        int lvl = explorers.GetAt(i)->GetLevel();
+        int lvl = explorers.cgc_GetAt(i)->cgc_GetLevel();
         if (lvl < m_req.m_level)
             est->m_successRate -= ((m_req.m_level - lvl) * 5);
         est->m_successRate += 5;

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,14 +32,14 @@ const double LN2 = 0.6931471805599453;
 // todo why this hash constant
 const unsigned int HASH_CONST = 0x9747b28c;
 
-zoom_filter_t * new_zoom_filter(int num_elements){
+cgc_zoom_filter_t * cgc_new_zoom_filter(int num_elements){
 	if(num_elements == 0){
 
  
 		return NULL;
 	}
 	double entry_bits;
-	zoom_filter_t *zf = malloc(sizeof(zoom_filter_t));
+	cgc_zoom_filter_t *zf = cgc_malloc(sizeof(cgc_zoom_filter_t));
 	// todo check for null here
 	if(zf == NULL)
 		return NULL;
@@ -55,8 +55,8 @@ zoom_filter_t * new_zoom_filter(int num_elements){
 	zf->hashes = (unsigned int)(LN2*entry_bits);
 
 	zf->data_len = ((zf->num_bits / 8 )+1 )* sizeof(unsigned char);
-	// todo figure out why calloc broke here...
-	zf->data = (unsigned char *) calloc(1, zf->data_len);
+	// todo figure out why cgc_calloc broke here...
+	zf->data = (unsigned char *) cgc_calloc(1, zf->data_len);
 	if(zf->data == NULL){
 
         	
@@ -70,31 +70,31 @@ zoom_filter_t * new_zoom_filter(int num_elements){
 	return zf;
 }
 
-unsigned int get_sample_n_bits(size_t sz){
+unsigned int cgc_get_sample_n_bits(cgc_size_t sz){
 	unsigned int nbits = 0;
-	zoom_filter_t *zft = new_zoom_filter(n_elements_from_sampsz(sz));
+	cgc_zoom_filter_t *zft = cgc_new_zoom_filter(cgc_n_elements_from_sampsz(sz));
 
 	if(zft == NULL)
 		return 0;
 	nbits = zft->num_bits;
-	zoom_free(zft);
+	cgc_zoom_free(zft);
 	return nbits;
 }
 
-size_t n_elements_from_sampsz(size_t sz){
+cgc_size_t cgc_n_elements_from_sampsz(cgc_size_t sz){
 	double mult = 1.25;
-	size_t s = (size_t) (((double) sz) * mult);
+	cgc_size_t s = (cgc_size_t) (((double) sz) * mult);
 	return s;
 
 }
 
-zoom_filter_t * load_zoom_filter(char *fromwire, unsigned int num_bits){
-	size_t encoded_sz = strlen(fromwire);
-	char *decstr = decode(fromwire, encoded_sz);
+cgc_zoom_filter_t * cgc_load_zoom_filter(char *fromwire, unsigned int num_bits){
+	cgc_size_t encoded_sz = cgc_strlen(fromwire);
+	char *decstr = cgc_decode(fromwire, encoded_sz);
 	if(decstr == NULL)
 		return NULL;
-	size_t datalen = strlen(fromwire)/BLOCK_SZ; 
-	zoom_filter_t *zf = malloc(sizeof(zoom_filter_t));
+	cgc_size_t datalen = cgc_strlen(fromwire)/BLOCK_SZ; 
+	cgc_zoom_filter_t *zf = cgc_malloc(sizeof(cgc_zoom_filter_t));
 	// todo check math based on new_zoom_filter_above
 	zf->data_len = datalen;
 
@@ -109,13 +109,13 @@ zoom_filter_t * load_zoom_filter(char *fromwire, unsigned int num_bits){
 
 }
 
-void zoom_free(zoom_filter_t *zf){
-	free(zf->data);
-	free(zf);
+void cgc_zoom_free(cgc_zoom_filter_t *zf){
+	cgc_free(zf->data);
+	cgc_free(zf);
 }
 
 // todo replace with own variant not mummur
-unsigned int crazy_hash(const char * key, size_t sz, unsigned int seed){
+unsigned int cgc_crazy_hash(const char * key, cgc_size_t sz, unsigned int seed){
 	static const unsigned int c1 = 0x1239dace;//0xcc9e2d51;
 	static const unsigned int c2 = 0x98ba38de;//0x1b873593;
 	static const unsigned int r1 = 15;
@@ -161,11 +161,11 @@ unsigned int crazy_hash(const char * key, size_t sz, unsigned int seed){
  	return hash;
 }
 
-hash_pair_t * hash_pair_buf(char *input, size_t buf_sz){
-	unsigned int h1 = crazy_hash(input, buf_sz, HASH_CONST);
-	unsigned int h2 = crazy_hash(input, buf_sz, h1);
+cgc_hash_pair_t * cgc_hash_pair_buf(char *input, cgc_size_t buf_sz){
+	unsigned int h1 = cgc_crazy_hash(input, buf_sz, HASH_CONST);
+	unsigned int h2 = cgc_crazy_hash(input, buf_sz, h1);
 
-	hash_pair_t * hp = malloc(sizeof(hash_pair_t));
+	cgc_hash_pair_t * hp = cgc_malloc(sizeof(cgc_hash_pair_t));
 	// todo check for bad alloc
 	hp->h1 = h1;
 	hp->h2 = h2;
@@ -173,7 +173,7 @@ hash_pair_t * hash_pair_buf(char *input, size_t buf_sz){
 
 }
 
-void zoom_add(hash_pair_t * hp, zoom_filter_t *zf){
+void cgc_zoom_add(cgc_hash_pair_t * hp, cgc_zoom_filter_t *zf){
 
 
 	unsigned int x;
@@ -201,7 +201,7 @@ void zoom_add(hash_pair_t * hp, zoom_filter_t *zf){
 }
 
 
-int zoom_check(hash_pair_t *hp, zoom_filter_t *zf){
+int cgc_zoom_check(cgc_hash_pair_t *hp, cgc_zoom_filter_t *zf){
 	int results = 0;
 
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,9 +26,9 @@
 #include "vfs.h"
 
 int
-vfs_init(struct vfs *vfs)
+cgc_vfs_init(struct vfs *vfs)
 {
-    if ((vfs->root = calloc(sizeof(struct directory))) == NULL)
+    if ((vfs->root = cgc_calloc(sizeof(struct directory))) == NULL)
         return -1;
 
     // Unnecessary, but do this explicitly anyway
@@ -37,83 +37,83 @@ vfs_init(struct vfs *vfs)
 }
 
 static void
-directory_destroy(struct directory *dir)
+cgc_directory_destroy(struct directory *dir)
 {
     struct file *cur_file, *n_file;
     struct directory *cur_dir, *n_dir;
 
     list_for_each_entry_safe(struct file, list, &dir->files, n_file, cur_file) {
-        free(cur_file->contents);
-        free(cur_file);
+        cgc_free(cur_file->contents);
+        cgc_free(cur_file);
     }
 
     list_for_each_entry_safe(struct directory, list, &dir->subdirectories, n_dir, cur_dir)
-        directory_destroy(cur_dir);
+        cgc_directory_destroy(cur_dir);
 
-    free(dir);
+    cgc_free(dir);
 }
 
 void
-vfs_destroy(struct vfs *vfs)
+cgc_vfs_destroy(struct vfs *vfs)
 {
-    directory_destroy(vfs->root);
+    cgc_directory_destroy(vfs->root);
 }
 
 static int
-dir_eq(const struct list_node *dir_, void *name_)
+cgc_dir_eq(const struct list_node *dir_, void *name_)
 {
     const struct directory *dir = list_entry(struct directory, list, dir_);
     const char *name = (const char *)name_;
 
-    return strncmp(dir->name, name, MAX_FILE_NAME_LENGTH) == 0;
+    return cgc_strncmp(dir->name, name, MAX_FILE_NAME_LENGTH) == 0;
 }
 
 static int
-file_eq(const struct list_node *file_, void *name_)
+cgc_file_eq(const struct list_node *file_, void *name_)
 {
     const struct file *file = list_entry(struct file, list, file_);
     const char *name = (const char *)name_;
 
-    return strncmp(file->name, name, MAX_FILE_NAME_LENGTH) == 0;
+    return cgc_strncmp(file->name, name, MAX_FILE_NAME_LENGTH) == 0;
 }
 
 struct directory *
-lookup_dir(const struct vfs *vfs, const char *path, int follow_links)
+cgc_lookup_dir(const struct vfs *vfs, const char *path, int follow_links)
 {
     struct directory *ret = NULL;
     struct directory *dir = vfs->root;
     struct list *files;
     struct file *file;
-    size_t path_len;
+    cgc_size_t path_len;
     char *path_dup, *cur;
 
-    path_len = strlen(path);
+    path_len = cgc_strlen(path);
     if (path_len == 0)
         return vfs->root;
 
-    if ((path_dup = calloc(path_len + 1)) == NULL)
+    if ((path_dup = cgc_calloc(path_len + 1)) == NULL)
         return NULL;
 
-    strncpy(path_dup, path, path_len);
-    for (cur = strtok(path_dup, '/'); cur != NULL; cur = strtok(NULL, '/'))
+    cgc_strncpy(path_dup, path, path_len);
+    for (cur = cgc_strtok(path_dup, '/'); cur != NULL; cur = cgc_strtok(NULL, '/'))
     {
         if (dir == NULL)
             break;
 
-        if (strcmp(cur, ".") == 0)
+        if (cgc_strcmp(cur, ".") == 0)
             continue;
 
-        if (strcmp(cur, "..") == 0) {
+        if (cgc_strcmp(cur, "..") == 0) {
             dir = dir->parent;
             continue;
         }
 
         files = &dir->files;
         if ((dir = list_find_entry(struct directory, list, &dir->subdirectories,
-                        dir_eq, (void *)cur)) == NULL) {
+                        cgc_dir_eq, (void *)cur)) == NULL) {
             if (follow_links && ((file = list_find_entry(struct file, list, files,
-                            file_eq, (void *)cur)) != NULL) && file->is_symlink) {
-                dir = lookup_dir(vfs, (const char *)file->contents, follow_links);
+                            cgc_file_eq, (void *)cur)) != NULL) && file->is_symlink) {
+                dir = cgc_lookup_dir(vfs, (const char *)file->contents, follow_links);
             } else {
                 goto free_path;
             }
@@ -123,62 +123,62 @@ lookup_dir(const struct vfs *vfs, const char *path, int follow_links)
     ret = dir;
 
 free_path:
-    free(path_dup);
+    cgc_free(path_dup);
     return ret;
 }
 
 struct file *
-lookup_file(const struct vfs *vfs, const char *path, int follow_links)
+cgc_lookup_file(const struct vfs *vfs, const char *path, int follow_links)
 {
     struct file *ret = NULL;
     struct directory *dir = vfs->root;
-    size_t path_len;
+    cgc_size_t path_len;
     char *path_dup, *name;
 
-    path_len = strlen(path);
+    path_len = cgc_strlen(path);
     if (path[path_len - 1] == '/')
         return NULL;
 
-    if ((path_dup = calloc(path_len + 1)) == NULL)
+    if ((path_dup = cgc_calloc(path_len + 1)) == NULL)
         return NULL;
 
-    strncpy(path_dup, path, path_len + 1);
+    cgc_strncpy(path_dup, path, path_len + 1);
 
-    if ((name = strrchr(path_dup, '/')) != NULL) {
+    if ((name = cgc_strrchr(path_dup, '/')) != NULL) {
         *name++ = '\0';
-        dir = lookup_dir(vfs, path_dup, follow_links);
+        dir = cgc_lookup_dir(vfs, path_dup, follow_links);
     } else {
         name = path_dup;
     }
 
     if (dir != NULL)
-        ret = list_find_entry(struct file, list, &dir->files, file_eq, (void *)name);
+        ret = list_find_entry(struct file, list, &dir->files, cgc_file_eq, (void *)name);
 
-    free(path_dup);
-    return (ret && follow_links && ret->is_symlink) ? lookup_file(vfs, (const char *)ret->contents, follow_links) : ret;
+    cgc_free(path_dup);
+    return (ret && follow_links && ret->is_symlink) ? cgc_lookup_file(vfs, (const char *)ret->contents, follow_links) : ret;
 }
 
 char *
-get_path_from_dir(const struct vfs *vfs, const struct directory *dir)
+cgc_get_path_from_dir(const struct vfs *vfs, const struct directory *dir)
 {
     char *tmp, *ret;
-    size_t cur_len, path_len = 1;
+    cgc_size_t cur_len, path_len = 1;
     const struct directory *cur = dir;
 
-    if ((ret = calloc(1)) == NULL)
+    if ((ret = cgc_calloc(1)) == NULL)
         return NULL;
 
     while (cur != vfs->root) {
-        cur_len = strnlen(cur->name, MAX_FILE_NAME_LENGTH);
-        if ((tmp = realloc(ret, path_len + cur_len + 1)) == NULL) {
-            free(ret);
+        cur_len = cgc_strnlen(cur->name, MAX_FILE_NAME_LENGTH);
+        if ((tmp = cgc_realloc(ret, path_len + cur_len + 1)) == NULL) {
+            cgc_free(ret);
             return NULL;
         }
         ret = tmp;
 
-        memmove(ret + cur_len + 1, ret, path_len);
+        cgc_memmove(ret + cur_len + 1, ret, path_len);
         ret[cur_len] = '/';
-        memcpy(ret, cur->name, cur_len);
+        cgc_memcpy(ret, cur->name, cur_len);
 
         path_len += cur_len + 1;
         cur = cur->parent;
@@ -186,14 +186,14 @@ get_path_from_dir(const struct vfs *vfs, const struct directory *dir)
 
     // Prepend leading slash
     if (path_len > 0) {
-        if ((tmp = realloc(ret, path_len + 1)) == NULL) {
-            free(ret);
+        if ((tmp = cgc_realloc(ret, path_len + 1)) == NULL) {
+            cgc_free(ret);
             return NULL;
         }
         ret = tmp;
-        memmove(ret + 1, ret, path_len);
+        cgc_memmove(ret + 1, ret, path_len);
     } else {
-        if ((ret = calloc(2)) == NULL)
+        if ((ret = cgc_calloc(2)) == NULL)
             return NULL;
     }
     ret[0] = '/';
@@ -202,48 +202,48 @@ get_path_from_dir(const struct vfs *vfs, const struct directory *dir)
 }
 
 char *
-get_path_from_file(const struct vfs *vfs, const struct file *file)
+cgc_get_path_from_file(const struct vfs *vfs, const struct file *file)
 {
     char *tmp, *ret;
-    size_t name_len;
+    cgc_size_t name_len;
 
-    name_len = strnlen(file->name, MAX_FILE_NAME_LENGTH);
-    if ((ret = get_path_from_dir(vfs, file->parent)) == NULL)
+    name_len = cgc_strnlen(file->name, MAX_FILE_NAME_LENGTH);
+    if ((ret = cgc_get_path_from_dir(vfs, file->parent)) == NULL)
         return NULL;
 
-    if ((tmp = realloc(ret, strlen(ret) + name_len + 1)) == NULL) {
-        free(ret);
+    if ((tmp = cgc_realloc(ret, cgc_strlen(ret) + name_len + 1)) == NULL) {
+        cgc_free(ret);
         return NULL;
     }
     ret = tmp;
 
-    strncat(ret, file->name, name_len);
+    cgc_strncat(ret, file->name, name_len);
     return ret;
 }
 
-uid_t
-get_owner(const struct vfs *vfs, const char *path)
+cgc_uid_t
+cgc_get_owner(const struct vfs *vfs, const char *path)
 {
     struct directory *dir;
     struct file *file;
 
-    if ((dir = lookup_dir(vfs, path, 0)) != NULL)
+    if ((dir = cgc_lookup_dir(vfs, path, 0)) != NULL)
         return dir->owner;
-    else if ((file = lookup_file(vfs, path, 0)) != NULL)
+    else if ((file = cgc_lookup_file(vfs, path, 0)) != NULL)
         return file->owner;
         
     return INVALID_UID;
 }
 
 int
-read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char **contents)
+cgc_read_file(const struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char **contents)
 {
     struct file *file;
 
     // We can read any file in our current model, so suppress unused warning
     (void)(user);
 
-    if ((file = lookup_file(vfs, path, 1)) == NULL)
+    if ((file = cgc_lookup_file(vfs, path, 1)) == NULL)
         return -1;
 
     if (contents != NULL)
@@ -253,15 +253,15 @@ read_file(const struct vfs *vfs, uid_t user, const char *path, unsigned char **c
 }
 
 int
-write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *contents, size_t size)
+cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, cgc_size_t size)
 {
     struct file *file;
 
-    if ((file = lookup_file(vfs, path, 1)) == NULL) {
-        if ((file = create_file(vfs, path)) != NULL &&
+    if ((file = cgc_lookup_file(vfs, path, 1)) == NULL) {
+        if ((file = cgc_create_file(vfs, path)) != NULL &&
                 (user != file->owner && user != ROOT_UID)) {
 
-            delete_file(vfs, ROOT_UID, file);
+            cgc_delete_file(vfs, ROOT_UID, file);
             return -1;
         }
     }
@@ -272,7 +272,7 @@ write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *content
     if (user != file->owner && user != ROOT_UID)
         return -1;
 
-    free(file->contents);
+    cgc_free(file->contents);
     file->contents = contents;
     file->size = size;
 
@@ -280,37 +280,37 @@ write_file(struct vfs *vfs, uid_t user, const char *path, unsigned char *content
 }
 
 struct directory *
-create_dir(struct vfs *vfs, const char *path)
+cgc_create_dir(struct vfs *vfs, const char *path)
 {
     struct directory *ret = NULL;
     struct directory *dir = vfs->root;
-    size_t path_len;
+    cgc_size_t path_len;
     char *path_dup, *name;
 
-    path_len = strlen(path);
-    if ((path_dup = calloc(path_len + 1)) == NULL)
+    path_len = cgc_strlen(path);
+    if ((path_dup = cgc_calloc(path_len + 1)) == NULL)
         return NULL;
 
-    strncpy(path_dup, path, path_len + 1);
+    cgc_strncpy(path_dup, path, path_len + 1);
     while (path_dup[path_len - 1] == '/')
         path_dup[(path_len--) - 1] = '\0';
 
-    if ((name = strrchr(path_dup, '/')) != NULL) {
+    if ((name = cgc_strrchr(path_dup, '/')) != NULL) {
         *name++ = '\0';
-        dir = lookup_dir(vfs, path_dup, 1);
+        dir = cgc_lookup_dir(vfs, path_dup, 1);
     } else {
         name = path_dup;
     }
 
     if (dir != NULL)
-        ret = create_dir_in_dir(vfs, dir, name);
+        ret = cgc_create_dir_in_dir(vfs, dir, name);
 
-    free(path_dup);
+    cgc_free(path_dup);
     return ret;
 }
 
 struct directory *
-create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
+cgc_create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
 {
     struct directory *ret;
 
@@ -318,17 +318,17 @@ create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
     (void)(vfs);
 
     // Ensure we can't create a directory with the same name as a file
-    if (list_find(&dir->files, file_eq, (void *)name) != NULL)
+    if (cgc_list_find(&dir->files, cgc_file_eq, (void *)name) != NULL)
         return NULL;
 
     // If the directory already exists, return it
     if ((ret = list_find_entry(struct directory, list, &dir->subdirectories,
-                    dir_eq, (void *)name)) != NULL) {
+                    cgc_dir_eq, (void *)name)) != NULL) {
         return ret;
     }
 
-    if ((ret = calloc(sizeof(struct directory))) != NULL) {
-        strncpy(ret->name, name, MAX_FILE_NAME_LENGTH);
+    if ((ret = cgc_calloc(sizeof(struct directory))) != NULL) {
+        cgc_strncpy(ret->name, name, MAX_FILE_NAME_LENGTH);
         ret->owner = dir->owner;
         ret->parent = dir;
         list_push_entry_front(struct directory, list, &dir->subdirectories, ret);
@@ -338,37 +338,37 @@ create_dir_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
 }
 
 struct file *
-create_file(struct vfs *vfs, const char *path)
+cgc_create_file(struct vfs *vfs, const char *path)
 {
     struct file *ret = NULL;
     struct directory *dir = vfs->root;
-    size_t path_len;
+    cgc_size_t path_len;
     char *path_dup, *name;
 
-    path_len = strlen(path);
+    path_len = cgc_strlen(path);
     if (path[path_len - 1] == '/')
         return NULL;
 
-    if ((path_dup = calloc(path_len + 1)) == NULL)
+    if ((path_dup = cgc_calloc(path_len + 1)) == NULL)
         return NULL;
 
-    strncpy(path_dup, path, path_len + 1);
-    if ((name = strrchr(path_dup, '/')) != NULL) {
+    cgc_strncpy(path_dup, path, path_len + 1);
+    if ((name = cgc_strrchr(path_dup, '/')) != NULL) {
         *name++ = '\0';
-        dir = lookup_dir(vfs, path_dup, 1);
+        dir = cgc_lookup_dir(vfs, path_dup, 1);
     } else {
         name = path_dup;
     }
 
     if (dir != NULL)
-        ret = create_file_in_dir(vfs, dir, name);
+        ret = cgc_create_file_in_dir(vfs, dir, name);
 
-    free(path_dup);
+    cgc_free(path_dup);
     return ret;
 }
 
 struct file *
-create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
+cgc_create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
 {
     struct file *ret;
 
@@ -376,17 +376,17 @@ create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
     (void)vfs;
 
     // Ensure we can't create a file with the same name as a directory
-    if (list_find(&dir->subdirectories, dir_eq, (void *)name) != NULL)
+    if (cgc_list_find(&dir->subdirectories, cgc_dir_eq, (void *)name) != NULL)
         return NULL;
 
     // If file already exists, return it
     if ((ret = list_find_entry(struct file, list, &dir->files,
-                    file_eq, (void *)name)) != NULL) {
+                    cgc_file_eq, (void *)name)) != NULL) {
         return ret;
     }
 
-    if ((ret = calloc(sizeof(struct file))) != NULL) {
-        strncpy(ret->name, name, MAX_FILE_NAME_LENGTH);
+    if ((ret = cgc_calloc(sizeof(struct file))) != NULL) {
+        cgc_strncpy(ret->name, name, MAX_FILE_NAME_LENGTH);
         ret->owner = dir->owner;
         ret->parent = dir;
         list_push_entry_front(struct file, list, &dir->files, ret);
@@ -396,31 +396,31 @@ create_file_in_dir(struct vfs *vfs, struct directory *dir, const char *name)
 }
 
 int
-create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *dst_path)
+cgc_create_symlink(struct vfs *vfs, cgc_uid_t user, const char *src_path, const char *dst_path)
 {
     int ret = -1;
     struct file *file, *cur;
     unsigned char *contents;
     struct directory *dir = vfs->root;
-    size_t src_path_len, dst_path_len;
+    cgc_size_t src_path_len, dst_path_len;
     char *path_dup, *name;
-    uid_t owner;
+    cgc_uid_t owner;
 
-    src_path_len = strlen(src_path);
+    src_path_len = cgc_strlen(src_path);
     if (src_path[src_path_len - 1] == '/')
         return -1;
 
-    if (lookup_file(vfs, src_path, 0) != NULL)
+    if (cgc_lookup_file(vfs, src_path, 0) != NULL)
         return -1;
 
-    if ((path_dup = calloc(src_path_len + 1)) == NULL)
+    if ((path_dup = cgc_calloc(src_path_len + 1)) == NULL)
         return -1;
 
-    strncpy(path_dup, src_path, src_path_len + 1);
-    if ((name = strrchr(path_dup, '/')) != NULL) {
+    cgc_strncpy(path_dup, src_path, src_path_len + 1);
+    if ((name = cgc_strrchr(path_dup, '/')) != NULL) {
         *name++ = '\0';
 #ifdef PATCHED
-        dir = lookup_dir(vfs, path_dup, 1);
+        dir = cgc_lookup_dir(vfs, path_dup, 1);
         if (dir == NULL)
             goto free_path;
 
@@ -429,7 +429,7 @@ create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *ds
         // Suppress unused variable warning
         (void)(dir);
 
-        owner = get_owner(vfs, path_dup);
+        owner = cgc_get_owner(vfs, path_dup);
         if (owner == INVALID_UID)
             goto free_path;
 #endif
@@ -441,13 +441,13 @@ create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *ds
     if (user != owner && user != ROOT_UID)
         goto free_path;
 
-    dst_path_len = strlen(dst_path);
-    if ((contents = calloc(dst_path_len + 1)) == NULL)
+    dst_path_len = cgc_strlen(dst_path);
+    if ((contents = cgc_calloc(dst_path_len + 1)) == NULL)
         goto free_path;
 
-    strncpy((char *)contents, dst_path, dst_path_len + 1);
+    cgc_strncpy((char *)contents, dst_path, dst_path_len + 1);
 
-    file = create_file(vfs, src_path);
+    file = cgc_create_file(vfs, src_path);
     if (file == NULL)
         goto free_path;
 
@@ -458,12 +458,12 @@ create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *ds
 
 #ifdef PATCHED
     // Detect cyclical symlinks
-    for (cur = lookup_file(vfs, (char *)file->contents, 0);
+    for (cur = cgc_lookup_file(vfs, (char *)file->contents, 0);
          cur && cur->is_symlink;
-         cur = lookup_file(vfs, (char *)cur->contents, 0)) {
+         cur = cgc_lookup_file(vfs, (char *)cur->contents, 0)) {
 
         if (cur == file) {
-            delete_file(vfs, user, file);
+            cgc_delete_file(vfs, user, file);
             goto free_path;
         }
     }
@@ -475,12 +475,12 @@ create_symlink(struct vfs *vfs, uid_t user, const char *src_path, const char *ds
     ret = 0;
 
 free_path:
-    free(path_dup);
+    cgc_free(path_dup);
     return ret;
 }
 
 int
-delete_file(struct vfs *vfs, uid_t user, struct file *file)
+cgc_delete_file(struct vfs *vfs, cgc_uid_t user, struct file *file)
 {
     // Suppress unused warning
     (void)vfs;
@@ -490,8 +490,8 @@ delete_file(struct vfs *vfs, uid_t user, struct file *file)
         return -1;
 
     list_remove_entry(struct file, list, &file->parent->files, file);
-    free(file->contents);
-    free(file);
+    cgc_free(file->contents);
+    cgc_free(file);
 
     return 0;
 }

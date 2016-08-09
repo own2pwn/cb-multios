@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,15 +23,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *strdup(const char *s1)
+char *cgc_strdup(const char *s1)
 {
-  size_t len = strlen(s1);
-  char *cpy = malloc(len + 1);
+  cgc_size_t len = cgc_strlen(s1);
+  char *cpy = cgc_malloc(len + 1);
 
   if (!cpy)
     return NULL;
 
-  memcpy(cpy, s1, len);
+  cgc_memcpy(cpy, s1, len);
   cpy[len] = '\0';
 
   return cpy;

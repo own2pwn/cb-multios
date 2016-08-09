@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -26,7 +26,7 @@
 #ifndef SHEAP_H
 #define SHEAP_H
 
-void * malloc(size_t s);
-void free(void *p);
-void malloc_init();
+void * cgc_malloc(cgc_size_t s);
+void cgc_free(void *p);
+void cgc_malloc_init();
 #endif

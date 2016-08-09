@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,7 +26,7 @@
 
 #define MAX_LENGTH (0x10000000)
 
-static int enlarge(strio_t *s, int min)
+static int cgc_enlarge(cgc_strio_t *s, int min)
 {
     char *buf;
     int new_length = s->length;
@@ -40,7 +40,7 @@ static int enlarge(strio_t *s, int min)
     while (new_length < min)
         new_length *= 2;
 
-    buf = realloc(s->buf, new_length);
+    buf = cgc_realloc(s->buf, new_length);
     if (buf == NULL)
         return 0;
 
@@ -49,10 +49,10 @@ static int enlarge(strio_t *s, int min)
     return 1;
 }
 
-int strio_init(strio_t *s)
+int cgc_strio_init(cgc_strio_t *s)
 {
     s->length = 32;
-    s->buf = malloc(s->length);
+    s->buf = cgc_malloc(s->length);
     s->pos = 0;
 
     if (s->buf == NULL)
@@ -61,17 +61,17 @@ int strio_init(strio_t *s)
     return 1;
 }
 
-void strio_free(strio_t *s)
+void cgc_strio_free(cgc_strio_t *s)
 {
-    free(s->buf);
-    memset(s, 0, sizeof(strio_t));
+    cgc_free(s->buf);
+    cgc_memset(s, 0, sizeof(cgc_strio_t));
 }
 
-int strio_append_char(strio_t *s, char c)
+int cgc_strio_append_char(cgc_strio_t *s, char c)
 {
     if (s->pos == s->length)
     {
-        if (!enlarge(s, s->length + 1))
+        if (!cgc_enlarge(s, s->length + 1))
             return 0;
     }
 
@@ -79,13 +79,13 @@ int strio_append_char(strio_t *s, char c)
     return 1;
 }
 
-char *strio_dup(strio_t *s)
+char *cgc_strio_dup(cgc_strio_t *s)
 {
     if (s->pos == s->length)
     {
-        if (!enlarge(s, s->length + 1))
+        if (!cgc_enlarge(s, s->length + 1))
             return 0;
     }
     s->buf[s->pos] = 0;
-    return strdup(s->buf);
+    return cgc_strdup(s->buf);
 }

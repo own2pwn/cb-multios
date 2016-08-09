@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,18 +30,18 @@ THE SOFTWARE.
 int g_currentWriteFD;
 int g_currentReadFD;
 
-void setup_io( int readFD, int writeFD )
+void cgc_setup_io( int readFD, int writeFD )
 {
     // Store the FD for I/O operations
     g_currentReadFD = readFD;
     g_currentWriteFD = writeFD;
 }
 
-uint8_t read_u8( void )
+cgc_uint8_t cgc_read_u8( void )
 {
     int retvalue;
-    uint8_t temp;
-    size_t rx_count = 1;
+    cgc_uint8_t temp;
+    cgc_size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -49,11 +49,11 @@ uint8_t read_u8( void )
     return (temp);
 }
 
-uint16_t read_u16( void )
+cgc_uint16_t cgc_read_u16( void )
 {
     int retvalue;
-    uint16_t temp;
-    size_t rx_count = 1;
+    cgc_uint16_t temp;
+    cgc_size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -61,11 +61,11 @@ uint16_t read_u16( void )
     return (temp);
 }
 
-uint32_t read_u32( void )
+cgc_uint32_t cgc_read_u32( void )
 {
     int retvalue;
-    uint32_t temp;
-    size_t rx_count = 1;
+    cgc_uint32_t temp;
+    cgc_size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -73,16 +73,16 @@ uint32_t read_u32( void )
     return (temp);
 }
 
-void write_u8( uint8_t value )
+void cgc_write_u8( cgc_uint8_t value )
 {
     int retvalue;
-    size_t tx_bytes = 1;
+    cgc_size_t tx_bytes = 1;
 
     if ( (retvalue = transmit( g_currentWriteFD, &value, sizeof(value), &tx_bytes )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
 }
 
-void write_u16( uint16_t value )
+void cgc_write_u16( cgc_uint16_t value )
 {
     int retvalue;
 
@@ -90,7 +90,7 @@ void write_u16( uint16_t value )
         _terminate( IO_ERROR_TERMINATE );
 }
 
-void write_u32( uint32_t value )
+void cgc_write_u32( cgc_uint32_t value )
 {
     int retvalue;
 

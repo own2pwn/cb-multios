@@ -27,7 +27,7 @@
 #include "vector.h"
 
 struct vector
-make_vector(double x, double y, double z)
+cgc_make_vector(double x, double y, double z)
 {
     struct vector ret;
     ret.x = x;
@@ -37,57 +37,57 @@ make_vector(double x, double y, double z)
 }
 
 struct vector
-vector_add(struct vector a, struct vector b)
+cgc_vector_add(struct vector a, struct vector b)
 {
-    return make_vector(a.x + b.x, a.y + b.y, a.z + b.z);
+    return cgc_make_vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 struct vector
-vector_sub(struct vector a, struct vector b)
+cgc_vector_sub(struct vector a, struct vector b)
 {
-    return make_vector(a.x - b.x, a.y - b.y, a.z - b.z);
+    return cgc_make_vector(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
 struct vector
-vector_mul(struct vector a, struct vector b)
+cgc_vector_mul(struct vector a, struct vector b)
 {
-    return make_vector(a.x * b.x, a.y * b.y, a.z * b.z);
+    return cgc_make_vector(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 
 struct vector
-vector_scale(struct vector a, double s)
+cgc_vector_scale(struct vector a, double s)
 {
-    return make_vector(a.x * s, a.y * s, a.z * s);
+    return cgc_make_vector(a.x * s, a.y * s, a.z * s);
 }
 
 double
-vector_mag_sqr(struct vector a)
+cgc_vector_mag_sqr(struct vector a)
 {
     return a.x * a.x + a.y * a.y + a.z * a.z;
 }
 
 double
-vector_mag(struct vector a)
+cgc_vector_mag(struct vector a)
 {
-    return sqrt(vector_mag_sqr(a));
+    return sqrt(cgc_vector_mag_sqr(a));
 }
 
 struct vector
-vector_norm(struct vector a)
+cgc_vector_norm(struct vector a)
 {
-    return vector_scale(a, 1.0 / vector_mag(a));
+    return cgc_vector_scale(a, 1.0 / cgc_vector_mag(a));
 }
 
 double
-vector_dot(struct vector a, struct vector b)
+cgc_vector_dot(struct vector a, struct vector b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
     
 struct vector
-vector_cross(struct vector a, struct vector b)
+cgc_vector_cross(struct vector a, struct vector b)
 {
-    return make_vector(a.y * b.z - a.z * b.y,
+    return cgc_make_vector(a.y * b.z - a.z * b.y,
             a.z * b.x - a.x * b.z,
             a.x * b.y - a.y * b.x);
 }

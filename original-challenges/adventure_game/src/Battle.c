@@ -30,7 +30,7 @@ DefineClass(Battle, Object)
 
 static Monster *get_next_alive(Array *team)
 {
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < team->m_count; i++)
     {
         Monster *m = $(team, get, i);
@@ -42,7 +42,7 @@ static Monster *get_next_alive(Array *team)
 
 static const attack_data_t *attack_menu(Monster *m)
 {
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < m->m_kind->num_attacks; i++)
     {
         const attack_data_t *atk = &m->m_kind->attacks[i];

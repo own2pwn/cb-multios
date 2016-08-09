@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
-int islower( int c )
+int cgc_islower( int c )
 {
 	if ( c >= 'a' && c <= 'z') {
 		return 1;
@@ -36,7 +36,7 @@ int islower( int c )
 	return 0;
 }
 
-int isupper( int c )
+int cgc_isupper( int c )
 {
 	if ( c >= 'A' && c <= 'Z') {
 		return 1;
@@ -45,7 +45,7 @@ int isupper( int c )
 	return 0;
 }
 
-int isascii( int c )
+int cgc_isascii( int c )
 {
 	if ( 0x20 <= c && c <= 0x7e ) {
 		return 1;
@@ -54,16 +54,16 @@ int isascii( int c )
 	return 0;
 }
 
-int isalpha( int c )
+int cgc_isalpha( int c )
 {
-	if ( islower(c) || isupper(c) ) {
+	if ( cgc_islower(c) || cgc_isupper(c) ) {
 		return 1;
 	}
 
 	return 0;
 }
 
-int isspace( int c )
+int cgc_isspace( int c )
 {
     if ( c == ' ' ||
          c == '\t' ||
@@ -76,7 +76,7 @@ int isspace( int c )
         return 0;
 }
 
-int isdigit( int c )
+int cgc_isdigit( int c )
 {
     if ( c >= '0' && c <= '9' )
         return 1;
@@ -84,17 +84,17 @@ int isdigit( int c )
         return 0;
 }
 
-int isnan( double val )
+int cgc_isnan( double val )
 {
     return __builtin_isnan( val );
 }
 
-int isinf( double val )
+int cgc_isinf( double val )
 {
     return __builtin_isinf( val );
 }
 
-int tolower( int c )
+int cgc_tolower( int c )
 {
     if ( c >= 'A' && c <= 'Z' )
         return (c - 'A') + 'a';
@@ -102,7 +102,7 @@ int tolower( int c )
         return c;
 }
 
-int toupper( int c )
+int cgc_toupper( int c )
 {
     if ( c >= 'a' && c <= 'z' )
         return (c - 'a') + 'A';
@@ -110,9 +110,9 @@ int toupper( int c )
         return c;
 }
 
-int strcmp( char *str1, char *str2 )
+int cgc_strcmp( char *str1, char *str2 )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -135,9 +135,9 @@ int strcmp( char *str1, char *str2 )
     return 0;
 }
 
-char *strcpy( char *dest, char *src )
+char *cgc_strcpy( char *dest, char *src )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -151,9 +151,9 @@ char *strcpy( char *dest, char *src )
     return (dest);
 }
 
-char *strncpy( char *dest, const char *src, size_t num )
+char *cgc_strncpy( char *dest, const char *src, cgc_size_t num )
 {
-    size_t i;
+    cgc_size_t i;
 
     for ( i = 0; i < num; i++ )
     {
@@ -167,41 +167,41 @@ char *strncpy( char *dest, const char *src, size_t num )
     return (dest);
 }
 
-void *memcpy( void *dest, void *src, size_t numbytes )
+void *cgc_memcpy( void *dest, void *src, cgc_size_t numbytes )
 {
-    size_t bytes_copied = 0;
+    cgc_size_t bytes_copied = 0;
     if ( numbytes >= 4 )
     {
         for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = *((uint32_t*)(src+bytes_copied));
+            *((cgc_uint32_t*)(dest+bytes_copied)) = *((cgc_uint32_t*)(src+bytes_copied));
     }
 
     for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = *((uint8_t*)(src+bytes_copied));
+        *((cgc_uint8_t*)(dest+bytes_copied)) = *((cgc_uint8_t*)(src+bytes_copied));
 
     return dest;
 }
 
-void *memset( void *dest, int value, size_t numbytes )
+void *cgc_memset( void *dest, int value, cgc_size_t numbytes )
 {
-    size_t bytes_copied = 0;
-    uint8_t byte_set_value = (uint8_t)value;
+    cgc_size_t bytes_copied = 0;
+    cgc_uint8_t byte_set_value = (cgc_uint8_t)value;
 
     if ( numbytes >= 4 )
     {
-        uint32_t dword_set_value = (byte_set_value << 24) | (byte_set_value << 16) | (byte_set_value << 8) | byte_set_value;
+        cgc_uint32_t dword_set_value = (byte_set_value << 24) | (byte_set_value << 16) | (byte_set_value << 8) | byte_set_value;
 
         for ( ; bytes_copied+3 < numbytes; bytes_copied += 4 )
-            *((uint32_t*)(dest+bytes_copied)) = dword_set_value;
+            *((cgc_uint32_t*)(dest+bytes_copied)) = dword_set_value;
     }
 
     for ( ; bytes_copied < numbytes; bytes_copied++ )
-        *((uint8_t*)(dest+bytes_copied)) = byte_set_value;
+        *((cgc_uint8_t*)(dest+bytes_copied)) = byte_set_value;
 
     return dest;
 }
 
-int atoi(const char* str)
+int cgc_atoi(const char* str)
 {
     if ( str == NULL )
         return 0;
@@ -212,7 +212,7 @@ int atoi(const char* str)
     int digit_count = 0;
 
     // Skip whitespace
-    while ( isspace( str[0] ) )
+    while ( cgc_isspace( str[0] ) )
         str++;
 
     part = 0; // First part (+/-/number is acceptable)
@@ -234,7 +234,7 @@ int atoi(const char* str)
 
             part++;
         }
-        else if ( isdigit( *str ) )
+        else if ( cgc_isdigit( *str ) )
         {
             if ( part == 0 || part == 1 )
             {
@@ -262,9 +262,9 @@ int atoi(const char* str)
     return (sign * integer_part);
 }
 
-size_t strlen( const char *str )
+cgc_size_t cgc_strlen( const char *str )
 {
-    size_t length = 0;
+    cgc_size_t length = 0;
 
     while ( str[length] != '\0' )
         length++;
@@ -272,7 +272,7 @@ size_t strlen( const char *str )
     return length;
 }
 
-int abs( int val )
+int cgc_abs( int val )
 {
     if ( val < 0 )
         return -val;

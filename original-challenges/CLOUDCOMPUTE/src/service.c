@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -24,7 +24,7 @@
 #include "service.h"
 
 unsigned char rx_buf[BUF_RX_SZ];
-session_t sessions[SESSIONS_MAX] = { 0 };
+cgc_session_t sessions[SESSIONS_MAX] = { 0 };
 uint8_t sessions_num = 0;
 // The last byte allocated for session data. session_window must not expand 
 // beyond this.
@@ -35,7 +35,7 @@ uint8_t *session_window = NULL;
 uint32_t tmp = 0;
 
 
-session_t * find_session(uint32_t id) {
+cgc_session_t * cgc_find_session(uint32_t id) {
     for (uint32_t i = 0; i < SESSIONS_MAX; i++) {
         if (id == sessions[i].id) {
             return &sessions[i];
@@ -45,10 +45,10 @@ session_t * find_session(uint32_t id) {
 }
 
 
-int do_init(session_t **session) {
+int cgc_do_init(cgc_session_t **session) {
 
     int ret = SUCCESS;
-    memset(rx_buf, 0, BUF_RX_SZ);
+    cgc_memset(rx_buf, 0, BUF_RX_SZ);
     uint32_t requested_session_id = 0;
 
     #ifdef DEBUG
@@ -56,7 +56,7 @@ int do_init(session_t **session) {
     #endif
 
     // Get session ID from CRS.
-    if (SUCCESS != (ret = recv_bytes(STDIN, (char *)&rx_buf, sizeof(uint32_t)))) { 
+    if (SUCCESS != (ret = cgc_recv_bytes(STDIN, (char *)&rx_buf, sizeof(uint32_t)))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during receive ()\n", __func__);
         #endif
@@ -89,7 +89,7 @@ int do_init(session_t **session) {
         #endif  
 
         tmp = MAGIC_ERR_BAD_ID;
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -114,7 +114,7 @@ int do_init(session_t **session) {
         fprintf(stderr, "[D] %s | session 0x%08x is requested\n", __func__, requested_session_id);
         #endif
         
-        if (NULL == (*session = find_session(requested_session_id))) {
+        if (NULL == (*session = cgc_find_session(requested_session_id))) {
 
             // Condition:
             // - they're requesting an existing session
@@ -128,7 +128,7 @@ int do_init(session_t **session) {
             #endif 
             
             tmp = MAGIC_ERR_SESSION_DOESNT_EXIST;
-            if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
+            if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
                 #ifdef DEBUG
                 fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
                 #endif
@@ -149,7 +149,7 @@ int do_init(session_t **session) {
         fprintf(stderr, "[D] %s | session 0x%08x exists; reflecting ID\n", __func__, (*session)->id);
         #endif
 
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&(*session)->id, sizeof(uint32_t)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&(*session)->id, sizeof(uint32_t)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -184,7 +184,7 @@ int do_init(session_t **session) {
         #endif 
 
         tmp = MAGIC_ERR_NO_SPACE;
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(uint32_t)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(uint32_t)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -207,7 +207,7 @@ int do_init(session_t **session) {
         __func__, SESSIONS_MAX, sessions_num+1);
     #endif
 
-    if (NULL == (*session = find_session(requested_session_id))) {
+    if (NULL == (*session = cgc_find_session(requested_session_id))) {
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | unable to find empty session; SHOULDN'T HAPPEN; bailing...\n", __func__);
         #endif
@@ -215,10 +215,10 @@ int do_init(session_t **session) {
     }
 
     // Generate a session ID.
-    size_t rnd_bytes = 0;
+    cgc_size_t rnd_bytes = 0;
     while(1) {
         rnd_bytes = 0;
-        if (SUCCESS != random(&(*session)->id, 4, &rnd_bytes) || 4 != rnd_bytes) {
+        if (SUCCESS != cgc_random(&(*session)->id, 4, &rnd_bytes) || 4 != rnd_bytes) {
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during random (); SHOULDN'T HAPPEN; bailing...\n", __func__);
             #endif
@@ -244,7 +244,7 @@ int do_init(session_t **session) {
     #endif
 
     // Echo the new session ID back to the CRS.
-    if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&(*session)->id, sizeof(uint32_t)))) {
+    if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&(*session)->id, sizeof(uint32_t)))) {
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
         #endif
@@ -261,7 +261,7 @@ int do_init(session_t **session) {
 
     // Next protocol step:
     // CRS -> CB: 4B session ID | 2B session SZ 
-    if (SUCCESS != (ret = recv_bytes(STDIN, (char *)&tmp, sizeof(uint32_t)))) { 
+    if (SUCCESS != (ret = cgc_recv_bytes(STDIN, (char *)&tmp, sizeof(uint32_t)))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during receive ()\n", __func__);
         #endif
@@ -279,7 +279,7 @@ int do_init(session_t **session) {
         #endif
 
         tmp = MAGIC_ERR_HANDSHAKE_FAILURE;
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -299,7 +299,7 @@ int do_init(session_t **session) {
     // - they've sent us a packet with matching session ID
 
     // Now we need the session size.
-    if (SUCCESS != (ret = recv_bytes(STDIN, (char *)&(*session)->sz, sizeof(uint16_t)))) { 
+    if (SUCCESS != (ret = cgc_recv_bytes(STDIN, (char *)&(*session)->sz, sizeof(uint16_t)))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during receive ()\n", __func__);
         #endif
@@ -328,7 +328,7 @@ int do_init(session_t **session) {
         #endif
 
         tmp = MAGIC_ERR_TOO_LARGE;
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(uint32_t)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(uint32_t)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -367,7 +367,7 @@ bail:
 }
 
 
-int do_exec(session_t *session) {
+int cgc_do_exec(cgc_session_t *session) {
 
     int ret = SUCCESS;
 
@@ -377,7 +377,7 @@ int do_exec(session_t *session) {
 
     // 0) read & verify (if PATCHED) session ID
     tmp = 0;
-    if (SUCCESS != (ret = recv_bytes(STDIN, (char *)&tmp, sizeof(uint32_t)))) { 
+    if (SUCCESS != (ret = cgc_recv_bytes(STDIN, (char *)&tmp, sizeof(uint32_t)))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during receive ()\n", __func__);
         #endif
@@ -397,7 +397,7 @@ int do_exec(session_t *session) {
         #endif
 
         tmp = MAGIC_ERR_HANDSHAKE_FAILURE;
-        if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
+        if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)&tmp, sizeof(tmp)))) { 
             #ifdef DEBUG
             fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
             #endif
@@ -429,8 +429,8 @@ int do_exec(session_t *session) {
 
     // This is pointless in the PATCHED version because tmp == session->id 
     // (and therefore the lookup should return same struct).
-    session_t *session_we_use_for_sz = NULL;
-    if (NULL == (session_we_use_for_sz = find_session(tmp))) {
+    cgc_session_t *session_we_use_for_sz = NULL;
+    if (NULL == (session_we_use_for_sz = cgc_find_session(tmp))) {
         #ifdef DEBUG
         fprintf(stderr, "[D] %s | unable to find session; bailing\n", __func__);
         #endif
@@ -454,7 +454,7 @@ int do_exec(session_t *session) {
         #endif
 
         tmp = (0xFFFFFF00 & (uint32_t)session->buf) >> 8;
-        memcpy(session->buf, &tmp, BASE_ADDR_SZ);
+        cgc_memcpy(session->buf, &tmp, BASE_ADDR_SZ);
     }
 
     #ifdef DEBUG
@@ -473,7 +473,7 @@ int do_exec(session_t *session) {
         "[D] %s | WARNING: about to copy 0x%04x (%d) bytes into session 0x%08x; session's sz: 0x%04x (%d)\n", 
         __func__, session_we_use_for_sz->sz, session_we_use_for_sz->sz, session->id, session->sz, session->sz);
     #endif
-    if (SUCCESS != (ret = recv_bytes(STDIN, (char *)(session->buf + BASE_ADDR_SZ), session_we_use_for_sz->sz))) { 
+    if (SUCCESS != (ret = cgc_recv_bytes(STDIN, (char *)(session->buf + BASE_ADDR_SZ), session_we_use_for_sz->sz))) { 
         #ifdef DEBUG
         fprintf(stderr, 
             "[E] %s | during receive (); session->sz: %d, got 0x%08x bytes\n", 
@@ -488,7 +488,7 @@ int do_exec(session_t *session) {
     #endif
 
     // 3) execute bytecode
-    if (SUCCESS != (ret = bytecode_exec(session->buf, session->sz))) {
+    if (SUCCESS != (ret = cgc_bytecode_exec(session->buf, session->sz))) {
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | bytecode execution failed; propagating error\n", __func__);
         #endif
@@ -500,7 +500,7 @@ int do_exec(session_t *session) {
 
     // 4) return result (the entirely of the scratch space)
     // 4B session ID | scratch area (of length SCRATCH_SZ)
-    if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)(&session->id), 4))) { 
+    if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)(&session->id), 4))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
         #endif
@@ -511,7 +511,7 @@ int do_exec(session_t *session) {
     // The address of the send needs to be derived from the BASE_ADDR for easy pwnage.
     uint32_t base_addr = ((*(uint32_t *)session->buf) & 0x00FFFFFF) << 8;
     uint32_t scratch_base = (base_addr | ((uint32_t)session->buf & 0x000000FF)) + BASE_ADDR_SZ + session->sz;
-    if (SUCCESS != (ret = send_bytes(STDOUT, (const char *)scratch_base, SCRATCH_SZ))) { 
+    if (SUCCESS != (ret = cgc_send_bytes(STDOUT, (const char *)scratch_base, SCRATCH_SZ))) { 
         #ifdef DEBUG
         fprintf(stderr, "[E] %s | during transmit ()\n", __func__);
         #endif
@@ -536,7 +536,7 @@ int main(void) {
 
     int ret = SUCCESS;
     uint32_t state = STATE_INIT;
-    session_t *session = NULL;
+    cgc_session_t *session = NULL;
 
     // Allocate large buffer for all session data.
     // To have a unique upper 2B and lower 2B  for each session, we need to allocate:
@@ -568,9 +568,9 @@ int main(void) {
                 #endif
 
                 session = NULL;
-                if (SUCCESS != (ret = do_init(&session))) {
+                if (SUCCESS != (ret = cgc_do_init(&session))) {
                     #ifdef DEBUG
-                    fprintf(stderr, "[E] %s | non-SUCCESS from do_init; bailing\n", __func__);
+                    fprintf(stderr, "[E] %s | non-SUCCESS from cgc_do_init; bailing\n", __func__);
                     #endif
                     goto bail;
                 }
@@ -585,9 +585,9 @@ int main(void) {
                 fprintf(stderr, "[D] %s | state = STATE_EXEC\n", __func__);
                 #endif
 
-                if (SUCCESS != (ret = do_exec(session))) {
+                if (SUCCESS != (ret = cgc_do_exec(session))) {
                     #ifdef DEBUG
-                    fprintf(stderr, "[E] %s | non-SUCCESS from do_exec; bailing\n", __func__);
+                    fprintf(stderr, "[E] %s | non-SUCCESS from cgc_do_exec; bailing\n", __func__);
                     #endif
                     goto bail;
                 }

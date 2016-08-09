@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,17 +25,17 @@
 #include "hashmap.h"
 #include "string.h"
 
-class Attribute
+class cgc_Attribute
 {
 public:
-    Attribute(const String *name);
-    ~Attribute();
-    void set(String *value);
-    inline const String *get() { return d_value; }
-    inline const String *name() { return d_name; }
+    cgc_Attribute(const cgc_String *cgc_name);
+    ~cgc_Attribute();
+    void cgc_set(cgc_String *value);
+    inline const cgc_String *cgc_get() { return d_value; }
+    inline const cgc_String *cgc_name() { return d_name; }
 private:
-    const String *d_name;
-    String *d_value;
+    const cgc_String *d_name;
+    cgc_String *d_value;
 };
 
-typedef HashMap<const String *, Attribute *, InternedComparator> AttributeMap;
+typedef cgc_HashMap<const cgc_String *, cgc_Attribute *, InternedComparator> cgc_AttributeMap;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,45 +37,45 @@ enum exp_type {
   LAMB
 };
 
-struct sym_list;
+struct cgc_sym_list;
 
-typedef struct exp_t {
+typedef struct cgc_exp_t {
   enum exp_type t;
   /* ATOM / FUNC */
   char *name;
 
   /* FUNC */
-  struct exp_t *(*f)(struct exp_t *, struct sym_list *);
+  struct cgc_exp_t *(*f)(struct cgc_exp_t *, struct cgc_sym_list *);
 
   /* CONS ^ LAMBDA */
   union {
-    struct exp_t *car;
-    struct exp_t *bound_vars;
+    struct cgc_exp_t *car;
+    struct cgc_exp_t *bound_vars;
   };
 
   union {
-    struct exp_t *cdr;
-    struct exp_t *exp;
+    struct cgc_exp_t *cdr;
+    struct cgc_exp_t *exp;
   };
 
   /* CONS */
-} exp_t;
+} cgc_exp_t;
 
 typedef struct {
-  exp_t *fst;
-  exp_t *snd;
-} exptup_t;
+  cgc_exp_t *fst;
+  cgc_exp_t *snd;
+} cgc_exptup_t;
 
-DEF_LIST(exptup, exptup_t *);
+DEF_LIST(exptup, cgc_exptup_t *);
 
 typedef struct {
   char *key;
-  exp_t *e;
-} sym_t;
+  cgc_exp_t *e;
+} cgc_sym_t;
 
-DEF_LIST(sym, sym_t *);
+DEF_LIST(sym, cgc_sym_t *);
 
-#define NEWE() (calloc(1, sizeof(exp_t)))
+#define NEWE() (cgc_calloc(1, sizeof(cgc_exp_t)))
 
 #define ATOM(e, s) \
   do { \
@@ -109,7 +109,7 @@ DEF_LIST(sym, sym_t *);
 
 #define APPEND(l, e) \
   do { \
-    exp_t *li = l; \
+    cgc_exp_t *li = l; \
     li->t = CONS; \
     while (li && CDR(li)) \
       li = CDR(li); \
@@ -121,7 +121,7 @@ DEF_LIST(sym, sym_t *);
     } else { \
       CONZ(&CDR(li), e, NULL); \
       if (CDR(li) == NULL) \
-        exit(1); \
+        cgc_exit(1); \
     } \
   } while (0)
 

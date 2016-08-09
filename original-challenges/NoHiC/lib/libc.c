@@ -40,11 +40,11 @@ in sample CB's and scored events.
 // RETURNS
 //  success: &(the new list)
 //  failure: NULL
-list_t * list_create_dup() {
-  list_t *new = NULL;
-  if (SUCCESS != (allocate(sizeof(list_t), 0, (void **)&new))) { return NULL; }
-  node_t * head_nd = node_create(NULL);
-  node_t * tail_nd = node_create(NULL);
+cgc_list_t * cgc_list_create_dup() {
+  cgc_list_t *new = NULL;
+  if (SUCCESS != (allocate(sizeof(cgc_list_t), 0, (void **)&new))) { return NULL; }
+  cgc_node_t * head_nd = cgc_node_create(NULL);
+  cgc_node_t * tail_nd = cgc_node_create(NULL);
   head_nd->next = tail_nd;
   head_nd->prev = NULL;
   tail_nd->next = NULL;
@@ -59,7 +59,7 @@ list_t * list_create_dup() {
 // Append the provided node to the provided list.
 // RETURNS
 //  success: SUCCESS
-int list_append(list_t *lst, node_t *nd) {
+int cgc_list_append(cgc_list_t *lst, cgc_node_t *nd) {
 
   int ret = SUCCESS;
 
@@ -81,7 +81,7 @@ int list_append(list_t *lst, node_t *nd) {
 // such that nodes are sorted ascending (low to high).
 // RETURNS
 //  success: SUCCESS
-int list_insert_sort(list_t *lst, node_t *nd, node_compare_f node_compare_impl) {
+int cgc_list_insert_sort(cgc_list_t *lst, cgc_node_t *nd, cgc_node_compare_f node_compare_impl) {
 
   int ret = SUCCESS;
 
@@ -99,7 +99,7 @@ int list_insert_sort(list_t *lst, node_t *nd, node_compare_f node_compare_impl) 
     lst->head->next = nd;
   } else {
     // insert node into a non-empty sorted list
-    node_t * curr = lst->head->next;
+    cgc_node_t * curr = lst->head->next;
     while(curr != lst->tail) {
       // insert new element as tail
       if(curr->next == lst->tail || (node_compare_impl(nd, curr->next) < 0)) {
@@ -123,9 +123,9 @@ int list_insert_sort(list_t *lst, node_t *nd, node_compare_f node_compare_impl) 
 // RETURNS:
 //  success: VA of new node
 //  failure: NULL
-node_t * node_create(void * data) {
-  node_t *new = NULL;
-  if (SUCCESS != (allocate(sizeof(node_t), 0, (void **)&new))) { return NULL; }
+cgc_node_t * cgc_node_create(void * data) {
+  cgc_node_t *new = NULL;
+  if (SUCCESS != (allocate(sizeof(cgc_node_t), 0, (void **)&new))) { return NULL; }
   new->data = data;
   new->next = NULL; // these will be set during list insertion
   new->prev = NULL;
@@ -135,37 +135,37 @@ node_t * node_create(void * data) {
 // Get the token head node.
 // RETURNS:
 //  &node
-node_t * get_list_head(list_t * lst) {
+cgc_node_t * cgc_get_list_head(cgc_list_t * lst) {
   return lst->head;
 }
 
 // Get the token tail node.
 // RETURNS:
 //  &node
-node_t * get_list_tail(list_t * lst) {
+cgc_node_t * cgc_get_list_tail(cgc_list_t * lst) {
   return lst->tail;
 }
 
 // Get the first node in the list used by the client to store data.
 // RETURNS:
 //  &node
-node_t * get_first_node(list_t * lst) {
+cgc_node_t * cgc_get_first_node(cgc_list_t * lst) {
   return lst->head->next;
 }
 
 // Get the last node in the list used by the client to store data.
 // RETURNS:
 //  &node
-node_t * get_last_node(list_t * lst) {
+cgc_node_t * cgc_get_last_node(cgc_list_t * lst) {
   return lst->tail->prev;
 }
 
 
 // write sz random bytes into buf
 // returns 0 on success, non-zero on failure.
-int rand(char *buf, size_t sz) {
-    size_t bytes = 0;
-    return random(buf, sz, &bytes);
+int cgc_rand(char *buf, cgc_size_t sz) {
+    cgc_size_t bytes = 0;
+    return cgc_random(buf, sz, &bytes);
 }
 
 
@@ -174,17 +174,17 @@ int rand(char *buf, size_t sz) {
 
 
 // I/O functions
-int send(const char *buf, const size_t size) {
-    if(transmit_all(STDOUT, buf, size)) {
+int cgc_send(const char *buf, const cgc_size_t size) {
+    if(cgc_transmit_all(STDOUT, buf, size)) {
         _terminate(111);
     }
 
     return 0;
 }
 
-int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
     if (!buf)
@@ -205,14 +205,14 @@ int transmit_all(int fd, const char *buf, const size_t size) {
 }
 
 // returns number of bytes received
-unsigned int recv_all(char *res_buf, size_t res_buf_size) {
-    return read_all(STDIN, res_buf, res_buf_size);
+unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size) {
+    return cgc_read_all(STDIN, res_buf, res_buf_size);
 }
 
-unsigned int read_all(int fd, char *buf, unsigned int size) {
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
    char ch;
    unsigned int total = 0;
-   size_t nbytes;
+   cgc_size_t nbytes;
    while (size) {
       if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
          break;
@@ -226,7 +226,7 @@ unsigned int read_all(int fd, char *buf, unsigned int size) {
 // stdlib functions
 
 // overwrites the first n chars of dst with char c.
-void *memset(void *dst, int c, unsigned int n) {
+void *cgc_memset(void *dst, int c, unsigned int n) {
    char *d = (char*)dst;
    while (n--) {*d++ = (char)c;}
    return dst;

@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,10 +30,10 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "service.h"
 
-void sort_shopping_list(Shopping_List_Type *the_list) {
+void cgc_sort_shopping_list(cgc_Shopping_List_Type *the_list) {
 
 char *tmp;
-Shopping_List_Type *tmp_list;
+cgc_Shopping_List_Type *tmp_list;
 int swapped;
 
 
@@ -47,7 +47,7 @@ int swapped;
 		while (tmp_list->next != 0) {
 
 
-			if (compare_strings(tmp_list->item, tmp_list->next->item) == 1) {
+			if (cgc_compare_strings(tmp_list->item, tmp_list->next->item) == 1) {
 
 				tmp = tmp_list->item;
 

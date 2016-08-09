@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,21 +32,21 @@ extern "C" {
 
 #include "llist.h"
 
-class BaseFile
+class cgc_BaseFile
 {
   public:
-    BaseFile() {}
-    virtual ~BaseFile() = 0;
+    cgc_BaseFile() {}
+    virtual ~cgc_BaseFile() = 0;
 
-    virtual int Open() = 0;
-    virtual int Close() = 0;
-    virtual int Read(size_t pos, size_t len, char **outBuf) = 0;
-    virtual int Write(size_t pos, char *inBuf, size_t len) = 0;
+    virtual int cgc_Open() = 0;
+    virtual int cgc_Close() = 0;
+    virtual int cgc_Read(cgc_size_t pos, cgc_size_t len, char **outBuf) = 0;
+    virtual int cgc_Write(cgc_size_t pos, char *inBuf, cgc_size_t len) = 0;
     
-    virtual void PrintFileInfo() = 0;
+    virtual void cgc_PrintFileInfo() = 0;
 };
 
-class File : public BaseFile
+class cgc_File : public cgc_BaseFile
 {
   public:
     enum FileType { FT_REG, FT_DIR };
@@ -54,31 +54,31 @@ class File : public BaseFile
   protected:
     char name[256];
     FileType type;
-    size_t size;
+    cgc_size_t size;
     bool opened;
     union {
       char *content;
-      List<File *> *files;
+      cgc_List<cgc_File *> *files;
     } info;
-    File *parent;
+    cgc_File *parent;
 
   public:
-    File(const char* name, FileType type, size_t size, File* parent);
-    ~File();
+    cgc_File(const char* name, FileType type, cgc_size_t size, cgc_File* parent);
+    ~cgc_File();
 
-    const char* GetName() { return name; }
-    FileType GetType() { return type; }
-    size_t GetSize() { return size; }
-    bool IsOpened() { return opened; }
-    List<File *>* GetFiles() { return (type == FT_DIR ? info.files : 0); }
-    File* GetParent() { return parent; }
+    const char* cgc_GetName() { return name; }
+    FileType cgc_GetType() { return type; }
+    cgc_size_t cgc_GetSize() { return size; }
+    bool cgc_IsOpened() { return opened; }
+    cgc_List<cgc_File *>* cgc_GetFiles() { return (type == FT_DIR ? info.files : 0); }
+    cgc_File* cgc_GetParent() { return parent; }
 
-    int Open();
-    int Close();
-    int Read(size_t pos, size_t len, char **outBuf);
-    int Write(size_t pos, char *inBuf, size_t len);
+    int cgc_Open();
+    int cgc_Close();
+    int cgc_Read(cgc_size_t pos, cgc_size_t len, char **outBuf);
+    int cgc_Write(cgc_size_t pos, char *inBuf, cgc_size_t len);
     
-    void PrintFileInfo();
+    void cgc_PrintFileInfo();
 };
 
 #endif

@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,11 +32,11 @@ typedef struct {
   enum CommandType command;
   char name[64];
   int data_size;
-  uint8_t *data;
-} CommandStruct;
+  cgc_uint8_t *data;
+} cgc_CommandStruct;
 
-void DestroyCommand(CommandStruct *command);
-int ReceiveCommand(CommandStruct *command, int *more_commands);
-void HandleCommand(CommandStruct *command);
+void cgc_DestroyCommand(cgc_CommandStruct *command);
+int cgc_ReceiveCommand(cgc_CommandStruct *command, int *more_commands);
+void cgc_HandleCommand(cgc_CommandStruct *command);
 
 #endif // COMMAND_H

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,10 +31,10 @@ char* privateKey=NULL;
  * @return       VALID_TOKEN if a user with the same token is found,
  *               INVALID_TOKEN otherwise.
  */
-unsigned int authenticateToken(User* users, char* token) {
+unsigned int cgc_authenticateToken(cgc_User* users, char* token) {
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(user->token && !strcmp(user->token, token)) 
+	for(cgc_User* user=users; user!=NULL; user=user->next) {
+		if(user->token && !cgc_strcmp(user->token, token)) 
 			return VALID_TOKEN;
 	}
 
@@ -46,22 +46,22 @@ unsigned int authenticateToken(User* users, char* token) {
  * @param  tokenSize the size of the request token
  * @return           The address of the generated token string
  */
-char* generateRandomToken(unsigned int tokenSize) {
+char* cgc_generateRandomToken(unsigned int tokenSize) {
 	char* token;
 	unsigned int idx=0;
 	char randomBuffer[1024];
-	size_t rnd_bytes;
+	cgc_size_t rnd_bytes;
 
 	if(tokenSize > 1024) {
 		return NULL;
 	}
 
-	if(!(token = malloc(tokenSize+1)))
+	if(!(token = cgc_malloc(tokenSize+1)))
 		return NULL;
 
-	memset(token, 0, tokenSize+1);
+	cgc_memset(token, 0, tokenSize+1);
 
-	if(random((void*)randomBuffer, sizeof(randomBuffer), &rnd_bytes))
+	if(cgc_random((void*)randomBuffer, sizeof(randomBuffer), &rnd_bytes))
 		return NULL;
 
 	if(rnd_bytes < sizeof(randomBuffer))
@@ -94,32 +94,32 @@ char* generateRandomToken(unsigned int tokenSize) {
  * @param  usersPtr The address of the user list
  * @param  name     The name of the new user
  * @param  password The password of the new user
- * @return          The address of a new User structure
+ * @return          The address of a new cgc_User structure
  */
-User* newUser(User** usersPtr, char* name, char* password) {
-	User* user=NULL;
-	User* users=NULL;
+cgc_User* cgc_newUser(cgc_User** usersPtr, char* name, char* password) {
+	cgc_User* user=NULL;
+	cgc_User* users=NULL;
 
 	users = *usersPtr;
 
-	if(!(user = malloc(sizeof(User)))) {
+	if(!(user = cgc_malloc(sizeof(cgc_User)))) {
 		return NULL;
 	}
 
-	if(!(user->name = malloc(strlen(name)+1))) {
-		free(user);
+	if(!(user->name = cgc_malloc(cgc_strlen(name)+1))) {
+		cgc_free(user);
 		return NULL;
 	}
-	memset(user->name, 0, strlen(name)+1);
-	strcpy(user->name, name);
+	cgc_memset(user->name, 0, cgc_strlen(name)+1);
+	cgc_strcpy(user->name, name);
 
-	if(!(user->password = malloc(strlen(password)+1))) {
-		free(user->name);
-		free(user);
+	if(!(user->password = cgc_malloc(cgc_strlen(password)+1))) {
+		cgc_free(user->name);
+		cgc_free(user);
 		return NULL;
 	}
-	memset(user->password, 0, strlen(password)+1);
-	strcpy(user->password, password);
+	cgc_memset(user->password, 0, cgc_strlen(password)+1);
+	cgc_strcpy(user->password, password);
 
 	user->token = NULL;
 	user->signingKey = NULL;
@@ -134,13 +134,13 @@ User* newUser(User** usersPtr, char* name, char* password) {
  * Find a user with the matching token
  * @param  users The list of users
  * @param  token The token to match
- * @return       The address of the found User structure,
+ * @return       The address of the found cgc_User structure,
  *               NULL if not found.
  */
-User* getUserByToken(User* users, char* token) {
+cgc_User* cgc_getUserByToken(cgc_User* users, char* token) {
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(user->token && !strcmp(user->token, token)) {
+	for(cgc_User* user=users; user!=NULL; user=user->next) {
+		if(user->token && !cgc_strcmp(user->token, token)) {
 			return user;
 		}
 	}
@@ -152,13 +152,13 @@ User* getUserByToken(User* users, char* token) {
  * Find a user with the matching name
  * @param  users The list of users
  * @param  name  The name to match
- * @return       The address of the found User structure,
+ * @return       The address of the found cgc_User structure,
  *               NULL if not found.
  */
-User* getUserByName(User* users, char* name) {
+cgc_User* cgc_getUserByName(cgc_User* users, char* name) {
 
-	for(User* user=users; user!=NULL; user=user->next) {
-		if(!strcmp(user->name, name)) {
+	for(cgc_User* user=users; user!=NULL; user=user->next) {
+		if(!cgc_strcmp(user->name, name)) {
 			return user;
 		}
 	}
@@ -168,12 +168,12 @@ User* getUserByName(User* users, char* name) {
 
 /**
  * Create a new token and assign it
- * @param  user The address of the User structure to assign the token to
- * @return      The address of the modified User structure
+ * @param  user The address of the cgc_User structure to assign the token to
+ * @return      The address of the modified cgc_User structure
  */
-User* newToken(User* user) {
+cgc_User* cgc_newToken(cgc_User* user) {
 
-	user->token = generateRandomToken(TOKEN_SIZE);
+	user->token = cgc_generateRandomToken(TOKEN_SIZE);
 
 	return user;
 }
@@ -183,17 +183,17 @@ User* newToken(User* user) {
  * @param  keySize The size of the requested signing key
  * @return         The address of the signing key string
  */
-unsigned char* generateSigningKey(size_t keySize) {
+unsigned char* cgc_generateSigningKey(cgc_size_t keySize) {
 	unsigned char* signingKey;
 	char* randomBuffer;
-	size_t rnd_bytes;
+	cgc_size_t rnd_bytes;
 
-	if(!(signingKey = malloc(keySize+1)))
+	if(!(signingKey = cgc_malloc(keySize+1)))
 		return NULL;
 
-	memset(signingKey, 0, keySize+1);
+	cgc_memset(signingKey, 0, keySize+1);
 
-	if(random((void*)signingKey, keySize, &rnd_bytes))
+	if(cgc_random((void*)signingKey, keySize, &rnd_bytes))
 		return NULL;
 
 	if(rnd_bytes < keySize)
@@ -206,10 +206,10 @@ unsigned char* generateSigningKey(size_t keySize) {
  * Reverse the list of subscriptions
  * @param subscriptionsPtr The address of the list of subscriptions
  */
-void reverseSubscriptionList(Subscription** subscriptionsPtr) {
-	Subscription* prevSub=NULL, *nextSub=NULL;
+void cgc_reverseSubscriptionList(cgc_Subscription** subscriptionsPtr) {
+	cgc_Subscription* prevSub=NULL, *nextSub=NULL;
 
-	for(Subscription* subscription=*subscriptionsPtr; subscription!=NULL; subscription=nextSub) {
+	for(cgc_Subscription* subscription=*subscriptionsPtr; subscription!=NULL; subscription=nextSub) {
 		nextSub = subscription->next;
 		subscription->next = prevSub;
 		prevSub = subscription;
@@ -225,20 +225,20 @@ void reverseSubscriptionList(Subscription** subscriptionsPtr) {
  * @return            VALID_SIGNATURE if the signature is valid
  *                    INVALID_SIGNATURE otherwise.
  */
-unsigned int verifySignature(AuthResponse* response, unsigned char* signingKey) {
+unsigned int cgc_verifySignature(cgc_AuthResponse* response, unsigned char* signingKey) {
 	char* subscriptionString;
 	unsigned int idx=0;
 
-	reverseSubscriptionList(&response->subscriptions);
+	cgc_reverseSubscriptionList(&response->subscriptions);
 
-	for(Subscription* subscription=response->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		size_t stringSize;
+	for(cgc_Subscription* subscription=response->subscriptions; subscription!=NULL; subscription=subscription->next) {
+		cgc_size_t stringSize;
 
-		stringSize = strlen(subscription->name);
+		stringSize = cgc_strlen(subscription->name);
 		for(int c=0; c<stringSize; c++) {
 			unsigned char sigChar;
 
-			sigChar = to_bin(response->signature[idx++]) * 16 + to_bin(response->signature[idx++]);
+			sigChar = cgc_to_bin(response->signature[idx++]) * 16 + cgc_to_bin(response->signature[idx++]);
 
 			if(subscription->name[c] != (signingKey[(idx-2)/2] ^ sigChar))
 				return INVALID_SIGNATURE;
@@ -250,27 +250,27 @@ unsigned int verifySignature(AuthResponse* response, unsigned char* signingKey) 
 
 /**
  * Compute the signature for a given subscription list
- * @param  user The User structure containing the subscription list to sign
+ * @param  user The cgc_User structure containing the subscription list to sign
  * @return      The address of the signature string
  */
-char* computeSignature(User* user) {
+char* cgc_computeSignature(cgc_User* user) {
 	char *signature, *signatureString;
-	size_t signatureSize=0, signatureStringSize=0;
+	cgc_size_t signatureSize=0, signatureStringSize=0;
 
-	for(Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		signatureSize += strlen(subscription->name);
+	for(cgc_Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
+		signatureSize += cgc_strlen(subscription->name);
 	}
 
-	if(!(user->signingKey = generateSigningKey(signatureSize)))
+	if(!(user->signingKey = cgc_generateSigningKey(signatureSize)))
 		return NULL;
 
-	if(!(signature = malloc(signatureSize+1)))
+	if(!(signature = cgc_malloc(signatureSize+1)))
 		return NULL;
 
-	memset(signature, 0, signatureSize+1);
+	cgc_memset(signature, 0, signatureSize+1);
 
-	for(Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		strcat(signature, subscription->name);
+	for(cgc_Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
+		cgc_strcat(signature, subscription->name);
 	}
 
 	for(int idx=0; idx<signatureSize; idx++) {
@@ -278,14 +278,14 @@ char* computeSignature(User* user) {
 	}
 
 	signatureStringSize = signatureSize*2 + 1;
-	if(!(signatureString = malloc(signatureStringSize+1)))
+	if(!(signatureString = cgc_malloc(signatureStringSize+1)))
 		return NULL;
 
-	memset(signatureString, 0, signatureStringSize+1);
+	cgc_memset(signatureString, 0, signatureStringSize+1);
 
 	for(unsigned int i=0; i < signatureSize*2; i++) {
-		signatureString[i++] = to_hex((unsigned char) *signature / 16 % 16);
-		signatureString[i] = to_hex((unsigned char) *signature++ % 16);
+		signatureString[i++] = cgc_to_hex((unsigned char) *signature / 16 % 16);
+		signatureString[i] = cgc_to_hex((unsigned char) *signature++ % 16);
 	}
 
 	return signatureString;

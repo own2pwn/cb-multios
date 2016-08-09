@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,10 +33,10 @@ THE SOFTWARE.
 #include "malloc.h"
 
 
-int create_pbi( productDefType *database, newPBIMessageType *message ) {
+int cgc_create_pbi( cgc_productDefType *database, cgc_newPBIMessageType *message ) {
 
-backlogItemType *newPBI;
-backlogItemType *PBIPtr;
+cgc_backlogItemType *newPBI;
+cgc_backlogItemType *PBIPtr;
 
 
 	while(database != 0 && database->ID != message->productID )
@@ -48,7 +48,7 @@ backlogItemType *PBIPtr;
 	}
 
 
-	newPBI = (backlogItemType *)calloc(sizeof(backlogItemType));
+	newPBI = (cgc_backlogItemType *)cgc_calloc(sizeof(cgc_backlogItemType));
 
 	if (newPBI == 0) 
 		_terminate(-1);
@@ -59,13 +59,13 @@ backlogItemType *PBIPtr;
 	newPBI->story_points = message->user_story_points;
 	newPBI->next = 0;
 
-	newPBI->description = calloc(strlen(&message->title)+1);
+	newPBI->description = cgc_calloc(cgc_strlen(&message->title)+1);
 
 	if (newPBI->description == 0)
 		_terminate(-1);
 
 
-	strcpy(newPBI->description, &message->title);
+	cgc_strcpy(newPBI->description, &message->title);
 
 
 	if (database->productBacklog == 0) {
@@ -86,10 +86,10 @@ backlogItemType *PBIPtr;
 }
 
 
-int delete_pbi( productDefType *database, deletePBIMessageType *message ) {
+int cgc_delete_pbi( cgc_productDefType *database, cgc_deletePBIMessageType *message ) {
 
-backlogItemType *prevPBI;
-backlogItemType *PBIPtr;
+cgc_backlogItemType *prevPBI;
+cgc_backlogItemType *PBIPtr;
 
 
 	while(database != 0 && database->ID != message->productID )
@@ -127,9 +127,9 @@ backlogItemType *PBIPtr;
 	}
 
 	if (PBIPtr->description != 0) 
-		free(PBIPtr->description);
+		cgc_free(PBIPtr->description);
 
-	free(PBIPtr);
+	cgc_free(PBIPtr);
 
 	return 0;
 
@@ -137,12 +137,12 @@ backlogItemType *PBIPtr;
 
 
 
-int move_pbi_to_sprint( productDefType *database, movePBIMessageType *message ) {
+int cgc_move_pbi_to_sprint( cgc_productDefType *database, cgc_movePBIMessageType *message ) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
-backlogItemType *prevPtr;
-backlogItemType *sprintBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *PBIPtr;
+cgc_backlogItemType *prevPtr;
+cgc_backlogItemType *sprintBIPtr;
 
 
 	// first find the product ID in the database
@@ -219,11 +219,11 @@ backlogItemType *sprintBIPtr;
 
 
 
-int update_sbi_status( productDefType *database, updateSBIMessageType *message ) {
+int cgc_update_sbi_status( cgc_productDefType *database, cgc_updateSBIMessageType *message ) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *SBIPtr;
+cgc_backlogItemType *sprintBIPtr;
 
 
 	// first find the product ID in the database
@@ -271,11 +271,11 @@ backlogItemType *sprintBIPtr;
 
 
 
-int update_sbi_points( productDefType *database, updateSBIMessageType *message ) {
+int cgc_update_sbi_points( cgc_productDefType *database, cgc_updateSBIMessageType *message ) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *SBIPtr;
+cgc_backlogItemType *sprintBIPtr;
 
 
 	// first find the product ID in the database
@@ -326,11 +326,11 @@ backlogItemType *sprintBIPtr;
 }
 
 
-int update_sbi_description( productDefType *database, updateSBIDescMessageType *message ) {
+int cgc_update_sbi_description( cgc_productDefType *database, cgc_updateSBIDescMessageType *message ) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *SBIPtr;
-backlogItemType *sprintBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *SBIPtr;
+cgc_backlogItemType *sprintBIPtr;
 
 
 	// first find the product ID in the database
@@ -372,28 +372,28 @@ backlogItemType *sprintBIPtr;
 
 #ifdef PATCHED_1
 
-	free(SBIPtr->description);
+	cgc_free(SBIPtr->description);
 
-	SBIPtr->description = malloc(strlen(&message->desc)+1);
+	SBIPtr->description = cgc_malloc(cgc_strlen(&message->desc)+1);
 
 	if (SBIPtr->description == 0)
 		_terminate(-1);
 
 #endif
 
-	strcpy(SBIPtr->description, &message->desc);
+	cgc_strcpy(SBIPtr->description, &message->desc);
 
 	return 0;
 
 }
 
 
-int move_sbi_to_pbl( productDefType *database, moveToPBIMessageType *message ) {
+int cgc_move_sbi_to_pbl( cgc_productDefType *database, cgc_moveToPBIMessageType *message ) {
 
-sprintEntryType *sprintPtr;
-backlogItemType *PBIPtr;
-backlogItemType *prevPtr;
-backlogItemType *SBIPtr;
+cgc_sprintEntryType *sprintPtr;
+cgc_backlogItemType *PBIPtr;
+cgc_backlogItemType *prevPtr;
+cgc_backlogItemType *SBIPtr;
 
 	// first find the product ID in the database
 	while( database != 0 && database->ID != message->productID )

@@ -26,9 +26,9 @@ THE SOFTWARE.
 #ifndef STRING_H_DEFINED
 #define STRING_H_DEFINED
 
-int get_str_end(char *str);
-void reverse(char *str, int len);
-int stoi(char *str, int *moved);
-int itos(int, char *str);
+int cgc_get_str_end(char *str);
+void cgc_reverse(char *str, int len);
+int cgc_stoi(char *str, int *moved);
+int cgc_itos(int, char *str);
 
 #endif // STRING_H_DEFINED

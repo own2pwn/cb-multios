@@ -10,13 +10,13 @@
 
 typedef struct deck
 {
-    card_t cards[NUM_CARDS];
+    cgc_card_t cards[NUM_CARDS];
     int top_of_deck;
-} deck_t;
+} cgc_deck_t;
 
-void init_deck(deck_t *d, unsigned int *seed);
-int shuffle_deck(deck_t *d);
-int shuffle_deck_if_needed(deck_t *d);
-card_t *draw_card(deck_t *d);
+void cgc_init_deck(cgc_deck_t *d, unsigned int *seed);
+int cgc_shuffle_deck(cgc_deck_t *d);
+int cgc_shuffle_deck_if_needed(cgc_deck_t *d);
+cgc_card_t *cgc_draw_card(cgc_deck_t *d);
 
 #endif /* DECK_H_ */

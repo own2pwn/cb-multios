@@ -27,13 +27,13 @@
 static unsigned long long rand_seed = 0xdeadbeefull;
 
 void
-srand(unsigned int seed)
+cgc_srand(unsigned int seed)
 {
     rand_seed = seed;
 }
 
 unsigned int
-rand(void)
+cgc_rand(void)
 {
     // Constants from Knuth
     rand_seed = 6364136223846793005 * rand_seed + 1442695040888963407;
@@ -41,14 +41,14 @@ rand(void)
 }
 
 unsigned char
-get_flag_byte(size_t index)
+cgc_get_flag_byte(cgc_size_t index)
 {
     unsigned char *flag_page = FLAG_PAGE;
     return flag_page[(index % (PAGE_SIZE / 4)) * 4];
 }
 
 unsigned char
-get_flag_byte_unsafe(size_t index)
+cgc_get_flag_byte_unsafe(cgc_size_t index)
 {
     unsigned char *flag_page = FLAG_PAGE;
     return flag_page[index % PAGE_SIZE];

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,76 +29,76 @@ enum {HAMMER=0, SHEET=1, SHEERS=2, BAD_CHOICE=8};
 static const unsigned char *secret = (const unsigned char *)0x4347C000;
 static int idx = 0;
 
-int play_rps()
+int cgc_play_rps()
 {
     idx %= 4096;
     int max_input = 256;
     unsigned char computer_choice = secret[idx++] % 3;
     unsigned char human_choice = BAD_CHOICE;
-    char *input = malloc(max_input);
+    char *input = cgc_malloc(max_input);
 
     while (human_choice == BAD_CHOICE) {
-        printf("Choose [HAMMER, SHEET, SHEERS]: ");
-        if (freaduntil(input, max_input, '\n', stdin) == -1)
+        cgc_printf("Choose [HAMMER, SHEET, SHEERS]: ");
+        if (cgc_freaduntil(input, max_input, '\n', stdin) == -1)
             continue;
-        if (strcmp(input, "HAMMER") == 0)
+        if (cgc_strcmp(input, "HAMMER") == 0)
             human_choice = HAMMER;
-        else if (strcmp(input, "SHEET") == 0)
+        else if (cgc_strcmp(input, "SHEET") == 0)
             human_choice = SHEET;
-        else if (strcmp(input, "SHEERS") == 0)
+        else if (cgc_strcmp(input, "SHEERS") == 0)
             human_choice = SHEERS;
         else
             human_choice = BAD_CHOICE;
     }
-    free(input);
+    cgc_free(input);
 
     switch(human_choice) {
     case HAMMER:
-        printf("HAMMER v ");
+        cgc_printf("HAMMER v ");
         switch(computer_choice) {
         case HAMMER:
-            printf("HAMMER\n");
-            printf("It's a tie!\n");
+            cgc_printf("HAMMER\n");
+            cgc_printf("It's a tie!\n");
             return 0;
         case SHEET:
-            printf("SHEET\n");
-            printf("You Lose.\n");
+            cgc_printf("SHEET\n");
+            cgc_printf("You Lose.\n");
             return 0;
         case SHEERS:
-            printf("SHEERS\n");
-            printf("You Win!\n");
+            cgc_printf("SHEERS\n");
+            cgc_printf("You Win!\n");
             return 1000;
         }
     case SHEET:
-        printf("SHEET v ");
+        cgc_printf("SHEET v ");
         switch(computer_choice) {
         case HAMMER:
-            printf("HAMMER\n");
-            printf("You Win!\n");
+            cgc_printf("HAMMER\n");
+            cgc_printf("You Win!\n");
             return 1000;
         case SHEET:
-            printf("SHEET\n");
-            printf("It's a tie!\n");
+            cgc_printf("SHEET\n");
+            cgc_printf("It's a tie!\n");
             return 0;
         case SHEERS:
-            printf("SHEERS\n");
-            printf("You Lose.\n");
+            cgc_printf("SHEERS\n");
+            cgc_printf("You Lose.\n");
             return 0;
         }
     case SHEERS:
-        printf("SHEERS v ");
+        cgc_printf("SHEERS v ");
         switch(computer_choice) {
         case HAMMER:
-            printf("HAMMER\n");
-            printf("You Lose.\n");
+            cgc_printf("HAMMER\n");
+            cgc_printf("You Lose.\n");
             return 0;
         case SHEET:
-            printf("SHEET\n");
-            printf("You Win!\n");
+            cgc_printf("SHEET\n");
+            cgc_printf("You Win!\n");
             return 1000;
         case SHEERS:
-            printf("SHEERS\n");
-            printf("It's a tie!\n");
+            cgc_printf("SHEERS\n");
+            cgc_printf("It's a tie!\n");
             return 0;
         }
     }

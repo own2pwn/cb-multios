@@ -8,9 +8,9 @@
 // The errno from fdwait or receive
 // it can also be -EINVAL if buf is NULL.
 // it can also be -EPIPE if EOF -- Notice that EPIPE is not used by either fdwait or receive
-ssize_t readLine(int fd, char* buf, size_t len);
-size_t myStrLen(const char* str);
-void write(int fd, const void* buf, size_t len);
+cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len);
+cgc_size_t cgc_myStrLen(const char* str);
+void cgc_write(int fd, const void* buf, cgc_size_t len);
 
 
 #endif//MY_LIB_C_H

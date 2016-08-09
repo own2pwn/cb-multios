@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,14 +34,14 @@ THE SOFTWARE.
 #define Diver_Statistics        0x53
 #define Exit					0x58
 
-void MainMenu ( pDiverInfo );
-void ChangeDiverInfo( pDiverInfo );
-void ChangeDive( pDiveEntry );
-void SanitizeDate(char date[32]);
-void LogNewDive( pDiverInfo );
-void DownloadDiveData( pDiverInfo );
-void EditDive( pDiverInfo );
-void PrintDiveLogs( pDiverInfo );
-void RemoveDive( pDiverInfo );
-void DiverStatistics( pDiverInfo );
+void cgc_MainMenu ( cgc_pDiverInfo );
+void cgc_ChangeDiverInfo( cgc_pDiverInfo );
+void cgc_ChangeDive( cgc_pDiveEntry );
+void cgc_SanitizeDate(char date[32]);
+void cgc_LogNewDive( cgc_pDiverInfo );
+void cgc_DownloadDiveData( cgc_pDiverInfo );
+void cgc_EditDive( cgc_pDiverInfo );
+void cgc_PrintDiveLogs( cgc_pDiverInfo );
+void cgc_RemoveDive( cgc_pDiverInfo );
+void cgc_DiverStatistics( cgc_pDiverInfo );
 #endif

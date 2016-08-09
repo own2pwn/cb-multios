@@ -53,30 +53,30 @@ int main(void) {
     while(1) {
         struct results r;
         // ask for input.
-        if (24 != send_bytes(STDOUT, GIMME, 24)) {
+        if (24 != cgc_send_bytes(STDOUT, GIMME, 24)) {
             _terminate(10);
         }
         #ifdef DEBUG
         fprintf(stderr, "sent GIMME\n");
         #endif
 
-        memset(input, 0, INBUFSZ);
-        memset(&r, 0, sizeof(r));
+        cgc_memset(input, 0, INBUFSZ);
+        cgc_memset(&r, 0, sizeof(r));
 
         // get input
         // bug: 1048 > INBUFSZ
         //  Allows overwrite of VA of _start and write OOB beyond input buf to cause SEGFAULT.
         //  The bytes are read by the input parsing code, but not written to registers.
         //  Not a CFE POV.
-        if (0 > (bytes_recv = recv_until_delim_n(STDIN, TERM, input, 1048))) {
+        if (0 > (bytes_recv = cgc_recv_until_delim_n(STDIN, TERM, input, 1048))) {
             _terminate(20);
         }
         #ifdef DEBUG
         fprintf(stderr, "recvd input bytes\n");
         #endif
 
-        // process input
-        if (SUCCESS != process(input, TERM, &r)) {
+        // cgc_process input
+        if (SUCCESS != cgc_process(input, TERM, &r)) {
             _terminate(15);
         }
         #ifdef DEBUG
@@ -84,13 +84,13 @@ int main(void) {
         #endif
 
         // send results
-        if (25 != send_bytes(STDOUT, DONE, 25)) {
+        if (25 != cgc_send_bytes(STDOUT, DONE, 25)) {
             _terminate(10);
         }
         #ifdef DEBUG
         fprintf(stderr, "sent TERM\n");
         #endif
-        if (sizeof(r) != send_bytes(STDOUT, (const char *)&r, sizeof(r))) {
+        if (sizeof(r) != cgc_send_bytes(STDOUT, (const char *)&r, sizeof(r))) {
             _terminate(10);
         }
 

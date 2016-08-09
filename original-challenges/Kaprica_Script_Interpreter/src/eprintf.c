@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014-2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,7 +25,7 @@
 #include "interp.h"
 
 #define OUTPUT_BYTE(x) do { \
-    size_t bytes; \
+    cgc_size_t bytes; \
     char _c = x; \
     transmit(fd, &_c, sizeof(_c), &bytes); \
 } while (0);
@@ -35,12 +35,12 @@
 
 #define FLAG_PAD_ZERO 0x1
 #define FLAG_UPPERCASE 0x2
-static int output_number_printf(int fd, unsigned int x, int base, int min, unsigned int flags)
+static int cgc_output_number_printf(int fd, unsigned int x, int base, int min, unsigned int flags)
 {
     int n = 0;
     if (x >= base)
     {
-        n = output_number_printf(fd, x / base, base, min-1, flags);
+        n = cgc_output_number_printf(fd, x / base, base, min-1, flags);
         x %= base;
     }
     if (n == 0 && min > 0)
@@ -59,7 +59,7 @@ static int output_number_printf(int fd, unsigned int x, int base, int min, unsig
     return n + 1;
 }
 
-int eprintf(int fd, const char *fmt, var_t *args, unsigned int cnt)
+int cgc_eprintf(int fd, const char *fmt, cgc_var_t *args, unsigned int cnt)
 {
     const char *astring;
     char achar;
@@ -67,7 +67,7 @@ int eprintf(int fd, const char *fmt, var_t *args, unsigned int cnt)
     unsigned int auint, narg = 0;
 
 #define NEXT_ARG(name, ctype, vtype) do { \
-        var_t *v; \
+        cgc_var_t *v; \
         if (narg >= cnt) \
             return -1; \
         v = &args[narg++]; \
@@ -105,7 +105,7 @@ int eprintf(int fd, const char *fmt, var_t *args, unsigned int cnt)
                 case '7':
                 case '8':
                 case '9':
-                    min = strtol(fmt-1, (char**)&fmt, 10);
+                    min = cgc_strtol(fmt-1, (char**)&fmt, 10);
                     continue;
                 }
                 break;
@@ -121,7 +121,7 @@ int eprintf(int fd, const char *fmt, var_t *args, unsigned int cnt)
                 if (args[narg-1].type == VAR_NUMBER)
                     return -1;
 #endif
-                for (i = 0; i < strlen(astring); i++)
+                for (i = 0; i < cgc_strlen(astring); i++)
                     OUTPUT_BYTE(astring[i]);
                 break;
             case 'd':
@@ -131,17 +131,17 @@ int eprintf(int fd, const char *fmt, var_t *args, unsigned int cnt)
                     OUTPUT_BYTE('-')
                     aint = -aint;
                 }
-                output_number_printf(fd, aint, 10, min, flags);
+                cgc_output_number_printf(fd, aint, 10, min, flags);
                 break;
             case 'u':
                 NEXT_ARG(auint, unsigned int, VAR_NUMBER);
-                output_number_printf(fd, auint, 10, min, flags);
+                cgc_output_number_printf(fd, auint, 10, min, flags);
                 break;
             case 'X':
                 flags |= FLAG_UPPERCASE;
             case 'x':
                 NEXT_ARG(auint, unsigned int, VAR_NUMBER);
-                output_number_printf(fd, auint, 16, min, flags);
+                cgc_output_number_printf(fd, auint, 16, min, flags);
                 break;
             case 'c':
                 NEXT_ARG(achar, int, VAR_NUMBER);

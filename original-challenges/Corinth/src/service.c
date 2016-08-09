@@ -31,29 +31,29 @@ THE SOFTWARE.
 #include "messages.h"
 #include "handler.h"
 
-void say_hello();
+void cgc_say_hello();
 
 int main(void) {
-  types_check();
+  cgc_types_check();
 
-  monte_initialize();
+  cgc_monte_initialize();
 
-  say_hello();
+  cgc_say_hello();
 
-  run_loop();
+  cgc_run_loop();
 
   return -1; // should never reach
 }
 
-void say_hello() {
-  protocol_frame hello_resp;
-  hello_contents hello_resp_contents;
+void cgc_say_hello() {
+  cgc_protocol_frame hello_resp;
+  cgc_hello_contents hello_resp_contents;
 
   hello_resp.id = HELLO_ID;
   hello_resp.length = HELLO_EXPECTED_LENGTH;
   hello_resp.value = (void*) &hello_resp_contents;
 
-  hello_resp_contents.pos0 = monte_gen();
+  hello_resp_contents.pos0 = cgc_monte_gen();
 
-  protocol_send(&hello_resp);
+  cgc_protocol_send(&hello_resp);
 }

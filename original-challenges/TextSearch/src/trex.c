@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,12 +31,12 @@
 
 #define MAX_STATES 1000
 
-static state_t **g_stack = NULL;
+static cgc_state_t **g_stack = NULL;
 static int *g_states_checked = NULL;
 static int *g_epsilon_loop = NULL;
 static int g_state_length = 0;
 
-static void debug_state_helper(state_t *state, int level) {
+static void cgc_debug_state_helper(cgc_state_t *state, int level) {
     if (!state)
         return;
 
@@ -59,20 +59,20 @@ static void debug_state_helper(state_t *state, int level) {
         printf("::Accepting State Id::%d", state->id);
     printf("\n");
 
-    debug_state_helper(state->t1, level + 1);
-    debug_state_helper(state->t2, level + 1);
+    cgc_debug_state_helper(state->t1, level + 1);
+    cgc_debug_state_helper(state->t2, level + 1);
 }
 
-static int match_helper(state_t *state, unsigned char *str, int match_len, match_type_e match_type) {
+static int cgc_match_helper(cgc_state_t *state, unsigned char *str, int match_len, cgc_match_type_e match_type) {
     if (!state)
         return 0;
 
 #ifdef PATCHED
-    if (g_epsilon_loop[state->id] > strlen(str))
+    if (g_epsilon_loop[state->id] > cgc_strlen(str))
 #else
-    if (g_epsilon_loop[state->id] >= strlen(str))
+    if (g_epsilon_loop[state->id] >= cgc_strlen(str))
 #endif
-        g_epsilon_loop[state->id] = strlen(str);
+        g_epsilon_loop[state->id] = cgc_strlen(str);
     else
         return 0;
 
@@ -101,31 +101,31 @@ static int match_helper(state_t *state, unsigned char *str, int match_len, match
         if(state->is_accepting_state && match_len)
             return match_len + 1;
 
-    len2 = match_helper(state->t2, str + step, match_len + step, match_type);
-    len1 = match_helper(state->t1, str + step, match_len + step, match_type);
+    len2 = cgc_match_helper(state->t2, str + step, match_len + step, match_type);
+    len1 = cgc_match_helper(state->t1, str + step, match_len + step, match_type);
 
 
     return len1 >= len2 ? len1 : len2;
 }
 
-void debug_state(state_t *state)
+void cgc_debug_state(cgc_state_t *state)
 {
     if(g_states_checked == NULL)
-        g_states_checked = malloc(sizeof(int) * MAX_STATES);
+        g_states_checked = cgc_malloc(sizeof(int) * MAX_STATES);
     g_state_length = 0;
-    return debug_state_helper(state, 0);
+    return cgc_debug_state_helper(state, 0);
 }
 
 
 
-void match(state_t *state, unsigned char *str, match_type_e match_type)
+void cgc_match(cgc_state_t *state, unsigned char *str, cgc_match_type_e match_type)
 {
     int i, match_len = 0, end_of_str = 0;
-    unsigned char *tstr = malloc(strlen(str) + 1), *line = tstr, *tline = tstr, *ptstr = tstr;
-    memcpy(tstr, str, strlen(str) + 1);
+    unsigned char *tstr = cgc_malloc(cgc_strlen(str) + 1), *line = tstr, *tline = tstr, *ptstr = tstr;
+    cgc_memcpy(tstr, str, cgc_strlen(str) + 1);
 
     if(g_epsilon_loop == NULL)
-        g_epsilon_loop = malloc(sizeof(int) * MAX_STATES);
+        g_epsilon_loop = cgc_malloc(sizeof(int) * MAX_STATES);
 
     while(!end_of_str) {
         tstr++;
@@ -136,7 +136,7 @@ void match(state_t *state, unsigned char *str, match_type_e match_type)
                 for (i = 0; i < MAX_STATES; i++)
                     g_epsilon_loop[i] = MAX_STATES;
 
-                match_len = match_helper(state, tline, 0, match_type);
+                match_len = cgc_match_helper(state, tline, 0, match_type);
                 if (match_len) {
                     printf("%s\n", line);
                     break;
@@ -151,16 +151,16 @@ void match(state_t *state, unsigned char *str, match_type_e match_type)
             tline = line;
         }
     }
-    free(ptstr);
+    cgc_free(ptstr);
 }
 
-state_t *evalrpn(unsigned char *rpn) {
+cgc_state_t *cgc_evalrpn(unsigned char *rpn) {
     if (!g_stack)
-        g_stack = malloc(sizeof(state_t *) * MAX_STATES);
+        g_stack = cgc_malloc(sizeof(cgc_state_t *) * MAX_STATES);
 
-    state_t **stack = g_stack;
-    state_t *temp_state;
-    state_t *arg1, *arg2;
+    cgc_state_t **stack = g_stack;
+    cgc_state_t *temp_state;
+    cgc_state_t *arg1, *arg2;
 
     for (; *rpn; rpn++ ) {
 #ifdef PATCHED
@@ -168,36 +168,36 @@ state_t *evalrpn(unsigned char *rpn) {
 #endif
         switch (*rpn) {
         default:
-            temp_state = create_state(*rpn);
+            temp_state = cgc_create_state(*rpn);
             break;
         case CONCAT:
             if (stack == g_stack) break;
             POP(stack, arg2);
             if (stack == g_stack) break;
             POP(stack, arg1);
-            temp_state = op_concat(arg1, arg2);
+            temp_state = cgc_op_concat(arg1, arg2);
             break;
         case UNION:
             if (stack == g_stack) break;
             POP(stack, arg2);
             if (stack == g_stack) break;
             POP(stack, arg1);
-            temp_state = op_union(arg1, arg2);
+            temp_state = cgc_op_union(arg1, arg2);
             break;
         case STAR:
             if (stack == g_stack) break;
             POP(stack, arg1);
-            temp_state = op_star(arg1);
+            temp_state = cgc_op_star(arg1);
             break;
         case QMARK:
             if (stack == g_stack) break;
             POP(stack, arg1);
-            temp_state = op_qmark(arg1);
+            temp_state = cgc_op_qmark(arg1);
             break;
         case PLUS:
             if (stack == g_stack) break;
             POP(stack, arg1);
-            temp_state = op_plus(arg1);
+            temp_state = cgc_op_plus(arg1);
             break;
         }
 
@@ -211,7 +211,7 @@ state_t *evalrpn(unsigned char *rpn) {
     return arg1;
 
 failed:
-    clear_trex();
+    cgc_clear_trex();
     return NULL;
 }
 

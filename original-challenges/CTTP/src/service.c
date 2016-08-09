@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,39 +31,39 @@
  * @param s Destination
  * @param np Number of times to copy it
  */
-void initialize(char *s, size_t np) {
-    size_t i;
+void cgc_initialize(char *s, cgc_size_t np) {
+    cgc_size_t i;
 
     if (np > 16)
         return;
 
     for (i = 0; i < np; i++)
-        memcpy(s+(i*PAGE_SIZE), (char *)FLAG_PAGE, PAGE_SIZE);
+        cgc_memcpy(s+(i*PAGE_SIZE), (char *)FLAG_PAGE, PAGE_SIZE);
 }
 
 int main() {
     char stack[PAGE_SIZE*16];
 
     int fd;
-    fd_set readfds;
+    cgc_fd_set readfds;
     int numready = 0;
-    struct timeval timeout = {2, 0};
-    size_t i, res, recvd = 0;
+    struct cgc_timeval timeout = {2, 0};
+    cgc_size_t i, res, recvd = 0;
 
     //lets be nice and make some backup copies of the flag page :)
-    initialize(stack, 16);
+    cgc_initialize(stack, 16);
 
     //get our stack cookies ready
-    __stack_cookie_init();
+    cgc___stack_cookie_init();
 
     while (1) {
         FD_ZERO(&readfds);
         FD_SET(fd, &readfds);
 
-        res = fdwait(fd+1, &readfds, NULL, &timeout, &numready);
+        res = cgc_fdwait(fd+1, &readfds, NULL, &timeout, &numready);
 
         if (!res && numready) {
-            if (!handle_request())
+            if (!cgc_handle_request())
                 break;
         } else {
             break;
@@ -71,7 +71,7 @@ int main() {
     }
 
     //send stats!
-    print_stats();
+    cgc_print_stats();
 
     return 0;
 }

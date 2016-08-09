@@ -24,9 +24,9 @@
 
 
 // Assumption: each access is 4B (the word size) in length.
-bool access_check(byte_t *loc, byte_t *bgn, byte_t *end) {
+cgc_bool cgc_access_check(cgc_byte_t *loc, cgc_byte_t *bgn, cgc_byte_t *end) {
     if ((loc >= bgn && loc <= end) || // standard
-        (loc+(sizeof(size_t)-1) >= bgn && loc+(sizeof(size_t)-1) <= end)) { // offcut up to 3 bytes
+        (loc+(sizeof(cgc_size_t)-1) >= bgn && loc+(sizeof(cgc_size_t)-1) <= end)) { // offcut up to 3 bytes
         return TRUE;
     }
     return FALSE;
@@ -37,15 +37,15 @@ bool access_check(byte_t *loc, byte_t *bgn, byte_t *end) {
  * Write a packet to the wire.
  *
  * @param pkt Pointer the packet struct to be serialized & sent.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int packet_send(packet_t *resp) {
+int cgc_packet_send(cgc_packet_t *resp) {
 
     int ret = SUCCESS;
 
     CHK_SUCCESS(
-            send_bytes(STDOUT, (char *)resp, sizeof(packet_t)), 
+            cgc_send_bytes(STDOUT, (char *)resp, sizeof(cgc_packet_t)), 
             "failed to send packet\n");
 
 bail:
@@ -57,32 +57,32 @@ bail:
  * Read a packet off the wire.
  *
  * @param pkt Pointer the packet struct to be populated.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int packet_recv(packet_t *req) {
+int cgc_packet_recv(cgc_packet_t *req) {
 
     int ret = SUCCESS;
 
     // These things should never happen.
-    if ((&rx_buf[BUF_RX_SZ] - rx_buf_cursor + sizeof(packet_t)) > BUF_RX_SZ) {
-        err("rx_buf_cursor is in a place it shouldn't be (0x%08x), sizeof(packet_t): %d\n", 
-            rx_buf_cursor, sizeof(packet_t));
+    if ((&rx_buf[BUF_RX_SZ] - rx_buf_cursor + sizeof(cgc_packet_t)) > BUF_RX_SZ) {
+        err("rx_buf_cursor is in a place it shouldn't be (0x%08x), sizeof(cgc_packet_t): %d\n", 
+            rx_buf_cursor, sizeof(cgc_packet_t));
     }
 
     // If we've read all the packets in the recv buffer, then:
     if (rx_buf_cursor == &rx_buf[BUF_RX_SZ]) {
         // In this case, we need to read more off the wire...
         CHK_SUCCESS(
-            recv_bytes(STDIN, (char *)&rx_buf, BUF_RX_SZ), 
+            cgc_recv_bytes(STDIN, (char *)&rx_buf, BUF_RX_SZ), 
             "failed to recv additional bytes\n");
         // ...and reset rx_buf_cursor.
         rx_buf_cursor = rx_buf;
     }
 
-    // We have at least one more packet_t to read out of the recv buffer.
-    memcpy(req, rx_buf_cursor, sizeof(packet_t));
-    rx_buf_cursor += sizeof(packet_t);
+    // We have at least one more cgc_packet_t to read out of the recv buffer.
+    cgc_memcpy(req, rx_buf_cursor, sizeof(cgc_packet_t));
+    rx_buf_cursor += sizeof(cgc_packet_t);
 
 bail:
     return ret;
@@ -92,11 +92,11 @@ bail:
 /**
  * Query against the "normal" region.
  *
- * @param req Pointer to a packet_t containing the normal request.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param req Pointer to a cgc_packet_t containing the normal request.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int do_normal(packet_t *req, packet_t *resp) {
+int cgc_do_normal(cgc_packet_t *req, cgc_packet_t *resp) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
@@ -111,8 +111,8 @@ int do_normal(packet_t *req, packet_t *resp) {
 
         // blacklist the FLAG page
         if (OP2_MEM == req->inst.op2type && 
-            TRUE == access_check(
-                (byte_t *)req->inst.src, 
+            TRUE == cgc_access_check(
+                (cgc_byte_t *)req->inst.src, 
                 FLAG_PAGE_BGN, 
                 FLAG_PAGE_END)) {
             dbg("attempt to read from FLAG page; returning error packet\n");
@@ -123,7 +123,7 @@ int do_normal(packet_t *req, packet_t *resp) {
         // Reads from an immediate don't really make much sense; they just 
         // result in a reflection of the immediate.
         resp->inst.dst = (OP2_IMM == req->inst.op2type) ? 
-            (req->inst.src) : (*(uint32_t *)req->inst.src);
+            (req->inst.src) : (*(cgc_uint32_t *)req->inst.src);
 
     } else { // A_WRITE
         
@@ -135,14 +135,14 @@ int do_normal(packet_t *req, packet_t *resp) {
         }
 
         // For dst, apply blacklist per above.
-        if (FALSE == access_check( // if it's not in the .text section...
-                (byte_t *)req->inst.dst,
+        if (FALSE == cgc_access_check( // if it's not in the .text section...
+                (cgc_byte_t *)req->inst.dst,
                 TEXT_BGN,
                 TEXT_END) 
 #ifndef PATCHED_1 // Data section write access only allowed on unpatched.
             &&
-            FALSE == access_check( // ...and it's not in the data section...
-                (byte_t *)req->inst.dst,
+            FALSE == cgc_access_check( // ...and it's not in the data section...
+                (cgc_byte_t *)req->inst.dst,
                 DATA_BGN,
                 DATA_END)
 #endif
@@ -154,7 +154,7 @@ int do_normal(packet_t *req, packet_t *resp) {
         }
 
         // Otherwise we're good and we do the WRITE.
-        *(uint32_t *)req->inst.dst = req->inst.src;
+        *(cgc_uint32_t *)req->inst.dst = req->inst.src;
     }
 
     resp->status = S_RESP;
@@ -167,15 +167,15 @@ bail:
 /**
  * Query against the "scratch" region.
  *
- * @param req Pointer to a packet_t containing the scratch request.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param req Pointer to a cgc_packet_t containing the scratch request.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int do_scratch(packet_t *req, packet_t *resp) {
+int cgc_do_scratch(cgc_packet_t *req, cgc_packet_t *resp) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
-    byte_t *loc = NULL, *loc2 = NULL;
+    cgc_byte_t *loc = NULL, *loc2 = NULL;
 
     // Times when we could R/W outside of the SCRATCH buffer:
     // READ, IMM: (none)
@@ -187,21 +187,21 @@ int do_scratch(packet_t *req, packet_t *resp) {
        // READ, IMM: (none)
     } else if (A_READ == req->inst.action && OP2_MEM == req->inst.op2type) {
         // READ, MEM: src 
-        loc = (byte_t *)req->inst.src; 
+        loc = (cgc_byte_t *)req->inst.src; 
     } else if (A_WRITE == req->inst.action && OP2_IMM == req->inst.op2type) {
         // WRITE, IMM: dst
-        loc = (byte_t *)req->inst.dst; 
+        loc = (cgc_byte_t *)req->inst.dst; 
     } else if (A_WRITE == req->inst.action && OP2_MEM == req->inst.op2type) {
         // WRITE, MEM: src & dst
-        loc = (byte_t *)req->inst.src;
-        loc2 = (byte_t *)req->inst.dst;
+        loc = (cgc_byte_t *)req->inst.src;
+        loc2 = (cgc_byte_t *)req->inst.dst;
     } else {
         err("this should never happen\n");
     }
 
     // This is pretty hacky.
     if (NULL != loc &&
-        FALSE == access_check(loc, buf_scratch, &buf_scratch[SZ_SCRATCH])) { 
+        FALSE == cgc_access_check(loc, buf_scratch, &buf_scratch[SZ_SCRATCH])) { 
         dbg("attempt to R/W @ %p, which is outside of SCRATCH region [%p - %p]; returning error packet\n", 
             loc, buf_scratch, &buf_scratch[SZ_SCRATCH]);
         resp->status = S_ERROR;
@@ -209,7 +209,7 @@ int do_scratch(packet_t *req, packet_t *resp) {
     }
 
     if (NULL != loc2 && 
-        FALSE == access_check(loc2, buf_scratch, &buf_scratch[SZ_SCRATCH])) {
+        FALSE == cgc_access_check(loc2, buf_scratch, &buf_scratch[SZ_SCRATCH])) {
         dbg("attempt to R/W @ %p, which is outside of SCRATCH region [%p - %p]; returning error packet\n", 
             loc2, buf_scratch, &buf_scratch[SZ_SCRATCH]);        
         resp->status = S_ERROR;
@@ -220,13 +220,13 @@ int do_scratch(packet_t *req, packet_t *resp) {
 
     if (A_READ == req->inst.action) {
         resp->inst.dst = (OP2_IMM == req->inst.op2type) ? 
-            (req->inst.src) : (*(uint32_t *)req->inst.src);
+            (req->inst.src) : (*(cgc_uint32_t *)req->inst.src);
         dbg("READ; value = 0x%08x\n", resp->inst.dst);
     } else { // Only other option is A_WRITE.
-        //dbg("WRITE @ %p; before value = 0x%08x\n", (uint32_t *)req->inst.dst, *(uint32_t *)req->inst.dst);
-        *(uint32_t *)req->inst.dst = (OP2_IMM == req->inst.op2type) ? 
-            (req->inst.src) : (*(uint32_t *)req->inst.src);
-        //dbg("WRITE @ %p; after  value = 0x%08x\n", (uint32_t *)req->inst.dst, *(uint32_t *)req->inst.dst);
+        //dbg("WRITE @ %p; before value = 0x%08x\n", (cgc_uint32_t *)req->inst.dst, *(cgc_uint32_t *)req->inst.dst);
+        *(cgc_uint32_t *)req->inst.dst = (OP2_IMM == req->inst.op2type) ? 
+            (req->inst.src) : (*(cgc_uint32_t *)req->inst.src);
+        //dbg("WRITE @ %p; after  value = 0x%08x\n", (cgc_uint32_t *)req->inst.dst, *(cgc_uint32_t *)req->inst.dst);
     }
 
     resp->status = S_RESP;
@@ -240,11 +240,11 @@ bail:
  * Query against the "static" region.
  * Involves unnecessarily complex code.
  *
- * @param req Pointer to a packet_t containing the static request.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param req Pointer to a cgc_packet_t containing the static request.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int do_static(packet_t *req, packet_t *resp) {
+int cgc_do_static(cgc_packet_t *req, cgc_packet_t *resp) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
@@ -257,9 +257,9 @@ int do_static(packet_t *req, packet_t *resp) {
         goto bail;
     }
 
-    size_t idx = req->inst.src;
+    cgc_size_t idx = req->inst.src;
     if (STATIC_MAX_SWITCH >= idx) {
-        resp->inst.dst = static_switch(idx);
+        resp->inst.dst = cgc_static_switch(idx);
         resp->status = S_RESP;
     } else {
         dbg("idx out of range; returning error packet\n");
@@ -275,11 +275,11 @@ bail:
 /**
  * Generate a "bad request" response packet for the corresponding request.
  *
- * @param req Pointer to a packet_t containing the bad request.
- * @param resp Pointer to a packet_t that is to be populated with the response.
+ * @param req Pointer to a cgc_packet_t containing the bad request.
+ * @param resp Pointer to a cgc_packet_t that is to be populated with the response.
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int bad_request(packet_t *req, packet_t *resp) {
+int cgc_bad_request(cgc_packet_t *req, cgc_packet_t *resp) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
@@ -296,7 +296,7 @@ bail:
  *
  * @return An int indicating SUCCESS (0) or an error condition (!=0).
  */
-int init(void) {
+int cgc_init(void) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
@@ -324,27 +324,27 @@ int main(void) {
     dbg("%s()\n", __func__);
 
     int ret = SUCCESS;
-    packet_t req, resp;
-    int (* volatile *loc_func_ptr[3])(packet_t *req, packet_t *resp);
+    cgc_packet_t req, resp;
+    int (* volatile *loc_func_ptr[3])(cgc_packet_t *req, cgc_packet_t *resp);
 
     // For leakage, we need something on main()'s stack frame that points to 
     // the .data segment.  We use some (otherwise unnecessary) indirection.
-    loc_func_ptr[0] = (int (**)(packet_t *, packet_t *))MAGIC_DATA_BEFORE;
+    loc_func_ptr[0] = (int (**)(cgc_packet_t *, cgc_packet_t *))MAGIC_DATA_BEFORE;
     loc_func_ptr[1] = &func_ptr[1]; // Read this to calculate base addr of .data.
-    loc_func_ptr[2] = (int (**)(packet_t *, packet_t *))MAGIC_DATA_AFTER;
+    loc_func_ptr[2] = (int (**)(cgc_packet_t *, cgc_packet_t *))MAGIC_DATA_AFTER;
 
     dbg("LEAK: loc_func_ptr[1] @ 0x%08x, func_ptr[1] @ 0x%08x\n", 
         &loc_func_ptr[1], &func_ptr[1]);
     
-    CHK_SUCCESS(init(), "init failed\n");
+    CHK_SUCCESS(cgc_init(), "cgc_init failed\n");
 
     // Main Loop
     while (TRUE) {
 
-        func_ptr[0] = (int (*)(packet_t *, packet_t *))MAGIC_PTR_BEFORE;
-        func_ptr[2] = (int (*)(packet_t *, packet_t *))MAGIC_PTR_AFTER;
+        func_ptr[0] = (int (*)(cgc_packet_t *, cgc_packet_t *))MAGIC_PTR_BEFORE;
+        func_ptr[2] = (int (*)(cgc_packet_t *, cgc_packet_t *))MAGIC_PTR_AFTER;
 
-        CHK_SUCCESS(packet_recv(&req), "could not receive packet\n");
+        CHK_SUCCESS(cgc_packet_recv(&req), "could not receive packet\n");
 
         // Check for magics.
         if (req.status == S_EXIT) { 
@@ -352,7 +352,7 @@ int main(void) {
             goto bail; 
         }
 
-        memset((void *)&resp, 0, sizeof(packet_t));
+        cgc_memset((void *)&resp, 0, sizeof(cgc_packet_t));
         resp.seq = req.seq;
 
         // Generic validation
@@ -366,11 +366,11 @@ int main(void) {
 
         dbg("req.type = %d\n", req.type);
         switch (req.type) {
-            case X_NORMAL: func_ptr[1] = &do_normal; break;
-            case X_SCRATCH: func_ptr[1] = &do_scratch; break;
-            case X_STATIC: func_ptr[1] = &do_static; break;
+            case X_NORMAL: func_ptr[1] = &cgc_do_normal; break;
+            case X_SCRATCH: func_ptr[1] = &cgc_do_scratch; break;
+            case X_STATIC: func_ptr[1] = &cgc_do_static; break;
             case X_PREV: break; // Leave func_ptr[1] alone.
-            default: func_ptr[1] = &bad_request; break;
+            default: func_ptr[1] = &cgc_bad_request; break;
         }
 
         dbg("about to call handler @ 0x%08x\n", func_ptr[1]);
@@ -378,7 +378,7 @@ int main(void) {
         CHK_SUCCESS(func_ptr[1](&req, &resp), "HANDLER failure\n");
 
 respond:
-        CHK_SUCCESS(packet_send(&resp), "could not send packet\n");
+        CHK_SUCCESS(cgc_packet_send(&resp), "could not send packet\n");
     }
 
 bail:

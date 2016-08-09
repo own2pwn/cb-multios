@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -27,91 +27,91 @@
 #include "unique_ptr.h"
 
 // simple wrapper around a null-terminated string
-class CString
+class cgc_CString
 {
 public:
-    CString() : ptr(nullptr) {}
-    CString(const char *str) : ptr(str) {}
-    CString(const CString& other)
+    cgc_CString() : ptr(nullptr) {}
+    cgc_CString(const char *str) : ptr(str) {}
+    cgc_CString(const cgc_CString& other)
     {
         if (other._ptr)
         {
             ptr = other.ptr;
-            ensure();
+            cgc_ensure();
         }
         else
         {
-            _ptr.reset(nullptr);
+            _ptr.cgc_reset(nullptr);
             ptr = other.ptr;
         }
     }
-    CString(CString&& other)
+    cgc_CString(cgc_CString&& other)
     {
-        _ptr.reset(other._ptr.release());
+        _ptr.cgc_reset(other._ptr.cgc_release());
         ptr = other.ptr;
         other.ptr = nullptr;
     }
 
-    CString& operator=(const CString& other)
+    cgc_CString& operator=(const cgc_CString& other)
     {
         if (other._ptr)
         {
             ptr = other.ptr;
-            ensure();
+            cgc_ensure();
         }
         else
         {
-            _ptr.reset(nullptr);
+            _ptr.cgc_reset(nullptr);
             ptr = other.ptr;
         }
         return *this;
     }
-    CString& operator=(CString&& other)
+    cgc_CString& operator=(cgc_CString&& other)
     {
-        _ptr.reset(other._ptr.release());
+        _ptr.cgc_reset(other._ptr.cgc_release());
         ptr = other.ptr;
         other.ptr = nullptr;
         return *this;
     }
 
-    bool operator==(const CString& other) const
+    bool operator==(const cgc_CString& other) const
     {
-        return strcmp(ptr, other.ptr) == 0;
+        return cgc_strcmp(ptr, other.ptr) == 0;
     }
 
-    CString& ensure()
+    cgc_CString& cgc_ensure()
     {
         if (!_ptr)
         {
-            size_t len = length() + 1;
-            _ptr.reset(new char [len]);
-            memcpy(_ptr.get(), ptr, len);
-            ptr = _ptr.get();
+            cgc_size_t len = cgc_length() + 1;
+            _ptr.cgc_reset(new char [len]);
+            cgc_memcpy(_ptr.cgc_get(), ptr, len);
+            ptr = _ptr.cgc_get();
         }
         return *this;
     }
 
-    const char *c_str() const
+    const char *cgc_c_str() const
     {
         return ptr;
     }
 
-    size_t hash() const;
-    size_t length() const
+    cgc_size_t cgc_hash() const;
+    cgc_size_t cgc_length() const
     {
-        return strlen(ptr);
+        return cgc_strlen(ptr);
     }
 private:
     const char *ptr;
-    unique_ptr<char[]> _ptr;
+    cgc_unique_ptr<char[]> _ptr;
 };
 
 template <>
-struct hash<CString>
+struct cgc_hash<cgc_CString>
 {
-    size_t operator() (const CString& t)
+    cgc_size_t operator() (const cgc_CString& t)
     {
-        return t.hash();
+        return t.cgc_hash();
     }
 };
 

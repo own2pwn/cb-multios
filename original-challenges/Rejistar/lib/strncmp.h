@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,4 +30,4 @@
 *
 * @return 0 if buffers are the same, -1 if s1 < s2, 1 if s1 > s2
 */
-int strncmp(const char* s1, const char* s2, size_t size);
+int cgc_strncmp(const char* s1, const char* s2, cgc_size_t size);

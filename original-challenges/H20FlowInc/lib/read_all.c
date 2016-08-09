@@ -24,10 +24,10 @@
 #include <libcgc.h>
 
 // borrowed from REDPILL
-unsigned int read_all(int fd, char *buf, unsigned int size) {
+unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
    char ch;
    unsigned int total = 0;
-   size_t nbytes;
+   cgc_size_t nbytes;
    while (size) {
       if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
          break;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,10 +22,10 @@
  */
 #include <string.h>
 
-void *memchr(const void *s, int c, size_t n)
+void *cgc_memchr(const void *s, int c, cgc_size_t n)
 {
     const unsigned char *buf = s;
-    size_t i;
+    cgc_size_t i;
     for (i = 0; i < n; i++)
         if (buf[i] == c)
             return (void *)&buf[i];

@@ -4,14 +4,14 @@ Author: Dustin Fraze <df@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
+of this software cgc_and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
+to use, copy, modify, merge, publish, distribute, sublicense, cgc_and/or sell
+copies of the Software, cgc_and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
+The above copyright notice cgc_and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -32,11 +32,11 @@ typedef struct _ltype{
 	char *type;
 	void *value;
 	int len;
-} ltype;
+} cgc_ltype;
 
-ltype *lint(char *name, char *val);
-ltype *lbool(char *name, char *val);
-ltype *lfunc(char *name, void (*val)());
-ltype *lstring(char *name, char *val);
+cgc_ltype *cgc_lint(char *name, char *val);
+cgc_ltype *cgc_lbool(char *name, char *val);
+cgc_ltype *cgc_lfunc(char *name, void (*val)());
+cgc_ltype *cgc_lstring(char *name, char *val);
 
 #endif

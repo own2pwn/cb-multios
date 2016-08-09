@@ -35,7 +35,7 @@ struct vector {
  * @param z The z component
  * @return A new vector with the given components
  */
-struct vector make_vector(double x, double y, double z);
+struct vector cgc_make_vector(double x, double y, double z);
 
 /**
  * Add two vectors and return the result
@@ -44,7 +44,7 @@ struct vector make_vector(double x, double y, double z);
  * @param b The second vector
  * @return The vector sum of a and b
  */
-struct vector vector_add(struct vector a, struct vector b);
+struct vector cgc_vector_add(struct vector a, struct vector b);
 
 /**
  * Subtract two vectors and return the result
@@ -53,7 +53,7 @@ struct vector vector_add(struct vector a, struct vector b);
  * @param b The second vector
  * @return The vector difference of a and b
  */
-struct vector vector_sub(struct vector a, struct vector b);
+struct vector cgc_vector_sub(struct vector a, struct vector b);
 
 /**
  * Multiply two vectors componentwise and return the result
@@ -62,7 +62,7 @@ struct vector vector_sub(struct vector a, struct vector b);
  * @param b The second vector
  * @return The product of the components of a and b as a vector
  */
-struct vector vector_mul(struct vector a, struct vector b);
+struct vector cgc_vector_mul(struct vector a, struct vector b);
 
 /**
  * Scale a vector by a scalar and return the result
@@ -71,7 +71,7 @@ struct vector vector_mul(struct vector a, struct vector b);
  * @param s The scalar
  * @return a scaled by s
  */
-struct vector vector_scale(struct vector a, double s);
+struct vector cgc_vector_scale(struct vector a, double s);
 
 /**
  * Find the maginitude squared of a vector
@@ -79,7 +79,7 @@ struct vector vector_scale(struct vector a, double s);
  * @param a The vector
  * @return The magnitude squared of a
  */
-double vector_mag_sqr(struct vector a);
+double cgc_vector_mag_sqr(struct vector a);
 
 /**
  * Find the magnitude of a vector
@@ -87,7 +87,7 @@ double vector_mag_sqr(struct vector a);
  * @param a The vector
  * @return The magnitude of a
  */
-double vector_mag(struct vector a);
+double cgc_vector_mag(struct vector a);
 
 /**
  * Normalize a vector
@@ -95,7 +95,7 @@ double vector_mag(struct vector a);
  * @param a The vector
  * @return The normalized value of a
  */
-struct vector vector_norm(struct vector a);
+struct vector cgc_vector_norm(struct vector a);
 
 /**
  * Find the cross product of two vectors and return the result
@@ -104,7 +104,7 @@ struct vector vector_norm(struct vector a);
  * @param b The second vector
  * @return The cross product of a and b
  */
-struct vector vector_cross(struct vector a, struct vector b);
+struct vector cgc_vector_cross(struct vector a, struct vector b);
 
 /**
  * Find the dot product of two vectors and return the result
@@ -113,7 +113,7 @@ struct vector vector_cross(struct vector a, struct vector b);
  * @param b The second vector
  * @return The dot product of a and b
  */
-double vector_dot(struct vector a, struct vector b);
+double cgc_vector_dot(struct vector a, struct vector b);
 
 #endif /* VECTOR_H_ */
 

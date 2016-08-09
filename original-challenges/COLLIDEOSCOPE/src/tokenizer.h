@@ -51,13 +51,13 @@ struct token {
 /**
  * Split a string into a buffer of tokens.
  *
- * @param str The string to tokenize
+ * @param str The string to cgc_tokenize
  * @param token The buffer to place the tokens, ensure it has enough room to
- *      receive up to strlen(str) tokens
+ *      receive up to cgc_strlen(str) tokens
  * @return The number of tokens in the stream on success, or EXIT_FAILURE on
  *      failure
  */
-ssize_t tokenize(char *str, struct token *token);
+cgc_ssize_t cgc_tokenize(char *str, struct token *token);
 
 #endif /* TOKENIZER_H_ */
 

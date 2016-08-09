@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,60 +37,60 @@ THE SOFTWARE.
 
 typedef struct __attribute__ ((__packed__)) tagPixelmapFileHeader
 {
-    uint16_t    pmType;
-    uint32_t    pmSize;
-    uint16_t    pmReserved1;
-    uint16_t    pmReserved2;
-    uint32_t    pmOffBits;
-} tPixelmapFileHeader;
+    cgc_uint16_t    pmType;
+    cgc_uint32_t    pmSize;
+    cgc_uint16_t    pmReserved1;
+    cgc_uint16_t    pmReserved2;
+    cgc_uint32_t    pmOffBits;
+} cgc_tPixelmapFileHeader;
 
 
 typedef struct __attribute__ ((__packed__)) tagPixelmapInfoHeader
 {
-    uint32_t    piSize;
-    uint32_t    piWidth;
-    uint32_t    piHeight;
-    uint16_t    piPlanes;
-    uint16_t    piBitCount;
-    uint32_t    piCompression;
-    uint32_t    piSizeImage;
-    uint32_t    piXPelsPerMeter;
-    uint32_t    piYPelsPerMeter;
-    uint32_t    piClrUsed;
-    uint32_t    piClrImportant;
-} tPixelmapInfoHeader;
+    cgc_uint32_t    piSize;
+    cgc_uint32_t    piWidth;
+    cgc_uint32_t    piHeight;
+    cgc_uint16_t    piPlanes;
+    cgc_uint16_t    piBitCount;
+    cgc_uint32_t    piCompression;
+    cgc_uint32_t    piSizeImage;
+    cgc_uint32_t    piXPelsPerMeter;
+    cgc_uint32_t    piYPelsPerMeter;
+    cgc_uint32_t    piClrUsed;
+    cgc_uint32_t    piClrImportant;
+} cgc_tPixelmapInfoHeader;
 
 // Binary writing helpers
-uint32_t pm_write_u32( uint8_t *pData, uint32_t *pFilePos, uint32_t value )
+cgc_uint32_t cgc_pm_write_u32( cgc_uint8_t *pData, cgc_uint32_t *pFilePos, cgc_uint32_t value )
 {
-    *((uint32_t*)(pData+(*pFilePos))) = value;
+    *((cgc_uint32_t*)(pData+(*pFilePos))) = value;
     (*pFilePos) += sizeof(value);
 
     return (sizeof(value));
 }
 
-uint32_t pm_write_u16( uint8_t *pData, uint32_t *pFilePos, uint16_t value )
+cgc_uint32_t cgc_pm_write_u16( cgc_uint8_t *pData, cgc_uint32_t *pFilePos, cgc_uint16_t value )
 {
-    *((uint16_t*)(pData+(*pFilePos))) = value;
+    *((cgc_uint16_t*)(pData+(*pFilePos))) = value;
     (*pFilePos) += sizeof(value);
 
     return (sizeof(value));
 }
 
-uint32_t pm_write_u8( uint8_t *pData, uint32_t *pFilePos, uint8_t value )
+cgc_uint32_t cgc_pm_write_u8( cgc_uint8_t *pData, cgc_uint32_t *pFilePos, cgc_uint8_t value )
 {
-    *((uint8_t*)(pData+(*pFilePos))) = value;
+    *((cgc_uint8_t*)(pData+(*pFilePos))) = value;
     (*pFilePos) += sizeof(value);
 
     return (sizeof(value));
 }
 
-int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *rgb_data, uint32_t width, uint32_t height )
+cgc_int32_t cgc_pixelmap_write_file( cgc_uint8_t **pFileData, cgc_uint32_t *pFileSize, cgc_uint8_t *rgb_data, cgc_uint32_t width, cgc_uint32_t height )
 {
-    uint32_t pmImageSize;
-    uint32_t row, col;
-    tPixelmapFileHeader oFileHeader;
-    tPixelmapInfoHeader oInfoHeader;
+    cgc_uint32_t pmImageSize;
+    cgc_uint32_t row, col;
+    cgc_tPixelmapFileHeader oFileHeader;
+    cgc_tPixelmapInfoHeader oInfoHeader;
 
     if ( width == 0 || height == 0 )
         return -1;
@@ -98,10 +98,10 @@ int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *
     if ( rgb_data == NULL )
         return -1;
 
-    if ( PMP_FILE_HEADER_SIZE != sizeof(tPixelmapFileHeader) )
+    if ( PMP_FILE_HEADER_SIZE != sizeof(cgc_tPixelmapFileHeader) )
         return -1;
 
-    if ( PMP_INFO_HEADER_SIZE != sizeof(tPixelmapInfoHeader) )
+    if ( PMP_INFO_HEADER_SIZE != sizeof(cgc_tPixelmapInfoHeader) )
         return -1;
 
     oFileHeader.pmOffBits = (PMP_FILE_HEADER_SIZE + PMP_INFO_HEADER_SIZE);
@@ -110,7 +110,7 @@ int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *
     oFileHeader.pmReserved2 = 0;
 
     // Calculate overall image size for RGB
-    uint32_t col_size;
+    cgc_uint32_t col_size;
 
     col_size = (width * 3);
 
@@ -140,34 +140,34 @@ int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *
     oInfoHeader.piSizeImage = pmImageSize;
 
     // Allocate file data
-    (*pFileData) = malloc( oFileHeader.pmSize );
+    (*pFileData) = cgc_malloc( oFileHeader.pmSize );
     (*pFileSize) = oFileHeader.pmSize;
 
-    uint8_t *pData = (*pFileData);
-    uint32_t filePos = 0;
+    cgc_uint8_t *pData = (*pFileData);
+    cgc_uint32_t filePos = 0;
 
     // Write out file data...
-    memcpy( (pData+filePos), &oFileHeader, sizeof(oFileHeader) );
+    cgc_memcpy( (pData+filePos), &oFileHeader, sizeof(oFileHeader) );
     filePos += sizeof(oFileHeader);
 
-    memcpy( (pData+filePos), &oInfoHeader, sizeof(oInfoHeader) );
+    cgc_memcpy( (pData+filePos), &oInfoHeader, sizeof(oInfoHeader) );
     filePos += sizeof(oInfoHeader);
 
     for ( row = height; row > 0; row-- )
     {
-        uint32_t col_byte_count = 0;
+        cgc_uint32_t col_byte_count = 0;
         for ( col = 0; col < width; col++ )
         {
-            uint8_t red, green, blue;
-            uint32_t data_offset = ((row-1) * (width*3));
+            cgc_uint8_t red, green, blue;
+            cgc_uint32_t data_offset = ((row-1) * (width*3));
 
             red = rgb_data[data_offset + (col*3)+2];
             green = rgb_data[data_offset + (col*3)+1];
             blue = rgb_data[data_offset + (col*3)+0];
 
-            pm_write_u8( pData, &filePos, red );
-            pm_write_u8( pData, &filePos, green );
-            pm_write_u8( pData, &filePos, blue );
+            cgc_pm_write_u8( pData, &filePos, red );
+            cgc_pm_write_u8( pData, &filePos, green );
+            cgc_pm_write_u8( pData, &filePos, blue );
 
             col_byte_count += 3;
         }
@@ -185,10 +185,10 @@ int32_t pixelmap_write_file( uint8_t **pFileData, uint32_t *pFileSize, uint8_t *
     return (filePos);
 }
 
-int32_t pixelmap_get_size( uint32_t width, uint32_t height )
+cgc_int32_t cgc_pixelmap_get_size( cgc_uint32_t width, cgc_uint32_t height )
 {
-    int32_t pmp_size = PMP_FILE_HEADER_SIZE + PMP_INFO_HEADER_SIZE;
-    int32_t col_size = (width * 3);
+    cgc_int32_t pmp_size = PMP_FILE_HEADER_SIZE + PMP_INFO_HEADER_SIZE;
+    cgc_int32_t col_size = (width * 3);
 
     // Add padding to 4-byte boundaries
     if ( col_size % 4 )

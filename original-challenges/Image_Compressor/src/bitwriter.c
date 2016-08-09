@@ -24,12 +24,12 @@
  */
 #include "bitwriter.h"
 
-void bitwriter_output(bitwriter_t *bw, uint32_t value, int8_t bits)
+void cgc_bitwriter_output(cgc_bitwriter_t *bw, cgc_uint32_t value, cgc_int8_t bits)
 {
     if (bits <= 0 || bits > 32)
         return;
 
-    uint32_t mask;
+    cgc_uint32_t mask;
     for (mask = 1 << (bits-1); mask != 0; mask >>= 1)
     {
         unsigned bit = !!(value & mask);
@@ -43,7 +43,7 @@ void bitwriter_output(bitwriter_t *bw, uint32_t value, int8_t bits)
     }
 }
 
-void bitwriter_flush(bitwriter_t *bw, uint8_t bit)
+void cgc_bitwriter_flush(cgc_bitwriter_t *bw, cgc_uint8_t bit)
 {
     while (bw->bits != 0) 
     {

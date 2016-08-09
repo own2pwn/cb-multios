@@ -1,6 +1,6 @@
 #include <libcgc.h>
 
-typedef unsigned int uint32_t;
+typedef unsigned int cgc_uint32_t;
 
 #define END_INSN (0xFFFFFFFF)
 #define INSN_TO_OPCODE(_x) (_x & 0x7)
@@ -25,10 +25,10 @@ typedef unsigned int uint32_t;
 #define _ILLEGAL_INSN_EXCP_MSG_ "ILLEGAL INSTRUCTION EXCEPTION\n"
 #define _PC_EXCP_MSG_ "INVALID PROGRAM COUNTER EXCEPTION\n"
 
-size_t transmit_all(char* buf, size_t size)
+cgc_size_t cgc_transmit_all(char* buf, cgc_size_t size)
 {
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -101,16 +101,16 @@ char gHelpMsg[] = "### The Instruction Set\n"
 
 int main(void)
 {
-  uint32_t insn = 0;
-  size_t rx_bytes = 0;
-  size_t total = 0;
+  cgc_uint32_t insn = 0;
+  cgc_size_t rx_bytes = 0;
+  cgc_size_t total = 0;
   int curTop = -1;
   int totalInsns = 0;
   int pc = 0;
   int ret = 0;
 
-  uint32_t* insns = NULL;
-  uint32_t* stack = NULL;
+  cgc_uint32_t* insns = NULL;
+  cgc_uint32_t* stack = NULL;
 
   void* b1 = NULL;
   void* b2 = NULL;
@@ -132,7 +132,7 @@ int main(void)
       {
         if (totalInsns == 0)
         {
-          transmit_all(gHelpMsg, sizeof(gHelpMsg));
+          cgc_transmit_all(gHelpMsg, sizeof(gHelpMsg));
         }
         _terminate(-1);
       }
@@ -143,7 +143,7 @@ int main(void)
     totalInsns++;
     if (totalInsns >= _MAX_INSNS_SIZE_)
     {
-      transmit_all(_INSNS_OVERFLOW_EXCP_MSG_, sizeof(_INSNS_OVERFLOW_EXCP_MSG_));
+      cgc_transmit_all(_INSNS_OVERFLOW_EXCP_MSG_, sizeof(_INSNS_OVERFLOW_EXCP_MSG_));
       _terminate(-1);
     }
   } while (insn != END_INSN);
@@ -165,7 +165,7 @@ int main(void)
 #ifdef PATCHED
         if (curTop >= _MAX_STACK_SIZE_)
         {
-          transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 #endif
@@ -176,7 +176,7 @@ int main(void)
       {
         if (curTop < 0)
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
         curTop--;
@@ -187,7 +187,7 @@ int main(void)
         curTop++;
         if (curTop >= _MAX_STACK_SIZE_)
         {
-          transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
         stack[curTop] = pc;
@@ -197,7 +197,7 @@ int main(void)
       {
         if (curTop < 1)
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 
@@ -206,7 +206,7 @@ int main(void)
           pc = stack[curTop - 1];
           if ((pc < 0) || (pc >= totalInsns))
           {
-            transmit_all(_PC_EXCP_MSG_, sizeof(_PC_EXCP_MSG_));
+            cgc_transmit_all(_PC_EXCP_MSG_, sizeof(_PC_EXCP_MSG_));
             _terminate(-1);
           }
           pc--; //for the pc++ at the end of the loop
@@ -218,16 +218,16 @@ int main(void)
       {
         if (curTop < 0)
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 
-        uint32_t temp = stack[curTop];
+        cgc_uint32_t temp = stack[curTop];
         int temp2 = curTop - INSN_TO_IMM(insn);
         
         if ( (temp2 < 0) || (temp2 > curTop) )
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 
@@ -241,7 +241,7 @@ int main(void)
 #ifdef PATCHED
         if (curTop >= _MAX_STACK_SIZE_)
         {
-          transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_OVERFLOW_EXCP_MSG_, sizeof(_STACK_OVERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 #endif
@@ -249,7 +249,7 @@ int main(void)
          
         if ( (temp < 0) || (temp > curTop) )
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
 
@@ -260,7 +260,7 @@ int main(void)
       {
         if (curTop < 1)
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
         stack[curTop - 1] += stack[curTop];
@@ -271,7 +271,7 @@ int main(void)
       {
         if (curTop < 1)
         {
-          transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+          cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
           _terminate(-1);
         }
         stack[curTop - 1] -= stack[curTop];
@@ -287,11 +287,11 @@ int main(void)
 
   if (curTop < 0)
   {
-    transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
+    cgc_transmit_all(_STACK_UNDERFLOW_EXCP_MSG_, sizeof(_STACK_UNDERFLOW_EXCP_MSG_));
     _terminate(-1);
   }
 
-  transmit_all(&stack[curTop], sizeof(uint32_t));
+  cgc_transmit_all(&stack[curTop], sizeof(cgc_uint32_t));
 
   return (0);
 }

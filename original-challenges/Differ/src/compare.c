@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,21 +25,21 @@
 
 #include "compare.h"
 
-static char *get_no_ws_line(char *line)
+static char *cgc_get_no_ws_line(char *line)
 {
     if (line == NULL)
         return NULL;
 
-    size_t size = strlen(line) + 1, i;
+    cgc_size_t size = cgc_strlen(line) + 1, i;
     char *nline = NULL, *iter;
-    nline = malloc(size);
+    nline = cgc_malloc(size);
     if (nline == NULL)
         return NULL;
 
-    memset(nline, 0, size);
+    cgc_memset(nline, 0, size);
     iter = nline;
     for (i = 0; i < size; i++) {
-        if (strchr(" \t\n", line[i]) == NULL)
+        if (cgc_strchr(" \t\n", line[i]) == NULL)
             *iter++ = line[i];
     }
 
@@ -47,14 +47,14 @@ static char *get_no_ws_line(char *line)
 
 }
 
-static size_t count_words(char *str) {
+static cgc_size_t cgc_count_words(char *str) {
     if (!str)
         return 0;
 
-    int i, len = strlen(str);
-    size_t words = 0;
+    int i, len = cgc_strlen(str);
+    cgc_size_t words = 0;
     for (i = 0; i < len; i++) {
-        if (strchr(" \t\r\n", str[i]) == NULL)
+        if (cgc_strchr(" \t\r\n", str[i]) == NULL)
             words++;
     }
 
@@ -63,23 +63,23 @@ static size_t count_words(char *str) {
 
 }
 
-lcll_t *pre_process(SFILE *sfp, size_t *wordc, size_t *linec)
+cgc_lcll_t *cgc_pre_process(cgc_SFILE *sfp, cgc_size_t *wordc, cgc_size_t *linec)
 {
     char *data = &sfp->data[0], *line = NULL;
     *wordc = 0, *linec = 1;
 
-    lc_t *new_lc;
-    lcll_t *head = NULL, *iter, *next;
+    cgc_lc_t *new_lc;
+    cgc_lcll_t *head = NULL, *iter, *next;
 
-    line = strsep(&data, "\n");
-    while (line && (strlen(line) || (data && strlen(data)))) {
-        next = malloc(sizeof(lcll_t));
+    line = cgc_strsep(&data, "\n");
+    while (line && (cgc_strlen(line) || (data && cgc_strlen(data)))) {
+        next = cgc_malloc(sizeof(cgc_lcll_t));
         if (!next)
             return NULL;
 
-        new_lc = new_linecmp(line);
+        new_lc = cgc_new_linecmp(line);
         if (new_lc == NULL) {
-            free(next);
+            cgc_free(next);
             next = NULL;
             break;
         }
@@ -92,41 +92,41 @@ lcll_t *pre_process(SFILE *sfp, size_t *wordc, size_t *linec)
         else
             iter->next = next;
         iter = next;
-        line = strsep(&data, "\n");
-        wordc += count_words(line);
+        line = cgc_strsep(&data, "\n");
+        wordc += cgc_count_words(line);
         (*linec)++;
     }
 
     return head;
 }
 
-lc_t *new_linecmp(char *line)
+cgc_lc_t *cgc_new_linecmp(char *line)
 {
     if (!line)
         return NULL;
 
-    lc_t *new_lc = malloc(sizeof(lc_t));
+    cgc_lc_t *new_lc = cgc_malloc(sizeof(cgc_lc_t));
     if (!new_lc)
         return NULL;
 
     new_lc->pline = line;
-    new_lc->no_ws_line = get_no_ws_line(line);
-    new_lc->lhash = get_lhash(line);
-    new_lc->no_ws_lhash = get_lhash(new_lc->no_ws_line);
+    new_lc->no_ws_line = cgc_get_no_ws_line(line);
+    new_lc->lhash = cgc_get_lhash(line);
+    new_lc->no_ws_lhash = cgc_get_lhash(new_lc->no_ws_line);
 
     return new_lc;
 }
 
-void free_linecmp_list(lcll_t **head)
+void cgc_free_linecmp_list(cgc_lcll_t **head)
 {
-    lcll_t *iter = *head, *prev;
+    cgc_lcll_t *iter = *head, *prev;
     while (iter) {
         prev = iter;
         iter = iter->next;
         if (prev->lc->no_ws_line)
-            free(prev->lc->no_ws_line);
-        free(prev->lc);
-        free(prev);
+            cgc_free(prev->lc->no_ws_line);
+        cgc_free(prev->lc);
+        cgc_free(prev);
     }
 
     *head = NULL;

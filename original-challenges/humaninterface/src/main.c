@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,30 +37,30 @@ static unsigned char g_incoming_report[600];
 
 int main();
 
-static void send_data(void *channel, unsigned int type, unsigned int length, unsigned char *data)
+static void cgc_send_data(void *channel, unsigned int type, unsigned int length, unsigned char *data)
 {
-    unsigned char *hdrdata = malloc(length + 1);
+    unsigned char *hdrdata = cgc_malloc(length + 1);
     hdrdata[0] = (10 << 4) | type;
-    memcpy(&hdrdata[1], data, length);
-    session_send(channel, length+1, hdrdata);
-    free(hdrdata);
+    cgc_memcpy(&hdrdata[1], data, length);
+    cgc_session_send(channel, length+1, hdrdata);
+    cgc_free(hdrdata);
 }
 
-static void send_handshake(void *channel, unsigned int result)
+static void cgc_send_handshake(void *channel, unsigned int result)
 {
     unsigned char hdr = result;
-    session_send(channel, 1, &hdr);
+    cgc_session_send(channel, 1, &hdr);
 }
 
-static void send_report(void *channel)
+static void cgc_send_report(void *channel)
 {
     unsigned char data[800];
-    size_t bytes;
-    random(data, sizeof(data), &bytes);
-    send_data(channel, 1, g_protocol == 0 ? 200 : 700, data);
+    cgc_size_t bytes;
+    cgc_random(data, sizeof(data), &bytes);
+    cgc_send_data(channel, 1, g_protocol == 0 ? 200 : 700, data);
 }
 
-static void handle_control_packet(void *channel, unsigned int length, unsigned char *data)
+static void cgc_handle_control_packet(void *channel, unsigned int length, unsigned char *data)
 {
     if (length < 1)
         return;
@@ -70,7 +70,7 @@ static void handle_control_packet(void *channel, unsigned int length, unsigned c
     if (g_incoming_report_type != -1 && type != 10)
     {
         g_incoming_report_type = -1;
-        send_handshake(channel, 1);
+        cgc_send_handshake(channel, 1);
         return;
     }
 
@@ -78,57 +78,57 @@ static void handle_control_packet(void *channel, unsigned int length, unsigned c
     {
     case 1: // CONTROL
         if (param == 5) // UNPLUG
-            exit(0);
+            cgc_exit(0);
         break;
     case 4: // GET REPORT
         if (param == 1)
-            send_report(channel);
+            cgc_send_report(channel);
         else if (param == 2)
-            send_data(channel, 2, sizeof(g_incoming_report), g_incoming_report);
+            cgc_send_data(channel, 2, sizeof(g_incoming_report), g_incoming_report);
         else
-            send_handshake(channel, 4);
+            cgc_send_handshake(channel, 4);
         break;
     case 5: // SET REPORT
         if (param == 2)
             g_incoming_report_type = 2;
         else
-            send_handshake(channel, 4);
+            cgc_send_handshake(channel, 4);
         break;
     case 6: // GET PROTOCOL
-        send_data(channel, 0, 1, &g_protocol);
+        cgc_send_data(channel, 0, 1, &g_protocol);
         break;
     case 7: // SET PROTOCOL
         g_protocol = param & 1;
-        send_handshake(channel, 0);
+        cgc_send_handshake(channel, 0);
         break;
     case 10: // DATA
         if (g_incoming_report_type == -1)
-            send_handshake(channel, 1);
+            cgc_send_handshake(channel, 1);
         else
         {
             if (length > 1)
-                memcpy(g_incoming_report, data+1, length-1 > sizeof(g_incoming_report) ? sizeof(g_incoming_report) : length-1);
-            send_handshake(channel, 0);
+                cgc_memcpy(g_incoming_report, data+1, length-1 > sizeof(g_incoming_report) ? sizeof(g_incoming_report) : length-1);
+            cgc_send_handshake(channel, 0);
             g_incoming_report_type = -1;
         }
         break;
     case 11: // INTEGRITY CHECK
-        send_data(channel, 0, 0x35, (unsigned char *)main);
+        cgc_send_data(channel, 0, 0x35, (unsigned char *)main);
         break;
     default:
-        send_handshake(channel, 3);
+        cgc_send_handshake(channel, 3);
         break;
     }
     return;
 }
 
-static void handle_event(void *channel, void *userdata, event_t *evt)
+static void cgc_handle_event(void *channel, void *userdata, cgc_event_t *evt)
 {
     if (userdata == CONTROL_USERDATA)
     {
         if (evt->type == RX_EVENT)
         {
-            handle_control_packet(channel, evt->rx.length, evt->rx.data);
+            cgc_handle_control_packet(channel, evt->rx.length, evt->rx.data);
         }
         else if (evt->type == DISCONNECT_EVENT)
         {
@@ -137,23 +137,23 @@ static void handle_event(void *channel, void *userdata, event_t *evt)
     }
 }
 
-static void handle_control_connect(void *channel)
+static void cgc_handle_control_connect(void *channel)
 {
-    session_register_userdata(channel, CONTROL_USERDATA);
-    session_register_events(channel, handle_event);
+    cgc_session_register_userdata(channel, CONTROL_USERDATA);
+    cgc_session_register_events(channel, cgc_handle_event);
 }
 
-static void handle_interrupt_connect(void *channel)
+static void cgc_handle_interrupt_connect(void *channel)
 {
-    session_register_userdata(channel, INTERRUPT_USERDATA);
-    session_register_events(channel, handle_event);
+    cgc_session_register_userdata(channel, INTERRUPT_USERDATA);
+    cgc_session_register_events(channel, cgc_handle_event);
 }
 
 int main()
 {
-    session_register_psm(PSM_CONTROL, handle_control_connect);
-    session_register_psm(PSM_INTERRUPT, handle_interrupt_connect);
-    session_loop();
+    cgc_session_register_psm(PSM_CONTROL, cgc_handle_control_connect);
+    cgc_session_register_psm(PSM_INTERRUPT, cgc_handle_interrupt_connect);
+    cgc_session_loop();
     return 0;
 }
 

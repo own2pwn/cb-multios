@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,8 +27,8 @@
 #include <stdint.h>
 
 struct h2o {
-	uint8_t H2O[3]; // 0x48 == 'H', 0x48 == 'H', 0x4F == 'O'
-	uint8_t unk; // make struct into even mult of 4 bytes
+	cgc_uint8_t H2O[3]; // 0x48 == 'H', 0x48 == 'H', 0x4F == 'O'
+	cgc_uint8_t unk; // make struct into even mult of 4 bytes
 };
 
 /**
@@ -36,14 +36,14 @@ struct h2o {
  *
  * @return VA of H2O
  */
-struct h2o *create_h2o();
+struct h2o *cgc_create_h2o();
 
 /**
  * Destroy a unit of h2o.
  *
  * @param h A unit of h2o
  */
-void destroy_h2o(struct h2o *h);
+void cgc_destroy_h2o(struct h2o *h);
 
 #endif
  

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,11 +30,11 @@ typedef struct dict {
   char *name;
   void *value;
   struct dict *next;
-} dict_t;
+} cgc_dict_t;
 
-dict_t** dict_new();
-void* dict_find(dict_t **dict, const char *name);
-void dict_insert(dict_t **dict, const char *name, void *value);
-void* dict_remove(dict_t **dict, const char *name);
+cgc_dict_t** cgc_dict_new();
+void* cgc_dict_find(cgc_dict_t **dict, const char *name);
+void cgc_dict_insert(cgc_dict_t **dict, const char *name, void *value);
+void* cgc_dict_remove(cgc_dict_t **dict, const char *name);
 
 #endif

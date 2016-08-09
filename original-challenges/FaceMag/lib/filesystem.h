@@ -5,7 +5,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,8 +38,8 @@ THE SOFTWARE.
 #define INITIAL_ROOT_DIR_BLOCK 2
 
 
-typedef int securityIdType;
-typedef unsigned char otherPermsType;
+typedef int cgc_securityIdType;
+typedef unsigned char cgc_otherPermsType;
 
 enum fileTypes { 	DIRECTORY = 0x1,
 					REGULAR = 0x2,
@@ -79,7 +79,7 @@ typedef struct {
 	unsigned int blockEntriesPerCatalog;
 	unsigned int checkValue;
 
-}  MasterBlockType;
+}  cgc_MasterBlockType;
 
 typedef struct {
 
@@ -90,37 +90,37 @@ typedef struct {
 	unsigned int maxEntriesPerDirectory;
 	unsigned int maxBlocksPerFile;
 
-} fileSystemInfoType;
+} cgc_fileSystemInfoType;
 
 typedef struct {
 
-	MasterBlockType mblock0;
-	MasterBlockType mblock1;
-	MasterBlockType mblock3;
+	cgc_MasterBlockType mblock0;
+	cgc_MasterBlockType mblock1;
+	cgc_MasterBlockType mblock3;
 
-} mbStructType;
+} cgc_mbStructType;
 
 
 typedef struct  { 
 
 	unsigned int RESERVED;
-	securityIdType securityID;
-	otherPermsType othersPermissions;
+	cgc_securityIdType securityID;
+	cgc_otherPermsType othersPermissions;
 	unsigned int fileSize;
 	enum fileTypes fileType;
 	unsigned int firstCatalogBlock;
 	char name[MAX_FILENAME_LEN];
 
-} directoryEntryType;
+} cgc_directoryEntryType;
 
 typedef struct  { 
 
 	unsigned short maxEntries;
 	unsigned short numEntries;
 	unsigned int nextBlock;
-	directoryEntryType entry[];
+	cgc_directoryEntryType entry[];
 
-} rootDirType;
+} cgc_rootDirType;
 
 
 typedef struct {
@@ -128,18 +128,18 @@ typedef struct {
 	enum fileTypes type;
 	unsigned int size;
 
-} fileInfoType;
+} cgc_fileInfoType;
 
 typedef struct {
 
-	directoryEntryType *currentFile;
+	cgc_directoryEntryType *currentFile;
 	unsigned int dirEntryNum;
 	enum fileTypes;
 	char filespec[MAX_FILENAME_LEN];
 	
-} findFileHandleType;
+} cgc_findFileHandleType;
 
-typedef char fileHandleType;
+typedef char cgc_fileHandleType;
 
 typedef struct {
 
@@ -151,35 +151,35 @@ typedef struct {
 	unsigned int writePos;
 	unsigned int fileSize;
 	unsigned int firstCatalogBlock;
-	securityIdType securityID;
-	otherPermsType othersPermissions;
+	cgc_securityIdType securityID;
+	cgc_otherPermsType othersPermissions;
 	enum fileTypes fileType;
 
-} fileCursorType;
+} cgc_fileCursorType;
 
 
 
-int initFileSystem( unsigned int sectorSize, unsigned int blockSize, unsigned int totalSize );
-int createFile( char *name, enum fileTypes type, securityIdType);
-int deleteFile( fileHandleType fh, securityIdType );
-int truncateFile ( fileHandleType fh, securityIdType );
-int findFiles( char *filespec, findFileHandleType **currentFile );
-int findNextFile( findFileHandleType *currentFile);
-int statusFile( char *name, fileInfoType *info );
-fileHandleType openFile( char *name, securityIdType );
-int writeFile( fileHandleType fh, char *buffer, unsigned int size, securityIdType );
-int readFile(fileHandleType fh, char *buffer, unsigned int size, int relPosition, unsigned int *numRead, securityIdType);
-int readFileUntil( fileHandleType fh, char *buffer, unsigned int size, char delim, unsigned int *numRead, securityIdType securityID );
-int closeFile( fileHandleType fh );
-int flushFile( fileHandleType fh );
-int fileReadPosition( fileHandleType fh, unsigned int offset );
-int fileReadPosRelative( fileHandleType fh, int offset );
-int fileWritePosition( fileHandleType fh, unsigned int offset );
-int fileWritePosRelative( fileHandleType fh, int offset );
-int getFileSystemInfo(fileSystemInfoType *fsInfo);
-int createDirectory( char *name, securityIdType );
-int setPerms(fileHandleType fh, otherPermsType othersPermissions, securityIdType securityID);
-int makeMemoryFile(char *name, unsigned int address, unsigned int length, char accessType, securityIdType  );
+int cgc_initFileSystem( unsigned int sectorSize, unsigned int blockSize, unsigned int totalSize );
+int cgc_createFile( char *name, enum fileTypes type, cgc_securityIdType);
+int cgc_deleteFile( cgc_fileHandleType fh, cgc_securityIdType );
+int cgc_truncateFile ( cgc_fileHandleType fh, cgc_securityIdType );
+int cgc_findFiles( char *filespec, cgc_findFileHandleType **currentFile );
+int cgc_findNextFile( cgc_findFileHandleType *currentFile);
+int cgc_statusFile( char *name, cgc_fileInfoType *info );
+cgc_fileHandleType cgc_openFile( char *name, cgc_securityIdType );
+int cgc_writeFile( cgc_fileHandleType fh, char *buffer, unsigned int size, cgc_securityIdType );
+int cgc_readFile(cgc_fileHandleType fh, char *buffer, unsigned int size, int relPosition, unsigned int *numRead, cgc_securityIdType);
+int cgc_readFileUntil( cgc_fileHandleType fh, char *buffer, unsigned int size, char delim, unsigned int *numRead, cgc_securityIdType securityID );
+int cgc_closeFile( cgc_fileHandleType fh );
+int cgc_flushFile( cgc_fileHandleType fh );
+int cgc_fileReadPosition( cgc_fileHandleType fh, unsigned int offset );
+int cgc_fileReadPosRelative( cgc_fileHandleType fh, int offset );
+int cgc_fileWritePosition( cgc_fileHandleType fh, unsigned int offset );
+int cgc_fileWritePosRelative( cgc_fileHandleType fh, int offset );
+int cgc_getFileSystemInfo(cgc_fileSystemInfoType *fsInfo);
+int cgc_createDirectory( char *name, cgc_securityIdType );
+int cgc_setPerms(cgc_fileHandleType fh, cgc_otherPermsType othersPermissions, cgc_securityIdType securityID);
+int cgc_makeMemoryFile(char *name, unsigned int address, unsigned int length, char accessType, cgc_securityIdType  );
 
 
 #endif

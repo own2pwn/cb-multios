@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,7 +30,7 @@
 These functions are designed under the following assumptions:
 
 1. The hash table struct is initialize with functions that are directly associated 
-	with the type of the 'key'. (uint/int key -> ht_int_init, str key -> ht_str_init)
+	with the type of the 'key'. (uint/int key -> cgc_ht_int_init, str key -> cgc_ht_str_init)
 2. The type of the 'key' must be a 32bit int/uint or a pointer to a string.
 	Mixing 'key' int and uint types in one hash table is not advised.
 3. The type of the 'value' is only important for the ht_value_as_XYZ functions.
@@ -48,7 +48,7 @@ These functions are designed under the following assumptions:
 
 // forward declarations
 struct ht;
-typedef struct ht ht_t;
+typedef struct ht cgc_ht_t;
 
 /**
  * Function to test if a pair contains the given key
@@ -57,7 +57,7 @@ typedef struct ht ht_t;
  * @param second	Pointer to key
  * @return 			1 if equal, 0 if not
  */
-typedef unsigned char (*f_key_in_pair)(const void *, void *);
+typedef unsigned char (*cgc_f_key_in_pair)(const void *, void *);
 
 /**
  * Function type used to compute the hash from the key
@@ -66,7 +66,7 @@ typedef unsigned char (*f_key_in_pair)(const void *, void *);
  * @param second 	Modulus to bound the hash
  * @return 			Hash value
  */
-typedef unsigned int (*f_hash)(void *, unsigned int);
+typedef unsigned int (*cgc_f_hash)(void *, unsigned int);
 
 /**
  * Function type used to resolve the key pointer in a pair
@@ -74,7 +74,7 @@ typedef unsigned int (*f_hash)(void *, unsigned int);
  * @param second 	pointer to (k, v) pair
  * @return 			pointer to key
  */
-typedef void *(*f_key_ptr)(void *);
+typedef void *(*cgc_f_key_ptr)(void *);
 
 /**
  * Function type used to resolve the value pointer in a pair
@@ -83,7 +83,7 @@ typedef void *(*f_key_ptr)(void *);
  * @param second 	pointer to (k, v) pair
  * @return 			pointer to value
  */
-typedef void *(*f_value_ptr)(ht_t *, void *);
+typedef void *(*cgc_f_value_ptr)(cgc_ht_t *, void *);
 
 struct ht {
 	unsigned int buckets_cnt;	// number of buckets (next prime > size)
@@ -92,10 +92,10 @@ struct ht {
 	unsigned int iter_idx;		// index in buckets where iterator is
 	struct node  *iter_node;	// node in list where iterator is 
 	struct list **buckets;		// array with values of: default NULL, else pointer to struct list
-	f_hash fn_hash;
-	f_key_in_pair fn_key_in_pair;
-	f_key_ptr fn_key_ptr;
-	f_value_ptr fn_value_ptr;
+	cgc_f_hash fn_hash;
+	cgc_f_key_in_pair fn_key_in_pair;
+	cgc_f_key_ptr fn_key_ptr;
+	cgc_f_value_ptr fn_value_ptr;
 };
 
 /**
@@ -104,7 +104,7 @@ struct ht {
 typedef struct uint_uint_pair {
 	unsigned int key;
 	unsigned int value;
-} uint_uint_pair_t;
+} cgc_uint_uint_pair_t;
 
 /**
  * Example pair struct for signed int key and value
@@ -112,7 +112,7 @@ typedef struct uint_uint_pair {
 typedef struct int_int_pair {
 	int key;
 	int value;
-} int_int_pair_t;
+} cgc_int_int_pair_t;
 
 /**
  * Example pair struct for string key and value
@@ -120,7 +120,7 @@ typedef struct int_int_pair {
 typedef struct str_str_pair {
 	char *key;
 	char *value;
-} str_str_pair_t;
+} cgc_str_str_pair_t;
 
 /**
  * Example pair struct for string key and int value
@@ -128,7 +128,7 @@ typedef struct str_str_pair {
 typedef struct str_int_pair {
 	char *key;
 	int value;
-} str_int_pair_t;
+} cgc_str_int_pair_t;
 
 /**
  * Example pair struct for string key and int value
@@ -136,7 +136,7 @@ typedef struct str_int_pair {
 typedef struct str_uint_pair {
 	char *key;
 	unsigned int value;
-} str_uint_pair_t;
+} cgc_str_uint_pair_t;
 
 /**
  * Example pair struct for int key and string value
@@ -144,7 +144,7 @@ typedef struct str_uint_pair {
 typedef struct int_str_pair {
 	int key;
 	char *value;
-} int_str_pair_t;
+} cgc_int_str_pair_t;
 
 /**
  * Example pair struct for unsigned int key and string value
@@ -152,7 +152,7 @@ typedef struct int_str_pair {
 typedef struct uint_str_pair {
 	unsigned int key;
 	char *value;
-} uint_str_pair_t;
+} cgc_uint_str_pair_t;
 
 /**
  * Example pair struct for unsigned int key and void * value
@@ -160,7 +160,7 @@ typedef struct uint_str_pair {
 typedef struct uint_voidp_pair {
 	unsigned int key;
 	void *value;
-} uint_voidp_pair_t;
+} cgc_uint_voidp_pair_t;
 
 /**
  * Example pair struct for signed int key and void * value
@@ -168,7 +168,7 @@ typedef struct uint_voidp_pair {
 typedef struct int_voidp_pair {
 	int key;
 	void *value;
-} int_voidp_pair_t;
+} cgc_int_voidp_pair_t;
 
 /**
  * Example pair struct for char * key and void * value
@@ -176,7 +176,7 @@ typedef struct int_voidp_pair {
 typedef struct str_voidp_pair {
 	char *key;
 	void *value;
-} str_voidp_pair_t;
+} cgc_str_voidp_pair_t;
 
 /**
  * Hash table with 32 bit keys (signed or unsigned int)
@@ -184,7 +184,7 @@ typedef struct str_voidp_pair {
  * @param size 	Requested number of buckets
  * @return VA of hash table struct
  */
-ht_t *ht_int_init(unsigned int size);
+cgc_ht_t *cgc_ht_int_init(unsigned int size);
 
 /**
  * Hash table with 32 bit keys (signed or unsigned int)
@@ -193,7 +193,7 @@ ht_t *ht_int_init(unsigned int size);
  * @param size 	Requested number of buckets
  * @return VA of hash table struct
  */
-ht_t *ht_int_init_fp(unsigned int size);
+cgc_ht_t *cgc_ht_int_init_fp(unsigned int size);
 
 /**
  * Hash table with variable length, null terminated, string keys
@@ -201,7 +201,7 @@ ht_t *ht_int_init_fp(unsigned int size);
  * @param size 	Requested number of buckets
  * @return VA of hash table struct
  */
-ht_t *ht_str_init(unsigned int size);
+cgc_ht_t *cgc_ht_str_init(unsigned int size);
 
 /**
  * Hash table with variable length, null terminated, string keys
@@ -210,18 +210,18 @@ ht_t *ht_str_init(unsigned int size);
  * @param size 	Requested number of buckets
  * @return VA of hash table struct
  */
-ht_t *ht_str_init_fp(unsigned int size);
+cgc_ht_t *cgc_ht_str_init_fp(unsigned int size);
 
 /**
  * Delete the hash table. Assumes hash table is empty.
  *
  * NOTE: This only deletes the hash table structure.
- * You MUST empty the hash table and free the pairs (ht_pair_remove + free)
+ * You MUST empty the hash table and cgc_free the pairs (cgc_ht_pair_remove + cgc_free)
  * yourself before destroying the hash table, else this is a huge memory leak.
  *
  * @param h 	Pointer to the hash table
  */
-void ht_destroy(ht_t *h);
+void cgc_ht_destroy(cgc_ht_t *h);
 
 /**
  * Get the number of (k, v) pairs stored in the hash table
@@ -229,7 +229,7 @@ void ht_destroy(ht_t *h);
  * @param h 	Pointer to the hash table
  * @return 		Number of pairs
  */
-unsigned int ht_length(ht_t *h);
+unsigned int cgc_ht_length(cgc_ht_t *h);
 
 /**
  * Insert a (k,v) pair into the hash table
@@ -240,7 +240,7 @@ unsigned int ht_length(ht_t *h);
  *				VA of pre-existing pair that was removed and 
  *				replaced by this new pair
  */
-void *ht_pair_insert(ht_t *h, void *pair);
+void *cgc_ht_pair_insert(cgc_ht_t *h, void *pair);
 
 /**
  * Get VA of (k, v) pair from hash table using key
@@ -249,7 +249,7 @@ void *ht_pair_insert(ht_t *h, void *pair);
  * @param key 	Pointer to key
  * @return 		VA of pair or NULL if not found
  */
-void *ht_pair_get(ht_t *h, void *key);
+void *cgc_ht_pair_get(cgc_ht_t *h, void *key);
 
 /**
  * Remove (k, v) pair from hash table using key
@@ -258,7 +258,7 @@ void *ht_pair_get(ht_t *h, void *key);
  * @param pair 	VA of struct holding key and value
  * @return 		VA of pair or NULL if not found
  */
-void *ht_pair_remove(ht_t *h, void *pair);
+void *cgc_ht_pair_remove(cgc_ht_t *h, void *pair);
 
 /**
  * Get VA of value from (k, v) pair from hash table using key
@@ -267,7 +267,7 @@ void *ht_pair_remove(ht_t *h, void *pair);
  * @param key 	Pointer to key
  * @return 		Pointer to value or NULL if no pair has this key
  */
-void *ht_value(ht_t *h, void *key);
+void *cgc_ht_value(cgc_ht_t *h, void *key);
 
 /**
  * Get void * value from (k, v) pair from hash table using key
@@ -276,7 +276,7 @@ void *ht_value(ht_t *h, void *key);
  * @param key 	Pointer to key
  * @return 		Value as void *
  */
-void *ht_value_as_voidp(ht_t *h, void *key);
+void *cgc_ht_value_as_voidp(cgc_ht_t *h, void *key);
 
 /**
  * Get unsigned int value from (k, v) pair from hash table using key
@@ -285,7 +285,7 @@ void *ht_value_as_voidp(ht_t *h, void *key);
  * @param key 	Pointer to key
  * @return 		uint value (will segfault if key is not found in hash table)
  */
-unsigned int ht_value_as_uint(ht_t *h, void *key);
+unsigned int cgc_ht_value_as_uint(cgc_ht_t *h, void *key);
 
 /**
  * Get signed int value from (k, v) pair from hash table using key
@@ -294,7 +294,7 @@ unsigned int ht_value_as_uint(ht_t *h, void *key);
  * @param key 	Pointer to key
  * @return 		int value (will segfault if key is not found in hash table)
  */
-int ht_value_as_int(ht_t *h, void *key);
+int cgc_ht_value_as_int(cgc_ht_t *h, void *key);
 
 /**
  * Get first pair from buckets iterator (also resets iterator)
@@ -302,7 +302,7 @@ int ht_value_as_int(ht_t *h, void *key);
  * @param h 	Pointer to the hash table
  * @return 		VA of pair or NULL if none found.
  */
-void *ht_pair_iter_start(ht_t *h);
+void *cgc_ht_pair_iter_start(cgc_ht_t *h);
 
 /**
  * Get next pair from buckets iterator
@@ -310,7 +310,7 @@ void *ht_pair_iter_start(ht_t *h);
  * @param h 	Pointer to the hash table
  * @return 		VA of pair or NULL if none found.
  */
-void *ht_pair_iter_next(ht_t *h);
+void *cgc_ht_pair_iter_next(cgc_ht_t *h);
 
 /**
  * Determine if this hash table needs to be re-hashed to more evenly spread out the pairs
@@ -318,7 +318,7 @@ void *ht_pair_iter_next(ht_t *h);
  * @param h 	Pointer to hash table
  * @return		1 if needs re-hash, 0 if not
  */
-unsigned int ht_is_re_hash_needed(ht_t *h);
+unsigned int cgc_ht_is_re_hash_needed(cgc_ht_t *h);
 
 /**
  * Re-hash the hash table.
@@ -326,7 +326,7 @@ unsigned int ht_is_re_hash_needed(ht_t *h);
  * @param h 	Pointer to pointer to the hash table
  * @return 		Pointer to the new hash table.
  */
-ht_t *ht_re_hash(ht_t *h);
+cgc_ht_t *cgc_ht_re_hash(cgc_ht_t *h);
 
 /**
  * Create and return a new pair with the given uint key and uint value.
@@ -335,7 +335,7 @@ ht_t *ht_re_hash(ht_t *h);
  * @param v 	uint value
  * @return		VA of new uint_uint_pair
  */
-uint_uint_pair_t *get_ui_ui_pair(unsigned int k, unsigned int v);
+cgc_uint_uint_pair_t *cgc_get_ui_ui_pair(unsigned int k, unsigned int v);
 
 /**
  * Create and return a new pair with the given int key and int value.
@@ -344,7 +344,7 @@ uint_uint_pair_t *get_ui_ui_pair(unsigned int k, unsigned int v);
  * @param v 	int value
  * @return		VA of new int_int_pair
  */
-int_int_pair_t *get_i_i_pair(int k, int v);
+cgc_int_int_pair_t *cgc_get_i_i_pair(int k, int v);
 
 /**
  * Create and return a new pair with the given char * key and uint value.
@@ -353,7 +353,7 @@ int_int_pair_t *get_i_i_pair(int k, int v);
  * @param v 	uint value
  * @return		VA of new str_uint_pair
  */
-str_uint_pair_t *get_s_ui_pair(char *s, unsigned int i);
+cgc_str_uint_pair_t *cgc_get_s_ui_pair(char *s, unsigned int i);
 
 /**
  * Create and return a new pair with the given char * key and int value.
@@ -362,7 +362,7 @@ str_uint_pair_t *get_s_ui_pair(char *s, unsigned int i);
  * @param v 	int value
  * @return		VA of new str_int_pair
  */
-str_int_pair_t *get_s_i_pair(char *s, int i);
+cgc_str_int_pair_t *cgc_get_s_i_pair(char *s, int i);
 
 
 #endif

@@ -23,6 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-void PrintAdminMenu(void);
-void AdminLogin(void);
-void SendBroadcastMessage(void);
+void cgc_PrintAdminMenu(void);
+void cgc_AdminLogin(void);
+void cgc_SendBroadcastMessage(void);

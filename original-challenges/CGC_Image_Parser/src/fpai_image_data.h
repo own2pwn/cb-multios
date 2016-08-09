@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #define FPAI_MAGIC 0x55d9b6de
 
-typedef struct fpai_image_data {
+typedef struct cgc_fpai_image_data {
         char *buffer;
         int max;
         int cbyte;
@@ -37,18 +37,18 @@ typedef struct fpai_image_data {
 	int ylen;
 	int axist;
 	short checksum;
-} fpai_image_data, *pfpai_image_data;
+} cgc_fpai_image_data, *cgc_pfpai_image_data;
 
-int fpai_add_pixel( pfpai_image_data fid, char *image, int x, int y, char pixel );
-int fpai_display_img( pfpai_image_data fid );
-int fpai_read_check( pfpai_image_data fid, int bitcount );
-int fpai_read_nbits( pfpai_image_data fid, int bitcount, int *value);
-int fpai_read_magic( pfpai_image_data fid );
-int fpai_read_xaxis( pfpai_image_data fid );
-int fpai_read_yaxis( pfpai_image_data fid );
-int fpai_read_axist( pfpai_image_data fid );
-int fpai_read_cksum( pfpai_image_data fid, short *cksum);
-int fpai_calc_cksum( pfpai_image_data fid);
-int fpai_read_pixel( pfpai_image_data fid, int *x, int*y, int*pixel);
+int cgc_fpai_add_pixel( cgc_pfpai_image_data fid, char *image, int x, int y, char pixel );
+int cgc_fpai_display_img( cgc_pfpai_image_data fid );
+int cgc_fpai_read_check( cgc_pfpai_image_data fid, int bitcount );
+int cgc_fpai_read_nbits( cgc_pfpai_image_data fid, int bitcount, int *value);
+int cgc_fpai_read_magic( cgc_pfpai_image_data fid );
+int cgc_fpai_read_xaxis( cgc_pfpai_image_data fid );
+int cgc_fpai_read_yaxis( cgc_pfpai_image_data fid );
+int cgc_fpai_read_axist( cgc_pfpai_image_data fid );
+int cgc_fpai_read_cksum( cgc_pfpai_image_data fid, short *cksum);
+int cgc_fpai_calc_cksum( cgc_pfpai_image_data fid);
+int cgc_fpai_read_pixel( cgc_pfpai_image_data fid, int *x, int*y, int*pixel);
 
 #endif

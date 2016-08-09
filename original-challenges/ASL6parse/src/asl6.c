@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,12 +30,12 @@
 
 #include "asl6.h"
 
-int fdprintf(int fd, const char *fmt, ...);
+int cgc_fdprintf(int fd, const char *fmt, ...);
 
 #ifndef DEBUG
   #define DBG(s, ...)
 #else
-  #define DBG(s, ...) fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+  #define DBG(s, ...) cgc_fdprintf(STDERR, "DEBUG %s:%d:\t" s "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #endif
 
 #define ERR(s, ...) printf("ERROR: " s "\n",##__VA_ARGS__)
@@ -84,9 +84,9 @@ const char *utag_names[31] = {
 
 
 // Element parsers
-static int parse_tag_class(uint8_t *b, element *e)
+static int cgc_parse_tag_class(cgc_uint8_t *b, cgc_element *e)
 {
-  tag_class c = (b[0] & CLASS_MASK) >> 6;
+  cgc_tag_class c = (b[0] & CLASS_MASK) >> 6;
   if (c < UNIVERSAL || c > PRIVATE)
     return -1;
   else
@@ -96,9 +96,9 @@ static int parse_tag_class(uint8_t *b, element *e)
   return 0;
 }
 
-static int parse_tag(uint8_t *b, element *e)
+static int cgc_parse_tag(cgc_uint8_t *b, cgc_element *e)
 {
-  uint8_t tval;
+  cgc_uint8_t tval;
 
   tval = *b & TAG_MASK;
   if (tval > 30 || tval < 0)
@@ -110,9 +110,9 @@ static int parse_tag(uint8_t *b, element *e)
   return 0;
 }
 
-static int parse_length(uint8_t *b, element *e)
+static int cgc_parse_length(cgc_uint8_t *b, cgc_element *e)
 {
-  size_t num_bytes, i;
+  cgc_size_t num_bytes, i;
   unsigned length;
   if (b[0] < 128) {
     DBG("parsed short form length: length = %d, num_bytes = 1, read = 1", *b);
@@ -142,21 +142,21 @@ static int parse_length(uint8_t *b, element *e)
 }
 
 // Helpers
-static void free_element(element *e)
+static void cgc_free_element(cgc_element *e)
 {
   unsigned i;
   if (e != NULL && e->subs != NULL)
     for (i = 0; i < e->nsubs; i++)
       if (e->subs[i] != NULL)
-        free_element(e->subs[i]);
+        cgc_free_element(e->subs[i]);
 
   if (e && e->subs)
-    free(e->subs);
+    cgc_free(e->subs);
   if (e)
-    free(e);
+    cgc_free(e);
 }
 
-static int append_sub(element *e, element *sub)
+static int cgc_append_sub(cgc_element *e, cgc_element *sub)
 {
   unsigned new_cap;
   if (e->nsubs == e->sub_cap) {
@@ -165,7 +165,7 @@ static int append_sub(element *e, element *sub)
       return -1;
     }
 
-    e->subs = realloc(e->subs, sizeof(element *) * new_cap);
+    e->subs = cgc_realloc(e->subs, sizeof(cgc_element *) * new_cap);
     if (e->subs == NULL) {
       return -1;
     }
@@ -177,7 +177,7 @@ static int append_sub(element *e, element *sub)
 }
 
 // Decoder
-static int within(uint8_t *b, unsigned length, unsigned st, unsigned sp)
+static int cgc_within(cgc_uint8_t *b, unsigned length, unsigned st, unsigned sp)
 {
   unsigned bu = (unsigned) b;
   if (bu < st || bu >= sp)
@@ -190,19 +190,19 @@ static int within(uint8_t *b, unsigned length, unsigned st, unsigned sp)
     return 0;
 }
 
-element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
+cgc_element *cgc__decode(cgc_uint8_t *b, unsigned depth, unsigned st, unsigned sp)
 {
-  if (within(b, 0, st, sp) != 0) {
+  if (cgc_within(b, 0, st, sp) != 0) {
     DBG("b = %x, st = %x, sp = %x\n", b, st, sp);
     ERR("bounds exceeded");
     return NULL;
   }
 
-  element *e = malloc(sizeof(element));
+  cgc_element *e = cgc_malloc(sizeof(cgc_element));
   if (e == NULL)
     goto ERROR;
   e->sub_cap = DEFAULT_SUB_CAP;
-  e->subs = calloc(sizeof(element *), e->sub_cap);
+  e->subs = cgc_calloc(sizeof(cgc_element *), e->sub_cap);
   if (e->subs == NULL)
     goto ERROR;
   e->nsubs = 0;
@@ -210,12 +210,12 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
   e->primitive = (b[0] & PRIM_MASK) == 0;
 
   // Check for issues
-  if (parse_tag_class(b, e) < 0) {
+  if (cgc_parse_tag_class(b, e) < 0) {
     ERR("unknown class");
     goto ERROR;
   }
 
-  if (parse_tag(b, e) < 0) {
+  if (cgc_parse_tag(b, e) < 0) {
     ERR("unknown tag");
     goto ERROR;
   }
@@ -231,14 +231,14 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
     goto ERROR;
   }
 
-  int bread = parse_length(b + 1, e);
+  int bread = cgc_parse_length(b + 1, e);
   if (bread <= 0) {
     goto ERROR;
   }
 
   // Enforce length rules
   if (e->tag == BOOLEAN && e->length != 1) {
-    ERR("invalid length for bool");
+    ERR("invalid length for cgc_bool");
     goto ERROR;
   }
 
@@ -250,22 +250,22 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
   bread += 1;
   DBG("header parsing consumed %d bytes", bread);
   e->data = b + bread;
-  if (within(e->data, e->length, st, sp) != 0) {
+  if (cgc_within(e->data, e->length, st, sp) != 0) {
     ERR("bounds exceeded");
     goto ERROR;
   }
 
   if (!e->primitive) {
-    uint8_t *cur;
-    element *sub;
+    cgc_uint8_t *cur;
+    cgc_element *sub;
     cur = e->data;
     while (1) {
-      sub = _decode(cur, depth + 1, st, sp);
+      sub = cgc__decode(cur, depth + 1, st, sp);
       if (sub == NULL) {
         goto ERROR;
       }
 
-      if (append_sub(e, sub) < 0) {
+      if (cgc_append_sub(e, sub) < 0) {
         goto ERROR;
       }
 
@@ -287,26 +287,26 @@ element *_decode(uint8_t *b, unsigned depth, unsigned st, unsigned sp)
   return e;
 
 ERROR:
-  free_element(e);
+  cgc_free_element(e);
   return NULL;
 }
 
-element *decode(uint8_t *b, unsigned end)
+cgc_element *cgc_decode(cgc_uint8_t *b, unsigned end)
 {
-  return _decode(b, 0, (unsigned) b, end);
+  return cgc__decode(b, 0, (unsigned) b, end);
 }
 
 // Pretty Printers
-static void print_indent(unsigned depth)
+static void cgc_print_indent(unsigned depth)
 {
   unsigned i;
   for (i = 0; i < depth; i++)
     printf("    ");
 }
 
-static void print_time(element *e, int utc)
+static void cgc_print_time(cgc_element *e, int utc)
 {
-  uint8_t *d = e->data;
+  cgc_uint8_t *d = e->data;
   unsigned req_len = utc ? 12 : 14;
   unsigned i;
 
@@ -316,7 +316,7 @@ static void print_time(element *e, int utc)
   }
 
   for (i = 0; i < req_len; i++)
-    if (!isdigit(d[i])) {
+    if (!cgc_isdigit(d[i])) {
       printf("INVALID TIME");
       return;
     }
@@ -338,17 +338,17 @@ static void print_time(element *e, int utc)
   printf(" %c%c:%c%c:%c%c GMT", d[6], d[7], d[8], d[9], d[10], d[11]);
 }
 
-static void print_hex(element *e)
+static void cgc_print_hex(cgc_element *e)
 {
   unsigned i;
   if (e->length > 16) {
     printf("\n");
-    print_indent(e->depth + 1);
+    cgc_print_indent(e->depth + 1);
     for (i = 0; i < e->length; i++) {
       printf("%02X", e->data[i]);
       if (i % 32 == 31) {
         printf("\n");
-        print_indent(e->depth + 1);
+        cgc_print_indent(e->depth + 1);
       } else {
         printf(" ");
       }
@@ -360,7 +360,7 @@ static void print_hex(element *e)
   }
 }
 
-static int read_octet_int(uint8_t *b, unsigned max, unsigned long *v)
+static int cgc_read_octet_int(cgc_uint8_t *b, unsigned max, unsigned long *v)
 {
   unsigned i;
 
@@ -376,14 +376,14 @@ static int read_octet_int(uint8_t *b, unsigned max, unsigned long *v)
   return -1;
 }
 
-static void print_oid(element *e)
+static void cgc_print_oid(cgc_element *e)
 {
   unsigned i = 0;
   int ret;
   unsigned long v = 0;
   while (1) {
     if (i == 0) {
-      ret = read_octet_int(&e->data[i], e->length, &v);
+      ret = cgc_read_octet_int(&e->data[i], e->length, &v);
       if (ret < 0) {
         return;
       }
@@ -406,9 +406,9 @@ static void print_oid(element *e)
     }
 
 #ifdef PATCHED
-    ret = read_octet_int(&e->data[i], e->length - i, &v);
+    ret = cgc_read_octet_int(&e->data[i], e->length - i, &v);
 #else
-    ret = read_octet_int(&e->data[i], e->length, &v);
+    ret = cgc_read_octet_int(&e->data[i], e->length, &v);
 #endif
     if (ret < 0) {
       return;
@@ -425,7 +425,7 @@ static void print_oid(element *e)
   }
 }
 
-static void print_tag(element *e)
+static void cgc_print_tag(cgc_element *e)
 {
   switch (e->cls) {
   case UNIVERSAL:
@@ -449,17 +449,17 @@ static void print_tag(element *e)
   }
 }
 
-static void print_string(element *e)
+static void cgc_print_string(cgc_element *e)
 {
   unsigned i;
   for (i = 0; i < e->length; i++)
-    if (isalnum(e->data[i]))
+    if (cgc_isalnum(e->data[i]))
       printf("%c", e->data[i]);
     else
       printf("\\x%x", e->data[i]);
 }
 
-static void print_primitive(element *e)
+static void cgc_print_primitive(cgc_element *e)
 {
   switch(e->cls) {
   case UNIVERSAL:
@@ -470,16 +470,16 @@ static void print_primitive(element *e)
     case INTEGER:
     case BITSTR:
     case OCTETSTR:
-      print_hex(e);
+      cgc_print_hex(e);
       return;
     case OID:
-      print_oid(e);
+      cgc_print_oid(e);
       return;
     case UTCTIME:
-      print_time(e, 1);
+      cgc_print_time(e, 1);
       return;
     case GENTIME:
-      print_time(e, 0);
+      cgc_print_time(e, 0);
       return;
     case UTFSTR:
     case NUMSTR:
@@ -488,7 +488,7 @@ static void print_primitive(element *e)
     case VIDSTR:
     case IA5STR:
     case VISSTR:
-      print_string(e);
+      cgc_print_string(e);
       return;
     default:
       break;
@@ -500,21 +500,21 @@ static void print_primitive(element *e)
   printf("UNPRINTABLE");
 }
 
-void pprint(element *e)
+void cgc_pprint(cgc_element *e)
 {
   unsigned i;
-  print_indent(e->depth);
-  print_tag(e);
+  cgc_print_indent(e->depth);
+  cgc_print_tag(e);
 
   if (e->primitive) {
-    print_primitive(e);
+    cgc_print_primitive(e);
     printf("\n");
   } else {
     printf("\n");
     for (i = 0; i < e->nsubs; i++)
-      pprint(e->subs[i]);
+      cgc_pprint(e->subs[i]);
   }
 
   if (e->depth == 0)
-    free_element(e);
+    cgc_free_element(e);
 }

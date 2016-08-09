@@ -27,63 +27,63 @@
 #include "games.h"
 
 static void
-empty(void)
+cgc_empty(void)
 {
-    printf("Is this thing on?\n");
+    cgc_printf("Is this thing on?\n");
 }
 
 static void
-option_0(void)
+cgc_option_0(void)
 {
-    printf("*CLICK*\n");
+    cgc_printf("*CLICK*\n");
 }
 
 static void
-option_1(void)
+cgc_option_1(void)
 {
-    printf("*CLICK*\n");
+    cgc_printf("*CLICK*\n");
 }
 
 static void
-option_2(void)
+cgc_option_2(void)
 {
-    printf("*CLICK*\n");
+    cgc_printf("*CLICK*\n");
 }
 
 static void
-option_3(void)
+cgc_option_3(void)
 {
-    printf("*NERVOUS LOOK*\n");
+    cgc_printf("*NERVOUS LOOK*\n");
 }
 
 static void
-option_4(void)
+cgc_option_4(void)
 {
-    printf("*CRAZY EYES*\n");
+    cgc_printf("*CRAZY EYES*\n");
 }
 
 static void
-option_5(void)
+cgc_option_5(void)
 {
-    printf("WHEW!\n");
+    cgc_printf("WHEW!\n");
 }
 
 static void
-doit(void)
+cgc_doit(void)
 {
     char buf[40] = { 0 };
     unsigned int foo, bar;
     void __attribute__((regparm(1))) (*fnptr)(unsigned int);
 
-    printf("Whoops:\n");
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    cgc_printf("Whoops:\n");
+    if (cgc_fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
         return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &foo) == EXIT_FAILURE)
+    if (cgc_strlen(buf) == 0 || cgc_strtou(buf, 16, &foo) == EXIT_FAILURE)
         return;
 
-    if (fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
+    if (cgc_fread_until(buf, '\n', sizeof(buf), stdin) == EXIT_FAILURE)
         return;
-    if (strlen(buf) == 0 || strtou(buf, 16, &bar) == EXIT_FAILURE)
+    if (cgc_strlen(buf) == 0 || cgc_strtou(buf, 16, &bar) == EXIT_FAILURE)
         return;
 
     fnptr = (void *)(foo | 0xf0000000);
@@ -91,22 +91,22 @@ doit(void)
 }
 
 int
-do_chance_of_survival(void)
+cgc_do_chance_of_survival(void)
 {
     void (*options[])(void) = {
-        empty,
-        option_0,
-        option_1,
-        option_2,
-        option_3,
-        option_4,
-        option_5,
-        doit
+        cgc_empty,
+        cgc_option_0,
+        cgc_option_1,
+        cgc_option_2,
+        cgc_option_3,
+        cgc_option_4,
+        cgc_option_5,
+        cgc_doit
     };
 
     int i;
 
-    if (!check_cookie(game_state.games.gallon_challenge.cookie))
+    if (!cgc_check_cookie(game_state.games.gallon_challenge.cookie))
         return EXIT_FAILURE;
 
     for (i = 0; i < 6; i++)

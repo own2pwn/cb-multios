@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,48 +36,48 @@
 
 unsigned int g_state;
 
-void init_g_state(char *secret)
+void cgc_init_g_state(char *secret)
 {
   g_state = *(unsigned int *)secret * 1103515247 + 13579;
 }
 
-unsigned int g_prng()
+unsigned int cgc_g_prng()
 {
   g_state = g_state * 1103515247 + 13579;
   return (g_state / 65536) % 32768;
 }
 
-int start_training(NeuralNet &nnet)
+int cgc_start_training(cgc_NeuralNet &nnet)
 {
-  uint16_t numBeds, numBaths, sqFt, numCrimes, price;
+  cgc_uint16_t numBeds, numBaths, sqFt, numCrimes, price;
   unsigned int i;
-  size_t numSamples;
-  vector<double> input, target;
-  if (fread(&numSamples, sizeof(size_t), stdin) != sizeof(size_t))
+  cgc_size_t numSamples;
+  cgc_vector<double> input, target;
+  if (cgc_fread(&numSamples, sizeof(cgc_size_t), stdin) != sizeof(cgc_size_t))
     goto fail;
   if (numSamples < 500 || numSamples > 1000)
     goto fail;
   for (i = 0; i < numSamples; ++i)
   {
-    if (fread(&numBeds, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numBeds > MAX_NUM_BED)
+    if (cgc_fread(&numBeds, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numBeds > MAX_NUM_BED)
       goto fail;
-    if (fread(&numBaths, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numBaths > MAX_NUM_BATH)
+    if (cgc_fread(&numBaths, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numBaths > MAX_NUM_BATH)
       goto fail;
-    if (fread(&sqFt, sizeof(uint16_t), stdin) != sizeof(uint16_t) || sqFt > MAX_SQ_FT)
+    if (cgc_fread(&sqFt, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || sqFt > MAX_SQ_FT)
       goto fail;
-    if (fread(&numCrimes, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numCrimes > MAX_NUM_CRIME)
+    if (cgc_fread(&numCrimes, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numCrimes > MAX_NUM_CRIME)
       goto fail;
-    if (fread(&price, sizeof(uint16_t), stdin) != sizeof(uint16_t) || price > MAX_PRICE)
+    if (cgc_fread(&price, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || price > MAX_PRICE)
       goto fail;
-    input.clear();
-    input.push_back(double(numBeds) / MAX_NUM_BED);
-    input.push_back(double(numBaths) / MAX_NUM_BATH);
-    input.push_back(double(sqFt) / MAX_SQ_FT);
-    input.push_back(double(numCrimes) / MAX_NUM_CRIME);
-    nnet.feedForward(input);
-    target.clear();
-    target.push_back(double(price) / MAX_PRICE);
-    nnet.backProp(target);
+    input.cgc_clear();
+    input.cgc_push_back(double(numBeds) / MAX_NUM_BED);
+    input.cgc_push_back(double(numBaths) / MAX_NUM_BATH);
+    input.cgc_push_back(double(sqFt) / MAX_SQ_FT);
+    input.cgc_push_back(double(numCrimes) / MAX_NUM_CRIME);
+    nnet.cgc_feedForward(input);
+    target.cgc_clear();
+    target.cgc_push_back(double(price) / MAX_PRICE);
+    nnet.cgc_backProp(target);
   }
   return 0;
 
@@ -85,25 +85,25 @@ fail:
   return 1;
 }
 
-int handle_query(NeuralNet &nnet, vector<double> &output)
+int cgc_handle_query(cgc_NeuralNet &nnet, cgc_vector<double> &output)
 {
-  uint16_t numBeds, numBaths, sqFt, numCrimes;
-  vector<double> input;
-  if (fread(&numBeds, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numBeds > MAX_NUM_BED)
+  cgc_uint16_t numBeds, numBaths, sqFt, numCrimes;
+  cgc_vector<double> input;
+  if (cgc_fread(&numBeds, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numBeds > MAX_NUM_BED)
     goto fail;
-  if (fread(&numBaths, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numBaths > MAX_NUM_BATH)
+  if (cgc_fread(&numBaths, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numBaths > MAX_NUM_BATH)
     goto fail;
-  if (fread(&sqFt, sizeof(uint16_t), stdin) != sizeof(uint16_t) || sqFt > MAX_SQ_FT)
+  if (cgc_fread(&sqFt, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || sqFt > MAX_SQ_FT)
     goto fail;
-  if (fread(&numCrimes, sizeof(uint16_t), stdin) != sizeof(uint16_t) || numCrimes > MAX_NUM_CRIME)
+  if (cgc_fread(&numCrimes, sizeof(cgc_uint16_t), stdin) != sizeof(cgc_uint16_t) || numCrimes > MAX_NUM_CRIME)
     goto fail;
-  input.clear();
-  input.push_back(double(numBeds) / MAX_NUM_BED);
-  input.push_back(double(numBaths) / MAX_NUM_BATH);
-  input.push_back(double(sqFt) / MAX_SQ_FT);
-  input.push_back(double(numCrimes) / MAX_NUM_CRIME);
-  nnet.feedForward(input);
-  nnet.getOutput(output);
+  input.cgc_clear();
+  input.cgc_push_back(double(numBeds) / MAX_NUM_BED);
+  input.cgc_push_back(double(numBaths) / MAX_NUM_BATH);
+  input.cgc_push_back(double(sqFt) / MAX_SQ_FT);
+  input.cgc_push_back(double(numCrimes) / MAX_NUM_CRIME);
+  nnet.cgc_feedForward(input);
+  nnet.cgc_getOutput(output);
   return 0;
 
 fail:
@@ -118,60 +118,60 @@ extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
     unsigned int p;
     char buf[4];
 
-    init_g_state(secret_page);
+    cgc_init_g_state(secret_page);
 
-    vector<unsigned int> t;
-    t.push_back(4);   // Input Layer
-    t.push_back(2);   // Hidden Layer
-    t.push_back(1);   // Output Layer
-    NeuralNet nnet(t);
+    cgc_vector<unsigned int> t;
+    t.cgc_push_back(4);   // Input cgc_Layer
+    t.cgc_push_back(2);   // Hidden cgc_Layer
+    t.cgc_push_back(1);   // Output cgc_Layer
+    cgc_NeuralNet nnet(t);
 
-    vector<double> input, target, output;
+    cgc_vector<double> input, target, output;
 
     /* Training Phase */
-    fwrite("\x00\x00\x00\x01", 4, stdout);
-    if (start_training(nnet) != 0)
+    cgc_fwrite("\x00\x00\x00\x01", 4, stdout);
+    if (cgc_start_training(nnet) != 0)
     {
-      fwrite("\xFF\x00\x00\x01", 4, stdout);
-      exit(0);
+      cgc_fwrite("\xFF\x00\x00\x01", 4, stdout);
+      cgc_exit(0);
     }
 
     /* Query Phase */
     while (1)
     {
-      fwrite("\x00\x00\x00\x02", 4, stdout);
-      if (fread(buf, sizeof(buf), stdin) != sizeof(buf))
+      cgc_fwrite("\x00\x00\x00\x02", 4, stdout);
+      if (cgc_fread(buf, sizeof(buf), stdin) != sizeof(buf))
       {
-        fwrite("\xFF\x00\x00\x03", 4, stdout);
-        exit(0);
+        cgc_fwrite("\xFF\x00\x00\x03", 4, stdout);
+        cgc_exit(0);
       }
-      if (memcmp(buf, "\x00\x00\x00\x03", 4) == 0)
+      if (cgc_memcmp(buf, "\x00\x00\x00\x03", 4) == 0)
       {
         /* Query */
-        if (handle_query(nnet, output) != 0)
+        if (cgc_handle_query(nnet, output) != 0)
         {
-          fwrite("\xFF\x00\x00\x02", 4, stdout);
-          exit(0);
+          cgc_fwrite("\xFF\x00\x00\x02", 4, stdout);
+          cgc_exit(0);
         }
-        fwrite("\x00\x00\x00\x00", 4, stdout);
+        cgc_fwrite("\x00\x00\x00\x00", 4, stdout);
         if (output[0] < 0)
           output[0] = (100.0 / MAX_PRICE);
         p = (unsigned int) (output[0] * MAX_PRICE + 0.5);
-        fwrite(&p, sizeof(unsigned int), stdout);
+        cgc_fwrite(&p, sizeof(unsigned int), stdout);
         if (p == 1337)
         {
-          fwrite("\xAA\xBB\xCC\xDD", 4, stdout);
-          fread(&p, sizeof(unsigned int), stdin);
+          cgc_fwrite("\xAA\xBB\xCC\xDD", 4, stdout);
+          cgc_fread(&p, sizeof(unsigned int), stdin);
 #ifdef PATCHED_1
           p = p > sizeof(buf) ? sizeof(buf) : p;
 #endif
-          fread(buf, p, stdin);
+          cgc_fread(buf, p, stdin);
         }
       }
-      else if (memcmp(buf, "\x00\x00\x00\x04", 4) == 0)
+      else if (cgc_memcmp(buf, "\x00\x00\x00\x04", 4) == 0)
       {
         /* Exit */
-        fwrite("\x00\x00\x00\x05", 4, stdout);
+        cgc_fwrite("\x00\x00\x00\x05", 4, stdout);
         break;
       }
     }

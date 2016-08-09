@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,13 +29,13 @@
 
 #include "protocol.h"
 
-int read_n(int fd, char *buf, size_t len)
+int cgc_read_n(int fd, char *buf, cgc_size_t len)
 {
-  size_t i;
+  cgc_size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       break;
     c++;
@@ -43,13 +43,13 @@ int read_n(int fd, char *buf, size_t len)
   return c - buf;
 }
 
-int read_until(int fd, char *buf, size_t len, char delim)
+int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim)
 {
-  size_t i;
+  cgc_size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       return -1;
     if (*(c++) == delim)
@@ -64,13 +64,13 @@ int main()
   int length = 0;
   char buf[8192];
 
-  while (read_n(STDIN, (char *)&length, sizeof(int)) > 0)
+  while (cgc_read_n(STDIN, (char *)&length, sizeof(int)) > 0)
   {
     if (length >= sizeof(buf))
       return 0;
-    if (read_n(STDIN, buf, length) > 0)
+    if (cgc_read_n(STDIN, buf, length) > 0)
     {
-      handle_command(buf, length);
+      cgc_handle_command(buf, length);
     }
   }
   return 0;

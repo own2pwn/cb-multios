@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,59 +22,59 @@
  */
 #include "file.h"
 
-File::File(size_t _header_size, size_t _data_size, char *_filename)
+cgc_File::cgc_File(cgc_size_t _header_size, cgc_size_t _data_size, char *_filename)
 {
-    size_t len;
+    cgc_size_t len;
     header_size = _header_size;
     data_size = _data_size;
-    if (!_filename || !*_filename || strlen(_filename) >= sizeof(filename))
-        strcpy(filename, "New File");
+    if (!_filename || !*_filename || cgc_strlen(_filename) >= sizeof(filename))
+        cgc_strcpy(filename, "New cgc_File");
     else
-        strcpy(filename, _filename);
+        cgc_strcpy(filename, _filename);
 
-    len = strlen(filename);
+    len = cgc_strlen(filename);
     if (len > 4 && filename[len - 4] == '.')
-        strcpy(extension, &filename[len - 3]);
+        cgc_strcpy(extension, &filename[len - 3]);
     else
-        memset(extension, 0, sizeof(extension));
+        cgc_memset(extension, 0, sizeof(extension));
 }
 
-File::~File()
+cgc_File::~cgc_File()
 {
     if(raw_header)
-        free(raw_header);
+        cgc_free(raw_header);
     if(raw_data)
         delete[] raw_data;
 }
 
-void File::clear_data_size()
+void cgc_File::cgc_clear_data_size()
 {
     data_size = 0;
 }
 
-size_t File::get_header_size()
+cgc_size_t cgc_File::cgc_get_header_size()
 {
     return header_size;
 }
 
-size_t File::get_data_size()
+cgc_size_t cgc_File::cgc_get_data_size()
 {
     return data_size;
 }
 
-const ftype File::tell_filetype()
+const ftype cgc_File::cgc_tell_filetype()
 {
     unsigned int magic;
     const filetype *ft;
 
 #ifndef PATCHED
-    ft = get_filetype_e(extension);
+    ft = cgc_get_filetype_e(extension);
     if (ft)
         return ft->type;
 #endif
 
     magic = ((unsigned int *)raw_header)[0];
-    ft = get_filetype_m(magic);
+    ft = cgc_get_filetype_m(magic);
     if (ft)
         return ft->type;
 

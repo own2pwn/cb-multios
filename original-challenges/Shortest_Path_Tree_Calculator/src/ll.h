@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,12 +28,12 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "graph.h"
 
-pNode AddNode(pNode Element);
-pEdge AddEdge(pEdge Element);
-pNode RemoveNode(pNode Element);
-pEdge RemoveEdge(pEdge Element);
-pEdge FindEdge(pNode NodeA, pNode NodeZ);
-pNode FindNode(uint32_t TargetName);
-uint8_t DestroyNodes(void);
-uint8_t DestroyEdges(void);
+cgc_pNode cgc_AddNode(cgc_pNode Element);
+cgc_pEdge cgc_AddEdge(cgc_pEdge Element);
+cgc_pNode cgc_RemoveNode(cgc_pNode Element);
+cgc_pEdge cgc_RemoveEdge(cgc_pEdge Element);
+cgc_pEdge cgc_FindEdge(cgc_pNode NodeA, cgc_pNode NodeZ);
+cgc_pNode cgc_FindNode(cgc_uint32_t TargetName);
+cgc_uint8_t cgc_DestroyNodes(void);
+cgc_uint8_t cgc_DestroyEdges(void);
 #endif

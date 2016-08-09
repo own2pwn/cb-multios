@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,22 +32,22 @@ int main(void) {
     unsigned int choice = 0;
     int ret = SUCCESS;
 
-    init_election();
+    cgc_init_election();
 
     while (SUCCESS == ret) {
-        print_menu(NO_AUTH);
-        ret = get_choice(&choice);
+        cgc_print_menu(NO_AUTH);
+        ret = cgc_get_choice(&choice);
 
         if (ERRNO_CONV != ret) {
-            ret = decider(choice);
+            ret = cgc_decider(choice);
 
             // successful login will return creds
             if ((VOTER == ret) || (E_MGR == ret)) {
-                print_menu(ret);
-                ret = get_choice(&choice);
+                cgc_print_menu(ret);
+                ret = cgc_get_choice(&choice);
 
                 if (ERRNO_CONV != ret) {
-                    ret = decider(choice);
+                    ret = cgc_decider(choice);
                     if (NO_AUTH == ret)
                         ret = -1;
                 }

@@ -28,47 +28,47 @@ THE SOFTWARE.
 
 #include <cutil_list.h>
 
-class CPeripheral
+class cgc_CPeripheral
 {
 public:
-	CPeripheral( uint8_t peripheralID );
-	virtual ~CPeripheral( );
+	cgc_CPeripheral( cgc_uint8_t peripheralID );
+	virtual ~cgc_CPeripheral( );
 
-	virtual bool Init( void ) = 0;
-	virtual bool Read( uint8_t *pDest, uint16_t length ) = 0;
-	virtual bool Write( uint8_t *pDest, uint16_t length ) = 0;
+	virtual bool cgc_Init( void ) = 0;
+	virtual bool cgc_Read( cgc_uint8_t *pDest, cgc_uint16_t length ) = 0;
+	virtual bool cgc_Write( cgc_uint8_t *pDest, cgc_uint16_t length ) = 0;
 
-	uint8_t GetPeripheralID( void ) const { return m_peripheralID; };
+	cgc_uint8_t cgc_GetPeripheralID( void ) const { return m_peripheralID; };
 
 private:
-	uint8_t m_peripheralID;
+	cgc_uint8_t m_peripheralID;
 
 public:
-	CUtil::DLL_LINK( CPeripheral ) m_peripheralListLink;
+	CUtil::DLL_LINK( cgc_CPeripheral ) m_peripheralListLink;
 };
 
-class CSendDevice : public CPeripheral
+class cgc_CSendDevice : public cgc_CPeripheral
 {
 public:
-	CSendDevice( uint8_t peripheralID );
-	~CSendDevice( );
+	cgc_CSendDevice( cgc_uint8_t peripheralID );
+	~cgc_CSendDevice( );
 
-	bool Init( void );
-	bool Read( uint8_t *pDest, uint16_t length );
-	bool Write( uint8_t *pDest, uint16_t length );
+	bool cgc_Init( void );
+	bool cgc_Read( cgc_uint8_t *pDest, cgc_uint16_t length );
+	bool cgc_Write( cgc_uint8_t *pDest, cgc_uint16_t length );
 
 private:
 };
 
-class CReadDevice : public CPeripheral
+class cgc_CReadDevice : public cgc_CPeripheral
 {
 public:
-	CReadDevice( uint8_t peripheralID );
-	~CReadDevice( );
+	cgc_CReadDevice( cgc_uint8_t peripheralID );
+	~cgc_CReadDevice( );
 
-	bool Init( void );
-	bool Read( uint8_t *pDest, uint16_t length );
-	bool Write( uint8_t *pDest, uint16_t length );
+	bool cgc_Init( void );
+	bool cgc_Read( cgc_uint8_t *pDest, cgc_uint16_t length );
+	bool cgc_Write( cgc_uint8_t *pDest, cgc_uint16_t length );
 
 private:
 };

@@ -32,8 +32,8 @@ THE SOFTWARE.
 #include "stdio.h"
 #include "prng.h"
 
-extern PlantSystem Effluent;
-uint8_t SimStepCount = 0;
+extern cgc_PlantSystem Effluent;
+cgc_uint8_t SimStepCount = 0;
 
 const char *rand_page = (const char *)0x4347C000;
 
@@ -41,56 +41,56 @@ int main(void) {
 	char buf[32];
 
 	// init the PRNG
-	seed_prng(*(unsigned int *)rand_page);
+	cgc_seed_prng(*(unsigned int *)rand_page);
 
 	// init the simulation
-	InitPlant();
+	cgc_InitPlant();
 
 	// Run a simulation step to prime the system
-	RunSimStep();
+	cgc_RunSimStep();
 
 	// Print the plant schematic
-	PrintPlantSchematic(); 
+	cgc_PrintPlantSchematic(); 
 
 	// Print the current plant status
-	PrintPlantStatus();
+	cgc_PrintPlantStatus();
 
 	// Print inital banner
-	PrintSystemBanner();
+	cgc_PrintSystemBanner();
 
 	// Run the simulation loop
 	while (SimStepCount < 254) {
 
 		// Allow the operator to adjust plant parameters
-		if (!PrintMenu()) {
+		if (!cgc_PrintMenu()) {
 			break;
 		}
 
 		// Run a simulation step
-		if (!RunSimStep()) {
-			cromu_puts("A valve's output percentages don't total to at least 100%.  Can't run the simulation.");
+		if (!cgc_RunSimStep()) {
+			cgc_cromu_puts("A valve's output percentages don't total to at least 100%.  Can't run the simulation.");
 			continue;
 		}
 		SimStepCount++;
 
 		// Enforce water quality standards
-		CheckEffluentQuality();
+		cgc_CheckEffluentQuality();
 
 		// Adjust Influent 
-		RandomInfluent();
+		cgc_RandomInfluent();
 
 	}
 
 	// see if the sim ran for at least 24 hours
 	if (SimStepCount >= 24) {
 		if (Effluent.QualityFailures > 5) {
-			cromu_printf("There were $d hours with sub-standard water quality levels. You Failed!\n", Effluent.QualityFailures);
+			cgc_cromu_printf("There were $d hours with sub-standard water quality levels. You Failed!\n", Effluent.QualityFailures);
 		} else {
-			SimulateEffluent();
-			cromu_puts("Congratulations!  You've successfully operated the plant for 24 hours.  You Win!");
+			cgc_SimulateEffluent();
+			cgc_cromu_puts("Congratulations!  You've successfully operated the plant for 24 hours.  You Win!");
 		}
 	} else {
-		cromu_puts("Ending simulation at less than 24 hours.");
+		cgc_cromu_puts("Ending simulation at less than 24 hours.");
 	}
 	
 	return(0);

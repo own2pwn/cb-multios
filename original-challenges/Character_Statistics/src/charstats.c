@@ -1,17 +1,17 @@
 #include <libcgc.h>
 
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef uint16_t reg_t;
+typedef unsigned char cgc_uint8_t;
+typedef unsigned short cgc_uint16_t;
+typedef unsigned int cgc_uint32_t;
+typedef cgc_uint16_t cgc_reg_t;
 
 // NOTE: Had to reduce the STATE_SIZE so that the segfault condition is easier to trigger - used to be 1024
 
 #define STATE_SIZE (256)
 #define NUM_CONSTANTS (6)
 #define CONSTANT_SIZE (NUM_CONSTANTS * 4)
-uint8_t* state = NULL; //[STATE_SIZE + CONSTANT_SIZE];
-uint8_t* _consts = NULL;
+cgc_uint8_t* state = NULL; //[STATE_SIZE + CONSTANT_SIZE];
+cgc_uint8_t* _consts = NULL;
 
 #define R_ZERO   (STATE_SIZE + (4 * 0))
 #define R_ONE    (STATE_SIZE + (4 * 1))
@@ -25,494 +25,494 @@ uint8_t* _consts = NULL;
 #define TRUE32 (0xFFFFFFFF)
 #define FALSE  (0x0)
 
-#define STATE8(_r)  ( *((uint8_t*)(state + _r))  )
-#define STATE16(_r) ( *((uint16_t*)(state + _r)) )
-#define STATE32(_r) ( *((uint32_t*)(state + _r)) )
+#define STATE8(_r)  ( *((cgc_uint8_t*)(state + _r))  )
+#define STATE16(_r) ( *((cgc_uint16_t*)(state + _r)) )
+#define STATE32(_r) ( *((cgc_uint32_t*)(state + _r)) )
 
 
 #define REGLIMIT (STATE_SIZE / 2) 
 
 #define ADDR(_r) (_r + REGLIMIT)
 
-uint8_t DATA8(reg_t r)
+cgc_uint8_t cgc_DATA8(cgc_reg_t r)
 {
  return (STATE8(r + REGLIMIT));
 }
 
-uint16_t DATA16(reg_t r)
+cgc_uint16_t cgc_DATA16(cgc_reg_t r)
 {
  return (STATE16(r + REGLIMIT));
 }
 
-uint32_t DATA32(reg_t r)
+cgc_uint32_t cgc_DATA32(cgc_reg_t r)
 {
  return (STATE32(r + REGLIMIT));
 }
 
-uint8_t REG8(reg_t r)
+cgc_uint8_t cgc_REG8(cgc_reg_t r)
 {
  return (STATE8(r));
 }
 
-uint16_t REG16(reg_t r)
+cgc_uint16_t cgc_REG16(cgc_reg_t r)
 {
  return (STATE16(r));
 }
 
-uint32_t REG32(reg_t r)
+cgc_uint32_t cgc_REG32(cgc_reg_t r)
 {
  return (STATE32(r));
 }
 
 
-void MOVIM8(reg_t r1, uint8_t im)
+void cgc_MOVIM8(cgc_reg_t r1, cgc_uint8_t im)
 {
   STATE8(r1) = im;
 }
 
-void MOVIM16(reg_t r1, uint16_t im)
+void cgc_MOVIM16(cgc_reg_t r1, cgc_uint16_t im)
 {
   STATE16(r1) = im;
 }
 
-void MOVIM32(reg_t r1, uint32_t im)
+void cgc_MOVIM32(cgc_reg_t r1, cgc_uint32_t im)
 {
   STATE32(r1) = im;
 }
 
-void MOV8(reg_t r1, reg_t r2)
+void cgc_MOV8(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE8(r1) = STATE8(r2);
 }
 
-void MOV16(reg_t r1, reg_t r2)
+void cgc_MOV16(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE16(r1) = STATE16(r2);
 }
 
-void MOV32(reg_t r1, reg_t r2)
+void cgc_MOV32(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE32(r1) = STATE32(r2);
 }
 
 
-void AND8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_AND8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE8(r1) = STATE8(r2) & STATE8(r3);
 }
 
-void AND16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_AND16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE16(r1) = STATE16(r2) & STATE16(r3);
 }
 
-void AND32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_AND32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE32(r1) = STATE32(r2) & STATE32(r3);
 }
 
-void OR8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_OR8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE8(r1) = STATE8(r2) | STATE8(r3);
 }
 
-void OR16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_OR16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE16(r1) = STATE16(r2) | STATE16(r3);
 }
 
-void OR32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_OR32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE32(r1) = STATE32(r2) | STATE32(r3);
 }
 
-void NOT8(reg_t r1, reg_t r2)
+void cgc_NOT8(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE8(r1) = ~STATE8(r2);
 }
 
-void NOT16(reg_t r1, reg_t r2)
+void cgc_NOT16(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE16(r1) = ~STATE16(r2);
 }
 
-void NOT32(reg_t r1, reg_t r2)
+void cgc_NOT32(cgc_reg_t r1, cgc_reg_t r2)
 {
   STATE32(r1) = ~STATE32(r2);
 }
 
-void ADD8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_ADD8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE8(r1) = STATE8(r2) + STATE8(r3);
 }
 
-void ADD16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_ADD16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE16(r1) = STATE16(r2) + STATE16(r3);
 }
 
-void ADD32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_ADD32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE32(r1) = STATE32(r2) + STATE32(r3);
 }
 
-void SUB8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_SUB8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE8(r1) = STATE8(r2) - STATE8(r3);
 }
 
-void SUB16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_SUB16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE16(r1) = STATE16(r2) - STATE16(r3);
 }
 
-void SUB32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_SUB32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   STATE32(r1) = STATE32(r2) - STATE32(r3);
 }
 
-void LAND8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LAND8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  AND8(r1, r2, r3);
+  cgc_AND8(r1, r2, r3);
 }
 
-void LAND16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LAND16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  AND16(r1, r2, r3);
+  cgc_AND16(r1, r2, r3);
 }
 
-void LAND32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LAND32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  AND32(r1, r2, r3);
+  cgc_AND32(r1, r2, r3);
 }
 
-void LOR8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LOR8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  OR8(r1, r2, r3);
+  cgc_OR8(r1, r2, r3);
 }
 
-void LOR16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LOR16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  OR16(r1, r2, r3);
+  cgc_OR16(r1, r2, r3);
 }
 
-void LOR32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LOR32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  OR32(r1, r2, r3);
+  cgc_OR32(r1, r2, r3);
 }
 
-void EQ8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_EQ8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE8(r2) == STATE8(r3))
   {
-    MOV8(r1, R_TRUE8);
+    cgc_MOV8(r1, R_TRUE8);
   }
   else
   {
-    MOV8(r1, R_FALSE);
+    cgc_MOV8(r1, R_FALSE);
   }
 }
 
-void EQ16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_EQ16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE16(r2) == STATE16(r3))
   {
-    MOV16(r1, R_TRUE16);
+    cgc_MOV16(r1, R_TRUE16);
   }
   else
   {
-    MOV16(r1, R_FALSE);
+    cgc_MOV16(r1, R_FALSE);
   }
 }
 
-void EQ32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_EQ32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE32(r2) == STATE32(r3))
   {
-    MOV32(r1, R_TRUE32);
+    cgc_MOV32(r1, R_TRUE32);
   }
   else
   {
-    MOV32(r1, R_FALSE);
+    cgc_MOV32(r1, R_FALSE);
   }
 }
 
-void GT8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_GT8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE8(r2) > STATE8(r3))
   {
-    MOV8(r1, R_TRUE8);
+    cgc_MOV8(r1, R_TRUE8);
   }
   else
   {
-    MOV8(r1, R_FALSE);
+    cgc_MOV8(r1, R_FALSE);
   }
 }
 
-void GT16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_GT16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE16(r2) > STATE16(r3))
   {
-    MOV16(r1, R_TRUE16);
+    cgc_MOV16(r1, R_TRUE16);
   }
   else
   {
-    MOV16(r1, R_FALSE);
+    cgc_MOV16(r1, R_FALSE);
   }
 }
 
-void GT32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_GT32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
   if (STATE32(r2) > STATE32(r3))
   {
-    MOV32(r1, R_TRUE32);
+    cgc_MOV32(r1, R_TRUE32);
   }
   else
   {
-    MOV32(r1, R_FALSE);
+    cgc_MOV32(r1, R_FALSE);
   }
 }
 
 
-void GTE8(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_GTE8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  EQ8(r1, r2, r3);
-  GT8(scratch, r2, r3);
-  LOR8(r1, r1, scratch);  
+  cgc_EQ8(r1, r2, r3);
+  cgc_GT8(scratch, r2, r3);
+  cgc_LOR8(r1, r1, scratch);  
 }
 
-void GTE16(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_GTE16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  EQ16(r1, r2, r3);
-  GT16(scratch, r2, r3);
-  LOR16(r1, r1, scratch);  
+  cgc_EQ16(r1, r2, r3);
+  cgc_GT16(scratch, r2, r3);
+  cgc_LOR16(r1, r1, scratch);  
 }
 
-void GTE32(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_GTE32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  EQ32(r1, r2, r3);
-  GT32(scratch, r2, r3);
-  LOR32(r1, r1, scratch);  
+  cgc_EQ32(r1, r2, r3);
+  cgc_GT32(scratch, r2, r3);
+  cgc_LOR32(r1, r1, scratch);  
 }
 
-void LT8(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LT8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  GT8(r1, r3, r2);
+  cgc_GT8(r1, r3, r2);
 }
 
-void LT16(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LT16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  GT16(r1, r3, r2);
+  cgc_GT16(r1, r3, r2);
 }
 
-void LT32(reg_t r1, reg_t r2, reg_t r3)
+void cgc_LT32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3)
 {
-  GT32(r1, r3, r2);
+  cgc_GT32(r1, r3, r2);
 }
 
-void LTE8(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_LTE8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  GTE8(r1, r3, r2, scratch);
+  cgc_GTE8(r1, r3, r2, scratch);
 }
 
-void LTE16(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_LTE16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  GTE16(r1, r3, r2, scratch);
+  cgc_GTE16(r1, r3, r2, scratch);
 }
 
-void LTE32(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_LTE32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  GTE32(r1, r3, r2, scratch);
+  cgc_GTE32(r1, r3, r2, scratch);
 }
 
-void INC8(reg_t r1)
+void cgc_INC8(cgc_reg_t r1)
 {
-  ADD8(r1, r1, R_ONE);
+  cgc_ADD8(r1, r1, R_ONE);
 }
 
-void INC16(reg_t r1)
+void cgc_INC16(cgc_reg_t r1)
 {
-  ADD16(r1, r1, R_ONE);
+  cgc_ADD16(r1, r1, R_ONE);
 }
 
-void INC32(reg_t r1)
+void cgc_INC32(cgc_reg_t r1)
 {
-  ADD32(r1, r1, R_ONE);
+  cgc_ADD32(r1, r1, R_ONE);
 }
 
-void DEC8(reg_t r1)
+void cgc_DEC8(cgc_reg_t r1)
 {
-  SUB8(r1, r1, R_ONE);
+  cgc_SUB8(r1, r1, R_ONE);
 }
 
-void DEC16(reg_t r1)
+void cgc_DEC16(cgc_reg_t r1)
 {
-  SUB16(r1, r1, R_ONE);
+  cgc_SUB16(r1, r1, R_ONE);
 }
 
-void DEC32(reg_t r1)
+void cgc_DEC32(cgc_reg_t r1)
 {
-  SUB32(r1, r1, R_ONE);
+  cgc_SUB32(r1, r1, R_ONE);
 }
 
-void MUL32(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_MUL32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOV32(scratch, r2); 
-  MOV32(scratch+4, r3); 
+  cgc_MOV32(scratch, r2); 
+  cgc_MOV32(scratch+4, r3); 
 
   //make sure this initialization is after r2 and r3 are already saved
   // otherwise, if r1 = r2 or r1 = r3, then we will have problems
-  MOVIM32(r1, 0);
+  cgc_MOVIM32(r1, 0);
 
-  GT32(scratch+8, r2, r3);
-  if (REG32(scratch+8))
+  cgc_GT32(scratch+8, r2, r3);
+  if (cgc_REG32(scratch+8))
   {
-    MOV32(scratch, r3);
-    MOV32(scratch+4, r2);
+    cgc_MOV32(scratch, r3);
+    cgc_MOV32(scratch+4, r2);
   }
 
   
-  GT32(scratch+8, scratch, R_ZERO);
-  while (REG32(scratch+8))
+  cgc_GT32(scratch+8, scratch, R_ZERO);
+  while (cgc_REG32(scratch+8))
   {
-    ADD32(r1, r1, scratch+4);
-    DEC32(scratch);
-    GT32(scratch+8, scratch, R_ZERO);
+    cgc_ADD32(r1, r1, scratch+4);
+    cgc_DEC32(scratch);
+    cgc_GT32(scratch+8, scratch, R_ZERO);
   } 
 }
 
-void MUL16(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_MUL16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV16(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV16(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV16(scratch+8, r3);
-  MUL32(scratch, scratch+4, scratch+8, scratch+12);
-  MOV16(r1, scratch);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV16(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV16(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV16(scratch+8, r3);
+  cgc_MUL32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOV16(r1, scratch);
 }
 
-void MUL8(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_MUL8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV8(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV8(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV8(scratch+8, r3);
-  MUL32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV8(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV8(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV8(scratch+8, r3);
+  cgc_MUL32(scratch, scratch+4, scratch+8, scratch+12);
 
-  MOV8(r1, scratch);
+  cgc_MOV8(r1, scratch);
 }
 
-void DIV32(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_DIV32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOV32(scratch, r2); 
-  MOVIM32(r1, 0);
+  cgc_MOV32(scratch, r2); 
+  cgc_MOVIM32(r1, 0);
 
-  EQ32(scratch+4, r3, R_ZERO);
-  if (REG32(scratch+4))
+  cgc_EQ32(scratch+4, r3, R_ZERO);
+  if (cgc_REG32(scratch+4))
   {
     goto _end;
   }
 
   
-  GTE32(scratch+4, scratch, r3, scratch+8);
-  GT32(scratch+8, scratch, R_ZERO);
-  LAND32(scratch+12, scratch+4, scratch+8);
-  while (REG32(scratch+12))
+  cgc_GTE32(scratch+4, scratch, r3, scratch+8);
+  cgc_GT32(scratch+8, scratch, R_ZERO);
+  cgc_LAND32(scratch+12, scratch+4, scratch+8);
+  while (cgc_REG32(scratch+12))
   {
-    INC32(r1);
-    SUB32(scratch, scratch, r3);
-    GTE32(scratch+4, scratch, r3, scratch+8);
-    GT32(scratch+8, scratch, R_ZERO);
-    LAND32(scratch+12, scratch+4, scratch+8);
+    cgc_INC32(r1);
+    cgc_SUB32(scratch, scratch, r3);
+    cgc_GTE32(scratch+4, scratch, r3, scratch+8);
+    cgc_GT32(scratch+8, scratch, R_ZERO);
+    cgc_LAND32(scratch+12, scratch+4, scratch+8);
   } 
 
 _end:
   return;
 }
 
-void DIV16(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_DIV16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV16(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV16(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV16(scratch+8, r3);
-  DIV32(scratch, scratch+4, scratch+8, scratch+12);
-  MOV16(r1, scratch);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV16(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV16(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV16(scratch+8, r3);
+  cgc_DIV32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOV16(r1, scratch);
 }
 
-void DIV8(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_DIV8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV8(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV8(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV8(scratch+8, r3);
-  DIV32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV8(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV8(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV8(scratch+8, r3);
+  cgc_DIV32(scratch, scratch+4, scratch+8, scratch+12);
 
-  MOV8(r1, scratch);
+  cgc_MOV8(r1, scratch);
 }
 
-void REM32(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_REM32(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOV32(scratch, r2); 
-  MOVIM32(r1, 0);
+  cgc_MOV32(scratch, r2); 
+  cgc_MOVIM32(r1, 0);
 
-  EQ32(scratch+4, r3, R_ZERO);
-  if (REG32(scratch+4))
+  cgc_EQ32(scratch+4, r3, R_ZERO);
+  if (cgc_REG32(scratch+4))
   {
     goto _end;
   }
 
-  GTE32(scratch+4, scratch, r3, scratch+16);
-  GT32(scratch+8, scratch, R_ZERO);
-  LAND32(scratch+12, scratch+4, scratch+8);
-  while (REG32(scratch+12))
+  cgc_GTE32(scratch+4, scratch, r3, scratch+16);
+  cgc_GT32(scratch+8, scratch, R_ZERO);
+  cgc_LAND32(scratch+12, scratch+4, scratch+8);
+  while (cgc_REG32(scratch+12))
   {
-    SUB32(scratch, scratch, r3);
+    cgc_SUB32(scratch, scratch, r3);
 
-    GTE32(scratch+4, scratch, r3, scratch+16);
-    GT32(scratch+8, scratch, R_ZERO);
-    LAND32(scratch+12, scratch+4, scratch+8);
+    cgc_GTE32(scratch+4, scratch, r3, scratch+16);
+    cgc_GT32(scratch+8, scratch, R_ZERO);
+    cgc_LAND32(scratch+12, scratch+4, scratch+8);
   } 
 
-  MOV32(r1, scratch);
+  cgc_MOV32(r1, scratch);
 _end:
   return;
 }
 
-void REM16(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_REM16(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV16(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV16(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV16(scratch+8, r3);
-  REM32(scratch, scratch+4, scratch+8, scratch+12);
-  MOV16(r1, scratch);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV16(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV16(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV16(scratch+8, r3);
+  cgc_REM32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOV16(r1, scratch);
 }
 
-void REM8(reg_t r1, reg_t r2, reg_t r3, reg_t scratch)
+void cgc_REM8(cgc_reg_t r1, cgc_reg_t r2, cgc_reg_t r3, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV8(scratch, r1);
-  MOVIM32(scratch+4, 0);
-  MOV8(scratch+4, r2);
-  MOVIM32(scratch+8, 0);
-  MOV8(scratch+8, r3);
-  REM32(scratch, scratch+4, scratch+8, scratch+12);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV8(scratch, r1);
+  cgc_MOVIM32(scratch+4, 0);
+  cgc_MOV8(scratch+4, r2);
+  cgc_MOVIM32(scratch+8, 0);
+  cgc_MOV8(scratch+8, r3);
+  cgc_REM32(scratch, scratch+4, scratch+8, scratch+12);
 
-  MOV8(r1, scratch);
+  cgc_MOV8(r1, scratch);
 }
 
-void INIT_MACHINE()
+void cgc_INIT_MACHINE()
 {
   int i = 0; 
   int ret  = 0;
@@ -532,40 +532,40 @@ void INIT_MACHINE()
 
   for (i = 0; i < STATE_SIZE; i+=4)
   {
-    MOVIM32(i, 0);
+    cgc_MOVIM32(i, 0);
   }
 
-  MOVIM32(R_ZERO, 0);
-  MOVIM32(R_ONE, 1);
-  MOVIM32(R_TRUE8, TRUE8);
-  MOVIM32(R_TRUE16, TRUE16);
-  MOVIM32(R_TRUE32, TRUE32);
-  MOVIM32(R_FALSE, FALSE);
+  cgc_MOVIM32(R_ZERO, 0);
+  cgc_MOVIM32(R_ONE, 1);
+  cgc_MOVIM32(R_TRUE8, TRUE8);
+  cgc_MOVIM32(R_TRUE16, TRUE16);
+  cgc_MOVIM32(R_TRUE32, TRUE32);
+  cgc_MOVIM32(R_FALSE, FALSE);
 }
 
-void printChar(reg_t r)
+void cgc_printChar(cgc_reg_t r)
 {
-  char c = REG8(r);
-  size_t n;
+  char c = cgc_REG8(r);
+  cgc_size_t n;
   if (transmit(STDOUT, &c, 1, &n) != 0 || n != 1) {
      _terminate(1);
   }
 }
 
-int getChar(reg_t r)
+int cgc_getChar(cgc_reg_t r)
 {
   char c;
-  size_t rx_bytes;
+  cgc_size_t rx_bytes;
   int ret = 0;
-  fd_set fdsToWait;
-  struct timeval timeToWait;
+  cgc_fd_set fdsToWait;
+  struct cgc_timeval timeToWait;
   timeToWait.tv_sec = 1;
   timeToWait.tv_usec = 0;
   int readyfds = 0;
 
   FD_ZERO(&fdsToWait);
   FD_SET(0, &fdsToWait);
-  ret = fdwait(1, &fdsToWait, NULL, &timeToWait, &readyfds);
+  ret = cgc_fdwait(1, &fdsToWait, NULL, &timeToWait, &readyfds);
   if ( (ret != 0) || (readyfds != 1) )
   {
     return (-1);
@@ -577,178 +577,178 @@ int getChar(reg_t r)
     return (-1);
   }
 
-  MOVIM8(r, c);
+  cgc_MOVIM8(r, c);
   return (0);
 }
 
 
-void printString(reg_t r, reg_t ret, reg_t scratch)
+void cgc_printString(cgc_reg_t r, cgc_reg_t ret, cgc_reg_t scratch)
 {
-  reg_t temp = scratch;
-  MOV16(temp, r); //temp pointer to string
+  cgc_reg_t temp = scratch;
+  cgc_MOV16(temp, r); //temp pointer to string
 
   scratch += 2;
-  MOVIM8(scratch, 0); //constant i
+  cgc_MOVIM8(scratch, 0); //constant i
  
   loop1:
-  MOV8(scratch+1, REG16(temp));
+  cgc_MOV8(scratch+1, cgc_REG16(temp));
 
-  EQ8(scratch+2, R_ZERO, scratch+1);
-  if (REG8(scratch+2))
+  cgc_EQ8(scratch+2, R_ZERO, scratch+1);
+  if (cgc_REG8(scratch+2))
   {
     goto loop1_end;
   }
-  printChar(scratch+1);
-  INC8(scratch);
-  INC16(temp);
+  cgc_printChar(scratch+1);
+  cgc_INC8(scratch);
+  cgc_INC16(temp);
   goto loop1;
   loop1_end: 
 
-  MOV8(ret, scratch);
+  cgc_MOV8(ret, scratch);
 }
 
-void printReg32(reg_t r, reg_t scratch)
+void cgc_printReg32(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOV32(scratch, r); //temporary r
+  cgc_MOV32(scratch, r); //temporary r
 
-  reg_t tens = scratch + 4;
+  cgc_reg_t tens = scratch + 4;
 
   //tens table
-  MOVIM32(tens,    1000000000);
-  MOVIM32(tens+4,  100000000);
-  MOVIM32(tens+8,  10000000);
-  MOVIM32(tens+12, 1000000);
-  MOVIM32(tens+16, 100000);
-  MOVIM32(tens+20, 10000);
-  MOVIM32(tens+24, 1000);
-  MOVIM32(tens+28, 100);
-  MOVIM32(tens+32, 10);
-  MOVIM32(tens+36, 1);
+  cgc_MOVIM32(tens,    1000000000);
+  cgc_MOVIM32(tens+4,  100000000);
+  cgc_MOVIM32(tens+8,  10000000);
+  cgc_MOVIM32(tens+12, 1000000);
+  cgc_MOVIM32(tens+16, 100000);
+  cgc_MOVIM32(tens+20, 10000);
+  cgc_MOVIM32(tens+24, 1000);
+  cgc_MOVIM32(tens+28, 100);
+  cgc_MOVIM32(tens+32, 10);
+  cgc_MOVIM32(tens+36, 1);
 
-  reg_t r_four = tens + 40;
-  MOVIM16(r_four, 4);
+  cgc_reg_t r_four = tens + 40;
+  cgc_MOVIM16(r_four, 4);
 
  
-  reg_t r_end = r_four+2;
-  MOVIM16(r_end, tens + 40);
+  cgc_reg_t r_end = r_four+2;
+  cgc_MOVIM16(r_end, tens + 40);
 
-  reg_t i = r_end + 2;
-  reg_t j = i+2;
-  reg_t temp = j+2;
+  cgc_reg_t i = r_end + 2;
+  cgc_reg_t j = i+2;
+  cgc_reg_t temp = j+2;
 
-  MOVIM16(i, tens); 
-  GT16(j, r_end, i);
+  cgc_MOVIM16(i, tens); 
+  cgc_GT16(j, r_end, i);
 
-  while (REG16(j))
+  while (cgc_REG16(j))
   {
-    DIV32(temp, scratch, REG16(i), temp + 5); 
+    cgc_DIV32(temp, scratch, cgc_REG16(i), temp + 5); 
 
-    MOVIM8(temp + 4, '0');
-    ADD8(temp + 4, temp + 4, temp); 
-    printChar(temp + 4);
-    REM32(scratch, scratch, REG16(i), temp + 5);
+    cgc_MOVIM8(temp + 4, '0');
+    cgc_ADD8(temp + 4, temp + 4, temp); 
+    cgc_printChar(temp + 4);
+    cgc_REM32(scratch, scratch, cgc_REG16(i), temp + 5);
     
-    ADD16(i, i, r_four);
-    GT16(j, r_end, i);
+    cgc_ADD16(i, i, r_four);
+    cgc_GT16(j, r_end, i);
   }
 }
 
-void printReg16(reg_t r, reg_t scratch)
+void cgc_printReg16(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV16(scratch, r);
-  printReg32(scratch, scratch + 4);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV16(scratch, r);
+  cgc_printReg32(scratch, scratch + 4);
 }
 
-void printReg8(reg_t r, reg_t scratch)
+void cgc_printReg8(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM32(scratch, 0);
-  MOV8(scratch, r);
-  printReg32(scratch, scratch + 4);
+  cgc_MOVIM32(scratch, 0);
+  cgc_MOV8(scratch, r);
+  cgc_printReg32(scratch, scratch + 4);
 }
 
-int isSpace(reg_t r, reg_t scratch)
+int cgc_isSpace(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM8(scratch, ' ');
-  MOVIM8(scratch+1, '\t');
+  cgc_MOVIM8(scratch, ' ');
+  cgc_MOVIM8(scratch+1, '\t');
 
-  EQ8(scratch+2, r, scratch);
-  EQ8(scratch+3, r, scratch+1);
-  LOR8(scratch+2, scratch+2, scratch+3);
-  return (REG8(scratch+2));
+  cgc_EQ8(scratch+2, r, scratch);
+  cgc_EQ8(scratch+3, r, scratch+1);
+  cgc_LOR8(scratch+2, scratch+2, scratch+3);
+  return (cgc_REG8(scratch+2));
 }
 
-int isNumber(reg_t r, reg_t scratch)
+int cgc_isNumber(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM8(scratch, '0');
-  SUB8(scratch+1, r, scratch);
-  MOVIM8(scratch+2, 10);
+  cgc_MOVIM8(scratch, '0');
+  cgc_SUB8(scratch+1, r, scratch);
+  cgc_MOVIM8(scratch+2, 10);
 
-  LT8(scratch+3, scratch+1, scratch+2);
-  return (REG8(scratch+3));
+  cgc_LT8(scratch+3, scratch+1, scratch+2);
+  return (cgc_REG8(scratch+3));
 }
 
-int isUpLetter(reg_t r, reg_t scratch)
+int cgc_isUpLetter(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM8(scratch, 'A');
-  MOVIM8(scratch+1, 'Z');
+  cgc_MOVIM8(scratch, 'A');
+  cgc_MOVIM8(scratch+1, 'Z');
 
-  GTE8(scratch+2, r, scratch, scratch+3);
-  LTE8(scratch+3, r, scratch+1, scratch+4);
-  LAND8(scratch+2, scratch+2, scratch+3);
-  return (REG8(scratch+2));
+  cgc_GTE8(scratch+2, r, scratch, scratch+3);
+  cgc_LTE8(scratch+3, r, scratch+1, scratch+4);
+  cgc_LAND8(scratch+2, scratch+2, scratch+3);
+  return (cgc_REG8(scratch+2));
 }
 
-int isLowLetter(reg_t r, reg_t scratch)
+int cgc_isLowLetter(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM8(scratch, 'a');
-  MOVIM8(scratch+1, 'z');
+  cgc_MOVIM8(scratch, 'a');
+  cgc_MOVIM8(scratch+1, 'z');
 
-  GTE8(scratch+2, r, scratch, scratch+3);
-  LTE8(scratch+3, r, scratch+1, scratch+4);
-  LAND8(scratch+2, scratch+2, scratch+3);
-  return (REG8(scratch+2));
+  cgc_GTE8(scratch+2, r, scratch, scratch+3);
+  cgc_LTE8(scratch+3, r, scratch+1, scratch+4);
+  cgc_LAND8(scratch+2, scratch+2, scratch+3);
+  return (cgc_REG8(scratch+2));
 }
 
-int isSpecial(reg_t r, reg_t scratch)
+int cgc_isSpecial(cgc_reg_t r, cgc_reg_t scratch)
 {
-  MOVIM8(scratch, '!');
-  MOVIM8(scratch+1, '/');
+  cgc_MOVIM8(scratch, '!');
+  cgc_MOVIM8(scratch+1, '/');
 
-  MOVIM8(scratch+2, ':');
-  MOVIM8(scratch+3, '@');
+  cgc_MOVIM8(scratch+2, ':');
+  cgc_MOVIM8(scratch+3, '@');
 
-  MOVIM8(scratch+4, '[');
-  MOVIM8(scratch+5, '`');
+  cgc_MOVIM8(scratch+4, '[');
+  cgc_MOVIM8(scratch+5, '`');
 
-  MOVIM8(scratch+6, 'P');
-  MOVIM8(scratch+7, '~');
+  cgc_MOVIM8(scratch+6, 'P');
+  cgc_MOVIM8(scratch+7, '~');
 
   
-  GTE8(scratch+10, r, scratch, scratch+12);
-  LTE8(scratch+11, r, scratch+1, scratch+13);
-  LAND8(scratch+9, scratch+10, scratch+11);
-  MOV8(scratch+8, scratch+9);
+  cgc_GTE8(scratch+10, r, scratch, scratch+12);
+  cgc_LTE8(scratch+11, r, scratch+1, scratch+13);
+  cgc_LAND8(scratch+9, scratch+10, scratch+11);
+  cgc_MOV8(scratch+8, scratch+9);
 
-  GTE8(scratch+10, r, scratch+2, scratch+12);
-  LTE8(scratch+11, r, scratch+3, scratch+13);
-  LAND8(scratch+9, scratch+10, scratch+11);
-  LOR8(scratch+8, scratch+8, scratch+9);
+  cgc_GTE8(scratch+10, r, scratch+2, scratch+12);
+  cgc_LTE8(scratch+11, r, scratch+3, scratch+13);
+  cgc_LAND8(scratch+9, scratch+10, scratch+11);
+  cgc_LOR8(scratch+8, scratch+8, scratch+9);
 
-  GTE8(scratch+10, r, scratch+4, scratch+12);
-  LTE8(scratch+11, r, scratch+5, scratch+13);
-  LAND8(scratch+9, scratch+10, scratch+11);
-  LOR8(scratch+8, scratch+8, scratch+9);
+  cgc_GTE8(scratch+10, r, scratch+4, scratch+12);
+  cgc_LTE8(scratch+11, r, scratch+5, scratch+13);
+  cgc_LAND8(scratch+9, scratch+10, scratch+11);
+  cgc_LOR8(scratch+8, scratch+8, scratch+9);
 
-  GTE8(scratch+10, r, scratch+6, scratch+12);
-  LTE8(scratch+11, r, scratch+7, scratch+13);
-  LAND8(scratch+9, scratch+10, scratch+11);
-  LOR8(scratch+8, scratch+8, scratch+9);
+  cgc_GTE8(scratch+10, r, scratch+6, scratch+12);
+  cgc_LTE8(scratch+11, r, scratch+7, scratch+13);
+  cgc_LAND8(scratch+9, scratch+10, scratch+11);
+  cgc_LOR8(scratch+8, scratch+8, scratch+9);
 
-  return (REG8(scratch+8));
+  return (cgc_REG8(scratch+8));
 }
 
-void insertString(reg_t r, const char* str, reg_t scratch)
+void cgc_insertString(cgc_reg_t r, const char* str, cgc_reg_t scratch)
 {
   int i = 0;
   if (str == NULL)
@@ -756,11 +756,11 @@ void insertString(reg_t r, const char* str, reg_t scratch)
     return;
   }
 
-  MOV16(scratch, r);
+  cgc_MOV16(scratch, r);
   while (str[i] != '\0')
   {
-    MOVIM8(REG16(scratch), str[i]);
-    INC16(scratch);
+    cgc_MOVIM8(cgc_REG16(scratch), str[i]);
+    cgc_INC16(scratch);
     i++; 
   } 
 }
@@ -769,111 +769,111 @@ int main(void)
 {
   int ret = 0;
 
-  INIT_MACHINE();
+  cgc_INIT_MACHINE();
 
-  reg_t numCount    = 1;
-  reg_t upCount     = 2;
-  reg_t lowCount    = 3;
-  reg_t specialCount  = 4;
-  reg_t otherCount  = 5;
-  reg_t spaceCount  = 6;
+  cgc_reg_t numCount    = 1;
+  cgc_reg_t upCount     = 2;
+  cgc_reg_t lowCount    = 3;
+  cgc_reg_t specialCount  = 4;
+  cgc_reg_t otherCount  = 5;
+  cgc_reg_t spaceCount  = 6;
 
-  MOVIM8(numCount, 0);
-  MOVIM8(spaceCount, 0);
-  MOVIM8(upCount, 0);
-  MOVIM8(lowCount, 0);
-  MOVIM8(specialCount, 0);
-  MOVIM8(otherCount, 0);
+  cgc_MOVIM8(numCount, 0);
+  cgc_MOVIM8(spaceCount, 0);
+  cgc_MOVIM8(upCount, 0);
+  cgc_MOVIM8(lowCount, 0);
+  cgc_MOVIM8(specialCount, 0);
+  cgc_MOVIM8(otherCount, 0);
 
-  reg_t numString = 7;
-  reg_t upString = 9;
-  reg_t lowString = 11;
-  reg_t spaceString = 13;
-  reg_t specialString = 15;
-  reg_t otherString = 17;
-  reg_t newlineString = 19;
+  cgc_reg_t numString = 7;
+  cgc_reg_t upString = 9;
+  cgc_reg_t lowString = 11;
+  cgc_reg_t spaceString = 13;
+  cgc_reg_t specialString = 15;
+  cgc_reg_t otherString = 17;
+  cgc_reg_t newlineString = 19;
 
-  MOVIM16(numString, ADDR(0));
-  MOVIM16(spaceString, ADDR(16));
-  MOVIM16(upString, ADDR(32));
-  MOVIM16(lowString, ADDR(48));
-  MOVIM16(specialString, ADDR(64));
-  MOVIM16(otherString, ADDR(80));
-  MOVIM16(newlineString, ADDR(96));
+  cgc_MOVIM16(numString, ADDR(0));
+  cgc_MOVIM16(spaceString, ADDR(16));
+  cgc_MOVIM16(upString, ADDR(32));
+  cgc_MOVIM16(lowString, ADDR(48));
+  cgc_MOVIM16(specialString, ADDR(64));
+  cgc_MOVIM16(otherString, ADDR(80));
+  cgc_MOVIM16(newlineString, ADDR(96));
 
 
-  reg_t i = 21;
+  cgc_reg_t i = 21;
 
   //                                  123456789012
-  insertString(numString,     "numbers  = ", i);
-  insertString(spaceString,   "spaces   = ", i);
-  insertString(upString,      "uppers   = ", i);
-  insertString(lowString,     "lowers   = ", i);
-  insertString(specialString, "special  = ", i);
-  insertString(otherString,   "other    = ", i);
+  cgc_insertString(numString,     "numbers  = ", i);
+  cgc_insertString(spaceString,   "spaces   = ", i);
+  cgc_insertString(upString,      "uppers   = ", i);
+  cgc_insertString(lowString,     "lowers   = ", i);
+  cgc_insertString(specialString, "special  = ", i);
+  cgc_insertString(otherString,   "other    = ", i);
 
   //endl
-  MOVIM8(REG16(newlineString), '\n');
-  MOVIM32(REG16(newlineString) + 1, 0);
+  cgc_MOVIM8(cgc_REG16(newlineString), '\n');
+  cgc_MOVIM32(cgc_REG16(newlineString) + 1, 0);
 
-  ret = getChar(i);
+  ret = cgc_getChar(i);
   while (ret != (-1))
   {
-    if (isUpLetter(i, i+1))
+    if (cgc_isUpLetter(i, i+1))
     {
-      INC8(upCount);
+      cgc_INC8(upCount);
     }
-    else if (isLowLetter(i, i+1))
+    else if (cgc_isLowLetter(i, i+1))
     {
-      INC8(lowCount);
+      cgc_INC8(lowCount);
     }
-    else if (isNumber(i, i+1))
+    else if (cgc_isNumber(i, i+1))
     {
-      INC8(numCount);
+      cgc_INC8(numCount);
     }
-    else if (isSpace(i, i+1))
+    else if (cgc_isSpace(i, i+1))
     {
 #ifdef PATCHED
-      INC8(spaceCount);
+      cgc_INC8(spaceCount);
 #else
-      INC32(spaceCount);
+      cgc_INC32(spaceCount);
 #endif
     }
-    else if (isSpecial(i, i+1))
+    else if (cgc_isSpecial(i, i+1))
     {
-      INC8(specialCount);
+      cgc_INC8(specialCount);
     }
     else
     {
-      INC8(otherCount);
+      cgc_INC8(otherCount);
     }
-    printChar(i);
-    ret = getChar(i);
+    cgc_printChar(i);
+    ret = cgc_getChar(i);
   }
 
-  printString(numString, i, i+4);
-  printReg8(numCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(numString, i, i+4);
+  cgc_printReg8(numCount, i);
+  cgc_printString(newlineString, i, i+4);
 
-  printString(upString, i, i+4);
-  printReg8(upCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(upString, i, i+4);
+  cgc_printReg8(upCount, i);
+  cgc_printString(newlineString, i, i+4);
 
-  printString(lowString, i, i+4);
-  printReg8(lowCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(lowString, i, i+4);
+  cgc_printReg8(lowCount, i);
+  cgc_printString(newlineString, i, i+4);
 
-  printString(spaceString, i, i+4);
-  printReg8(spaceCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(spaceString, i, i+4);
+  cgc_printReg8(spaceCount, i);
+  cgc_printString(newlineString, i, i+4);
 
-  printString(specialString, i, i+4);
-  printReg8(specialCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(specialString, i, i+4);
+  cgc_printReg8(specialCount, i);
+  cgc_printString(newlineString, i, i+4);
 
-  printString(otherString, i, i+4);
-  printReg8(otherCount, i);
-  printString(newlineString, i, i+4);
+  cgc_printString(otherString, i, i+4);
+  cgc_printReg8(otherCount, i);
+  cgc_printString(newlineString, i, i+4);
 
   return (0);
 }

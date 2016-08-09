@@ -39,300 +39,300 @@ extern "C" {
 #undef NULL
 #define NULL (0L)
 
-void put(char);
-void put(const char *s);
-void put(void *v);
-void put(int v);
-void put(long v);
+void cgc_put(char);
+void cgc_put(const char *s);
+void cgc_put(void *v);
+void cgc_put(int v);
+void cgc_put(long v);
 
-void call_inits(void);
-void terminate(int) __attribute__((__noreturn__));
+void cgc_call_inits(void);
+void cgc_terminate(int e) {_terminate(e);}
 
 int first = 1;
 int seq;
 
-class Pet {
+class cgc_Pet {
 protected:
 	char name[200];
 
 public:
-	Pet() { name[0] = '\0'; transmit_all(1, "init..\n", 7); }
-	virtual ~Pet() = 0;
+	cgc_Pet() { name[0] = '\0'; cgc_transmit_all(1, "init..\n", 7); }
+	virtual ~cgc_Pet() = 0;
 
-	virtual void Rollover() = 0;
-	virtual void Speak() = 0;
-	virtual void Flush() = 0;
+	virtual void cgc_Rollover() = 0;
+	virtual void cgc_Speak() = 0;
+	virtual void cgc_Flush() = 0;
 
-	void Debug();
-	void Name(const char *s) {
+	void cgc_Debug();
+	void cgc_Name(const char *s) {
 #ifdef PATCHED
-		if (strlen(s) < sizeof(name))
-			strlcat(name, s, sizeof(name));
+		if (cgc_strlen(s) < sizeof(name))
+			cgc_strlcat(name, s, sizeof(name));
 #else
-		if (strlen(s) < sizeof(name)) {
-			char *n = name + strlen(name);
-			memcpy(n, s, strlen(s) + 1);
+		if (cgc_strlen(s) < sizeof(name)) {
+			char *n = name + cgc_strlen(name);
+			cgc_memcpy(n, s, cgc_strlen(s) + 1);
 		}
 #endif
 	}
 };
 
 template <typename T>
-class listnode {
+class cgc_listnode {
 private:
-	listnode<T> *nxt;
+	cgc_listnode<T> *nxt;
 	T datax;
 
 public:
-	listnode<T> *next() { return nxt; }
-	void next(listnode<T> *p) { nxt = p; }
-	listnode(T d, listnode<T> *p) { datax = d; nxt = p; }
-	listnode(T d) { datax = d; nxt = NULL; }
-	T data() { return datax; }
+	cgc_listnode<T> *cgc_next() { return nxt; }
+	void cgc_next(cgc_listnode<T> *p) { nxt = p; }
+	cgc_listnode(T d, cgc_listnode<T> *p) { datax = d; nxt = p; }
+	cgc_listnode(T d) { datax = d; nxt = NULL; }
+	T cgc_data() { return datax; }
 };
 
-class petlist {
-	listnode<Pet *> *head;
+class cgc_petlist {
+	cgc_listnode<cgc_Pet *> *head;
 	int n;
 
 public:
-	petlist() { head = NULL; n = 0; put("list init...\n"); }
-	~petlist();
+	cgc_petlist() { head = NULL; n = 0; cgc_put("list init...\n"); }
+	~cgc_petlist();
 
-	void append(Pet *);
-	void remove(int n);
-	Pet *nth(int n);
-	int len() { return n; }
+	void cgc_append(cgc_Pet *);
+	void cgc_remove(int n);
+	cgc_Pet *cgc_nth(int n);
+	int cgc_len() { return n; }
 } myList;
 
-Pet::~Pet() {
+cgc_Pet::~cgc_Pet() {
 }
 
 void
-Pet::Debug() {
-	put((void *)this);
-	put(' ');
-	put((int)sizeof(Pet));
-	put("\n");
+cgc_Pet::cgc_Debug() {
+	cgc_put((void *)this);
+	cgc_put(' ');
+	cgc_put((int)sizeof(cgc_Pet));
+	cgc_put("\n");
 }
 
-class Cat: public Pet {
+class cgc_Cat: public cgc_Pet {
 public:
-	~Cat() {};
-	virtual void Rollover();
-	virtual void Speak();
-	virtual void Flush();
+	~cgc_Cat() {};
+	virtual void cgc_Rollover();
+	virtual void cgc_Speak();
+	virtual void cgc_Flush();
 };
 
-class Dog: public Pet {
+class cgc_Dog: public cgc_Pet {
 public:
-	~Dog() {}
-	virtual void Rollover();
-	virtual void Speak();
-	virtual void Flush();
+	~cgc_Dog() {}
+	virtual void cgc_Rollover();
+	virtual void cgc_Speak();
+	virtual void cgc_Flush();
 };
 
-class Hotdog: public Dog {
+class cgc_Hotdog: public cgc_Dog {
 public:
-	~Hotdog() { };
-	virtual void Rollover();
-	virtual void Speak();
-	virtual void Flush();
+	~cgc_Hotdog() { };
+	virtual void cgc_Rollover();
+	virtual void cgc_Speak();
+	virtual void cgc_Flush();
 };
 
 void
-Cat::Rollover() {
-	put(name);
-	put(" will not roll over\n");
+cgc_Cat::cgc_Rollover() {
+	cgc_put(name);
+	cgc_put(" will not roll over\n");
 	
 }
 
 void
-Cat::Speak() {
-	put(name);
-	put(" meows\n");
+cgc_Cat::cgc_Speak() {
+	cgc_put(name);
+	cgc_put(" meows\n");
 }
 
 void
-Cat::Flush() {
-	put(name);
-	put(" purrs takes a nap\n");
+cgc_Cat::cgc_Flush() {
+	cgc_put(name);
+	cgc_put(" purrs takes a nap\n");
 }
 
 void
-Dog::Rollover() {
-	put(name);
-	put(" rolls over\n");
+cgc_Dog::cgc_Rollover() {
+	cgc_put(name);
+	cgc_put(" rolls over\n");
 	
 }
 
 void
-Dog::Speak() {
-	put(name);
-	put(" barks\n");
+cgc_Dog::cgc_Speak() {
+	cgc_put(name);
+	cgc_put(" barks\n");
 }
 
 void
-Dog::Flush() {
-	put(name);
-	put(" goes to sleep... permanently\n");
+cgc_Dog::cgc_Flush() {
+	cgc_put(name);
+	cgc_put(" goes to sleep... permanently\n");
 }
 
 void
-Hotdog::Rollover() {
-	put(name);
-	put(" rolls over on the grill\n");
+cgc_Hotdog::cgc_Rollover() {
+	cgc_put(name);
+	cgc_put(" rolls over on the grill\n");
 	
 }
 
 void
-Hotdog::Speak() {
-	put(name);
-	put(" can't speak\n");
+cgc_Hotdog::cgc_Speak() {
+	cgc_put(name);
+	cgc_put(" can't speak\n");
 }
 
 void
-Hotdog::Flush() {
-	put(name);
-	put(" tastes great with ketchup and mustard\n");
+cgc_Hotdog::cgc_Flush() {
+	cgc_put(name);
+	cgc_put(" tastes great with ketchup and mustard\n");
 }
 
-petlist::~petlist() {
+cgc_petlist::~cgc_petlist() {
 	while (head) {
-		listnode<Pet *> *p = head;
-		head = head->next();
-		delete p->data();
+		cgc_listnode<cgc_Pet *> *p = head;
+		head = head->cgc_next();
+		delete p->cgc_data();
 		delete p;
 	}
 }
 
 void
-petlist::append(Pet *pet) {
+cgc_petlist::cgc_append(cgc_Pet *pet) {
 	if (n == 100) {
-		put("too many pets already... put one to sleep\n");
+		cgc_put("too many pets already... cgc_put one to sleep\n");
 		return;
 	}
 
 	n++;
 
-	listnode<Pet *> *p = new listnode<Pet *>(pet);
+	cgc_listnode<cgc_Pet *> *p = new cgc_listnode<cgc_Pet *>(pet);
 	if (head == NULL)
 		head = p;
 	else {
-		listnode<Pet *> *q;
+		cgc_listnode<cgc_Pet *> *q;
 
-		for (q = head; q->next(); q = q->next())
+		for (q = head; q->cgc_next(); q = q->cgc_next())
 			/* empty */;
-		q->next(p);
+		q->cgc_next(p);
 	}
 }
 
-Pet *
-petlist::nth(int x) {
-	listnode<Pet *>*p = head;
+cgc_Pet *
+cgc_petlist::cgc_nth(int x) {
+	cgc_listnode<cgc_Pet *>*p = head;
 
 	if (n == 0) {
-		put("you don't have any pets\n");
+		cgc_put("you don't have any pets\n");
 		return (NULL);
 	}
 	if (x < 0) {
-		put("no imaginary pets allowed\n");
+		cgc_put("no imaginary pets allowed\n");
 		return (NULL);
 	}
 
-	for (int i = 0; i < x; p = p->next(), i++)
+	for (int i = 0; i < x; p = p->cgc_next(), i++)
 		/* empty */;
-	return p->data();
+	return p->cgc_data();
 }
 
 void
-petlist::remove(int nth) {
-	listnode<Pet *> *prev = NULL, *p;
+cgc_petlist::cgc_remove(int cgc_nth) {
+	cgc_listnode<cgc_Pet *> *prev = NULL, *p;
 	int i;
 
 	if (n == 0) {
-		put("you don't have any pets\n");
+		cgc_put("you don't have any pets\n");
 		return;
 	}
 
 	if (n < 0) {
-		put("no imaginary pets allowed\n");
+		cgc_put("no imaginary pets allowed\n");
 		return;
 	}
 
-	if (nth >= n) {
-		put("you don't have that many pets\n");
+	if (cgc_nth >= n) {
+		cgc_put("you don't have that many pets\n");
 		return;
 	}
 
-	for (i = 0, p = head; i < nth; i++, p = p->next())
+	for (i = 0, p = head; i < cgc_nth; i++, p = p->cgc_next())
 		prev = p;
 
 	n--;
 
 	if (prev == NULL) {
 		p = head;
-		head = head->next();
-		p->data()->Flush();
-		delete p->data();
+		head = head->cgc_next();
+		p->cgc_data()->cgc_Flush();
+		delete p->cgc_data();
 		delete p;
 		return;
 	}
 
-	p->data()->Flush();
-	delete p->data();
-	prev->next(p->next());
+	p->cgc_data()->cgc_Flush();
+	delete p->cgc_data();
+	prev->cgc_next(p->cgc_next());
 	delete p;
 }
 
 void
-do_rollover(const char *cmd, const char *opt) {
-	for (int i = 0; i < myList.len(); i++)
-		myList.nth(i)->Rollover();
+cgc_do_rollover(const char *cmd, const char *opt) {
+	for (int i = 0; i < myList.cgc_len(); i++)
+		myList.cgc_nth(i)->cgc_Rollover();
 }
 
 void
-do_speak(const char *cmd, const char *opt) {
-	for (int i = 0; i < myList.len(); i++)
-		myList.nth(i)->Speak();
+cgc_do_speak(const char *cmd, const char *opt) {
+	for (int i = 0; i < myList.cgc_len(); i++)
+		myList.cgc_nth(i)->cgc_Speak();
 }
 
 void
-do_create(const char *cmd, const char *opt) {
-	Pet *p;
+cgc_do_create(const char *cmd, const char *opt) {
+	cgc_Pet *p;
 
 	if (!opt) {
-		put("missing option\n");
+		cgc_put("missing option\n");
 		return;
 	}
 
-	if (!strcmp(opt, "hotdog"))
-		p = new Hotdog();
-	else if (!strcmp(opt, "cat"))
-		p = new Cat();
-	else if (!strcmp(opt, "dog"))
-		p = new Dog();
+	if (!cgc_strcmp(opt, "hotdog"))
+		p = new cgc_Hotdog();
+	else if (!cgc_strcmp(opt, "cat"))
+		p = new cgc_Cat();
+	else if (!cgc_strcmp(opt, "dog"))
+		p = new cgc_Dog();
 	else {
-		put("unknown pet\n");
+		cgc_put("unknown pet\n");
 		return;
 	}
 
-	myList.append(p);
+	myList.cgc_append(p);
 }
 
 void
-do_name(const char *cmd, const char *opt) {
+cgc_do_name(const char *cmd, const char *opt) {
 	int n = 0, i;
 	const char *name;
 
 	if (!opt) {
-		printf("missing option\n");
+		cgc_printf("missing option\n");
 		return;
 	}
 
 	if (opt[0] < '0' || opt[0] > '9') {
 bad_num:
-		put("bad number\n");
+		cgc_put("bad number\n");
 		return;
 	}
 
@@ -346,34 +346,34 @@ bad_num:
 	}
 
 	name = &opt[i + 1];
-	if (opt[i] == '\0' || strlen(name) == 0) {
-		put("missing name\n");
+	if (opt[i] == '\0' || cgc_strlen(name) == 0) {
+		cgc_put("missing name\n");
 		return;
 	}
 
-	if (n >= myList.len()) {
-		put("you don't have that many pets\n");
+	if (n >= myList.cgc_len()) {
+		cgc_put("you don't have that many pets\n");
 		return;
 	}
 
-	Pet *p = myList.nth(n);
+	cgc_Pet *p = myList.cgc_nth(n);
 	if (p == NULL)
 		return;
-	p->Name(name);
+	p->cgc_Name(name);
 }
 
 void
-do_debug(const char *cmd, const char *opt) {
-	for (int i = 0; i < myList.len(); i++)
-		myList.nth(i)->Debug();
+cgc_do_debug(const char *cmd, const char *opt) {
+	for (int i = 0; i < myList.cgc_len(); i++)
+		myList.cgc_nth(i)->cgc_Debug();
 }
 
 void
-do_delete(const char *cmd, const char *opt) {
+cgc_do_delete(const char *cmd, const char *opt) {
 	int n = 0;
 
 	if (!opt) {
-		printf("missing option\n");
+		cgc_printf("missing option\n");
 		return;
 	}
 
@@ -386,16 +386,16 @@ do_delete(const char *cmd, const char *opt) {
 			goto bad_number;
 	}
 
-	myList.remove(n);
+	myList.cgc_remove(n);
 
 	return;
 
 bad_number:
-	put("bad number\n");
+	cgc_put("bad number\n");
 }
 
 int
-get_number(const char *str) {
+cgc_get_number(const char *str) {
 	int n = 0, neg = 0;
 
 	if (str[0] == '-') {
@@ -427,19 +427,19 @@ get_number(const char *str) {
 	return (0);
 
 bad:
-	put("bad sequence\n");
+	cgc_put("bad sequence\n");
 	return (-1);
 }
 
 void
-do_line(char *line) {
+cgc_do_line(char *line) {
 	const char *number = NULL;
 	const char *cmd = NULL;
 	const char *opt = NULL;
-	int nextiscmd = 0, nextisopt = 0, len = strlen(line);
+	int nextiscmd = 0, nextisopt = 0, cgc_len = cgc_strlen(line);
 
 	number = line;
-	for (int i = 0; i < len; i++) {
+	for (int i = 0; i < cgc_len; i++) {
 		if ((nextiscmd || nextisopt) && line[i] == '\0')
 			continue;
 		if (nextiscmd) {
@@ -471,27 +471,27 @@ do_line(char *line) {
 	}
 
 	if (!cmd) {
-		printf("no command?\n");
+		cgc_printf("no command?\n");
 		return;
 	}
 
-	if (get_number(number))
+	if (cgc_get_number(number))
 		return;
 
-	if (!strcmp(cmd, "create"))
-		do_create(cmd, opt);
-	else if (!strcmp(cmd, "delete"))
-		do_delete(cmd, opt);
-	else if (!strcmp(cmd, "speak"))
-		do_speak(cmd, opt);
-	else if (!strcmp(cmd, "rollover"))
-		do_rollover(cmd, opt);
-	else if (!strcmp(cmd, "debug"))
-		do_debug(cmd, opt);
-	else if (!strcmp(cmd, "name"))
-		do_name(cmd, opt);
+	if (!cgc_strcmp(cmd, "create"))
+		cgc_do_create(cmd, opt);
+	else if (!cgc_strcmp(cmd, "delete"))
+		cgc_do_delete(cmd, opt);
+	else if (!cgc_strcmp(cmd, "speak"))
+		cgc_do_speak(cmd, opt);
+	else if (!cgc_strcmp(cmd, "rollover"))
+		cgc_do_rollover(cmd, opt);
+	else if (!cgc_strcmp(cmd, "debug"))
+		cgc_do_debug(cmd, opt);
+	else if (!cgc_strcmp(cmd, "name"))
+		cgc_do_name(cmd, opt);
 	else {
-		put("invalid cmd\n");
+		cgc_put("invalid cmd\n");
 	}
 }
 
@@ -499,9 +499,9 @@ int
 main() {
 	char buf[1024], c;
 	int nbuf = 0;
-	size_t nr;
+	cgc_size_t nr;
 
-	call_inits();
+	
 
 	for (;;) {
 		if (receive(0, &c, 1, &nr))
@@ -510,18 +510,18 @@ main() {
 			break;
 		if (c == '\n') {
 			buf[nbuf] = '\0';
-			do_line(buf);
-			memset(buf, 0, sizeof(buf));
+			cgc_do_line(buf);
+			cgc_memset(buf, 0, sizeof(buf));
 			nbuf = 0;
 		} else
 			buf[nbuf++] = c;
 		if (nbuf == sizeof(buf)) {
-			put("you talk too much.\n");
+			cgc_put("you talk too much.\n");
 			break;
 		}
 	}
 
-	terminate(0);
+	cgc_terminate(0);
 }
 
 
@@ -529,29 +529,29 @@ main() {
 static char hex[] = "0123456789abcdef";
 
 void
-put(char c) {
-	transmit_all(1, &c, 1);
+cgc_put(char c) {
+	cgc_transmit_all(1, &c, 1);
 }
 
 void
-put(const char *s) {
-	transmit_str(1, s);
+cgc_put(const char *s) {
+	cgc_transmit_str(1, s);
 }
 
 void
-put(void *v) {
-	put((long)v);
+cgc_put(void *v) {
+	cgc_put((long)v);
 }
 
 void
-put(int v) {
-	put((long)v);
+cgc_put(int v) {
+	cgc_put((long)v);
 }
 
 void
-put(long v) {
+cgc_put(long v) {
 	int i;
 
 	for (i = 28; i >= 0; i -= 4)
-		put(hex[(v >> i) & 0xf]);
+		cgc_put(hex[(v >> i) & 0xf]);
 }

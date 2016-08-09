@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,12 +35,12 @@
  * @return Number of chars read or ERR_INVALID_CARD, 
  *	ERR_INVALID_XML on error.
  */
-int parse_xml_card(char *xml, struct card *cards[]) {
+int cgc_parse_xml_card(char *xml, struct card *cards[]) {
 	int have_rank = FALSE;
 	int have_suit = FALSE;
-	uint8_t rank = 0;
-	uint8_t suit = 0;
-	uint8_t chars_read = 8;
+	cgc_uint8_t rank = 0;
+	cgc_uint8_t suit = 0;
+	cgc_uint8_t chars_read = 8;
 
 	if (CARD != *xml) {return ERR_INVALID_XML;}
 	xml++;
@@ -81,7 +81,7 @@ int parse_xml_card(char *xml, struct card *cards[]) {
 
 	if (END != *xml) {return ERR_INVALID_XML;}
 
-	cards[0] = create_card(suit, rank);
+	cards[0] = cgc_create_card(suit, rank);
 
 	if (NULL == cards[0]) {
 		return ERR_INVALID_CARD;
@@ -97,8 +97,8 @@ int parse_xml_card(char *xml, struct card *cards[]) {
  * @param c A card
  * @return Number of bytes written to xml char buf.
  */
-uint8_t gen_xml_card(char *xml, struct card *c) {
-	uint8_t bytes_written = 0;
+cgc_uint8_t cgc_gen_xml_card(char *xml, struct card *c) {
+	cgc_uint8_t bytes_written = 0;
 
 	xml[bytes_written++] = CARD;
 	xml[bytes_written++] = SUIT;
@@ -112,7 +112,7 @@ uint8_t gen_xml_card(char *xml, struct card *c) {
 	return bytes_written;
 }
 
-int parse_xml_player_name(char *xml, char **player_name, uint8_t len) {
+int cgc_parse_xml_player_name(char *xml, char **player_name, cgc_uint8_t len) {
 	// xml[0] = START;
 	// xml[1] = GAME;
 	// xml[2] = PLAYER;
@@ -135,10 +135,10 @@ int parse_xml_player_name(char *xml, char **player_name, uint8_t len) {
 	}
 
 	char *name = NULL;
-	uint8_t name_len = len - 8;
-	name = calloc(name_len);
+	cgc_uint8_t name_len = len - 8;
+	name = cgc_calloc(name_len);
 
-	strncpy(name, &xml[4], name_len);
+	cgc_strncpy(name, &xml[4], name_len);
 	*player_name = name;
 
 	if ((END != xml[len - 4]) ||
@@ -151,7 +151,7 @@ int parse_xml_player_name(char *xml, char **player_name, uint8_t len) {
 	return SUCCESS;
 }
 
-int parse_xml_cards(char *xml, struct card *cards[], uint8_t qty) {
+int cgc_parse_xml_cards(char *xml, struct card *cards[], cgc_uint8_t qty) {
 	char *idx = xml;
 	int count = 0;
 	int ret = 0;
@@ -163,13 +163,13 @@ int parse_xml_cards(char *xml, struct card *cards[], uint8_t qty) {
 	idx++;
 
 	// VULN: not checking against expected qty or any upper bound, 
-	// 		so could send too many cards and overrun cards[] array.
+	// 		so could cgc_send too many cards and overrun cards[] array.
 #ifdef PATCHED
 	while ((END != *idx) && (count < qty)) {
 #else
 	while (END != *idx) {
 #endif
-		ret = parse_xml_card(idx, card);
+		ret = cgc_parse_xml_card(idx, card);
 		if (0 > ret) {return ret;} 
 		idx += ret;
 
@@ -184,15 +184,15 @@ int parse_xml_cards(char *xml, struct card *cards[], uint8_t qty) {
 	return count;
 }
 
-int gen_xml_cards(char *xml, struct card *cards[], uint8_t qty) {
-	uint8_t bytes_written = 0;
-	uint8_t cards_written = 0;
-	uint8_t bytes_needed = 2 + (qty * 8) + 2;
+int cgc_gen_xml_cards(char *xml, struct card *cards[], cgc_uint8_t qty) {
+	cgc_uint8_t bytes_written = 0;
+	cgc_uint8_t cards_written = 0;
+	cgc_uint8_t bytes_needed = 2 + (qty * 8) + 2;
 
 	xml[bytes_written++] = START;
 	xml[bytes_written++] = CARDS;
 	while ((0 < qty) && (bytes_needed > (bytes_written + 2))) {
-		bytes_written += gen_xml_card(&xml[bytes_written], cards[cards_written++]);
+		bytes_written += cgc_gen_xml_card(&xml[bytes_written], cards[cards_written++]);
 	}
 	xml[bytes_written++] = END;
 	xml[bytes_written++] = FIN;
@@ -200,7 +200,7 @@ int gen_xml_cards(char *xml, struct card *cards[], uint8_t qty) {
 	return bytes_written;
 }
 
-int parse_xml_draw(char *xml) {
+int cgc_parse_xml_draw(char *xml) {
 	if ((START != xml[0]) ||
 		(DRAW != xml[1]) ||
 		(END != xml[2]) ||
@@ -211,7 +211,7 @@ int parse_xml_draw(char *xml) {
 	return SUCCESS;
 }
 
-int parse_xml_go_fish(char *xml) {
+int cgc_parse_xml_go_fish(char *xml) {
 	if ((START != xml[0]) ||
 		(GO_FISH != xml[1]) ||
 		(END != xml[3]) ||
@@ -222,7 +222,7 @@ int parse_xml_go_fish(char *xml) {
 	return xml[2];
 }
 
-int gen_xml_go_fish(char *xml, uint8_t qty) {
+int cgc_gen_xml_go_fish(char *xml, cgc_uint8_t qty) {
 	// alloc(5, xml);
 	xml[0] = START;
 	xml[1] = GO_FISH;
@@ -233,15 +233,15 @@ int gen_xml_go_fish(char *xml, uint8_t qty) {
 	return 5;
 }
 
-int parse_xml_ask(char *xml) {
+int cgc_parse_xml_ask(char *xml) {
 	if ((START != xml[0]) ||
 		(ASK != xml[1]) ||
 		(RANK != xml[2])) {
 		return ERR_INVALID_XML;
 	}
 
-	int8_t rank = (int8_t)xml[3];
-	if (FALSE == is_valid_rank(rank)) {return ERR_INVALID_RANK;}
+	cgc_int8_t rank = (cgc_int8_t)xml[3];
+	if (FALSE == cgc_is_valid_rank(rank)) {return ERR_INVALID_RANK;}
 
 	if ((END != xml[4]) ||
 		(END != xml[5]) ||
@@ -252,7 +252,7 @@ int parse_xml_ask(char *xml) {
 	return rank;
 }
 
-int gen_xml_ask(char *xml, uint8_t rank) {
+int cgc_gen_xml_ask(char *xml, cgc_uint8_t rank) {
 	// alloc(7, xml);
 	xml[0] = START;
 	xml[1] = ASK;
@@ -265,7 +265,7 @@ int gen_xml_ask(char *xml, uint8_t rank) {
 	return 7;
 }
 
-int parse_xml_fishing(char *xml) {
+int cgc_parse_xml_fishing(char *xml) {
 	if ((START != xml[0]) ||
 		(FISHING != xml[1]) ||
 		(END != xml[2]) ||
@@ -276,13 +276,13 @@ int parse_xml_fishing(char *xml) {
 	return SUCCESS;
 }
 
-int parse_xml_books(char *xml) {
+int cgc_parse_xml_books(char *xml) {
 	if ((START != xml[0]) ||
 		(BOOKS != xml[1])) {
 		return ERR_INVALID_XML;
 	}
 
-	uint8_t books = (uint8_t)xml[2];
+	cgc_uint8_t books = (cgc_uint8_t)xml[2];
 
 	if ((END != xml[3]) ||
 		(FIN != xml[4])) {
@@ -292,7 +292,7 @@ int parse_xml_books(char *xml) {
 	return books;
 }
 
-int gen_xml_books(char *xml, uint8_t count) {
+int cgc_gen_xml_books(char *xml, cgc_uint8_t count) {
 	// alloc(5, xml);
 	xml[0] = START;
 	xml[1] = BOOKS;
@@ -303,7 +303,7 @@ int gen_xml_books(char *xml, uint8_t count) {
 	return 5;
 }
 
-int gen_xml_turn(char *xml, uint8_t player_id) {
+int cgc_gen_xml_turn(char *xml, cgc_uint8_t player_id) {
 	// alloc(9, xml);
 	xml[0] = START;
 	xml[1] = TURN;
@@ -318,14 +318,14 @@ int gen_xml_turn(char *xml, uint8_t player_id) {
 	return 9;
 }
 
-int gen_xml_final_results(char *xml, uint8_t p0_books, uint8_t p1_books) {
+int cgc_gen_xml_final_results(char *xml, cgc_uint8_t p0_books, cgc_uint8_t p1_books) {
 	// alloc(20, xml);
 	xml[0] = START;
 	xml[1] = GAME;
 
 	xml[2] = PLAYER;
 	xml[3] = ID;
-	xml[4] = (uint8_t)0;
+	xml[4] = (cgc_uint8_t)0;
 	xml[5] = END;
 	xml[6] = BOOKS;
 	xml[7] = p0_books;
@@ -334,7 +334,7 @@ int gen_xml_final_results(char *xml, uint8_t p0_books, uint8_t p1_books) {
 
 	xml[10] = PLAYER;
 	xml[11] = ID;
-	xml[12] = (uint8_t)1;
+	xml[12] = (cgc_uint8_t)1;
 	xml[13] = END;
 	xml[14] = BOOKS;
 	xml[15] = p1_books;
@@ -347,7 +347,7 @@ int gen_xml_final_results(char *xml, uint8_t p0_books, uint8_t p1_books) {
 	return 20;
 }
 
-int gen_xml_error(char *xml, int8_t err_code) {
+int cgc_gen_xml_error(char *xml, cgc_int8_t err_code) {
 	// alloc(5, xml);
 	xml[0] = START;
 	xml[1] = ERROR;

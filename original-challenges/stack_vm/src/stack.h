@@ -31,15 +31,15 @@ typedef struct {
 	int elementSize;
 	int numElements;
 	void *elements;
-} Stack;
+} cgc_Stack;
 
-void initStack(Stack *stack, int numElements, int elementSize);
-void destroyStack(Stack *stack);
+void cgc_initStack(cgc_Stack *stack, int numElements, int elementSize);
+void cgc_destroyStack(cgc_Stack *stack);
 
-int isStackFull(Stack *stack);
-int isStackEmpty(Stack *stack);
+int cgc_isStackFull(cgc_Stack *stack);
+int cgc_isStackEmpty(cgc_Stack *stack);
 
-void pushElement(Stack *stack, void* element);
-void* popElement(Stack *stack);
+void cgc_pushElement(cgc_Stack *stack, void* element);
+void* cgc_popElement(cgc_Stack *stack);
 
 #endif /* STACK_H */

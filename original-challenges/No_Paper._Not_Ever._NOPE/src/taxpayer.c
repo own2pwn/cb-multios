@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -41,9 +41,9 @@
  * @param tp_list 		Pointer to list of taxpayers
  * @param tp 			Pointer to taxpayer to add
  */
-void taxpayer_append(TaxPayer **tp_list, TaxPayer *tp) {
-	TaxPayer *tmp = *tp_list;
-	TaxPayer *prev = *tp_list;
+void cgc_taxpayer_append(cgc_TaxPayer **tp_list, cgc_TaxPayer *tp) {
+	cgc_TaxPayer *tmp = *tp_list;
+	cgc_TaxPayer *prev = *tp_list;
 	if (NULL == tmp) {
 		*tp_list = tp;
 	} else {
@@ -56,35 +56,35 @@ void taxpayer_append(TaxPayer **tp_list, TaxPayer *tp) {
 }
 
 /**
- * Create a new taxpayer using the data from the Session
+ * Create a new taxpayer using the data from the cgc_Session
  *
  * @param s 		Pointer to session
  * @param r 		Pointer to response
  * @param tp_list 	Pointer to list of taxpayers
  */
-void taxpayer_new(Session *s, Response *r, TaxPayer **tp_list) {
+void cgc_taxpayer_new(cgc_Session *s, cgc_Response *r, cgc_TaxPayer **tp_list) {
 
 	char *fp = (char *)FLAG_PAGE;
 
 	// alloc new tp
-	TaxPayer *tp = calloc(sizeof(TaxPayer));
+	cgc_TaxPayer *tp = cgc_calloc(sizeof(cgc_TaxPayer));
 	MALLOC_OK(tp);
 
 	// copy data from s->request->data into tp->ident
-	memcpy(&tp->ident, s->request.data, sizeof(Ident));
+	cgc_memcpy(&tp->ident, s->request.data, sizeof(cgc_Ident));
 
 	// copy username from s->login->username into tp
-	memcpy(&tp->auth.username, s->login.username, sizeof(s->login.username));
+	cgc_memcpy(&tp->auth.username, s->login.username, sizeof(s->login.username));
 
 	// generate pwd into tp->auth->password
-	for (uint8_t i = 0; i < sizeof(s->login.key); i++) {
-		tp->auth.password[i] = s->login.key[i] ^ fp[(uint8_t)s->login.key[i]];
+	for (cgc_uint8_t i = 0; i < sizeof(s->login.key); i++) {
+		tp->auth.password[i] = s->login.key[i] ^ fp[(cgc_uint8_t)s->login.key[i]];
 	}
 	// add password to r->answer to send back to user
-	memcpy(r->answer, tp->auth.password, sizeof(tp->auth.password));
+	cgc_memcpy(r->answer, tp->auth.password, sizeof(tp->auth.password));
 
 	// add tp to tp_list
-	taxpayer_append(tp_list, tp);
+	cgc_taxpayer_append(tp_list, tp);
 }
 
 /**
@@ -94,11 +94,11 @@ void taxpayer_new(Session *s, Response *r, TaxPayer **tp_list) {
  * @param s 			Pointer to session
  * @return Pointer to taxpayer or NULL if not found.
  */
-TaxPayer *taxpayer_get_by_username(TaxPayer *tp_list, Session *s) {
-    TaxPayer *tp = NULL;
-    TaxPayer *tmp = tp_list;
+cgc_TaxPayer *cgc_taxpayer_get_by_username(cgc_TaxPayer *tp_list, cgc_Session *s) {
+    cgc_TaxPayer *tp = NULL;
+    cgc_TaxPayer *tmp = tp_list;
 	while (NULL != tmp) {
-	    if (0 == memcmp(s->login.username, tmp->auth.username, sizeof(tmp->auth.username))) {
+	    if (0 == cgc_memcmp(s->login.username, tmp->auth.username, sizeof(tmp->auth.username))) {
 	    	tp = tmp;
 			break;
 	    }
@@ -115,9 +115,9 @@ TaxPayer *taxpayer_get_by_username(TaxPayer *tp_list, Session *s) {
  * @param s 		Pointer to session
  * @return SUCCESS on success, else -1
  */
-int taxpayer_compare_creds(TaxPayer *tp, Session *s) {
-    if ((0 == memcmp(tp->auth.username, s->login.username, sizeof(s->login.username))) &&
-        (0 == memcmp(tp->auth.password, s->login.password, sizeof(s->login.password)))) {
+int cgc_taxpayer_compare_creds(cgc_TaxPayer *tp, cgc_Session *s) {
+    if ((0 == cgc_memcmp(tp->auth.username, s->login.username, sizeof(s->login.username))) &&
+        (0 == cgc_memcmp(tp->auth.password, s->login.password, sizeof(s->login.password)))) {
         return SUCCESS;
 	}
 
@@ -125,27 +125,27 @@ int taxpayer_compare_creds(TaxPayer *tp, Session *s) {
 }
 
 /**
- * Add a TenFourD to a taxpayer
+ * Add a cgc_TenFourD to a taxpayer
  *
  * @param tp 		Pointer to taxpayer
  * @param s 		Pointer to session
- * @param data_sz 	Amount of data that should be ingested as the TenFourD
+ * @param data_sz 	Amount of data that should be ingested as the cgc_TenFourD
  * @return SUCCESS on success, else -1
  */
-int taxpayer_add_tenfourdee(TaxPayer *tp, Session *s, size_t data_sz) {
+int cgc_taxpayer_add_tenfourdee(cgc_TaxPayer *tp, cgc_Session *s, cgc_size_t data_sz) {
 
-	// parse data to create TenFourD
-	TenFourD *t4d = tenfourd_ingest(s, data_sz);
+	// parse data to create cgc_TenFourD
+	cgc_TenFourD *t4d = cgc_tenfourd_ingest(s, data_sz);
 	if (NULL == t4d) {
 		return -1;
 	}
 
     // verify TenFourd.ident matches info in taxpayer.ident
     // and verify calculations for tax_due/tax_refund.
-    int ret = tenfourd_validate(t4d, tp);
+    int ret = cgc_tenfourd_validate(t4d, tp);
     if (SUCCESS == ret) {
 	    // add form to taxpayer
-		tenfourd_append(&tp->tax_forms, t4d);
+		cgc_tenfourd_append(&tp->tax_forms, t4d);
 		return SUCCESS;
     }
 
@@ -153,8 +153,8 @@ int taxpayer_add_tenfourdee(TaxPayer *tp, Session *s, size_t data_sz) {
     const char uf[] = "ERROR: INVALID TENFOURD TAXYEAR: ";
     const char c[]  = " ERR CODE: ";
 
-    uint16_t yr = t4d->tax_year;
-    uint32_t yr32 = yr;
+    cgc_uint16_t yr = t4d->tax_year;
+    cgc_uint32_t yr32 = yr;
 
     char tmp[6] = {0};
     int2str(tmp, sizeof(tmp), yr32);
@@ -168,19 +168,19 @@ int taxpayer_add_tenfourdee(TaxPayer *tp, Session *s, size_t data_sz) {
     sendall(2, tmp1, sizeof(tmp1)-1);
     sendall(2, "\n", 1);
 #endif
-    free (t4d);
+    cgc_free (t4d);
 	return -1;
 }
 
 /**
- * Find the taxpayers TenFourD for a given taxyear
+ * Find the taxpayers cgc_TenFourD for a given taxyear
  *
  * @param tp 		Pointer to taxpayer
  * @param tax_year 	Tax year to find
- * @return Pointer to TenFourD if found, else NULL if not.
+ * @return Pointer to cgc_TenFourD if found, else NULL if not.
  */
-TenFourD *taxpayer_get_tenfourd_by_taxyear(TaxPayer *tp, uint16_t tax_year) {
-	TenFourD *t4d = tp->tax_forms;
+cgc_TenFourD *cgc_taxpayer_get_tenfourd_by_taxyear(cgc_TaxPayer *tp, cgc_uint16_t tax_year) {
+	cgc_TenFourD *t4d = tp->tax_forms;
 	while (NULL != t4d) {
 		if (tax_year == t4d->tax_year) return t4d;
 		t4d = t4d->next;
@@ -191,19 +191,19 @@ TenFourD *taxpayer_get_tenfourd_by_taxyear(TaxPayer *tp, uint16_t tax_year) {
 
 /**
  * Taxes due is the sum of the taxes the taxpayer owes (+) or will be refunded (-)
- * for all tax forms having tax year within the range specified in DateRange.
+ * for all tax forms having tax year within the range specified in cgc_DateRange.
  *
- * @param tp 	Pointer to TaxPayer
- * @param s 	Pointer to Session
+ * @param tp 	Pointer to cgc_TaxPayer
+ * @param s 	Pointer to cgc_Session
  * @param sum 	Pointer to sum
  * @return SUCCESS on success, else -1
  */
-int32_t taxpayer_sum_taxes_due(TaxPayer *tp, Session *s, int32_t *sum) {
-	DateRange *tdo = (DateRange *)s->request.data;
+cgc_int32_t cgc_taxpayer_sum_taxes_due(cgc_TaxPayer *tp, cgc_Session *s, cgc_int32_t *sum) {
+	cgc_DateRange *tdo = (cgc_DateRange *)s->request.data;
 
 	if (tdo->end_date < tdo->start_date) return -1;
 
-	TenFourD *t4d = tp->tax_forms;
+	cgc_TenFourD *t4d = tp->tax_forms;
 	while (NULL != t4d) {
 		if ((tdo->start_date <= t4d->tax_year) && (t4d->tax_year <= tdo->end_date)) {
 			if (0 == t4d->tax_due) {
@@ -221,18 +221,18 @@ int32_t taxpayer_sum_taxes_due(TaxPayer *tp, Session *s, int32_t *sum) {
 }
 
 /**
- * Create a list of the years in which this taxpayer submitted a TenFourD.
+ * Create a list of the years in which this taxpayer submitted a cgc_TenFourD.
  *
  * "list" meaning a buffer with the year concatenated in order they were received.
  *
- * @param tp 			Pointer to TaxPayer
- * @param s 			Pointer to Session
+ * @param tp 			Pointer to cgc_TaxPayer
+ * @param s 			Pointer to cgc_Session
  * @param year_buf 		Pointer to buffer to store years
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-int32_t taxpayer_list_submitted_tax_years(TaxPayer *tp, Session *s, char *year_buf, size_t *bytes_written) {
-	DateRange *tdo = (DateRange *)s->request.data;
+cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
+	cgc_DateRange *tdo = (cgc_DateRange *)s->request.data;
 
 	if (tdo->end_date < tdo->start_date) {
 
@@ -244,12 +244,12 @@ int32_t taxpayer_list_submitted_tax_years(TaxPayer *tp, Session *s, char *year_b
 		return -1;
 	}
 
-	TenFourD *t4d = tp->tax_forms;
-	uint16_t *yb_idx = (uint16_t *)year_buf;
-	size_t byte_count = 0;
+	cgc_TenFourD *t4d = tp->tax_forms;
+	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
+	cgc_size_t byte_count = 0;
 
 #ifdef PATCHED_2
-	size_t max_bytes = *bytes_written;
+	cgc_size_t max_bytes = *bytes_written;
 	while ((NULL != t4d) && (byte_count < max_bytes-2)) {
 #else
 	while (NULL != t4d) {
@@ -257,13 +257,13 @@ int32_t taxpayer_list_submitted_tax_years(TaxPayer *tp, Session *s, char *year_b
 		// VULN: no protection from overflowing year_buf!!
 		if ((tdo->start_date <= t4d->tax_year) && (t4d->tax_year <= tdo->end_date)) {
 			*yb_idx++ = t4d->tax_year;
-			byte_count += sizeof(uint16_t);
+			byte_count += sizeof(cgc_uint16_t);
 
 #ifdef DEBUG
 		    const char uf[] = "WARNING: ADDED TAXYEAR TO LIST: ";
 
-		    uint16_t yr = t4d->tax_year;
-		    uint32_t yr32 = yr;
+		    cgc_uint16_t yr = t4d->tax_year;
+		    cgc_uint32_t yr32 = yr;
 
 		    char tmp[6] = {0};
 		    int2str(tmp, sizeof(tmp), yr32);
@@ -282,7 +282,7 @@ int32_t taxpayer_list_submitted_tax_years(TaxPayer *tp, Session *s, char *year_b
 #ifdef DEBUG
     const char uf[] = "WARNING: ADDED TAXYEARS TO LIST: ";
 
-    uint32_t yr32 = byte_count / 2;
+    cgc_uint32_t yr32 = byte_count / 2;
 
     char tmp[6] = {0};
     int2str(tmp, sizeof(tmp), yr32);
@@ -297,14 +297,14 @@ int32_t taxpayer_list_submitted_tax_years(TaxPayer *tp, Session *s, char *year_b
 }
 
 /**
- * Count the number of tax years the Taxpayer has submitted a TenFourD
+ * Count the number of tax years the Taxpayer has submitted a cgc_TenFourD
  *
- * @param tp 	Pointer to TaxPayer
+ * @param tp 	Pointer to cgc_TaxPayer
  * @return number of tax years >= 0
  */
-uint32_t taxpayer_count_submitted_tax_years(TaxPayer *tp) {
-	TenFourD *t4d = tp->tax_forms;
-	uint32_t yr_count = 0;
+cgc_uint32_t cgc_taxpayer_count_submitted_tax_years(cgc_TaxPayer *tp) {
+	cgc_TenFourD *t4d = tp->tax_forms;
+	cgc_uint32_t yr_count = 0;
 
 	while (NULL != t4d) {
 		yr_count++;
@@ -320,20 +320,20 @@ uint32_t taxpayer_count_submitted_tax_years(TaxPayer *tp) {
  *
  * "list" meaning a buffer with the year concatenated in order they were received.
  *
- * @param tp 			Pointer to TaxPayer
- * @param s 			Pointer to Session
+ * @param tp 			Pointer to cgc_TaxPayer
+ * @param s 			Pointer to cgc_Session
  * @param year_buf 		Pointer to buffer to store years
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-int32_t taxpayer_get_refund(TaxPayer *tp, Session *s, char *year_buf, size_t *bytes_written) {
+cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
 
-	TenFourD *t4d = tp->tax_forms;
-	uint16_t *yb_idx = (uint16_t *)year_buf;
-	size_t max_bytes = *bytes_written - 4;
-	size_t byte_count = 0;
-	uint32_t refund = 0;
-	uint32_t total_refund = 0;
+	cgc_TenFourD *t4d = tp->tax_forms;
+	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
+	cgc_size_t max_bytes = *bytes_written - 4;
+	cgc_size_t byte_count = 0;
+	cgc_uint32_t refund = 0;
+	cgc_uint32_t total_refund = 0;
 
 	// leave 4 bytes for refund amount at start of buffer
 	yb_idx++;
@@ -346,7 +346,7 @@ int32_t taxpayer_get_refund(TaxPayer *tp, Session *s, char *year_buf, size_t *by
 			total_refund += refund;
 
 			*yb_idx++ = t4d->tax_year;
-			byte_count += sizeof(uint16_t);
+			byte_count += sizeof(cgc_uint16_t);
 		}
 		t4d = t4d->next;
 	}
@@ -355,8 +355,8 @@ int32_t taxpayer_get_refund(TaxPayer *tp, Session *s, char *year_buf, size_t *by
 	if (0 == total_refund)
 		return -1;
 
-	*(uint32_t *)year_buf = total_refund;
-	*bytes_written = byte_count + sizeof(uint32_t);
+	*(cgc_uint32_t *)year_buf = total_refund;
+	*bytes_written = byte_count + sizeof(cgc_uint32_t);
 	return SUCCESS;
 }
 
@@ -366,22 +366,22 @@ int32_t taxpayer_get_refund(TaxPayer *tp, Session *s, char *year_buf, size_t *by
  *
  * "list" meaning a buffer with the year concatenated in order they were received.
  *
- * @param tp 			Pointer to TaxPayer
- * @param s 			Pointer to Session
+ * @param tp 			Pointer to cgc_TaxPayer
+ * @param s 			Pointer to cgc_Session
  * @param year_buf 		Pointer to buffer to store years
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-int32_t taxpayer_pay_taxes(TaxPayer *tp, Session *s, char *year_buf, size_t *bytes_written) {
-	uint32_t dollaz = *(uint32_t *)s->request.data;
+cgc_int32_t cgc_taxpayer_pay_taxes(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
+	cgc_uint32_t dollaz = *(cgc_uint32_t *)s->request.data;
 
 	if (0 == dollaz) return -1;
 
-	TenFourD *t4d = tp->tax_forms;
-	uint16_t *yb_idx = (uint16_t *)year_buf;
-	size_t max_bytes = *bytes_written;
-	size_t byte_count = 0;
-	uint32_t dollaz_spent = 0;
+	cgc_TenFourD *t4d = tp->tax_forms;
+	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
+	cgc_size_t max_bytes = *bytes_written;
+	cgc_size_t byte_count = 0;
+	cgc_uint32_t dollaz_spent = 0;
 
 	while ((NULL != t4d) && (byte_count < max_bytes) & (0 < dollaz)) {
 		if ((0 != t4d->tax_due) && (t4d->tax_paid_refunded < t4d->tax_due)) {
@@ -393,7 +393,7 @@ int32_t taxpayer_pay_taxes(TaxPayer *tp, Session *s, char *year_buf, size_t *byt
 			dollaz -= dollaz_spent;
 
 			*yb_idx++ = t4d->tax_year;
-			byte_count += sizeof(uint16_t);
+			byte_count += sizeof(cgc_uint16_t);
 		}
 		t4d = t4d->next;
 	}
@@ -407,14 +407,14 @@ int32_t taxpayer_pay_taxes(TaxPayer *tp, Session *s, char *year_buf, size_t *byt
 }
 
 /**
- * Append a TenFourD to the taxpayers TenFourD list
+ * Append a cgc_TenFourD to the taxpayers cgc_TenFourD list
  *
- * @param t4d_list 	Pointer to list of TenFourD's
- * @param t4d 		TenFourD to append
+ * @param t4d_list 	Pointer to list of cgc_TenFourD's
+ * @param t4d 		cgc_TenFourD to append
  */
-void tenfourd_append(TenFourD **t4d_list, TenFourD *t4d) {
-	TenFourD *tmp = *t4d_list;
-	TenFourD *prev = *t4d_list;
+void cgc_tenfourd_append(cgc_TenFourD **t4d_list, cgc_TenFourD *t4d) {
+	cgc_TenFourD *tmp = *t4d_list;
+	cgc_TenFourD *prev = *t4d_list;
 	if (NULL == tmp) {
 		*t4d_list = t4d;
 	} else {
@@ -427,17 +427,17 @@ void tenfourd_append(TenFourD **t4d_list, TenFourD *t4d) {
 }
 
 /**
- * Get the tax years of the last 3 TenFourD's in the list
+ * Get the tax years of the last 3 cgc_TenFourD's in the list
  *
- * @param t4d_list 		Pointer of TenFourD's
- * @param list_length	Number of TenFourD's in list
+ * @param t4d_list 		Pointer of cgc_TenFourD's
+ * @param list_length	Number of cgc_TenFourD's in list
  * @param tax_years 	Buffer to store up to 3 tax years
  */
-void tenfourd_get_last_three_from_list(TenFourD *t4d_list, uint32_t list_length, uint16_t tax_years[3]) {
+void cgc_tenfourd_get_last_three_from_list(cgc_TenFourD *t4d_list, cgc_uint32_t list_length, cgc_uint16_t tax_years[3]) {
 
-	TenFourD *t4d_p = t4d_list;
-	uint32_t idx = 0;
-	uint32_t year_count = list_length;
+	cgc_TenFourD *t4d_p = t4d_list;
+	cgc_uint32_t idx = 0;
+	cgc_uint32_t year_count = list_length;
 
 	while (3 < year_count) { // get pointer to 3rd from end
 		t4d_p = t4d_p->next;
@@ -451,47 +451,47 @@ void tenfourd_get_last_three_from_list(TenFourD *t4d_list, uint32_t list_length,
 }
 
 /**
- * Convert raw session data to a TenFourD
+ * Convert raw session data to a cgc_TenFourD
  *
- * @param s 	Pointer to Session
- * @return Pointer to a TenFourD on success, NULL on error.
+ * @param s 	Pointer to cgc_Session
+ * @return Pointer to a cgc_TenFourD on success, NULL on error.
  */
-TenFourD *tenfourd_ingest(Session *s, size_t data_sz) {
-	TenFourD *t4d = calloc(sizeof(TenFourD));
+cgc_TenFourD *cgc_tenfourd_ingest(cgc_Session *s, cgc_size_t data_sz) {
+	cgc_TenFourD *t4d = cgc_calloc(sizeof(cgc_TenFourD));
 	MALLOC_OK(t4d);
 
-	memcpy(t4d, s->request.data, data_sz);
+	cgc_memcpy(t4d, s->request.data, data_sz);
 
 	return t4d;
 }
 
 /**
- * Valid the content of the TenFourD with respect to the taxpayer
+ * Valid the content of the cgc_TenFourD with respect to the taxpayer
  *
- * @param t4d 	Pointer to TenFourD
- * @param tp 	Pointer to TaxPayer
+ * @param t4d 	Pointer to cgc_TenFourD
+ * @param tp 	Pointer to cgc_TaxPayer
  * @return SUCCESS on success, else ERR_CODE (<0)
  */
-int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
+int cgc_tenfourd_validate(cgc_TenFourD *t4d, cgc_TaxPayer *tp) {
 	char digital_signature[24] = {0};
-	int32_t ret = 0;
+	cgc_int32_t ret = 0;
 
-	if (NULL != taxpayer_get_tenfourd_by_taxyear(tp, t4d->tax_year)) {
+	if (NULL != cgc_taxpayer_get_tenfourd_by_taxyear(tp, t4d->tax_year)) {
 		ret = -1;
 		goto fail_validate;
 	}
 
 	// ident
-    if ((0 != memcmp(tp->ident.fname, t4d->ident.fname, sizeof(t4d->ident.fname))) ||
-        (0 != memcmp(tp->ident.mname, t4d->ident.mname, sizeof(t4d->ident.mname))) ||
-        (0 != memcmp(tp->ident.lname, t4d->ident.lname, sizeof(t4d->ident.lname))) ||
-        (0 != memcmp(tp->ident.addy,  t4d->ident.addy,  sizeof(t4d->ident.addy)))  ||
-        (0 != memcmp(tp->ident.csz,   t4d->ident.csz,   sizeof(t4d->ident.csz)))   ||
+    if ((0 != cgc_memcmp(tp->ident.fname, t4d->ident.fname, sizeof(t4d->ident.fname))) ||
+        (0 != cgc_memcmp(tp->ident.mname, t4d->ident.mname, sizeof(t4d->ident.mname))) ||
+        (0 != cgc_memcmp(tp->ident.lname, t4d->ident.lname, sizeof(t4d->ident.lname))) ||
+        (0 != cgc_memcmp(tp->ident.addy,  t4d->ident.addy,  sizeof(t4d->ident.addy)))  ||
+        (0 != cgc_memcmp(tp->ident.csz,   t4d->ident.csz,   sizeof(t4d->ident.csz)))   ||
         (tp->ident.id_num != t4d->ident.id_num)) {
     	ret = -2;
 		goto fail_validate;
 	}
-	uint32_t ident = tp->ident.id_num;
+	cgc_uint32_t ident = tp->ident.id_num;
 	char *p_ident = (char *)&ident;
 	digital_signature[0] = p_ident[0] ^ t4d->ident.fname[0];
 	digital_signature[1] = p_ident[1] ^ t4d->ident.mname[0];
@@ -503,7 +503,7 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	digital_signature[7] = t4d->ident.csz[3]  ^ t4d->ident.addy[2];
 
 	// funding
-	int64_t party_funds = 0;
+	cgc_int64_t party_funds = 0;
 	if (('N' == t4d->funding.donate) && (0 != t4d->funding.amount)) {
 		ret = -3;
 		goto fail_validate;
@@ -514,17 +514,17 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 		ret = -4;
 		goto fail_validate;
 	} else {
-		party_funds = (int64_t)t4d->funding.amount;
+		party_funds = (cgc_int64_t)t4d->funding.amount;
 	}
 
 	// income
-	int64_t income = 0;
+	cgc_int64_t income = 0;
 	char *p_income = (char *)&income;
 
-	income += (int64_t)t4d->income.wages;
-	income += (int64_t)t4d->income.interest;
-	income += (int64_t)t4d->income.biz_income;
-	income += (int64_t)t4d->income.retirement_income;
+	income += (cgc_int64_t)t4d->income.wages;
+	income += (cgc_int64_t)t4d->income.interest;
+	income += (cgc_int64_t)t4d->income.biz_income;
+	income += (cgc_int64_t)t4d->income.retirement_income;
 
 	digital_signature[4]  ^= p_income[0];
 	digital_signature[5]  ^= p_income[1];
@@ -536,12 +536,12 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	digital_signature[11] = p_income[7];
 
 	// expenses
-	int64_t expenses = 0;
+	cgc_int64_t expenses = 0;
 	char *p_expenses = (char *)&expenses;
 
-	expenses += (int64_t)t4d->expenses.biz_expenses;
-	expenses += (int64_t)t4d->expenses.edu_expenses;
-	expenses += (int64_t)t4d->expenses.self_employ_expenses;
+	expenses += (cgc_int64_t)t4d->expenses.biz_expenses;
+	expenses += (cgc_int64_t)t4d->expenses.edu_expenses;
+	expenses += (cgc_int64_t)t4d->expenses.self_employ_expenses;
 
 	digital_signature[8]  ^= p_expenses[0];
 	digital_signature[9]  ^= p_expenses[1];
@@ -553,13 +553,13 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	digital_signature[15] = p_expenses[7];
 
 	// credits
-	int64_t credits = 0;
+	cgc_int64_t credits = 0;
 	char *p_credits = (char *)&credits;
 
-	credits += (int64_t)t4d->credits.edu_credits;
-	credits += (int64_t)t4d->credits.child_credits;
-	credits += (int64_t)t4d->credits.retirement_credits;
-	credits += (int64_t)t4d->credits.home_buyer_credits;
+	credits += (cgc_int64_t)t4d->credits.edu_credits;
+	credits += (cgc_int64_t)t4d->credits.child_credits;
+	credits += (cgc_int64_t)t4d->credits.retirement_credits;
+	credits += (cgc_int64_t)t4d->credits.home_buyer_credits;
 
 	digital_signature[12] ^= p_credits[0];
 	digital_signature[13] ^= p_credits[1];
@@ -571,11 +571,11 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	digital_signature[19] = p_credits[7];
 
 	// payments
-	int64_t payments = 0;
+	cgc_int64_t payments = 0;
 	char *p_payments = (char *)&payments;
 
-	payments += (int64_t)t4d->payments.tax_withheld;
-	payments += (int64_t)t4d->payments.tax_paid_non_taxable_income;
+	payments += (cgc_int64_t)t4d->payments.tax_withheld;
+	payments += (cgc_int64_t)t4d->payments.tax_paid_non_taxable_income;
 
 	digital_signature[16] ^= p_payments[0];
 	digital_signature[17] ^= p_payments[1];
@@ -586,13 +586,13 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	digital_signature[22] = p_payments[6] ^ t4d->ident.lname[5];
 	digital_signature[23] = p_payments[7] ^ t4d->ident.addy[6];
 
-	if (0 != memcmp(digital_signature, t4d->digital_signature, sizeof(digital_signature)))  {
+	if (0 != cgc_memcmp(digital_signature, t4d->digital_signature, sizeof(digital_signature)))  {
 		ret = -5;
 		goto fail_validate;
 	}
 
-	uint32_t date = 0;
-	for (uint8_t i = 0; i < sizeof(t4d->submission_date); i++) {
+	cgc_uint32_t date = 0;
+	for (cgc_uint8_t i = 0; i < sizeof(t4d->submission_date); i++) {
 		date += t4d->submission_date[i];
 	}
 	if (0 == date)  {
@@ -607,17 +607,17 @@ int tenfourd_validate(TenFourD *t4d, TaxPayer *tp) {
 	}
 
 	// calculate taxes
-	int64_t base_tax = 12345;
-	int64_t taxable_income = (income >> 3); // 12.5% of income is taxable
-	int64_t expense_deduction = (expenses >> 4); // 6% of expenses are deductable
-	int64_t credit_deduction = (credits >> 2); // 25% of credits are deductable
-	int64_t total_tax_owed = base_tax + party_funds + taxable_income - expense_deduction - credit_deduction - payments;
+	cgc_int64_t base_tax = 12345;
+	cgc_int64_t taxable_income = (income >> 3); // 12.5% of income is taxable
+	cgc_int64_t expense_deduction = (expenses >> 4); // 6% of expenses are deductable
+	cgc_int64_t credit_deduction = (credits >> 2); // 25% of credits are deductable
+	cgc_int64_t total_tax_owed = base_tax + party_funds + taxable_income - expense_deduction - credit_deduction - payments;
 
-	if ((0 < total_tax_owed) && ((int64_t)t4d->tax_due != total_tax_owed)) {
+	if ((0 < total_tax_owed) && ((cgc_int64_t)t4d->tax_due != total_tax_owed)) {
 		ret = -8;
 		goto fail_validate;
 	}
-	if ((0 > total_tax_owed) && ((int64_t)t4d->tax_refund != -total_tax_owed)) {
+	if ((0 > total_tax_owed) && ((cgc_int64_t)t4d->tax_refund != -total_tax_owed)) {
 		ret = -9;
 		goto fail_validate;
 	}

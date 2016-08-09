@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -24,29 +24,29 @@
 #include "list.h"
 #include "malloc.h"
 
-typedef struct node block_meta_t;
+typedef struct node cgc_block_meta_t;
 
 struct list allocated_list;
 struct list free_list;
 
 char init_heap_done = FALSE;
-size_t remaining = 0;
-block_meta_t *last = NULL;
+cgc_size_t remaining = 0;
+cgc_block_meta_t *last = NULL;
 
 
-static void set_block_size(block_meta_t *block, size_t size) {
+static void cgc_set_block_size(cgc_block_meta_t *block, cgc_size_t size) {
 	block->data = (void *)size;
 }
 
-static void init_heap() {
+static void cgc_init_heap() {
 	if (FALSE == init_heap_done) {
-		list_init(&allocated_list, NULL);
-		list_init(&free_list, NULL);
+		cgc_list_init(&allocated_list, NULL);
+		cgc_list_init(&free_list, NULL);
 		init_heap_done = TRUE;
 	}
 }
 
-static unsigned char is_enough_room(const void *free_sz, void *new_sz) {
+static unsigned char cgc_is_enough_room(const void *free_sz, void *new_sz) {
 	if (free_sz >= new_sz) {
 		return TRUE;
 	}
@@ -54,23 +54,23 @@ static unsigned char is_enough_room(const void *free_sz, void *new_sz) {
 	return FALSE;
 }
 
-void *malloc(size_t size) {
+void *cgc_malloc(cgc_size_t size) {
 
 	if (0 == size) {
 		return NULL;
 	}
 
-	size += sizeof(block_meta_t); // size requested + size of block_meta_t is total size required
-	block_meta_t *ret = NULL;
+	size += sizeof(cgc_block_meta_t); // size requested + size of cgc_block_meta_t is total size required
+	cgc_block_meta_t *ret = NULL;
 
-	init_heap();
+	cgc_init_heap();
 
 	// check for a block on the free_list of sufficient size
-	ret = (block_meta_t *)list_find_node_with_data(&free_list, &is_enough_room, (void *)size);
+	ret = (cgc_block_meta_t *)cgc_list_find_node_with_data(&free_list, &cgc_is_enough_room, (void *)size);
 
 	// found room on free_list
 	if (NULL != ret) {
-		list_remove_node(&free_list, ret);
+		cgc_list_remove_node(&free_list, ret);
 
 	// no room on free_list
 	} else {
@@ -83,11 +83,11 @@ void *malloc(size_t size) {
 			// Allocate creates new page(s), so the memory from a prevoius page where 
 			// last and remaining refer should be saved to the free_list.
 			//
-			// Only save if that space can fit a block_meta_t + some bytes
+			// Only save if that space can fit a cgc_block_meta_t + some bytes
 			// else let it become dangling/unusable memory.
-			if (remaining > sizeof(block_meta_t)) {
-				set_block_size(last, remaining);
-				list_insert_node_at_end(&free_list, last);
+			if (remaining > sizeof(cgc_block_meta_t)) {
+				cgc_set_block_size(last, remaining);
+				cgc_list_insert_node_at_end(&free_list, last);
 				last = NULL;
 				remaining = 0;
 			}
@@ -99,27 +99,27 @@ void *malloc(size_t size) {
 			remaining = PAGE_SZ - (size % PAGE_SZ);
 		}
 
-		set_block_size(ret, size);
+		cgc_set_block_size(ret, size);
 
-		last = (block_meta_t *)((unsigned char *)ret + size);
+		last = (cgc_block_meta_t *)((unsigned char *)ret + size);
 
 	}
 
 	// add block to allocated_list
-	list_insert_node_at_end(&allocated_list, ret);
+	cgc_list_insert_node_at_end(&allocated_list, ret);
 
 	// need casting to make the math work correctly.
-	return (void *)((unsigned char*)ret + sizeof(block_meta_t));
+	return (void *)((unsigned char*)ret + sizeof(cgc_block_meta_t));
 }
 
-void free(void *ptr) {
+void cgc_free(void *ptr) {
 	// get block_meta for this memory
-	ptr -= sizeof(block_meta_t);
+	ptr -= sizeof(cgc_block_meta_t);
 
 	// rm block from allocated_list
-	list_remove_node(&allocated_list, (block_meta_t *)ptr);
+	cgc_list_remove_node(&allocated_list, (cgc_block_meta_t *)ptr);
 
 	// add block to free_list
-	list_insert_node_at_end(&free_list, (block_meta_t *)ptr);
+	cgc_list_insert_node_at_end(&free_list, (cgc_block_meta_t *)ptr);
 }
 

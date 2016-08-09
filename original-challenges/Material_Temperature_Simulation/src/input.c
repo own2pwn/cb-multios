@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,13 +30,13 @@ THE SOFTWARE.
 #include "room.h"
 
 #define pGRID(grid,x,y,z) (grid + x + y*X + z*X*Y)
-extern uint32_t X;
-extern uint32_t Y;
-extern uint32_t Z;
+extern cgc_uint32_t X;
+extern cgc_uint32_t Y;
+extern cgc_uint32_t Z;
 
-ssize_t read_until(char *buf, char *delim, size_t max) {
-	size_t index = 0;
-	size_t len;
+cgc_ssize_t cgc_read_until(char *buf, char *delim, cgc_size_t max) {
+	cgc_size_t index = 0;
+	cgc_size_t len;
 	char c;
 
 	while (index < max-1) {
@@ -48,7 +48,7 @@ ssize_t read_until(char *buf, char *delim, size_t max) {
 			return(-1);
 		}
 
-		if (strchr(delim, c)) {
+		if (cgc_strchr(delim, c)) {
 			break;
 		}
 
@@ -60,10 +60,10 @@ ssize_t read_until(char *buf, char *delim, size_t max) {
 }
 
 // store the temp in grid[x][y][z] if valid
-int32_t StoreTemp(double *grid, uint32_t x, uint32_t y, uint32_t z, char *buf) {
+cgc_int32_t cgc_StoreTemp(double *grid, cgc_uint32_t x, cgc_uint32_t y, cgc_uint32_t z, char *buf) {
 	double temp;
 
-	temp = cgcatof(buf);
+	temp = cgc_cgcatof(buf);
 
 	if (temp < MIN_TEMP-1.0 || temp > MAX_TEMP) {
 		return(-1);
@@ -76,37 +76,37 @@ int32_t StoreTemp(double *grid, uint32_t x, uint32_t y, uint32_t z, char *buf) {
 
 }
 
-int8_t read_temps(double *grid) {
-	size_t len;
-	uint32_t x, y, z;
+cgc_int8_t cgc_read_temps(double *grid) {
+	cgc_size_t len;
+	cgc_uint32_t x, y, z;
 	double temp;
 	char buf[100];
 
 	for (z = 0; z < Z; z++) {
 		for (y = 0; y < Y; y++) {
 			for (x = 0; x < X; x++) {
-				if (read_until(buf, ",\n", 99) == -1) {
+				if (cgc_read_until(buf, ",\n", 99) == -1) {
 					return(-1);
 				}
 
-				if (StoreTemp(grid, x, y, z, buf)) {
-					puts("Invalid temperature");
+				if (cgc_StoreTemp(grid, x, y, z, buf)) {
+					cgc_puts("Invalid temperature");
 					return(-1);
 				}
 			}
 		}
 	}
 	
-	flush_stdin();
+	cgc_flush_stdin();
 
 	return(0);
 }
 
-int flush_stdin(void) {
-	fd_set readfds;
-	struct timeval timeout;
+int cgc_flush_stdin(void) {
+	cgc_fd_set readfds;
+	struct cgc_timeval timeout;
 	char c;
-	size_t len;
+	cgc_size_t len;
 
 	while (1) {
 		FD_ZERO(&readfds);
@@ -115,7 +115,7 @@ int flush_stdin(void) {
 		timeout.tv_sec = 0;
 		timeout.tv_usec = 0;
 
-		if (fdwait(STDIN+1, &readfds, NULL, &timeout, NULL)) {
+		if (cgc_fdwait(STDIN+1, &readfds, NULL, &timeout, NULL)) {
 			return(-1);
 		}
 
@@ -130,11 +130,11 @@ int flush_stdin(void) {
 	} 
 }
 
-int32_t kbhit(void) {
-	fd_set readfds;
-	struct timeval timeout;
+cgc_int32_t cgc_kbhit(void) {
+	cgc_fd_set readfds;
+	struct cgc_timeval timeout;
 	char c;
-	size_t len;
+	cgc_size_t len;
 
 	while (1) {
 		FD_ZERO(&readfds);
@@ -143,7 +143,7 @@ int32_t kbhit(void) {
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 
-		if (fdwait(STDIN+1, &readfds, NULL, &timeout, NULL)) {
+		if (cgc_fdwait(STDIN+1, &readfds, NULL, &timeout, NULL)) {
 			return(-1);
 		}
 

@@ -41,6 +41,6 @@ static const int poker_value[SIZE_OF_DECK + 1] = {
     11, 12, 13, 14,                 // JC - AC
 };
 
-void poker(player_info *player);
+void cgc_poker(cgc_player_info *player);
 
 #endif // POKER_H

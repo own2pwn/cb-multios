@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,37 +35,37 @@ extern double max_wall_clock;
 
 int main(void) {
 
-	puts("Welcome to the network queuing simulator");
+	cgc_puts("Welcome to the network queuing simulator");
 
-	if (InitInterface()) {
-		puts("Unable to init interface\n");
+	if (cgc_InitInterface()) {
+		cgc_puts("Unable to init cgc_interface\n");
 		_terminate(-1);
 	}
 
-	if (InitReceive()) {
-		puts("Unable to init packet generator\n");
+	if (cgc_InitReceive()) {
+		cgc_puts("Unable to init packet generator\n");
 		_terminate(-1);
 	}
 
-	if (InitQueues()) {
-		puts("Failed to initialize queues\n");
+	if (cgc_InitQueues()) {
+		cgc_puts("Failed to initialize queues\n");
 		_terminate(-1);
 	}
 
 	while (1)  {
-		RX();
-		TX();
+		cgc_RX();
+		cgc_TX();
 		// increment wall_clock time since we don't have
-		// any packets to TX or RX
+		// any packets to cgc_TX or cgc_RX
 		wall_clock += 0.00001;
 		if (wall_clock > max_wall_clock) {
 			break;
 		}
 	}
 
-	PrintStats();
+	cgc_PrintStats();
 
-	DestroyQueues();
+	cgc_DestroyQueues();
 
 	_terminate(0);
 }

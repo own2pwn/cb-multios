@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,29 +25,29 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-bool Date::SetDate( const char* pszInStr )
+bool cgc_Date::cgc_SetDate( const char* pszInStr )
 {
-    uint8_t tempMonth, tempDay;
-    uint16_t tempYear;
+    cgc_uint8_t tempMonth, tempDay;
+    cgc_uint16_t tempYear;
 
     if ( pszInStr == NULL )
         return (false);
 
-    while ( isspace( *pszInStr ) )
+    while ( cgc_isspace( *pszInStr ) )
         pszInStr++;
 
     tempMonth = 0;
     tempDay = 0;
     tempYear = 0;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempMonth = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempMonth *= 10;
         tempMonth += (*pszInStr - '0');
@@ -64,14 +64,14 @@ bool Date::SetDate( const char* pszInStr )
     pszInStr++;
 
     // Parse day format
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempDay = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempDay *= 10;
         tempDay += (*pszInStr - '0');
@@ -89,14 +89,14 @@ bool Date::SetDate( const char* pszInStr )
     pszInStr++;
 
     // Parse year
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempYear = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempYear *= 10;
         tempYear += (*pszInStr - '0');
@@ -106,7 +106,7 @@ bool Date::SetDate( const char* pszInStr )
     else
         return (false);
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempYear *= 10;
         tempYear += (*pszInStr - '0');
@@ -128,7 +128,7 @@ bool Date::SetDate( const char* pszInStr )
     }
 
     // 4 Character date
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempYear *= 10;
         tempYear += (*pszInStr - '0');
@@ -145,28 +145,28 @@ bool Date::SetDate( const char* pszInStr )
     return (true);
 }
 
-bool Date::SetDate( const String& inStr )
+bool cgc_Date::cgc_SetDate( const cgc_String& inStr )
 {
-    return SetDate( inStr.c_str() );
+    return cgc_SetDate( inStr.cgc_c_str() );
 }
 
-String Date::GetString( void ) const
+cgc_String cgc_Date::cgc_GetString( void ) const
 {
     char tempStr[512];
 
-    sprintf( tempStr, "@d/@d/@d", m_month, m_day, m_year );
+    cgc_sprintf( tempStr, "@d/@d/@d", m_month, m_day, m_year );
 
-    return String( tempStr );
+    return cgc_String( tempStr );
 }
 
-void Date::FromUnixTimeval( uint32_t timeval )
+void cgc_Date::cgc_FromUnixTimeval( cgc_uint32_t cgc_timeval )
 {
     // Get days
-    uint32_t daysFromEpoch = (timeval / 86400);
+    cgc_uint32_t daysFromEpoch = (cgc_timeval / 86400);
 
     // Calculate year...
-    uint32_t last_year = 1970, last_year_days = 0;
-    uint32_t cur_year, day_counter;
+    cgc_uint32_t last_year = 1970, last_year_days = 0;
+    cgc_uint32_t cur_year, day_counter;
     for ( cur_year = 1970, day_counter = 0; day_counter <= daysFromEpoch; cur_year++ )
     {
         last_year = cur_year;
@@ -175,23 +175,23 @@ void Date::FromUnixTimeval( uint32_t timeval )
         // Add days based on year
         day_counter += 365;
 
-        if ( IsLeapYear( cur_year ) )
+        if ( cgc_IsLeapYear( cur_year ) )
             day_counter++;
     }
 
     m_year = last_year;
 
-    uint32_t day_in_year = (daysFromEpoch - last_year_days);
+    cgc_uint32_t day_in_year = (daysFromEpoch - last_year_days);
 
     // Now calculate month
-    uint32_t last_month = 1, last_month_days = 0;
-    uint32_t cur_month;
+    cgc_uint32_t last_month = 1, last_month_days = 0;
+    cgc_uint32_t cur_month;
     for ( cur_month = 1, day_counter = 0; day_counter <= day_in_year; cur_month++ )
     {
         last_month = cur_month;
         last_month_days = day_counter;
 
-        day_counter += DaysInMonth( cur_month, m_year );
+        day_counter += cgc_DaysInMonth( cur_month, m_year );
     }
 
     m_month = last_month;
@@ -200,9 +200,9 @@ void Date::FromUnixTimeval( uint32_t timeval )
     m_day = (day_in_year - last_month_days)+1;
 }
 
-bool Time::SetTime( const char *pszInStr )
+bool cgc_Time::cgc_SetTime( const char *pszInStr )
 {
-    uint8_t tempHour, tempMinute, tempSecond;
+    cgc_uint8_t tempHour, tempMinute, tempSecond;
 
     tempHour = 0;
     tempMinute = 0;
@@ -211,17 +211,17 @@ bool Time::SetTime( const char *pszInStr )
     if ( pszInStr == NULL )
         return (false);
 
-    while ( isspace( *pszInStr ) )
+    while ( cgc_isspace( *pszInStr ) )
         pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempHour = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempHour *= 10;
         tempHour += (*pszInStr - '0');
@@ -236,14 +236,14 @@ bool Time::SetTime( const char *pszInStr )
     if ( tempHour >= 24 )
         return (false);
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempMinute = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempMinute *= 10;
         tempMinute += (*pszInStr - '0');
@@ -258,14 +258,14 @@ bool Time::SetTime( const char *pszInStr )
     if ( tempMinute >= 60 )
         return (false);
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
         tempSecond = (*pszInStr - '0');
     else
         return (false);
 
     pszInStr++;
 
-    if ( isdigit( *pszInStr ) )
+    if ( cgc_isdigit( *pszInStr ) )
     {
         tempSecond *= 10;
         tempSecond += (*pszInStr - '0');
@@ -282,27 +282,27 @@ bool Time::SetTime( const char *pszInStr )
     return (true);
 }
 
-bool Time::SetTime( const String &inStr )
+bool cgc_Time::cgc_SetTime( const cgc_String &inStr )
 {
-    return SetTime( inStr.c_str() );
+    return cgc_SetTime( inStr.cgc_c_str() );
 }
 
-String Time::GetString( void ) const
+cgc_String cgc_Time::cgc_GetString( void ) const
 {
     char tempStr[512];
 
-    sprintf( tempStr, "@02d:@02d:@02d", m_hour, m_minute, m_second );
+    cgc_sprintf( tempStr, "@02d:@02d:@02d", m_hour, m_minute, m_second );
 
-    return String( tempStr );
+    return cgc_String( tempStr );
 }
 
-void Time::FromUnixTimeval( uint32_t timeval )
+void cgc_Time::cgc_FromUnixTimeval( cgc_uint32_t cgc_timeval )
 {
-    uint32_t dayRemainder = timeval % 86400;
+    cgc_uint32_t dayRemainder = cgc_timeval % 86400;
 
-    uint32_t hour = (dayRemainder / 3600);
-    uint32_t second = (dayRemainder % 60);
-    uint32_t minute = ((dayRemainder / 60) % 60);
+    cgc_uint32_t hour = (dayRemainder / 3600);
+    cgc_uint32_t second = (dayRemainder % 60);
+    cgc_uint32_t minute = ((dayRemainder / 60) % 60);
 
     m_hour = hour;
     m_minute = minute;

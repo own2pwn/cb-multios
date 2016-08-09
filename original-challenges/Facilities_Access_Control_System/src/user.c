@@ -32,14 +32,14 @@ THE SOFTWARE.
 #include "io.h"
 #include "device.h"
 
-User Users[MAX_USERS];
-uint8_t NumUsers = 0;
+cgc_User Users[MAX_USERS];
+cgc_uint8_t NumUsers = 0;
 
-uint8_t FindUsername(char *Username) {
-	uint8_t i;
+cgc_uint8_t cgc_FindUsername(char *Username) {
+	cgc_uint8_t i;
 
 	for (i = 0; i < MAX_USERS; i++) {
-		if (!strcmp(Users[i].Username, Username)) {
+		if (!cgc_strcmp(Users[i].Username, Username)) {
 			break;
 		}
 	}
@@ -47,14 +47,14 @@ uint8_t FindUsername(char *Username) {
 	return(i);
 }
 
-uint8_t FindCode(char *code) {
-	uint8_t i;
+cgc_uint8_t cgc_FindCode(char *code) {
+	cgc_uint8_t i;
 
 	for (i = 0; i < MAX_USERS; i++) {
-		if (!strcmp(Users[i].Pin, code)) {
+		if (!cgc_strcmp(Users[i].Pin, code)) {
 			return(1);
 		}
-		if (!strcmp(Users[i].AccessCode, code)) {
+		if (!cgc_strcmp(Users[i].AccessCode, code)) {
 			return(1);
 		}
 	}
@@ -62,8 +62,8 @@ uint8_t FindCode(char *code) {
 	return(0);
 }
 
-int8_t FindAvailableUser(void) {
-	uint8_t i;
+cgc_int8_t cgc_FindAvailableUser(void) {
+	cgc_uint8_t i;
 
 	for (i = 0; i < MAX_USERS; i++) {
 		if (!Users[i].Username[0]) {
@@ -77,12 +77,12 @@ int8_t FindAvailableUser(void) {
 	}
 }
 
-uint8_t AddUser(void) {
-	int8_t TargetUser;
-	User NewUser;
+cgc_uint8_t cgc_AddUser(void) {
+	cgc_int8_t TargetUser;
+	cgc_User NewUser;
 
 	// Read in the user info
-	if (!ReadBytes((unsigned char *)&NewUser, sizeof(User))) {
+	if (!cgc_ReadBytes((unsigned char *)&NewUser, sizeof(cgc_User))) {
 		return(0);
 	}
 
@@ -96,55 +96,55 @@ uint8_t AddUser(void) {
 	}
 
 	// Find an available user entry
-	TargetUser = FindAvailableUser();
+	TargetUser = cgc_FindAvailableUser();
 		
 	// Make sure the user doesn't already exist
-	if (FindUsername(NewUser.Username) != MAX_USERS) {
+	if (cgc_FindUsername(NewUser.Username) != MAX_USERS) {
 		return(0);
 	}
 
 	// Make sure the selected pin and access code are of the correct lengths
-	if (strlen(NewUser.Pin) != PIN_LEN) {
+	if (cgc_strlen(NewUser.Pin) != PIN_LEN) {
 		return(0);
 	}
-	if (strlen(NewUser.AccessCode) != ACCESS_CODE_LEN) {
+	if (cgc_strlen(NewUser.AccessCode) != ACCESS_CODE_LEN) {
 		return(0);
 	}
 
 	// Make sure the selected passcode doesn't already exist
-	if (FindCode(NewUser.Pin) || FindCode(NewUser.AccessCode)) {
+	if (cgc_FindCode(NewUser.Pin) || cgc_FindCode(NewUser.AccessCode)) {
 		return(0);
 	}
 
 	// Add the user to the list
-	memcpy(&Users[TargetUser], &NewUser, sizeof(User));
+	cgc_memcpy(&Users[TargetUser], &NewUser, sizeof(cgc_User));
 
 	NumUsers++;
 
 	return(1);
 }
 
-uint8_t DelUser(void) {
+cgc_uint8_t cgc_DelUser(void) {
 	char Username[32];
-	uint8_t UserIndex;
+	cgc_uint8_t UserIndex;
 
 	// Read in the username
-	bzero(Username, 32);
-	if (!ReadBytes((unsigned char *)Username, 32)) {
+	cgc_bzero(Username, 32);
+	if (!cgc_ReadBytes((unsigned char *)Username, 32)) {
 		return(0);
 	}
 	Username[31] = '\0';
 
 	// Find the user in the table
-	if ((UserIndex = FindUsername(Username)) == MAX_USERS) {
+	if ((UserIndex = cgc_FindUsername(Username)) == MAX_USERS) {
 		return(0);
 	}
 
 	// Remove the user from any devices to which it's associated
-	RevokeAccess(UserIndex);
+	cgc_RevokeAccess(UserIndex);
 
 	// Zero that entry
-	bzero(&Users[UserIndex], sizeof(User));
+	cgc_bzero(&Users[UserIndex], sizeof(cgc_User));
 	NumUsers--;
 
 	return(1);

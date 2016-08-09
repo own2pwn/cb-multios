@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,19 +29,19 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "page.h"
 
-int AddPageVar(PageVar *varlist, char *cmd) {
-  char *name = strchr(cmd, ':') + 1;
-  char *value = strchr(name, ':') + 1;
-  char *end = strchr(cmd, ']');
+int cgc_AddPageVar(cgc_PageVar *varlist, char *cmd) {
+  char *name = cgc_strchr(cmd, ':') + 1;
+  char *value = cgc_strchr(name, ':') + 1;
+  char *end = cgc_strchr(cmd, ']');
   if (value - name > sizeof(varlist->name)) {
     // Invalid name length
     return -1;
   } 
-  PageVar *pagevar = GetPageVar(varlist, name, value -1);
+  cgc_PageVar *pagevar = cgc_GetPageVar(varlist, name, value -1);
   if (pagevar != NULL) {
     // Special case, variable already exists
     if (pagevar->value != NULL) {
-      free(pagevar->value);
+      cgc_free(pagevar->value);
     }
   } else {
     // Add new variable to end of list
@@ -49,25 +49,25 @@ int AddPageVar(PageVar *varlist, char *cmd) {
     while (pagevar->next != NULL) {
       pagevar = pagevar->next;
     }
-    pagevar->next = calloc(sizeof(PageVar), 1);
-    VerifyPointerOrTerminate(pagevar->next, "New PageVar");
+    pagevar->next = cgc_calloc(sizeof(cgc_PageVar), 1);
+    cgc_VerifyPointerOrTerminate(pagevar->next, "New cgc_PageVar");
     pagevar = pagevar->next;
   }
-  memcpy(pagevar->name, name, value - 1 - name);
+  cgc_memcpy(pagevar->name, name, value - 1 - name);
   #ifdef PATCHED
   if (end - value <= 0) {
     return -1;
   }
   #endif 
-  pagevar->value = calloc(end - value + 1, 1);
-  VerifyPointerOrTerminate(pagevar->value, "PageVar->value");
-  memcpy(pagevar->value, value, end - value);
+  pagevar->value = cgc_calloc(end - value + 1, 1);
+  cgc_VerifyPointerOrTerminate(pagevar->value, "cgc_PageVar->value");
+  cgc_memcpy(pagevar->value, value, end - value);
   return 1;
 }
 
-PageVar *GetPageVar(PageVar *varlist, char *name, char *end) {
+cgc_PageVar *cgc_GetPageVar(cgc_PageVar *varlist, char *name, char *end) {
   while (varlist != NULL) {
-    if (strncmp(varlist->name, name, end - name) == 0) {
+    if (cgc_strncmp(varlist->name, name, end - name) == 0) {
       return varlist;
     }
     varlist = varlist->next;
@@ -75,63 +75,63 @@ PageVar *GetPageVar(PageVar *varlist, char *name, char *end) {
   return NULL;
 }
 
-void DestroyVarList(PageVar *varlist) {
+void cgc_DestroyVarList(cgc_PageVar *varlist) {
   if (varlist == NULL) {
     return;
   }
   if (varlist->next != NULL) {
-    DestroyVarList(varlist->next);
+    cgc_DestroyVarList(varlist->next);
     varlist->next = NULL;
   }
   if (varlist->value != NULL) {
-    free(varlist->value);
+    cgc_free(varlist->value);
     varlist->value = NULL;
   }
-  free(varlist);
+  cgc_free(varlist);
 }
 
 // Processes user supplied variable definitions and then serves the requested
 // page using those variables. 
 // Variable definitions are in the same syntax as those scripted in a page
 // eg. [var:name:value][var:name2:value2]
-int InteractWithPage(char *page, int page_size, char *override_data) {
+int cgc_InteractWithPage(char *page, int page_size, char *override_data) {
 #ifdef PATCHED
   if (override_data == NULL) {
-    return ServePageWithOverride(page, page_size, NULL);
+    return cgc_ServePageWithOverride(page, page_size, NULL);
   }
 #endif 
-  PageVar *override_list = calloc(sizeof(PageVar), 1);
-  VerifyPointerOrTerminate(override_list, "Override_list initialization");
+  cgc_PageVar *override_list = cgc_calloc(sizeof(cgc_PageVar), 1);
+  cgc_VerifyPointerOrTerminate(override_list, "Override_list initialization");
   // Process override variable definitions
   while(*override_data != '\0' && *override_data != ']') {
     // Check for start of var definition
     if (*override_data != '[') { break; }
     // Process var definition
-    AddPageVar(override_list, override_data);
+    cgc_AddPageVar(override_list, override_data);
     // Locate end of var definition
-    char *end_of_var = strchr(override_data, ']');
+    char *end_of_var = cgc_strchr(override_data, ']');
     if (end_of_var == NULL) { break; }
     // Step over var definition
     override_data = end_of_var + 1;
   }
   // Serve page with overridden variables
-  return ServePageWithOverride(page, page_size, override_list);
+  return cgc_ServePageWithOverride(page, page_size, override_list);
 }
 
 // Serve a page without supplying override variables.
-int ServePage(char *page, int page_size) {
-  return ServePageWithOverride(page, page_size, NULL);
+int cgc_ServePage(char *page, int page_size) {
+  return cgc_ServePageWithOverride(page, page_size, NULL);
 }
 
 int in_a_box = 0;
 char line[81];
 int line_length;
 
-void FlushOutput() {
-  printf("@s\n", line);
-  memset(line, '\0', sizeof(line));
+void cgc_FlushOutput() {
+  cgc_printf("@s\n", line);
+  cgc_memset(line, '\0', sizeof(line));
   if (in_a_box) {
-    memset(line, ' ', sizeof(line) - 1);
+    cgc_memset(line, ' ', sizeof(line) - 1);
     line[0] = '*';
     line[79] = '*';
     line_length = 2;
@@ -140,36 +140,36 @@ void FlushOutput() {
   }
 }
 
-void OutputChar(char c) {
+void cgc_OutputChar(char c) {
   line[line_length++] = c;
   if (in_a_box && line_length == 78) {
-    FlushOutput();
+    cgc_FlushOutput();
   } else if (line_length == 80) {
-    FlushOutput();
+    cgc_FlushOutput();
   }
 }
 
-void OutputStr(char *s) {
-  if (strlen(s) + line_length > 80) {
-    FlushOutput();
+void cgc_OutputStr(char *s) {
+  if (cgc_strlen(s) + line_length > 80) {
+    cgc_FlushOutput();
   }
-  if (strlen(s) > 80) {
-    printf("@s\n", s);
+  if (cgc_strlen(s) > 80) {
+    cgc_printf("@s\n", s);
   } else {
-    memcpy(&line[line_length],s, strlen(s));
-    line_length += strlen(s);
+    cgc_memcpy(&line[line_length],s, cgc_strlen(s));
+    line_length += cgc_strlen(s);
   }
 } 
 
 // Serves a page by interpreting command codes, processing script commands,
 // and handling variable substitution. Any variables provided in the override_list
 // will take precedence over variables of the same name defined in the page. 
-int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
+int cgc_ServePageWithOverride(char *page, int page_size, cgc_PageVar *override_list) {
   // Initialize varlist
-  PageVar *varlist = calloc(sizeof(PageVar), 1);
-  VerifyPointerOrTerminate(varlist, "VarList initialization");
+  cgc_PageVar *varlist = cgc_calloc(sizeof(cgc_PageVar), 1);
+  cgc_VerifyPointerOrTerminate(varlist, "VarList initialization");
   in_a_box = 0;
-  memset(line, '\0', sizeof(line));
+  cgc_memset(line, '\0', sizeof(line));
   line_length = 0;
   
   #ifdef PATCHED
@@ -185,32 +185,32 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
       switch (*page) {
         case 't': {
           for (int i=0; i<4; i++) {
-            OutputChar(' ');
+            cgc_OutputChar(' ');
           }
           break;
         }
         case 'n': {
-          FlushOutput();
+          cgc_FlushOutput();
           break;
         }
         case '[': {
-          OutputChar('[');
+          cgc_OutputChar('[');
           break;
         }
         case ']': {
-          OutputChar(']');
+          cgc_OutputChar(']');
           break;
         }
         case '~': {
-          OutputChar('~');
+          cgc_OutputChar('~');
           break;
         }
         case '#': {
-          OutputChar('#');
+          cgc_OutputChar('#');
           break;
         }
         default: {
-          printf("ERROR: Invalid control code\n");
+          cgc_printf("ERROR: Invalid control code\n");
           goto error;
         }
       }
@@ -223,8 +223,8 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
         goto error;
       }
       // Process script commands
-      if (strncmp(page, "line", strlen("line")) == 0) {
-        page += strlen("line");
+      if (cgc_strncmp(page, "line", cgc_strlen("line")) == 0) {
+        page += cgc_strlen("line");
         if (*page != ':') {
           goto error;
         }
@@ -232,32 +232,32 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
         if (*(++page) != ':') {
           goto error;
         }
-        int length = atoi(++page);
+        int length = cgc_atoi(++page);
         for (int i = 0; i < length; i++) {
-          OutputChar(c);
+          cgc_OutputChar(c);
         }
         page = close + 1;
-      } else if (strncmp(page, "var", strlen("var")) == 0) {
-        AddPageVar(varlist, page);
+      } else if (cgc_strncmp(page, "var", cgc_strlen("var")) == 0) {
+        cgc_AddPageVar(varlist, page);
         page = close + 1;
-      } else if (strncmp(page, "box", strlen("box")) == 0) {
+      } else if (cgc_strncmp(page, "box", cgc_strlen("box")) == 0) {
         in_a_box = 1;
-        FlushOutput();
+        cgc_FlushOutput();
         for (int i = 0; i < 80; i++) {
-          putc('*');
+          cgc_putc('*');
         }
-        printf("\n");
+        cgc_printf("\n");
         page += 4;
       } 
     } else if (*page == ']') {
       page++;
       if (in_a_box) {
         in_a_box = 0;
-        FlushOutput();
+        cgc_FlushOutput();
         for (int i = 0; i < 80; i++) {
-          putc('*');
+          cgc_putc('*');
         }
-        printf("\n");
+        cgc_printf("\n");
       } else {
         goto error;
       }
@@ -268,37 +268,37 @@ int ServePageWithOverride(char *page, int page_size, PageVar *override_list) {
       if (*end != '#') {
         goto error;
       }
-      PageVar *var = NULL;
+      cgc_PageVar *var = NULL;
       // Check for overridden variables
       if (override_list != NULL) {
-        var = GetPageVar(override_list, page, end);
+        var = cgc_GetPageVar(override_list, page, end);
       }
       // Fall back to default values if override doesn't exist
       if (var == NULL) {
-        var = GetPageVar(varlist, page, end);
+        var = cgc_GetPageVar(varlist, page, end);
       }
       // If a value has been found, output it
       if (var != NULL) {
-        OutputStr(var->value);
+        cgc_OutputStr(var->value);
       }
       page = end + 1;
     } else {
       // Normal character, send to output
-      OutputChar(*page);
+      cgc_OutputChar(*page);
       page++;
     }
   }
   if (line_length != 0) {
-    FlushOutput();
+    cgc_FlushOutput();
   }
-  DestroyVarList(varlist);
-  DestroyVarList(override_list);
+  cgc_DestroyVarList(varlist);
+  cgc_DestroyVarList(override_list);
   return 0;
 
 error:
-  printf("ERROR: Invalid syntax\n");
-  DestroyVarList(varlist);
-  DestroyVarList(override_list);
+  cgc_printf("ERROR: Invalid syntax\n");
+  cgc_DestroyVarList(varlist);
+  cgc_DestroyVarList(override_list);
   return -1;
 }
 

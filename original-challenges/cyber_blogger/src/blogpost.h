@@ -5,29 +5,29 @@
 #include "file.h"
 #include "user.h"
 
-class User;
-class BlogPost
+class cgc_User;
+class cgc_BlogPost
 {
 private:
     char title[128];
-    List<char *> text_blocks;
-    List<File *> files;
+    cgc_List<char *> text_blocks;
+    cgc_List<cgc_File *> files;
     char post_order[32];
 
     int total_views;
-    List<User *> likes;
-    User *owner;
+    cgc_List<cgc_User *> likes;
+    cgc_User *owner;
 
-    BlogPost(User *user, char *_title);
+    cgc_BlogPost(cgc_User *user, char *_title);
 public:
-    static BlogPost *create_blog_post(User *user, char *_title);
-    virtual ~BlogPost();
-    char *get_title();
-    bool add_text_block(char *text);
-    bool add_file(File *file);
-    void like(User *user);
+    static cgc_BlogPost *cgc_create_blog_post(cgc_User *user, char *_title);
+    virtual ~cgc_BlogPost();
+    char *cgc_get_title();
+    bool cgc_add_text_block(char *text);
+    bool cgc_add_file(cgc_File *file);
+    void cgc_like(cgc_User *user);
 
-    void print_post();
+    void cgc_print_post();
 };
 
 #endif

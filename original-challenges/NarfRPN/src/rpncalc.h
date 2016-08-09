@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,7 +32,7 @@
 #include "rpnval.h"
 
 struct operand {
-    rpnval val;
+    cgc_rpnval val;
     struct list_node list;
 };
 
@@ -51,10 +51,10 @@ enum rpncalc_op_type {
     INV
 };
 
-void rpncalc_init(struct rpncalc_state *state);
-void rpncalc_destroy(struct rpncalc_state *state);
+void cgc_rpncalc_init(struct rpncalc_state *state);
+void cgc_rpncalc_destroy(struct rpncalc_state *state);
 
-int perform_rpncalc_op(struct rpncalc_state *state, enum rpncalc_op_type type);
+int cgc_perform_rpncalc_op(struct rpncalc_state *state, enum rpncalc_op_type type);
 
 #endif /* RPNCALC_H_ */
 

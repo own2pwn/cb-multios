@@ -41,13 +41,13 @@ THE SOFTWARE.
 
 typedef struct 
 {
-	uint16_t type;
-	uint16_t data_len;
-	uint8_t *data;
-} InPacket;
+	cgc_uint16_t type;
+	cgc_uint16_t data_len;
+	cgc_uint8_t *data;
+} cgc_InPacket;
 
 
-void SendResponse ( uint16_t category, uint8_t error )
+void cgc_SendResponse ( cgc_uint16_t category, cgc_uint8_t error )
 {
 	/*
 		2b sync: 0xc3 0x3c
@@ -58,7 +58,7 @@ void SendResponse ( uint16_t category, uint8_t error )
 		 1b: error code
 	*/
 #define RESP_LEN 9
-	uint8_t buff[ RESP_LEN ];
+	cgc_uint8_t buff[ RESP_LEN ];
 	
 	// sync
 	buff[0] = 0xc3;
@@ -73,31 +73,31 @@ void SendResponse ( uint16_t category, uint8_t error )
 	buff[5] = 0x00;
 
 	// data
-	memcpy ( ( uint8_t* )&buff[6], &category, sizeof( uint16_t ) );
+	cgc_memcpy ( ( cgc_uint8_t* )&buff[6], &category, sizeof( cgc_uint16_t ) );
 
 	buff[8] = error;
 
 
-	write( buff, RESP_LEN );
+	cgc_write( buff, RESP_LEN );
 }
 
-InPacket* ReadInput()
+cgc_InPacket* cgc_ReadInput()
 {
-	InPacket *pkt = new InPacket();
+	cgc_InPacket *pkt = new cgc_InPacket();
 	pkt->data = NULL;
 
-	uint8_t sync[2];
+	cgc_uint8_t sync[2];
 
-	uint16_t error = 0;
+	cgc_uint16_t error = 0;
 
 	// Read and verify SYNC
-	receive_bytes( ( uint8_t* )&sync[ 0 ], 1 );
+	cgc_receive_bytes( ( cgc_uint8_t* )&sync[ 0 ], 1 );
 
 	if ( sync[ 0 ] != SYNC_BYTE_1 )
 	{
 		goto leave_fast;
 	}
-	receive_bytes( ( uint8_t* )&sync[1], 1 );
+	cgc_receive_bytes( ( cgc_uint8_t* )&sync[1], 1 );
 	if ( sync[ 1 ] != SYNC_BYTE_2 )
 	{
 		error = ERROR_BAD_VALUE;
@@ -105,10 +105,10 @@ InPacket* ReadInput()
 	}
 
 	// Read and verify type field
-	receive_bytes( ( uint8_t* )&pkt->type, 2 );
+	cgc_receive_bytes( ( cgc_uint8_t* )&pkt->type, 2 );
 
 	// Read and verify data length field
-	receive_bytes( ( uint8_t* )&pkt->data_len, 2 );
+	cgc_receive_bytes( ( cgc_uint8_t* )&pkt->data_len, 2 );
 
 	// verify len not too long
 	if ( pkt->data_len > MAX_DATA_LEN )
@@ -118,9 +118,9 @@ InPacket* ReadInput()
 	}
 
 	// Read data field
-	pkt->data = new uint8_t[ pkt->data_len + 1 ];
+	pkt->data = new cgc_uint8_t[ pkt->data_len + 1 ];
 
-	receive_bytes( pkt->data, pkt->data_len );
+	cgc_receive_bytes( pkt->data, pkt->data_len );
 
 	pkt->data[ pkt->data_len ] = '\0';
 
@@ -128,7 +128,7 @@ InPacket* ReadInput()
 	return pkt;
 
 return_error:
-	SendResponse( GENERAL, error );
+	cgc_SendResponse( GENERAL, error );
 	
 leave_fast:
 	if ( pkt )
@@ -145,7 +145,7 @@ leave_fast:
 // Used to verify python's magic numbers and our magic numbers match
 // TEST ONLY
 //
-bool VerifyMagicMatch( uint8_t *remote, uint8_t *local )
+bool cgc_VerifyMagicMatch( cgc_uint8_t *remote, cgc_uint8_t *local )
 {
 	for ( int i = 0; i < 5; i++ )
 	{
@@ -169,23 +169,23 @@ fail:
 //
 int main( void )
 {
-	uint8_t *magic_page = ( uint8_t* )MAGIC_PAGE;
+	cgc_uint8_t *magic_page = ( cgc_uint8_t* )MAGIC_PAGE;
 	
 	// INIT VALUES HERE
-	InPacket *pkt;
-	SensorManager sensorManager;
-	FitnessSensor::GenerateTypeValues();
+	cgc_InPacket *pkt;
+	cgc_SensorManager sensorManager;
+	cgc_FitnessSensor::cgc_GenerateTypeValues();
 	for ( int i = 0; i < MAX_SENSOR_VALUE; i++ )
 	{
-		if (FitnessSensor::m_sensorArray[ i ] == 0)
-			printf( "fnd: $x ", FitnessSensor::m_sensorArray[ i ] );
+		if (cgc_FitnessSensor::m_sensorArray[ i ] == 0)
+			cgc_printf( "fnd: $x ", cgc_FitnessSensor::m_sensorArray[ i ] );
 	}
 
-	sensorManager.SetCurrentUser( INVALID_USER );
+	sensorManager.cgc_SetCurrentUser( INVALID_USER );
 
 	while ( 1 ) 
 	{
-		pkt = ReadInput();
+		pkt = cgc_ReadInput();
 		if ( pkt == NULL )
 			continue;
 		
@@ -198,27 +198,27 @@ int main( void )
 			{
 				bool match = false;
 
-				match = VerifyMagicMatch( pkt->data, FitnessSensor::m_sensorArray );
+				match = cgc_VerifyMagicMatch( pkt->data, cgc_FitnessSensor::m_sensorArray );
 				#ifdef HUMAN_PRINT
-				printf("py magic: ");
+				cgc_printf("py magic: ");
 					for ( int i = 0; i < pkt->data_len; i++ )
 					{
-						printf( "$02x.", pkt->data[ i ] );
+						cgc_printf( "$02x.", pkt->data[ i ] );
 					}
-					printf( "\n" );
+					cgc_printf( "\n" );
 					
 					
-					printf("my magic: ");
+					cgc_printf("my magic: ");
 					for ( int i = 0; i < 5; i++ )
 					{
-						printf( "$02x.", FitnessSensor::m_sensorArray[ i ] );
+						cgc_printf( "$02x.", cgc_FitnessSensor::m_sensorArray[ i ] );
 					}
-					printf( "\n" );
+					cgc_printf( "\n" );
 				#endif
 				if ( match == false )
-					SendResponse( TEST_VERIFY, ERROR_TEST_MAGIC_MISMATCH );
+					cgc_SendResponse( TEST_VERIFY, ERROR_TEST_MAGIC_MISMATCH );
 				else
-					SendResponse( TEST_VERIFY, ERROR_TEST_MAGIC_MATCH );
+					cgc_SendResponse( TEST_VERIFY, ERROR_TEST_MAGIC_MATCH );
 				break;
 			}*/
 			case REGISTER_SENSOR:
@@ -226,78 +226,78 @@ int main( void )
 				// Register this fitness sensor for the current user
 				
 				// current user and list owned by sensor_manager
-				if ( sensorManager.GetCurrentUser() == INVALID_USER )
+				if ( sensorManager.cgc_GetCurrentUser() == INVALID_USER )
 				{
-					SendResponse( REGISTER_SENSOR, ERROR_NO_USER );
+					cgc_SendResponse( REGISTER_SENSOR, ERROR_NO_USER );
 					continue;
 				}
 
 				// Data: 
 				// 2b: sensor type
 				// 4b: sensor MAC
-				const int MIN_SENSOR_LEN = sizeof( uint16_t ) + sizeof( uint32_t ); // 2b for ID, 4b for MAC
+				const int MIN_SENSOR_LEN = sizeof( cgc_uint16_t ) + sizeof( cgc_uint32_t ); // 2b for ID, 4b for MAC
 				if ( pkt->data_len < MIN_SENSOR_LEN )
 				{
 					// data field does not have enough data for this type of packet
 					// discard and print error
-					//printf( "sensor data too short\n" );
-					SendResponse( REGISTER_SENSOR, ERROR_BAD_VALUE );
+					//cgc_printf( "sensor data too short\n" );
+					cgc_SendResponse( REGISTER_SENSOR, ERROR_BAD_VALUE );
 					continue;
 				}
 
-				uint16_t id = *( uint16_t* )&pkt->data[ 0 ];
-				uint32_t mac = *( uint32_t* )&pkt->data[ sizeof( uint16_t ) ];
+				cgc_uint16_t id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+				cgc_uint32_t mac = *( cgc_uint32_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 				
-				// matching 'delete' is in RemoveSensor in sensor_manager.cc
+				// matching 'delete' is in cgc_RemoveSensor in sensor_manager.cc
 				// MAC is verified in the sensor's constructor
-				FitnessSensor *sensor = new FitnessSensor( id, mac, &pkt->data[6], pkt->data_len - 6 );
-				sensor->SetUser( sensorManager.GetCurrentUser() );
+				cgc_FitnessSensor *sensor = new cgc_FitnessSensor( id, mac, &pkt->data[6], pkt->data_len - 6 );
+				sensor->cgc_SetUser( sensorManager.cgc_GetCurrentUser() );
 
 				// read sensor information
 				#ifndef TEST_VER
-					if ( sensor->IsInvalid() == true )
+					if ( sensor->cgc_IsInvalid() == true )
 					{
 						// bad sensor MAC, discard, return error
-						SendResponse( REGISTER_SENSOR, ERROR_BAD_SENSOR_MAC );
+						cgc_SendResponse( REGISTER_SENSOR, ERROR_BAD_SENSOR_MAC );
 						delete sensor;
 						break;
 					}
 				#endif
-				int resp = sensorManager.AddSensor( sensor );
+				int resp = sensorManager.cgc_AddSensor( sensor );
 
 				// Add this sensor to sensor list
 				if ( resp == 1 )
 				{
-					SendResponse( REGISTER_SENSOR, ERROR_DUPLICATE_SENSOR );
+					cgc_SendResponse( REGISTER_SENSOR, ERROR_DUPLICATE_SENSOR );
 					delete sensor;
 					break;
 				}
 				else if ( resp == 2 )
 				{
-					SendResponse( REGISTER_SENSOR, ERROR_FULL_SENSORS );
+					cgc_SendResponse( REGISTER_SENSOR, ERROR_FULL_SENSORS );
 					delete sensor;
 					break;
 				}
 
-				SendResponse( REGISTER_SENSOR, NO_ERROR );
+				cgc_SendResponse( REGISTER_SENSOR, NO_ERROR );
 				break;
 			}
 			case REGISTER_USER:
 			{
-				uint8_t field_count = pkt->data[ 0 ];
+				cgc_uint8_t field_count = pkt->data[ 0 ];
 
-				uint16_t expected_size = ( field_count * 3 ) + 3;
+				cgc_uint16_t expected_size = ( field_count * 3 ) + 3;
 
 				if ( pkt->data_len != expected_size )
 				{
-					SendResponse( REGISTER_USER, ERROR_BAD_VALUE );
+					cgc_SendResponse( REGISTER_USER, ERROR_BAD_VALUE );
 					continue;
 				}
 
-				uint16_t new_id = *( uint16_t* )&pkt->data[ 1 ];
+				cgc_uint16_t new_id = *( cgc_uint16_t* )&pkt->data[ 1 ];
 
-				User *user = new User( new_id );
+				cgc_User *user = new cgc_User( new_id );
 
 				int d_offset = 3;
 
@@ -308,32 +308,32 @@ int main( void )
 					{
 						case WEIGHT:
 						{
-							user->SetWeight( *( uint16_t* )&pkt->data[ d_offset + 1 ] );
+							user->cgc_SetWeight( *( cgc_uint16_t* )&pkt->data[ d_offset + 1 ] );
 							break;
 						}
 						case HEIGHT:
 						{
-							user->SetHeight( *( uint16_t* )&pkt->data[ d_offset + 1 ] );
+							user->cgc_SetHeight( *( cgc_uint16_t* )&pkt->data[ d_offset + 1 ] );
 							break;
 						}
 
 						default:
 						{
-							SendResponse( REGISTER_USER, ERROR_BAD_VALUE );
+							cgc_SendResponse( REGISTER_USER, ERROR_BAD_VALUE );
 							break;
 						}
 					}
 				}
 
 				// Add user
-				int resp = sensorManager.AddUser( user );
+				int resp = sensorManager.cgc_AddUser( user );
 
 				if ( resp == RET_USER_FULL )
-					SendResponse( REGISTER_USER, ERROR_USER_FULL );
+					cgc_SendResponse( REGISTER_USER, ERROR_USER_FULL );
 				else if ( resp == RET_USER_REDUNDANT )
-					SendResponse( REGISTER_USER, ERROR_DUPLICATE_USER );
+					cgc_SendResponse( REGISTER_USER, ERROR_DUPLICATE_USER );
 				else
-					SendResponse( REGISTER_USER, NO_ERROR );
+					cgc_SendResponse( REGISTER_USER, NO_ERROR );
 
 				break;
 			}
@@ -342,232 +342,232 @@ int main( void )
 				// given a user ID,
 				// look for the id and change to it
 
-				if ( pkt->data_len != sizeof( uint16_t ) )
+				if ( pkt->data_len != sizeof( cgc_uint16_t ) )
 				{
-					SendResponse( CHANGE_CURRENT_USER, ERROR_BAD_VALUE );
+					cgc_SendResponse( CHANGE_CURRENT_USER, ERROR_BAD_VALUE );
 					break;
 				}
 
-				uint16_t new_id = *( uint16_t* )&pkt->data[ 0 ];
+				cgc_uint16_t new_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
 
 				// This will add this user if needed
-				uint8_t ret = sensorManager.SetCurrentUser( new_id );
+				cgc_uint8_t ret = sensorManager.cgc_SetCurrentUser( new_id );
 
 				if ( ret != 0 )
 				{
-					SendResponse( CHANGE_CURRENT_USER, ERROR_REG_THIS_USER );
+					cgc_SendResponse( CHANGE_CURRENT_USER, ERROR_REG_THIS_USER );
 					break;
 				}
 
-				SendResponse( CHANGE_CURRENT_USER, NO_ERROR );
+				cgc_SendResponse( CHANGE_CURRENT_USER, NO_ERROR );
 				break;
 			}
 			case INPUT_SENSOR_DATA:
 			{	
-				uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
+				cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
 
-				if ( sensorManager.VerifySensor( sensor_id ) == false )
+				if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 				{
 					// this sensor isn't registered for the current user
-					SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+					cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 					break;
 				}
 				// we have the sensor_id. we need the type of sensor this is
-				FitnessSensor* sensor = sensorManager.GetSensor( sensor_id );
+				cgc_FitnessSensor* sensor = sensorManager.cgc_GetSensor( sensor_id );
 
 				if ( sensor == NULL )
 				{
-					SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+					cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 					break;
 				}
 
-				int sensor_type = sensor->GetType();
+				int sensor_type = sensor->cgc_GetType();
 
 				if ( sensor_type == BIKE )
 				{
 					// size of the sensor id + data
-					if ( pkt->data_len != ( sizeof( uint16_t ) + sizeof( uint16_t ) ) )
+					if ( pkt->data_len != ( sizeof( cgc_uint16_t ) + sizeof( cgc_uint16_t ) ) )
 					{
 						// sensor ID missing
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 						break;
 					}
 
-					uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
-					uint16_t bike_dist = *( uint16_t* )&pkt->data[ sizeof( uint16_t ) ];
+					cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+					cgc_uint16_t bike_dist = *( cgc_uint16_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 					// use sensor_id to check if this ID is registred with this user
 					
 
-					uint16_t new_dist = FitnessSensor::HandleBikeSensor( bike_dist );
+					cgc_uint16_t new_dist = cgc_FitnessSensor::cgc_HandleBikeSensor( bike_dist );
 
 					// add this distance to this user's total distance traveled
-					if ( !sensorManager.AddDistance( new_dist, sensorManager.GetCurrentUser() ) )
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+					if ( !sensorManager.cgc_AddDistance( new_dist, sensorManager.cgc_GetCurrentUser() ) )
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 					else						
-						SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
+						cgc_SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
 					break;
 				}
 				else if ( sensor_type == HEART )
 				{
-					if ( pkt->data_len != ( sizeof( uint16_t ) + sizeof( uint16_t ) ) )
+					if ( pkt->data_len != ( sizeof( cgc_uint16_t ) + sizeof( cgc_uint16_t ) ) )
 					{
 						// sensor ID missing
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 						break;
 					}
 
-					uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
-					uint16_t beats = *( uint16_t* )&pkt->data[ sizeof( uint16_t ) ];
+					cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+					cgc_uint16_t beats = *( cgc_uint16_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 					// use sensor_id to check if this ID is registred with this user
-					if ( sensorManager.VerifySensor( sensor_id ) == false )
+					if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 					{
 						// this sensor isn't registered for the current user
-						SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 						break;
 					}
 
-					uint16_t new_value = FitnessSensor::HandleHeartSensor( beats );
+					cgc_uint16_t new_value = cgc_FitnessSensor::cgc_HandleHeartSensor( beats );
 
 					// add this distance to this user's total distance traveled
-					if ( !sensorManager.AddDistance( new_value, sensorManager.GetCurrentUser() ) )
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+					if ( !sensorManager.cgc_AddDistance( new_value, sensorManager.cgc_GetCurrentUser() ) )
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 					else						
-						SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
+						cgc_SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
 					break;
 				}
 				else if ( sensor_type == SCALE )
 				{
-					if ( pkt->data_len != ( sizeof( uint16_t ) + sizeof( uint16_t ) ) )
+					if ( pkt->data_len != ( sizeof( cgc_uint16_t ) + sizeof( cgc_uint16_t ) ) )
 					{
 						// sensor ID missing
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 						break;
 					}
 
-					uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
-					uint16_t weight = *( uint16_t* )&pkt->data[ sizeof( uint16_t ) ];
+					cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+					cgc_uint16_t weight = *( cgc_uint16_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 					// use sensor_id to check if this ID is registred with this user
-					if ( sensorManager.VerifySensor( sensor_id ) == false )
+					if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 					{
 						// this sensor isn't registered for the current user
-						SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 						break;
 					}
 
-					uint16_t new_weight = FitnessSensor::HandleScaleSensor( weight );
+					cgc_uint16_t new_weight = cgc_FitnessSensor::cgc_HandleScaleSensor( weight );
 
 					// add this distance to this user's total distance traveled
-					if ( !sensorManager.AddDistance( new_weight, sensorManager.GetCurrentUser() ) )
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+					if ( !sensorManager.cgc_AddDistance( new_weight, sensorManager.cgc_GetCurrentUser() ) )
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 					else						
-						SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
+						cgc_SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
 					break;
 				}
 				else if ( sensor_type == STEP )
 				{
-					if ( pkt->data_len != ( sizeof( uint16_t ) + sizeof( uint16_t ) ) )
+					if ( pkt->data_len != ( sizeof( cgc_uint16_t ) + sizeof( cgc_uint16_t ) ) )
 					{
 						// sensor ID missing
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 						break;
 					}
 
-					uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
-					uint16_t steps = *( uint16_t* )&pkt->data[ sizeof( uint16_t ) ];
+					cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+					cgc_uint16_t steps = *( cgc_uint16_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 					// use sensor_id to check if this ID is registred with this user
-					if ( sensorManager.VerifySensor( sensor_id ) == false )
+					if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 					{
 						// this sensor isn't registered for the current user
-						SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 						break;
 					}
 
-					uint16_t new_dist = FitnessSensor::HandleStepSensor( steps );
+					cgc_uint16_t new_dist = cgc_FitnessSensor::cgc_HandleStepSensor( steps );
 
 					// add this distance to this user's total distance traveled
-					if ( !sensorManager.AddDistance( new_dist, sensorManager.GetCurrentUser() ) )
+					if ( !sensorManager.cgc_AddDistance( new_dist, sensorManager.cgc_GetCurrentUser() ) )
 					{
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 					}
 					else						
-						SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
+						cgc_SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
 					break;
 				}
 				else if ( sensor_type == RUN )
 				{
-					if ( pkt->data_len != ( sizeof( uint16_t ) + sizeof( uint16_t ) ) )
+					if ( pkt->data_len != ( sizeof( cgc_uint16_t ) + sizeof( cgc_uint16_t ) ) )
 					{
 						// sensor ID missing
 						
-						SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 						break;
 					}
 
-					uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
-					uint16_t dist = *( uint16_t* )&pkt->data[ sizeof( uint16_t ) ];
+					cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
+					cgc_uint16_t dist = *( cgc_uint16_t* )&pkt->data[ sizeof( cgc_uint16_t ) ];
 
 					// use sensor_id to check if this ID is registred with this user
-					if ( sensorManager.VerifySensor( sensor_id ) == false )
+					if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 					{
 						// this sensor isn't registered for the current user
-						SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
+						cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_SENSOR_NOT_REGISTERED );
 						break;
 					}
 
-					FitnessSensor::HandleRunSensor( dist );
-					SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
+					cgc_FitnessSensor::cgc_HandleRunSensor( dist );
+					cgc_SendResponse( INPUT_SENSOR_DATA, NO_ERROR );
 				}
 				else
 				{
-					SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
+					cgc_SendResponse( INPUT_SENSOR_DATA, ERROR_BAD_VALUE );
 				}
 				break;
 			}
 			case REMOVE_SENSOR:
 			{
-				if ( pkt->data_len != sizeof( uint16_t ) )
+				if ( pkt->data_len != sizeof( cgc_uint16_t ) )
 				{
 					// sensor ID missing
-					SendResponse( REMOVE_SENSOR, ERROR_BAD_VALUE );
+					cgc_SendResponse( REMOVE_SENSOR, ERROR_BAD_VALUE );
 					break;
 				}
 
-				uint16_t sensor_id = *( uint16_t* )&pkt->data[ 0 ];
+				cgc_uint16_t sensor_id = *( cgc_uint16_t* )&pkt->data[ 0 ];
 
 				// Verify this sensor is in this user's list
-				if ( sensorManager.VerifySensor( sensor_id ) == false )
+				if ( sensorManager.cgc_VerifySensor( sensor_id ) == false )
 				{
 					// this sensor isn't registered for the current user
 
-					SendResponse( REMOVE_SENSOR, ERROR_SENSOR_NOT_REGISTERED );
+					cgc_SendResponse( REMOVE_SENSOR, ERROR_SENSOR_NOT_REGISTERED );
 					break;
 				}
 
-				bool ret = sensorManager.RemoveSensor( sensor_id, sensorManager.GetCurrentUser() );
+				bool ret = sensorManager.cgc_RemoveSensor( sensor_id, sensorManager.cgc_GetCurrentUser() );
 
 				if ( ret == false )
 				{
-					SendResponse( REMOVE_SENSOR, ERROR_BAD_VALUE );
+					cgc_SendResponse( REMOVE_SENSOR, ERROR_BAD_VALUE );
 					break;
 				}
 
-				SendResponse( REMOVE_SENSOR, NO_ERROR );
+				cgc_SendResponse( REMOVE_SENSOR, NO_ERROR );
 				break;
 			}
 			case REQUEST_SENSORS:
 			{
 				// respond with the ID and MAC of all sensors (not just for this user)
-				uint16_t data_len = 0;
+				cgc_uint16_t data_len = 0;
 
-				uint8_t *data;
+				cgc_uint8_t *data;
 
-				data = sensorManager.ListSensors( data_len );
+				data = sensorManager.cgc_ListSensors( data_len );
 
-				uint8_t *buff = new uint8_t[ data_len + 6 ];
+				cgc_uint8_t *buff = new cgc_uint8_t[ data_len + 6 ];
 	
 				// sync
 				buff[0] = 0xc3;
@@ -578,14 +578,14 @@ int main( void )
 				buff[3] = 0x00;
 
 				// data len
-				memcpy( &buff[4], &data_len, sizeof( uint16_t ) );
+				cgc_memcpy( &buff[4], &data_len, sizeof( cgc_uint16_t ) );
 
 				// data
-				memcpy ( ( uint8_t* )&buff[6], data, data_len );
+				cgc_memcpy ( ( cgc_uint8_t* )&buff[6], data, data_len );
 
 				delete[] data;
 
-				write( buff, data_len + 6 );
+				cgc_write( buff, data_len + 6 );
 
 				delete[] buff;
 
@@ -595,15 +595,15 @@ int main( void )
 			{
 				// return buffer of hardware ids
 				// len, 5 IDs
-				uint16_t data_len = 0;
+				cgc_uint16_t data_len = 0;
 
 				// each sensor is 2b ID, 4b mac: 6B
-				uint8_t data[ 7 ];
-				bzero( data, 7 );
+				cgc_uint8_t data[ 7 ];
+				cgc_bzero( data, 7 );
 
-				sensorManager.ListHwIds( data_len, data );
+				sensorManager.cgc_ListHwIds( data_len, data );
 
-				uint8_t *buff = new uint8_t[ data_len + 6 ];
+				cgc_uint8_t *buff = new cgc_uint8_t[ data_len + 6 ];
 	
 				// sync
 				buff[0] = 0xc3;
@@ -614,12 +614,12 @@ int main( void )
 				buff[3] = 0x77;
 
 				// data len
-				memcpy( &buff[4], &data_len, sizeof( uint16_t ) );
+				cgc_memcpy( &buff[4], &data_len, sizeof( cgc_uint16_t ) );
 
 				// data
-				memcpy ( ( uint8_t* )&buff[6], data, data_len );
+				cgc_memcpy ( ( cgc_uint8_t* )&buff[6], data, data_len );
 
-				write( buff, data_len + 6 );
+				cgc_write( buff, data_len + 6 );
 
 				break;
 			}
@@ -630,7 +630,7 @@ int main( void )
 			default:
 			{
 				// error: bad command
-				SendResponse( GENERAL, ERROR_BAD_VALUE );
+				cgc_SendResponse( GENERAL, ERROR_BAD_VALUE );
 			}
 			
 		}

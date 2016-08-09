@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -46,19 +46,19 @@ typedef struct __attribute__ ((__packed__)) ppermit {
   char license_number[10];
   int num_entrances;
   int spot_number;
-} ppermit_t;
+} cgc_ppermit_t;
 
 typedef struct __attribute__ ((__packed__)) ppring {
   int num_permits;
-  ppermit_t permits[MAX_NUM_PERMITS];
-} ppring_t;
+  cgc_ppermit_t permits[MAX_NUM_PERMITS];
+} cgc_ppring_t;
 
-ppermit_t* permit_new(char *license_number, int num_entrances, int spot_number);
-ppring_t* pring_new(int num_permits, ppermit_t permits[]);
-ppring_t* pring_refactor(ppring_t *pring);
-int permit_test(ppermit_t *permit, int spot_number, char *license_number);
-int pring_test(ppring_t *pring, int spot_numbers[], char* license_numbers);
-void destroy_permit(ppermit_t *permit);
-void destroy_permit_ring(ppring_t *pring);
+cgc_ppermit_t* cgc_permit_new(char *license_number, int num_entrances, int spot_number);
+cgc_ppring_t* cgc_pring_new(int num_permits, cgc_ppermit_t permits[]);
+cgc_ppring_t* cgc_pring_refactor(cgc_ppring_t *pring);
+int cgc_permit_test(cgc_ppermit_t *permit, int spot_number, char *license_number);
+int cgc_pring_test(cgc_ppring_t *pring, int spot_numbers[], char* license_numbers);
+void cgc_destroy_permit(cgc_ppermit_t *permit);
+void cgc_destroy_permit_ring(cgc_ppring_t *pring);
 
 #endif

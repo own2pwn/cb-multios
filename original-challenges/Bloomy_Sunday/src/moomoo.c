@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,7 +23,7 @@
 
 #include "moomoo.h"
 
-unsigned int geegee(const char *buf, size_t size)
+unsigned int cgc_geegee(const char *buf, cgc_size_t size)
 {
   int i;
   unsigned int hash = 0;
@@ -33,7 +33,7 @@ unsigned int geegee(const char *buf, size_t size)
   return hash;
 }
 
-unsigned int yooyoo(const char *buf, size_t size)
+unsigned int cgc_yooyoo(const char *buf, cgc_size_t size)
 {
   int i;
   unsigned int hash = 1835;
@@ -43,7 +43,7 @@ unsigned int yooyoo(const char *buf, size_t size)
   return hash;
 }
 
-unsigned int moomoo(const char *buf, size_t size)
+unsigned int cgc_moomoo(const char *buf, cgc_size_t size)
 {
   unsigned int hash = 0x41414141, k;
   const unsigned int *_buf = (const unsigned int *) buf;
@@ -56,7 +56,7 @@ unsigned int moomoo(const char *buf, size_t size)
     hash = ((hash << 15) | (hash >> 17)) * 7 + 0x46b6456e;
   }
 
-  const uint8_t *remain = (const uint8_t *) (buf + (size / 4) * 4);
+  const cgc_uint8_t *remain = (const cgc_uint8_t *) (buf + (size / 4) * 4);
   k = 0;
 
   if (size <= 3)

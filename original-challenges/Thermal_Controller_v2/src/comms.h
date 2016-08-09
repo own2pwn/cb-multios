@@ -33,38 +33,38 @@ THE SOFTWARE.
 //
 // Handles all return messages
 //
-class CommsMessage
+class cgc_CommsMessage
 {
 protected:
 
-	// uint16_t header
-	// uint16_t version
-	// uint8_t* body
-	// uint16_t body length
+	// cgc_uint16_t header
+	// cgc_uint16_t version
+	// cgc_uint8_t* body
+	// cgc_uint16_t body length
 
-	// uint16_t message type
-	// uint16_t status
-	// uint32_t extended body len
+	// cgc_uint16_t message type
+	// cgc_uint16_t status
+	// cgc_uint32_t extended body len
 
 	// Entire message
-	CUtil::String m_message;
+	CUtil::cgc_String m_message;
 
 	// Body of message
-	CUtil::String m_body;
+	CUtil::cgc_String m_body;
 
 public:
-	CommsMessage();
-	~CommsMessage();
+	cgc_CommsMessage();
+	~cgc_CommsMessage();
 	
-	void SetBody(CUtil::String);
-	CUtil::String GetBody() { return m_body; }
-	CUtil::String GetMessage() { return m_message; }
-	uint16_t GetType();
-	uint16_t GetValue();
-	uint16_t GetLenValue();
+	void cgc_SetBody(CUtil::cgc_String);
+	CUtil::cgc_String cgc_GetBody() { return m_body; }
+	CUtil::cgc_String cgc_GetMessage() { return m_message; }
+	cgc_uint16_t cgc_GetType();
+	cgc_uint16_t cgc_GetValue();
+	cgc_uint16_t cgc_GetLenValue();
 };
 
-class IncomingMessage : public CommsMessage
+class cgc_IncomingMessage : public cgc_CommsMessage
 {
 private:
 	bool m_checksum_passed;
@@ -73,33 +73,33 @@ public:
 
 	// read from input
 	// store all variables
-	void ReadInput();
+	void cgc_ReadInput();
 
-	uint16_t GetSensorId();
-	uint32_t GetSensorAddress();
-	uint32_t GetSensorCoefficient();
+	cgc_uint16_t cgc_GetSensorId();
+	cgc_uint32_t cgc_GetSensorAddress();
+	cgc_uint32_t cgc_GetSensorCoefficient();
 
-	void GetProgramValues( uint32_t, uint32_t &, uint32_t &, uint32_t & );
+	void cgc_GetProgramValues( cgc_uint32_t, cgc_uint32_t &, cgc_uint32_t &, cgc_uint32_t & );
 
 };
 
-class OutgoingMessage : public CommsMessage
+class cgc_OutgoingMessage : public cgc_CommsMessage
 {
 private:
-	CUtil::String m_version;
-	uint16_t m_response;
-	CUtil::String m_message;
+	CUtil::cgc_String m_version;
+	cgc_uint16_t m_response;
+	CUtil::cgc_String m_message;
 
 public:
 
-	void SetResponse( uint16_t resp ) { m_response = resp; }
-	void SetVersion( uint16_t ); 
-	void SetExtMessage( uint32_t, uint8_t* );
+	void cgc_SetResponse( cgc_uint16_t resp ) { m_response = resp; }
+	void cgc_SetVersion( cgc_uint16_t ); 
+	void cgc_SetExtMessage( cgc_uint32_t, cgc_uint8_t* );
 
-	void SendAsExtended();
-	void SendAsBasic();
+	void cgc_SendAsExtended();
+	void cgc_SendAsBasic();
 
-	void Reset() { m_version = ""; m_response = 0; }
+	void cgc_Reset() { m_version = ""; m_response = 0; }
 };
 
 #endif

@@ -34,4 +34,4 @@ typedef struct _users {
 	char messages[MAX_MESSAGES][MAX_MESSAGE_LEN];
 	unsigned char msg_read[MAX_MESSAGES];
 	unsigned int top_message;
-} users_t;
+} cgc_users_t;

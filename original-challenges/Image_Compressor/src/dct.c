@@ -38,7 +38,7 @@
 #define I 2718
 #define J 2528
 
-static const int32_t S[] = {
+static const cgc_int32_t S[] = {
     A, B, C, D, A, D, C, B,
     B, E, F, G, B, G, F, E,
     C, F, H, I, C, I, H, F,
@@ -62,30 +62,30 @@ static const int32_t S[] = {
 
 #define MUL_ALPHA_BETA(x, y, z) \
     do { \
-        int32_t t1 = x + (x >> 5); \
-        int32_t t2 = t1 >> 2; \
+        cgc_int32_t t1 = x + (x >> 5); \
+        cgc_int32_t t2 = t1 >> 2; \
         y = t2 + (x >> 4); \
         z = t1 - t2; \
     } while (0)
 
 #define MUL_DELTA_EPSILON(x, y, z) \
     do { \
-        int32_t t1 = (x >> 3) - (x >> 7); \
-        int32_t t2 = t1 - (x >> 11); \
+        cgc_int32_t t1 = (x >> 3) - (x >> 7); \
+        cgc_int32_t t2 = t1 - (x >> 11); \
         y = x - t1; \
         z = t1 + (t2 >> 1); \
     } while (0)
 
 #define MUL_ETA_THETA(x, y, z) \
     do { \
-        int32_t t1 = (x >> 9) - x; \
+        cgc_int32_t t1 = (x >> 9) - x; \
         z = x >> 1; \
         y = (t1 >> 2) - t1; \
     } while (0)
 
 #define INV_TRANSFORM() \
     do { \
-        int32_t x0 = G(0), x1 = G(1), x2 = G(2), x3 = G(3), \
+        cgc_int32_t x0 = G(0), x1 = G(1), x2 = G(2), x3 = G(3), \
             x4 = G(4), x5 = G(5), x6 = G(6), x7 = G(7), a, b; \
         a = x1 + x7; \
         b = x1 - x7; \
@@ -123,7 +123,7 @@ static const int32_t S[] = {
 
 #define TRANSFORM() \
     do { \
-        int32_t x0 = G(0), x1 = G(1), x2 = G(2), x3 = G(3), \
+        cgc_int32_t x0 = G(0), x1 = G(1), x2 = G(2), x3 = G(3), \
             x4 = G(4), x5 = G(5), x6 = G(6), x7 = G(7), a, b, c, d; \
         a = x3 - x4; \
         b = x2 - x5; \
@@ -160,10 +160,10 @@ static const int32_t S[] = {
     } while (0)
 
 
-void idct(const int16_t input[], int8_t output[], const uint8_t scaler[])
+void cgc_idct(const cgc_int16_t input[], cgc_int8_t output[], const cgc_uint8_t scaler[])
 {
     int u, v;
-    int32_t M[64];
+    cgc_int32_t M[64];
     
     // scale input
     for (v = 0; v < 8; v++)
@@ -187,10 +187,10 @@ void idct(const int16_t input[], int8_t output[], const uint8_t scaler[])
             output[v*8 + u] = M[v*8 + u] >> 13;
 }
 
-void dct(const int8_t input[], int16_t output[], const uint8_t scaler[])
+void cgc_dct(const cgc_int8_t input[], cgc_int16_t output[], const cgc_uint8_t scaler[])
 {
     int u, v;
-    int32_t M[64];
+    cgc_int32_t M[64];
     
     // shift
     for (v = 0; v < 8; v++)

@@ -24,28 +24,28 @@
 #define MATH_H_
 
 /**
- * Return the sign bit of d, unshifted.
+ * Return the cgc_sign bit of d, unshifted.
  *
  * @param d The double to examine
- * @return The extracted sign bit of d
+ * @return The extracted cgc_sign bit of d
  */
-unsigned long long sign(double d);
+unsigned long long cgc_sign(double d);
 
 /**
- * Return the exponent bits of d, unshifted.
+ * Return the cgc_exponent bits of d, unshifted.
  *
  * @param d The double to examine
- * @return The exponent bits of d
+ * @return The cgc_exponent bits of d
  */
-unsigned long long exponent(double d);
+unsigned long long cgc_exponent(double d);
 
 /**
- * Return the mantissa bits of d
+ * Return the cgc_mantissa bits of d
  *
  * @param d The double to examine
- * @return The mantissa bits of d
+ * @return The cgc_mantissa bits of d
  */
-unsigned long long mantissa(double d);
+unsigned long long cgc_mantissa(double d);
 
 /**
  * Return 1 if d is a NaN, 0 otherwise
@@ -53,7 +53,7 @@ unsigned long long mantissa(double d);
  * @param d The double to examine
  * @return 1 if d is a NaN, 0 otherwise
  */
-int isnan(double d);
+int cgc_isnan(double d);
 
 /**
  * Return 1 if d == +inf, -1 if d == -inf, 0 otherwise
@@ -61,23 +61,23 @@ int isnan(double d);
  * @param d The double to examine
  * @return 1 if d == +inf, -1 if d == -inf, 0 otherwise
  */
-int isinf(double d);
+int cgc_isinf(double d);
 
 /**
- * Return the absolute value of d as calculated by masking off sign bit.
+ * Return the absolute value of d as calculated by masking off cgc_sign bit.
  *
  * @param d The double to examine
  * @return The absolute value of d
  */
-double abs(double d);
+double cgc_abs(double d);
 
 /**
  * Clamp the value of d between 0.0 and 1.0
  *
- * @param d The value to clamp
+ * @param d The value to cgc_clamp
  * @return 0.0 if d < 0.0, 1.0 if d > 1.0, else d
  */
-double clamp(double d);
+double cgc_clamp(double d);
 
 #endif /* MATH_H_ */
 

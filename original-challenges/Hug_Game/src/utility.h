@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include "gamestate.h"
 #include "libc.h"
 
-unsigned int getBet(gamestate *state);
-void hugsrand(gamestate* state, unsigned int seed);
-unsigned int hugsnextrand(gamestate *state);
-void handleOutcome(gamestate *state, char outcome, unsigned int wagered);
+unsigned int cgc_getBet(cgc_gamestate *state);
+void cgc_hugsrand(cgc_gamestate* state, unsigned int seed);
+unsigned int cgc_hugsnextrand(cgc_gamestate *state);
+void cgc_handleOutcome(cgc_gamestate *state, char outcome, unsigned int wagered);
 
 #endif

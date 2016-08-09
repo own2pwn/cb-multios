@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,11 +37,11 @@ extern "C"
 #define NULL (0)
 #endif
 
-CPRNG::CPRNG( uint32_t *pMagicPage, uint32_t magicPageByteSize )
+cgc_CPRNG::cgc_CPRNG( cgc_uint32_t *pMagicPage, cgc_uint32_t magicPageByteSize )
 {
 	m_pMagicPage = pMagicPage;
 
-	m_magicPageSize = (magicPageByteSize / sizeof(uint32_t));
+	m_magicPageSize = (magicPageByteSize / sizeof(cgc_uint32_t));
 
 	m_magicPagePosition = 0;
 
@@ -50,81 +50,81 @@ CPRNG::CPRNG( uint32_t *pMagicPage, uint32_t magicPageByteSize )
 	m_pGeneratorMatrix = NULL;
 }
 
-CPRNG::~CPRNG( )
+cgc_CPRNG::~cgc_CPRNG( )
 {
 	if ( m_pGeneratorMatrix )
 		delete m_pGeneratorMatrix;
 }
 
-uint32_t CPRNG::GetRandomU32( void )
+cgc_uint32_t cgc_CPRNG::cgc_GetRandomU32( void )
 {
-	return (GetRandomInternal());
+	return (cgc_GetRandomInternal());
 }
 
-uint16_t CPRNG::GetRandomU16( void )
+cgc_uint16_t cgc_CPRNG::cgc_GetRandomU16( void )
 {
-	return (uint16_t)(GetRandomInternal() & 0xFFFF);
+	return (cgc_uint16_t)(cgc_GetRandomInternal() & 0xFFFF);
 }
 
-uint8_t CPRNG::GetRandomU8( void )
+cgc_uint8_t cgc_CPRNG::cgc_GetRandomU8( void )
 {
-	return (uint8_t)(GetRandomInternal() & 0xFF);
+	return (cgc_uint8_t)(cgc_GetRandomInternal() & 0xFF);
 }
 	
-uint32_t CPRNG::GetRandomRange( uint32_t start, uint32_t end )
+cgc_uint32_t cgc_CPRNG::cgc_GetRandomRange( cgc_uint32_t start, cgc_uint32_t end )
 {
 	if ( start > end )
 	{
-		uint32_t temp = end;
+		cgc_uint32_t temp = end;
 		end = start;
 		start = temp;
 	}
 
-	uint32_t delta = (end - start);
+	cgc_uint32_t delta = (end - start);
 
 	if ( delta == 0 )
 		return (start);
 
 	// Not exactly uniform distribution but good enough!
-	return start + GetRandomInternal()%(delta+1);	
+	return start + cgc_GetRandomInternal()%(delta+1);	
 }
 
-uint32_t CPRNG::GetRandomInternal( void )
+cgc_uint32_t cgc_CPRNG::cgc_GetRandomInternal( void )
 {
 	if ( !m_pGeneratorMatrix )
-		GenerateMatrix();
+		cgc_GenerateMatrix();
 
 	if ( m_matrixPosition >= m_matrixSize )
-		GenerateMatrix();
+		cgc_GenerateMatrix();
 	
-	uint32_t newValue = m_pGeneratorMatrix[m_matrixPosition++];
+	cgc_uint32_t newValue = m_pGeneratorMatrix[m_matrixPosition++];
 
 	return (newValue);
 }
 
-void CPRNG::GenerateMatrix( void )
+void cgc_CPRNG::cgc_GenerateMatrix( void )
 {
 	if ( !m_pGeneratorMatrix )
 	{
-		m_pGeneratorMatrix = new uint32_t[DEFAULT_MATRIX_SIZE];
+		m_pGeneratorMatrix = new cgc_uint32_t[DEFAULT_MATRIX_SIZE];
 
 		// Initialize
-		for ( uint32_t i = 0; i < DEFAULT_MATRIX_SIZE; i++ )
+		for ( cgc_uint32_t i = 0; i < DEFAULT_MATRIX_SIZE; i++ )
 			m_pGeneratorMatrix[i] = i;
 
 		m_matrixSize = DEFAULT_MATRIX_SIZE;
 		m_matrixPosition = 0;
 	}
 
-	uint32_t newMatrixSize = m_matrixSize + DEFAULT_MATRIX_SIZE;
+	cgc_uint32_t newMatrixSize = m_matrixSize + DEFAULT_MATRIX_SIZE;
 	if ( newMatrixSize > PRNG_MATRIX_MAX_SIZE )
 		newMatrixSize = PRNG_MATRIX_MAX_SIZE;
 
-	uint32_t *pNewMatrix = new uint32_t[newMatrixSize];
+	cgc_uint32_t *pNewMatrix = new cgc_uint32_t[newMatrixSize];
 
-	uint32_t generatorPos = 0;
-	uint32_t magicPageLast = 0;
-	for ( uint32_t i = 0; i < newMatrixSize; i++ )
+	cgc_uint32_t generatorPos = 0;
+	cgc_uint32_t magicPageLast = 0;
+	for ( cgc_uint32_t i = 0; i < newMatrixSize; i++ )
 	{
 		pNewMatrix[i] = m_pMagicPage[m_magicPagePosition++] & MAGIC_PAGE_MASK;
 

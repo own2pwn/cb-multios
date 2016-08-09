@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,39 +26,39 @@
 
 #define SAMPLE_RATE 8000
 
-class AudioStream
+class cgc_AudioStream
 {
 public:
-    ~AudioStream();
-    static AudioStream *fromSilence(unsigned int samples);
-    static AudioStream *fromSineWave(unsigned int samples, unsigned int hz);
-    static AudioStream *fromSquareWave(unsigned int samples, unsigned int hz);
+    ~cgc_AudioStream();
+    static cgc_AudioStream *cgc_fromSilence(unsigned int samples);
+    static cgc_AudioStream *cgc_fromSineWave(unsigned int samples, unsigned int hz);
+    static cgc_AudioStream *cgc_fromSquareWave(unsigned int samples, unsigned int hz);
 
-    inline unsigned int getLength() const
+    inline unsigned int cgc_getLength() const
     {
         return length;
     }
-    inline int32_t getSample(unsigned int i) const
+    inline cgc_int32_t cgc_getSample(unsigned int i) const
     {
         if (i < length)
             return samples[i];
         return 0;
     }
 
-    void setLength(unsigned int length);
-    inline void setSample(unsigned int i, int32_t sample)
+    void cgc_setLength(unsigned int length);
+    inline void cgc_setSample(unsigned int i, cgc_int32_t sample)
     {
         if (i >= length)
-            setLength(i+1);
+            cgc_setLength(i+1);
         samples[i] = sample;
     }
-    void addSilence(unsigned int length);
-    void mix(const AudioStream &src, Gain gain);
+    void cgc_addSilence(unsigned int length);
+    void cgc_mix(const cgc_AudioStream &src, cgc_Gain gain);
 private:
-    AudioStream(unsigned int length);
-    void enlarge(unsigned int length);
+    cgc_AudioStream(unsigned int length);
+    void cgc_enlarge(unsigned int length);
 
     unsigned int length;
     unsigned int size;
-    int32_t *samples;
+    cgc_int32_t *samples;
 };

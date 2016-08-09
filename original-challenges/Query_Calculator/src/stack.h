@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Bryce Kerley <bk@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,38 +37,38 @@ typedef enum stack_elem_type_enum {
   ST_LEXEME_FLAVOR,
   ST_OPERATION_TYPE,
   ST_STR
-} stack_elem_type;
+} cgc_stack_elem_type;
 
 typedef struct stack_elem_str {
   struct stack_elem_str* next;
-  stack_elem_type type;
+  cgc_stack_elem_type type;
   union {
-    sint32 sint32;
-    uint64 uint64;
-    sint64 sint64;
-    lexeme_flavor lexeme_flavor;
-    operation_type operation_type;
+    cgc_sint32 cgc_sint32;
+    cgc_uint64 cgc_uint64;
+    cgc_sint64 cgc_sint64;
+    cgc_lexeme_flavor cgc_lexeme_flavor;
+    cgc_operation_type cgc_operation_type;
     char* str;
   };
-} stack_elem;
+} cgc_stack_elem;
 
-stack_elem* stack_create();
-void stack_free(stack_elem* stk);
+cgc_stack_elem* cgc_stack_create();
+void cgc_stack_free(cgc_stack_elem* stk);
 
-uint64 stack_empty(stack_elem* stk);
+cgc_uint64 cgc_stack_empty(cgc_stack_elem* stk);
 
-void stack_push_sint32(stack_elem* stk, sint32 i);
-void stack_push_uint64(stack_elem* stk, uint64 i);
-void stack_push_sint64(stack_elem* stk, sint64 i);
-void stack_push_lexeme_flavor(stack_elem* stk, lexeme_flavor f);
-void stack_push_operation_type(stack_elem* stk, operation_type t);
-void stack_push_str(stack_elem* stk, char* s);
+void cgc_stack_push_sint32(cgc_stack_elem* stk, cgc_sint32 i);
+void cgc_stack_push_uint64(cgc_stack_elem* stk, cgc_uint64 i);
+void cgc_stack_push_sint64(cgc_stack_elem* stk, cgc_sint64 i);
+void cgc_stack_push_lexeme_flavor(cgc_stack_elem* stk, cgc_lexeme_flavor f);
+void cgc_stack_push_operation_type(cgc_stack_elem* stk, cgc_operation_type t);
+void cgc_stack_push_str(cgc_stack_elem* stk, char* s);
 
-sint32 stack_pop_sint32(stack_elem* stk);
-uint64 stack_pop_uint64(stack_elem* stk);
-sint64 stack_pop_sint64(stack_elem* stk);
-lexeme_flavor stack_pop_lexeme_flavor(stack_elem* stk);
-operation_type stack_pop_operation_type(stack_elem* stk);
-char* stack_pop_str(stack_elem* stk);
+cgc_sint32 cgc_stack_pop_sint32(cgc_stack_elem* stk);
+cgc_uint64 cgc_stack_pop_uint64(cgc_stack_elem* stk);
+cgc_sint64 cgc_stack_pop_sint64(cgc_stack_elem* stk);
+cgc_lexeme_flavor cgc_stack_pop_lexeme_flavor(cgc_stack_elem* stk);
+cgc_operation_type cgc_stack_pop_operation_type(cgc_stack_elem* stk);
+char* cgc_stack_pop_str(cgc_stack_elem* stk);
 
-void stack_test();
+void cgc_stack_test();

@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -52,30 +52,30 @@
 #define LOW_PASS 1
 #define HIGH_PASS 2
 
-static const size_t UWFC_HEADER_SIZE = sizeof(uwfc_t) - sizeof(char *);
+static const cgc_size_t UWFC_HEADER_SIZE = sizeof(cgc_uwfc_t) - sizeof(char *);
 static int vis_multiplier = 0;
 
-void set_vis_multiplier(char c) {
+void cgc_set_vis_multiplier(char c) {
     if (c <= '9' && c >= '0') {
         vis_multiplier = c - '0';
-        printf("Multiplier set to %d\n", c - '0');
+        cgc_printf("Multiplier set to %d\n", c - '0');
     } else {
-        printf("Bad multiplier argument\n");
+        cgc_printf("Bad multiplier argument\n");
     }
 }
 
-int get_vis_multiplier() {
+int cgc_get_vis_multiplier() {
     return vis_multiplier;
 }
 
-int validate_header(uwfc_t *header) {
+int cgc_validate_header(cgc_uwfc_t *header) {
     char *magic = "FFIR";
     char *audio_fmt = "UWFC";
     char *sub_chunk1_id = "cgc ";
     char *sub_chunk2_id = "data";
 
     // "FFIR"
-    if (memcmp(header->chunk_id, magic, 4) != 0)
+    if (cgc_memcmp(header->chunk_id, magic, 4) != 0)
         return BAD_CHUNK_ID;
 
     if (header->chunk_size != (4 + (8 + header->sub_chunk1_size) + (8 + header->sub_chunk2_size)))
@@ -83,11 +83,11 @@ int validate_header(uwfc_t *header) {
 
     // "UWFC"
     unsigned char *temp = &header->format[0];
-    if (memcmp(temp, audio_fmt, 4) != 0)
+    if (cgc_memcmp(temp, audio_fmt, 4) != 0)
         return BAD_FORMAT;
 
     // "cgc "
-    if (memcmp(header->sub_chunk1_id, sub_chunk1_id, 4) != 0)
+    if (cgc_memcmp(header->sub_chunk1_id, sub_chunk1_id, 4) != 0)
         return BAD_SUB_CHUNK1_ID;
 
     // Only allow uncompressed PCM
@@ -116,7 +116,7 @@ int validate_header(uwfc_t *header) {
         return BAD_BITS_PER_SAMPLE;
 
     // "data"
-    if (memcmp(header->sub_chunk2_id, sub_chunk2_id, 4) != 0)
+    if (cgc_memcmp(header->sub_chunk2_id, sub_chunk2_id, 4) != 0)
         return BAD_SUB_CHUNK2_ID;
 
 #ifndef PATCHED
@@ -126,38 +126,38 @@ int validate_header(uwfc_t *header) {
 #endif
 }
 
-uwfc_t *init_track() {
-    uwfc_t *track;
+cgc_uwfc_t *cgc_init_track() {
+    cgc_uwfc_t *track;
     int track_size = 0;
-    size_t rx = 0, rx_count = 0;
+    cgc_size_t rx = 0, rx_count = 0;
 
-    track = malloc(sizeof(uwfc_t));
+    track = cgc_malloc(sizeof(cgc_uwfc_t));
     if (track == NULL)
         return NULL;
 
     if (receive(STDIN, track, UWFC_HEADER_SIZE, &rx) != 0 || rx != UWFC_HEADER_SIZE) {
-        free(track);
+        cgc_free(track);
         return NULL;
     }
 
 #ifndef PATCHED
-    track_size = validate_header(track) - UWFC_HEADER_SIZE; //size of file
+    track_size = cgc_validate_header(track) - UWFC_HEADER_SIZE; //size of file
 #else
-    track_size = validate_header(track); //track->sub_chunk2_size (size of data)
+    track_size = cgc_validate_header(track); //track->sub_chunk2_size (size of data)
 #endif
 
-    // track_size is signed int as a mechanism to prevent huge malloc requests
+    // track_size is signed int as a mechanism to prevent huge cgc_malloc requests
     if (track_size < 0) {
-        free(track);
+        cgc_free(track);
         return NULL;
     }
 
     if (track_size == 0) {
         track->data = NULL;
     } else {
-        track->data = malloc(track_size);
+        track->data = cgc_malloc(track_size);
         if (track->data == NULL) {
-            free(track);
+            cgc_free(track);
             return NULL;
         }
     }
@@ -165,8 +165,8 @@ uwfc_t *init_track() {
     while (receive(STDIN, &track->data[rx_count], (track->sub_chunk2_size - rx_count), &rx) == 0 &&
             (rx_count + rx) != track->sub_chunk2_size) {
         if(rx == 0) {
-            free(track->data);
-            free(track);
+            cgc_free(track->data);
+            cgc_free(track);
             return NULL;
         }
 
@@ -176,27 +176,27 @@ uwfc_t *init_track() {
     return track;
 }
 
-void clear_track(uwfc_t **uwfc_track) {
-    uwfc_t *track = *uwfc_track;
+void cgc_clear_track(cgc_uwfc_t **uwfc_track) {
+    cgc_uwfc_t *track = *uwfc_track;
     if (track == NULL)
         return;
 
     if (track->data != NULL)
-        free(track->data);
+        cgc_free(track->data);
 
     if(track != NULL)
-        free(track);
+        cgc_free(track);
     *uwfc_track = NULL;
 }
 
-static void slow_vis() {
+static void cgc_slow_vis() {
     int i = 0;
     for(i = 0; i < 200000 * vis_multiplier; i++)
         sin(i) / (cos(i) + 1);
 }
 
 
-static void plot_mono_wave(uwfc_t *track, unsigned char *data) {
+static void cgc_plot_mono_wave(cgc_uwfc_t *track, unsigned char *data) {
     double normalized = 0;
 
     if (track->bits_per_sample == 8)
@@ -209,14 +209,14 @@ static void plot_mono_wave(uwfc_t *track, unsigned char *data) {
     int y = (w - 1) / 2;
     int x = (normalized * y) + y + .5;
     char line[w];
-    memset(line, ' ', w);
+    cgc_memset(line, ' ', w);
     line[w-1] = '\0';
     line[x] = '*';
-    printf("%s\n", line);
+    cgc_printf("%s\n", line);
 
 }
 
-static void plot_stereo_wave(uwfc_t *track, unsigned char *data) {
+static void cgc_plot_stereo_wave(cgc_uwfc_t *track, unsigned char *data) {
     double normalized_l = 0;
     double normalized_r = 0;
 
@@ -235,48 +235,48 @@ static void plot_stereo_wave(uwfc_t *track, unsigned char *data) {
     int x_l = (normalized_l * y) + y + .5;
     int x_r = (normalized_r * y) + y + chan_w + 1.5;
     char line[w];
-    memset(line, ' ', w);
+    cgc_memset(line, ' ', w);
     line[w-1] = '\0';
     line[chan_w] = '|';
     line[x_l] = '*';
     line[x_r] = '*';
-    printf("%s\n", line);
+    cgc_printf("%s\n", line);
 }
 
-void wave_vis(uwfc_t *track) {
+void cgc_wave_vis(cgc_uwfc_t *track) {
     unsigned char *data = (unsigned char*)track->data;
-    size_t i = 0;
+    cgc_size_t i = 0;
 
     while (i < (track->sub_chunk2_size / track->block_align)) {
         if (i % track->sample_rate == 0)
-            slow_vis();
+            cgc_slow_vis();
 
         if (track->num_channels == 2)
-            plot_stereo_wave(track, data);
+            cgc_plot_stereo_wave(track, data);
         else if(track->num_channels == 1)
-            plot_mono_wave(track, data);
+            cgc_plot_mono_wave(track, data);
 
         i++;
         data += track->block_align;
     }
 
-    printf("++++END VISUALIZATION++++\n\n");
+    cgc_printf("++++END VISUALIZATION++++\n\n");
 }
 
 typedef struct {
     double total_power;
     double max_power;
     int freq_count;
-} eq_bucket_t;
+} cgc_eq_bucket_t;
 
-static void add_to_bucket(eq_bucket_t *buckets, complex_t *f, int f_i, int f_max) {
+static void cgc_add_to_bucket(cgc_eq_bucket_t *buckets, cgc_complex_t *f, int f_i, int f_max) {
     // Usign gamma-corrected frequency range (gamma = 2 -> sqrt)
     int b_i = (int)(sqrt(f_i / (double)f_max) * MAX_BUCKETS);
     double power;
-    eq_bucket_t *bucket = &buckets[b_i];
+    cgc_eq_bucket_t *bucket = &buckets[b_i];
 
     power = pow(f->real, 2) + pow(f->imag, 2);
-    //factor in noise & dft leakage
+    //factor in noise & cgc_dft leakage
     if (power > 4)
         bucket->total_power += power;
     if (bucket->max_power < power)
@@ -285,30 +285,30 @@ static void add_to_bucket(eq_bucket_t *buckets, complex_t *f, int f_i, int f_max
     bucket->freq_count++;
 }
 
-static void vis_buckets(eq_bucket_t *buckets, int vis_type) {
+static void cgc_vis_buckets(cgc_eq_bucket_t *buckets, int vis_type) {
     int i;
     const int max_height = 90;
     char line[max_height + 1];
 
-    slow_vis();
+    cgc_slow_vis();
     if (vis_type == FREQ_VIS) {
         int h;
         for (h = max_height; h >= 0; h--) {
-            printf("   ");
+            cgc_printf("   ");
             for (i = 0; i < MAX_BUCKETS; i++) {
                 // Because loudness of sound is logarithmic (dB), by using frequency buckets
                 // the equalizer is best visualized taking the log of the max power
                 // of all frequencies in a given frequency bucket
                 if (h == 0) {
-                    printf("|-----|");
+                    cgc_printf("|-----|");
                 } else if (h <= (int)(log(buckets[i].max_power))) {
-                    printf("|=====|");
+                    cgc_printf("|=====|");
                 } else {
                     if( h <= 30)
-                        printf("|     |");
+                        cgc_printf("|     |");
                 }
             }
-            printf("\n");
+            cgc_printf("\n");
         }
     } else if(vis_type == POWER_VIS) {
         double total_power = 0;
@@ -321,32 +321,32 @@ static void vis_buckets(eq_bucket_t *buckets, int vis_type) {
         // for each second (sample cycle) is best visualized taking the log of the
         // total power of all frequencies in frequency bucket
         bar_len = (int)(log(total_power + 1) * 3); // +1 to avoid log(0), log(1) is neglible
-        memset(line, 0, max_height + 1);
-        memset(line, '=', bar_len );
+        cgc_memset(line, 0, max_height + 1);
+        cgc_memset(line, '=', bar_len );
 
         line[bar_len] = ']';
         for(i = 0; i < bar_width; i++)
-            printf("%s\n", line);
+            cgc_printf("%s\n", line);
     }
 }
 
-void eq_vis(uwfc_t *track, int vis_type, int filter_type) {
+void cgc_eq_vis(cgc_uwfc_t *track, int vis_type, int filter_type) {
     int i, j, len;
     unsigned char *data = (unsigned char*) track->data;
     double *dft_inputs_l;
     double *dft_inputs_r;
-    complex_t *dft_output_l= NULL;
-    complex_t *dft_output_r = NULL;
+    cgc_complex_t *dft_output_l= NULL;
+    cgc_complex_t *dft_output_r = NULL;
     double normalized_l;
     double normalized_r;
-    eq_bucket_t freq_bars[MAX_BUCKETS];
+    cgc_eq_bucket_t freq_bars[MAX_BUCKETS];
 
-    dft_inputs_l = malloc(track->sample_rate * sizeof(double));
+    dft_inputs_l = cgc_malloc(track->sample_rate * sizeof(double));
     if (dft_inputs_l == NULL)
         return;
 
     if (track->num_channels == 2) {
-        dft_inputs_r = malloc(track->sample_rate * sizeof(double));
+        dft_inputs_r = cgc_malloc(track->sample_rate * sizeof(double));
         if (dft_inputs_r == NULL)
             return;
     }
@@ -380,9 +380,9 @@ void eq_vis(uwfc_t *track, int vis_type, int filter_type) {
             data += track->block_align;
         }
 
-        dft_output_l = dft(dft_inputs_l, j, &len);
+        dft_output_l = cgc_dft(dft_inputs_l, j, &len);
         if (track->num_channels == 2)
-            dft_output_r = dft(dft_inputs_r, j, &len);
+            dft_output_r = cgc_dft(dft_inputs_r, j, &len);
 
         int k;
         if (filter_type == LOW_PASS) {
@@ -417,17 +417,17 @@ void eq_vis(uwfc_t *track, int vis_type, int filter_type) {
             }
         }
         for (k = 0; k < j/2; k++) {
-            add_to_bucket(&freq_bars[0], &dft_output_l[k], k, j/2);
+            cgc_add_to_bucket(&freq_bars[0], &dft_output_l[k], k, j/2);
             if (track->num_channels == 2)
-                add_to_bucket(&freq_bars[0], &dft_output_r[k], k, j/2);
+                cgc_add_to_bucket(&freq_bars[0], &dft_output_r[k], k, j/2);
         }
 
-        vis_buckets(&freq_bars[0], vis_type);
-        free(dft_output_l);
+        cgc_vis_buckets(&freq_bars[0], vis_type);
+        cgc_free(dft_output_l);
 
         if (track->num_channels == 2)
-            free(dft_output_r);
+            cgc_free(dft_output_r);
     }
 
-    printf("++++END VISUALIZATION++++\n\n");
+    cgc_printf("++++END VISUALIZATION++++\n\n");
 }

@@ -4,9 +4,9 @@
 #include "list.h"
 #include "blogpost.h"
 
-class BlogPost;
+class cgc_BlogPost;
 
-class User
+class cgc_User
 {
 private:
     char username[16];
@@ -15,29 +15,29 @@ private:
     char *profile;
     unsigned int total_likes;
 
-    List<BlogPost *> posts;
-    List<User *> friends;
+    cgc_List<cgc_BlogPost *> posts;
+    cgc_List<cgc_User *> friends;
 public:
-    User(char *_username, char *_pw, char *_friend_code);
-    ~User();
+    cgc_User(char *_username, char *_pw, char *_friend_code);
+    ~cgc_User();
 
-    BlogPost *get_post(int idx);
-    char *get_username();
-    bool is_full_user(); //more than 2 posts and more than 10 likes
-    bool check_password(char *pw_attempt);
-    bool add_friend(User *user, char *fcode_attempt);
-    bool edit_profile();
-    bool add_post();
-    bool delete_post();
-    size_t num_posts();
+    cgc_BlogPost *cgc_get_post(int idx);
+    char *cgc_get_username();
+    bool cgc_is_full_user(); //more than 2 posts and more than 10 likes
+    bool cgc_check_password(char *pw_attempt);
+    bool cgc_add_friend(cgc_User *user, char *fcode_attempt);
+    bool cgc_edit_profile();
+    bool cgc_add_post();
+    bool cgc_delete_post();
+    cgc_size_t cgc_num_posts();
 
-    void print_profile();
-    void list_posts();
-    void print_post(size_t idx);
-    void like_post(User *reg_user, size_t idx);
-    void list_friends();
-    bool unfriend();
-    void add_like();
+    void cgc_print_profile();
+    void cgc_list_posts();
+    void cgc_print_post(cgc_size_t idx);
+    void cgc_like_post(cgc_User *reg_user, cgc_size_t idx);
+    void cgc_list_friends();
+    bool cgc_unfriend();
+    void cgc_add_like();
 };
 
 #endif

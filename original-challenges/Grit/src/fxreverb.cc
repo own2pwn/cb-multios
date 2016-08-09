@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,33 +23,33 @@
 #include <cstring.h>
 #include "fxreverb.h"
 
-FxReverb::FxReverb(unsigned int delay_) : delay(delay_)
+cgc_FxReverb::cgc_FxReverb(unsigned int delay_) : delay(delay_)
 {
 }
 
-void FxReverb::apply(AudioTrack &track) const
+void cgc_FxReverb::cgc_apply(cgc_AudioTrack &track) const
 {
-    apply(*track.getChannel(0));
-    if (track.getStereo())
-        apply(*track.getChannel(1));
+    cgc_apply(*track.cgc_getChannel(0));
+    if (track.cgc_getStereo())
+        cgc_apply(*track.cgc_getChannel(1));
 }
 
-void FxReverb::apply(AudioStream &stream) const
+void cgc_FxReverb::cgc_apply(cgc_AudioStream &stream) const
 {
-    Gain gain = Gain::fromRational(-50, 100);
-    int32_t *buffer = new int32_t[delay];
-    memset(buffer, 0, sizeof(int32_t) * delay);
+    cgc_Gain gain = cgc_Gain::cgc_fromRational(-50, 100);
+    cgc_int32_t *buffer = new cgc_int32_t[delay];
+    cgc_memset(buffer, 0, sizeof(cgc_int32_t) * delay);
 
-    for (unsigned int i = 0; i < stream.getLength(); i++)
+    for (unsigned int i = 0; i < stream.cgc_getLength(); i++)
     {
-        long long sample = gain.adjustSample(buffer[i % delay]); // mix-in delayed audio
-        sample += stream.getSample(i); // mix-in original audio
+        long long sample = gain.cgc_adjustSample(buffer[i % delay]); // cgc_mix-in delayed audio
+        sample += stream.cgc_getSample(i); // cgc_mix-in original audio
         if (sample > INT32_MAX)
             sample = INT32_MAX;
         else if (sample < INT32_MIN)
             sample = INT32_MIN;
-        buffer[i % delay] = sample; // put mix back into the buffer
-        stream.setSample(i, sample); // put mix into audio stream
+        buffer[i % delay] = sample; // put cgc_mix back into the buffer
+        stream.cgc_setSample(i, sample); // put cgc_mix into audio stream
     }
 
     delete buffer;

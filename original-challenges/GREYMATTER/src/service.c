@@ -32,13 +32,13 @@ char buf_recv_tmp[SZ_BUF_RECV] = { STRING_TERMINATOR };
 ////
 
 // Populate a buf with len random lowercase alpha characters.
-void random_alpha_lower(char *buf, size_t len) {
+void cgc_random_alpha_lower(char *buf, cgc_size_t len) {
 
     int ret = SUCCESS;
-    size_t rnd_bytes = 0;
+    cgc_size_t rnd_bytes = 0;
     unsigned char rnd[len];
 
-    while ((0 != random(rnd, len, &rnd_bytes)) && (len != rnd_bytes)) {}
+    while ((0 != cgc_random(rnd, len, &rnd_bytes)) && (len != rnd_bytes)) {}
 
     for (int i = 0; i < len; i++) {
         buf[i] = (rnd[i] % NUM_CHARS_ALPHA) + 'a';
@@ -50,7 +50,7 @@ void random_alpha_lower(char *buf, size_t len) {
 // Vulnerability is in this function, emulates MS08-067 (Conficker).
 // Canonicalization process:
     // CANON_TOKEN -> empty string
-    //  for each CANON_TOKEN, advance beyond the token and strncat() until the 
+    //  for each CANON_TOKEN, advance beyond the token and cgc_strncat() until the 
     //  next CANON_TOKEN
 // Case A:
     // aaaaaaaaaaaaaaaa
@@ -62,16 +62,16 @@ void random_alpha_lower(char *buf, size_t len) {
     // Section 0 is bound by rp and the first token.
     // Section 1 is bound by the first token and the second token.
     // Section 2 is bound by the last token and the end of rp (rp + rp_len).
-int canonicalize_path(char * cp, char * rp, size_t rp_len) {
+int cgc_canonicalize_path(char * cp, char * rp, cgc_size_t rp_len) {
 
     int ret = SUCCESS;
     char * sec_start = NULL;
     char * sec_end = NULL;
-    size_t sz_copy = 0;
+    cgc_size_t sz_copy = 0;
     char *pos = rp; // A parsing index into the rp.
 
 #ifdef PATCHED
-    size_t sz_consumed = 0;
+    cgc_size_t sz_consumed = 0;
 #endif
 
     // The first section is a special case.
@@ -79,7 +79,7 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
     // sec_end will be either the location of the first token, or if not 
     // present, rp + rp_len.
     sec_start = rp;
-    if (NULL != (pos = strpos(rp, CANON_TOKEN))) {
+    if (NULL != (pos = cgc_strpos(rp, CANON_TOKEN))) {
         sec_end = pos;
     } else {
         sec_end = rp + rp_len;
@@ -101,10 +101,10 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
         goto _bail_canon;
     }
 
-    // If we pass the security check, we do the strncat.
-    strncat(cp, sec_start, sz_copy);
+    // If we pass the security check, we do the cgc_strncat.
+    cgc_strncat(cp, sec_start, sz_copy);
 
-    // If pos is NULL, meaning we just strncat()ed the entire rp into the cp, 
+    // If pos is NULL, meaning we just cgc_strncat()ed the entire rp into the cp, 
     // then there's no more to process.  We've handled Case A.
     if (NULL == pos) { goto _bail_canon; }
 
@@ -114,12 +114,12 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
     pos += (sizeof(CANON_TOKEN)-sizeof(STRING_TERMINATOR_STR));
     sec_start = pos;
 
-    while (NULL != (pos = strpos(pos, CANON_TOKEN))) {
+    while (NULL != (pos = cgc_strpos(pos, CANON_TOKEN))) {
 
         // We found a token.  This token signifies the end of a section.
         sec_end = pos;
 
-        // We do our security check and then strncat().
+        // We do our security check and then cgc_strncat().
         sz_copy = sec_end - sec_start;
 #ifdef PATCHED
         sz_consumed += sz_copy;
@@ -135,7 +135,7 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
             goto _bail_canon; 
         }
 
-        strncat(cp, sec_start, sz_copy);
+        cgc_strncat(cp, sec_start, sz_copy);
 
         // We advance pos beyond the token and update sec_start.
         pos += (sizeof(CANON_TOKEN)-sizeof(STRING_TERMINATOR_STR));
@@ -147,9 +147,9 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
     sec_end = rp + rp_len;
     if (sec_start < sec_end) {
         // If sec_start is before the end of the rp, then there's more we need 
-        // to strncat().
+        // to cgc_strncat().
 
-        // We do our (buggy) security check and then strncat().
+        // We do our (buggy) security check and then cgc_strncat().
         sz_copy = sec_end - sec_start;
 #ifdef PATCHED
         sz_consumed += sz_copy;
@@ -165,7 +165,7 @@ int canonicalize_path(char * cp, char * rp, size_t rp_len) {
             goto _bail_canon; 
         }
 
-        strncat(cp, sec_start, sz_copy);
+        cgc_strncat(cp, sec_start, sz_copy);
     }
 
 _bail_canon:
@@ -174,10 +174,10 @@ _bail_canon:
 
 
 // This is recursive, depth-first.
-int request_document(char * path, size_t recusion_depth) {
+int cgc_request_document(char * path, cgc_size_t recusion_depth) {
 
     int ret = SUCCESS;
-    size_t sz_recv = 0;
+    cgc_size_t sz_recv = 0;
 
     // Place some arbitrary upper limit on recursion so that SEGFAULTs cannot 
     // be caused via recursion.
@@ -193,7 +193,7 @@ int request_document(char * path, size_t recusion_depth) {
 #endif    
 
     // Send request to the CRS
-    if (SUCCESS != (ret = transmit_with_term(STDOUT, path, strlen(path), NULL))) { 
+    if (SUCCESS != (ret = cgc_transmit_with_term(STDOUT, path, cgc_strlen(path), NULL))) { 
 #ifdef DEBUG
         fprintf(stderr, "[E] during request for '%s'\n", path);
 #endif
@@ -205,7 +205,7 @@ int request_document(char * path, size_t recusion_depth) {
     // First, get the size of the document.
     // (Specified as an unsigned short, assumed to be first 2 bytes).
     unsigned short doc_len = 0;
-    if (SUCCESS != (ret = receive_all(STDIN, (void *)&doc_len, sizeof(doc_len), NULL))) {
+    if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&doc_len, sizeof(doc_len), NULL))) {
 #ifdef DEBUG
         fprintf(stderr, "[E] during doc_len receive ()\n");
 #endif
@@ -221,7 +221,7 @@ int request_document(char * path, size_t recusion_depth) {
     }
 
     // Next, get the name of the document.
-    if (0 > recv_until_delim(STDIN, buf_recv_tmp, SZ_BUF_RECV)) {
+    if (0 > cgc_recv_until_delim(STDIN, buf_recv_tmp, SZ_BUF_RECV)) {
 #ifdef DEBUG
         fprintf(stderr, "[E] during doc name receive ()\n");
 #endif
@@ -229,7 +229,7 @@ int request_document(char * path, size_t recusion_depth) {
     }
 
     // Check the name of the document against the expected name.
-    if (0 != strcmp(path, buf_recv_tmp)) {
+    if (0 != cgc_strcmp(path, buf_recv_tmp)) {
 #ifdef DEBUG
         fprintf(stderr, "[E] doc name mismatch: got: %s, expected: %s\n", buf_recv_tmp, path);
 #endif
@@ -253,7 +253,7 @@ int request_document(char * path, size_t recusion_depth) {
         fprintf(stderr, "[D] allocate()d buffer; doc_contents @ %p, doc_len+1 = %d\n", doc_contents, doc_len+1);
 #endif 
 
-    if (SUCCESS != (ret = receive_with_term(STDIN, doc_contents, doc_len, &sz_recv)) ||
+    if (SUCCESS != (ret = cgc_receive_with_term(STDIN, doc_contents, doc_len, &sz_recv)) ||
         sz_recv != doc_len) {
 
 #ifdef DEBUG
@@ -264,7 +264,7 @@ int request_document(char * path, size_t recusion_depth) {
 
 #ifdef DEBUG
         fprintf(stderr, "[D] receive ()d %d bytes into allocate()d buffer @ %p; contents:\n", sz_recv, doc_contents);
-        size_t i = 0;
+        cgc_size_t i = 0;
         for (i=0; i<sz_recv; i++) {
             fprintf(stderr, "%02x ", doc_contents[i]);
             if (!((i+1)% 32)) { fprintf(stderr, "\n"); }
@@ -280,32 +280,32 @@ int request_document(char * path, size_t recusion_depth) {
     char * open = doc_contents;
     char * clse = NULL;
 
-    while (NULL != (open = strpos(open, TAG_SRC_OPEN))) {
+    while (NULL != (open = cgc_strpos(open, TAG_SRC_OPEN))) {
 
         // Advance open beyond the tag.
-        open += strlen(TAG_SRC_OPEN);
+        open += cgc_strlen(TAG_SRC_OPEN);
 
         // We found the opening tag, now find the closing tag.
-        clse = strpos(open, TAG_SRC_CLSE);
+        clse = cgc_strpos(open, TAG_SRC_CLSE);
 
         if (NULL != clse) {
 
             // Now that we have a SRC open & close tag combination, we copy the 
             // rp between them into a temporary buffer and allocate our cp.
-            size_t rp_len = clse - open + 1;
+            cgc_size_t rp_len = clse - open + 1;
             char rp[rp_len];
-            strncpy(rp, open, rp_len-1);
+            cgc_strncpy(rp, open, rp_len-1);
             rp[rp_len-1] = STRING_TERMINATOR;
 
             char cp[SZ_MAX_FILEPATH] = { STRING_TERMINATOR };
 
             // We canonicalize from rp to cp.
-            if (SUCCESS != (ret = canonicalize_path(cp, rp, rp_len))) {
+            if (SUCCESS != (ret = cgc_canonicalize_path(cp, rp, rp_len))) {
                 goto _bail_request;
             }
 
             // Finally, we have a canonicalized path.  Request it and recurse.
-            if (SUCCESS != (ret = request_document(cp, ++recusion_depth))) {
+            if (SUCCESS != (ret = cgc_request_document(cp, ++recusion_depth))) {
                 goto _bail_request;
             }      
         }
@@ -322,14 +322,14 @@ int main(void) {
 
     // Request the "index" document from the CRS.
     char index_path[SZ_INDEX_PATH];
-    random_alpha_lower(index_path, SZ_INDEX_PATH);
+    cgc_random_alpha_lower(index_path, SZ_INDEX_PATH);
     index_path[SZ_INDEX_PATH-1] = STRING_TERMINATOR;
 
 #ifdef DEBUG
     fprintf(stderr, "\n\n\n\n[D] index_path: %s\n", index_path);
 #endif
 
-    return request_document(index_path, 0);
+    return cgc_request_document(index_path, 0);
 }  
 
 

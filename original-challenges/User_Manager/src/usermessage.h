@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,25 +26,25 @@ THE SOFTWARE.
 #ifndef __USER_MESSAGE_H__
 #define __USER_MESSAGE_H__
 
-class CUserMessage : public CDoubleItemLink
+class cgc_CUserMessage : public cgc_CDoubleItemLink
 {
 public:
-    CUserMessage( const String &sFrom, const String &sMessage );
-    ~CUserMessage();
+    cgc_CUserMessage( const cgc_String &sFrom, const cgc_String &sMessage );
+    ~cgc_CUserMessage();
 
-    const String &GetFrom( void ) const
+    const cgc_String &cgc_GetFrom( void ) const
     {
         return m_sFrom;
     }
 
-    const String &GetMessage( void ) const
+    const cgc_String &cgc_GetMessage( void ) const
     {
         return m_sMessage;
     }
 
 private:
-    String m_sFrom;
-    String m_sMessage;
+    cgc_String m_sFrom;
+    cgc_String m_sMessage;
 };
 
 #endif // __USER_MESSAGE_H__

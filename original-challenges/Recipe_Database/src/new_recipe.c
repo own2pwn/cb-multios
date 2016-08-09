@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,23 +30,23 @@ THE SOFTWARE.
 
 #define BUFF_SIZE 200
 
-int new_recipe(Recipe_Type **book) {
+int cgc_new_recipe(cgc_Recipe_Type **book) {
 
-Recipe_Type *recipe;
-Recipe_Type *previous;
+cgc_Recipe_Type *recipe;
+cgc_Recipe_Type *previous;
 
 char buffer[BUFF_SIZE];
-size_t size;
+cgc_size_t size;
 
 	previous = 0;
 
 	if (*book == 0) {
 
-		*book = malloc(sizeof(Recipe_Type));
+		*book = cgc_malloc(sizeof(cgc_Recipe_Type));
 
 		if (*book==0) {
 
-			printf("Failed to allocate memory\n");
+			cgc_printf("Failed to allocate memory\n");
 			_terminate(-1);
 
 		}
@@ -60,11 +60,11 @@ size_t size;
 		while(recipe->next != 0) 
 			recipe = recipe->next;
 
-		recipe->next = malloc(sizeof(Recipe_Type));
+		recipe->next = cgc_malloc(sizeof(cgc_Recipe_Type));
 
 		if (recipe->next == 0) {
 
-			printf("Failed to allocate memory\n");
+			cgc_printf("Failed to allocate memory\n");
 			_terminate(-1);
 
 		}
@@ -76,9 +76,9 @@ size_t size;
 	recipe->Tagged = 0;
 	recipe->next = 0;
 
-	printf("Enter Title: ");
+	cgc_printf("Enter Title: ");
 
-	size=getline(buffer, sizeof(buffer));
+	size=cgc_getline(buffer, sizeof(buffer));
 
 	if (size <=1) {
 
@@ -87,7 +87,7 @@ size_t size;
 			*book = 0;
 		}
 
-		free(recipe);
+		cgc_free(recipe);
 
 		if (previous)
 			previous->next = 0;
@@ -96,18 +96,18 @@ size_t size;
 	}
 	else {
 
-		strncpy(recipe->Title, buffer, BUFF_SIZE);
+		cgc_strncpy(recipe->Title, buffer, BUFF_SIZE);
 
 	}
 
-	if (get_ingredients(recipe) == 0) {
+	if (cgc_get_ingredients(recipe) == 0) {
 
 		if (*book == recipe) {
 
 			*book = 0;
 		}
 
-		free(recipe);
+		cgc_free(recipe);
 
 		if (previous) 
 			previous->next = 0;
@@ -117,7 +117,7 @@ size_t size;
 	}
 
 	// instructions can be left blank as some recipes are just ingredients
-	get_instructions(recipe);
+	cgc_get_instructions(recipe);
 
 
 	return(0);

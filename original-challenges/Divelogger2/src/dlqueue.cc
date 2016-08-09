@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,18 +26,18 @@ THE SOFTWARE.
 
 #include "common.h"
 
-DLQueue::DLQueue( )
+cgc_DLQueue::cgc_DLQueue( )
     : m_pFirst( NULL ), m_pLast( NULL ), m_count( 0 )
 {
 
 }
 
-DLQueue::~DLQueue( )
+cgc_DLQueue::~cgc_DLQueue( )
 {
-    DeleteAll();
+    cgc_DeleteAll();
 }
 
-void DLQueue::AddFirst( DLItem *pItem )
+void cgc_DLQueue::cgc_AddFirst( cgc_DLItem *pItem )
 {
     if ( pItem == NULL )
         return;
@@ -64,7 +64,7 @@ void DLQueue::AddFirst( DLItem *pItem )
     m_count++;
 }
 
-void DLQueue::AddLast( DLItem *pItem )
+void cgc_DLQueue::cgc_AddLast( cgc_DLItem *pItem )
 {
     if ( pItem == NULL )
         return;
@@ -91,7 +91,7 @@ void DLQueue::AddLast( DLItem *pItem )
     m_count++;
 }
 
-void DLQueue::AddAfter( DLItem *pPrev, DLItem *pItem )
+void cgc_DLQueue::cgc_AddAfter( cgc_DLItem *pPrev, cgc_DLItem *pItem )
 {
     if ( pPrev == NULL || pItem == NULL )
         return;
@@ -111,7 +111,7 @@ void DLQueue::AddAfter( DLItem *pPrev, DLItem *pItem )
     m_count++;
 }
 
-void DLQueue::Unlink( DLItem *pItem )
+void cgc_DLQueue::cgc_Unlink( cgc_DLItem *pItem )
 {
     if ( pItem->m_pNext )
         pItem->m_pNext->m_pPrev = pItem->m_pPrev;
@@ -128,39 +128,39 @@ void DLQueue::Unlink( DLItem *pItem )
     m_count--;
 }
 
-void DLQueue::DeleteItem( DLItem *pItem )
+void cgc_DLQueue::cgc_DeleteItem( cgc_DLItem *pItem )
 {
-    Unlink( pItem );
+    cgc_Unlink( pItem );
 
     delete pItem;
 }
 
-void DLQueue::RemoveItem( DLItem *pItem )
+void cgc_DLQueue::cgc_RemoveItem( cgc_DLItem *pItem )
 {
-    Unlink( pItem );
+    cgc_Unlink( pItem );
 }
 
-DLItem *DLQueue::RemoveFirst( void )
+cgc_DLItem *cgc_DLQueue::cgc_RemoveFirst( void )
 {
-    DLItem *pItem = m_pFirst;
-    Unlink( pItem );
+    cgc_DLItem *pItem = m_pFirst;
+    cgc_Unlink( pItem );
 
     return (pItem);
 }
 
-DLItem *DLQueue::RemoveLast( void )
+cgc_DLItem *cgc_DLQueue::cgc_RemoveLast( void )
 {
-    DLItem *pItem = m_pLast;
-    Unlink( pItem );
+    cgc_DLItem *pItem = m_pLast;
+    cgc_Unlink( pItem );
 
     return (pItem);
 }
 
-void DLQueue::DeleteAll( void )
+void cgc_DLQueue::cgc_DeleteAll( void )
 {
     // Fast delete all items
-    DLItem *pCur = m_pFirst;
-    DLItem *pNext = NULL;
+    cgc_DLItem *pCur = m_pFirst;
+    cgc_DLItem *pNext = NULL;
 
     for ( ; pCur; pCur = pNext )
     {

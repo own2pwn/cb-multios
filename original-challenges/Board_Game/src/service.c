@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014-2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,30 +36,30 @@ int main(void) {
 	// board
 	char board[X_MAX][Y_MAX];
 
-	InitBoard(board);
-	strcpy(CURR_PLAYER, "WHITE");
-	PrintBoard(board);
+	cgc_InitBoard(board);
+	cgc_strcpy(CURR_PLAYER, "WHITE");
+	cgc_PrintBoard(board);
 
 	while (1) {
-		if (!AcceptMove(board, &srcx, &srcy, &dstx, &dsty)) {
-			puts("good game");
+		if (!cgc_AcceptMove(board, &srcx, &srcy, &dstx, &dsty)) {
+			cgc_puts("good game");
 			return(0);
 		}	
 
-		if (!IsValidMove(board, srcx, srcy, dstx, dsty)) {
-			puts("NO");
+		if (!cgc_IsValidMove(board, srcx, srcy, dstx, dsty)) {
+			cgc_puts("NO");
 			continue;
 		}
 
-		MakeMove(board, srcx, srcy, dstx, dsty);
+		cgc_MakeMove(board, srcx, srcy, dstx, dsty);
 
-		if (!strcmp(CURR_PLAYER, "WHITE")) {
-			strcpy(CURR_PLAYER, "BLACK");
+		if (!cgc_strcmp(CURR_PLAYER, "WHITE")) {
+			cgc_strcpy(CURR_PLAYER, "BLACK");
 		} else {
-			strcpy(CURR_PLAYER, "WHITE");
+			cgc_strcpy(CURR_PLAYER, "WHITE");
 		}
 
-		puts("OK");
+		cgc_puts("OK");
 	}
 
 	return(0);

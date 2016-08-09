@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 #include <cstring.h>
 
 #pragma pack(push, 1)
-struct mgc_tag
+struct cgc_mgc_tag
 {
     char header[3];
     char title[30];
@@ -41,7 +41,7 @@ struct mgc_tag
     char unused;
 
     unsigned int id;
-    unsigned int header_size();
+    unsigned int cgc_header_size();
 };
 #pragma pack(pop)
 

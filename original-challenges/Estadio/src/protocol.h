@@ -29,18 +29,18 @@ THE SOFTWARE.
 #include "isopropyl.h"
 
 typedef struct {
-  uint32 type;
-  uint32 length;
+  cgc_uint32 type;
+  cgc_uint32 length;
   void* value;
-} protocol_frame;
+} cgc_protocol_frame;
 
-protocol_frame* allocate_frame(protocol_frame template);
+cgc_protocol_frame* cgc_allocate_frame(cgc_protocol_frame template);
 
-protocol_frame* expect_frame(uint32 type);
-protocol_frame* receive_frame();
+cgc_protocol_frame* cgc_expect_frame(cgc_uint32 type);
+cgc_protocol_frame* cgc_receive_frame();
 
-void send_frame(protocol_frame* payload);
-void send_empty_frame(uint32 type);
-void expect_empty_frame(uint32 type);
+void cgc_send_frame(cgc_protocol_frame* payload);
+void cgc_send_empty_frame(cgc_uint32 type);
+void cgc_expect_empty_frame(cgc_uint32 type);
 
-void free_frame(protocol_frame* fr);
+void cgc_free_frame(cgc_protocol_frame* fr);

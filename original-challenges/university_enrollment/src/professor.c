@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,93 +25,93 @@
 
 #include <string.h>
 
-ptrlist_t *g_all_profs = NULL;
+cgc_ptrlist_t *g_all_profs = NULL;
 
-void add_professor(professor_t *prof)
+void cgc_add_professor(cgc_professor_t *prof)
 {
     if (!prof)
         return;
 
     if (!g_all_profs)
-        g_all_profs = create_ptrlist();
+        g_all_profs = cgc_create_ptrlist();
 
-    add_item(g_all_profs, prof);
+    cgc_add_item(g_all_profs, prof);
 }
 
-professor_t *create_professor(char *name)
+cgc_professor_t *cgc_create_professor(char *name)
 {
     if (!name)
         return NULL;
 
-    professor_t *prof = malloc(sizeof(professor_t));
+    cgc_professor_t *prof = cgc_malloc(sizeof(cgc_professor_t));
     if (!prof)
         return NULL;
 
-    prof->name = strdup(name);
-    prof->courses_taught = create_ptrlist();
-    add_professor(prof);
+    prof->name = cgc_strdup(name);
+    prof->courses_taught = cgc_create_ptrlist();
+    cgc_add_professor(prof);
 
     return prof;
 }
 
-void add_course_to_professor(professor_t *prof, course_t *course)
+void cgc_add_course_to_professor(cgc_professor_t *prof, cgc_course_t *course)
 {
     if (!prof || !course)
         return;
 
-    add_item(prof->courses_taught, course);
+    cgc_add_item(prof->courses_taught, course);
 }
 
-professor_t *get_professor(char *name)
+cgc_professor_t *cgc_get_professor(char *name)
 {
     if (!name || !g_all_profs)
         return NULL;
 
     int i = 0;
-    professor_t *iter;
+    cgc_professor_t *iter;
     for (i = 0; i < g_all_profs->length; i++) {
-        iter = get_item(professor_t, g_all_profs, i);
-        if (strcasecmp(iter->name, name) == 0)
+        iter = get_item(cgc_professor_t, g_all_profs, i);
+        if (cgc_strcasecmp(iter->name, name) == 0)
             return iter;
     }
 
     return NULL;
 }
 
-course_t *get_professor_class(professor_t *prof, size_t idx)
+cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, cgc_size_t idx)
 {
     if (!prof)
         return NULL;
 
-    return get_item(course_t, prof->courses_taught, idx);
+    return get_item(cgc_course_t, prof->courses_taught, idx);
 }
 
-void list_professors()
+void cgc_list_professors()
 {
     if (!g_all_profs)
         return;
 
     int i = 0;
-    professor_t *iter;
+    cgc_professor_t *iter;
     printf("--All Professors--\n");
     for (i = 0; i < g_all_profs->length; i++) {
-        iter = get_item(professor_t, g_all_profs, i);
+        iter = get_item(cgc_professor_t, g_all_profs, i);
         printf("%s\n", iter->name);
     }
 }
 
-void list_classes_taught(professor_t *prof)
+void cgc_list_classes_taught(cgc_professor_t *prof)
 {
     if (!prof)
         return;
 
     int i = 0;
-    course_t *iter;
+    cgc_course_t *iter;
     printf("--%s's Classes--\n", prof->name);
-    print_course_banner();
+    cgc_print_course_banner();
     for (i = 0; i < prof->courses_taught->length; i++) {
         printf("#%d|", i+1);
-        iter = get_item(course_t, prof->courses_taught, i);
+        iter = get_item(cgc_course_t, prof->courses_taught, i);
         iter->print_course(iter); //brief?
     }
 }

@@ -31,16 +31,16 @@ THE SOFTWARE.
 
 typedef struct _DATE_TIME_STRUCT
 {
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
+    cgc_uint8_t hour;
+    cgc_uint8_t minute;
+    cgc_uint8_t second;
 
-    uint8_t month;
-    uint8_t day;
-    uint8_t year;
-} tDateTime;
+    cgc_uint8_t month;
+    cgc_uint8_t day;
+    cgc_uint8_t year;
+} cgc_tDateTime;
 
-int32_t date_compare( tDateTime date1, tDateTime date2 );
-int32_t parse_date( const char *str, tDateTime *pDate );
+cgc_int32_t cgc_date_compare( cgc_tDateTime date1, cgc_tDateTime date2 );
+cgc_int32_t cgc_parse_date( const char *str, cgc_tDateTime *pDate );
 
 #endif // __DATE_H__

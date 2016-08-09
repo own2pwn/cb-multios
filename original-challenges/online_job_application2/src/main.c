@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,7 +30,7 @@
 #include "form.h"
 #include "input.h"
 
-extern form_t af86;
+extern cgc_form_t af86;
 
 int main(void)
 {
@@ -40,15 +40,15 @@ int main(void)
   int done = 0;
 
   af86.init();
-  print_greeting(&af86);
+  cgc_print_greeting(&af86);
   while (1) {
-    print_prompt(&af86, with_title, done);
+    cgc_print_prompt(&af86, with_title, done);
     with_title = 0;
-    memset(line_buf, 0, LINE_SIZE);
-    if (read_line(line_buf) < 0)
+    cgc_memset(line_buf, 0, LINE_SIZE);
+    if (cgc_read_line(line_buf) < 0)
       break;
 
-    ret = handle_line(&af86, line_buf);
+    ret = cgc_handle_line(&af86, line_buf);
     if (ret < 0)
       break;
     else if (ret == 1)

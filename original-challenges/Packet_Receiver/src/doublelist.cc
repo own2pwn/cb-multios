@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,25 +26,25 @@ THE SOFTWARE.
 
 #include "common.h"
 
-CDoubleList::CDoubleList( ) :
+cgc_CDoubleList::cgc_CDoubleList( ) :
     m_pFirst( NULL ), m_pLast( NULL )
 {
 
 }
 
-CDoubleList::~CDoubleList( )
+cgc_CDoubleList::~cgc_CDoubleList( )
 {
-    DeleteAll();
+    cgc_DeleteAll();
 }
 
-void CDoubleList::DeleteAll( void )
+void cgc_CDoubleList::cgc_DeleteAll( void )
 {
-    CDoubleListElement *pNext;
-    CDoubleListElement *pCur;
+    cgc_CDoubleListElement *pNext;
+    cgc_CDoubleListElement *pCur;
 
     for ( pCur = m_pFirst; pCur; pCur = pNext )
     {
-        pNext = pCur->GetNext();
+        pNext = pCur->cgc_GetNext();
 
         delete pCur;
     }
@@ -53,7 +53,7 @@ void CDoubleList::DeleteAll( void )
     m_pLast = NULL;
 }
 
-void CDoubleList::InsertHead( CDoubleListElement *pItem )
+void cgc_CDoubleList::cgc_InsertHead( cgc_CDoubleListElement *pItem )
 {
     if ( pItem == NULL )
         return;
@@ -76,7 +76,7 @@ void CDoubleList::InsertHead( CDoubleListElement *pItem )
     }
 }
 
-void CDoubleList::InsertTail( CDoubleListElement *pItem )
+void cgc_CDoubleList::cgc_InsertTail( cgc_CDoubleListElement *pItem )
 {
     if ( pItem == NULL )
         return;
@@ -99,20 +99,20 @@ void CDoubleList::InsertTail( CDoubleListElement *pItem )
     }
 }
 
-void CDoubleList::InsertAfter( CDoubleListElement *pBefore, CDoubleListElement *pItem )
+void cgc_CDoubleList::cgc_InsertAfter( cgc_CDoubleListElement *pBefore, cgc_CDoubleListElement *pItem )
 {
     if ( pItem == NULL )
         return;
 
     if ( pBefore == NULL )
     {
-        InsertHead( pItem );
+        cgc_InsertHead( pItem );
         return;
     }
 
     if ( pBefore == m_pLast )
     {
-        InsertTail( pItem );
+        cgc_InsertTail( pItem );
     }
     else
     {
@@ -126,7 +126,7 @@ void CDoubleList::InsertAfter( CDoubleListElement *pBefore, CDoubleListElement *
     }
 }
 
-void CDoubleList::Unlink( CDoubleListElement *pItem )
+void cgc_CDoubleList::cgc_Unlink( cgc_CDoubleListElement *pItem )
 {
     if ( pItem == m_pFirst )
     {

@@ -25,14 +25,14 @@ THE SOFTWARE.
 */
 #include "user.h"
 
-user allUsers[MAX_USERS];
+cgc_user allUsers[MAX_USERS];
 
-void GenerateUsers()
+void cgc_GenerateUsers()
 {
-  // Populate the user table with information
+  // Populate the cgc_user table with information
 }
 
-uint32_t LookupUser(uint8_t *username, uint8_t *password)
+cgc_uint32_t cgc_LookupUser(cgc_uint8_t *username, cgc_uint8_t *password)
 {
   // Check if username is valid
   return USER_GUEST;

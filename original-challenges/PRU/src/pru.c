@@ -35,109 +35,109 @@ THE SOFTWARE.
 
 #define MAX_INSNS 2000
 
-void dprintf(char *str) {
-//	puts(str);
+void cgc_dprintf(char *str) {
+//	cgc_puts(str);
 }
 
-void dumpState(pruCPU *cpu) {
+void cgc_dumpState(cgc_pruCPU *cpu) {
 	int regNum;
-	printf("============================================\n");
+	cgc_printf("============================================\n");
 	for(regNum=0;regNum<=31;regNum+=2) {
-		printf("R$d:\t0x$0.8x\tR$d:\t0x$0.8x\n", regNum, cpu->r[regNum], regNum+1, cpu->r[regNum+1]);
+		cgc_printf("R$d:\t0x$0.8x\tR$d:\t0x$0.8x\n", regNum, cpu->r[regNum], regNum+1, cpu->r[regNum+1]);
 	}
-	printf("PC:\t0x$0.8x\n============================================\n", cpu->pc * 4);
+	cgc_printf("PC:\t0x$0.8x\n============================================\n", cpu->pc * 4);
 }
 
-void execute(pruCPU *cpu) {
-	aluInstruction inst;
-	fmt2InstructionHeader fmt2Hdr;
+void cgc_execute(cgc_pruCPU *cpu) {
+	cgc_aluInstruction inst;
+	cgc_fmt2InstructionHeader fmt2Hdr;
 	while(1) {
 		int didBranch = 0;
-		memcpy(&inst, (aluInstruction *)&cpu->code[cpu->pc], 4);
+		cgc_memcpy(&inst, (cgc_aluInstruction *)&cpu->code[cpu->pc], 4);
 		switch(inst.opFmt) {
 			case 0b000:
 				switch(inst.aluOp) {
 					case ADD:
-						doAdd(cpu, inst);
+						cgc_doAdd(cpu, inst);
 						break;
 					case ADC:
-						doAdc(cpu, inst);
+						cgc_doAdc(cpu, inst);
 						break;
 					case SUB:
-						doSub(cpu, inst);
+						cgc_doSub(cpu, inst);
 						break;
 					case SUC:
-						doSuc(cpu, inst);
+						cgc_doSuc(cpu, inst);
 						break;
 					case LSL:
-						doLsl(cpu, inst);
+						cgc_doLsl(cpu, inst);
 						break;
 					case LSR:
-						doLsr(cpu, inst);
+						cgc_doLsr(cpu, inst);
 						break;
 					case RSB:
-						doRsb(cpu, inst);
+						cgc_doRsb(cpu, inst);
 						break;
 					case RSC:
-						doRsc(cpu, inst);
+						cgc_doRsc(cpu, inst);
 						break;
 					case AND:
-						doAnd(cpu, inst);
+						cgc_doAnd(cpu, inst);
 						break;
 					case OR:
-						doOr(cpu, inst);
+						cgc_doOr(cpu, inst);
 						break;
 					case XOR:
-						doXor(cpu, inst);
+						cgc_doXor(cpu, inst);
 						break;
 					case NOT:
-						doNot(cpu, inst);
+						cgc_doNot(cpu, inst);
 						break;
 					case MIN:
-						doMin(cpu, inst);
+						cgc_doMin(cpu, inst);
 						break;
 					case MAX:
-						doMax(cpu, inst);
+						cgc_doMax(cpu, inst);
 						break;
 					case CLR:
-						doClr(cpu, inst);
+						cgc_doClr(cpu, inst);
 						break;
 					case SET:
-						doSet(cpu, inst);
+						cgc_doSet(cpu, inst);
 						break;
 				}
 				break;
 			case 0b001:
-				memcpy(&fmt2Hdr, &inst, sizeof(fmt2Hdr));
+				cgc_memcpy(&fmt2Hdr, &inst, sizeof(fmt2Hdr));
 				switch(fmt2Hdr.subOp)
 				{
 					case JMP:
 					case JAL:
 						;
-						fmt2BranchInstruction fmt2Branch;
-						memcpy(&fmt2Branch, &inst, 4);
-						doBranch(cpu, fmt2Branch);
+						cgc_fmt2BranchInstruction fmt2Branch;
+						cgc_memcpy(&fmt2Branch, &inst, 4);
+						cgc_doBranch(cpu, fmt2Branch);
 						didBranch = 1;
 						break;
 					case LDI:
 						;
-						fmt2LdiInstruction fmt2Ldi;
-						memcpy(&fmt2Ldi, &inst, 4);
-						doLdi(cpu, fmt2Ldi);
+						cgc_fmt2LdiInstruction fmt2Ldi;
+						cgc_memcpy(&fmt2Ldi, &inst, 4);
+						cgc_doLdi(cpu, fmt2Ldi);
 						break;
 					case LMBD:
 						;
-						fmt2LmbdInstruction fmt2Lmbd;
-						memcpy(&fmt2Lmbd, &inst, 4);
-						doLmbd(cpu, fmt2Lmbd);
+						cgc_fmt2LmbdInstruction fmt2Lmbd;
+						cgc_memcpy(&fmt2Lmbd, &inst, 4);
+						cgc_doLmbd(cpu, fmt2Lmbd);
 						break;
 					case HALT:
 						return;
 					case SCAN:
 						;
-						fmt2ScanInstruction fmt2Scan;
-						memcpy(&fmt2Scan, &inst, 4);
-						doScan(cpu, fmt2Scan);
+						cgc_fmt2ScanInstruction fmt2Scan;
+						cgc_memcpy(&fmt2Scan, &inst, 4);
+						cgc_doScan(cpu, fmt2Scan);
 						break;
 					case SLP:
 					case RESERVED_1:
@@ -154,9 +154,9 @@ void execute(pruCPU *cpu) {
 				break;
 			case 0b11:
 				;
-				fmtQatbInstruction qatbInstruction;
-				memcpy(&qatbInstruction, &inst, 4);
-				doQATB(cpu, qatbInstruction);			
+				cgc_fmtQatbInstruction qatbInstruction;
+				cgc_memcpy(&qatbInstruction, &inst, 4);
+				cgc_doQATB(cpu, qatbInstruction);			
 			default:
 				return;
 		}
@@ -169,10 +169,10 @@ void execute(pruCPU *cpu) {
 	}
 }
 
-int recvInt() {
+int cgc_recvInt() {
 	char tmp[4];
-	size_t recvd = 0;
-	size_t totRecvd = 0;
+	cgc_size_t recvd = 0;
+	cgc_size_t totRecvd = 0;
 	int ret;
 	while(totRecvd<=3) {
 		receive(0, tmp+totRecvd, 4-totRecvd, &recvd);
@@ -180,22 +180,22 @@ int recvInt() {
 			_terminate(0);
 		totRecvd+=recvd;
 	}
-	memcpy(&ret, tmp, 4);
+	cgc_memcpy(&ret, tmp, 4);
 	return ret;
 }
 int main() {
 	int numInstructions;
 	int recvd;
 	int i;
-	pruCPU cpu;
+	cgc_pruCPU cpu;
 	cpu.numExecuted = 0;
-	memset(cpu.code, 0xff, 0x4000);
-	numInstructions = recvInt();
+	cgc_memset(cpu.code, 0xff, 0x4000);
+	numInstructions = cgc_recvInt();
 	for(i=0;i<numInstructions;i++) {
-		cpu.code[i] = recvInt();
+		cpu.code[i] = cgc_recvInt();
 	}
-	execute(&cpu);
-	dumpState(&cpu);
+	cgc_execute(&cpu);
+	cgc_dumpState(&cpu);
 	_terminate(0);
 
 }

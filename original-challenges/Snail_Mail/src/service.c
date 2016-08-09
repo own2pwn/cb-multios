@@ -33,17 +33,17 @@ int main(void) {
 
     short ret = 0;
 
-    setup();
+    cgc_setup();
 
     while (TRUE) {
-        ret = process_cmd();
+        ret = cgc_process_cmd();
 
         if (0 == ret) {
-        	send_status((char *)STATUS_OK);
+        	cgc_send_status((char *)STATUS_OK);
         } else if (-1 == ret) {
-        	send_status((char *)STATUS_ERR);
+        	cgc_send_status((char *)STATUS_ERR);
         } else {
-	        send_status((char *)STATUS_QUIT);
+	        cgc_send_status((char *)STATUS_QUIT);
 	        break;
         }
     }

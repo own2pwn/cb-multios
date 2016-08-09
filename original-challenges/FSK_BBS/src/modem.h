@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,10 +26,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef void (*modem_rx_cb_t) (const uint8_t *data, size_t count);
+typedef void (*cgc_modem_rx_cb_t) (const cgc_uint8_t *data, cgc_size_t count);
 
-void modem_init();
-void modem_output(uint8_t *data, size_t count);
-void modem_loop(modem_rx_cb_t cb);
+void cgc_modem_init();
+void cgc_modem_output(cgc_uint8_t *data, cgc_size_t count);
+void cgc_modem_loop(cgc_modem_rx_cb_t cb);
 
 #endif /* !MODEM_H_ */

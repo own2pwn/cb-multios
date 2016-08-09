@@ -39,8 +39,8 @@ enum order_type {
     SELL
 };
 
-typedef LIST_OF(struct order) order_list_t;
-typedef LIST_OF(struct stock) stock_list_t;
+typedef LIST_OF(struct order) cgc_order_list_t;
+typedef LIST_OF(struct stock) cgc_stock_list_t;
 
 struct stock;
 
@@ -59,7 +59,7 @@ struct order {
 #else
     int dummy;
 #endif
-    void (*on_complete)(struct order *order);
+    void (*cgc_on_complete)(struct order *order);
     unsigned int id, price, quantity;
     LIST_ELEMS(struct order) global_list, stock_list;
     enum order_type type;
@@ -76,7 +76,7 @@ struct stock {
     char name[STOCK_NAME_MAX_LEN];
     unsigned int num_orders;
     LIST_ELEMS(struct stock) bucket_list, global_list;
-    order_list_t buy_orders, sell_orders;
+    cgc_order_list_t buy_orders, sell_orders;
 };
 
 struct stock_state {
@@ -85,9 +85,9 @@ struct stock_state {
     int stock_freed;
 #endif
     struct pool stock_pool;
-    stock_list_t stocks_list;
-    order_list_t orders_list;
-    stock_list_t stock_hash_table[HASH_TABLE_NUM_BUCKETS];
+    cgc_stock_list_t stocks_list;
+    cgc_order_list_t orders_list;
+    cgc_stock_list_t stock_hash_table[HASH_TABLE_NUM_BUCKETS];
 };
 
 /**
@@ -95,14 +95,14 @@ struct stock_state {
  *
  * @param state The stock state struct
  */
-void stock_init(struct stock_state *state);
+void cgc_stock_init(struct stock_state *state);
 
 /**
  * Destroy a stock state struct.
  *
  * @param state The stock state struct
  */
-void stock_destroy(struct stock_state *state);
+void cgc_stock_destroy(struct stock_state *state);
 
 /**
  * Process a command to list all stocks, printing to stdout.
@@ -110,7 +110,7 @@ void stock_destroy(struct stock_state *state);
  * @param state The stock state struct
  * @return 0 on success, -1 on failure
  */
-int cmd_list_stocks(struct stock_state *state);
+int cgc_cmd_list_stocks(struct stock_state *state);
 
 /**
  * Process a command to list all orders for a stock, printing to stdout.
@@ -119,7 +119,7 @@ int cmd_list_stocks(struct stock_state *state);
  * @param name The name of the stock to examine
  * @return 0 on success, -1 on failure
  */
-int cmd_list_orders(const struct stock_state *state, const char *name);
+int cgc_cmd_list_orders(const struct stock_state *state, const char *name);
 
 /**
  * Process a command to place an order
@@ -131,7 +131,7 @@ int cmd_list_orders(const struct stock_state *state, const char *name);
  * @param price The price for each unit of the order
  * @return id of new order on success, -1 on failure
  */
-int cmd_place_order(struct stock_state *state, const char *name, int type,
+int cgc_cmd_place_order(struct stock_state *state, const char *name, int type,
         unsigned int quantity, unsigned int price);
 
 /**
@@ -141,7 +141,7 @@ int cmd_place_order(struct stock_state *state, const char *name, int type,
  * @param id The id of the order
  * @return 0 on success, -1 on failure
  */
-int cmd_check_order(const struct stock_state *state, unsigned int id);
+int cgc_cmd_check_order(const struct stock_state *state, unsigned int id);
 
 /**
  * Process a command to cancel an order.
@@ -150,6 +150,6 @@ int cmd_check_order(const struct stock_state *state, unsigned int id);
  * @param id The id of the order
  * @return 0 on success, -1 on failure
  */
-int cmd_cancel_order(struct stock_state *state, unsigned int id);
+int cgc_cmd_cancel_order(struct stock_state *state, unsigned int id);
 
 #endif /* STOCK_H_ */

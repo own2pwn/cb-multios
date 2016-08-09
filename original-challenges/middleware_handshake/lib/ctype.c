@@ -56,87 +56,87 @@ static const unsigned char _xdigit[NUM_ASCII_CHAR] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int isalnum(int c)
+int cgc_isalnum(int c)
 {
-  return isalpha(c) || isdigit(c);
+  return cgc_isalpha(c) || cgc_isdigit(c);
 }
 
-int isalpha(int c)
+int cgc_isalpha(int c)
 {
-  return islower(c) || isupper(c);
+  return cgc_islower(c) || cgc_isupper(c);
 }
 
-int isascii(int c)
+int cgc_isascii(int c)
 {
   return !(c & ~ASCII_MASK);
 }
 
-int isblank(int c)
+int cgc_isblank(int c)
 {
   return (c == ' ' || c == '\t');
 }
 
-int iscntrl(int c)
+int cgc_iscntrl(int c)
 {
   return c == DEL || c < SPACE;
 }
 
-int isdigit(int c)
+int cgc_isdigit(int c)
 {
   return (unsigned int ) c - '0' < 10;
 }
 
-int isgraph(int c)
+int cgc_isgraph(int c)
 {
-  return c != ' ' && isprint(c);
+  return c != ' ' && cgc_isprint(c);
 }
 
-int islower(int c)
+int cgc_islower(int c)
 {
   return (unsigned int) c - 'a' < 26;
 }
 
-int isprint(int c)
+int cgc_isprint(int c)
 {
   return c >= SPACE && c != DEL;
 }
 
-int ispunct(int c)
+int cgc_ispunct(int c)
 {
   return _punct[c];
 }
 
-int isspace(int c)
+int cgc_isspace(int c)
 {
   return (c > 8 && c < 14) || c == ' ';
 }
 
-int isupper(int c)
+int cgc_isupper(int c)
 {
   return (unsigned int) (c - 'A') < 26;
 }
 
-int isxdigit(int c)
+int cgc_isxdigit(int c)
 {
   return _xdigit[c];
 }
 
-int toascii(int c)
+int cgc_toascii(int c)
 {
   return c & ASCII_MASK;
 }
 
-int tolower(int c)
+int cgc_tolower(int c)
 {
-  if (isupper(c))
+  if (cgc_isupper(c))
     return c | SPACE;
 
   return c;
 }
 
-int toupper(int c)
+int cgc_toupper(int c)
 {
-  if (islower(c))
+  if (cgc_islower(c))
     return c & (~SPACE & ASCII_MASK);
 
   return c;

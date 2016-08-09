@@ -23,4 +23,4 @@
  * 
  */
 #include "malloc_internal.h"
-malloc_t g_malloc = {0};
+cgc_malloc_t g_malloc = {0};

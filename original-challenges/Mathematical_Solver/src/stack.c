@@ -30,13 +30,13 @@ THE SOFTWARE.
 #include "prng.h"
 
 // Globals
-Stack_i num_stack;
+cgc_Stack_i num_stack;
 int curr_num_stack;
-Stack_c op_stack;
+cgc_Stack_c op_stack;
 int curr_op_stack;
 
 
-int push_num(int num)
+int cgc_push_num(int num)
 {
 	debug_print("PUSH_NUM: @d\n", num);
 	if (curr_num_stack >= MAX_NUM_COUNT)
@@ -48,7 +48,7 @@ int push_num(int num)
 // returns SUCCESS or FAIL
 // pass in number which will contain the requested number
 // removes number from num_stack
-int pop_num(int *num)
+int cgc_pop_num(int *num)
 {
 	debug_print("POP_NUM: @d\n", num_stack.stak[curr_num_stack]);
 	if (curr_num_stack <= -1)
@@ -66,7 +66,7 @@ int pop_num(int *num)
 // returns SUCCESS or FAIL
 // pass in char pointer which will contain the requested operator
 // does NOT remove operator from op_stack
-int peek_op(char *op)
+int cgc_peek_op(char *op)
 {
 	if (curr_op_stack <= -1)
 	{
@@ -79,7 +79,7 @@ int peek_op(char *op)
 
 // returns SUCCESS or FAIL
 // pushes op onto the op_stack
-int push_op(char op)
+int cgc_push_op(char op)
 {
 	debug_print("PUSH_OP: @c\n", op);
 	if (curr_op_stack >= MAX_NUM_COUNT)
@@ -91,7 +91,7 @@ int push_op(char op)
 // returns SUCCESS or FAIL
 // pass in char pointer which will contain the requested operator
 // removes operator from op_stack
-int pop_op(char *op)
+int cgc_pop_op(char *op)
 {
 	debug_print("POP_OP: @c\n", op_stack.stak[curr_op_stack]);
 	if (curr_op_stack <= -1)

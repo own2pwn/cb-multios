@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,31 +23,31 @@
 #ifndef PRODUCTS_H
 #define PRODUCTS_H 1
 
-#define MAX_DESC_LEN	128		// max bytes in Product desc
+#define MAX_DESC_LEN	128		// max bytes in cgc_Product desc
 #define BARCODE_SZ 		8		// # bytes in bar code
 
-typedef float __attribute__((regparm(2))) (*sale_fn)(unsigned int, float);
+typedef float __attribute__((regparm(2))) (*cgc_sale_fn)(unsigned int, float);
 
 typedef struct {
 	unsigned char barcode[BARCODE_SZ];
 	char desc[MAX_DESC_LEN];
 	unsigned int model_num;
 	float cost;
-	sale_fn sfn;
+	cgc_sale_fn sfn;
 	unsigned int update_serial;
-} Product;
+} cgc_Product;
 
 
 /**
  * Initialize the postage and mailboxes.
  */
-void setup(void);
+void cgc_setup(void);
 
 /**
  * Process a user's command.
  *
  * @return SUCCESS on success, else -1
  */
-short process_cmd(void);
+short cgc_process_cmd(void);
 
 #endif

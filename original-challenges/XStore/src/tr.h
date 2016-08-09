@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,25 +25,25 @@
 #define TR_H
 #include <stdio.h>
 
-typedef void* T;
+typedef void* cgc_T;
 typedef struct tr_node {
     char *key;
     unsigned int prio;
-    T value;
+    cgc_T value;
     struct tr_node *left, *right;
-} tr_node_t;
-typedef tr_node_t* tr_t;
-typedef void (*tr_destroy_value) (T value);
-typedef void (*tr_apply_fn) (tr_t root, void *arg);
+} cgc_tr_node_t;
+typedef cgc_tr_node_t* cgc_tr_t;
+typedef void (*cgc_tr_destroy_value) (cgc_T value);
+typedef void (*cgc_tr_apply_fn) (cgc_tr_t root, void *arg);
 
-extern tr_destroy_value destroy_value_fn;
+extern cgc_tr_destroy_value destroy_value_fn;
 
-tr_t tr_insert(tr_t root, char *key, T value);
-tr_t tr_delete(tr_t root, char *key);
-T tr_find(tr_t root, char *key);
-void tr_destroy(tr_t root);
+cgc_tr_t cgc_tr_insert(cgc_tr_t root, char *key, cgc_T value);
+cgc_tr_t cgc_tr_delete(cgc_tr_t root, char *key);
+cgc_T cgc_tr_find(cgc_tr_t root, char *key);
+void cgc_tr_destroy(cgc_tr_t root);
 
-void tr_apply(tr_t root, tr_apply_fn apply, void *arg);
-void tr_print(tr_t root);
+void cgc_tr_apply(cgc_tr_t root, cgc_tr_apply_fn apply, void *arg);
+void cgc_tr_print(cgc_tr_t root);
 
 #endif

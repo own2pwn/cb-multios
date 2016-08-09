@@ -23,8 +23,8 @@
 #include "send.h"
 #include "sendall.h"
 
-int send(const char *buf, const size_t size) {
-    if(sendall(STDOUT, buf, size)) {
+int cgc_send(const char *buf, const cgc_size_t size) {
+    if(cgc_sendall(STDOUT, buf, size)) {
         _terminate(ERRNO_SEND);
     }
 

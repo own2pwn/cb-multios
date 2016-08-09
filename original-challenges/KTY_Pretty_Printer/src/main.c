@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,16 +31,16 @@
 
 #define MAX_KTY_LENGTH 8192
 
-kty_parser_t *parser;
-kty_item_t *my_kty;
+cgc_kty_parser_t *parser;
+cgc_kty_item_t *my_kty;
 
-int read_until(int fd, char *buf, size_t len, char delim)
+int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim)
 {
-  size_t i;
+  cgc_size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       return -1;
     if (*(c++) == delim)
@@ -50,11 +50,11 @@ int read_until(int fd, char *buf, size_t len, char delim)
   return c - buf;
 }
 
-void import_kty(char *buf)
+void cgc_import_kty(char *buf)
 {
   if (my_kty != NULL)
   {
-    free_kty_item(my_kty);
+    cgc_free_kty_item(my_kty);
     my_kty = NULL;
   }
 
@@ -62,14 +62,14 @@ void import_kty(char *buf)
   my_kty = parser->loads(buf);
 
   if (my_kty == NULL)
-    fdprintf(STDOUT, "Error!\n");
+    cgc_fdprintf(STDOUT, "Error!\n");
 }
 
-void print_kty()
+void cgc_print_kty()
 {
   if (my_kty == NULL)
   {
-    fdprintf(STDOUT, "Error!\n");
+    cgc_fdprintf(STDOUT, "Error!\n");
     return;
   }
 
@@ -77,7 +77,7 @@ void print_kty()
   parser->dumps(my_kty);
 }
 
-void nyan()
+void cgc_nyan()
 {
   int i;
   char *c;
@@ -100,82 +100,82 @@ o        o         o      o     +\n\
 
   if (my_kty == NULL)
   {
-    fdprintf(STDOUT, "Error!\n");
+    cgc_fdprintf(STDOUT, "Error!\n");
     return;
   }
   parser->dumps(my_kty);
   if (parser->cats < 3)
     return;
 
-  fdprintf(STDOUT, "%s", nyan_cat);
+  cgc_fdprintf(STDOUT, "%s", nyan_cat);
 
   c = buf;
-  for (i = 0; i < array_length(parser->nyan_says); ++i)
+  for (i = 0; i < cgc_array_length(parser->nyan_says); ++i)
   {
-    kty_item_t *item = array_get(parser->nyan_says, i);
+    cgc_kty_item_t *item = cgc_array_get(parser->nyan_says, i);
 #if PATCHED
-    int sz = (buf + sizeof(buf) - c) - strlen(item->item.i_string.s);
-    sz = sz > 0 ? strlen(item->item.i_string.s) : (buf + sizeof(buf) - c - 1);
-    memcpy(c, item->item.i_string.s, sz);
+    int sz = (buf + sizeof(buf) - c) - cgc_strlen(item->item.i_string.s);
+    sz = sz > 0 ? cgc_strlen(item->item.i_string.s) : (buf + sizeof(buf) - c - 1);
+    cgc_memcpy(c, item->item.i_string.s, sz);
 #else
-    strcpy(c, item->item.i_string.s);
+    cgc_strcpy(c, item->item.i_string.s);
 #endif
     c += item->item.i_string.len;
   }
-  fdprintf(STDOUT, "NYAN SAYS...\n\"\n%s\n\"", buf);
+  cgc_fdprintf(STDOUT, "NYAN SAYS...\n\"\n%s\n\"", buf);
 }
 
-void quit()
+void cgc_quit()
 {
-  fdprintf(STDOUT, "\n\n=^.^=// Bye!\n\n");
-  exit(0);
+  cgc_fdprintf(STDOUT, "\n\n=^.^=// Bye!\n\n");
+  cgc_exit(0);
 }
 
-void menu()
+void cgc_menu()
 {
-  fdprintf(STDOUT, "=======================\n");
-  fdprintf(STDOUT, " 1. Import KTY\n");
-  fdprintf(STDOUT, " 2. Print KTY\n");
-  fdprintf(STDOUT, " 3. Quit\n");
-  fdprintf(STDOUT, "=======================\n");
+  cgc_fdprintf(STDOUT, "=======================\n");
+  cgc_fdprintf(STDOUT, " 1. Import KTY\n");
+  cgc_fdprintf(STDOUT, " 2. Print KTY\n");
+  cgc_fdprintf(STDOUT, " 3. Quit\n");
+  cgc_fdprintf(STDOUT, "=======================\n");
 }
 
 int main()
 {
   char buf[MAX_KTY_LENGTH];
   char select[16];
-  fdprintf(STDOUT, "KTY Pretty Printer v0.1\n");
+  cgc_fdprintf(STDOUT, "KTY Pretty Printer v0.1\n");
 
-  parser = (kty_parser_t *) malloc(sizeof(kty_parser_t));
-  if (kty_init(parser) != 0)
+  parser = (cgc_kty_parser_t *) cgc_malloc(sizeof(cgc_kty_parser_t));
+  if (cgc_kty_init(parser) != 0)
   {
-    fdprintf(STDOUT, "Error!\n");
-    quit();
+    cgc_fdprintf(STDOUT, "Error!\n");
+    cgc_quit();
   }
 
-  menu();
-  while (read_until(STDIN, select, sizeof(select), '\n') > 0)
+  cgc_menu();
+  while (cgc_read_until(STDIN, select, sizeof(select), '\n') > 0)
   {
-    int menu = strtol(select, NULL, 10);
-    switch (menu)
+    int cgc_menu = cgc_strtol(select, NULL, 10);
+    switch (cgc_menu)
     {
       case 1:
-        if (read_until(STDIN, buf, MAX_KTY_LENGTH, '\x00') > 0)
-          import_kty(buf);
+        if (cgc_read_until(STDIN, buf, MAX_KTY_LENGTH, '\x00') > 0)
+          cgc_import_kty(buf);
         else
-          fdprintf(STDOUT, "Error!\n");
+          cgc_fdprintf(STDOUT, "Error!\n");
         break;
       case 2:
-        print_kty();
+        cgc_print_kty();
         break;
       case 3:
-        quit();
+        cgc_quit();
         break;
       case 777:
-        nyan();
+        cgc_nyan();
         break;
       default:
-        fdprintf(STDOUT, "Invalid menu. Try again.\n");
+        cgc_fdprintf(STDOUT, "Invalid cgc_menu. Try again.\n");
         break;
     }
   }

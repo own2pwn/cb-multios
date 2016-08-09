@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,94 +27,94 @@ extern "C" {
 
 #include "order.h"
 
-Order::Order()
+cgc_Order::cgc_Order()
 {
 }
 
-Order::~Order()
+cgc_Order::~cgc_Order()
 {
 }
 
-int Order::wait_time()
+int cgc_Order::cgc_wait_time()
 {
-    size_t i = 0, wait_time = 0, wait_time_modifier = 1, prep_time = 0;
-    size_t max_wait_time = pizzas[0]->get_prep_time();
-    for (i = 0; i < pizzas.length(); i++) {
-        prep_time = pizzas[i]->get_prep_time();
-        wait_time += prep_time;
+    cgc_size_t i = 0, cgc_wait_time = 0, wait_time_modifier = 1, prep_time = 0;
+    cgc_size_t max_wait_time = pizzas[0]->cgc_get_prep_time();
+    for (i = 0; i < pizzas.cgc_length(); i++) {
+        prep_time = pizzas[i]->cgc_get_prep_time();
+        cgc_wait_time += prep_time;
 
         if (max_wait_time < prep_time)
             max_wait_time = prep_time;
     }
 
     //Factor in wait time grows with larger orders, but not linearly
-    wait_time_modifier += pizzas.length() / 5;
-    printf("Pizza length... = %d\n", pizzas.length());
-    return (wait_time + ((max_wait_time * wait_time_modifier) / pizzas.length()));
+    wait_time_modifier += pizzas.cgc_length() / 5;
+    printf("cgc_Pizza cgc_length... = %d\n", pizzas.cgc_length());
+    return (cgc_wait_time + ((max_wait_time * wait_time_modifier) / pizzas.cgc_length()));
 }
 
-char *Order::get_name()
+char *cgc_Order::cgc_get_name()
 {
     return pickup_name;
 }
 
-bool Order::set_name(char *name)
+bool cgc_Order::cgc_set_name(char *name)
 {
-    if (strlen(name) >= NAME_SIZE)
+    if (cgc_strlen(name) >= NAME_SIZE)
         return false;
 
-    strcpy(pickup_name, name);
+    cgc_strcpy(pickup_name, name);
     return true;
 }
 
-bool Order::add_pizza(Pizza *pizza)
+bool cgc_Order::cgc_add_pizza(cgc_Pizza *pizza)
 {
-    return pizzas.add(pizza);
+    return pizzas.cgc_add(pizza);
 }
 
-void Order::remove_pizza(size_t idx)
+void cgc_Order::cgc_remove_pizza(cgc_size_t idx)
 {
-    Pizza *pizza = pizzas[idx];
-    pizzas.remove(idx);
+    cgc_Pizza *pizza = pizzas[idx];
+    pizzas.cgc_remove(idx);
     delete pizza;
 }
 
-void Order::remove_all_pizzas()
+void cgc_Order::cgc_remove_all_pizzas()
 {
-    Pizza *pizza;
+    cgc_Pizza *pizza;
 
-    while (pizzas.pop(pizza)) {
+    while (pizzas.cgc_pop(pizza)) {
         delete pizza;
     }
 }
 
-Pizza *Order::get_pizza(size_t idx)
+cgc_Pizza *cgc_Order::cgc_get_pizza(cgc_size_t idx)
 {
-    if (idx >= pizzas.length())
+    if (idx >= pizzas.cgc_length())
         return NULL;
 
     return pizzas[idx];
 }
 
-int Order::get_num_pizzas()
+int cgc_Order::cgc_get_num_pizzas()
 {
-    return pizzas.length();
+    return pizzas.cgc_length();
 }
 
-void Order::print_order()
+void cgc_Order::cgc_print_order()
 {
     int i, calories = 0, carbs = 0;
     printf("==================================================\n");
-    for (i = 0; i < pizzas.length(); i++) {
+    for (i = 0; i < pizzas.cgc_length(); i++) {
         printf("  Item #%d. ", i+1);
-        pizzas[i]->print_pizza();
-        calories += pizzas[i]->get_calories();
-        carbs += pizzas[i]->get_carbs();
+        pizzas[i]->cgc_print_pizza();
+        calories += pizzas[i]->cgc_get_calories();
+        carbs += pizzas[i]->cgc_get_carbs();
     }
     printf("--------------------------------------\n");
     printf("\t\tCalories: %d\n", calories);
     printf("\t\tCarbs   : %d\n\n", carbs);
-    printf("\t\tEstimated wait time: %d minute(s)\n", wait_time()/60);
+    printf("\t\tEstimated wait time: %d minute(s)\n", cgc_wait_time()/60);
     printf("==================================================\n");
 }
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -62,27 +62,27 @@ typedef struct job {
     char title[80];
     unsigned int width;
     char format;
-} job_t;
+} cgc_job_t;
 
 typedef struct printer {
     enum pstate_t state;
     char queue[256];
-    job_t jobs[NUM_MAX_JOBS];
+    cgc_job_t jobs[NUM_MAX_JOBS];
     void (*tick_func) (struct printer *);
     struct printer *self;
-} printer_t;
+} cgc_printer_t;
 
-int cmd_print_jobs(printer_t *printer);
-int cmd_recv_job(printer_t *printer);
-int cmd_abort_job(printer_t *printer);
-int cmd_recv_control_file(printer_t *printer, char *buf);
-int cmd_recv_data_file(printer_t *printer, char *buf);
-int cmd_send_queue_state(printer_t *printer);
-int cmd_remove_jobs(printer_t *printer, char *agent, unsigned int job_id);
+int cgc_cmd_print_jobs(cgc_printer_t *printer);
+int cgc_cmd_recv_job(cgc_printer_t *printer);
+int cgc_cmd_abort_job(cgc_printer_t *printer);
+int cgc_cmd_recv_control_file(cgc_printer_t *printer, char *buf);
+int cgc_cmd_recv_data_file(cgc_printer_t *printer, char *buf);
+int cgc_cmd_send_queue_state(cgc_printer_t *printer);
+int cgc_cmd_remove_jobs(cgc_printer_t *printer, char *agent, unsigned int job_id);
 
-void printer_tick(printer_t *printer);
+void cgc_printer_tick(cgc_printer_t *printer);
 
-void print_ws(int n);
-char* jstate_str(enum jstate_t s);
+void cgc_print_ws(int n);
+char* cgc_jstate_str(enum jstate_t s);
 
 #endif

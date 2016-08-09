@@ -4,25 +4,25 @@
 #include "pizza.h"
 #include "list.h"
 
-class Order
+class cgc_Order
 {
 public:
-    static const size_t NAME_SIZE = 32;
+    static const cgc_size_t NAME_SIZE = 32;
 private:
     char pickup_name[NAME_SIZE];
-    List<Pizza *> pizzas;
+    cgc_List<cgc_Pizza *> pizzas;
 public:
-    Order();
-    ~Order();
-    int wait_time();
-    char *get_name();
-    bool set_name(char *name);
-    bool add_pizza(Pizza *pizza);
-    void remove_pizza(size_t idx);
-    void remove_all_pizzas();
-    Pizza *get_pizza(size_t idx);
-    int get_num_pizzas();
-    void print_order();
+    cgc_Order();
+    ~cgc_Order();
+    int cgc_wait_time();
+    char *cgc_get_name();
+    bool cgc_set_name(char *name);
+    bool cgc_add_pizza(cgc_Pizza *pizza);
+    void cgc_remove_pizza(cgc_size_t idx);
+    void cgc_remove_all_pizzas();
+    cgc_Pizza *cgc_get_pizza(cgc_size_t idx);
+    int cgc_get_num_pizzas();
+    void cgc_print_order();
 };
 
 #endif

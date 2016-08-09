@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,13 +26,13 @@ THE SOFTWARE.
 #ifndef __STDINT_H__
 #define __STDINT_H__
 
-typedef unsigned long long uint64_t;
-typedef long long int64_t;
-typedef unsigned int uint32_t;
-typedef signed int int32_t;
-typedef unsigned short int uint16_t;
-typedef signed short int int16_t;
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
+typedef unsigned long long cgc_uint64_t;
+typedef long long cgc_int64_t;
+typedef unsigned int cgc_uint32_t;
+typedef signed int cgc_int32_t;
+typedef unsigned short int cgc_uint16_t;
+typedef signed short int cgc_int16_t;
+typedef unsigned char cgc_uint8_t;
+typedef signed char cgc_int8_t;
 
 #endif // __STDINT_H__

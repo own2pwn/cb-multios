@@ -34,7 +34,7 @@ struct namespace;
  * @param result The result of evaluating the expression
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int eval(struct ast *ast, struct namespace *ns, struct variable *result);
+int cgc_eval(struct ast *ast, struct namespace *ns, struct variable *result);
 
 #endif /* INTERPRETER_H_ */
 

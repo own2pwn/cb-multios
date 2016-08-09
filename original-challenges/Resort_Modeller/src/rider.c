@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,12 +28,12 @@
 /**
  * Function to check the health of a rider when they run out of energy
  *
- * @param r 	Rider
- * @param id 	Rider ID
+ * @param r 	cgc_Rider
+ * @param id 	cgc_Rider ID
  */
-void __attribute__((regparm(2))) rider_health_check(Rider *r, uint32_t r_id) {
+void __attribute__((regparm(2))) cgc_rider_health_check(cgc_Rider *r, cgc_uint32_t r_id) {
 
-	uint32_t *results = &r->health_code;
+	cgc_uint32_t *results = &r->health_code;
 #ifdef PATCHED_1
 	if (0 == r->energy_level) {
 		*results = r->health_code;
@@ -53,9 +53,9 @@ void __attribute__((regparm(2))) rider_health_check(Rider *r, uint32_t r_id) {
  * @param settings 	Array of rider settings
  * @return SUCCESS on success, else -1
  */
-int32_t rider_new(Rider **rider, uint32_t settings[4]) {
+cgc_int32_t cgc_rider_new(cgc_Rider **rider, cgc_uint32_t settings[4]) {
 
-	Rider *new = calloc(sizeof(Rider));
+	cgc_Rider *new = cgc_calloc(sizeof(cgc_Rider));
 	MALLOC_OK(new);
 
 	new->id = settings[0];
@@ -63,11 +63,11 @@ int32_t rider_new(Rider **rider, uint32_t settings[4]) {
 	new->energy_level = settings[2];
 	new->initial_energy_level = new->energy_level;
 	new->health_code = settings[3];
-	new->health_check = rider_health_check;
+	new->health_check = cgc_rider_health_check;
 
 	if ((new->energy_level == 0) ||
 		((new->r_type != SKIER) && (new->r_type != BOARDER))) {
-		free(new);
+		cgc_free(new);
 		return -1;
 	}	
 
@@ -78,10 +78,10 @@ int32_t rider_new(Rider **rider, uint32_t settings[4]) {
 /**
  * Destroy one rider
  *
- * @param rider 	Rider
+ * @param rider 	cgc_Rider
  */
-void rider_destroy(Rider **rider) {
-	free(*rider);
+void cgc_rider_destroy(cgc_Rider **rider) {
+	cgc_free(*rider);
 	*rider = NULL;
 }
 
@@ -90,11 +90,11 @@ void rider_destroy(Rider **rider) {
  *
  * @param riders 	List of Riders
  */
-void rider_destroy_list(Rider **riders) {
-	Rider *this = *riders;
+void cgc_rider_destroy_list(cgc_Rider **riders) {
+	cgc_Rider *this = *riders;
 	while (NULL != this) {
-		this = rider_pop(riders);
-		rider_destroy(&this);
+		this = cgc_rider_pop(riders);
+		cgc_rider_destroy(&this);
 		this = *riders;
 	}
 	*riders = NULL;
@@ -106,9 +106,9 @@ void rider_destroy_list(Rider **riders) {
  * @param riders 	List of riders that will be appended to
  * @param rider 	A single rider or a list of riders to append 
  */
-void rider_append(Rider **riders, Rider *rider) {
-	Rider *this = *riders;
-	Rider *prev = *riders;
+void cgc_rider_append(cgc_Rider **riders, cgc_Rider *rider) {
+	cgc_Rider *this = *riders;
+	cgc_Rider *prev = *riders;
 
 	if (NULL == this) { // was empty list, to rider is first
 		*riders = rider;
@@ -127,8 +127,8 @@ void rider_append(Rider **riders, Rider *rider) {
  * @param riders 	List of riders
  * @return pointer to first rider or NULL if empty list
  */
-Rider *rider_pop(Rider **riders) {
-	Rider *this = *riders;
+cgc_Rider *cgc_rider_pop(cgc_Rider **riders) {
+	cgc_Rider *this = *riders;
 	if (NULL != this) {
 		*riders = this->next;
 		this->next = NULL;
@@ -136,7 +136,7 @@ Rider *rider_pop(Rider **riders) {
 	return this;
 }
 
-void rider_reset(Rider *rider) {
+void cgc_rider_reset(cgc_Rider *rider) {
 	rider->energy_level = rider->initial_energy_level;
 	rider->trail_count = 0;
 	rider->trail_distance = 0;

@@ -41,7 +41,7 @@ struct variable {
 };
 
 struct namespace {
-    size_t size;
+    cgc_size_t size;
     struct variable *variables;
 };
 
@@ -52,14 +52,14 @@ struct namespace {
  * @param size The size of the namespace
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int namespace_init(struct namespace *ns, size_t size);
+int cgc_namespace_init(struct namespace *ns, cgc_size_t size);
 
 /**
  * Destroy a namespace.
  *
  * @param ns The namespace to destroy
  */
-void namespace_destroy(struct namespace *ns);
+void cgc_namespace_destroy(struct namespace *ns);
 
 /**
  * Lookup a variable in a namespace.
@@ -68,7 +68,7 @@ void namespace_destroy(struct namespace *ns);
  * @param name The name of the variable
  * @return A pointer to the variable with the given name, or NULL on failure
  */
-struct variable *lookup_variable(struct namespace *ns, const char *name);
+struct variable *cgc_lookup_variable(struct namespace *ns, const char *name);
 
 /**
  * Insert a variable in a namespace.
@@ -78,7 +78,7 @@ struct variable *lookup_variable(struct namespace *ns, const char *name);
  * @param type The type of the variable
  * @return A pointer to the variable, or NULL on failure
  */
-struct variable *insert_variable(struct namespace *ns, const char *name,
+struct variable *cgc_insert_variable(struct namespace *ns, const char *name,
         enum variable_type type);
 
 #endif /* NAMESPACE_H_ */

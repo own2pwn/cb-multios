@@ -50,7 +50,7 @@ int answers[] = {18,18,-34,0,5,0,18,10,12,12,5,12345};
 
 
 // Runs an internal set of tests
-void run_tests()
+void cgc_run_tests()
 {
 	int answer = 0;
 
@@ -61,23 +61,23 @@ void run_tests()
 	while(runs < 1000)
 	{
 		char equation[256];
-		int answer = generate_one_equation(equation);
-		printf("r: @d @s = @d\n", runs, equation, answer);
+		int answer = cgc_generate_one_equation(equation);
+		cgc_printf("r: @d @s = @d\n", runs, equation, answer);
 		runs++;
 	}
 
 	for (int i = 0; i < TEST_LEN; i++)
 	{ 
-		solve_equation(tests[i], &answer);
-		printf("equation: @s = @d \n", tests[i], answer);
-		printf((answer == answers[i]) ? "correct\n" : "wrong\n");
-		printf("-----------------\n");
+		cgc_solve_equation(tests[i], &answer);
+		cgc_printf("equation: @s = @d \n", tests[i], answer);
+		cgc_printf((answer == answers[i]) ? "correct\n" : "wrong\n");
+		cgc_printf("-----------------\n");
 	}
 
 }
 
 // returns a ** b
-int get_pow(int a, int b)
+int cgc_get_pow(int a, int b)
 {
 	int ret = 0;
 	int i;
@@ -93,7 +93,7 @@ int get_pow(int a, int b)
 
 
 // Evaluates a single mathemetical operation
-int evaluate(int a, char op, int b, int *answer)
+int cgc_evaluate(int a, char op, int b, int *answer)
 {
 
 
@@ -124,7 +124,7 @@ int evaluate(int a, char op, int b, int *answer)
 		
 	else if (op == '*')
 	{
-		int64_t x = (int64_t)a*b;
+		cgc_int64_t x = (cgc_int64_t)a*b;
 		// check for overflow/underflow
 		if ((x > 0x7fffffff) || (x < -0x7fffffff))
 		{
@@ -149,7 +149,7 @@ int evaluate(int a, char op, int b, int *answer)
 
 // Solves the equation within a set of parenthesis 
 // returns SUCCESS or FAIL
-int satisfy_paren()
+int cgc_satisfy_paren()
 {
 	char op;
 	int larg;
@@ -157,24 +157,24 @@ int satisfy_paren()
 	int answer;
 	int ret;
 
-	ret = peek_op(&op);
+	ret = cgc_peek_op(&op);
 	while (op != '(' && ret == SUCCESS)
 	{
 		
-		// evaluate everything inside of the parens
-		if (pop_num(&rarg) != SUCCESS) return FAIL;
-		if (pop_num(&larg) != SUCCESS) return FAIL;
-		if (pop_op(&op) != SUCCESS) return FAIL;
-		if (evaluate(larg, op, rarg, &answer) != SUCCESS) return FAIL;
+		// cgc_evaluate everything inside of the parens
+		if (cgc_pop_num(&rarg) != SUCCESS) return FAIL;
+		if (cgc_pop_num(&larg) != SUCCESS) return FAIL;
+		if (cgc_pop_op(&op) != SUCCESS) return FAIL;
+		if (cgc_evaluate(larg, op, rarg, &answer) != SUCCESS) return FAIL;
 		
 		debug_print("inside paren loop: @d@c@d=@d\n", larg, op, rarg, answer);
 		
-		push_num(answer);
-		ret = peek_op(&op);
+		cgc_push_num(answer);
+		ret = cgc_peek_op(&op);
 	}
 	if (op == '(')
 	{
-		pop_op(&op); // consume the open paren
+		cgc_pop_op(&op); // consume the open paren
 	}
 	return ret;
 }
@@ -185,7 +185,7 @@ int satisfy_paren()
 // returns SUCCESS if equation was solved
 // returns FAIL if equation couldn't be solved
 // Solution returned in 'answer'
-int solve_equation(char* str, int *answer)
+int cgc_solve_equation(char* str, int *answer)
 {
 	int j = 0;
 	int ret;
@@ -207,69 +207,69 @@ int solve_equation(char* str, int *answer)
 			// get the number (could be any number of spots)
 			// this is a number, push it on the stack
 
-			ret = peek_op(&t);
+			ret = cgc_peek_op(&t);
 			if (ret == SUCCESS && t == '-')
 			{
-				if(pop_op(&t) != SUCCESS) return FAIL;
-				push_op('+');
+				if(cgc_pop_op(&t) != SUCCESS) return FAIL;
+				cgc_push_op('+');
 				is_neg = 1;
 			}
 			int moved = 0;
-			val = stoi(str+j, &moved);
+			val = cgc_stoi(str+j, &moved);
 	
 			if (is_neg)
 				val *= -1;
 			is_neg = 0;
 
-			push_num(val);
-			//tmp = get_str_end(str+j);
+			cgc_push_num(val);
+			//tmp = cgc_get_str_end(str+j);
 			j += moved; 
 			continue;		
 		}
 		if (curr == '(')
 		{
-			push_op(str[j]);
+			cgc_push_op(str[j]);
 			j++;
 			continue;
 		}
 		if (curr == ')')
 		{
-			if (satisfy_paren() != SUCCESS) return FAIL;
+			if (cgc_satisfy_paren() != SUCCESS) return FAIL;
 			j++;
 			continue;
 		}
 		if (curr == '+' || curr == '-')
 		{
 			char p_op;
-			ret = peek_op(&p_op);
+			ret = cgc_peek_op(&p_op);
 			if (ret == SUCCESS && (p_op == '+' || p_op == '-' || p_op == '*' || p_op == '/'))
 			{
 				char prev_op;
 				int larg, rarg, answer = 0;
-				if (pop_num(&rarg)!= SUCCESS) return FAIL;
-				if (pop_num(&larg)!= SUCCESS) return FAIL;
-				if (pop_op(&prev_op)!= SUCCESS) return FAIL;
-				if (evaluate(larg, prev_op, rarg, &answer) != SUCCESS) return FAIL;
-				push_num(answer);
+				if (cgc_pop_num(&rarg)!= SUCCESS) return FAIL;
+				if (cgc_pop_num(&larg)!= SUCCESS) return FAIL;
+				if (cgc_pop_op(&prev_op)!= SUCCESS) return FAIL;
+				if (cgc_evaluate(larg, prev_op, rarg, &answer) != SUCCESS) return FAIL;
+				cgc_push_num(answer);
 			}
-			push_op(str[j]);
+			cgc_push_op(str[j]);
 			j++;
 			continue;
 		}
 		if (curr == '*' || curr == '/')
 		{
 			char prev_op;
-			ret = peek_op(&prev_op);
+			ret = cgc_peek_op(&prev_op);
 			if (ret == SUCCESS && (prev_op == '*' || prev_op == '/'))
 			{
 				int larg, rarg, answer = 0;
-				if (pop_num(&rarg)!= SUCCESS) return FAIL;
-				if (pop_num(&larg)!= SUCCESS) return FAIL;
-				if (pop_op(&prev_op)!= SUCCESS) return FAIL;
-				if (evaluate(larg, prev_op, rarg, &answer) != SUCCESS) return FAIL;
-				push_num(answer);
+				if (cgc_pop_num(&rarg)!= SUCCESS) return FAIL;
+				if (cgc_pop_num(&larg)!= SUCCESS) return FAIL;
+				if (cgc_pop_op(&prev_op)!= SUCCESS) return FAIL;
+				if (cgc_evaluate(larg, prev_op, rarg, &answer) != SUCCESS) return FAIL;
+				cgc_push_num(answer);
 			}
-			push_op(str[j]);
+			cgc_push_op(str[j]);
 			j++;
 			continue;
 		}
@@ -278,12 +278,12 @@ int solve_equation(char* str, int *answer)
 	}
 
 	int b,a, tmp;
-	pop_num(&b);
+	cgc_pop_num(&b);
 	while(curr_op_stack != -1)
 	{
-		if (pop_num(&a)!= SUCCESS) return FAIL;
-		if (pop_op(&curr)!= SUCCESS) return FAIL;
-		if (evaluate(a,curr,b, &tmp)!= SUCCESS) return FAIL;
+		if (cgc_pop_num(&a)!= SUCCESS) return FAIL;
+		if (cgc_pop_op(&curr)!= SUCCESS) return FAIL;
+		if (cgc_evaluate(a,curr,b, &tmp)!= SUCCESS) return FAIL;
 		b = tmp;
 	}
 	*answer = b;

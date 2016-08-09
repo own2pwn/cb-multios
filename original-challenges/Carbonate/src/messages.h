@@ -30,48 +30,48 @@ THE SOFTWARE.
 
 #define HELLO_ID 0
 #define HELLO_EXPECTED_LENGTH 0
-void* extract_hello(protocol_frame* frame);
+void* cgc_extract_hello(cgc_protocol_frame* frame);
 
 #define SCRAMBLE_REQ_ID 1
 #define SCRAMBLE_REQ_EXPECTED_LENGTH 2
-void* extract_scramble_req(protocol_frame* frame);
+void* cgc_extract_scramble_req(cgc_protocol_frame* frame);
 
 #define SCRAMBLE_RESP_ID 2
 #define SCRAMBLE_RESP_EXPECTED_LENGTH 0
-void* extract_scramble_resp(protocol_frame* frame);
+void* cgc_extract_scramble_resp(cgc_protocol_frame* frame);
 
 #define CHECK_REQ_ID 16
 #define CHECK_REQ_EXPECTED_LENGTH 2
-void* extract_check_req(protocol_frame* frame);
+void* cgc_extract_check_req(cgc_protocol_frame* frame);
 
 #define CHECK_FOUND_RESP_ID 17
 #define CHECK_FOUND_RESP_EXPECTED_LENGTH 0
-void* extract_check_found_resp(protocol_frame* frame);
+void* cgc_extract_check_found_resp(cgc_protocol_frame* frame);
 
 #define CHECK_NOT_FOUND_RESP_ID 18
 #define CHECK_NOT_FOUND_RESP_EXPECTED_LENGTH 0
-void* extract_check_not_found_resp(protocol_frame* frame);
+void* cgc_extract_check_not_found_resp(cgc_protocol_frame* frame);
 
 #define ADD_REQ_ID 32
 #define ADD_REQ_EXPECTED_LENGTH 2
-void* extract_add_req(protocol_frame* frame);
+void* cgc_extract_add_req(cgc_protocol_frame* frame);
 
 #define ADD_RESP_ID 33
 #define ADD_RESP_EXPECTED_LENGTH 0
-void* extract_add_resp(protocol_frame* frame);
+void* cgc_extract_add_resp(cgc_protocol_frame* frame);
 
 #define SUBTRACT_REQ_ID 48
 #define SUBTRACT_REQ_EXPECTED_LENGTH 2
-void* extract_subtract_req(protocol_frame* frame);
+void* cgc_extract_subtract_req(cgc_protocol_frame* frame);
 
 #define SUBTRACT_RESP_ID 49
 #define SUBTRACT_RESP_EXPECTED_LENGTH 0
-void* extract_subtract_resp(protocol_frame* frame);
+void* cgc_extract_subtract_resp(cgc_protocol_frame* frame);
 
 #define CLEAR_REQ_ID 64
 #define CLEAR_REQ_EXPECTED_LENGTH 0
-void* extract_clear_req(protocol_frame* frame);
+void* cgc_extract_clear_req(cgc_protocol_frame* frame);
 
 #define CLEAR_RESP_ID 65
 #define CLEAR_RESP_EXPECTED_LENGTH 0
-void* extract_clear_resp(protocol_frame* frame);
+void* cgc_extract_clear_resp(cgc_protocol_frame* frame);

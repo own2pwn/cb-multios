@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -43,17 +43,17 @@ THE SOFTWARE.
 
 #pragma pack(push,1)
 typedef struct ShortcutFileHeader_s {
-  uint32_t size;
-  uint32_t magic;
+  cgc_uint32_t size;
+  cgc_uint32_t magic;
   char targetName[65];
-  uint32_t index;
-  uint16_t numResources;
-} ShortcutFileHeader;
+  cgc_uint32_t index;
+  cgc_uint16_t numResources;
+} cgc_ShortcutFileHeader;
 
-void ListFilesRecurse(FileNode *file, int level);
-void ListFilesLong(FileNode *parent);
-void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, ExecutableInMemory **flavorSL, int *index);
-ExecutableInMemory *VerifyAndLoadFlavorFile(char *name, FileNode *parent);
-char ReceiveCommand();
+void cgc_ListFilesRecurse(cgc_FileNode *file, int level);
+void cgc_ListFilesLong(cgc_FileNode *parent);
+void cgc_ExtractLinkTargetAndID(cgc_ShortcutFileHeader *sh, cgc_FileNode *parent, cgc_ExecutableInMemory **flavorSL, int *index);
+cgc_ExecutableInMemory *cgc_VerifyAndLoadFlavorFile(char *name, cgc_FileNode *parent);
+char cgc_ReceiveCommand();
 
 #endif

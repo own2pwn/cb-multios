@@ -30,22 +30,22 @@
 #define MAX_JOKE_STRING_LEN 512
 
 
-// define a joke_struct that has a joke_id, and joke_string
-typedef struct joke_struct {
-	uint32_t joke_id;
+// define a cgc_joke_struct that has a joke_id, and joke_string
+typedef struct cgc_joke_struct {
+	cgc_uint32_t joke_id;
 	char joke_string[MAX_JOKE_STRING_LEN];
-} joke_struct;
+} cgc_joke_struct;
 
-// jokedb_struct is our array of jokes, and a count of the jokes in the array
-typedef struct jokedb_struct {
+// cgc_jokedb_struct is our array of jokes, and a count of the jokes in the array
+typedef struct cgc_jokedb_struct {
 	int count;
-	joke_struct jokes[MAX_JOKES];
-} jokedb_struct;
+	cgc_joke_struct jokes[MAX_JOKES];
+} cgc_jokedb_struct;
 
 // define function interfaces
-int insert_joke(jokedb_struct *jokedb, const char *joke_str);
-void load_default_jokes(jokedb_struct *jokedb);
-int joke_count(jokedb_struct *jokedb);
+int cgc_insert_joke(cgc_jokedb_struct *jokedb, const char *joke_str);
+void cgc_load_default_jokes(cgc_jokedb_struct *jokedb);
+int cgc_joke_count(cgc_jokedb_struct *jokedb);
 
 #endif
 

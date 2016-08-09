@@ -34,52 +34,52 @@ extern "C"
 #include <stdlib.h>
 }
 
-class CResponse
+class cgc_CResponse
 {
 public:
-	CResponse( );
-	~CResponse( );
+	cgc_CResponse( );
+	~cgc_CResponse( );
 
-	uint16_t GetResponseLength( void ) const { return m_responseLen; };
+	cgc_uint16_t cgc_GetResponseLength( void ) const { return m_responseLen; };
 
-	uint16_t AddResponse( uint8_t *pData, uint16_t dataLen );
-	uint16_t GetResponseData( uint8_t *pDest, uint16_t destLen );
+	cgc_uint16_t cgc_AddResponse( cgc_uint8_t *pData, cgc_uint16_t dataLen );
+	cgc_uint16_t cgc_GetResponseData( cgc_uint8_t *pDest, cgc_uint16_t destLen );
 
-	void ClearResponse( void );
+	void cgc_ClearResponse( void );
 
 private:
-	class CResponseElement
+	class cgc_CResponseElement
 	{
 	public:
-		CResponseElement( uint8_t *pData, uint16_t dataLen )
+		cgc_CResponseElement( cgc_uint8_t *pData, cgc_uint16_t dataLen )
 		{
-			m_pData = new uint8_t[dataLen];
+			m_pData = new cgc_uint8_t[dataLen];
 
-			memcpy( m_pData, pData, dataLen );
+			cgc_memcpy( m_pData, pData, dataLen );
 			m_dataLen = dataLen;
 		}
 
-		~CResponseElement( )
+		~cgc_CResponseElement( )
 		{
 			if ( m_pData )
 				delete [] m_pData;
 		}
 
-		uint8_t *GetData( void ) const { return m_pData; };
-		uint16_t GetDataLength( void ) const { return m_dataLen; };
+		cgc_uint8_t *cgc_GetData( void ) const { return m_pData; };
+		cgc_uint16_t cgc_GetDataLength( void ) const { return m_dataLen; };
 
 	public:
-		CUtil::DLL_LINK( CResponseElement ) m_responseLink;
+		CUtil::DLL_LINK( cgc_CResponseElement ) m_responseLink;
 
 	private:
-		uint8_t *m_pData;
-		uint16_t m_dataLen;
+		cgc_uint8_t *m_pData;
+		cgc_uint16_t m_dataLen;
 
 	};
 
 private:
-	CUtil::DLL_LIST( CResponseElement, m_responseLink ) m_responseList;
-	uint16_t m_responseLen;	
+	CUtil::DLL_LIST( cgc_CResponseElement, m_responseLink ) m_responseList;
+	cgc_uint16_t m_responseLen;	
 };
 
 #endif // __RESPONSE_H__

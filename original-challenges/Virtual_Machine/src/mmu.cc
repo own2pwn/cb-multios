@@ -38,18 +38,18 @@ extern "C"
 #define NULL (0)
 #endif
 
-CMMU::CMMU( )
+cgc_CMMU::cgc_CMMU( )
 {
-	for ( uint16_t i = 0; i < MMU_PAGE_COUNT; i++ )
+	for ( cgc_uint16_t i = 0; i < MMU_PAGE_COUNT; i++ )
 	{
 		m_mmuPages[i].pageData = NULL;
 		m_mmuPages[i].mmuFlags = MMU_PAGE_NOT_ALLOC;
 	}
 }
 
-CMMU::~CMMU( )
+cgc_CMMU::~cgc_CMMU( )
 {
-	for ( uint16_t i = 0; i < MMU_PAGE_COUNT; i++ )
+	for ( cgc_uint16_t i = 0; i < MMU_PAGE_COUNT; i++ )
 	{
 		if ( m_mmuPages[i].pageData )
 			delete [] m_mmuPages[i].pageData;
@@ -59,7 +59,7 @@ CMMU::~CMMU( )
 	}
 }
 
-bool CMMU::AddMemorySection( uint16_t address, uint8_t *pData, uint16_t dataLen, uint8_t mmuFlags )
+bool cgc_CMMU::cgc_AddMemorySection( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t dataLen, cgc_uint8_t mmuFlags )
 {
 	address &= 0xFFFE;
 
@@ -69,30 +69,30 @@ bool CMMU::AddMemorySection( uint16_t address, uint8_t *pData, uint16_t dataLen,
 	if ( dataLen % MMU_PAGE_SIZE != 0 )
 		return (false);
 
-	uint16_t copyRemaining = dataLen;
-	uint16_t copyFromPos = 0;
+	cgc_uint16_t copyRemaining = dataLen;
+	cgc_uint16_t copyFromPos = 0;
 
 	// Define new section
 	while ( copyRemaining > 0 )
 	{
-		uint16_t mmuPage = ((address+copyFromPos) / MMU_PAGE_SIZE);
-		uint16_t pageOffset = ((address+copyFromPos) % MMU_PAGE_SIZE);
-		uint16_t copyAmount = copyRemaining;
+		cgc_uint16_t mmuPage = ((address+copyFromPos) / MMU_PAGE_SIZE);
+		cgc_uint16_t pageOffset = ((address+copyFromPos) % MMU_PAGE_SIZE);
+		cgc_uint16_t copyAmount = copyRemaining;
 
 		if ( copyRemaining > (MMU_PAGE_SIZE - pageOffset) )
 			copyAmount = MMU_PAGE_SIZE - pageOffset;
 
 		if ( !m_mmuPages[mmuPage].pageData )
 		{
-			m_mmuPages[mmuPage].pageData = new uint8_t[MMU_PAGE_SIZE];
+			m_mmuPages[mmuPage].pageData = new cgc_uint8_t[MMU_PAGE_SIZE];
 	
-			bzero( m_mmuPages[mmuPage].pageData, MMU_PAGE_SIZE );	
+			cgc_bzero( m_mmuPages[mmuPage].pageData, MMU_PAGE_SIZE );	
 		}
 
 		m_mmuPages[mmuPage].mmuFlags |= mmuFlags;
 	
 		// Copy in the data
-		memcpy( m_mmuPages[mmuPage].pageData+pageOffset, pData+copyFromPos, copyAmount );
+		cgc_memcpy( m_mmuPages[mmuPage].pageData+pageOffset, pData+copyFromPos, copyAmount );
 
 		// Update copy positions
 		copyFromPos += copyAmount;
@@ -102,72 +102,72 @@ bool CMMU::AddMemorySection( uint16_t address, uint8_t *pData, uint16_t dataLen,
 	return (true);
 }
 
-bool CMMU::Fetch16( uint16_t address, uint16_t &value )
+bool cgc_CMMU::cgc_Fetch16( cgc_uint16_t address, cgc_uint16_t &value )
 {
 	address &= 0xFFFE;
 
-	uint16_t mmuPage = (address / MMU_PAGE_SIZE);
-	uint16_t pageOffset = (address % MMU_PAGE_SIZE);
+	cgc_uint16_t mmuPage = (address / MMU_PAGE_SIZE);
+	cgc_uint16_t pageOffset = (address % MMU_PAGE_SIZE);
 
 	// No need to worry about straddling a page -- just make the lookup
 	if ( !(m_mmuPages[mmuPage].mmuFlags & MMU_PAGE_EXEC) )
 		return (false);	// Cannot exec!
 
-	value = *(uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]);
+	value = *(cgc_uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]);
 
 	return (true);
 }
 
-bool CMMU::Read16( uint16_t address, uint16_t &value )
+bool cgc_CMMU::cgc_Read16( cgc_uint16_t address, cgc_uint16_t &value )
 {
 	address &= 0xFFFE;
 
-	uint16_t mmuPage = (address / MMU_PAGE_SIZE);
-	uint16_t pageOffset = (address % MMU_PAGE_SIZE);
+	cgc_uint16_t mmuPage = (address / MMU_PAGE_SIZE);
+	cgc_uint16_t pageOffset = (address % MMU_PAGE_SIZE);
 
 	// No need to worry about straddling a page -- just make the lookup
 	if ( !(m_mmuPages[mmuPage].mmuFlags & MMU_PAGE_READ) )
 		return (false);	// Cannot exec!
 	
-	value = *(uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]);
+	value = *(cgc_uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]);
 
 	return (true);
 }
 
-bool CMMU::Write16( uint16_t address, uint16_t value )
+bool cgc_CMMU::cgc_Write16( cgc_uint16_t address, cgc_uint16_t value )
 {
 	address &= 0xFFFE;
 
-	uint16_t mmuPage = (address / MMU_PAGE_SIZE);
-	uint16_t pageOffset = (address % MMU_PAGE_SIZE);
+	cgc_uint16_t mmuPage = (address / MMU_PAGE_SIZE);
+	cgc_uint16_t pageOffset = (address % MMU_PAGE_SIZE);
 
 	// No need to worry about straddling a page -- just make the lookup
 	if ( !(m_mmuPages[mmuPage].mmuFlags & MMU_PAGE_WRITE) )
 		return (false);	// Cannot exec!
 
-	*(uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]) = value;
+	*(cgc_uint16_t*)&(m_mmuPages[mmuPage].pageData[pageOffset]) = value;
 
 	return (true);
 }
 
-bool CMMU::ReadDMA( uint16_t address, uint8_t *pData, uint16_t amount )
+bool cgc_CMMU::cgc_ReadDMA( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t amount )
 {
-	uint16_t offset = 0;
+	cgc_uint16_t offset = 0;
 
 	while ( amount > 0 )
 	{
-		uint16_t mmuPage = ((address+offset) / MMU_PAGE_SIZE);
-		uint16_t pageOffset = ((address+offset) % MMU_PAGE_SIZE);
+		cgc_uint16_t mmuPage = ((address+offset) / MMU_PAGE_SIZE);
+		cgc_uint16_t pageOffset = ((address+offset) % MMU_PAGE_SIZE);
 
 		// No need to worry about straddling a page -- just make the lookup
 		if ( !(m_mmuPages[mmuPage].mmuFlags & MMU_PAGE_READ) )
 			return (false);	// Cannot exec!
 
-		uint16_t amountToRead = amount;
+		cgc_uint16_t amountToRead = amount;
 		if ( pageOffset+amountToRead > MMU_PAGE_SIZE )
 			amountToRead = (MMU_PAGE_SIZE - (pageOffset+amountToRead));
 
-		memcpy( pData+offset, m_mmuPages[mmuPage].pageData+pageOffset, amountToRead );
+		cgc_memcpy( pData+offset, m_mmuPages[mmuPage].pageData+pageOffset, amountToRead );
 
 		offset += amountToRead;
 		amount -= amountToRead;
@@ -176,24 +176,24 @@ bool CMMU::ReadDMA( uint16_t address, uint8_t *pData, uint16_t amount )
 	return (true);
 }
 
-bool CMMU::WriteDMA( uint16_t address, uint8_t *pData, uint16_t amount )
+bool cgc_CMMU::cgc_WriteDMA( cgc_uint16_t address, cgc_uint8_t *pData, cgc_uint16_t amount )
 {
-	uint16_t offset = 0;
+	cgc_uint16_t offset = 0;
 
 	while ( amount > 0 )
 	{
-		uint16_t mmuPage = ((address+offset) / MMU_PAGE_SIZE);
-		uint16_t pageOffset = ((address+offset) % MMU_PAGE_SIZE);
+		cgc_uint16_t mmuPage = ((address+offset) / MMU_PAGE_SIZE);
+		cgc_uint16_t pageOffset = ((address+offset) % MMU_PAGE_SIZE);
 		
 		// No need to worry about straddling a page -- just make the lookup
 		if ( !(m_mmuPages[mmuPage].mmuFlags & MMU_PAGE_WRITE) )
 			return (false);	// Cannot exec!
 
-		uint16_t amountToWrite = amount;
+		cgc_uint16_t amountToWrite = amount;
 		if ( pageOffset+amountToWrite > MMU_PAGE_SIZE )
 			amountToWrite = (MMU_PAGE_SIZE - (pageOffset+amountToWrite));
 
-		memcpy( m_mmuPages[mmuPage].pageData+pageOffset, (pData+offset), amountToWrite );
+		cgc_memcpy( m_mmuPages[mmuPage].pageData+pageOffset, (pData+offset), amountToWrite );
 
 		offset += amountToWrite;
 		amount -= amountToWrite;

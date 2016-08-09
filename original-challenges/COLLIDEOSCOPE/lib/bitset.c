@@ -25,23 +25,23 @@
 
 #include "bitset.h"
 
-static int bitset_set_bit_value(struct bitset *, unsigned int, int);
+static int cgc_bitset_set_bit_value(struct bitset *, unsigned int, int);
 
 void
-bitset_init(struct bitset *bitset, size_t size)
+cgc_bitset_init(struct bitset *bitset, cgc_size_t size)
 {
     bitset->size = size;
-    bitset_clear(bitset);
+    cgc_bitset_clear(bitset);
 }
 
 void
-bitset_clear(struct bitset *bitset)
+cgc_bitset_clear(struct bitset *bitset)
 {
-    memset(bitset->data, '\0', ALIGN(bitset->size, 8) / 8);
+    cgc_memset(bitset->data, '\0', ALIGN(bitset->size, 8) / 8);
 }
 
 static int
-bitset_set_bit_value(struct bitset *bitset, unsigned int bit, int value)
+cgc_bitset_set_bit_value(struct bitset *bitset, unsigned int bit, int value)
 {
     unsigned int index = bit / 8;
     unsigned char mask = 1 << (bit % 8);
@@ -58,19 +58,19 @@ bitset_set_bit_value(struct bitset *bitset, unsigned int bit, int value)
 }
 
 int
-bitset_set_bit(struct bitset *bitset, unsigned int bit)
+cgc_bitset_set_bit(struct bitset *bitset, unsigned int bit)
 {
-    return bitset_set_bit_value(bitset, bit, 1);
+    return cgc_bitset_set_bit_value(bitset, bit, 1);
 }
 
 int
-bitset_clear_bit(struct bitset *bitset, unsigned int bit)
+cgc_bitset_clear_bit(struct bitset *bitset, unsigned int bit)
 {
-    return bitset_set_bit_value(bitset, bit, 0);
+    return cgc_bitset_set_bit_value(bitset, bit, 0);
 }
 
 int
-bitset_get_bit(struct bitset *bitset, unsigned int bit)
+cgc_bitset_get_bit(struct bitset *bitset, unsigned int bit)
 {
     unsigned int index = bit / 8;
     unsigned char mask = 1 << (bit % 8);
@@ -82,12 +82,12 @@ bitset_get_bit(struct bitset *bitset, unsigned int bit)
 }
 
 int
-bitset_find_first(struct bitset *bitset, int set)
+cgc_bitset_find_first(struct bitset *bitset, int set)
 {
     unsigned int i;
 
     for (i = 0; i < bitset->size; i++)
-        if (bitset_get_bit(bitset, i) == set)
+        if (cgc_bitset_get_bit(bitset, i) == set)
             return i;
 
     return EXIT_FAILURE;

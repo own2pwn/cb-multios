@@ -3,12 +3,12 @@
 
 #ifdef FILAMENTS
     /* syscalls with wrappers */
-    #define transmit __filaments_transmit
-    #define receive __filaments_receive
-    #define fdwait __filaments_fdwait
-    #define allocate __filaments_allocate
-    #define deallocate __filaments_deallocate
-    #define random __filaments_random
+    #define transmit cgc___filaments_transmit
+    #define receive cgc___filaments_receive
+    #define fdwait cgc___filaments_fdwait
+    #define allocate cgc___filaments_allocate
+    #define deallocate cgc___filaments_deallocate
+    #define random cgc___filaments_random
 #endif
 
 #endif /* WRAPPER_H */

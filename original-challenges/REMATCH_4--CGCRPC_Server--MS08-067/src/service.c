@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -37,44 +37,44 @@ THE SOFTWARE.
 
 int main(void) 
 {
-  TransportMessage *tpMessage;
-  CGCMB_Message *mbMessage;
+  cgc_TransportMessage *tpMessage;
+  cgc_CGCMB_Message *mbMessage;
 
-  mbServerState = calloc(sizeof(CGCMB_ServerState));
+  mbServerState = cgc_calloc(sizeof(cgc_CGCMB_ServerState));
   mbServerState->state = INITIAL;
   mbServerState->dialect = 0;
   mbServerState->sessionKey = 0;
 
-  srand();
+  cgc_srand();
   
-  GenerateUsers();
-  InitializeFileSystem();
-  InitializeCGCRPC();
+  cgc_GenerateUsers();
+  cgc_InitializeFileSystem();
+  cgc_InitializeCGCRPC();
  
 TOP:
-  if (ReceiveTransportMessage(&tpMessage) != 0)
+  if (cgc_ReceiveTransportMessage(&tpMessage) != 0)
   {
     goto NEXT_MSG;
   }
 
-  if (ReceiveCGCMBMessage(tpMessage, &mbMessage) != 0)
+  if (cgc_ReceiveCGCMBMessage(tpMessage, &mbMessage) != 0)
   {
     goto NEXT_MSG;
   }
 
-  if (ParseCGCMBMessage(mbMessage) != 0)
+  if (cgc_ParseCGCMBMessage(mbMessage) != 0)
   {
     goto NEXT_MSG;
   }
 
-  if (HandleCGCMBMessage(mbMessage) != 0)
+  if (cgc_HandleCGCMBMessage(mbMessage) != 0)
   {
     return 0;
   }
     
 NEXT_MSG:
-  DestroyCGCMBMessage(&mbMessage);
-  DestroyTransportMessage(&tpMessage);
+  cgc_DestroyCGCMBMessage(&mbMessage);
+  cgc_DestroyTransportMessage(&tpMessage);
   goto TOP;
 
 }

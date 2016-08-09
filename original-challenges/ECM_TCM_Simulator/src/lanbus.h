@@ -28,46 +28,46 @@ THE SOFTWARE.
 
 #include <cutil_list.h>
 
-class CLANMessage
+class cgc_CLANMessage
 {
 public:
-	CLANMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
-	~CLANMessage( );
+	cgc_CLANMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen );
+	~cgc_CLANMessage( );
 
-	uint8_t GetSourceID( void ) const { return m_srcID; };
-	uint8_t GetDestID( void ) const { return m_destID; };
-	uint16_t GetMessageLen( void ) const { return m_messageLen; };
-	uint8_t *GetMessageData( void ) { return m_pMessageData; };
+	cgc_uint8_t cgc_GetSourceID( void ) const { return m_srcID; };
+	cgc_uint8_t cgc_GetDestID( void ) const { return m_destID; };
+	cgc_uint16_t cgc_GetMessageLen( void ) const { return m_messageLen; };
+	cgc_uint8_t *cgc_GetMessageData( void ) { return m_pMessageData; };
 
 private:
-	uint8_t *m_pMessageData;
-	uint16_t m_messageLen;
-	uint8_t m_destID;
-	uint8_t m_srcID;
+	cgc_uint8_t *m_pMessageData;
+	cgc_uint16_t m_messageLen;
+	cgc_uint8_t m_destID;
+	cgc_uint8_t m_srcID;
 
 public:
-	CUtil::DLL_LINK( CLANMessage ) m_lanbusLink;
+	CUtil::DLL_LINK( cgc_CLANMessage ) m_lanbusLink;
 };
 
-class CLANBus
+class cgc_CLANBus
 {
 public:
-	CLANBus( );
-	~CLANBus( );
+	cgc_CLANBus( );
+	~cgc_CLANBus( );
 
-	bool SendMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
-	bool InjectSimulationMessage( uint8_t srcID, uint8_t destID, uint8_t *pMessageData, uint16_t messageLen );
+	bool cgc_SendMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen );
+	bool cgc_InjectSimulationMessage( cgc_uint8_t srcID, cgc_uint8_t destID, cgc_uint8_t *pMessageData, cgc_uint16_t messageLen );
 
-	CLANMessage *RecvMessage( uint8_t *pDestList, uint8_t destListCount, CLANMessage *pLastMessage = NULL );
+	cgc_CLANMessage *cgc_RecvMessage( cgc_uint8_t *pDestList, cgc_uint8_t destListCount, cgc_CLANMessage *pLastMessage = NULL );
 
-	void NextTick( void );
+	void cgc_NextTick( void );
 
 private:
 	// Messages waiting to be sent (next tick)
-	CUtil::DLL_LIST( CLANMessage, m_lanbusLink ) m_oSentList;
+	CUtil::DLL_LIST( cgc_CLANMessage, m_lanbusLink ) m_oSentList;
 
 	// Messages read (current tick)
-	CUtil::DLL_LIST( CLANMessage, m_lanbusLink ) m_oReceiveList;
+	CUtil::DLL_LIST( cgc_CLANMessage, m_lanbusLink ) m_oReceiveList;
 };
 
 #endif // __ECM_H__

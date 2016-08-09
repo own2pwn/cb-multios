@@ -25,7 +25,7 @@
 #include "ai.h"
 
 void
-seed_ai(struct ai_state *state)
+cgc_seed_ai(struct ai_state *state)
 {
     // TODO: Implement an AI ;)
     state->seed = *(unsigned int *)FLAG_PAGE;

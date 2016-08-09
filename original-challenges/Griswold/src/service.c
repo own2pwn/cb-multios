@@ -31,19 +31,19 @@ enum {
 
 int main(void) {
 
-    uint32_t mode[1] = {0};
+    cgc_uint32_t mode[1] = {0};
     int ret = 0;
 
     while (1) {
-        if ((ret = do_nonce()) == 0) {            
-            RECV(mode, sizeof(uint32_t));
+        if ((ret = cgc_do_nonce()) == 0) {            
+            RECV(mode, sizeof(cgc_uint32_t));
 
             switch (mode[0]) {
                 case MODE_BUILD:
-                    ret = do_build();
+                    ret = cgc_do_build();
                     break;
                 case MODE_EXAMINE:
-                    ret = do_examine();
+                    ret = cgc_do_examine();
                     break;
                 default:
                     ret = ERR_INVALID_MODE;

@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.co)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,28 +33,28 @@ THE SOFTWARE.
 #include "ui.h"
 
 
-pDiverInfo init_data(){
-	pDiverInfo workingData = NULL;
-	workingData = malloc( sizeof( sDiverInfo ) );
+cgc_pDiverInfo cgc_init_data(){
+	cgc_pDiverInfo workingData = NULL;
+	workingData = cgc_malloc( sizeof( cgc_sDiverInfo ) );
 	if ( workingData == NULL ){ _terminate( -2 );}
 	return workingData;
 }
 
-void destroy_data( pDiverInfo workingData ){
-	free( workingData );
+void cgc_destroy_data( cgc_pDiverInfo workingData ){
+	cgc_free( workingData );
 }
 
 //dive is linked list
 //cases first entry in list, last entry in list (always add at the end)
 //returns pointer to diveentrynew
-pDiveEntry AddDive( pDiverInfo DiverInfo ){
-	pDiveEntryListNode DiveEntryListCur = NULL ;
-	pDiveEntryListNode DiveEntryListTemp;
+cgc_pDiveEntry cgc_AddDive( cgc_pDiverInfo DiverInfo ){
+	cgc_pDiveEntryListNode DiveEntryListCur = NULL ;
+	cgc_pDiveEntryListNode DiveEntryListTemp;
 	//linked list node
-	pDiveEntryListNode DiveEntryListNew = malloc( sizeof( sDiveEntryListNode ) );
+	cgc_pDiveEntryListNode DiveEntryListNew = cgc_malloc( sizeof( cgc_sDiveEntryListNode ) );
 	//data element
-	pDiveEntry DiveEntryNew = malloc( sizeof( sDiveEntry ) );
-	//if malloc fails, exit
+	cgc_pDiveEntry DiveEntryNew = cgc_malloc( sizeof( cgc_sDiveEntry ) );
+	//if cgc_malloc fails, exit
 	if (  ( DiveEntryNew == NULL ) || ( DiveEntryListNew == NULL )  ) { _terminate( -2 );}
 
 	//add data element to linked list node
@@ -88,15 +88,15 @@ pDiveEntry AddDive( pDiverInfo DiverInfo ){
 //to delete all dives, delete last, and keep deleting until returns null
 //five cases: 
 //	pointer is invalid/not in list, 
-//	pointer is only node, free and set diveentrylist to null
-//	pointer is first but not only, free and set diveentrylist to next, next->prev to null
-//	pointer is middle, free and set prev->next to next, next->prev to prev
-//	pointer is last but not only. free set prev->next to next (which is null)
+//	pointer is only node, cgc_free and set diveentrylist to null
+//	pointer is first but not only, cgc_free and set diveentrylist to next, next->prev to null
+//	pointer is middle, cgc_free and set prev->next to next, next->prev to prev
+//	pointer is last but not only. cgc_free set prev->next to next (which is null)
 //reduces to if exists, only, not first, and not last (4 cases)
-pDiveEntryListNode DeleteDive( pDiverInfo DiverInfo, pDiveEntryListNode DiveEntryListNodeToDelete ){
-	pDiveEntryListNode DiveEntryListPrev = NULL;
-	pDiveEntryListNode DiveEntryListTemp = NULL;
-	pDiveEntryListNode DiveEntryListCur  = NULL;
+cgc_pDiveEntryListNode cgc_DeleteDive( cgc_pDiverInfo DiverInfo, cgc_pDiveEntryListNode DiveEntryListNodeToDelete ){
+	cgc_pDiveEntryListNode DiveEntryListPrev = NULL;
+	cgc_pDiveEntryListNode DiveEntryListTemp = NULL;
+	cgc_pDiveEntryListNode DiveEntryListCur  = NULL;
 	DiveEntryListTemp = DiverInfo->DiveEntryList;
 	while (  ( DiveEntryListTemp != NULL )&&( DiveEntryListTemp != DiveEntryListNodeToDelete )  ){
 		DiveEntryListTemp = DiveEntryListTemp->next;
@@ -117,14 +117,14 @@ pDiveEntryListNode DeleteDive( pDiverInfo DiverInfo, pDiveEntryListNode DiveEntr
 	if ( DiveEntryListNodeToDelete == DiverInfo->DiveEntryList ){
 		DiverInfo->DiveEntryList = DiverInfo->DiveEntryList->next;
 	}
-	free(DiveEntryListNodeToDelete->DiveEntry);
-	free(DiveEntryListNodeToDelete);	
+	cgc_free(DiveEntryListNodeToDelete->DiveEntry);
+	cgc_free(DiveEntryListNodeToDelete);	
 	return DiveEntryListPrev;
 }
 
 int main(){
-	pDiverInfo workingData = init_data();
-	MainMenu( workingData );
-	destroy_data( workingData );
+	cgc_pDiverInfo workingData = cgc_init_data();
+	cgc_MainMenu( workingData );
+	cgc_destroy_data( workingData );
 	return 1;
 }

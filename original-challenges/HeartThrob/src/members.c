@@ -32,40 +32,40 @@
 #define MAGICWORD "<3 "
 #define SIZEOFARR(a) sizeof(a)/sizeof(typeof(a[0]))
 
-static void edgar_match(htreq *req) {
+static void cgc_edgar_match(cgc_htreq *req) {
 #ifndef PATCHED
-    strcpy(req->resp, req->recv+sizeof(EDGRBUF)-1);
-    strcat(req->resp, EDGROVFSTR);
+    cgc_strcpy(req->resp, req->recv+sizeof(EDGRBUF)-1);
+    cgc_strcat(req->resp, EDGROVFSTR);
 #else
-    strncpy(req->resp, req->recv+sizeof(EDGRBUF)-1,sizeof(req->resp)-1);
-    strncpy(req->resp+strlen(req->resp), EDGROVFSTR, sizeof(req->resp)-strlen(req->resp)-1);
+    cgc_strncpy(req->resp, req->recv+sizeof(EDGRBUF)-1,sizeof(req->resp)-1);
+    cgc_strncpy(req->resp+cgc_strlen(req->resp), EDGROVFSTR, sizeof(req->resp)-cgc_strlen(req->resp)-1);
 #endif
 }
 
-static void edgar_no_match(htreq *req) {
-    strncpy(req->resp, req->recv+sizeof(EDGRBUF)-1, sizeof(req->resp)-1);
-    strncpy(req->resp+strlen(req->resp), EDGRBUTSTR, sizeof(req->resp)-strlen(req->resp)-1);
+static void cgc_edgar_no_match(cgc_htreq *req) {
+    cgc_strncpy(req->resp, req->recv+sizeof(EDGRBUF)-1, sizeof(req->resp)-1);
+    cgc_strncpy(req->resp+cgc_strlen(req->resp), EDGRBUTSTR, sizeof(req->resp)-cgc_strlen(req->resp)-1);
 }
 
-void do_edgar(htreq* req) {
-    req->match = edgar_match;
-    req->nomatch = edgar_no_match;
-    //use our super optimized check function
+void cgc_do_edgar(cgc_htreq* req) {
+    req->match = cgc_edgar_match;
+    req->nomatch = cgc_edgar_no_match;
+    //use our super optimized cgc_check function
     //will add support for more matches in future
-    if (check(req->recv+sizeof(EDGRBUF)-1) == 1)
+    if (cgc_check(req->recv+sizeof(EDGRBUF)-1) == 1)
         req->match(req);
     else
         req->nomatch(req);
 }
 
-static void will_no_match(htreq *req) {
+static void cgc_will_no_match(cgc_htreq *req) {
     int res;
-    SEND("(bb|[^b]{2})?",strlen("(bb|[^b]{2})?"),res); 
+    SEND("(bb|[^b]{2})?",cgc_strlen("(bb|[^b]{2})?"),res); 
     req->resplen = 0;
     *req->resp = '\0';
 }
 
-static void will_match(htreq *req) {
+static void cgc_will_match(cgc_htreq *req) {
     char *src = req->recv+sizeof(WILLBUF)-1;
     char *dst = req->resp;
 
@@ -75,18 +75,18 @@ static void will_match(htreq *req) {
     char *end = req->resp+sizeof(req->resp);
     while(dst < end && *src) {
 #endif
-        if (startswith(src, "your")) {
+        if (cgc_startswith(src, "your")) {
 #ifndef PATCHED
-            dst += strcpy(dst,"thy");
+            dst += cgc_strcpy(dst,"thy");
 #else
-            dst += strncpy(dst,"thy",(size_t)(end-dst));
+            dst += cgc_strncpy(dst,"thy",(cgc_size_t)(end-dst));
 #endif
             src += sizeof("your")-1;
-        } else if (startswith(src, "has")) {
+        } else if (cgc_startswith(src, "has")) {
 #ifndef PATCHED
-            dst += strcpy(dst,"hath");
+            dst += cgc_strcpy(dst,"hath");
 #else
-            dst += strncpy(dst,"hath",(size_t)(end-dst));
+            dst += cgc_strncpy(dst,"hath",(cgc_size_t)(end-dst));
 #endif
             src += sizeof("has")-1;
         } else {
@@ -100,66 +100,66 @@ static void will_match(htreq *req) {
 #endif
 
 #ifndef PATCHED
-    req->resplen = strlen(req->recv+sizeof(WILLBUF)-1);
+    req->resplen = cgc_strlen(req->recv+sizeof(WILLBUF)-1);
 #else
-    req->resplen = strlen(req->resp);
+    req->resplen = cgc_strlen(req->resp);
 #endif
 }
 
-void do_will(htreq *req) {
-    req->match = will_match;
-    req->nomatch = will_no_match;
-    if (startswith(req->recv+sizeof(WILLBUF)-1,MAGICWORD)){
+void cgc_do_will(cgc_htreq *req) {
+    req->match = cgc_will_match;
+    req->nomatch = cgc_will_no_match;
+    if (cgc_startswith(req->recv+sizeof(WILLBUF)-1,MAGICWORD)){
         req->match(req);
     } else {
         req->nomatch(req);
     }
 }
 
-static void eliz_all(htreq *req) {
+static void cgc_eliz_all(cgc_htreq *req) {
     int res;
     SEND("I love thee seven ways.",sizeof("I love thee seven ways.")-1,res);
     *req->resp = '\0';
 }
 
-void do_eliz(htreq *req) {
+void cgc_do_eliz(cgc_htreq *req) {
 #ifndef PATCHED
-    if (req->nomatch != eliz_all) {
+    if (req->nomatch != cgc_eliz_all) {
 #endif
-    req->nomatch = eliz_all;
-    req->match = eliz_all;
+    req->nomatch = cgc_eliz_all;
+    req->match = cgc_eliz_all;
 #ifndef PATCHED
     }
 #endif
     req->match(req);
 }
 
-static void john_match(htreq *req) {
+static void cgc_john_match(cgc_htreq *req) {
     int res;
     SENDL(johnarr[SIZEOFARR(johnarr)-1],
-            strlen(johnarr[SIZEOFARR(johnarr)-1]),res);
+            cgc_strlen(johnarr[SIZEOFARR(johnarr)-1]),res);
     *req->resp = '\0';
 }
 
-static void john_nomatch(htreq *req) {
+static void cgc_john_nomatch(cgc_htreq *req) {
     int res;
-    size_t bytes;
+    cgc_size_t bytes;
     char rand = 0;
-    random(&rand,1,&bytes);
+    cgc_random(&rand,1,&bytes);
     SENDL(johnarr[rand%SIZEOFARR(johnarr)],
-            strlen(johnarr[rand%SIZEOFARR(johnarr)]), res);
+            cgc_strlen(johnarr[rand%SIZEOFARR(johnarr)]), res);
     SENDL("\n-John",sizeof("\n-John")-1,res)
     *req->resp = '\0';
 }
 
-void do_john(htreq *req) {
+void cgc_do_john(cgc_htreq *req) {
     int res;
 
-    req->nomatch = john_nomatch;
-    req->match = john_match;
+    req->nomatch = cgc_john_nomatch;
+    req->match = cgc_john_match;
 
     
-    if (check(req->recv+sizeof(JOHNBUF)-1) == 31337)
+    if (cgc_check(req->recv+sizeof(JOHNBUF)-1) == 31337)
         req->match(req);
     else
         req->nomatch(req);

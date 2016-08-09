@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,100 +31,100 @@
 #include "ctf.h"
 
 unsigned int r;
-unsigned int prng()
+unsigned int cgc_prng()
 {
     r = ((((r >> 31) ^ (r >> 30) ^ (r >> 10) ^ (r >> 0)) & 1) << 31) | (r >> 1);
     return r;
 }
 
-void random_string(char *buf, size_t len)
+void cgc_random_string(char *buf, cgc_size_t len)
 {
     int i;
     int r;
     char str[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     for (i = 0; i < len; ++i)
     {
-        r = prng();
+        r = cgc_prng();
         buf[i] = str[r % (sizeof(str) - 1)];
     }
 }
 
-void print_main_menu()
+void cgc_print_main_menu()
 {
-    printf("\n=== Menu ===================\n");
-    printf("1. Register User\n");
-    printf("2. Login User\n");
-    printf("3. Quit\n");
-    printf("> ");
+    cgc_printf("\n=== Menu ===================\n");
+    cgc_printf("1. Register User\n");
+    cgc_printf("2. Login User\n");
+    cgc_printf("3. Quit\n");
+    cgc_printf("> ");
 }
 
-int is_alphanum(const char *s)
+int cgc_is_alphanum(const char *s)
 {
     int i;
-    for (i = 0; i < strlen(s) - 1; ++i)
+    for (i = 0; i < cgc_strlen(s) - 1; ++i)
     {
-        if (!isalnum(s[i]))
+        if (!cgc_isalnum(s[i]))
             return 0;
     }
     return 1;
 }
 
-void handle_register_user(ctf_t *ctf)
+void cgc_handle_register_user(cgc_ctf_t *ctf)
 {
     char shout[128], buf[256];
-    user_t *user = NULL;
-    team_t *team = NULL;
+    cgc_user_t *user = NULL;
+    cgc_team_t *team = NULL;
     int new_team = 0;
-    error_t err;
-    if ((err = user_new(&user)) != ERR_OK)
+    cgc_error_t err;
+    if ((err = cgc_user_new(&user)) != ERR_OK)
         goto fail;
-    printf("\n=== User Creation ===================\n");
-    printf("Nickname: ");
+    cgc_printf("\n=== User Creation ===================\n");
+    cgc_printf("Nickname: ");
     err = ERR_INVALID_VALUE;
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
         goto fail;
-    if (!is_alphanum(buf))
+    if (!cgc_is_alphanum(buf))
         goto fail;
-    if ((err = user_set_nick(user, buf)) != ERR_OK)
+    if ((err = cgc_user_set_nick(user, buf)) != ERR_OK)
         goto fail;
-    printf("Password: ");
+    cgc_printf("Password: ");
     err = ERR_INVALID_VALUE;
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
         goto fail;
-    if (!is_alphanum(buf))
+    if (!cgc_is_alphanum(buf))
         goto fail;
-    if ((err = user_set_pass(user, buf)) != ERR_OK)
+    if ((err = cgc_user_set_pass(user, buf)) != ERR_OK)
         goto fail;
-    printf("Team token: ");
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+    cgc_printf("Team token: ");
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
         goto fail;
-    if (strcmp(buf, "") == 0)
+    if (cgc_strcmp(buf, "") == 0)
     {
-        if ((err = team_new(&team)) != ERR_OK)
+        if ((err = cgc_team_new(&team)) != ERR_OK)
             goto fail;
-        printf("\n=== Team Creation ===================\n");
-        printf("Team name: ");
+        cgc_printf("\n=== Team Creation ===================\n");
+        cgc_printf("Team name: ");
         err = ERR_INVALID_VALUE;
-        fflush(stdout);
-        if (freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
+        cgc_fflush(stdout);
+        if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
             goto fail;
-        if ((err = team_change_name(team, buf)) != ERR_OK)
+        if ((err = cgc_team_change_name(team, buf)) != ERR_OK)
             goto fail;
-        printf("Shoutout: ");
+        cgc_printf("Shoutout: ");
         err = ERR_INVALID_VALUE;
-        fflush(stdout);
+        cgc_fflush(stdout);
 #ifdef PATCHED_1
-        if (freaduntil(shout, sizeof(shout), '\n', stdin) <= 0)
+        if (cgc_freaduntil(shout, sizeof(shout), '\n', stdin) <= 0)
 #else
-        if (freaduntil(shout, sizeof(buf), '\n', stdin) <= 0)
+        if (cgc_freaduntil(shout, sizeof(buf), '\n', stdin) <= 0)
 #endif
             goto fail;
-        if ((err = team_set_shoutout(team, shout)) != ERR_OK)
+        if ((err = cgc_team_set_shoutout(team, shout)) != ERR_OK)
             goto fail;
-        random_string(team->code, sizeof(team->code) - 1);
+        cgc_random_string(team->code, sizeof(team->code) - 1);
         team->code[sizeof(team->code) - 1] = '\0';
         new_team = 1;
     }
@@ -133,7 +133,7 @@ void handle_register_user(ctf_t *ctf)
         int i;
         for (i = 0; i < ctf->num_teams; ++i)
         {
-            if (memcmp(ctf->teams[i]->code, buf, 32) == 0)
+            if (cgc_memcmp(ctf->teams[i]->code, buf, 32) == 0)
             {
                 team = ctf->teams[i];
                 break;
@@ -145,217 +145,217 @@ void handle_register_user(ctf_t *ctf)
             goto fail;
         }
     }
-    if ((err = ctf_add_user(ctf, user)) != ERR_OK)
+    if ((err = cgc_ctf_add_user(ctf, user)) != ERR_OK)
         goto fail;
-    if (new_team && (err = ctf_add_team(ctf, team)) != ERR_OK)
+    if (new_team && (err = cgc_ctf_add_team(ctf, team)) != ERR_OK)
         goto fail;
-    if ((err = team_add_member(team, user)) != ERR_OK)
+    if ((err = cgc_team_add_member(team, user)) != ERR_OK)
         goto fail;
-    if ((err = user_set_team(user, team, NULL)) != ERR_OK)
+    if ((err = cgc_user_set_team(user, team, NULL)) != ERR_OK)
         goto fail;
-    printf("[INFO] Successfully registered.\n");
+    cgc_printf("[INFO] Successfully registered.\n");
     if (new_team)
-        printf("[INFO] Team code: ;s\n", team->code);
+        cgc_printf("[INFO] Team code: ;s\n", team->code);
     return;
 
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
     if (user)
-        free(user);
+        cgc_free(user);
     if (new_team && team)
-        free(team);
+        cgc_free(team);
     return;
 }
 
-void handle_login_user(ctf_t *ctf)
+void cgc_handle_login_user(cgc_ctf_t *ctf)
 {
-    error_t err;
+    cgc_error_t err;
     char nick[64], pass[64];
-    printf("\n=== Login ===================\n");
-    printf("Nick: ");
+    cgc_printf("\n=== Login ===================\n");
+    cgc_printf("Nick: ");
     err = ERR_INVALID_VALUE;
-    fflush(stdout);
-    if (freaduntil(nick, sizeof(nick), '\n', stdin) <= 0)
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(nick, sizeof(nick), '\n', stdin) <= 0)
         goto fail;
-    if (!is_alphanum(nick))
+    if (!cgc_is_alphanum(nick))
         goto fail;
-    printf("Password: ");
-    fflush(stdout);
-    if (freaduntil(pass, sizeof(pass), '\n', stdin) <= 0)
+    cgc_printf("Password: ");
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(pass, sizeof(pass), '\n', stdin) <= 0)
         goto fail;
-    if (!is_alphanum(pass))
+    if (!cgc_is_alphanum(pass))
         goto fail;
-    if ((err = ctf_auth_user(ctf, &ctf->logged_in, nick, pass)) != ERR_OK)
+    if ((err = cgc_ctf_auth_user(ctf, &ctf->logged_in, nick, pass)) != ERR_OK)
         goto fail;
-    printf("[INFO] Successfully logged in as ;s.\n", nick);
+    cgc_printf("[INFO] Successfully logged in as ;s.\n", nick);
     return;
 
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void print_ctf_ticker(ctf_t *ctf)
+void cgc_print_ctf_ticker(cgc_ctf_t *ctf)
 {
-    team_t *t = ctf->logged_in->team;
-    size_t n = 1;
-    team_t **tmp = NULL;
-    ctf_get_ranks(ctf, &tmp, &n);
-    free(tmp);
-    printf("\n================================\n");
-    printf("| [;s] - ;d\n", t->name, t->score);
-    printf("================================\n");
+    cgc_team_t *t = ctf->logged_in->team;
+    cgc_size_t n = 1;
+    cgc_team_t **tmp = NULL;
+    cgc_ctf_get_ranks(ctf, &tmp, &n);
+    cgc_free(tmp);
+    cgc_printf("\n================================\n");
+    cgc_printf("| [;s] - ;d\n", t->name, t->score);
+    cgc_printf("================================\n");
     int i;
-    flag_t **solves = NULL;
+    cgc_flag_t **solves = NULL;
     n = 5;
-    ctf_get_solves(ctf, &solves, &n);
+    cgc_ctf_get_solves(ctf, &solves, &n);
     if (n == 0)
-        printf("No solves yet.\n");
+        cgc_printf("No solves yet.\n");
     for (i = 0; i < n; ++i)
-        printf("| ;s solved ;s (;d pts)\n", solves[i]->team->name, solves[i]->chal->name, solves[i]->chal->points);
+        cgc_printf("| ;s solved ;s (;d pts)\n", solves[i]->team->name, solves[i]->chal->name, solves[i]->chal->points);
     if (solves)
-        free(solves);
-    printf("================================\n");
+        cgc_free(solves);
+    cgc_printf("================================\n");
 }
 
-void print_ctf_menu(ctf_t *ctf)
+void cgc_print_ctf_menu(cgc_ctf_t *ctf)
 {
-    print_ctf_ticker(ctf);
-    printf("\n=== CTF Menu ===================\n");
-    printf("1. View challenge list\n");
-    printf("2. View challenge detail\n");
-    printf("3. View ranking\n");
-    printf("4. View team profile\n");
-    printf("5. Submit flag\n");
-    printf("6. Logout\n");
-    printf("> ");
+    cgc_print_ctf_ticker(ctf);
+    cgc_printf("\n=== CTF Menu ===================\n");
+    cgc_printf("1. View challenge list\n");
+    cgc_printf("2. View challenge detail\n");
+    cgc_printf("3. View ranking\n");
+    cgc_printf("4. View team profile\n");
+    cgc_printf("5. Submit flag\n");
+    cgc_printf("6. Logout\n");
+    cgc_printf("> ");
 }
 
-void print_challenge(ctf_t *ctf, chal_t *chal, int detail)
+void cgc_print_challenge(cgc_ctf_t *ctf, cgc_chal_t *chal, int detail)
 {
-    const char *cat = chal_cat_to_string(chal->cat);
-    chal_stat_t stat = chal->status;
-    if (flg_team_did_solve(&ctf->flg, ctf->logged_in->team, chal))
+    const char *cat = cgc_chal_cat_to_string(chal->cat);
+    cgc_chal_stat_t stat = chal->status;
+    if (cgc_flg_team_did_solve(&ctf->flg, ctf->logged_in->team, chal))
         stat = CSTAT_SOLVED_U;
-    const char *status = chal_status_to_string(stat);
+    const char *status = cgc_chal_status_to_string(stat);
     if (!detail)
-        printf("[;s] [;d pts] ;s - ;s\n", cat, chal->points, chal->name, status);
+        cgc_printf("[;s] [;d pts] ;s - ;s\n", cat, chal->points, chal->name, status);
     else
     {
-        printf("[;s] [;d pts] ;s - ;s\n", cat, chal->points, chal->name, status);
+        cgc_printf("[;s] [;d pts] ;s - ;s\n", cat, chal->points, chal->name, status);
         if (chal->status == CSTAT_LOCKED)
-            printf("Hidden.\n");
+            cgc_printf("Hidden.\n");
         else
-            printf(";s\n", chal->desc);
-        //printf("flag: ;s\n", chal->flag);
-        flag_t **f = NULL;
-        size_t n = 3;
-        flg_get_solves(&ctf->flg, &f, chal, &n);
+            cgc_printf(";s\n", chal->desc);
+        //cgc_printf("flag: ;s\n", chal->flag);
+        cgc_flag_t **f = NULL;
+        cgc_size_t n = 3;
+        cgc_flg_get_solves(&ctf->flg, &f, chal, &n);
         if (n > 0)
         {
-            printf("\nTop Solvers\n");
-            printf("===========\n");
+            cgc_printf("\nTop Solvers\n");
+            cgc_printf("===========\n");
             int i;
             for(i = 0; i< n; ++i)
-                printf(";d. ;s\n", i+1, f[i]->team->name);
-            free(f);
+                cgc_printf(";d. ;s\n", i+1, f[i]->team->name);
+            cgc_free(f);
         }
     }
 }
 
-void handle_view_challenge_list(ctf_t *ctf)
+void cgc_handle_view_challenge_list(cgc_ctf_t *ctf)
 {
     int i;
     if (ctf->num_chals == 0)
     {
-        printf("[INFO] No challenges are available.\n");
+        cgc_printf("[INFO] No challenges are available.\n");
         return;
     }
-    printf("\n=== Challenge list ===================\n");
+    cgc_printf("\n=== Challenge list ===================\n");
     for (i = 0; i < ctf->num_chals; ++i)
     {
-        printf(";d. ", i);
-        print_challenge(ctf, ctf->chals[i], 0);
+        cgc_printf(";d. ", i);
+        cgc_print_challenge(ctf, ctf->chals[i], 0);
     }
 }
 
-void handle_view_challenge_detail(ctf_t *ctf)
+void cgc_handle_view_challenge_detail(cgc_ctf_t *ctf)
 {
     char buf[32];
-    handle_view_challenge_list(ctf);
+    cgc_handle_view_challenge_list(ctf);
     if (ctf->num_chals == 0)
         return;
-    printf("\nChoose idx: ");
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+    cgc_printf("\nChoose idx: ");
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
         goto fail;
-    error_t err;
-    chal_t *chal = NULL;
-    if ((err = ctf_get_chal(ctf, &chal, strtoul(buf, NULL, 10))) != ERR_OK)
+    cgc_error_t err;
+    cgc_chal_t *chal = NULL;
+    if ((err = cgc_ctf_get_chal(ctf, &chal, cgc_strtoul(buf, NULL, 10))) != ERR_OK)
         goto fail;
-    printf("\n=== Challenge detail ===================\n");
-    print_challenge(ctf, chal, 1);
+    cgc_printf("\n=== Challenge detail ===================\n");
+    cgc_print_challenge(ctf, chal, 1);
     return;
 
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void view_ranking_page(ctf_t *ctf, size_t page)
+void cgc_view_ranking_page(cgc_ctf_t *ctf, cgc_size_t page)
 {
     int i;
-    size_t n = (5 < ctf->num_teams - (page - 1) * 5) ? 5 : (ctf->num_teams - (page - 1) * 5);
-    team_t **ranks = NULL;
-    ctf_get_ranks(ctf, &ranks, &page);
+    cgc_size_t n = (5 < ctf->num_teams - (page - 1) * 5) ? 5 : (ctf->num_teams - (page - 1) * 5);
+    cgc_team_t **ranks = NULL;
+    cgc_ctf_get_ranks(ctf, &ranks, &page);
     for (i = 0; i < n; ++i)
     {
         int rank = i + page * 5 + 1;
-        printf(";d. ;s (;d pts)\n", rank, ranks[i]->name, ranks[i]->score);
+        cgc_printf(";d. ;s (;d pts)\n", rank, ranks[i]->name, ranks[i]->score);
     }
-    free(ranks);
+    cgc_free(ranks);
 }
 
-void handle_view_ranking(ctf_t *ctf)
+void cgc_handle_view_ranking(cgc_ctf_t *ctf)
 {
     char buf[32];
-    error_t err = ERR_INVALID_VALUE;
-    printf("\n=== Ranking ===================\n");
-    size_t page = 1;
-    size_t num_pages = (ctf->num_teams / 5) + ((ctf->num_teams % 5) == 0 ? 0 : 1);
-    view_ranking_page(ctf, 1);
-    printf("\n=== 1 / ;d ===================\n", num_pages);
+    cgc_error_t err = ERR_INVALID_VALUE;
+    cgc_printf("\n=== Ranking ===================\n");
+    cgc_size_t page = 1;
+    cgc_size_t num_pages = (ctf->num_teams / 5) + ((ctf->num_teams % 5) == 0 ? 0 : 1);
+    cgc_view_ranking_page(ctf, 1);
+    cgc_printf("\n=== 1 / ;d ===================\n", num_pages);
     while (1)
     {
-        printf("\nPage: ");
-        fflush(stdout);
-        if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+        cgc_printf("\nPage: ");
+        cgc_fflush(stdout);
+        if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
             goto fail;
-        if (strcmp(buf, "q") == 0)
+        if (cgc_strcmp(buf, "q") == 0)
             return;
-        page = strtoul(buf, NULL, 10);
+        page = cgc_strtoul(buf, NULL, 10);
         if (page < 1 || page > num_pages)
             goto fail;
-        view_ranking_page(ctf, page);
-        printf("\n=== ;d / ;d ===================\n", page, num_pages);
+        cgc_view_ranking_page(ctf, page);
+        cgc_printf("\n=== ;d / ;d ===================\n", page, num_pages);
     }
     return;
 
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void handle_view_team_profile(ctf_t *ctf)
+void cgc_handle_view_team_profile(cgc_ctf_t *ctf)
 {
     char buf[64];
-    error_t err = ERR_NO_SUCH_TEAM;
-    printf("\nTeam name: ");
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
+    cgc_error_t err = ERR_NO_SUCH_TEAM;
+    cgc_printf("\nTeam name: ");
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
         goto fail;
     int i;
-    team_t *t = NULL;
+    cgc_team_t *t = NULL;
     for (i = 0; i < ctf->num_teams; ++i)
     {
-        if (strcmp(ctf->teams[i]->name, buf) == 0)
+        if (cgc_strcmp(ctf->teams[i]->name, buf) == 0)
         {
             t = ctf->teams[i];
             break;
@@ -363,59 +363,59 @@ void handle_view_team_profile(ctf_t *ctf)
     }
     if (!t)
         goto fail;
-    printf("\n=== Team profile ===================\n");
-    printf(";s\n", t->name);
-    printf("Leader: ;s\n", t->leader->nick);
-    printf("Members (;d)\n - ", t->num_members);
+    cgc_printf("\n=== Team profile ===================\n");
+    cgc_printf(";s\n", t->name);
+    cgc_printf("Leader: ;s\n", t->leader->nick);
+    cgc_printf("Members (;d)\n - ", t->num_members);
     for (i = 0; i < t->num_members; ++i)
     {
-        printf(";s", t->members[i]->nick);
+        cgc_printf(";s", t->members[i]->nick);
         if (i != t->num_members - 1)
-            printf(", ");
+            cgc_printf(", ");
     }
-    printf("\nShoutout: ;s\n", t->shout);
+    cgc_printf("\nShoutout: ;s\n", t->shout);
     return;
 
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void handle_submit_flag(ctf_t *ctf)
+void cgc_handle_submit_flag(cgc_ctf_t *ctf)
 {
     char buf[512];
-    error_t err = ERR_INVALID_FLAG;
-    printf("\n=== Submit flag ===================\n");
-    printf("Flag: ");
-    fflush(stdout);
-    if (freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
+    cgc_error_t err = ERR_INVALID_FLAG;
+    cgc_printf("\n=== Submit flag ===================\n");
+    cgc_printf("Flag: ");
+    cgc_fflush(stdout);
+    if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) <= 0)
         goto fail;
-    if ((err = ctf_submit_flag(ctf, ctf->logged_in->team, buf)) != ERR_OK)
+    if ((err = cgc_ctf_submit_flag(ctf, ctf->logged_in->team, buf)) != ERR_OK)
         goto fail;
-    chal_t *chal = NULL;
-    flg_find_chal(&ctf->flg, &chal, buf);
-    printf("[INFO] Congrats! You scored ;d points!\n", chal->points);
+    cgc_chal_t *chal = NULL;
+    cgc_flg_find_chal(&ctf->flg, &chal, buf);
+    cgc_printf("[INFO] Congrats! You scored ;d points!\n", chal->points);
     return;
 fail:
-    printf("[ERROR] ;s\n", error_to_string(err));
+    cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void handle_logout_user(ctf_t *ctf)
+void cgc_handle_logout_user(cgc_ctf_t *ctf)
 {
-    printf("[INFO] Successfully logged out.\n");
+    cgc_printf("[INFO] Successfully logged out.\n");
     ctf->logged_in = NULL;
 }
 
-void handle_quit()
+void cgc_handle_quit()
 {
-    printf("Bye.\n");
-    fflush(stdout);
-    exit(0);
+    cgc_printf("Bye.\n");
+    cgc_fflush(stdout);
+    cgc_exit(0);
 }
 
-void do_random_action(ctf_t *ctf)
+void cgc_do_random_action(cgc_ctf_t *ctf)
 {
     ctf->status = CTF_STAT_LIVE;
-    switch (prng() % 10)
+    switch (cgc_prng() % 10)
     {
         case 0:
         case 1:
@@ -423,20 +423,20 @@ void do_random_action(ctf_t *ctf)
         case 3:
             /* Create a random challenge */
             {
-                chal_t *chal = (chal_t *) malloc(sizeof(chal_t));
-                random_string(chal->name, 32);
+                cgc_chal_t *chal = (cgc_chal_t *) cgc_malloc(sizeof(cgc_chal_t));
+                cgc_random_string(chal->name, 32);
                 chal->name[32] = '\0';
-                random_string(chal->desc, 64);
+                cgc_random_string(chal->desc, 64);
                 chal->desc[64] = '\0';
-                chal->points = prng() % 600;
+                chal->points = cgc_prng() % 600;
                 if (chal->points == 0)
                     chal->points = 1;
                 chal->status = CSTAT_LOCKED;
-                chal->cat = prng() % 7;
-                chal->flag = malloc(64);
-                random_string(chal->flag, 32);
+                chal->cat = cgc_prng() % 7;
+                chal->flag = cgc_malloc(64);
+                cgc_random_string(chal->flag, 32);
                 chal->flag[32] = '\0';
-                ctf_add_chal(ctf, chal);
+                cgc_ctf_add_chal(ctf, chal);
             }
             break;
         case 4:
@@ -448,12 +448,12 @@ void do_random_action(ctf_t *ctf)
                 int i;
                 for (i = 0; i < ctf->num_chals; ++i)
                 {
-                    chal_t *c = ctf->chals[i];
+                    cgc_chal_t *c = ctf->chals[i];
                     if (c->status == CSTAT_LOCKED)
                     {
-                        if (prng() % 100 < 50)
+                        if (cgc_prng() % 100 < 50)
                         {
-                            ctf_open_chal(ctf, i);
+                            cgc_ctf_open_chal(ctf, i);
                             break;
                         }
                     }
@@ -475,69 +475,69 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
 
     r = *(unsigned int *)secret_page ^ *(unsigned int *)&secret_page[20];
 
-    fbuffered(stdin, 1);
-    fbuffered(stdout, 1);
+    cgc_fbuffered(stdin, 1);
+    cgc_fbuffered(stdout, 1);
 
-    fxlat(stdin, "7943");
-    fxlat(stdout, "7943");
+    cgc_fxlat(stdin, "7943");
+    cgc_fxlat(stdout, "7943");
 
-    ctf_t ctf;
-    ctf_init(&ctf);
+    cgc_ctf_t ctf;
+    cgc_ctf_init(&ctf);
 
-    printf("Shout CTF CLI v0.1\n");
-    printf("=================\n");
-    fflush(stdout);
+    cgc_printf("Shout CTF CLI v0.1\n");
+    cgc_printf("=================\n");
+    cgc_fflush(stdout);
     while (1)
     {
-        do_random_action(&ctf);
+        cgc_do_random_action(&ctf);
         if (!ctf.logged_in)
         {
-            print_main_menu();
-            fflush(stdout);
-            if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+            cgc_print_main_menu();
+            cgc_fflush(stdout);
+            if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
                 break;
             if (ctf.status == CTF_STAT_DOWN)
             {
-                printf("CTF server is down! Try again later :(\n");
+                cgc_printf("CTF server is down! Try again later :(\n");
                 continue;
             }
-            if (strcmp(buf, "1") == 0)
-                handle_register_user(&ctf);
-            else if (strcmp(buf, "2") == 0)
-                handle_login_user(&ctf);
-            else if (strcmp(buf, "3") == 0)
-                handle_quit();
+            if (cgc_strcmp(buf, "1") == 0)
+                cgc_handle_register_user(&ctf);
+            else if (cgc_strcmp(buf, "2") == 0)
+                cgc_handle_login_user(&ctf);
+            else if (cgc_strcmp(buf, "3") == 0)
+                cgc_handle_quit();
             else
-                printf("Try again.\n");
+                cgc_printf("Try again.\n");
         }
         else
         {
-            print_ctf_menu(&ctf);
-            fflush(stdout);
-            if (freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
+            cgc_print_ctf_menu(&ctf);
+            cgc_fflush(stdout);
+            if (cgc_freaduntil(buf, sizeof(buf), '\n', stdin) < 0)
                 break;
             if (ctf.status == CTF_STAT_DOWN)
             {
-                printf("CTF server is down! Try again later :(\n");
+                cgc_printf("CTF server is down! Try again later :(\n");
                 continue;
             }
-            if (strcmp(buf, "1") == 0)
-                handle_view_challenge_list(&ctf);
-            else if (strcmp(buf, "2") == 0)
-                handle_view_challenge_detail(&ctf);
-            else if (strcmp(buf, "3") == 0)
-                handle_view_ranking(&ctf);
-            else if (strcmp(buf, "4") == 0)
-                handle_view_team_profile(&ctf);
-            else if (strcmp(buf, "5") == 0)
-                handle_submit_flag(&ctf);
-            else if (strcmp(buf, "6") == 0)
-                handle_logout_user(&ctf);
+            if (cgc_strcmp(buf, "1") == 0)
+                cgc_handle_view_challenge_list(&ctf);
+            else if (cgc_strcmp(buf, "2") == 0)
+                cgc_handle_view_challenge_detail(&ctf);
+            else if (cgc_strcmp(buf, "3") == 0)
+                cgc_handle_view_ranking(&ctf);
+            else if (cgc_strcmp(buf, "4") == 0)
+                cgc_handle_view_team_profile(&ctf);
+            else if (cgc_strcmp(buf, "5") == 0)
+                cgc_handle_submit_flag(&ctf);
+            else if (cgc_strcmp(buf, "6") == 0)
+                cgc_handle_logout_user(&ctf);
             else
-                printf("Try again.\n");
+                cgc_printf("Try again.\n");
         }
     }
 
-    fflush(stdout);
+    cgc_fflush(stdout);
     return 0;
 }

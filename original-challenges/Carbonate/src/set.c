@@ -26,32 +26,32 @@ THE SOFTWARE.
 
 #include "set.h"
 
-void with_set(void (^block)(set_t set)) {
-  set_cell blob[SET_CELLS];
-  for (size_t i = 0; i < SET_CELLS; i++) {
+void cgc_with_set(void (^block)(cgc_set_t set)) {
+  cgc_set_cell blob[SET_CELLS];
+  for (cgc_size_t i = 0; i < SET_CELLS; i++) {
     blob[i] = 0;
   }
-  set_t set = blob;
+  cgc_set_t set = blob;
   block(set);
 }
 
-void add_set(set_t set, uint16 value) {
-  uint8 mask = 1 << (value & 0x7);
-  size_t offset = value >> 3;
+void cgc_add_set(cgc_set_t set, cgc_uint16 value) {
+  cgc_uint8 mask = 1 << (value & 0x7);
+  cgc_size_t offset = value >> 3;
 
   set[offset] |= mask;
 }
 
-void subtract_set(set_t set, uint16 value) {
-  uint8 mask = ~(1 << (value & 0x7));
-  size_t offset = value >> 3;
+void cgc_subtract_set(cgc_set_t set, cgc_uint16 value) {
+  cgc_uint8 mask = ~(1 << (value & 0x7));
+  cgc_size_t offset = value >> 3;
 
   set[offset] &= mask;
 }
 
-uint8 check_set(set_t set, uint16 value) {
-  uint8 mask = 1 << (value & 0x7);
-  size_t offset = value >> 3;
+cgc_uint8 cgc_check_set(cgc_set_t set, cgc_uint16 value) {
+  cgc_uint8 mask = 1 << (value & 0x7);
+  cgc_size_t offset = value >> 3;
 
   return set[offset] & mask;
 }

@@ -25,7 +25,7 @@
 #include "trunc.h"
 
 double
-float_trunc(double d)
+cgc_float_trunc(double d)
 {
     union {
         double d;
@@ -39,8 +39,8 @@ float_trunc(double d)
 }
 
 struct vector
-vector_trunc(struct vector v)
+cgc_vector_trunc(struct vector v)
 {
-    return make_vector(float_trunc(v.x), float_trunc(v.y), float_trunc(v.z));
+    return cgc_make_vector(cgc_float_trunc(v.x), cgc_float_trunc(v.y), cgc_float_trunc(v.z));
 }
 

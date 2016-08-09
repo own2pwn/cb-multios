@@ -46,7 +46,7 @@ THE SOFTWARE.
 
 typedef struct _plantsystem {
 	// System Type
-	uint8_t Type;
+	cgc_uint8_t Type;
 
 	// system name
 	char Name[32];
@@ -62,16 +62,16 @@ typedef struct _plantsystem {
 
 	// Filter values
 	double GpmPerSqft;
-	uint8_t NumActiveFilters;
-	uint8_t MaxFilters;
+	cgc_uint8_t NumActiveFilters;
+	cgc_uint8_t MaxFilters;
 
 	// Disinfection values
-	uint8_t SuccessfulDisinfection;
+	cgc_uint8_t SuccessfulDisinfection;
 	double ChlorineRate;
 	double ChlorineResidual;
 
 	// Effluent
-	uint8_t QualityFailures;
+	cgc_uint8_t QualityFailures;
 
 	// valve values
 	// pointer to structs that are outputs from the valve
@@ -90,6 +90,6 @@ typedef struct _plantsystem {
 	// percent open for each valve output
 	double PctOpen[MAX_VALVE_OUTPUT];
 	
-} PlantSystem, *pPlantSystem;
+} cgc_PlantSystem, *cgc_pPlantSystem;
 
 #endif

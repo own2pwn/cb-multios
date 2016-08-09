@@ -36,7 +36,7 @@ extern "C"
 using namespace CUtil;
 
 
-String::String( )
+cgc_String::cgc_String( )
 {
 	m_pData = new char[1];
 	m_pData[0] = '\0';
@@ -44,19 +44,19 @@ String::String( )
 	m_length = 0;
 }
 
-String::String( const String &str )
+cgc_String::cgc_String( const cgc_String &str )
 	: m_pData( NULL ), m_length( 0 )
 {
-	SetInternal( str );
+	cgc_SetInternal( str );
 }
 
-String::String( const char *pszStr )
+cgc_String::cgc_String( const char *pszStr )
 	: m_pData( NULL ), m_length( 0 )
 {
-	SetInternal( pszStr );
+	cgc_SetInternal( pszStr );
 }
 
-String::~String( )
+cgc_String::~cgc_String( )
 {
 	if ( m_pData )
 		delete [] m_pData;
@@ -65,45 +65,45 @@ String::~String( )
 }
 	
 // Operators
-bool String::operator==( const String &rhs ) const
+bool cgc_String::operator==( const cgc_String &rhs ) const
 {
 	if ( m_length != rhs.m_length )
 		return (false);
 
-	return memcmp( m_pData, rhs.m_pData, m_length ) == 0;
+	return cgc_memcmp( m_pData, rhs.m_pData, m_length ) == 0;
 }
 
-bool String::operator!=( const String &rhs ) const
+bool cgc_String::operator!=( const cgc_String &rhs ) const
 {
 	return !(*this == rhs);
 }
 
-void String::operator=( const String &rhs )
+void cgc_String::operator=( const cgc_String &rhs )
 {
-	SetInternal( rhs );
+	cgc_SetInternal( rhs );
 }
 
-void String::operator=( const char *rhs )
+void cgc_String::operator=( const char *rhs )
 {
-	SetInternal( rhs );
+	cgc_SetInternal( rhs );
 }
 
-const String& String::operator+( const String &rhs ) const
+const cgc_String& cgc_String::operator+( const cgc_String &rhs ) const
 {
-	return String(*this) += rhs;
+	return cgc_String(*this) += rhs;
 }
 
-String& String::operator+=( const String &rhs )
+cgc_String& cgc_String::operator+=( const cgc_String &rhs )
 {
 	// Make a new string of this string + rhs
-	size_t new_stringlen = m_length + rhs.m_length;
+	cgc_size_t new_stringlen = m_length + rhs.m_length;
 
 	char *pNewData = new char[new_stringlen+1];
 
-	memcpy( pNewData, m_pData, m_length );
-	memcpy( pNewData+m_length, rhs.m_pData, rhs.m_length );
+	cgc_memcpy( pNewData, m_pData, m_length );
+	cgc_memcpy( pNewData+m_length, rhs.m_pData, rhs.m_length );
 
-	// Keep a null terminator at the end for easy return of c_str
+	// Keep a null terminator at the end for easy return of cgc_c_str
 	pNewData[m_length+rhs.m_length] = '\0';
 
 	if ( m_pData )
@@ -116,40 +116,40 @@ String& String::operator+=( const String &rhs )
 }
 		
 // Conversion
-const char* String::c_str( void ) const
+const char* cgc_String::cgc_c_str( void ) const
 {
 	return (m_pData);
 }
 
-String String::Upper( void ) const
+cgc_String cgc_String::cgc_Upper( void ) const
 {
-	String sUpper = *this;
+	cgc_String sUpper = *this;
 
-	for ( size_t i = 0; i < m_length; i++ )
+	for ( cgc_size_t i = 0; i < m_length; i++ )
 	{
-		if ( islower( sUpper.m_pData[i] ) )
-			sUpper.m_pData[i] = toupper( sUpper.m_pData[i] );
+		if ( cgc_islower( sUpper.m_pData[i] ) )
+			sUpper.m_pData[i] = cgc_toupper( sUpper.m_pData[i] );
 	}
 
 	return (sUpper);
 }
 
-String String::Lower( void ) const
+cgc_String cgc_String::cgc_Lower( void ) const
 {
-	String sLower = *this;
+	cgc_String sLower = *this;
 
-	for ( size_t i = 0; i < m_length; i++ )
+	for ( cgc_size_t i = 0; i < m_length; i++ )
 	{
-		if ( isupper( sLower.m_pData[i] ) )
-			sLower.m_pData[i] = tolower( sLower.m_pData[i] );
+		if ( cgc_isupper( sLower.m_pData[i] ) )
+			sLower.m_pData[i] = cgc_tolower( sLower.m_pData[i] );
 	}
 
 	return (sLower);
 }
 
-char String::operator[]( const size_t &loc ) const
+char cgc_String::operator[]( const cgc_size_t &loc ) const
 {
-	if ( IsEmpty() )
+	if ( cgc_IsEmpty() )
 		return '\0';
 
 	if ( loc >= m_length )
@@ -158,65 +158,65 @@ char String::operator[]( const size_t &loc ) const
 	return m_pData[loc];
 }
 
-String String::Trim( size_t length ) const
+cgc_String cgc_String::cgc_Trim( cgc_size_t length ) const
 {
-	return (SubString( 0, length ));
+	return (cgc_SubString( 0, length ));
 }
 
-String String::SubString( size_t startPos, size_t endPos ) const
+cgc_String cgc_String::cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) const
 {
 	if ( endPos > m_length )
 		endPos = m_length;
 
 	if ( startPos >= m_length || startPos >= endPos )
-	       return String("");
+	       return cgc_String("");
 
-	size_t new_length = endPos - startPos;
+	cgc_size_t new_length = endPos - startPos;
 	char *pszNewStr = new char[new_length+1];
 
-	size_t destPos = 0;
-	for ( size_t srcPos = startPos; srcPos < endPos; srcPos++ )
+	cgc_size_t destPos = 0;
+	for ( cgc_size_t srcPos = startPos; srcPos < endPos; srcPos++ )
 		pszNewStr[destPos++] = m_pData[srcPos];
 
 	pszNewStr[destPos] = '\0';
 	
-	return String(pszNewStr);	
+	return cgc_String(pszNewStr);	
 }
 
-String String::TrimSpaces( void ) const
+cgc_String cgc_String::cgc_TrimSpaces( void ) const
 {
-	size_t pos = 0;
+	cgc_size_t pos = 0;
 	for ( ; pos < m_length; pos++ )
 	{
 		if ( m_pData[pos] != ' ' )
 			break;
 	}
 
-	return (SubString( pos, npos ));
+	return (cgc_SubString( pos, npos ));
 }
 
-bool String::ToInt( uint32_t &value )
+bool cgc_String::cgc_ToInt( cgc_uint32_t &value )
 {
-	if ( !IsEmpty() )
+	if ( !cgc_IsEmpty() )
 	{
-		value = atoi( m_pData );
+		value = cgc_atoi( m_pData );
 		return (true);
 	}
 	else
 		return (false);
 }
 
-size_t String::GetLength( void ) const
+cgc_size_t cgc_String::cgc_GetLength( void ) const
 {
 	return (m_length);
 }
 
-bool String::IsEmpty( void ) const
+bool cgc_String::cgc_IsEmpty( void ) const
 {
 	return (m_length == 0);
 }
 
-void String::SetInternal( const char *pszStr )
+void cgc_String::cgc_SetInternal( const char *pszStr )
 {
 	if ( m_pData )
 		delete [] m_pData;
@@ -230,15 +230,15 @@ void String::SetInternal( const char *pszStr )
 		return;
 	}
 
-	m_length = strlen( pszStr );
+	m_length = cgc_strlen( pszStr );
 
 	m_pData = new char[m_length+1];
 
-	memcpy( m_pData, pszStr, m_length );
+	cgc_memcpy( m_pData, pszStr, m_length );
 	m_pData[m_length] = '\0';
 }
 
-void String::SetInternal( const String& str )
+void cgc_String::cgc_SetInternal( const cgc_String& str )
 {
 	if ( m_pData )
 		delete [] m_pData;
@@ -247,6 +247,6 @@ void String::SetInternal( const String& str )
 
 	m_pData = new char[m_length+1];
 
-	memcpy( m_pData, str.m_pData, m_length );
+	cgc_memcpy( m_pData, str.m_pData, m_length );
 	m_pData[m_length] = '\0';
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,8 +24,8 @@
 
 #include <cstdio.h>
 
-static inline void die(const char *msg)
+static inline void cgc_die(const char *msg)
 {
-    fprintf(stderr, msg);
-    exit(1);
+    cgc_fprintf(stderr, msg);
+    cgc_exit(1);
 }

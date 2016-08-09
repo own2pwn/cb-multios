@@ -30,15 +30,15 @@
 
 #include "stdio.h"
 
-struct FILE {
+struct cgc_FILE {
     int fd;
     enum mode mode;
     unsigned char *buf;
-    size_t bufsize;
-    size_t bufpos;
+    cgc_size_t bufsize;
+    cgc_size_t bufpos;
 };
 
-static FILE stdfiles[3] = {
+static cgc_FILE stdfiles[3] = {
     { STDIN, READ, NULL, 0, 0 },
     { STDOUT, WRITE, NULL, 0, 0 },
     { STDERR, WRITE, NULL, 0, 0 }
@@ -46,15 +46,15 @@ static FILE stdfiles[3] = {
 
 static struct pool file_pool = { 0, NULL };
 
-FILE *stdin = &stdfiles[0];
-FILE *stdout = &stdfiles[1];
-FILE *stderr = &stdfiles[2];
+cgc_FILE *stdin = &stdfiles[0];
+cgc_FILE *stdout = &stdfiles[1];
+cgc_FILE *stderr = &stdfiles[2];
 
-ssize_t
-read_all(int fd, void *ptr, size_t size)
+cgc_ssize_t
+cgc_read_all(int fd, void *ptr, cgc_size_t size)
 {
-    ssize_t ret = 0;
-    size_t bytes_rx;
+    cgc_ssize_t ret = 0;
+    cgc_size_t bytes_rx;
 
     if (size > SSIZE_MAX)
         return EXIT_FAILURE;
@@ -71,16 +71,16 @@ read_all(int fd, void *ptr, size_t size)
     return ret;
 }
 
-ssize_t
-read_until(int fd, void *ptr, unsigned char delim, size_t size)
+cgc_ssize_t
+cgc_read_until(int fd, void *ptr, unsigned char delim, cgc_size_t size)
 {
-    ssize_t ret = 0;
-    size_t bytes_rx;
+    cgc_ssize_t ret = 0;
+    cgc_size_t bytes_rx;
 
     if (size < 1 || size > SSIZE_MAX)
         return EXIT_FAILURE;
 
-    while (ret < (ssize_t)size - 1) {
+    while (ret < (cgc_ssize_t)size - 1) {
         if (receive(fd, (unsigned char *)ptr + ret, 1, &bytes_rx) != 0 ||
                 bytes_rx == 0)
             return EXIT_FAILURE;
@@ -95,11 +95,11 @@ read_until(int fd, void *ptr, unsigned char delim, size_t size)
     return ret;
 }
 
-ssize_t
-write_all(int fd, const void *ptr, size_t size)
+cgc_ssize_t
+cgc_write_all(int fd, const void *ptr, cgc_size_t size)
 {
-    ssize_t ret = 0;
-    size_t bytes_tx;
+    cgc_ssize_t ret = 0;
+    cgc_size_t bytes_tx;
 
     if (size > SSIZE_MAX)
         return EXIT_FAILURE;
@@ -117,7 +117,7 @@ write_all(int fd, const void *ptr, size_t size)
 }
 
 static int
-allocate_buffer(FILE *stream)
+cgc_allocate_buffer(cgc_FILE *stream)
 {
     if (stream->buf)
         return EXIT_FAILURE;
@@ -131,15 +131,15 @@ allocate_buffer(FILE *stream)
     return EXIT_SUCCESS;
 }
 
-FILE *
-fdopen(int fd, enum mode mode)
+cgc_FILE *
+cgc_fdopen(int fd, enum mode mode)
 {
-    FILE *ret;
+    cgc_FILE *ret;
 
-    if (file_pool.size == 0 && pool_init(&file_pool, sizeof(struct FILE)) != EXIT_SUCCESS)
+    if (file_pool.size == 0 && cgc_pool_init(&file_pool, sizeof(struct cgc_FILE)) != EXIT_SUCCESS)
         return NULL;
 
-    if ((ret = pool_alloc(&file_pool)) == NULL)
+    if ((ret = cgc_pool_alloc(&file_pool)) == NULL)
         return NULL;
 
     ret->fd = fd;
@@ -152,18 +152,18 @@ fdopen(int fd, enum mode mode)
 }
 
 void
-fclose(FILE *stream)
+cgc_fclose(cgc_FILE *stream)
 {
     if (stream->buf)
         deallocate(stream->buf, PAGE_SIZE);
 
-    pool_free(&file_pool, stream);
+    cgc_pool_free(&file_pool, stream);
 }
 
 int
-fflush(FILE *stream)
+cgc_fflush(cgc_FILE *stream)
 {
-    ssize_t written;
+    cgc_ssize_t written;
 
     if (!stream || !stream->mode == WRITE)
         return EXIT_FAILURE;
@@ -171,7 +171,7 @@ fflush(FILE *stream)
     if (!stream->buf || stream->bufsize == 0)
         return EXIT_SUCCESS;
 
-    written = write_all(stream->fd, &stream->buf[stream->bufpos], stream->bufsize);
+    written = cgc_write_all(stream->fd, &stream->buf[stream->bufpos], stream->bufsize);
     if (written < 0)
         return written;
 
@@ -181,11 +181,11 @@ fflush(FILE *stream)
     return EXIT_SUCCESS;
 }
 
-ssize_t
-fread(void *ptr, size_t size, FILE *stream)
+cgc_ssize_t
+cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream)
 {
-    ssize_t ret = 0;
-    size_t bytes_rx, buffered, whole_chunks;
+    cgc_ssize_t ret = 0;
+    cgc_size_t bytes_rx, buffered, whole_chunks;
     unsigned char *ptr_ = ptr;
 
     if (size > SSIZE_MAX || stream->mode != READ)
@@ -198,7 +198,7 @@ fread(void *ptr, size_t size, FILE *stream)
     if (stream->bufsize > 0) {
         buffered = MIN(size, stream->bufsize);
 
-        memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
+        cgc_memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
         stream->bufsize -= buffered;
         stream->bufpos = stream->bufsize ? stream->bufpos + buffered : 0;
         size -= buffered;
@@ -216,7 +216,7 @@ fread(void *ptr, size_t size, FILE *stream)
     if (size >= PAGE_SIZE) {
         whole_chunks = size & ~(PAGE_SIZE - 1);
 
-        if ((bytes_rx = read_all(stream->fd, ptr_, whole_chunks)) != whole_chunks)
+        if ((bytes_rx = cgc_read_all(stream->fd, ptr_, whole_chunks)) != whole_chunks)
             return EXIT_FAILURE;
 
         size &= PAGE_SIZE - 1;
@@ -229,7 +229,7 @@ fread(void *ptr, size_t size, FILE *stream)
 
     // Read the remainder, attempting to overread to fill buffer but breaking
     // once all of our data has been read
-    if (!stream->buf && allocate_buffer(stream) != EXIT_SUCCESS)
+    if (!stream->buf && cgc_allocate_buffer(stream) != EXIT_SUCCESS)
         return EXIT_FAILURE;
 
     while (stream->bufsize < size) {
@@ -244,7 +244,7 @@ fread(void *ptr, size_t size, FILE *stream)
     if (stream->bufsize >= size) {
         buffered = MIN(size, stream->bufsize);
 
-        memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
+        cgc_memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
         stream->bufsize -= buffered;
         stream->bufpos = stream->bufsize ? stream->bufpos + buffered : 0;
         ret += buffered;
@@ -253,11 +253,11 @@ fread(void *ptr, size_t size, FILE *stream)
     return ret;
 }
 
-ssize_t
-fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream)
+cgc_ssize_t
+cgc_fread_until(void *ptr, unsigned char delim, cgc_size_t size, cgc_FILE *stream)
 {
-    ssize_t ret = 0;
-    size_t buffered, bytes_rx;
+    cgc_ssize_t ret = 0;
+    cgc_size_t buffered, bytes_rx;
     char *delim_ptr;
     unsigned char *ptr_ = ptr;
 
@@ -266,19 +266,19 @@ fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream)
 
     // Read the remainder, attempting to overread to fill buffer but breaking
     // once all of our data has been read
-    if (!stream->buf && allocate_buffer(stream) != EXIT_SUCCESS)
+    if (!stream->buf && cgc_allocate_buffer(stream) != EXIT_SUCCESS)
         return EXIT_FAILURE;
 
     while (ret < size - 1) {
         if (stream->buf && stream->bufsize > 0) {
-            if ((delim_ptr = memchr(&stream->buf[stream->bufpos], delim, stream->bufsize)))
+            if ((delim_ptr = cgc_memchr(&stream->buf[stream->bufpos], delim, stream->bufsize)))
                 buffered = (unsigned char *)delim_ptr - &stream->buf[stream->bufpos] + 1;
             else
                 buffered = stream->bufsize;
 
             buffered = MIN(size - 1, buffered);
 
-            memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
+            cgc_memcpy(ptr_, &stream->buf[stream->bufpos], buffered);
             stream->bufsize -= buffered;
             stream->bufpos = stream->bufsize ? stream->bufpos + buffered : 0;
             size -= buffered;
@@ -302,11 +302,11 @@ fread_until(void *ptr, unsigned char delim, size_t size, FILE *stream)
     return EXIT_FAILURE;
 }
 
-ssize_t
-fwrite(const void *ptr, size_t size, FILE *stream)
+cgc_ssize_t
+cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream)
 {
-    ssize_t ret = 0;
-    size_t bytes_tx, buffered, whole_chunks;
+    cgc_ssize_t ret = 0;
+    cgc_size_t bytes_tx, buffered, whole_chunks;
     const unsigned char *ptr_ = ptr;
 
     if (size > SSIZE_MAX || stream->mode != WRITE)
@@ -319,7 +319,7 @@ fwrite(const void *ptr, size_t size, FILE *stream)
     if (stream->buf) {
         buffered = MIN(size, PAGE_SIZE - stream->bufpos - stream->bufsize);
 
-        memcpy(&stream->buf[stream->bufpos + stream->bufsize], ptr_, buffered);
+        cgc_memcpy(&stream->buf[stream->bufpos + stream->bufsize], ptr_, buffered);
         stream->bufsize += buffered;
         size -= buffered;
         ptr_ += buffered;
@@ -328,7 +328,7 @@ fwrite(const void *ptr, size_t size, FILE *stream)
         if (size == 0)
             return ret;
 
-        if (stream->bufsize != write_all(stream->fd, &stream->buf[stream->bufpos],
+        if (stream->bufsize != cgc_write_all(stream->fd, &stream->buf[stream->bufpos],
                     stream->bufsize))
             return EXIT_FAILURE;
 
@@ -340,7 +340,7 @@ fwrite(const void *ptr, size_t size, FILE *stream)
     if (size >= PAGE_SIZE) {
         whole_chunks = size & ~(PAGE_SIZE - 1);
 
-        if ((bytes_tx = write_all(stream->fd, ptr_, whole_chunks)) != whole_chunks)
+        if ((bytes_tx = cgc_write_all(stream->fd, ptr_, whole_chunks)) != whole_chunks)
             return EXIT_FAILURE;
 
         size &= PAGE_SIZE - 1;
@@ -352,10 +352,10 @@ fwrite(const void *ptr, size_t size, FILE *stream)
     }
 
     // Buffer the remainder
-    if (!stream->buf && allocate_buffer(stream) != EXIT_SUCCESS)
+    if (!stream->buf && cgc_allocate_buffer(stream) != EXIT_SUCCESS)
         return EXIT_FAILURE;
 
-    memcpy(stream->buf, ptr_, size);
+    cgc_memcpy(stream->buf, ptr_, size);
     stream->bufsize = size;
     ret += size;
 
@@ -363,32 +363,32 @@ fwrite(const void *ptr, size_t size, FILE *stream)
 }
 
 int
-fgetc(FILE *stream)
+cgc_fgetc(cgc_FILE *stream)
 {
     char c;
-    ssize_t read;
+    cgc_ssize_t read;
 
     if (stream->bufsize)
-        read = fread(&c, 1, stream);
+        read = cgc_fread(&c, 1, stream);
     else
-        read = read_all(stream->fd, &c, 1);
+        read = cgc_read_all(stream->fd, &c, 1);
 
     return read < 0 ? read : c;
 }
 
 int
-fputc(int character, FILE *stream)
+cgc_fputc(int character, cgc_FILE *stream)
 {
-    return fwrite(&character, 1, stream);
+    return cgc_fwrite(&character, 1, stream);
 }
 
 static int
-printf_core(const char *format, void (*printfn)(char c, void *data),
-        void *data, va_list args)
+cgc_printf_core(const char *format, void (*printfn)(char c, void *data),
+        void *data, cgc_va_list args)
 {
     int ret = 0;
     char c, f, buf[32];
-    size_t buflen;
+    cgc_size_t buflen;
     const char *s = NULL;
 
     while ((f = *format++)) {
@@ -410,29 +410,29 @@ printf_core(const char *format, void (*printfn)(char c, void *data),
                 s = va_arg(args, char *);
                 break;
             case 'f':
-                if (dtostr(va_arg(args, double), buf, sizeof(buf)) != EXIT_SUCCESS)
+                if (cgc_dtostr(va_arg(args, double), buf, sizeof(buf)) != EXIT_SUCCESS)
                     return EXIT_FAILURE;
                 s = buf;
                 break;
             case 'd':
-                if (itostr(va_arg(args, int), 10, 0, buf, sizeof(buf)) != EXIT_SUCCESS)
+                if (cgc_itostr(va_arg(args, int), 10, 0, buf, sizeof(buf)) != EXIT_SUCCESS)
                     return EXIT_FAILURE;
                 s = buf;
                 break;
             case 'u':
-                if (utostr(va_arg(args, unsigned int), 10, 0, buf, sizeof(buf)) != EXIT_SUCCESS)
+                if (cgc_utostr(va_arg(args, unsigned int), 10, 0, buf, sizeof(buf)) != EXIT_SUCCESS)
                     return EXIT_FAILURE;
                 s = buf;
                 break;
             case 'x':
             case 'X':
-                if (utostr(va_arg(args, unsigned int), 16, isupper(f), buf, sizeof(buf)) != EXIT_SUCCESS)
+                if (cgc_utostr(va_arg(args, unsigned int), 16, cgc_isupper(f), buf, sizeof(buf)) != EXIT_SUCCESS)
                     return EXIT_FAILURE;
 
                 // Pad out with 8 zeros
-                if ((buflen = strlen(buf)) < 2 * sizeof(unsigned int)) {
-                    memmove(buf + (2 * sizeof(unsigned int) - buflen), buf, buflen + 1);
-                    memset(buf, '0', 2 * sizeof(unsigned int) - buflen);
+                if ((buflen = cgc_strlen(buf)) < 2 * sizeof(unsigned int)) {
+                    cgc_memmove(buf + (2 * sizeof(unsigned int) - buflen), buf, buflen + 1);
+                    cgc_memset(buf, '0', 2 * sizeof(unsigned int) - buflen);
                 }
 
                 s = buf;
@@ -454,21 +454,21 @@ printf_core(const char *format, void (*printfn)(char c, void *data),
 }
 
 static void
-file_printer(char c, void *data)
+cgc_file_printer(char c, void *data)
 {
-    fputc(c, data);
+    cgc_fputc(c, data);
 
     if (c == '\n')
-        fflush(data);
+        cgc_fflush(data);
 }
 
 struct string_printer_ctx {
     char *s;
-    size_t num;
+    cgc_size_t num;
 };
 
 static void
-string_printer(char c, void *data)
+cgc_string_printer(char c, void *data)
 {
     struct string_printer_ctx *ctx = data;
     if (ctx->num--)
@@ -476,70 +476,70 @@ string_printer(char c, void *data)
 }
 
 int
-vfprintf(FILE *stream, const char *format, va_list args)
+cgc_vfprintf(cgc_FILE *stream, const char *format, cgc_va_list args)
 {
-    return printf_core(format, file_printer, stream, args);
+    return cgc_printf_core(format, cgc_file_printer, stream, args);
 }
 
 int
-vprintf(const char *format, va_list args) 
+cgc_vprintf(const char *format, cgc_va_list args) 
 {
-    return vfprintf(stdout, format, args);
+    return cgc_vfprintf(stdout, format, args);
 }
 
 int
-vsnprintf(char *s, size_t num, const char *format, va_list args)
+cgc_vsnprintf(char *s, cgc_size_t num, const char *format, cgc_va_list args)
 {
     struct string_printer_ctx ctx = { s, num };
-    return printf_core(format, string_printer, &ctx, args);
+    return cgc_printf_core(format, cgc_string_printer, &ctx, args);
 }
 
 int
-vsprintf(char *s, const char *format, va_list args)
+cgc_vsprintf(char *s, const char *format, cgc_va_list args)
 {
-    return vsnprintf(s, (size_t)SIZE_MAX, format, args);
+    return cgc_vsnprintf(s, (cgc_size_t)SIZE_MAX, format, args);
 }
 
 int
-fprintf(FILE *stream, const char *format, ...)
+cgc_fprintf(cgc_FILE *stream, const char *format, ...)
 {
     int ret;
-    va_list args;
+    cgc_va_list args;
     va_start(args, format);
-    ret = vfprintf(stream, format, args);
+    ret = cgc_vfprintf(stream, format, args);
     va_end(args);
     return ret;
 }
 
 int
-printf(const char *format, ...)
+cgc_printf(const char *format, ...)
 {
     int ret;
-    va_list args;
+    cgc_va_list args;
     va_start(args, format);
-    ret = vprintf(format, args);
+    ret = cgc_vprintf(format, args);
     va_end(args);
     return ret;
 }
 
 int
-snprintf(char *s, size_t num, const char *format, ...)
+cgc_snprintf(char *s, cgc_size_t num, const char *format, ...)
 {
     int ret;
-    va_list args;
+    cgc_va_list args;
     va_start(args, format);
-    ret = vsnprintf(s, num, format, args);
+    ret = cgc_vsnprintf(s, num, format, args);
     va_end(args);
     return ret;
 }
 
 int
-sprintf(char *s, const char *format, ...)
+cgc_sprintf(char *s, const char *format, ...)
 {
     int ret;
-    va_list args;
+    cgc_va_list args;
     va_start(args, format);
-    ret = vsprintf(s, format, args);
+    ret = cgc_vsprintf(s, format, args);
     va_end(args);
     return ret;
 }

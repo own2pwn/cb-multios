@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,7 +30,7 @@ typedef struct llama_hdr {
     uint64_t from;
     uint32_t time;
     uint32_t type;
-} llama_hdr_t;
+} cgc_llama_hdr_t;
 
 /**
  * Process Regular Output For LAN Packet
@@ -38,12 +38,12 @@ typedef struct llama_hdr {
  * @param payload Payload buffer to process
  * @param size Size of payload
  */
-void process_llama(uint8_t *payload, int size);
+void cgc_process_llama(uint8_t *payload, int size);
 
 /**
  * Process Dissector Upload Packet Encapsulation Packet
  *
  * @param f Pointer to DUPE file
  */
-void process_dupe(dupefile_t *f); 
+void cgc_process_dupe(cgc_dupefile_t *f); 
 #endif

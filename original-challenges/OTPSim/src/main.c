@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,33 +31,33 @@
 
 int main()
 {
-    otp_t *o = NULL;
+    cgc_otp_t *o = NULL;
     unsigned int cmd = 0;
 
-    fbuffered(stdout, 1);
+    cgc_fbuffered(stdout, 1);
 
     while (1)
     {
-        if (read_n(STDIN, (char *)&cmd, sizeof(unsigned int)) != sizeof(unsigned int))
+        if (cgc_read_n(STDIN, (char *)&cmd, sizeof(unsigned int)) != sizeof(unsigned int))
             return 0;
         if (cmd == 0x4b414853)          // SHAK
-            otp_handshake(&o);
+            cgc_otp_handshake(&o);
         else if (cmd == 0x4f4e4547)     // GENO
-            otp_generate_otp(o);
+            cgc_otp_generate_otp(o);
         else if (cmd == 0x444e5458)     // XTND
-            otp_extend_session(o);
+            cgc_otp_extend_session(o);
         else if (cmd == 0x44454553)     // SEED
-            otp_set_seeds(o);
+            cgc_otp_set_seeds(o);
         else if (cmd == 0x49524556)     // VERI
-            otp_verify_otp(o);
+            cgc_otp_verify_otp(o);
         else if (cmd == 0x54495551)     // QUIT
         {
-            fwrite("\x00", 1, stdout);
-            fflush(stdout);
+            cgc_fwrite("\x00", 1, stdout);
+            cgc_fflush(stdout);
             _terminate(0);
         }
         else
-            fwrite("\xFF", 1, stdout);
+            cgc_fwrite("\xFF", 1, stdout);
     }
     return 0;
 }

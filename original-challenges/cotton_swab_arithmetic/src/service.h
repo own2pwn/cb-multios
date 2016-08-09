@@ -37,10 +37,10 @@ typedef struct instruction {
     uint8_t opcode;
     uint32_t op1;
     uint32_t op2;
-} inst_t;
+} cgc_inst_t;
 
-int bytecode_vrfy(uint8_t *bytecode, uint16_t len);
-int bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out);
+int cgc_bytecode_vrfy(uint8_t *bytecode, uint16_t len);
+int cgc_bytecode_exec(uint8_t *bytes, uint16_t len, uint8_t *scratch, uint32_t *out);
 
 // Bytecode is (single) register-based with memory accesses available.
 // Only a single register is used, which can be thought of as ACC (accumulator).

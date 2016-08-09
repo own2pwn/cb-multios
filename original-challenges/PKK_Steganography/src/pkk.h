@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,16 +31,16 @@ typedef struct pixel {
   unsigned char r;
   unsigned char g;
   unsigned char b;
-} pixel_t;
+} cgc_pixel_t;
 
 typedef struct pkk {
   unsigned int width;
   unsigned int height;
-  pixel_t *pixels;
-} pkk_t;
+  cgc_pixel_t *pixels;
+} cgc_pkk_t;
 
-pkk_t* parse_pkk(char *, unsigned int len);
-char* output_pkk(pkk_t *, int *);
-void free_pkk(pkk_t *);
+cgc_pkk_t* cgc_parse_pkk(char *, unsigned int len);
+char* cgc_output_pkk(cgc_pkk_t *, int *);
+void cgc_free_pkk(cgc_pkk_t *);
 
 #endif

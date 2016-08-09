@@ -46,10 +46,10 @@ enum {
 /*
  * Send results to client.
  */
-static void do_send_results(assemble_result_t *results) {
-	// hard code size because sizeof(assemble_result_t) 
+static void cgc_do_send_results(cgc_assemble_result_t *results) {
+	// hard code size because sizeof(cgc_assemble_result_t) 
 	//  is padded to mult of 4 (40), which is too much
-	send((char *)results, 37);
+	cgc_send((char *)results, 37);
 }
 
 /*
@@ -58,8 +58,8 @@ static void do_send_results(assemble_result_t *results) {
  * Returns:
  *  Success: uint32 instruction
  */
-static uint32_t recv_uint32() {
-	uint32_t command[1] = {0};
+static cgc_uint32_t cgc_recv_uint32() {
+	cgc_uint32_t command[1] = {0};
 	RECV(command, 4);
 	return command[0];
 }
@@ -70,8 +70,8 @@ static uint32_t recv_uint32() {
  * Returns:
  *  Success: uint8 instruction
  */
-static uint8_t recv_uint8() {
-	uint8_t command[1] = {0};
+static cgc_uint8_t cgc_recv_uint8() {
+	cgc_uint8_t command[1] = {0};
 	RECV(command, 1);
 	return command[0];
 }
@@ -83,48 +83,48 @@ static uint8_t recv_uint8() {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_COMMAND, ERR_INVALID_MODEL_ID, and various others (< 0) 
  */
-int do_build() {
+int cgc_do_build() {
 
 	int ret = 0;
-	uint32_t target_id32 = 0;
+	cgc_uint32_t target_id32 = 0;
 
-    uint32_t command = recv_uint32();
-    uint32_t model_id = 0;
+    cgc_uint32_t command = cgc_recv_uint32();
+    cgc_uint32_t model_id = 0;
 
-    assemble_result_t result;
-    memset(&result, 0, sizeof(assemble_result_t));
+    cgc_assemble_result_t result;
+    cgc_memset(&result, 0, sizeof(cgc_assemble_result_t));
 
     switch(command) {
 	case B_CMD_INIT_PANEL:
-		model_id = recv_uint32();
-		ret = init_electric_model(model_id);
+		model_id = cgc_recv_uint32();
+		ret = cgc_init_electric_model(model_id);
 		break;
 	case B_CMD_ADD_BREAKER:
-		model_id = recv_uint32();
-		ret = add_breaker_to_load_center(model_id, &result);
+		model_id = cgc_recv_uint32();
+		ret = cgc_add_breaker_to_load_center(model_id, &result);
 		break;
 	case B_CMD_ADD_OUTLET:
-		model_id = recv_uint32();
-		target_id32 = recv_uint32();
-		ret = add_outlet_to_breaker(model_id, target_id32, &result);
+		model_id = cgc_recv_uint32();
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_add_outlet_to_breaker(model_id, target_id32, &result);
 		break;
 	case B_CMD_ADD_SPLITTER:
-		model_id = recv_uint32();
-		target_id32 = recv_uint32();
-		ret = add_n_way_splitter_to_receptacle(model_id, target_id32, &result);
+		model_id = cgc_recv_uint32();
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_add_n_way_splitter_to_receptacle(model_id, target_id32, &result);
 		break;
 	case B_CMD_ADD_LIGHT_STRING:
-		model_id = recv_uint32();
-		target_id32 = recv_uint32();
-		ret = add_light_string_to_receptacle(model_id, target_id32, &result);
+		model_id = cgc_recv_uint32();
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_add_light_string_to_receptacle(model_id, target_id32, &result);
 		break;
 	default:
 		ret = ERR_INVALID_COMMAND;
     }
 
-    // send results if no error
+    // cgc_send results if no error
     if ((ret >= 0) && (B_CMD_INIT_PANEL != command)) {
-        do_send_results(&result);
+        cgc_do_send_results(&result);
     }
 
 	return ret;
@@ -137,63 +137,63 @@ int do_build() {
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_COMMAND
  */
-int do_examine() {
+int cgc_do_examine() {
 	int ret = SUCCESS;
-	uint32_t target_id32 = 0;
+	cgc_uint32_t target_id32 = 0;
 
-    uint32_t command = recv_uint32();
+    cgc_uint32_t command = cgc_recv_uint32();
 
     switch(command) {
 	case E_CMD_PANEL_OVERLOADED:
-		ret = is_electrical_panel_overloaded();
+		ret = cgc_is_electrical_panel_overloaded();
 		break;
 	case E_CMD_BREAKER_OVERLOADED:
-		target_id32 = recv_uint32();
-		ret = is_breaker_overloaded(target_id32);
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_is_breaker_overloaded(target_id32);
 		break;
 	case E_CMD_OUTLET_OVERLOADED:
-		target_id32 = recv_uint32();
-		ret = is_outlet_overloaded(target_id32);
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_is_outlet_overloaded(target_id32);
 		break;
 	case E_CMD_SPLITTER_OVERLOADED:
-		target_id32 = recv_uint32();
-		ret = is_splitter_overloaded(target_id32);
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_is_splitter_overloaded(target_id32);
 		break;
 	case E_CMD_LIGHT_STRING_OVERLOADED:
-		target_id32 = recv_uint32();
-		ret = is_light_string_overloaded(target_id32);
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_is_light_string_overloaded(target_id32);
 		break;
 	case E_CMD_RECEPTACLE_OVERLOADED:
-		target_id32 = recv_uint32();
-		ret = is_receptacle_overloaded(target_id32);
+		target_id32 = cgc_recv_uint32();
+		ret = cgc_is_receptacle_overloaded(target_id32);
 		break;
 	default:
 		ret = ERR_INVALID_COMMAND;
     }
 
-    // send results if no error
+    // cgc_send results if no error
     if (ret >= 0) {
-    	assemble_result_t result = {0};
-    	result.object_id = (uint32_t)ret;
-        do_send_results(&result);
+    	cgc_assemble_result_t result = {0};
+    	result.object_id = (cgc_uint32_t)ret;
+        cgc_do_send_results(&result);
     }
 
 	return ret;
 }
 
 /*
- * Generate a random nonce and send it to the client.
+ * Generate a random nonce and cgc_send it to the client.
  * Read the value sent back from the client and verify that it matches the nonce.
  *
  * Returns:
  *  Success: SUCCESS
  *  Failure: ERR_INVALID_NONCE
 */
-int do_nonce() {
+int cgc_do_nonce() {
  	int ret = 0;
 
  	char nonce[8] = "1234567";
- 	if((ret = rand(nonce, 8)) < 0) {_terminate(ERR_RAND_FAILED);}
+ 	if((ret = cgc_rand(nonce, 8)) < 0) {_terminate(ERR_RAND_FAILED);}
  	SENDLL(nonce);
 
  	char nonce_reply[8] = "1234567";

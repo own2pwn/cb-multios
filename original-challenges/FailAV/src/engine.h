@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,23 +25,23 @@
 #include "database.h"
 #include "emulator.h"
 
-class Engine
+class cgc_Engine
 {
 private:
-    bool is_bmp(unsigned char *data, unsigned int len);
-    void process_bmp(unsigned char *data, unsigned int len);
-    bool is_exe(unsigned char *data, unsigned int len);
-    void process_exe(unsigned char *data, unsigned int len);
+    bool cgc_is_bmp(unsigned char *data, unsigned int len);
+    void cgc_process_bmp(unsigned char *data, unsigned int len);
+    bool cgc_is_exe(unsigned char *data, unsigned int len);
+    void cgc_process_exe(unsigned char *data, unsigned int len);
 public:
-    Engine();
-    ~Engine();
+    cgc_Engine();
+    ~cgc_Engine();
 
-    bool process(unsigned char *data, unsigned int len);
-    bool update_rules(unsigned char *data, unsigned int len);
-    void whitelist(unsigned char *data, unsigned int len);
+    bool cgc_process(unsigned char *data, unsigned int len);
+    bool cgc_update_rules(unsigned char *data, unsigned int len);
+    void cgc_whitelist(unsigned char *data, unsigned int len);
 private:
-    Database d_db;
-    Database d_whitelist;
+    cgc_Database d_db;
+    cgc_Database d_whitelist;
 
     unsigned char *d_heap;
     bool d_malware;

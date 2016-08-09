@@ -52,23 +52,23 @@ typedef struct playerInfo {
 	unsigned int bet;
 
 
-} playerInfoType;
+} cgc_playerInfoType;
 
 
-int add_player( playerInfoType *playerList );
-int delete_player( playerInfoType *playerList );
-int show_players( playerInfoType *playerList );
-int play_round( playerInfoType *playerList, unsigned short *next_card );
+int cgc_add_player( cgc_playerInfoType *playerList );
+int cgc_delete_player( cgc_playerInfoType *playerList );
+int cgc_show_players( cgc_playerInfoType *playerList );
+int cgc_play_round( cgc_playerInfoType *playerList, unsigned short *next_card );
 
-int score_cards( unsigned char *cards );
+int cgc_score_cards( unsigned char *cards );
 
-char matchDealer( unsigned char dealer_show_card, unsigned char *player_cards );
-char basicAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
+char cgc_matchDealer( unsigned char dealer_show_card, unsigned char *player_cards );
+char cgc_basicAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
 
-char neverBustAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
-char simpleAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
+char cgc_neverBustAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
+char cgc_simpleAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
 
-char superDuperAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
+char cgc_superDuperAlgo( unsigned char dealer_show_card, unsigned char *player_cards );
 
 #endif
 

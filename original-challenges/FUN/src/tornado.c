@@ -26,22 +26,38 @@
 #define N 156
 
 /* from gcc headers */
-typedef long long _m128i __attribute__((__vector_size__(16)));
-#define _mm_slli_si128 __builtin_ia32_pslldqi128
-#define _mm_srli_si128 __builtin_ia32_psrldqi128
-#define _mm_slli_epi32 __builtin_ia32_pslldi128
-#define _mm_srli_epi32 __builtin_ia32_psrldi128
+typedef long long cgc__m128i __attribute__((__vector_size__(16)));
+inline cgc__m128i cgc__mm_slli_si128(cgc__m128i a, cgc_uint8_t b) {
+    __asm__ volatile ( "pslldq %1, %0" : "+x" (a) : "i" (b) );
+    return a;
+}
+
+inline cgc__m128i cgc__mm_srli_si128(cgc__m128i a, cgc_uint8_t b) {
+    __asm__ volatile ( "psrldq %1, %0" : "+x" (a) : "i" (b) );
+    return a;
+}
+
+inline cgc__m128i cgc__mm_slli_epi32(cgc__m128i a, cgc_uint8_t b) {
+    __asm__ volatile ( "pslld %1, %0" : "+x" (a) : "i" (b) );
+    return a;
+}
+
+inline cgc__m128i cgc__mm_srli_epi32(cgc__m128i a, cgc_uint8_t b) {
+    __asm__ volatile ( "psrld %1, %0" : "+x" (a) : "i" (b) );
+    return a;
+}
+
 
 static int initialized = 0;
 static int available_bytes;
 static unsigned idx;
-static _m128i W[N];
-const static _m128i MASK = {0xBFFFFFF6BFFAFFFF, 0xDDFECB7FDFFFFFEF};
+static cgc__m128i W[N];
+const static cgc__m128i MASK = {0xBFFFFFF6BFFAFFFF, 0xDDFECB7FDFFFFFEF};
 
-void tornado_mix()
+void cgc_tornado_mix()
 {
     int i;
-    _m128i g, wA, wB, wC, wD, tmp;
+    cgc__m128i g, wA, wB, wC, wD, tmp;
 
     // generate g
     wA = W[idx];
@@ -49,10 +65,10 @@ void tornado_mix()
     wC = W[(idx + N-2) % N];
     wD = W[(idx + N-1) % N];
 
-    wA = _mm_slli_si128(wA, 1) ^ wA;
-    wB = _mm_srli_epi32(wB, 11) & MASK;
-    wC = _mm_srli_si128(wC, 1);
-    wD = _mm_slli_epi32(wD, 18);
+    wA = cgc__mm_slli_si128(wA, 1) ^ wA;
+    wB = cgc__mm_srli_epi32(wB, 11) & MASK;
+    wC = cgc__mm_srli_si128(wC, 1);
+    wD = cgc__mm_slli_epi32(wD, 18);
 
     g = W[idx] ^ wA ^ wB ^ wC ^ wD;
 
@@ -63,11 +79,11 @@ void tornado_mix()
     available_bytes = N * 4;
 }
 
-void tornado_init()
+void cgc_tornado_init()
 {
     int i;
-    uint32_t seed = 0x12345678;
-    uint32_t *W32 = (uint32_t *)W;
+    cgc_uint32_t seed = 0x12345678;
+    cgc_uint32_t *W32 = (cgc_uint32_t *)W;
 
     initialized = 1;
     available_bytes = 0;
@@ -81,19 +97,19 @@ void tornado_init()
     }
 
     for (i = 0; i < 1000; i++)
-        tornado_mix();
+        cgc_tornado_mix();
 }
 
-uint32_t tornado()
+cgc_uint32_t cgc_tornado()
 {
-    uint32_t result;
+    cgc_uint32_t result;
     if (!initialized)
-        tornado_init();
+        cgc_tornado_init();
 
-    if (available_bytes < sizeof(uint32_t))
-        tornado_mix();
+    if (available_bytes < sizeof(cgc_uint32_t))
+        cgc_tornado_mix();
 
-    result = *(uint32_t *)W + N * 4 - available_bytes/4;
-    available_bytes -= sizeof(uint32_t);
+    result = *(cgc_uint32_t *)W + N * 4 - available_bytes/4;
+    available_bytes -= sizeof(cgc_uint32_t);
     return result;
 }

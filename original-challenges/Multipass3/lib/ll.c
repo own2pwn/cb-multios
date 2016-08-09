@@ -24,7 +24,7 @@
 #include "ll.h"
 
 
-int head_check(alloc_head_t *h){
+int cgc_head_check(cgc_alloc_head_t *h){
     if(h == NULL)
         return HEADNODENULL;
     if(h->n == NULL)
@@ -32,13 +32,13 @@ int head_check(alloc_head_t *h){
     return 0;
 }
 
-int check_next_node_for(alloc_node_t *n) {
+int cgc_check_next_node_for(cgc_alloc_node_t *n) {
     return n != NULL && n->next != NULL;
 }
 
-alloc_head_t * init_ll(){
-    alloc_head_t * h;
-    int r = allocate(sizeof(alloc_head_t), 0, (void **) &h);
+cgc_alloc_head_t * cgc_init_ll(){
+    cgc_alloc_head_t * h;
+    int r = allocate(sizeof(cgc_alloc_head_t), 0, (void **) &h);
     if(r != 0)
         return NULL;
     h->n_nodes = 0;
@@ -46,7 +46,7 @@ alloc_head_t * init_ll(){
     return h;
 }
 
-alloc_node_t * get_head(alloc_head_t *h){
+cgc_alloc_node_t * cgc_get_head(cgc_alloc_head_t *h){
     if(h == NULL)
         return NULL;
     return h->n;
@@ -54,7 +54,7 @@ alloc_node_t * get_head(alloc_head_t *h){
 
 
 //safely do this so we dont rollover
-void dec_nodes(alloc_head_t *head){
+void cgc_dec_nodes(cgc_alloc_head_t *head){
     if(head && head->n_nodes > 0)
         head->n_nodes -= 1;
 }
@@ -64,8 +64,8 @@ void dec_nodes(alloc_head_t *head){
 
 
 
-alloc_node_t * get_node(alloc_head_t *head, alloc_node_t *a){
-    alloc_node_t * n = get_head(head);
+cgc_alloc_node_t * cgc_get_node(cgc_alloc_head_t *head, cgc_alloc_node_t *a){
+    cgc_alloc_node_t * n = cgc_get_head(head);
     while(n != NULL){
         if(n == a){
             return n;
@@ -75,12 +75,12 @@ alloc_node_t * get_node(alloc_head_t *head, alloc_node_t *a){
     return NULL;
 
 }
-int remove_node(alloc_head_t *head, alloc_node_t *t){
+int cgc_remove_node(cgc_alloc_head_t *head, cgc_alloc_node_t *t){
     if(t == NULL)
         return UNLINKNULL;
 
-    alloc_node_t *p = NULL;
-    alloc_node_t *n = get_head(head);
+    cgc_alloc_node_t *p = NULL;
+    cgc_alloc_node_t *n = cgc_get_head(head);
     while(n != NULL){    
         if(n == t){
             // ensure p is not null before unlink and if it is we're at head
@@ -89,7 +89,7 @@ int remove_node(alloc_head_t *head, alloc_node_t *t){
             else
                 head->n = n->next;
 
-            dec_nodes(head);
+            cgc_dec_nodes(head);
             return 0;
         }
 
@@ -104,8 +104,8 @@ int remove_node(alloc_head_t *head, alloc_node_t *t){
 }
 
 
-int add_node_tail(alloc_head_t *head, alloc_node_t *a){
-    int hc = head_check(head);
+int cgc_add_node_tail(cgc_alloc_head_t *head, cgc_alloc_node_t *a){
+    int hc = cgc_head_check(head);
     if(hc == HEADALLOCNODENULL){
         head->n_nodes += 1;
         head->n = a;
@@ -113,7 +113,7 @@ int add_node_tail(alloc_head_t *head, alloc_node_t *a){
         return OPOKAY;
     }
 
-    alloc_node_t *n = get_head(head);
+    cgc_alloc_node_t *n = cgc_get_head(head);
     while(n != NULL){    
         
         if(n->next == NULL){
@@ -132,8 +132,8 @@ int add_node_tail(alloc_head_t *head, alloc_node_t *a){
 }
 
 
-int add_node(alloc_head_t *head, alloc_node_t *a){
-    int hc = head_check(head);
+int cgc_add_node(cgc_alloc_head_t *head, cgc_alloc_node_t *a){
+    int hc = cgc_head_check(head);
     if(hc == HEADALLOCNODENULL){
         head->n_nodes += 1;
         head->n = a;
@@ -145,20 +145,20 @@ int add_node(alloc_head_t *head, alloc_node_t *a){
     if(hc > 0)
         return hc;
     
-    a->next = get_head(head);
+    a->next = cgc_get_head(head);
     head->n = a;
     head->n_nodes += 1;
     return OPOKAY;
 }
 
-int count_entries(alloc_head_t *head){
-    int hc = head_check(head);
+int cgc_count_entries(cgc_alloc_head_t *head){
+    int hc = cgc_head_check(head);
     if(hc > 0)
         return hc;
 
     int count = 0;
 
-    for(alloc_node_t *n = head->n; n->next != NULL; n = n->next){
+    for(cgc_alloc_node_t *n = head->n; n->next != NULL; n = n->next){
         count += 1;
     }
     return count;

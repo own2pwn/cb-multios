@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,27 +27,27 @@
 
 struct AudioHeader
 {
-    uint32_t magic;
-    uint32_t offset;
-    uint32_t samples;
-    uint32_t encoding;
-    uint32_t sample_rate;
-    uint32_t channels;
+    cgc_uint32_t magic;
+    cgc_uint32_t offset;
+    cgc_uint32_t samples;
+    cgc_uint32_t encoding;
+    cgc_uint32_t sample_rate;
+    cgc_uint32_t channels;
 };
 
-class Interface
+class cgc_Interface
 {
 public:
-    Interface();
-    ~Interface();
-    void run();
+    cgc_Interface();
+    ~cgc_Interface();
+    void cgc_run();
 private:
-    void exportAudio(const Compression &comp);
-    bool importAudio();
-    void listTracks();
-    bool menuMain();
-    bool menuEffects();
-    bool menuExport();
-    bool menuNew();
-    Mixer mixer;
+    void cgc_exportAudio(const cgc_Compression &comp);
+    bool cgc_importAudio();
+    void cgc_listTracks();
+    bool cgc_menuMain();
+    bool cgc_menuEffects();
+    bool cgc_menuExport();
+    bool cgc_menuNew();
+    cgc_Mixer mixer;
 };

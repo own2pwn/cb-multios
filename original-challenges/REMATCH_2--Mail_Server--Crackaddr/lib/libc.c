@@ -30,16 +30,16 @@ THE SOFTWARE.
 
 
 
-int receive_all(char *buf, int length) {
-  return receive_all_fd(STDIN, buf, length);
+int cgc_receive_all(char *buf, int length) {
+  return cgc_receive_all_fd(STDIN, buf, length);
 }
 
 
-int receive_all_fd(int fd, char *buf, int length) {
+int cgc_receive_all_fd(int fd, char *buf, int length) {
 
   int total_received = 0;
   int ret;
-  size_t bytes_received;
+  cgc_size_t bytes_received;
   while (total_received < length) {
     ret = receive(fd, buf + total_received, length - total_received, &bytes_received);
     if (ret !=0 ) {
@@ -60,10 +60,10 @@ int receive_all_fd(int fd, char *buf, int length) {
 // Receives bytes from the given fd until delim is found. 
 // Output buf will always be null terminated. Output buf does not contain delim.
 // Returns bytes received not including delim or null 
-int receive_str_until_fd(int fd, char *buf, int length, char delim) {
+int cgc_receive_str_until_fd(int fd, char *buf, int length, char delim) {
   int total_received = 0;
   int ret;
-  size_t bytes_received;
+  cgc_size_t bytes_received;
   char c;
   buf[0] = '\0';
   while (1) {
@@ -91,10 +91,10 @@ DONE:
 // Receives bytes from the given fd until delim is found. 
 // Output buf will not always be null terminated. Output buf does not contain delim. 
 // Returns bytes received not including delim or null
-int receive_until_fd(int fd, char *buf, int length, char delim) {
+int cgc_receive_until_fd(int fd, char *buf, int length, char delim) {
   int total_received = 0;
   int ret;
-  size_t bytes_received;
+  cgc_size_t bytes_received;
   char c;
   buf[0] = '\0';
   while (1) {
@@ -125,7 +125,7 @@ char receive_buf[1024];
 char *p_data = receive_buf;
 int bytes_in_buffer = 0;
 
-int buffered_receive(char *buf, int length)
+int cgc_buffered_receive(char *buf, int length)
 {
   int bytes_remaining = length;
   if (bytes_in_buffer)
@@ -135,7 +135,7 @@ int buffered_receive(char *buf, int length)
     { 
       byte_to_copy = bytes_in_buffer;
     }
-    memcpy(buf, p_data, byte_to_copy);
+    cgc_memcpy(buf, p_data, byte_to_copy);
     bytes_remaining -= byte_to_copy;
     p_data += byte_to_copy;
     bytes_in_buffer -= byte_to_copy;
@@ -147,7 +147,7 @@ int buffered_receive(char *buf, int length)
   }
   if (bytes_remaining > 0)
   {
-    if (receive_all(buf, bytes_remaining) < 0)
+    if (cgc_receive_all(buf, bytes_remaining) < 0)
     {
       return -1;
     }
@@ -155,11 +155,11 @@ int buffered_receive(char *buf, int length)
   return length;
 }
 
-int receive_until(char *buf, int length, char delim) {
-  return buffered_receive_until(buf, length, delim);
+int cgc_receive_until(char *buf, int length, char delim) {
+  return cgc_buffered_receive_until(buf, length, delim);
 }
 
-int buffered_receive_until(char *buf, int length, char delim)
+int cgc_buffered_receive_until(char *buf, int length, char delim)
 {
   char c;
   int bytes_copied = 0;
@@ -176,7 +176,7 @@ int buffered_receive_until(char *buf, int length, char delim)
       }
     } else {
       int ret;
-      size_t bytes_received = 0;
+      cgc_size_t bytes_received = 0;
       ret = receive(STDIN, receive_buf , 1024 , &bytes_received);
       if (ret != 0) {
         return -1;
@@ -203,14 +203,14 @@ int buffered_receive_until(char *buf, int length, char delim)
   return bytes_copied;
 }
 
-int send_all(char *buf, int length) {
-  return send_all_fd(STDOUT, buf, length);
+int cgc_send_all(char *buf, int length) {
+  return cgc_send_all_fd(STDOUT, buf, length);
 }
 
-int send_all_fd(int fd, char *buf, int length) {
+int cgc_send_all_fd(int fd, char *buf, int length) {
   int total_sent = 0;
   int ret;
-  size_t bytes_sent;
+  cgc_size_t bytes_sent;
   while(total_sent < length) {
     ret = transmit(fd, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
@@ -226,8 +226,8 @@ int send_all_fd(int fd, char *buf, int length) {
 }
 
 
-// Return 1 if string 'd' equals string 's', otherwise return 0
-int equals(char *d, char *s) {
+// Return 1 if string 'd' cgc_equals string 's', otherwise return 0
+int cgc_equals(char *d, char *s) {
   while (*d == *s) {
     if (*d == '\0')
       return 1;
@@ -237,17 +237,17 @@ int equals(char *d, char *s) {
   return 0;
 }
   
-// Replace 'find' char with 'replace' char in the string 's' up to 'num' instances. 
-// If 'num' is 0, replace all instances. 
+// Replace 'find' char with 'cgc_replace' char in the string 's' up to 'num' instances. 
+// If 'num' is 0, cgc_replace all instances. 
 // Returns number of instances that were replaced. 
-int replace(char *s, char find, char replace, int num) {
+int cgc_replace(char *s, char find, char cgc_replace, int num) {
   int count = 0;
   while (*s != '\0') {
     if ((num != 0) && (count >= num)) {
       break;
     }
     if (*s == find) {
-      *s = replace;
+      *s = cgc_replace;
       count++;
     }
     s++;
@@ -263,7 +263,7 @@ int replace(char *s, char find, char replace, int num) {
 // The newline will be added at the end of the useful string or, if the string is max length, in the last position of the buffer
 // Returns the new length of the useful string including the newline character
 // Buffer will only be null terminated if size permits
-int force_newline(char *s, int size, int bytes) {
+int cgc_force_newline(char *s, int size, int bytes) {
   if (bytes == size) {
       s[bytes - 1] = '\n';
     } else {
@@ -278,13 +278,13 @@ int force_newline(char *s, int size, int bytes) {
 }
 
 
-int getopt(int argc, char **argv, char *optstring, int *opt_index) {
+int cgc_getopt(int argc, char **argv, char *optstring, int *opt_index) {
   
   int option = -1;
   if (*opt_index >= argc || !argv[*opt_index]) {
     goto DONE;
   }
-  for (int i = 0; i < strlen(optstring); i++) {
+  for (int i = 0; i < cgc_strlen(optstring); i++) {
     if (*argv[*opt_index] == optstring[i]) {
       option = optstring[i];
       (*opt_index)++;
@@ -300,7 +300,7 @@ DONE:
 
 
 
-void bcopy(char *s, char *d, size_t size) {
+void cgc_bcopy(char *s, char *d, cgc_size_t size) {
   while (size > 0) {
     *d = *s;
     d++;s++;size--;
@@ -308,6 +308,6 @@ void bcopy(char *s, char *d, size_t size) {
 }
 
 
-void exit(int e) {
+void cgc_exit(int e) {
   _terminate(e);
 }

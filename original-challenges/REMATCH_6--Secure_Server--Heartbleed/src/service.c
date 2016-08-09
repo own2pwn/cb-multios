@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,24 +34,24 @@ THE SOFTWARE.
 int main(void)
 {
   // Setup server state
-  SERVER_STATE *state = calloc(sizeof(SERVER_STATE));
+  cgc_SERVER_STATE *state = cgc_calloc(sizeof(cgc_SERVER_STATE));
 
-  state->functions =  msls_get_sls_functions();
+  state->functions =  cgc_msls_get_sls_functions();
   state->functions->set_cookie(state);
   state->is_initialized = 1;
 
   // Run Server
   while (!state->should_exit)
   {
-    SLS_MESSAGE *msg = state->functions->receive_msg(state);
+    cgc_SLS_MESSAGE *msg = state->functions->receive_msg(state);
 
     if (msg == NULL)
     {
-      debug_print("Skipping invalid MSG\n");
+      cgc_debug_print("Skipping invalid MSG\n");
       continue;
     }
 
-    CLIENT_CONTEXT *connection = state->functions->lookup_context(state, msg->connection_id);
+    cgc_CLIENT_CONTEXT *connection = state->functions->lookup_context(state, msg->connection_id);
 
     switch(msg->type)
     {
@@ -87,10 +87,10 @@ int main(void)
       default:
         break;
     }
-    free(msg->message);
-    free(msg);
+    cgc_free(msg->message);
+    cgc_free(msg);
   }
   state->functions->cleanup(state);
-  free(state);
+  cgc_free(state);
   return 0;
 }

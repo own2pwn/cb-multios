@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,11 +31,11 @@ THE SOFTWARE.
 #define MAX_X (20)
 #define MAX_Y (20)
 #define MAX_MATRIX_SIZE (255)
-uint8_t X;
-uint8_t Y;
+cgc_uint8_t X;
+cgc_uint8_t Y;
 
-void Add(int32_t *m1, int32_t *m2, int32_t *result) {
-	uint8_t x, y;
+void cgc_Add(cgc_int32_t *m1, cgc_int32_t *m2, cgc_int32_t *result) {
+	cgc_uint8_t x, y;
 
 	for (x = 0; x < X; x++) {
 		for (y = 0; y < Y; y++) {
@@ -44,8 +44,8 @@ void Add(int32_t *m1, int32_t *m2, int32_t *result) {
 	}
 }
 
-void Sub(int32_t *m1, int32_t *m2, int32_t *result) {
-	uint8_t x, y;
+void cgc_Sub(cgc_int32_t *m1, cgc_int32_t *m2, cgc_int32_t *result) {
+	cgc_uint8_t x, y;
 
 	for (x = 0; x < X; x++) {
 		for (y = 0; y < Y; y++) {
@@ -54,8 +54,8 @@ void Sub(int32_t *m1, int32_t *m2, int32_t *result) {
 	}
 }
 
-void ScalerMultiply(int32_t *m1, int32_t multiplier, int32_t *result) {
-	uint8_t x, y;
+void cgc_ScalerMultiply(cgc_int32_t *m1, cgc_int32_t multiplier, cgc_int32_t *result) {
+	cgc_uint8_t x, y;
 
 	for (x = 0; x < X; x++) {
 		for (y = 0; y < Y; y++) {
@@ -64,40 +64,40 @@ void ScalerMultiply(int32_t *m1, int32_t multiplier, int32_t *result) {
 	}
 }
 
-void PrintMenu(void) {
-	puts("Matrix Calculator");
-	puts("1. Add two matrices");
-	puts("2. Subtract two matrices");
-	puts("3. Scalar multiply a matrix");
-	puts("4. Return to main menu");
-	printf("Choice: ");
+void cgc_PrintMenu(void) {
+	cgc_puts("Matrix Calculator");
+	cgc_puts("1. cgc_Add two matrices");
+	cgc_puts("2. Subtract two matrices");
+	cgc_puts("3. Scalar multiply a matrix");
+	cgc_puts("4. Return to main menu");
+	cgc_printf("Choice: ");
 
 }
 
-int32_t ReadMatrix(int32_t *m) {
-	uint8_t x, y;
+cgc_int32_t cgc_ReadMatrix(cgc_int32_t *m) {
+	cgc_uint8_t x, y;
 	char buf[8];
 
 	if (X == 0) {
 		// X
-		printf("X: ");
-		if (receive_until(buf, '\n', 7) == 0) {
+		cgc_printf("X: ");
+		if (cgc_receive_until(buf, '\n', 7) == 0) {
 			return(0);
 		}
-		x = atoi(buf);	
+		x = cgc_atoi(buf);	
 		if (x < 1 || x > MAX_X) {
-			puts("invalid");
+			cgc_puts("invalid");
 			return(0);
 		}
 	
 		// Y
-		printf("Y: ");
-		if (receive_until(buf, '\n', 7) == 0) {
+		cgc_printf("Y: ");
+		if (cgc_receive_until(buf, '\n', 7) == 0) {
 			return(0);
 		}
-		y = atoi(buf);	
+		y = cgc_atoi(buf);	
 		if (y < 1 || y > MAX_Y) {
-			puts("invalid");
+			cgc_puts("invalid");
 			return(0);
 		}
 
@@ -107,141 +107,141 @@ int32_t ReadMatrix(int32_t *m) {
 	}
 	
 #ifdef PATCHED
-	uint16_t matrix_size;
+	cgc_uint16_t matrix_size;
 #else
 	// BUG: 8-bit integer overflow possible
-	uint8_t matrix_size;
+	cgc_uint8_t matrix_size;
 #endif
 	matrix_size = x * y;
 	if (matrix_size > MAX_MATRIX_SIZE) {
-		puts("matrix too large");
+		cgc_puts("matrix too large");
 		return(0);
 	}
 		
 
 	// Read in the matrix values
-	puts("Enter the matrix values");
+	cgc_puts("Enter the matrix values");
 	for (x = 0; x < X; x++) {
 		for (y = 0; y < Y; y++) {
-			printf("@d,@d: ", x, y);
-			if (receive_until(buf, '\n', 7) == 0) {
+			cgc_printf("@d,@d: ", x, y);
+			if (cgc_receive_until(buf, '\n', 7) == 0) {
 				return(0);
 			}
-			*pM(m, x, y) = atoi(buf);
+			*pM(m, x, y) = cgc_atoi(buf);
 		}
 	}
 
 	return(1);
 }
 
-void PrintMatrix(int32_t *m) {
-	uint8_t x, y;
+void cgc_PrintMatrix(cgc_int32_t *m) {
+	cgc_uint8_t x, y;
 
 	for (x = 0; x < X; x++) {
 		for (y = 0; y < Y; y++) {
-			printf("@d ", *pM(m, x, y));
+			cgc_printf("@d ", *pM(m, x, y));
 		}
-		puts("");
+		cgc_puts("");
 	}
 
 }
 
-int32_t matrix_add(void) {
-	int32_t m1[MAX_MATRIX_SIZE];
-	int32_t m2[MAX_MATRIX_SIZE];
-	int32_t result[MAX_MATRIX_SIZE];
-	uint8_t x, y;
+cgc_int32_t cgc_matrix_add(void) {
+	cgc_int32_t m1[MAX_MATRIX_SIZE];
+	cgc_int32_t m2[MAX_MATRIX_SIZE];
+	cgc_int32_t result[MAX_MATRIX_SIZE];
+	cgc_uint8_t x, y;
 
 	X = 0;
 	Y = 0;
-	puts("First matrix");
-	puts("Provide the matrix dimensions");
-	if (!ReadMatrix(m1)) {
+	cgc_puts("First matrix");
+	cgc_puts("Provide the matrix dimensions");
+	if (!cgc_ReadMatrix(m1)) {
 		return(0);
 	}	
-	puts("Second matrix");
-	if (!ReadMatrix(m2)) {
+	cgc_puts("Second matrix");
+	if (!cgc_ReadMatrix(m2)) {
 		return(0);
 	}	
-	Add(m1, m2, result);
-	puts("Result");
-	PrintMatrix(result);
+	cgc_Add(m1, m2, result);
+	cgc_puts("Result");
+	cgc_PrintMatrix(result);
 
 	return(1);
 }
 	
-int32_t matrix_sub(void) {
-	int32_t m1[MAX_MATRIX_SIZE];
-	int32_t m2[MAX_MATRIX_SIZE];
-	int32_t result[MAX_MATRIX_SIZE];
-	uint8_t x, y;
+cgc_int32_t cgc_matrix_sub(void) {
+	cgc_int32_t m1[MAX_MATRIX_SIZE];
+	cgc_int32_t m2[MAX_MATRIX_SIZE];
+	cgc_int32_t result[MAX_MATRIX_SIZE];
+	cgc_uint8_t x, y;
 
 	X = 0;
 	Y = 0;
-	puts("First matrix");
-	puts("Provide the matrix dimensions");
-	if (!ReadMatrix(m1)) {
+	cgc_puts("First matrix");
+	cgc_puts("Provide the matrix dimensions");
+	if (!cgc_ReadMatrix(m1)) {
 		return(0);
 	}	
-	puts("Second matrix");
-	if (!ReadMatrix(m2)) {
+	cgc_puts("Second matrix");
+	if (!cgc_ReadMatrix(m2)) {
 		return(0);
 	}	
-	Sub(m1, m2, result);
-	puts("Result");
-	PrintMatrix(result);
+	cgc_Sub(m1, m2, result);
+	cgc_puts("Result");
+	cgc_PrintMatrix(result);
 
 	return(1);
 }
 	
-int32_t matrix_smul(void) {
-	int32_t m1[MAX_MATRIX_SIZE];
-	int32_t result[MAX_MATRIX_SIZE];
-	uint8_t x, y;
-	int32_t multiplier;
+cgc_int32_t cgc_matrix_smul(void) {
+	cgc_int32_t m1[MAX_MATRIX_SIZE];
+	cgc_int32_t result[MAX_MATRIX_SIZE];
+	cgc_uint8_t x, y;
+	cgc_int32_t multiplier;
 	char buf[8];
 
 	X = 0;
 	Y = 0;
-	puts("Provide the matrix dimensions");
-	if (!ReadMatrix(m1)) {
+	cgc_puts("Provide the matrix dimensions");
+	if (!cgc_ReadMatrix(m1)) {
 		return(0);
 	}	
-	printf("Multiplier: ");
-	if (receive_until(buf, '\n', 7) == 0) {
+	cgc_printf("Multiplier: ");
+	if (cgc_receive_until(buf, '\n', 7) == 0) {
 		return(0);
 	}
-	multiplier = atoi(buf);	
-	ScalerMultiply(m1, multiplier, result);
-	puts("Result");
-	PrintMatrix(result);
+	multiplier = cgc_atoi(buf);	
+	cgc_ScalerMultiply(m1, multiplier, result);
+	cgc_puts("Result");
+	cgc_PrintMatrix(result);
 
 	return(1);
 }
 	
-int32_t matrix_command(char *t) {
+cgc_int32_t cgc_matrix_command(char *t) {
 	char buf[8];
-	uint8_t choice;
+	cgc_uint8_t choice;
 	
 	while (1) {
-		PrintMenu();
-		if (receive_until(buf, '\n', 7) == 0) {
+		cgc_PrintMenu();
+		if (cgc_receive_until(buf, '\n', 7) == 0) {
 			return(0);
 		}
-		choice = atoi(buf);
+		choice = cgc_atoi(buf);
 		if (choice < 1 || choice > 4) {
 			continue;
 		}
 
 		switch (choice) {
 			case 1:
-				matrix_add();
+				cgc_matrix_add();
 				break;
 			case 2:
-				matrix_sub();
+				cgc_matrix_sub();
 				break;
 			case 3:
-				matrix_smul();
+				cgc_matrix_smul();
 				break;
 			case 4:
 				return(0);

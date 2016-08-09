@@ -13,7 +13,7 @@ struct filetype {
     unsigned int magic;
 };
 
-const filetype *get_filetype_m(unsigned int magic);
-const filetype *get_filetype_e(char *extension);
+const filetype *cgc_get_filetype_m(unsigned int magic);
+const filetype *cgc_get_filetype_e(char *extension);
 
 #endif

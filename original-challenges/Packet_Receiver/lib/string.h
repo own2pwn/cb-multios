@@ -1,38 +1,38 @@
 #ifndef __STRING_H__
 #define __STRING_H__
 
-class String
+class cgc_String
 {
 public:
-    String();
-    String( const char *instr );
-    String( const String &instr );
-    ~String();
+    cgc_String();
+    cgc_String( const char *instr );
+    cgc_String( const cgc_String &instr );
+    ~cgc_String();
 
-    String& operator+=( const String &rhs );
-    const String operator+( const String &rhs ) const;
-    const char *c_str( void ) const;
+    cgc_String& operator+=( const cgc_String &rhs );
+    const cgc_String operator+( const cgc_String &rhs ) const;
+    const char *cgc_c_str( void ) const;
 
-    bool operator==( const String &rhs ) const;
-    bool operator!=( const String &rhs ) const;
-    void operator=( const String &rhs );
-    void SetString( const char *pszBuffer );
+    bool operator==( const cgc_String &rhs ) const;
+    bool operator!=( const cgc_String &rhs ) const;
+    void operator=( const cgc_String &rhs );
+    void cgc_SetString( const char *pszBuffer );
 
-    String upper( void ) const;
-    String lower( void ) const;
+    cgc_String cgc_upper( void ) const;
+    cgc_String cgc_lower( void ) const;
 
-    String Trim( size_t length );
-    String SubString( size_t startPos, size_t endPos ) const;
-    String StripSpaces( void ) const;
+    cgc_String cgc_Trim( cgc_size_t cgc_length );
+    cgc_String cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) const;
+    cgc_String cgc_StripSpaces( void ) const;
 
-    size_t length( void );
-    bool empty( void );
+    cgc_size_t cgc_length( void );
+    bool cgc_empty( void );
 
 public:
-    const static size_t STRING_END_POS = 0xFFFFFFFF;
+    const static cgc_size_t STRING_END_POS = 0xFFFFFFFF;
 
 private:
-    size_t m_length;
+    cgc_size_t m_length;
     char *m_pData;
 };
 

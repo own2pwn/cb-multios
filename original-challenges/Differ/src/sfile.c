@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,19 +26,19 @@
 
 #include "sfile.h"
 
-int recvall(int fd, void *dst, size_t size);
+int cgc_recvall(int fd, void *dst, cgc_size_t size);
 
-SFILE *open_sfile()
+cgc_SFILE *cgc_open_sfile()
 {
-    size_t rx, idx = 0;
+    cgc_size_t rx, idx = 0;
     unsigned int filesize = 0;
-    SFILE tmp_sfp;
-    SFILE *sfp = &tmp_sfp, *new_sfp = NULL;
+    cgc_SFILE tmp_sfp;
+    cgc_SFILE *sfp = &tmp_sfp, *new_sfp = NULL;
 
-    if (recvall(STDIN, sfp, sizeof(SFILE)) < 0)
+    if (cgc_recvall(STDIN, sfp, sizeof(cgc_SFILE)) < 0)
         goto error;
 
-    if (memcmp(sfp->magic, "SFP", 3) != 0)
+    if (cgc_memcmp(sfp->magic, "SFP", 3) != 0)
         goto error;
 
     if (sfp->file_type != BINARY && sfp->file_type != ASCII)
@@ -50,13 +50,13 @@ SFILE *open_sfile()
     if (sfp->size == 0)
         goto error;
 
-    new_sfp = malloc(sizeof(SFILE) + sfp->size + 1);
+    new_sfp = cgc_malloc(sizeof(cgc_SFILE) + sfp->size + 1);
     if (!new_sfp)
         goto error;
-    memcpy(new_sfp, sfp, sizeof(SFILE));
+    cgc_memcpy(new_sfp, sfp, sizeof(cgc_SFILE));
 
 
-    if (recvall(STDIN, &new_sfp->data[0], sfp->size) < 0)
+    if (cgc_recvall(STDIN, &new_sfp->data[0], sfp->size) < 0)
         goto error;
     new_sfp->data[sfp->size] = '\0';
 
@@ -64,15 +64,15 @@ SFILE *open_sfile()
 
 error:
     if (new_sfp)
-        free(new_sfp);
+        cgc_free(new_sfp);
     return NULL;
 }
 
-void close_sfile(SFILE **psfp)
+void cgc_close_sfile(cgc_SFILE **psfp)
 {
-    SFILE *sfp = *psfp;
+    cgc_SFILE *sfp = *psfp;
     if (sfp)
-        free(sfp);
+        cgc_free(sfp);
 
     *psfp = NULL;
 }

@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,19 +41,19 @@ typedef struct {
     unsigned int asn;
     char name[256];
     unsigned int ip;
-} router_t;
+} cgc_router_t;
 
 typedef struct route {
     struct route *left;
     struct route *right;
-    uint32_t ip;
-    uint16_t asn;
-    uint8_t reserved;
-    uint8_t flag1 : 1;
-    uint8_t drop : 1;
-    uint8_t free : 1;
-    uint8_t length : 5;
-} route_t;
+    cgc_uint32_t ip;
+    cgc_uint16_t asn;
+    cgc_uint8_t reserved;
+    cgc_uint8_t flag1 : 1;
+    cgc_uint8_t drop : 1;
+    cgc_uint8_t cgc_free : 1;
+    cgc_uint8_t length : 5;
+} cgc_route_t;
 
 typedef struct {
     unsigned int free_head;
@@ -61,28 +61,28 @@ typedef struct {
     unsigned int reserved2;
     unsigned int reserved3;
 
-    route_t routes[4095];
-} route_mem_t;
+    cgc_route_t routes[4095];
+} cgc_route_mem_t;
 
 char g_buffer[1024];
-size_t g_buffer_bytes;
+cgc_size_t g_buffer_bytes;
 unsigned int g_num_routers;
-router_t g_routers[MAX_ROUTERS];
-route_t g_default_route;
+cgc_router_t g_routers[MAX_ROUTERS];
+cgc_route_t g_default_route;
 int g_enable;
 int g_route_mem_length;
-route_mem_t **g_route_memory;
+cgc_route_mem_t **g_route_memory;
 
-static void print(const char *s)
+static void cgc_print(const char *s)
 {
-    size_t bytes;
-    transmit(STDOUT, s, strlen(s), &bytes);
+    cgc_size_t bytes;
+    transmit(STDOUT, s, cgc_strlen(s), &bytes);
 }
 
-static char *readline(const char *prompt)
+static char *cgc_readline(const char *prompt)
 {
-    size_t idx = 0, bytes;
-    print(prompt);
+    cgc_size_t idx = 0, bytes;
+    cgc_print(prompt);
     while (1)
     {
         int status = receive(STDIN, &g_buffer[idx], 1, &bytes);
@@ -95,47 +95,47 @@ static char *readline(const char *prompt)
     }
     g_buffer[idx] = 0;
 #ifdef LINEECHO
-    print(g_buffer);
-    print("\n");
+    cgc_print(g_buffer);
+    cgc_print("\n");
 #endif
     return g_buffer;
 }
 
-static int parse_ip(char *line, unsigned int *out)
+static int cgc_parse_ip(char *line, unsigned int *out)
 {
     char *s1, *s2, *s3, *s4;
-    if ((s1 = strsep(&line, ".")) == NULL)
+    if ((s1 = cgc_strsep(&line, ".")) == NULL)
         return 0;
-    if ((s2 = strsep(&line, ".")) == NULL)
+    if ((s2 = cgc_strsep(&line, ".")) == NULL)
         return 0;
-    if ((s3 = strsep(&line, ".")) == NULL)
+    if ((s3 = cgc_strsep(&line, ".")) == NULL)
         return 0;
-    if ((s4 = strsep(&line, ".")) == NULL)
+    if ((s4 = cgc_strsep(&line, ".")) == NULL)
         return 0;
     unsigned int i1, i2, i3, i4;
-    if ((i1 = strtoul(s1, NULL, 10)) >= 256)
+    if ((i1 = cgc_strtoul(s1, NULL, 10)) >= 256)
         return 0;
-    if ((i2 = strtoul(s2, NULL, 10)) >= 256)
+    if ((i2 = cgc_strtoul(s2, NULL, 10)) >= 256)
         return 0;
-    if ((i3 = strtoul(s3, NULL, 10)) >= 256)
+    if ((i3 = cgc_strtoul(s3, NULL, 10)) >= 256)
         return 0;
-    if ((i4 = strtoul(s4, NULL, 10)) >= 256)
+    if ((i4 = cgc_strtoul(s4, NULL, 10)) >= 256)
         return 0;
     *out = (i1 << 24) | (i2 << 16) | (i3 << 8) | i4;
     return 1;
 }
 
-static int valid_router(router_t *router)
+static int cgc_valid_router(cgc_router_t *router)
 {
     return router->asn != INVALID_ASN && router->asn <= MAX_ROUTERS;
 }
 
-static router_t *get_router(unsigned int asn)
+static cgc_router_t *cgc_get_router(unsigned int asn)
 {
     return &g_routers[asn-1];
 }
 
-static int mask_to_length(unsigned int mask)
+static int cgc_mask_to_length(unsigned int mask)
 {
     int length;
     if (mask == 0)
@@ -148,14 +148,14 @@ static int mask_to_length(unsigned int mask)
     return length;
 }
 
-static unsigned route_mask(route_t *route)
+static unsigned cgc_route_mask(cgc_route_t *route)
 {
     if (route == &g_default_route)
         return 0;
     return 0xFFFFFFFF << (31 - route->length);
 }
 
-static unsigned route_bit(route_t *route)
+static unsigned cgc_route_bit(cgc_route_t *route)
 {
     if (route == &g_default_route)
         return 1 << 31;
@@ -163,23 +163,23 @@ static unsigned route_bit(route_t *route)
         return 1 << (31 - route->length - 1);
 }
 
-static route_t *route_child(route_t *parent, uint32_t ip)
+static cgc_route_t *cgc_route_child(cgc_route_t *parent, cgc_uint32_t ip)
 {
-    return (ip & route_bit(parent)) == 0 ? parent->left : parent->right;
+    return (ip & cgc_route_bit(parent)) == 0 ? parent->left : parent->right;
 }
 
 #ifdef DEBUG
-static void print_route(route_t *route, int level)
+static void print_route(cgc_route_t *route, int level)
 {
-    unsigned int mask = route_mask(route);
-    printf(" [%d] %08x %08x %d\n", level,
+    unsigned int mask = cgc_route_mask(route);
+    cgc_printf(" [%d] %08x %08x %d\n", level,
         route->ip,
         mask,
         route->asn);
 
 }
 
-static void print_routes(route_t *root, int level)
+static void print_routes(cgc_route_t *root, int level)
 {
     print_route(root, level);
     if (root->left)
@@ -189,7 +189,7 @@ static void print_routes(route_t *root, int level)
 }
 #endif
 
-static route_t *lookup_route(uint32_t ip, unsigned int length, route_t **parent)
+static cgc_route_t *cgc_lookup_route(cgc_uint32_t ip, unsigned int length, cgc_route_t **parent)
 {
     if (length == 0)
     {
@@ -204,10 +204,10 @@ static route_t *lookup_route(uint32_t ip, unsigned int length, route_t **parent)
         }
     }
 
-    route_t *p = &g_default_route, *route;
-    while ((route = route_child(p, ip)) != NULL)
+    cgc_route_t *p = &g_default_route, *route;
+    while ((route = cgc_route_child(p, ip)) != NULL)
     {
-        uint32_t mask = route_mask(route);
+        cgc_uint32_t mask = cgc_route_mask(route);
         if (route->ip == ip && route->length == length - 1)
         {
             if (parent) *parent = p;
@@ -223,45 +223,45 @@ static route_t *lookup_route(uint32_t ip, unsigned int length, route_t **parent)
     return NULL;
 }
 
-static void prompt_edit_router(router_t *router)
+static void cgc_prompt_edit_router(cgc_router_t *router)
 {
     char *line;
-    printf("AS %d\n", router->asn);
-    printf(" Name: %s\n", router->name);
-    printf(" IP: %d.%d.%d.%d\n", router->ip >> 24, 
+    cgc_printf("AS %d\n", router->asn);
+    cgc_printf(" Name: %s\n", router->name);
+    cgc_printf(" IP: %d.%d.%d.%d\n", router->ip >> 24, 
         (router->ip >> 16) & 0xff,
         (router->ip >> 8) & 0xff,
         (router->ip >> 0) & 0xff);
 
-    line = readline("Modify name? ");
-    if (line && strcmp(line, "y") == 0)
+    line = cgc_readline("Modify name? ");
+    if (line && cgc_strcmp(line, "y") == 0)
     {
-        line = readline("New name? ");
+        line = cgc_readline("New name? ");
         if (line)
         {
-            strncpy(router->name, line, sizeof(router->name));
+            cgc_strncpy(router->name, line, sizeof(router->name));
             router->name[sizeof(router->name)-1] = 0;
         }
     }
-    line = readline("Modify IP? ");
-    if (line && strcmp(line, "y") == 0)
+    line = cgc_readline("Modify IP? ");
+    if (line && cgc_strcmp(line, "y") == 0)
     {
         unsigned int ip;
-        line = readline("New IP? ");
-        if (line && parse_ip(line, &ip))
+        line = cgc_readline("New IP? ");
+        if (line && cgc_parse_ip(line, &ip))
         {
             router->ip = ip;
         }
     }
 }
 
-static route_t *allocate_route()
+static cgc_route_t *cgc_allocate_route()
 {
     int i;
-    route_mem_t *avail_mem = NULL;
+    cgc_route_mem_t *avail_mem = NULL;
     for (i = 0; i < g_route_mem_length; i++)
     {
-        route_mem_t *mem = g_route_memory[i];
+        cgc_route_mem_t *mem = g_route_memory[i];
         if (mem == NULL)
             continue;
         if (mem->free_head != 0)
@@ -274,13 +274,13 @@ static route_t *allocate_route()
     {
         if (g_route_mem_length == MAX_ROUTE_ALLOCATIONS)
             return NULL;
-        if (allocate(sizeof(route_mem_t), 0, (void **)&avail_mem) != 0)
+        if (allocate(sizeof(cgc_route_mem_t), 0, (void **)&avail_mem) != 0)
             return NULL;
         avail_mem->free_head = 1;
         for (i = 1; i <= sizeof(avail_mem->routes) / sizeof(avail_mem->routes[0]); i++)
         {
-            route_t *route = &avail_mem->routes[i - 1];
-            route->free = 1;
+            cgc_route_t *route = &avail_mem->routes[i - 1];
+            route->cgc_free = 1;
             if (i == sizeof(avail_mem->routes) / sizeof(avail_mem->routes[0]))
                 route->ip = 0;
             else
@@ -288,40 +288,40 @@ static route_t *allocate_route()
         }
         g_route_memory[g_route_mem_length++] = avail_mem;
     }
-    route_t *route = &avail_mem->routes[avail_mem->free_head - 1];
+    cgc_route_t *route = &avail_mem->routes[avail_mem->free_head - 1];
     avail_mem->free_head = route->ip;
-    memset(route, 0, sizeof(route_t));
+    cgc_memset(route, 0, sizeof(cgc_route_t));
     return route;
 }
 
-static void free_route(route_t *route)
+static void cgc_free_route(cgc_route_t *route)
 {
     int i;
     for (i = 0; i < g_route_mem_length; i++)
     {
-        route_mem_t *mem = g_route_memory[i];
+        cgc_route_mem_t *mem = g_route_memory[i];
         if (mem == NULL)
             continue;
-        if ((intptr_t)route - (intptr_t)mem < sizeof(route_mem_t))
+        if ((cgc_intptr_t)route - (cgc_intptr_t)mem < sizeof(cgc_route_mem_t))
         {
-            route->free = 1;
+            route->cgc_free = 1;
             route->ip = mem->free_head;
-            mem->free_head = ((intptr_t)route - (intptr_t)mem) / sizeof(route_t);
+            mem->free_head = ((cgc_intptr_t)route - (cgc_intptr_t)mem) / sizeof(cgc_route_t);
             return;
         }
     }
-    exit(9);
+    cgc_exit(9);
 }
 
-static void delete_route(route_t *route, route_t *parent)
+static void cgc_delete_route(cgc_route_t *route, cgc_route_t *parent)
 {
     if (parent == NULL)
-        if (lookup_route(route->ip, route->length + 1, &parent) == NULL)
-            exit(1);
+        if (cgc_lookup_route(route->ip, route->length + 1, &parent) == NULL)
+            cgc_exit(1);
     if (parent == NULL)
-        exit(2);
+        cgc_exit(2);
 
-    route_t *sibling, **slot;
+    cgc_route_t *sibling, **slot;
     if (parent->left == route)
     {
         slot = &parent->left;
@@ -334,7 +334,7 @@ static void delete_route(route_t *route, route_t *parent)
     }
     else
     {
-        exit(3);
+        cgc_exit(3);
     }
 
     route->asn = INVALID_ASN;
@@ -348,18 +348,18 @@ static void delete_route(route_t *route, route_t *parent)
     {
         // replace with left child
         *slot = route->left;
-        free_route(route);
+        cgc_free_route(route);
     }
     else if (route->right)
     {
         // replace with right child
         *slot = route->right;
-        free_route(route);
+        cgc_free_route(route);
     }
     else if (parent != &g_default_route && parent->asn == INVALID_ASN && !parent->drop && sibling)
     {
-        route_t *pp;
-        if (lookup_route(parent->ip, parent->length + 1, &pp) != NULL && pp != NULL)
+        cgc_route_t *pp;
+        if (cgc_lookup_route(parent->ip, parent->length + 1, &pp) != NULL && pp != NULL)
         {
             // parent is a NOOP
             // replace parent with the remaining sibling
@@ -367,38 +367,38 @@ static void delete_route(route_t *route, route_t *parent)
                 pp->left = sibling;
             else
                 pp->right = sibling;
-            free_route(parent);
-            free_route(route);
+            cgc_free_route(parent);
+            cgc_free_route(route);
         }
     }
     else
     {
         // parent has a purpose, keep it around
         *slot = NULL;
-        free_route(route);
+        cgc_free_route(route);
     }
 }
 
-static void cmd_add_route(char *line)
+static void cgc_cmd_add_route(char *line)
 {
     unsigned int ip, mask, asn;
-    char *word = strsep(&line, " ");
-    if (word == NULL || !parse_ip(word, &ip))
+    char *word = cgc_strsep(&line, " ");
+    if (word == NULL || !cgc_parse_ip(word, &ip))
         goto bad_arguments;
-    word = strsep(&line, " ");
-    if (word == NULL || !parse_ip(word, &mask))
+    word = cgc_strsep(&line, " ");
+    if (word == NULL || !cgc_parse_ip(word, &mask))
         goto bad_arguments;
-    word = strsep(&line, " ");
+    word = cgc_strsep(&line, " ");
     if (word == NULL)
         goto bad_arguments;
-    asn = strtoul(word, NULL, 10);
+    asn = cgc_strtoul(word, NULL, 10);
     if (asn > MAX_ROUTERS)
         goto bad_arguments;
 
-    if (asn != INVALID_ASN && !valid_router(get_router(asn)))
+    if (asn != INVALID_ASN && !cgc_valid_router(cgc_get_router(asn)))
         goto bad_arguments;
 
-    int length = mask_to_length(mask);
+    int length = cgc_mask_to_length(mask);
     if (length > 32)
         goto bad_arguments;
 
@@ -413,17 +413,17 @@ static void cmd_add_route(char *line)
     }
     length--;
 
-    route_t *next, *route, *parent = &g_default_route;
+    cgc_route_t *next, *route, *parent = &g_default_route;
     while (1)
     {
-        int bit = route_bit(parent);
+        int bit = cgc_route_bit(parent);
         next = (ip & bit) == 0 ? parent->left : parent->right;
         if (next == NULL)
         {
-            route = allocate_route();
+            route = cgc_allocate_route();
             if (route == NULL)
             {
-                print("OUT OF MEMORY\n");
+                cgc_print("OUT OF MEMORY\n");
                 return;
             }
             if ((ip & bit) == 0)
@@ -433,17 +433,17 @@ static void cmd_add_route(char *line)
             break;
         }
 
-        uint32_t mask = route_mask(next);
+        cgc_uint32_t mask = cgc_route_mask(next);
         if ((next->ip & mask) != (ip & mask) || next->length > length)
         {
             mask = 0xFFFFFFFF << (31 - length);
             if ((next->ip & mask) == (ip & mask))
             {
                 // create a new internal node
-                route = allocate_route();
+                route = cgc_allocate_route();
                 if (route == NULL)
                 {
-                    print("OUT OF MEMORY\n");
+                    cgc_print("OUT OF MEMORY\n");
                     return;
                 }
                 if ((ip & bit) == 0)
@@ -460,10 +460,10 @@ static void cmd_add_route(char *line)
             {
                 // create a new internal node
                 // and a new leaf node
-                route = allocate_route();
+                route = cgc_allocate_route();
                 if (route == NULL)
                 {
-                    print("OUT OF MEMORY\n");
+                    cgc_print("OUT OF MEMORY\n");
                     return;
                 }
 
@@ -473,10 +473,10 @@ static void cmd_add_route(char *line)
                     parent->right = route;
                 parent = route;
 
-                route = allocate_route();
+                route = cgc_allocate_route();
                 if (route == NULL)
                 {
-                    print("OUT OF MEMORY\n");
+                    cgc_print("OUT OF MEMORY\n");
                     return;
                 }
 
@@ -529,21 +529,21 @@ static void cmd_add_route(char *line)
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_delete_route(char *line)
+static void cgc_cmd_delete_route(char *line)
 {
     unsigned int ip, mask;
-    char *word = strsep(&line, " ");
-    if (word == NULL || !parse_ip(word, &ip))
+    char *word = cgc_strsep(&line, " ");
+    if (word == NULL || !cgc_parse_ip(word, &ip))
         goto bad_arguments;
-    word = strsep(&line, " ");
-    if (word == NULL || !parse_ip(word, &mask))
+    word = cgc_strsep(&line, " ");
+    if (word == NULL || !cgc_parse_ip(word, &mask))
         goto bad_arguments;
 
-    int length = mask_to_length(mask);
+    int length = cgc_mask_to_length(mask);
     if (length > 32)
         goto bad_arguments;
 
@@ -552,35 +552,35 @@ static void cmd_delete_route(char *line)
         if (ip == 0)
             g_default_route.asn = INVALID_ASN;
         else
-            print("ROUTE NOT FOUND\n");
+            cgc_print("ROUTE NOT FOUND\n");
         return;
     }
 
-    route_t *parent, *route;
-    route = lookup_route(ip, length, &parent);
+    cgc_route_t *parent, *route;
+    route = cgc_lookup_route(ip, length, &parent);
     if (route && (route->asn != INVALID_ASN || route->drop))
-        delete_route(route, parent);
+        cgc_delete_route(route, parent);
     else
-        print("ROUTE NOT FOUND\n");
+        cgc_print("ROUTE NOT FOUND\n");
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_query_route(char *line)
+static void cgc_cmd_query_route(char *line)
 {
     unsigned int ip;
-    char *word = strsep(&line, " ");
-    if (word == NULL || !parse_ip(word, &ip))
+    char *word = cgc_strsep(&line, " ");
+    if (word == NULL || !cgc_parse_ip(word, &ip))
         goto bad_arguments;
 
     unsigned int next_hop = INVALID_ASN;
-    route_t *route = &g_default_route;
+    cgc_route_t *route = &g_default_route;
     while (route != NULL)
     {
-        uint32_t mask;
+        cgc_uint32_t mask;
         if (route == &g_default_route)
             mask = 0;
         else
@@ -599,18 +599,18 @@ static void cmd_query_route(char *line)
         route = (ip & bit) == 0 ? route->left : route->right;
     }
 
-    printf("Next hop for %d.%d.%d.%d is ", ip >> 24,
+    cgc_printf("Next hop for %d.%d.%d.%d is ", ip >> 24,
         (ip >> 16) & 0xff,
         (ip >> 8) & 0xff,
         (ip >> 0) & 0xff);
     if (next_hop == INVALID_ASN)
     {
-        printf("BLACKHOLE.\n");
+        cgc_printf("BLACKHOLE.\n");
     }
     else
     {
-        router_t *router = get_router(next_hop);
-        printf("%d.%d.%d.%d, AS %d (%s)\n", router->ip >> 24,
+        cgc_router_t *router = cgc_get_router(next_hop);
+        cgc_printf("%d.%d.%d.%d, AS %d (%s)\n", router->ip >> 24,
             (router->ip >> 16) & 0xff,
             (router->ip >> 8) & 0xff,
             (router->ip >> 0) & 0xff,
@@ -619,59 +619,59 @@ static void cmd_query_route(char *line)
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_add_router(char *line)
+static void cgc_cmd_add_router(char *line)
 {
-    char *word = strsep(&line, " ");
+    char *word = cgc_strsep(&line, " ");
     if (word == NULL)
         goto bad_arguments;
     
-    unsigned int asn = strtoul(word, NULL, 10);
+    unsigned int asn = cgc_strtoul(word, NULL, 10);
     if (asn == INVALID_ASN || asn > MAX_ROUTERS)
         goto bad_arguments;
 
-    router_t *router = get_router(asn);
-    if (valid_router(router))
+    cgc_router_t *router = cgc_get_router(asn);
+    if (cgc_valid_router(router))
         goto bad_arguments;
 
-    memset(router, 0, sizeof(router_t));
+    cgc_memset(router, 0, sizeof(cgc_router_t));
     router->asn = asn;
-    prompt_edit_router(router);
+    cgc_prompt_edit_router(router);
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_delete_router(char *line)
+static void cgc_cmd_delete_router(char *line)
 {
-    char *word = strsep(&line, " ");
+    char *word = cgc_strsep(&line, " ");
     if (word == NULL)
         goto bad_arguments;
     
-    unsigned int asn = strtoul(word, NULL, 10);
+    unsigned int asn = cgc_strtoul(word, NULL, 10);
     if (asn == INVALID_ASN || asn > MAX_ROUTERS)
         goto bad_arguments;
 
-    router_t *router = get_router(asn);
-    if (!valid_router(router))
+    cgc_router_t *router = cgc_get_router(asn);
+    if (!cgc_valid_router(router))
         goto bad_arguments;
 
     // delete all routes with this router
     int i, j;
     for (i = 0; i < g_route_mem_length; i++)
     {
-        route_mem_t *mem = g_route_memory[i];
+        cgc_route_mem_t *mem = g_route_memory[i];
         for (j = 0; j < sizeof(mem->routes)/sizeof(mem->routes[0]); j++)
         {
-            route_t *route = &mem->routes[j];
-            if (!route->free && route->asn == asn)
+            cgc_route_t *route = &mem->routes[j];
+            if (!route->cgc_free && route->asn == asn)
             {
-                delete_route(route, NULL);
+                cgc_delete_route(route, NULL);
             }
         }
     }
@@ -685,17 +685,17 @@ static void cmd_delete_router(char *line)
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_edit_router(char *line)
+static void cgc_cmd_edit_router(char *line)
 {
-    char *word = strsep(&line, " ");
+    char *word = cgc_strsep(&line, " ");
     if (word == NULL)
         goto bad_arguments;
     
-    unsigned int asn = strtoul(word, NULL, 10);
+    unsigned int asn = cgc_strtoul(word, NULL, 10);
 #ifdef PATCHED
     if (asn == INVALID_ASN || asn > MAX_ROUTERS)
         goto bad_arguments;
@@ -704,44 +704,44 @@ static void cmd_edit_router(char *line)
         goto bad_arguments;
 #endif
 
-    router_t *router = get_router(asn);
-    if (!valid_router(router))
+    cgc_router_t *router = cgc_get_router(asn);
+    if (!cgc_valid_router(router))
         goto bad_arguments;
 
-    prompt_edit_router(router);
+    cgc_prompt_edit_router(router);
     return;
 
 bad_arguments:
-    print("BAD ARGUMENTS\n");
+    cgc_print("BAD ARGUMENTS\n");
     return;
 }
 
-static void cmd_list_router(char *line)
+static void cgc_cmd_list_router(char *line)
 {
     int i;
     for (i = 1; i <= MAX_ROUTERS; i++)
     {
-        router_t *router = get_router(i);
-        if (!valid_router(router))
+        cgc_router_t *router = cgc_get_router(i);
+        if (!cgc_valid_router(router))
             continue;
-        printf("AS %d\n", router->asn);
-        printf(" Name: %s\n", router->name);
-        printf(" IP: %d.%d.%d.%d\n", router->ip >> 24, 
+        cgc_printf("AS %d\n", router->asn);
+        cgc_printf(" Name: %s\n", router->name);
+        cgc_printf(" IP: %d.%d.%d.%d\n", router->ip >> 24, 
             (router->ip >> 16) & 0xff,
             (router->ip >> 8) & 0xff,
             (router->ip >> 0) & 0xff);
     }
 }
 
-static void cmd_enable_mode(char *line)
+static void cgc_cmd_enable_mode(char *line)
 {
-    char *word = strsep(&line, " ");
+    char *word = cgc_strsep(&line, " ");
     if (word == NULL)
-        print("BAD ARGUMENTS\n");
-    else if (strcmp(word, ENABLE_PASSWORD) == 0)
+        cgc_print("BAD ARGUMENTS\n");
+    else if (cgc_strcmp(word, ENABLE_PASSWORD) == 0)
         g_enable = 1;
     else
-        print("BAD PASSWORD\n");
+        cgc_print("BAD PASSWORD\n");
 }
 
 int main()
@@ -750,37 +750,37 @@ int main()
         return 0;
     while (1)
     {
-        char *line = readline(g_enable ? ENABLE_PROMPT : PROMPT);
+        char *line = cgc_readline(g_enable ? ENABLE_PROMPT : PROMPT);
         if (line == NULL)
             break;
-        char *word = strsep(&line, " ");
+        char *word = cgc_strsep(&line, " ");
         if (g_enable == 0)
         {
-            if (strcmp(word, "add") == 0)
-                cmd_add_route(line);
-            if (strcmp(word, "delete") == 0)
-                cmd_delete_route(line);
-            if (strcmp(word, "query") == 0)
-                cmd_query_route(line);
-            if (strcmp(word, "enable") == 0)
-                cmd_enable_mode(line);
-            if (strcmp(word, "quit") == 0)
+            if (cgc_strcmp(word, "add") == 0)
+                cgc_cmd_add_route(line);
+            if (cgc_strcmp(word, "delete") == 0)
+                cgc_cmd_delete_route(line);
+            if (cgc_strcmp(word, "query") == 0)
+                cgc_cmd_query_route(line);
+            if (cgc_strcmp(word, "enable") == 0)
+                cgc_cmd_enable_mode(line);
+            if (cgc_strcmp(word, "quit") == 0)
                 break;
         }
         else
         {
-            if (strcmp(word, "add") == 0)
-                cmd_add_router(line);
-            if (strcmp(word, "delete") == 0)
-                cmd_delete_router(line);
-            if (strcmp(word, "edit") == 0)
-                cmd_edit_router(line);
-            if (strcmp(word, "list") == 0)
-                cmd_list_router(line);
-            if (strcmp(word, "quit") == 0)
+            if (cgc_strcmp(word, "add") == 0)
+                cgc_cmd_add_router(line);
+            if (cgc_strcmp(word, "delete") == 0)
+                cgc_cmd_delete_router(line);
+            if (cgc_strcmp(word, "edit") == 0)
+                cgc_cmd_edit_router(line);
+            if (cgc_strcmp(word, "list") == 0)
+                cgc_cmd_list_router(line);
+            if (cgc_strcmp(word, "quit") == 0)
                 g_enable = 0;
         }
     }
-    print("GOOD-BYE\n");
+    cgc_print("GOOD-BYE\n");
     return 0;
 }

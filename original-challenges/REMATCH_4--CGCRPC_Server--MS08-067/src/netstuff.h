@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -40,21 +40,21 @@ THE SOFTWARE.
 /*
   Request:
   Response:
-    uint16_t numServices;
-    uint8_t *services; // each null terminated
+    cgc_uint16_t numServices;
+    cgc_uint8_t *services; // each null terminated
 */
 #define NETSTUFF_FIND_TREE              0xb3  // Find which tree a file is in
 #define NETSTUFF_FIND_FILE              0xb4  // Find a filename by FileID
 #define NETSTUFF_FILE_STAT              0xb5  // Info on file
 /*
   Request:
-  uint8_t   *path;
+  cgc_uint8_t   *path;
 
   Response:
-  uint16_t fileID;
-  uint16_t numBytes;
-  uint8_t isOpen;
-  uint16_t errorCode;
+  cgc_uint16_t fileID;
+  cgc_uint16_t numBytes;
+  cgc_uint8_t isOpen;
+  cgc_uint16_t errorCode;
 */
 #define NETSTUFF_FILE_CLOSE             0xb6  // Force close a file/resource
 #define NETSTUFF_SESSION_ENUM           0xb7   // Info on established sessions
@@ -66,11 +66,11 @@ THE SOFTWARE.
 #define NETSTUFF_NET_PATH_CANONICALIZE  0xbc  // Convert path name to canonical format
 /*
   Request
-  uint8_t  path[];
+  cgc_uint8_t  path[];
 
   Response:
-  uint8_t path[] (canonicalized)
-  uint16_t errorCode;
+  cgc_uint8_t path[] (canonicalized)
+  cgc_uint16_t errorCode;
 */
   
 #define NETSTUFF_PATH_COMPARE           0xbd  // comparison of paths
@@ -87,27 +87,27 @@ THE SOFTWARE.
 
 
 typedef struct DataSet_s {
-  uint8_t *data;
-  uint16_t length;
-  uint16_t offset;
-} DataSet;
+  cgc_uint8_t *data;
+  cgc_uint16_t length;
+  cgc_uint16_t offset;
+} cgc_DataSet;
 
-void AddData(DataSet *ds, uint8_t *newData, uint16_t length);
-int ReadData(DataSet *ds, uint8_t *dest, uint16_t length);
-uint8_t *BufCat(uint8_t *dest, uint8_t *src);
-uint8_t *BufCpy(uint8_t *dest, uint8_t *source);
-uint32_t BufCmp(uint8_t *s1, uint8_t *s2);
-uint32_t Length(uint8_t *b);
+void cgc_AddData(cgc_DataSet *ds, cgc_uint8_t *newData, cgc_uint16_t length);
+int cgc_ReadData(cgc_DataSet *ds, cgc_uint8_t *dest, cgc_uint16_t length);
+cgc_uint8_t *cgc_BufCat(cgc_uint8_t *dest, cgc_uint8_t *src);
+cgc_uint8_t *cgc_BufCpy(cgc_uint8_t *dest, cgc_uint8_t *source);
+cgc_uint32_t cgc_BufCmp(cgc_uint8_t *s1, cgc_uint8_t *s2);
+cgc_uint32_t cgc_Length(cgc_uint8_t *b);
 
 
-void NETSTUFF_Handler(uint16_t opCode, uint8_t *data, uint32_t requestLength, uint8_t **endpointData, uint16_t *endpointDataLength);
-uint8_t ServiceEnum(uint8_t *data, uint16_t length, DataSet *outputds);
-uint8_t FileStat(uint8_t *data, uint16_t length, DataSet *outputds);
-uint8_t NetPathCanonicalize(uint8_t *path, uint16_t length, DataSet *outputds);
-uint8_t *FindChar(uint8_t *s, uint16_t length, uint8_t c);
-uint8_t CanonicalizePathName(uint8_t *path, uint16_t length, uint8_t *output, uint16_t *outputLength);
-uint8_t ConvertPathMacros(uint8_t *buffer);
-uint8_t NetPathType(uint8_t *path, uint16_t length);
+void cgc_NETSTUFF_Handler(cgc_uint16_t opCode, cgc_uint8_t *data, cgc_uint32_t requestLength, cgc_uint8_t **endpointData, cgc_uint16_t *endpointDataLength);
+cgc_uint8_t cgc_ServiceEnum(cgc_uint8_t *data, cgc_uint16_t length, cgc_DataSet *outputds);
+cgc_uint8_t cgc_FileStat(cgc_uint8_t *data, cgc_uint16_t length, cgc_DataSet *outputds);
+cgc_uint8_t cgc_NetPathCanonicalize(cgc_uint8_t *path, cgc_uint16_t length, cgc_DataSet *outputds);
+cgc_uint8_t *cgc_FindChar(cgc_uint8_t *s, cgc_uint16_t length, cgc_uint8_t c);
+cgc_uint8_t cgc_CanonicalizePathName(cgc_uint8_t *path, cgc_uint16_t length, cgc_uint8_t *output, cgc_uint16_t *outputLength);
+cgc_uint8_t cgc_ConvertPathMacros(cgc_uint8_t *buffer);
+cgc_uint8_t cgc_NetPathType(cgc_uint8_t *path, cgc_uint16_t length);
 #endif
 
 

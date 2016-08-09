@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,11 +29,11 @@ extern "C" {
 
 namespace {
     unsigned char _pie_sz;
-    size_t _pie_calories, _pie_carbs;
+    cgc_size_t _pie_calories, _pie_carbs;
     enum {PIE_SMALL_CALORIES = 1000, PIE_MED_CALORIES = 1500, PIE_LG_CALORIES = 2300};
     enum {PIE_SMALL_CARBS = 222, PIE_MED_CARBS = 284, PIE_LG_CARBS = 356};
 
-    inline void set_pie_size_helper(unsigned int _pie_size)
+    inline void cgc_set_pie_size_helper(unsigned int _pie_size)
     {
         switch(_pie_size) {
         case LG:
@@ -56,48 +56,48 @@ namespace {
     }
 }
 
-PizzaPie::PizzaPie(unsigned char _pie_size)
+cgc_PizzaPie::cgc_PizzaPie(unsigned char _pie_size)
 {
-    set_pie_size_helper(_pie_size);
+    cgc_set_pie_size_helper(_pie_size);
     pie_size = _pie_sz;
     pie_calories = _pie_calories;
     pie_carbs = _pie_carbs;
 }
 
-PizzaPie::~PizzaPie()
+cgc_PizzaPie::~cgc_PizzaPie()
 {
 }
 
-int PizzaPie::get_calories()
+int cgc_PizzaPie::cgc_get_calories()
 {
-    return Pizza::get_calories() + pie_calories;
+    return cgc_Pizza::cgc_get_calories() + pie_calories;
 }
 
 
-int PizzaPie::get_carbs()
+int cgc_PizzaPie::cgc_get_carbs()
 {
-    return Pizza::get_carbs() + pie_carbs;
+    return cgc_Pizza::cgc_get_carbs() + pie_carbs;
 }
 
-unsigned char PizzaPie::get_pie_size()
+unsigned char cgc_PizzaPie::cgc_get_pie_size()
 {
     return pie_size;
 }
 
-void PizzaPie::set_pie_size(unsigned char _pie_size)
+void cgc_PizzaPie::cgc_set_pie_size(unsigned char _pie_size)
 {
-    set_pie_size_helper(_pie_size);
+    cgc_set_pie_size_helper(_pie_size);
     pie_size = _pie_sz;
     pie_calories = _pie_calories;
     pie_carbs = _pie_carbs;
 }
 
-int PizzaPie::get_prep_time()
+int cgc_PizzaPie::cgc_get_prep_time()
 {
-    return Pizza::get_prep_time() + PIE_PREP_TIME;
+    return cgc_Pizza::cgc_get_prep_time() + PIE_PREP_TIME;
 }
 
-void PizzaPie::print_pizza()
+void cgc_PizzaPie::cgc_print_pizza()
 {
     const char *pizza_size = "WHOOPS";
     if (pie_size == SMALL)
@@ -107,6 +107,6 @@ void PizzaPie::print_pizza()
     else if (pie_size == LG)
         pizza_size = "LARGE";
 
-    printf("Classic Pizza Pie, Size: %s\n", pizza_size);
-    Pizza::print_pizza();
+    printf("Classic cgc_Pizza Pie, Size: %s\n", pizza_size);
+    cgc_Pizza::cgc_print_pizza();
 }

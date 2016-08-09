@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,19 +27,19 @@ THE SOFTWARE.
 
 #define LINE_BUF_MAX        (512)
 
-void ReadLine( String &sLine )
+void cgc_ReadLine( cgc_String &sLine )
 {
     char lineBuffer[LINE_BUF_MAX+1];
 
-    getline( lineBuffer, LINE_BUF_MAX );
+    cgc_getline( lineBuffer, LINE_BUF_MAX );
 
-    sLine.SetString( lineBuffer );
+    sLine.cgc_SetString( lineBuffer );
 }
 
-size_t recv_bytes( uint8_t *pDest, size_t count )
+cgc_size_t cgc_recv_bytes( cgc_uint8_t *pDest, cgc_size_t count )
 {
-    size_t pos = 0;
-    size_t rx_count = 0;
+    cgc_size_t pos = 0;
+    cgc_size_t rx_count = 0;
 
     while ( pos < count )
     {
@@ -56,16 +56,16 @@ end:
     return (pos);
 }
 
-void ReadUint32( uint32_t &value )
+void cgc_ReadUint32( cgc_uint32_t &value )
 {
     int retvalue;
-    size_t rx_count = 1;
+    cgc_size_t rx_count = 1;
 
-    if ( recv_bytes( (uint8_t*)&value, sizeof(value) ) != sizeof(value) )
+    if ( cgc_recv_bytes( (cgc_uint8_t*)&value, sizeof(value) ) != sizeof(value) )
         _terminate( -1 );
 }
 
-uint32_t StringToInt( const String& sInStr )
+cgc_uint32_t cgc_StringToInt( const cgc_String& sInStr )
 {
-    return atoi( sInStr.StripSpaces().c_str() );
+    return cgc_atoi( sInStr.cgc_StripSpaces().cgc_c_str() );
 }

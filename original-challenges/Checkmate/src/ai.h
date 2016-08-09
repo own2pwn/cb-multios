@@ -34,7 +34,7 @@ struct ai_state {
  *
  * @param state The AI state to seed
  */
-void seed_ai(struct ai_state *state);
+void cgc_seed_ai(struct ai_state *state);
 
 #endif /* AI_H_ */
 

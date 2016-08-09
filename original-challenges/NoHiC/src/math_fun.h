@@ -24,30 +24,30 @@
 #define MATH_FUN_H
 #include "libc.h"
 
-void do_int_mean(list_t * num_list);
-void do_int_median(list_t * num_list);
-void do_int_mode(list_t * num_list);
-void do_int_range(list_t * num_list);
-void do_int_sum(list_t * num_list);
-void do_int_product(list_t * num_list);
-void do_int_min(list_t * num_list);
-void do_int_max(list_t * num_list);
-void do_int_sort(list_t * num_list);
-void do_int_rsort(list_t * num_list);
-void do_int_odds(list_t * num_list);
-void do_int_evens(list_t * num_list);
+void cgc_do_int_mean(cgc_list_t * num_list);
+void cgc_do_int_median(cgc_list_t * num_list);
+void cgc_do_int_mode(cgc_list_t * num_list);
+void cgc_do_int_range(cgc_list_t * num_list);
+void cgc_do_int_sum(cgc_list_t * num_list);
+void cgc_do_int_product(cgc_list_t * num_list);
+void cgc_do_int_min(cgc_list_t * num_list);
+void cgc_do_int_max(cgc_list_t * num_list);
+void cgc_do_int_sort(cgc_list_t * num_list);
+void cgc_do_int_rsort(cgc_list_t * num_list);
+void cgc_do_int_odds(cgc_list_t * num_list);
+void cgc_do_int_evens(cgc_list_t * num_list);
 
-void do_dbl_mean(list_t * num_list);
-void do_dbl_median(list_t * num_list);
-void do_dbl_mode(list_t * num_list);
-void do_dbl_range(list_t * num_list);
-void do_dbl_sum(list_t * num_list);
-void do_dbl_product(list_t * num_list);
-void do_dbl_min(list_t * num_list);
-void do_dbl_max(list_t * num_list);
-void do_dbl_sort(list_t * num_list);
-void do_dbl_rsort(list_t * num_list);
-void do_dbl_odds(list_t * num_list);
-void do_dbl_evens(list_t * num_list);
+void cgc_do_dbl_mean(cgc_list_t * num_list);
+void cgc_do_dbl_median(cgc_list_t * num_list);
+void cgc_do_dbl_mode(cgc_list_t * num_list);
+void cgc_do_dbl_range(cgc_list_t * num_list);
+void cgc_do_dbl_sum(cgc_list_t * num_list);
+void cgc_do_dbl_product(cgc_list_t * num_list);
+void cgc_do_dbl_min(cgc_list_t * num_list);
+void cgc_do_dbl_max(cgc_list_t * num_list);
+void cgc_do_dbl_sort(cgc_list_t * num_list);
+void cgc_do_dbl_rsort(cgc_list_t * num_list);
+void cgc_do_dbl_odds(cgc_list_t * num_list);
+void cgc_do_dbl_evens(cgc_list_t * num_list);
 
 #endif

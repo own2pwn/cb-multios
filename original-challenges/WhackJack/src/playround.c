@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 char *cardType[] = { "", "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 
-int score_cards(unsigned char *cards) {
+int cgc_score_cards(unsigned char *cards) {
 
 int score1 = 0;
 int ace = 0;
@@ -68,29 +68,29 @@ int i;
 
 
 
-void show_cards(unsigned char *dealer_cards, playerInfoType *playerList) {
+void cgc_show_cards(unsigned char *dealer_cards, cgc_playerInfoType *playerList) {
 
 int i;
 int x;
 
 	
-	printf("Dealer:");
+	cgc_printf("Dealer:");
 
 	for (i=0; i< MAX_CARDS && dealer_cards[i]!= 0; ++i)
-		printf(" $s", cardType[dealer_cards[i]]);
+		cgc_printf(" $s", cardType[dealer_cards[i]]);
 
-	printf(" ($d)\n", score_cards(dealer_cards));
+	cgc_printf(" ($d)\n", cgc_score_cards(dealer_cards));
 
 	for (i = 0; i < MAX_PLAYERS; ++i) {
 
 		if (playerList[i].player_name[0] != 0) {
 
-			printf("$s:", playerList[i].player_name);
+			cgc_printf("$s:", playerList[i].player_name);
 
 			for (x=0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
-				printf(" $s", cardType[playerList[i].cards[x]]);
+				cgc_printf(" $s", cardType[playerList[i].cards[x]]);
 
-			printf(" ($d)\n", score_cards(playerList[i].cards));
+			cgc_printf(" ($d)\n", cgc_score_cards(playerList[i].cards));
 		}
 
 	}	
@@ -99,7 +99,7 @@ int x;
 }
 
 
-int play_round(playerInfoType *playerList, unsigned short *next_card) {
+int cgc_play_round(cgc_playerInfoType *playerList, unsigned short *next_card) {
 
 unsigned short *deck;
 int i;
@@ -129,7 +129,7 @@ int bet;
 
 	if (player_count == 0) {
 
-		printf("No players\n");
+		cgc_printf("No players\n");
 		return -1;
 	}
 
@@ -140,9 +140,9 @@ int bet;
 			continue;
 
 		finished = 0;
-		printf("Player: $s\n", playerList[i].player_name);
+		cgc_printf("Player: $s\n", playerList[i].player_name);
 
-		printf("Place your bet (1-$d)\n", playerList[i].funds);
+		cgc_printf("Place your bet (1-$d)\n", playerList[i].funds);
 
 		if (playerList[i].computerPlayer==1) {
 
@@ -151,10 +151,10 @@ int bet;
 		}
 		else {
 
-			if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+			if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 				return -1;
 
-			bet = atoi(buffer);
+			bet = cgc_atoi(buffer);
 
 			playerList[i].bet = bet;
 		}
@@ -196,8 +196,8 @@ int bet;
 
 	}
 
- 	show_cards(dealer_cards, playerList);
-	//printf("Dealer shows: $d $d\n", dealer_cards[0], dealer_cards[1]);
+ 	cgc_show_cards(dealer_cards, playerList);
+	//cgc_printf("Dealer shows: $d $d\n", dealer_cards[0], dealer_cards[1]);
 
 
  	// Now each player gets to play in turn
@@ -207,20 +207,20 @@ int bet;
 			continue;
 
 		finished = 0;
-		printf("Player: $s\n", playerList[i].player_name);
+		cgc_printf("Player: $s\n", playerList[i].player_name);
 
 		while (!finished) {
 
 			for (x=0; x < MAX_CARDS && playerList[i].cards[x] != 0; ++x)
-				printf("$s ", cardType[playerList[i].cards[x]]);		
+				cgc_printf("$s ", cardType[playerList[i].cards[x]]);		
 
-			printf("($d)\n", score_cards(playerList[i].cards));	
+			cgc_printf("($d)\n", cgc_score_cards(playerList[i].cards));	
 
 			if (playerList[i].useHints == 1) {
 
-				printf("Do you want a hint?\n");
+				cgc_printf("Do you want a hint?\n");
 
-				if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+				if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 					return -1;
 
 				if (buffer[0] == 'y' || buffer[0] == 'Y') {
@@ -232,16 +232,16 @@ int bet;
 
 						case 'S':
 
-							printf("You should Stand\n");
+							cgc_printf("You should Stand\n");
 							break;
 
 						case 'H':
 
-							printf("You should Hit\n");
+							cgc_printf("You should Hit\n");
 							break;
 
 						default:
-							printf("Uh.... it didn't say\n");
+							cgc_printf("Uh.... it didn't say\n");
 
 					} //switch
 
@@ -250,7 +250,7 @@ int bet;
 
 			} // if useHints
 
-			printf("Do you wish to H)it or S)tand\n");
+			cgc_printf("Do you wish to H)it or S)tand\n");
 
 			if (playerList[i].computerPlayer==1) {
 
@@ -259,7 +259,7 @@ int bet;
 
 			}
 			else {
-				if(receive_until( buffer, '\n', sizeof(buffer) ) == 0)
+				if(cgc_receive_until( buffer, '\n', sizeof(buffer) ) == 0)
 					return -1;
 			}
 			if (buffer[0] == 'S')
@@ -269,8 +269,8 @@ int bet;
 				playerList[i].cards[x] = (deck[*next_card] % 13) +1;
 				*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
 
-				printf("$s draws $s\n", playerList[i].player_name, cardType[playerList[i].cards[x]]);
-				score = score_cards(playerList[i].cards);
+				cgc_printf("$s draws $s\n", playerList[i].player_name, cardType[playerList[i].cards[x]]);
+				score = cgc_score_cards(playerList[i].cards);
 
 				if (score > 21)
 					finished = 1;
@@ -289,13 +289,13 @@ int bet;
 
 	while (!finished) {
 
-		dealer_score = score_cards(dealer_cards);
+		dealer_score = cgc_score_cards(dealer_cards);
 
 		if ( dealer_score > 16 )
 			break;
 
 		dealer_cards[x] = (deck[*next_card] % 13) +1;
-		printf("Dealer draws $s\n", cardType[dealer_cards[x]]);
+		cgc_printf("Dealer draws $s\n", cardType[dealer_cards[x]]);
 
 		*next_card = (*next_card < CARD_DATA_LEN - 1) ? (*next_card + 1) : 0;
 		++x;
@@ -308,24 +308,24 @@ int bet;
 		if (playerList[i].player_name[0] == 0)
 			continue;
 
-		printf("$s: ", playerList[i].player_name);
+		cgc_printf("$s: ", playerList[i].player_name);
 
-		score = score_cards(playerList[i].cards);
+		score = cgc_score_cards(playerList[i].cards);
 
 		if (dealer_score > 21 && score < 22) {
-			printf("wins!\n");
+			cgc_printf("wins!\n");
 			playerList[i].funds += playerList[i].bet;
 			playerList[i].wins++;
 		}
 		else if ( score < 22 && score > dealer_score) {
-			printf("wins!\n");
+			cgc_printf("wins!\n");
 			playerList[i].wins++;
 			playerList[i].funds += playerList[i].bet;
 		}
 		else if ( score == dealer_score)
-			printf("pushes\n");
+			cgc_printf("pushes\n");
 		else  {
-			printf("loses\n");
+			cgc_printf("loses\n");
 			playerList[i].funds -= playerList[i].bet;
 			playerList[i].losses++;
 

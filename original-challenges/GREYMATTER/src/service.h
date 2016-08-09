@@ -39,8 +39,8 @@
 #define SZ_INDEX_PATH 16
 
 
-int canonicalize_path(char * cp, char * rp, size_t rp_len);
-int request_document(char * path, size_t recusion_depth);
+int cgc_canonicalize_path(char * cp, char * rp, cgc_size_t rp_len);
+int cgc_request_document(char * path, cgc_size_t recusion_depth);
 int main(void);
 
 

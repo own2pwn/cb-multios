@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,7 +33,7 @@ typedef struct _pkt {
 	unsigned int bytes;
 	unsigned int priority;
 	struct _pkt *next;
-} pkt;
+} cgc_pkt;
 
 #define MIN_PRIORITY 0
 #define MAX_PRIORITY 63
@@ -55,10 +55,10 @@ typedef struct _queue {
 	unsigned char min_priority;
 	unsigned char max_priority;
 	unsigned char weight;
-	pkt *head;
-	pkt *free;
-	pkt *ring_buffer;
-} queue;
+	cgc_pkt *head;
+	cgc_pkt *cgc_free;
+	cgc_pkt *ring_buffer;
+} cgc_queue;
 
 typedef struct _interface {
 	unsigned int speed;
@@ -67,10 +67,10 @@ typedef struct _interface {
 	unsigned char num_queues;
 	double ifg;
 	char priority_queue_enabled;
-	queue **ifqueue;
-} interface;
+	cgc_queue **ifqueue;
+} cgc_interface;
 
-int InitQueues(void);
-int InitRingBuffer(unsigned int, pkt **);
-int DestroyRingBuffer(unsigned char);
-int DestroyQueues(void);
+int cgc_InitQueues(void);
+int cgc_InitRingBuffer(unsigned int, cgc_pkt **);
+int cgc_DestroyRingBuffer(unsigned char);
+int cgc_DestroyQueues(void);

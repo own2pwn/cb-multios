@@ -3,7 +3,7 @@
 #include "sample_shipgame.h"
 
 //Simple protocol - 5 bytes followed by a newline
-//Command - first letter //PARAMS - latter letters - 
+//cgc_Command - first letter //PARAMS - latter letters - 
 static const char CMD_NEW = 'N'; //N.... -- only first character is looked at
 static const char CMD_PLACE = 'P'; //Prcd1 -- 1 is the ship number, r is Row, C is Column, d is direction (Up or Down)
 static const char CMD_START = 'S'; //S....
@@ -33,7 +33,7 @@ const char* SHIP5_SUNK_MSG = "You have sunk my SHIP 5\n";
 const char* MISSED_MSG = "You missed\n";
 const char* HIT_MSG = "OUCH!!\n";
 
-const char* BAD_COMMAND_MSG = "Bad Command - Try again\n";
+const char* BAD_COMMAND_MSG = "Bad cgc_Command - Try again\n";
 const char* GAME_ALREADY_STARTED_MSG = "Game already started - try to hit something\n";
 const char* GAME_NOT_STARTED_MSG = "Game not started yet\n";
 const char* HELP_MSG = "Sorry, I am not very helpful\n";
@@ -53,7 +53,7 @@ const char* P1_PROMPT = "Player2:$ ";
 /**               shipgame related functions              **/
 /***********************************************************/
 
-int getCommand(Command* cmd)
+int cgc_getCommand(cgc_Command* cmd)
 {
   int ret = 0;
 
@@ -65,7 +65,7 @@ int getCommand(Command* cmd)
     return (-1);
   }
   
-  ret = readLine(STDIN, buf, 512); 
+  ret = cgc_readLine(STDIN, buf, 512); 
   if (ret < 0)
   {
     return (-2); //-2 is 
@@ -119,7 +119,7 @@ int getCommand(Command* cmd)
   return (0);
 }
 
-int dumpBoard(PlayerState* ps)
+int cgc_dumpBoard(cgc_PlayerState* ps)
 {
   int i = 0;
   int j = 0;
@@ -136,17 +136,17 @@ int dumpBoard(PlayerState* ps)
     {
       tempStr[0] = '\t';
       tempStr[1] = COL_BASE;
-      write(STDOUT, tempStr, 2);
+      cgc_write(STDOUT, tempStr, 2);
     }
     else
     {
       //this will mess up if i > 26
       tempStr[0] = COL_BASE + (char)i;
-      write(STDOUT, tempStr, 1);
+      cgc_write(STDOUT, tempStr, 1);
     }
   }
   tempStr[0] = '\n';
-  write(STDOUT, tempStr, 1);
+  cgc_write(STDOUT, tempStr, 1);
 
   for (i = 0; i < BOARD_SIZE; i++)
   {
@@ -156,21 +156,21 @@ int dumpBoard(PlayerState* ps)
     tempStr[3] = ROW_BASE + (char)i;
     tempStr[4] = ':';
     tempStr[5] = '\t';
-    write(STDOUT, tempStr, 6);
+    cgc_write(STDOUT, tempStr, 6);
 
     for (j = 0; j < BOARD_SIZE; j++)
     {
       tempStr[0] = ps->board[i][j];
-      write(STDOUT, tempStr, 1);
+      cgc_write(STDOUT, tempStr, 1);
     }
   
     tempStr[0] = '\n';
-    write(STDOUT, tempStr, 1);
+    cgc_write(STDOUT, tempStr, 1);
   }
   return (0);
 }
 
-int clearPlayerState(PlayerState* ps)
+int cgc_clearPlayerState(cgc_PlayerState* ps)
 {
   int i = 0; 
   int j = 0;
@@ -196,18 +196,18 @@ int clearPlayerState(PlayerState* ps)
   return (0);
 }
 
-static inline int isGoodRow(char c)
+static inline int cgc_isGoodRow(char c)
 {
   return ( (c >= ROW_BASE) && (c <= (ROW_BASE + BOARD_SIZE - 1)) );
 }
 
-static inline int isGoodCol(char c)
+static inline int cgc_isGoodCol(char c)
 {
   return ( (c >= COL_BASE) && (c <= (COL_BASE + BOARD_SIZE - 1)) );
 }
 
 //assumes that r and c are good
-static inline int isOnBoard(char r, char c, char d, int num)
+static inline int cgc_isOnBoard(char r, char c, char d, int num)
 {
   if ( d == DIR_R )
   {
@@ -226,7 +226,7 @@ static inline int isOnBoard(char r, char c, char d, int num)
   return (0);
 }
 
-int processPlace(PlayerState* ps, Command* cmd)
+int cgc_processPlace(cgc_PlayerState* ps, cgc_Command* cmd)
 {
   if ( (ps == NULL) || (cmd == NULL) )
   {
@@ -234,7 +234,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   }
 
   //check and convert the row and column fields
-  if ( !isGoodRow(cmd->row) || !isGoodCol(cmd->col) )
+  if ( !cgc_isGoodRow(cmd->row) || !cgc_isGoodCol(cmd->col) )
   {
     return (-1);
   }
@@ -243,7 +243,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   if (cmd->shipNum == SHIP2)
   {
     //if its outside of the board area then error
-    if (!isOnBoard(cmd->row, cmd->col, cmd->dir, 2) || (ps->ship2Life > 0))
+    if (!cgc_isOnBoard(cmd->row, cmd->col, cmd->dir, 2) || (ps->ship2Life > 0))
     {
       return (-1);
     }
@@ -284,7 +284,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   }
   else if (cmd->shipNum == SHIP3)
   {
-    if (!isOnBoard(cmd->row, cmd->col, cmd->dir, 3) || (ps->ship3Life > 0))
+    if (!cgc_isOnBoard(cmd->row, cmd->col, cmd->dir, 3) || (ps->ship3Life > 0))
     {
       return (-1);
     }
@@ -328,7 +328,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   }
   else if (cmd->shipNum == SHIP4)
   {
-    if (!isOnBoard(cmd->row, cmd->col, cmd->dir, 4) || (ps->ship4Life > 0))
+    if (!cgc_isOnBoard(cmd->row, cmd->col, cmd->dir, 4) || (ps->ship4Life > 0))
     {
       return (-1);
     }
@@ -377,7 +377,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   }
   else if (cmd->shipNum == SHIP5)
   {
-    if (!isOnBoard(cmd->row, cmd->col, cmd->dir, 5) || (ps->ship5Life > 0))
+    if (!cgc_isOnBoard(cmd->row, cmd->col, cmd->dir, 5) || (ps->ship5Life > 0))
     {
       return (-1);
     }
@@ -435,7 +435,7 @@ int processPlace(PlayerState* ps, Command* cmd)
   return (0);
 }
 
-int processTarget(PlayerState* ps, Command* cmd)
+int cgc_processTarget(cgc_PlayerState* ps, cgc_Command* cmd)
 {
   if ( (ps == NULL) || (cmd == NULL) )
   {
@@ -443,7 +443,7 @@ int processTarget(PlayerState* ps, Command* cmd)
   }
 
   //check and convert the row and column fields
-  if ( !isGoodRow(cmd->row) || !isGoodCol(cmd->col) )
+  if ( !cgc_isGoodRow(cmd->row) || !cgc_isGoodCol(cmd->col) )
   {
     return (-1);
   }
@@ -453,51 +453,51 @@ int processTarget(PlayerState* ps, Command* cmd)
   {
     ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] = HIT_CELL;
     ps->ship2Life--;
-    write(STDOUT, HIT_MSG, myStrLen(HIT_MSG));
+    cgc_write(STDOUT, HIT_MSG, cgc_myStrLen(HIT_MSG));
     if (ps->ship2Life == 0)
     {
-      write(STDOUT, SHIP2_SUNK_MSG, myStrLen(SHIP2_SUNK_MSG));
+      cgc_write(STDOUT, SHIP2_SUNK_MSG, cgc_myStrLen(SHIP2_SUNK_MSG));
     }
   }
   else if ( ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] == SHIP3 )
   {
     ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] = HIT_CELL;
     ps->ship3Life--;
-    write(STDOUT, HIT_MSG, myStrLen(HIT_MSG));
+    cgc_write(STDOUT, HIT_MSG, cgc_myStrLen(HIT_MSG));
     if (ps->ship3Life == 0)
     {
-      write(STDOUT, SHIP3_SUNK_MSG, myStrLen(SHIP3_SUNK_MSG));
+      cgc_write(STDOUT, SHIP3_SUNK_MSG, cgc_myStrLen(SHIP3_SUNK_MSG));
     }
   }
   else if ( ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] == SHIP4 )
   {
     ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] = HIT_CELL;
     ps->ship4Life--;
-    write(STDOUT, HIT_MSG, myStrLen(HIT_MSG));
+    cgc_write(STDOUT, HIT_MSG, cgc_myStrLen(HIT_MSG));
     if (ps->ship4Life == 0)
     {
-      write(STDOUT, SHIP4_SUNK_MSG, myStrLen(SHIP4_SUNK_MSG));
+      cgc_write(STDOUT, SHIP4_SUNK_MSG, cgc_myStrLen(SHIP4_SUNK_MSG));
     }
   }
   else if ( ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] == SHIP5 )
   {
     ps->board[ROW_TO_NUM(cmd->row)][COL_TO_NUM(cmd->col)] = HIT_CELL;
     ps->ship5Life--;
-    write(STDOUT, HIT_MSG, myStrLen(HIT_MSG));
+    cgc_write(STDOUT, HIT_MSG, cgc_myStrLen(HIT_MSG));
     if (ps->ship5Life == 0)
     {
-      write(STDOUT, SHIP5_SUNK_MSG, myStrLen(SHIP5_SUNK_MSG));
+      cgc_write(STDOUT, SHIP5_SUNK_MSG, cgc_myStrLen(SHIP5_SUNK_MSG));
     }
   }
   else
   {
-    write(STDOUT, MISSED_MSG, myStrLen(MISSED_MSG));
+    cgc_write(STDOUT, MISSED_MSG, cgc_myStrLen(MISSED_MSG));
   }
 
   return (0);
 }
 
-static inline int allShipsSunk(PlayerState* ps)
+static inline int cgc_allShipsSunk(cgc_PlayerState* ps)
 {
   if (ps == NULL)
   {
@@ -514,43 +514,43 @@ static inline int allShipsSunk(PlayerState* ps)
 int main(void)
 {
 
-  PlayerState player0, player1; //2 players
+  cgc_PlayerState player0, player1; //2 players
   int ret = 0;
   int curPlayer = 0;
   int bStarted = 0;
   int bEnded = 0;
-  Command cmd;
+  cgc_Command cmd;
 
   //initialize
   cmd.cmdNum = CMD_UNKNOWN;
-  clearPlayerState(&player0);
-  clearPlayerState(&player1);
+  cgc_clearPlayerState(&player0);
+  cgc_clearPlayerState(&player1);
 
   while(1)
   {
     if (curPlayer == 0)
     {
-      write(STDOUT, P0_PROMPT, myStrLen(P0_PROMPT)); 
+      cgc_write(STDOUT, P0_PROMPT, cgc_myStrLen(P0_PROMPT)); 
     }
     else
     {
-      write(STDOUT, P1_PROMPT, myStrLen(P1_PROMPT)); 
+      cgc_write(STDOUT, P1_PROMPT, cgc_myStrLen(P1_PROMPT)); 
     }
 
-    ret = getCommand(&cmd);
+    ret = cgc_getCommand(&cmd);
 
     if (ret == 0) //if its okay
     {
       if (cmd.cmdNum == CMD_EXIT)
       {
-        write(STDOUT, EXIT_MSG, myStrLen(EXIT_MSG)); 
+        cgc_write(STDOUT, EXIT_MSG, cgc_myStrLen(EXIT_MSG)); 
         //break;
       }
       else if (cmd.cmdNum == CMD_NEW)
       {
         cmd.cmdNum = CMD_UNKNOWN;
-        clearPlayerState(&player0);
-        clearPlayerState(&player1);
+        cgc_clearPlayerState(&player0);
+        cgc_clearPlayerState(&player1);
         curPlayer = 0;
         bStarted = 0;
         bEnded = 0;
@@ -558,28 +558,28 @@ int main(void)
       }
       else if (cmd.cmdNum == CMD_HELP)
       {
-        write(STDOUT, HELP_MSG, myStrLen(HELP_MSG));
+        cgc_write(STDOUT, HELP_MSG, cgc_myStrLen(HELP_MSG));
       }
       else if (bEnded)
       {
-        write(STDOUT, GAME_ALREADY_ENDED_MSG, myStrLen(GAME_ALREADY_ENDED_MSG));
+        cgc_write(STDOUT, GAME_ALREADY_ENDED_MSG, cgc_myStrLen(GAME_ALREADY_ENDED_MSG));
       }
       else if (cmd.cmdNum == CMD_MAP)
       { 
         if (curPlayer == 0)
         {
-          dumpBoard(&player0);
+          cgc_dumpBoard(&player0);
         }
         else
         {
-          dumpBoard(&player1);
+          cgc_dumpBoard(&player1);
         }
       }
       else if (cmd.cmdNum == CMD_START)
       {
         if (bStarted)
         {
-          write(STDOUT, GAME_ALREADY_STARTED_MSG, myStrLen(GAME_ALREADY_STARTED_MSG));
+          cgc_write(STDOUT, GAME_ALREADY_STARTED_MSG, cgc_myStrLen(GAME_ALREADY_STARTED_MSG));
         }
         else
         {
@@ -590,17 +590,17 @@ int main(void)
       {
         if (bStarted)
         {
-          write(STDOUT, GAME_ALREADY_STARTED_MSG, myStrLen(GAME_ALREADY_STARTED_MSG));
+          cgc_write(STDOUT, GAME_ALREADY_STARTED_MSG, cgc_myStrLen(GAME_ALREADY_STARTED_MSG));
         }
         else
         {
           if (curPlayer == 0)
           {
-            ret = processPlace(&player0, &cmd);
+            ret = cgc_processPlace(&player0, &cmd);
           }
           else
           {
-            ret = processPlace(&player1, &cmd);
+            ret = cgc_processPlace(&player1, &cmd);
           }
 
           if (ret == 0)
@@ -610,7 +610,7 @@ int main(void)
           }
           else
           {
-            write(STDOUT, BAD_COMMAND_MSG, myStrLen(BAD_COMMAND_MSG));
+            cgc_write(STDOUT, BAD_COMMAND_MSG, cgc_myStrLen(BAD_COMMAND_MSG));
           }
         }
       }
@@ -618,17 +618,17 @@ int main(void)
       {
         if (!bStarted)
         {
-          write(STDOUT, GAME_NOT_STARTED_MSG, myStrLen(GAME_NOT_STARTED_MSG));
+          cgc_write(STDOUT, GAME_NOT_STARTED_MSG, cgc_myStrLen(GAME_NOT_STARTED_MSG));
         }
         else
         {
           if (curPlayer == 0)
           {
-            ret = processTarget(&player1, &cmd);
+            ret = cgc_processTarget(&player1, &cmd);
           }
           else
           {
-            ret = processTarget(&player0, &cmd);
+            ret = cgc_processTarget(&player0, &cmd);
           }
 
           if (ret == 0)
@@ -636,18 +636,18 @@ int main(void)
             //see if the current player won
             if (curPlayer == 0)
             {
-              if (allShipsSunk(&player1))
+              if (cgc_allShipsSunk(&player1))
               {
-                write(STDOUT, YOU_WIN_MSG, myStrLen(YOU_WIN_MSG));
+                cgc_write(STDOUT, YOU_WIN_MSG, cgc_myStrLen(YOU_WIN_MSG));
                 bStarted = 0;
                 bEnded = 1;
               }
             }
             else
             {
-              if (allShipsSunk(&player0))
+              if (cgc_allShipsSunk(&player0))
               {
-                write(STDOUT, YOU_WIN_MSG, myStrLen(YOU_WIN_MSG));
+                cgc_write(STDOUT, YOU_WIN_MSG, cgc_myStrLen(YOU_WIN_MSG));
                 bStarted = 0;
                 bEnded = 1;
               }
@@ -658,18 +658,18 @@ int main(void)
           }
           else
           {
-            write(STDOUT, BAD_COMMAND_MSG, myStrLen(BAD_COMMAND_MSG));
+            cgc_write(STDOUT, BAD_COMMAND_MSG, cgc_myStrLen(BAD_COMMAND_MSG));
           }
         }
       }
     }    
     else if (ret == -1)
     {
-      write(STDOUT, BAD_COMMAND_MSG, myStrLen(BAD_COMMAND_MSG));
+      cgc_write(STDOUT, BAD_COMMAND_MSG, cgc_myStrLen(BAD_COMMAND_MSG));
     }
     else if (ret == -2) //read error
     {
-      write(STDOUT, READ_ERROR_MSG, myStrLen(READ_ERROR_MSG));
+      cgc_write(STDOUT, READ_ERROR_MSG, cgc_myStrLen(READ_ERROR_MSG));
       break;
     }
   }

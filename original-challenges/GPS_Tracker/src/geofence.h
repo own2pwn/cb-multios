@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,20 +28,20 @@ THE SOFTWARE.
 
 #include "gps.h"
 
-class CGeofencePoint
+class cgc_CGeofencePoint
 {
 public:
-	CGeofencePoint( );
-	CGeofencePoint( CGPSCoordinates &coords, uint32_t distance );
-	~CGeofencePoint( );
+	cgc_CGeofencePoint( );
+	cgc_CGeofencePoint( cgc_CGPSCoordinates &coords, cgc_uint32_t distance );
+	~cgc_CGeofencePoint( );
 
-	void SetDistance( uint32_t distance ) { m_distance = distance; };
-	uint32_t GetDistance( void ) const { return m_distance; };
-	CGPSCoordinates &GetCoords( void ) { return m_coords; };
+	void cgc_SetDistance( cgc_uint32_t distance ) { m_distance = distance; };
+	cgc_uint32_t cgc_GetDistance( void ) const { return m_distance; };
+	cgc_CGPSCoordinates &cgc_GetCoords( void ) { return m_coords; };
 	
 private:
-	CGPSCoordinates m_coords;
-	uint32_t m_distance;
+	cgc_CGPSCoordinates m_coords;
+	cgc_uint32_t m_distance;
 };
 
 #endif // __GEOFENCE_H__

@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Bryce Kerley <bk@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,18 +41,18 @@ typedef enum lexeme_flavor_enum {
   F_COMMA,
   F_OPEN_PAREN,
   F_CLOSE_PAREN
-} lexeme_flavor;
+} cgc_lexeme_flavor;
 
 typedef struct {
-  lexeme_flavor flavor;
-  uint16 bytes_len;
+  cgc_lexeme_flavor flavor;
+  cgc_uint16 bytes_len;
   char* bytes;
-} lexeme;
+} cgc_lexeme;
 
 typedef struct lexer_list_str {
-  lexeme* content;
+  cgc_lexeme* content;
   struct lexer_list_str* next;
-} lexer_list;
+} cgc_lexer_list;
 
-lexer_list* lex_string(uint16 len, char* str);
-void lexer_test();
+cgc_lexer_list* cgc_lex_string(cgc_uint16 cgc_len, char* str);
+void cgc_lexer_test();

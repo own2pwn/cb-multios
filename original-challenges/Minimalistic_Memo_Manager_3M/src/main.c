@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,15 +29,15 @@
 #include "ac.h"
 
 typedef struct entry {
-  memo_t *memo;
+  cgc_memo_t *memo;
   struct entry *next;
-} entry_t;
+} cgc_entry_t;
 
-entry_t *memos = NULL;
+cgc_entry_t *memos = NULL;
 int g_num_memos = 0;
 char g_memo_ids[MAX_MEMO_ID] = { 0 };
 
-int _find_memo_id()
+int cgc__find_memo_id()
 {
   int i;
   for (i = 0; i < MAX_MEMO_ID; ++i)
@@ -48,53 +48,53 @@ int _find_memo_id()
   return -1;
 }
 
-void add_memo()
+void cgc_add_memo()
 {
   int num;
   int ret = 0;
   char buf[MAX_MEMO_BODY];
   int bytes;
-  entry_t *node, *temp;
-  memo_t *memo;
-  if ((memo = new_memo(default_view_memo, default_update_memo, default_delete_memo)) != NULL &&
-      (node = (entry_t *)malloc(sizeof(entry_t))) != NULL)
+  cgc_entry_t *node, *temp;
+  cgc_memo_t *memo;
+  if ((memo = cgc_new_memo(cgc_default_view_memo, cgc_default_update_memo, cgc_default_delete_memo)) != NULL &&
+      (node = (cgc_entry_t *)cgc_malloc(sizeof(cgc_entry_t))) != NULL)
   {
     printf("subject? ");
-    if ((bytes = read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
       goto fail;
-    if (strlen(buf) >= MAX_MEMO_SUBJECT)
+    if (cgc_strlen(buf) >= MAX_MEMO_SUBJECT)
       goto fail;
-    strcpy(memo->subject, buf);
+    cgc_strcpy(memo->subject, buf);
     printf("year? ");
-    if ((bytes = read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
       goto fail;
-    num = strtol(buf, NULL, 10);
+    num = cgc_strtol(buf, NULL, 10);
     memo->date.year = num;
     printf("month? ");
-    if ((bytes = read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
       goto fail;
-    num = strtol(buf, NULL, 10);
+    num = cgc_strtol(buf, NULL, 10);
     memo->date.month = num;
     printf("date? ");
-    if ((bytes = read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
       goto fail;
-    num = strtol(buf, NULL, 10);
+    num = cgc_strtol(buf, NULL, 10);
     memo->date.date = num;
     printf("priority? ");
-    if ((bytes = read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, buf, MAX_MEMO_BODY, '\n')) < 0)
       goto fail;
-    num = strtol(buf, NULL, 10);
+    num = cgc_strtol(buf, NULL, 10);
     memo->priority = num;
     printf("body? ");
-    memo->body = ac_read(STDIN, '\n');
+    memo->body = cgc_ac_read(STDIN, '\n');
     if (memo->body == NULL)
       goto fail;
 
     if (g_num_memos >= MAX_MEMO_ID)
       goto fail;
-    memo->id = _find_memo_id();
+    memo->id = cgc__find_memo_id();
 
-    if ((ret = validate_memo(memo)) != MRES_OK)
+    if ((ret = cgc_validate_memo(memo)) != MRES_OK)
       goto fail;
 
     g_memo_ids[memo->id] = 1;
@@ -122,14 +122,14 @@ fail:
   if (memo)
     memo->mfuns[MOP_DELETE](memo);
   if (node)
-    free(node);
-  fdprintf(STDERR, "created failed.\n");
+    cgc_free(node);
+  cgc_fdprintf(STDERR, "created failed.\n");
   return;
 }
 
-void update_memo(int id)
+void cgc_update_memo(int id)
 {
-  entry_t *temp;
+  cgc_entry_t *temp;
   temp = memos;
   while (temp != NULL)
   {
@@ -142,9 +142,9 @@ void update_memo(int id)
   }
 }
 
-void remove_memo(int id)
+void cgc_remove_memo(int id)
 {
-  entry_t *node, *temp;
+  cgc_entry_t *node, *temp;
   temp = memos;
   while (temp != NULL)
   {
@@ -156,14 +156,14 @@ void remove_memo(int id)
       {
         memos = temp->next;
         temp->memo->mfuns[MOP_DELETE](temp->memo);
-        free(temp);
+        cgc_free(temp);
         break;
       }
       else
       {
         node->next = temp->next;
         temp->memo->mfuns[MOP_DELETE](temp->memo);
-        free(temp);
+        cgc_free(temp);
         break;
       }
     }
@@ -175,9 +175,9 @@ void remove_memo(int id)
   }
 }
 
-void view_memo(int id)
+void cgc_view_memo(int id)
 {
-  entry_t *temp;
+  cgc_entry_t *temp;
   temp = memos;
   while (temp != NULL)
   {
@@ -190,13 +190,13 @@ void view_memo(int id)
   }
 }
 
-void quit()
+void cgc_quit()
 {
   printf("bye!\n");
-  exit(0);
+  cgc_exit(0);
 }
 
-void menu()
+void cgc_menu()
 {
   printf("======================\n");
   printf(" 1. New memo\n");
@@ -212,65 +212,65 @@ int main()
 {
   char input[4];
   char typo[MAX_AC_LEN], correct[MAX_AC_LEN];
-  filaments_init();
-  filaments_new(ac_process, NULL);
+  cgc_filaments_init();
+  cgc_filaments_new(cgc_ac_process, NULL);
   printf("====== 3M v0.2 ======\n");
 
-  menu();
-  ac_init();
+  cgc_menu();
+  cgc_ac_init();
   while (1)
   {
     int menu_n, memo_id = -1;
     int bytes;
-    if ((bytes = read_until(STDIN, input, sizeof(input), '\n')) < 0)
+    if ((bytes = cgc_read_until(STDIN, input, sizeof(input), '\n')) < 0)
       return 0;
-    menu_n = strtol(input, NULL, 10);
+    menu_n = cgc_strtol(input, NULL, 10);
 
     switch (menu_n)
     {
       case 1:
-        add_memo();
+        cgc_add_memo();
         break;
       case 2:
         printf("id? ");
-        if ((bytes = read_until(STDIN, input, sizeof(input), '\n')) < 0)
+        if ((bytes = cgc_read_until(STDIN, input, sizeof(input), '\n')) < 0)
           break;
         if (input[0] != '\0')
         {
-          memo_id = strtol(input, NULL, 10);
-          view_memo(memo_id);
+          memo_id = cgc_strtol(input, NULL, 10);
+          cgc_view_memo(memo_id);
         }
         break;
       case 3:
         printf("id? ");
-        if ((bytes = read_until(STDIN, input, sizeof(input), '\n')) < 0)
+        if ((bytes = cgc_read_until(STDIN, input, sizeof(input), '\n')) < 0)
           break;
-        memo_id = strtol(input, NULL, 10);
-        update_memo(memo_id);
+        memo_id = cgc_strtol(input, NULL, 10);
+        cgc_update_memo(memo_id);
         break;
       case 4:
         printf("id? ");
-        if ((bytes = read_until(STDIN, input, sizeof(input), '\n')) < 0)
+        if ((bytes = cgc_read_until(STDIN, input, sizeof(input), '\n')) < 0)
           break;
-        memo_id = strtol(input, NULL, 10);
-        remove_memo(memo_id);
+        memo_id = cgc_strtol(input, NULL, 10);
+        cgc_remove_memo(memo_id);
         break;
       case 5:
-        memset(typo, 0, sizeof(typo));
-        memset(correct, 0, sizeof(correct));
+        cgc_memset(typo, 0, sizeof(typo));
+        cgc_memset(correct, 0, sizeof(correct));
         printf("typo? ");
-        if ((bytes = read_until(STDIN, typo, sizeof(typo), '\n')) < 0)
+        if ((bytes = cgc_read_until(STDIN, typo, sizeof(typo), '\n')) < 0)
           break;
         printf("correct? ");
-        if ((bytes = read_until(STDIN, correct, sizeof(correct), '\n')) < 0)
+        if ((bytes = cgc_read_until(STDIN, correct, sizeof(correct), '\n')) < 0)
           break;
-        ac_add_custom(typo, correct);
+        cgc_ac_add_custom(typo, correct);
         break;
       case 6:
-        quit();
+        cgc_quit();
         break;
       default:
-        printf("invalid menu, try again.\n");
+        printf("invalid cgc_menu, try again.\n");
         break;
     }
   }

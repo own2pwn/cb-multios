@@ -35,18 +35,18 @@ extern "C"
 
 #include "comms.h"
 
-CNetworkComm::CNetworkComm( int32_t recvFD, int32_t sendFD )
+cgc_CNetworkComm::cgc_CNetworkComm( cgc_int32_t recvFD, cgc_int32_t sendFD )
 	: m_recvFD( recvFD ), m_sendFD( sendFD )
 {
 
 }
 
-CNetworkComm::~CNetworkComm( )
+cgc_CNetworkComm::~cgc_CNetworkComm( )
 {
 
 }
 
-uint32_t CNetworkComm::RecvData( uint8_t *pDest, uint32_t recvLen )
+cgc_uint32_t cgc_CNetworkComm::cgc_RecvData( cgc_uint8_t *pDest, cgc_uint32_t recvLen )
 {
 	if ( pDest == NULL )
 		return (0);
@@ -54,12 +54,12 @@ uint32_t CNetworkComm::RecvData( uint8_t *pDest, uint32_t recvLen )
 	if ( recvLen == 0 )
 		return (0);
 
-	uint32_t curRecvLen = 0;
+	cgc_uint32_t curRecvLen = 0;
 
 	while ( curRecvLen < recvLen )
 	{
-		size_t num_bytes;
-		uint32_t recvRemaining = (recvLen - curRecvLen);
+		cgc_size_t num_bytes;
+		cgc_uint32_t recvRemaining = (recvLen - curRecvLen);
 
 		if ( receive( m_recvFD, (pDest+curRecvLen), recvRemaining, &num_bytes ) != 0 )
 			_terminate( -1 );
@@ -73,7 +73,7 @@ uint32_t CNetworkComm::RecvData( uint8_t *pDest, uint32_t recvLen )
 	return curRecvLen;
 }
 
-uint32_t CNetworkComm::SendData( uint8_t *pSource, uint32_t sendLen )
+cgc_uint32_t cgc_CNetworkComm::cgc_SendData( cgc_uint8_t *pSource, cgc_uint32_t sendLen )
 {
 	if ( pSource == NULL )
 		return (0);
@@ -81,12 +81,12 @@ uint32_t CNetworkComm::SendData( uint8_t *pSource, uint32_t sendLen )
 	if ( sendLen == 0 )
 		return (0);
 
-	uint32_t curSendLen = 0;
+	cgc_uint32_t curSendLen = 0;
 
 	while ( curSendLen < sendLen )
 	{
-		size_t num_bytes;
-		uint32_t sendRemaining = (sendLen - curSendLen);
+		cgc_size_t num_bytes;
+		cgc_uint32_t sendRemaining = (sendLen - curSendLen);
 
 		if ( transmit( m_sendFD, (pSource+curSendLen), sendRemaining, &num_bytes ) != 0 )
 			_terminate( -1 );

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,14 +26,14 @@
 
 #define DEFAULT_S_SZ 128
 
-typedef struct string string;
-struct string {
-  size_t cap;
+typedef struct cgc_string cgc_string;
+struct cgc_string {
+  cgc_size_t cap;
   char *d;
 };
 
-string *new_string(char *);
-int append_string(string *s, const char *d);
-void free_string(string *s);
-int contains_string(string *s, const char *sub);
+cgc_string *cgc_new_string(char *);
+int cgc_append_string(cgc_string *s, const char *d);
+void cgc_free_string(cgc_string *s);
+int cgc_contains_string(cgc_string *s, const char *sub);
 #endif /* __STRING__H */

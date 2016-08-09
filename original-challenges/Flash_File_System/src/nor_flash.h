@@ -37,30 +37,30 @@ THE SOFTWARE.
 #define FLASH_INVALID_ADDRESS	(-4)
 
 // Class to simulate the behavior of NOR Flash
-class CNORFlash
+class cgc_CNORFlash
 {
 public:
-	CNORFlash( );
-	~CNORFlash( );
+	cgc_CNORFlash( );
+	~cgc_CNORFlash( );
 
-	void Init( uint32_t blockSize, uint32_t blocksPerSector, uint32_t sectorCount );
+	void cgc_Init( cgc_uint32_t blockSize, cgc_uint32_t blocksPerSector, cgc_uint32_t sectorCount );
 
-	int32_t WriteData( uint32_t address, uint8_t *pData, uint32_t dataLen );
-	int32_t ReadData( uint32_t address, uint8_t *pData, uint32_t dataLen );	
+	cgc_int32_t cgc_WriteData( cgc_uint32_t address, cgc_uint8_t *pData, cgc_uint32_t dataLen );
+	cgc_int32_t cgc_ReadData( cgc_uint32_t address, cgc_uint8_t *pData, cgc_uint32_t dataLen );	
 
-	int32_t DeviceErase( void );
-	int32_t SectorErase( uint32_t sectorNum );
-	int32_t BlockErase( uint32_t blockNum );
+	cgc_int32_t cgc_DeviceErase( void );
+	cgc_int32_t cgc_SectorErase( cgc_uint32_t sectorNum );
+	cgc_int32_t cgc_BlockErase( cgc_uint32_t blockNum );
 
-	uint32_t GetBlockSize( void ) const { return m_blockSize; };
-	uint32_t GetBlocksPerSector( void ) const { return m_blocksPerSector; };
-	uint32_t GetSectorCount( void ) const { return m_sectorCount; };
+	cgc_uint32_t cgc_GetBlockSize( void ) const { return m_blockSize; };
+	cgc_uint32_t cgc_GetBlocksPerSector( void ) const { return m_blocksPerSector; };
+	cgc_uint32_t cgc_GetSectorCount( void ) const { return m_sectorCount; };
 
 private:
-	uint8_t *m_pFlashMemory;
-	uint32_t m_blockSize;
-	uint32_t m_blocksPerSector;
-	uint32_t m_sectorCount;
+	cgc_uint8_t *m_pFlashMemory;
+	cgc_uint32_t m_blockSize;
+	cgc_uint32_t m_blocksPerSector;
+	cgc_uint32_t m_sectorCount;
 };
 
 #endif // __NOR_FLASH_H__

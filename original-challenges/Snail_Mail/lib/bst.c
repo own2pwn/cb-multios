@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -27,9 +27,9 @@
 #include "memset.h"
 
 
-bst_node_t *bst_create_node(int key) {
+cgc_bst_node_t *cgc_bst_create_node(int key) {
 
-	bst_node_t *np = malloc(sizeof(bst_node_t));
+	cgc_bst_node_t *np = cgc_malloc(sizeof(cgc_bst_node_t));
 	if (NULL == np) {
 		_terminate(ERRNO_ALLOC);
 	}
@@ -41,20 +41,20 @@ bst_node_t *bst_create_node(int key) {
 	return np;
 }
 
-void bst_delete_node(bst_node_t **node) {
-	memset(*node, '\0', sizeof(bst_node_t));
-	free(*node);
+void cgc_bst_delete_node(cgc_bst_node_t **node) {
+	cgc_memset(*node, '\0', sizeof(cgc_bst_node_t));
+	cgc_free(*node);
 }
 
-void bst_init(bst_t *bst) {
+void cgc_bst_init(cgc_bst_t *bst) {
 	bst->root = NULL_NODE;
 	bst->count = 0;
 	bst->iter_node = NULL_NODE;
 	bst->iter_asc = TRUE;
 }
 
-bst_node_t *bst_search(bst_t *bst, int key) {
-	bst_node_t *node = bst->root;
+cgc_bst_node_t *cgc_bst_search(cgc_bst_t *bst, int key) {
+	cgc_bst_node_t *node = bst->root;
 	while ((node != NULL_NODE) && (node->key != key)) {
 		if (key < node->key) {
 			node = node->left;
@@ -66,50 +66,50 @@ bst_node_t *bst_search(bst_t *bst, int key) {
 	return node;
 }
 
-bst_node_t *bst_max_node_subtree(bst_node_t *node) {
+cgc_bst_node_t *cgc_bst_max_node_subtree(cgc_bst_node_t *node) {
 	while ((NULL_NODE != node) && (NULL_NODE != node->right)) node = node->right;
 
 	return node;
 }
 
-int bst_max_subtree(bst_node_t *node) {
-	return bst_max_node_subtree(node)->key;
+int cgc_bst_max_subtree(cgc_bst_node_t *node) {
+	return cgc_bst_max_node_subtree(node)->key;
 }
 
-bst_node_t *bst_max_node(bst_t *bst) {
-	bst_node_t *node = bst->root;
-	return bst_max_node_subtree(node);
+cgc_bst_node_t *cgc_bst_max_node(cgc_bst_t *bst) {
+	cgc_bst_node_t *node = bst->root;
+	return cgc_bst_max_node_subtree(node);
 }
 
-int bst_max(bst_t *bst) {
-	bst_node_t *node = bst->root;
-	return bst_max_subtree(node);
+int cgc_bst_max(cgc_bst_t *bst) {
+	cgc_bst_node_t *node = bst->root;
+	return cgc_bst_max_subtree(node);
 }
 
-bst_node_t *bst_min_node_subtree(bst_node_t *node) {
+cgc_bst_node_t *cgc_bst_min_node_subtree(cgc_bst_node_t *node) {
 	while ((NULL_NODE != node) && (NULL_NODE != node->left)) node = node->left;
 
 	return node;
 }
 
-int bst_min_subtree(bst_node_t *node) {
-	return bst_min_node_subtree(node)->key;
+int cgc_bst_min_subtree(cgc_bst_node_t *node) {
+	return cgc_bst_min_node_subtree(node)->key;
 }
 
-bst_node_t *bst_min_node(bst_t *bst) {
-	return bst_min_node_subtree(bst->root);
+cgc_bst_node_t *cgc_bst_min_node(cgc_bst_t *bst) {
+	return cgc_bst_min_node_subtree(bst->root);
 }
 
-int bst_min(bst_t *bst) {
-	return bst_min_subtree(bst->root);
+int cgc_bst_min(cgc_bst_t *bst) {
+	return cgc_bst_min_subtree(bst->root);
 }
 
-bst_node_t *bst_predecessor(bst_node_t *node) {
+cgc_bst_node_t *cgc_bst_predecessor(cgc_bst_node_t *node) {
 	if (NULL_NODE != node->left) {
-		return bst_max_node_subtree(node->left);
+		return cgc_bst_max_node_subtree(node->left);
 	}
-	bst_node_t *n_child = node;
-	bst_node_t *n_parent = node->parent;
+	cgc_bst_node_t *n_child = node;
+	cgc_bst_node_t *n_parent = node->parent;
 	while ((n_parent != NULL_NODE) && (n_child == n_parent->left)) {
 		n_child = n_parent;
 		n_parent = n_parent->parent;
@@ -118,12 +118,12 @@ bst_node_t *bst_predecessor(bst_node_t *node) {
 	return n_parent;
 }
 
-bst_node_t *bst_successor(bst_node_t *node) {
+cgc_bst_node_t *cgc_bst_successor(cgc_bst_node_t *node) {
 	if (NULL_NODE != node->right) {
-		return bst_min_node_subtree(node->right);
+		return cgc_bst_min_node_subtree(node->right);
 	}
-	bst_node_t *n_child = node;
-	bst_node_t *n_parent = node->parent;
+	cgc_bst_node_t *n_child = node;
+	cgc_bst_node_t *n_parent = node->parent;
 	while ((n_parent != NULL_NODE) && (n_child == n_parent->right)) {
 		n_child = n_parent;
 		n_parent = n_parent->parent;
@@ -132,33 +132,33 @@ bst_node_t *bst_successor(bst_node_t *node) {
 	return n_parent;
 }
 
-bst_node_t *bst_iter_start(bst_t *bst, unsigned char ascending) {
+cgc_bst_node_t *cgc_bst_iter_start(cgc_bst_t *bst, unsigned char ascending) {
 	bst->iter_asc = ascending;
-	bst_node_t *n;
+	cgc_bst_node_t *n;
 	if (TRUE == bst->iter_asc) {
-		bst->iter_node = bst_min_node(bst);
+		bst->iter_node = cgc_bst_min_node(bst);
 	} else {
-		bst->iter_node = bst_max_node(bst);
+		bst->iter_node = cgc_bst_max_node(bst);
 	}
 	return bst->iter_node;
 }
 
-bst_node_t *bst_iter_next(bst_t *bst) {
+cgc_bst_node_t *cgc_bst_iter_next(cgc_bst_t *bst) {
 	if (TRUE == bst->iter_asc) {
-		bst->iter_node = bst_successor(bst->iter_node);
+		bst->iter_node = cgc_bst_successor(bst->iter_node);
 	} else {
-		bst->iter_node = bst_predecessor(bst->iter_node);
+		bst->iter_node = cgc_bst_predecessor(bst->iter_node);
 	}
 	return bst->iter_node;
 }
 
-int bst_iter_end(bst_t *bst) {
+int cgc_bst_iter_end(cgc_bst_t *bst) {
 	return NULL_NODE == bst->iter_node;
 }
 
-void bst_insert_node(bst_t *bst, bst_node_t *node) {
-	bst_node_t *n_parent = bst->root;
-	bst_node_t *n_child = bst->root;
+void cgc_bst_insert_node(cgc_bst_t *bst, cgc_bst_node_t *node) {
+	cgc_bst_node_t *n_parent = bst->root;
+	cgc_bst_node_t *n_child = bst->root;
 
 	while (n_child != NULL_NODE) {
 		n_parent = n_child;
@@ -181,18 +181,18 @@ void bst_insert_node(bst_t *bst, bst_node_t *node) {
 	bst->count++;
 }
 
-void bst_insert(bst_t *bst, int key) {
-	bst_node_t *n = bst_create_node(key);
-	bst_insert_node(bst, n);
+void cgc_bst_insert(cgc_bst_t *bst, int key) {
+	cgc_bst_node_t *n = cgc_bst_create_node(key);
+	cgc_bst_insert_node(bst, n);
 }
 
-bst_node_t *bst_remove_node(bst_t *bst, bst_node_t *node) {
-	bst_node_t *n_splice;
-	bst_node_t *n_child;
+cgc_bst_node_t *cgc_bst_remove_node(cgc_bst_t *bst, cgc_bst_node_t *node) {
+	cgc_bst_node_t *n_splice;
+	cgc_bst_node_t *n_child;
 	if ((NULL_NODE == node->left) || (NULL_NODE == node->right)) {
 		n_splice = node;
 	} else {
-		n_splice = bst_successor(node);
+		n_splice = cgc_bst_successor(node);
 	}
 
 	if (NULL_NODE != n_splice->left) {
@@ -223,14 +223,14 @@ bst_node_t *bst_remove_node(bst_t *bst, bst_node_t *node) {
 	return n_splice;
 }
 
-bst_node_t *bst_remove(bst_t *bst, int key) {
-	bst_node_t *node = bst_search(bst, key);
+cgc_bst_node_t *cgc_bst_remove(cgc_bst_t *bst, int key) {
+	cgc_bst_node_t *node = cgc_bst_search(bst, key);
 	if (NULL_NODE == node) return node;
 
-	return bst_remove_node(bst, node);
+	return cgc_bst_remove_node(bst, node);
 }
 
-int bst_is_empty(bst_t *bst) {
+int cgc_bst_is_empty(cgc_bst_t *bst) {
 	return NULL_NODE == bst->root;
 }
 

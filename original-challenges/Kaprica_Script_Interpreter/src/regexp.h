@@ -22,41 +22,41 @@ enum {
     ROP_OR
 };
 
-typedef struct rop_t {
+typedef struct cgc_rop_t {
     unsigned char op, flag;
-    struct rop_t *next, *parent;
+    struct cgc_rop_t *next, *parent;
 
     union {
         struct {
-            struct rop_t *e[0];
+            struct cgc_rop_t *e[0];
         } r_or;
         struct {
-            uint8_t data[0];
+            cgc_uint8_t data[0];
         } r_class;
         struct {
-            struct rop_t *e;
+            struct cgc_rop_t *e;
         } r_group;
         struct {
             char seq;
         } r_seq;
     };
-} rop_t;
+} cgc_rop_t;
 
 typedef struct {
     char *input;
-    rop_t *tree;
+    cgc_rop_t *tree;
 
-    rop_t **states;
+    cgc_rop_t **states;
     unsigned int num_states;
     unsigned int max_states;
 
     // loop detection (only an issue for begin and end)
-    rop_t **prev_states;
+    cgc_rop_t **prev_states;
     unsigned int num_prev_states;
-} regexp_t;
+} cgc_regexp_t;
 
-int regexp_init(regexp_t *r, const char *str);
-int regexp_free(regexp_t *r);
-int regexp_match(regexp_t *r, const char *input);
+int cgc_regexp_init(cgc_regexp_t *r, const char *str);
+int cgc_regexp_free(cgc_regexp_t *r);
+int cgc_regexp_match(cgc_regexp_t *r, const char *input);
 
 #endif

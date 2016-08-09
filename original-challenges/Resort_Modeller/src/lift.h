@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,49 +25,49 @@
 #include <stdint.h>
 #include "rider.h"
 
-typedef struct chair Chair;
+typedef struct chair cgc_Chair;
 
-typedef void (*chair_embark_fn)(Chair *, Rider *);
-typedef Rider *(*chair_disembark_fn)(Chair *);
+typedef void (*cgc_chair_embark_fn)(cgc_Chair *, cgc_Rider *);
+typedef cgc_Rider *(*cgc_chair_disembark_fn)(cgc_Chair *);
 
 struct chair {
-	uint32_t id;
-	uint32_t seats;					// number of seats on chair
-	uint32_t empty_seats;			// number of seats that are empty
-	Rider *riders;					// list of riders on chair
-	chair_embark_fn embark;			// add one rider to this chair
-	chair_disembark_fn disembark;	// remove one rider from this chair
-	Chair *next;
+	cgc_uint32_t id;
+	cgc_uint32_t seats;					// number of seats on chair
+	cgc_uint32_t empty_seats;			// number of seats that are empty
+	cgc_Rider *riders;					// list of riders on chair
+	cgc_chair_embark_fn embark;			// add one rider to this chair
+	cgc_chair_disembark_fn disembark;	// remove one rider from this chair
+	cgc_Chair *next;
 };
 
-typedef struct lift Lift;
+typedef struct lift cgc_Lift;
 
-typedef uint32_t (*lift_embark_fn)(Lift *);
-typedef uint32_t (*lift_disembark_fn)(Lift *);
-typedef void (*lift_step_fn)(Lift *);
+typedef cgc_uint32_t (*cgc_lift_embark_fn)(cgc_Lift *);
+typedef cgc_uint32_t (*cgc_lift_disembark_fn)(cgc_Lift *);
+typedef void (*cgc_lift_step_fn)(cgc_Lift *);
 
 struct lift {
-	uint32_t id;
-	uint32_t chair_count;			// number of chairs on lift
-	uint32_t chair_capacity;		// number of seats on chairs in this lift
-	uint32_t rider_total;			// number of riders that have embarked on this lift
-	Rider *queue;					// queue of riders ready to embark on this lift
-	Chair *chairs;					// list of chairs on this lift
-	Chair *c_embark;				// chair onto which riders will embark
-	Chair *c_disembark;				// chair from which riders will disembark
-	uint32_t start_decider;			// ID of decider at start of lift
-	uint32_t end_decider;			// ID of decider at end of lift
-	lift_embark_fn embark;			// move rider from queue to a chair
-	lift_step_fn step; 				// move rider on step through the lift
-	lift_disembark_fn disembark;	// move rider from a chair to the end decider rider queue
+	cgc_uint32_t id;
+	cgc_uint32_t chair_count;			// number of chairs on lift
+	cgc_uint32_t chair_capacity;		// number of seats on chairs in this lift
+	cgc_uint32_t rider_total;			// number of riders that have embarked on this lift
+	cgc_Rider *queue;					// queue of riders ready to embark on this lift
+	cgc_Chair *chairs;					// list of chairs on this lift
+	cgc_Chair *c_embark;				// chair onto which riders will embark
+	cgc_Chair *c_disembark;				// chair from which riders will disembark
+	cgc_uint32_t start_decider;			// ID of decider at start of lift
+	cgc_uint32_t end_decider;			// ID of decider at end of lift
+	cgc_lift_embark_fn embark;			// move rider from queue to a chair
+	cgc_lift_step_fn step; 				// move rider on step through the lift
+	cgc_lift_disembark_fn disembark;	// move rider from a chair to the end decider rider queue
 };
 
 #define LIFT_IO_ELEMENTS	5
-#define LIFT_IO_SZ 		(LIFT_IO_ELEMENTS * sizeof(uint32_t))
+#define LIFT_IO_SZ 		(LIFT_IO_ELEMENTS * sizeof(cgc_uint32_t))
 
-int32_t lift_new(Lift **l, uint32_t settings[5]);
-void lift_reset(Lift *l, Rider **riders);
-void lift_enqueue_riders(Lift *l, Rider **riders);
-void lift_destroy(Lift **l, Rider **riders);
+cgc_int32_t cgc_lift_new(cgc_Lift **l, cgc_uint32_t settings[5]);
+void cgc_lift_reset(cgc_Lift *l, cgc_Rider **riders);
+void cgc_lift_enqueue_riders(cgc_Lift *l, cgc_Rider **riders);
+void cgc_lift_destroy(cgc_Lift **l, cgc_Rider **riders);
 
 #endif

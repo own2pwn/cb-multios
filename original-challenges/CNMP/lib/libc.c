@@ -24,17 +24,17 @@
 #include "libc.h"
 
 
-#define MAX_SYSLOG_LEN 1024 // max len of a syslog log entry
+#define MAX_SYSLOG_LEN 1024 // max len of a cgc_syslog log entry
 
-// syslog
+// cgc_syslog
 #ifndef SYSLOG_NAMES
 #define SYSLOG_NAMES
 typedef struct _syslog_codes {
         char    *code_name;
         int     code_val;
-} CODES;
+} cgc_CODES;
 
-CODES priorities_array[] =
+cgc_CODES priorities_array[] =
   {
     { "EMERGENCY", LOG_EMERGENCY },
     { "ALERT", LOG_ALERT },
@@ -49,9 +49,9 @@ CODES priorities_array[] =
 
 #endif
 
-int sendall(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
     if (!buf) 
@@ -72,9 +72,9 @@ int sendall(int fd, const char *buf, const size_t size) {
 }
 
 // mod from FASTLANE: lines terminated with \x07, diff return values, 
-int recvline(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -101,25 +101,25 @@ int recvline(int fd, char *buf, size_t size) {
     return total_read;
 }
 
-int syslog(int priority, const char *format, ...) {
+int cgc_syslog(int priority, const char *format, ...) {
     char log_entry[MAX_SYSLOG_LEN] = { 0 };
     char *log_entry_idx = log_entry;
     int ret;
     char *pri_str = priorities_array[priority].code_name;
     int log_entry_len;
-    va_list args;
+    cgc_va_list args;
 
     va_start(args, format);
     // write priority to log_entry buffer
-    log_entry_len = snprintf(log_entry_idx, MAX_SYSLOG_LEN, "~c: ", pri_str);
+    log_entry_len = cgc_snprintf(log_entry_idx, MAX_SYSLOG_LEN, "~c: ", pri_str);
     log_entry_idx += log_entry_len;
 
     // process format string and write it to log_entry buffer
-    log_entry_len += vsnprintf(log_entry_idx, MAX_SYSLOG_LEN - log_entry_len, format, args);
+    log_entry_len += cgc_vsnprintf(log_entry_idx, MAX_SYSLOG_LEN - log_entry_len, format, args);
     va_end(args);
 
     // send log_entry to stdout
-    ret = sendall(STDERR, log_entry, (log_entry_len < MAX_SYSLOG_LEN ? log_entry_len : MAX_SYSLOG_LEN));
+    ret = cgc_sendall(STDERR, log_entry, (log_entry_len < MAX_SYSLOG_LEN ? log_entry_len : MAX_SYSLOG_LEN));
     if (ret != 0)
         _terminate(4);
 
@@ -127,9 +127,9 @@ int syslog(int priority, const char *format, ...) {
 }
 
 // return 0 if str1 == str2, else return -1
-int streq(const char* str1, const char* str2) {
+int cgc_streq(const char* str1, const char* str2) {
 
-    if (strlen(str1) != strlen(str2))
+    if (cgc_strlen(str1) != cgc_strlen(str2))
         return -1;
 
     while(*str1 != '\0') {
@@ -141,7 +141,7 @@ int streq(const char* str1, const char* str2) {
 }
 
 // return number of chars in str, not counting the '\0'
-unsigned int strlen(const char *str) {
+unsigned int cgc_strlen(const char *str) {
     unsigned int count = 0;
     while(*str != '\0') {
         count++;
@@ -152,9 +152,9 @@ unsigned int strlen(const char *str) {
 }
 
 // size bytes of src are copied into dest.
-// if strlen(src) < size, dest is padded with '\0' bytes.
-// NOTE: if size <= strlen(src), the dest will not be null terminated.
-char * strncpy(char* dest, const char* src, size_t size) {
+// if cgc_strlen(src) < size, dest is padded with '\0' bytes.
+// NOTE: if size <= cgc_strlen(src), the dest will not be null terminated.
+char * cgc_strncpy(char* dest, const char* src, cgc_size_t size) {
 
     int idx = 0;
     for (; idx < size && src[idx] != '\0'; idx++) {
@@ -169,7 +169,7 @@ char * strncpy(char* dest, const char* src, size_t size) {
 }
 
 // overwrites the first n chars of str with unsigned char ch.
-void * memset(void* str, int ch, size_t n) {
+void * cgc_memset(void* str, int ch, cgc_size_t n) {
     unsigned char *ch_ptr = str;
     while (n > 0) {
         *ch_ptr = (unsigned char)ch;
@@ -181,10 +181,10 @@ void * memset(void* str, int ch, size_t n) {
 }
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * memcpy(void* dst, const void* src, size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
 
-    uint8_t *dst_ptr = (uint8_t *) dst;
-    uint8_t *src_ptr = (uint8_t *) src;
+    cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
+    cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
     while (cnt--) {
         *dst_ptr = *src_ptr;
         dst_ptr++;
@@ -197,7 +197,7 @@ void * memcpy(void* dst, const void* src, size_t cnt) {
 // find index of char 'ch' in char buffer 'str'
 // return pointer to index of ch if found
 // return NULL if ch is not found
-char * strchr(char *str, char ch) {
+char * cgc_strchr(char *str, char ch) {
 
     while (*str != '\0') {
         if (*str == ch)
@@ -212,12 +212,12 @@ char * strchr(char *str, char ch) {
 
 // write a random number between 0 and (2^32) in res
 // returns 0 on success, non-zero on failure.
-int rand(uint32_t * res) {
-    size_t bytes = 0;
-    return random((char *)res, 4, &bytes);
+int cgc_rand(cgc_uint32_t * res) {
+    cgc_size_t bytes = 0;
+    return cgc_random((char *)res, 4, &bytes);
 }
 
-// simple vsnprintf with supported format specifiers
+// simple cgc_vsnprintf with supported format specifiers
 //  - 'n' for numbers (signed ints)
 //  - 'c' for char buffer (strings)
 // the format string marker is '~'
@@ -230,10 +230,10 @@ int rand(uint32_t * res) {
 // fmt - null-terminated format string
 // args - ptr to list of arguments to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
-// note: vsnprintf does not call va_end, because it takes a va_list, caller does so.
-int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
+// note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, caller does so.
+int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args) {
 
-    size_t buf_len = 0;
+    cgc_size_t buf_len = 0;
     const char *fmt_ptr = fmt;
 
     // if fmt is NULL, set fmt_ptr to "" so it will skip the while loop
@@ -255,9 +255,9 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
 
         } else {
             char fmt_spec = '\0';
-            size_t arg_len = 0;
+            cgc_size_t arg_len = 0;
             const char *next_arg;  // ptr to the next arg in args (to use this iteration)
-            char tmp[32]; // tmp buffer for int2str conversion
+            char tmp[32]; // tmp buffer for cgc_int2str conversion
             int int_arg = 0;
             int remaining = 0;
 
@@ -269,9 +269,9 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
                 case 'n': // deal with number
                     int_arg = 0;
                     int_arg = va_arg(args, int);
-                    int2str(tmp, 32, int_arg);
+                    cgc_int2str(tmp, 32, int_arg);
                     next_arg = tmp;
-                    arg_len = strlen(next_arg);
+                    arg_len = cgc_strlen(next_arg);
 
                     break; 
                 case 'c': // deal with char buffer (i.e. string)
@@ -279,7 +279,7 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
                     if (!next_arg) {
                         arg_len = 0;
                     } else { 
-                        arg_len = strlen(next_arg);
+                        arg_len = cgc_strlen(next_arg);
                     } 
 
                     break; 
@@ -289,10 +289,10 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
             if (fmt_spec == 'n' || fmt_spec == 'c') {
                 remaining = buf_size - buf_len;
                 if (arg_len <= remaining) {
-                    memcpy(&buf[buf_len], next_arg, arg_len);
+                    cgc_memcpy(&buf[buf_len], next_arg, arg_len);
                     buf_len += arg_len;
                 } else {
-                    memcpy(&buf[buf_len], next_arg, remaining);
+                    cgc_memcpy(&buf[buf_len], next_arg, remaining);
                     buf_len += remaining;
                 }
             }
@@ -317,7 +317,7 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
 }
 
 
-// simple snprintf with supported format specifiers
+// simple cgc_snprintf with supported format specifiers
 //  - 'n' for numbers (signed ints)
 //  - 'c' for char buffer (strings)
 // the format string marker is '~'
@@ -330,12 +330,12 @@ int vsnprintf(char* buf, size_t buf_size, const char* fmt, va_list args) {
 // fmt - null-terminated format string
 // ... - optional arguments for strings to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
-int snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
+int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...) {
     int buf_len;
-    va_list args;
+    cgc_va_list args;
 
     va_start(args, fmt);
-    buf_len = vsnprintf(buf, buf_size, fmt, args);
+    buf_len = cgc_vsnprintf(buf, buf_size, fmt, args);
     va_end(args);
 
     return buf_len;
@@ -345,10 +345,10 @@ int snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
 // takes a string and converts it to a uint32
 // MAX uint32 is 2^32 which is 10 digits
 // returns 0 if str_buf is "0", has no digits, or if there is an error.
-uint32_t str2uint32(const char* str_buf) {
-    uint32_t result = 0;
-    uint32_t temp = 0;
-    uint32_t max_chars = 10;
+cgc_uint32_t cgc_str2uint32(const char* str_buf) {
+    cgc_uint32_t result = 0;
+    cgc_uint32_t temp = 0;
+    cgc_uint32_t max_chars = 10;
 
     if (str_buf == NULL)
         return result;
@@ -379,7 +379,7 @@ uint32_t str2uint32(const char* str_buf) {
 // takes a string and converts it to an int32
 // MAX int32 is +/- 2^31-1 (2,147,483,647) which is 10 digits
 // returns 0 if str_buf is "0" or has no digits.
-int str2int(const char* str_buf) {
+int cgc_str2int(const char* str_buf) {
     int result = 0;
     int temp = 0;
     int max_chars = 10; // max number of chars read from str_buf
@@ -422,7 +422,7 @@ int str2int(const char* str_buf) {
 // takes an int32 and converts it to a string saved in str_buf
 // str_buf must be large enough to fit the sign, number(s), and '\0'
 // returns 0 on success, -1 if error due to buf_size
-int int2str(char* str_buf, int buf_size, int i) {
+int cgc_int2str(char* str_buf, int buf_size, int i) {
 
     int idx = 0;
     int tmp;
@@ -474,10 +474,10 @@ int int2str(char* str_buf, int buf_size, int i) {
 
 // examine str to determine if it can be converted to a number
 // return 0 if yes and 0/positive, 1 if yes and negative, -1 if no.
-int is_numeric(const char *str) {
+int cgc_is_numeric(const char *str) {
     int sign = 0;
 
-    if (strlen(str) == 0)
+    if (cgc_strlen(str) == 0)
         return -1;
 
     if (*str == '-') {
@@ -494,8 +494,8 @@ int is_numeric(const char *str) {
 }
 
 // remove \t, \r, \n, and space from end of string
-void strip(char *str) {
-    int len = strlen(str);
+void cgc_strip(char *str) {
+    int len = cgc_strlen(str);
     for (int i = len - 1; i >= 0; i--) {
         if (str[i] == '\n' ||
             str[i] == '\t' ||

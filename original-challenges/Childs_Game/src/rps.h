@@ -1,6 +1,6 @@
 #ifndef RPS_H_
 #define RPS_H_
 
-int play_rps();
+int cgc_play_rps();
 
 #endif

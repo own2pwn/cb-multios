@@ -34,19 +34,19 @@ THE SOFTWARE.
 
 
 
-int receiveMessage( void *message ) {
+int cgc_receiveMessage( void *message ) {
 
 unsigned int messageType;
 unsigned char field_len;
 int retcode;
-newUserMessageType *newUser;
-loginMessageType *loginUser;
-feedRequestMessageType *newFeedRequest;
-newPostMessageType *newPost;
-requestPostMessageType *requestPost;
-addCommentMessageType *newComment;
+cgc_newUserMessageType *newUser;
+cgc_loginMessageType *loginUser;
+cgc_feedRequestMessageType *newFeedRequest;
+cgc_newPostMessageType *newPost;
+cgc_requestPostMessageType *requestPost;
+cgc_addCommentMessageType *newComment;
 
-	if (receive_bytes((char *)&messageType, sizeof(messageType)) == -1)  {
+	if (cgc_receive_bytes((char *)&messageType, sizeof(messageType)) == -1)  {
 
 		return -1;
 	}
@@ -63,16 +63,16 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->name, field_len);
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(newUser->name, field_len);
 			newUser->name[field_len] = 0;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->password, field_len);
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(newUser->password, field_len);
 			newUser->password[field_len] = 0;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newUser->fullname, field_len);
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(newUser->fullname, field_len);
 			newUser->fullname[field_len] = 0;
 
 			return(messageType);
@@ -89,12 +89,12 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(loginUser->name, field_len);
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(loginUser->name, field_len);
 			loginUser->name[field_len] = 0;
 
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(loginUser->password, field_len);
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(loginUser->password, field_len);
 			loginUser->password[field_len] = 0;
 			
 			return(messageType);
@@ -111,7 +111,7 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((char *)&newFeedRequest->sessionToken, sizeof (newFeedRequest->sessionToken));
+			cgc_receive_bytes((char *)&newFeedRequest->sessionToken, sizeof (newFeedRequest->sessionToken));
 
 			return(messageType);
 
@@ -127,11 +127,11 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((void *)&newPost->sessionToken, sizeof(newPost->sessionToken));
+			cgc_receive_bytes((void *)&newPost->sessionToken, sizeof(newPost->sessionToken));
 
-			receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes((char *)&field_len, 1);
 
-			receive_bytes(newPost->post, field_len);
+			cgc_receive_bytes(newPost->post, field_len);
 			newPost->post[field_len] = 0;
 			
 			return(messageType);
@@ -148,10 +148,10 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((void *)&newComment->postID, sizeof(newComment->postID));
-			receive_bytes((void *)&newComment->commenterID, sizeof(newComment->commenterID));
-			receive_bytes((char *)&field_len, 1);
-			receive_bytes(newComment->comment, field_len);
+			cgc_receive_bytes((void *)&newComment->postID, sizeof(newComment->postID));
+			cgc_receive_bytes((void *)&newComment->commenterID, sizeof(newComment->commenterID));
+			cgc_receive_bytes((char *)&field_len, 1);
+			cgc_receive_bytes(newComment->comment, field_len);
 
 			newComment->comment[field_len] = 0;
 
@@ -168,7 +168,7 @@ addCommentMessageType *newComment;
 
 			}
 
-			receive_bytes((char *)&requestPost->postID, sizeof (requestPost->postID));
+			cgc_receive_bytes((char *)&requestPost->postID, sizeof (requestPost->postID));
 
 			return(messageType);
 
@@ -179,10 +179,10 @@ addCommentMessageType *newComment;
 }
 
 
-int sendResponse( void *message, int length ) {
+int cgc_sendResponse( void *message, int length ) {
 
 
-	if (write(STDOUT, message, length) != 0 ) {
+	if (cgc_write(STDOUT, message, length) != 0 ) {
 
 		return -1;
 	}

@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,18 +32,18 @@ THE SOFTWARE.
 #define RAND_MAX	2147483647
 #define FLAG_PAGE 0x4347c800
 
-void srand(void);
-uint32_t rand( void );
-uint32_t random_in_range(uint32_t min, uint32_t max);
-void populate_random_string( char * s, uint32_t length );
+void cgc_srand(void);
+cgc_uint32_t cgc_rand( void );
+cgc_uint32_t cgc_random_in_range(cgc_uint32_t min, cgc_uint32_t max);
+void cgc_populate_random_string( char * s, cgc_uint32_t length );
 
-int atoi( const char *pStr );
-double atof( char *pStr );
+int cgc_atoi( const char *pStr );
+double cgc_atof( char *pStr );
  
-char *strcpy( char *pDest, const char *pSource );
-char *strncpy( char *pDest, const char *pSource, size_t maxlen );
-void *memcpy( void *pDest, const void *pSrc, size_t nbytes );
+char *cgc_strcpy( char *pDest, const char *pSource );
+char *cgc_strncpy( char *pDest, const char *pSource, cgc_size_t maxlen );
+void *cgc_memcpy( void *pDest, const void *pSrc, cgc_size_t nbytes );
 
-long int strtol( const char *str, char **endptr, int base );
+long int cgc_strtol( const char *str, char **endptr, int base );
 
 #endif // STDLIB_H__

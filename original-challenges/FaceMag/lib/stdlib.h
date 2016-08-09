@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,12 +30,12 @@ THE SOFTWARE.
 
 #define RAND_MAX	2147483647
 
-int minimum(unsigned int a, unsigned int b);
-int max(int a, int b);
-int rand( void );
-void srand( unsigned int seed );
-int atoi( const char *pStr );
-double atof( char *pStr );
+int cgc_minimum(unsigned int a, unsigned int b);
+int cgc_max(int a, int b);
+int cgc_rand( void );
+void cgc_srand( unsigned int seed );
+int cgc_atoi( const char *pStr );
+double cgc_atof( char *pStr );
  
 
 

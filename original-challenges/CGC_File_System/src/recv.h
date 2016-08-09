@@ -4,6 +4,6 @@
 #include <libcgc.h>
 #include <stdlib.h>
 
-int recv( char *dest, int length );
+int cgc_recv( char *dest, int length );
 
 #endif

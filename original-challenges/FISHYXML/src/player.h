@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -25,10 +25,10 @@
 #define PLAYER_H 1
 
 struct player {
-	uint8_t id;
-	uint8_t book_count;
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
+	cgc_uint8_t id;
+	cgc_uint8_t book_count;
+	cgc_uint8_t unk1; // push size to mult of 4 bytes
+	cgc_uint8_t unk2; // push size to mult of 4 bytes
 	char *name;
 	struct hand *h;
 };
@@ -40,7 +40,7 @@ struct player {
  * @param name Player Name
  * @return VA of new player
  */
-extern struct player *create_player(uint8_t id, char *name);
+extern struct player *cgc_create_player(cgc_uint8_t id, char *name);
 
 /**
  * Player takes top card from deck (dealing) or pool (fishing) to his hand.
@@ -50,7 +50,7 @@ extern struct player *create_player(uint8_t id, char *name);
  * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_HAND_FULL,
  *	ERR_UNINITIALIZED_PLAYER, ERR_UNINITIALIZED_DECK on error 
  */
-extern int take_top_card(struct player *p, struct deck *d);
+extern int cgc_take_top_card(struct player *p, struct deck *d);
 
 /**
  * Player is asked for cards of a given rank and gives them up if they have them.
@@ -62,7 +62,7 @@ extern int take_top_card(struct player *p, struct deck *d);
  *	ERR_UNINITIALIZED_PLAYER, ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, 
  *	ERR_INVALID_CARD on error
  */
-extern int have_cards_of_rank(struct player *p, uint8_t rank, struct card *cards[]);
+extern int cgc_have_cards_of_rank(struct player *p, cgc_uint8_t rank, struct card *cards[]);
 
 /**
  * Player searches their hand for books. If found, plays the books.
@@ -71,7 +71,7 @@ extern int have_cards_of_rank(struct player *p, uint8_t rank, struct card *cards
  * @return Number of books played or ERR_UNINITIALIZED_PLAYER,
  *  ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_INVALID_CARD on error
  */
-extern int play_books(struct player *p);
+extern int cgc_play_books(struct player *p);
 
 /**
  * Checks to see if the player has no cards left in their hand.
@@ -80,7 +80,7 @@ extern int play_books(struct player *p);
  * @return TRUE if yes, FALSE if no, or ERR_UNINITIALIZED_PLAYER,
  *  ERR_UNINITIALIZED_HAND on error
  */
-extern int is_player_hand_empty(struct player *p);
+extern int cgc_is_player_hand_empty(struct player *p);
 
 /**
  * Player takes qty cards from the pool (fishing) to his hand.
@@ -90,7 +90,7 @@ extern int is_player_hand_empty(struct player *p);
  * @return Number of cards drawn or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, ERR_HAND_FULL,
  *	ERR_UNINITIALIZED_PLAYER, ERR_UNINITIALIZED_DECK, ERR_INVALID_QTY on error 
  */
-extern int draw_new_hand(struct player *p, struct deck *d, uint8_t qty);
+extern int cgc_draw_new_hand(struct player *p, struct deck *d, cgc_uint8_t qty);
 
 /**
  * Get the rank of a random card in players hand.
@@ -99,7 +99,7 @@ extern int draw_new_hand(struct player *p, struct deck *d, uint8_t qty);
  * @return Rank of card or ERR_UNINITIALIZED_PLAYER, ERR_HAND_EMPTY,
  *	ERR_UNINITIALIZED_HAND on error
  */
-extern int select_random_card(struct player *p);
+extern int cgc_select_random_card(struct player *p);
 
 /**
  * Insert given cards into players hand.
@@ -110,7 +110,7 @@ extern int select_random_card(struct player *p);
  * @return SUCCESS or ERR_UNINITIALIZED_HAND, ERR_NULL_CARD, 
  * 	ERR_INVALID_QTY, ERR_HAND_FULL on error
  */
-extern int accept_cards(struct player *p, struct card *cards[], uint8_t qty);
+extern int cgc_accept_cards(struct player *p, struct card *cards[], cgc_uint8_t qty);
 
 /**
  * Get card player drew most recently.
@@ -120,7 +120,7 @@ extern int accept_cards(struct player *p, struct card *cards[], uint8_t qty);
  * @return SUCCESS or ERR_UNINITIALIZED_ARRAY, ERR_UNINITIALIZED_PLAYER
  *  on error
  */
-extern int get_players_newest_card(struct player *p, struct card *card[]);
+extern int cgc_get_players_newest_card(struct player *p, struct card *card[]);
 
 #endif
 

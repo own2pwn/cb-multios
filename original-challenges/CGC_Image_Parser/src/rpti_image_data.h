@@ -31,23 +31,23 @@ THE SOFTWARE.
  * Structure to hold the rpti image data.
  * It points to the current byte/bit to be read
  **/
-typedef struct rpti_image_data {
+typedef struct cgc_rpti_image_data {
 	char *buffer;
 	int max;
 	int cbyte;
 	int cbit;
-} rpti_image_data, *prpti_image_data;
+} cgc_rpti_image_data, *cgc_prpti_image_data;
 
-int rpti_display_img( prpti_image_data );
-int rpti_read_magic( prpti_image_data );
-int rpti_read_xaxis( prpti_image_data );
-int rpti_read_yaxis( prpti_image_data );
-int rpti_read_initx( prpti_image_data rid, int *out_data );
-int rpti_read_inity( prpti_image_data rid, int *out_data );
-int rpti_read_axist( prpti_image_data );
-int rpti_read_pixel( prpti_image_data rid, int *out_data  );
-int rpti_read_check( prpti_image_data, int bit_count );
-int rpti_inc_index( prpti_image_data, int bit_count );
-int rpti_read_bits( prpti_image_data, int bit_count, int *out_data );
+int cgc_rpti_display_img( cgc_prpti_image_data );
+int cgc_rpti_read_magic( cgc_prpti_image_data );
+int cgc_rpti_read_xaxis( cgc_prpti_image_data );
+int cgc_rpti_read_yaxis( cgc_prpti_image_data );
+int cgc_rpti_read_initx( cgc_prpti_image_data rid, int *out_data );
+int cgc_rpti_read_inity( cgc_prpti_image_data rid, int *out_data );
+int cgc_rpti_read_axist( cgc_prpti_image_data );
+int cgc_rpti_read_pixel( cgc_prpti_image_data rid, int *out_data  );
+int cgc_rpti_read_check( cgc_prpti_image_data, int bit_count );
+int cgc_rpti_inc_index( cgc_prpti_image_data, int bit_count );
+int cgc_rpti_read_bits( cgc_prpti_image_data, int bit_count, int *out_data );
 
 #endif

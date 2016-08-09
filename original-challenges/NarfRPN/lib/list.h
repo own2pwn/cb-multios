@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -164,7 +164,7 @@ struct list {
  * @return The length of the list
  */
 static inline unsigned int
-list_length(struct list *list)
+cgc_list_length(struct list *list)
 {
     unsigned int ret = 0;
     struct list_node *cur;
@@ -180,10 +180,10 @@ list_length(struct list *list)
  *
  * @param list The list
  * @param succ The node to insert before
- * @param toadd The node to add
+ * @param toadd The node to cgc_add
  */
 static inline void
-list_insert_before(struct list *list, struct list_node *succ,
+cgc_list_insert_before(struct list *list, struct list_node *succ,
         struct list_node *toadd)
 {
     if (toadd == NULL)
@@ -221,10 +221,10 @@ list_insert_before(struct list *list, struct list_node *succ,
  * @param member The member of each entry containing the list's nodes
  * @param list A pointer to the list
  * @param succ The entry to insert before
- * @param toadd The entry to add
+ * @param toadd The entry to cgc_add
  */
 #define list_insert_entry_before(type, member, list, succ, toadd)       \
-    list_insert_before(list, succ ? &((type *)(succ))->member : NULL,   \
+    cgc_list_insert_before(list, succ ? &((type *)(succ))->member : NULL,   \
             &(toadd)->member)
 
 /**
@@ -232,16 +232,16 @@ list_insert_before(struct list *list, struct list_node *succ,
  *
  * @param list The list
  * @param pred The node to insert after
- * @param toadd The node to add
+ * @param toadd The node to cgc_add
  */
 static inline void
-list_insert_after(struct list *list, struct list_node *pred,
+cgc_list_insert_after(struct list *list, struct list_node *pred,
         struct list_node *toadd)
 {
     if (pred == NULL)
-        list_insert_before(list, list->head, toadd);
+        cgc_list_insert_before(list, list->head, toadd);
     else
-        list_insert_before(list, pred->next, toadd);
+        cgc_list_insert_before(list, pred->next, toadd);
 }
 
 /**
@@ -251,22 +251,22 @@ list_insert_after(struct list *list, struct list_node *pred,
  * @param member The member of each entry containing the list's nodes
  * @param list The list
  * @param pred The entry to insert after
- * @param toadd The entry to add
+ * @param toadd The entry to cgc_add
  */
 #define list_insert_entry_after(type, member, list, pred, toadd)        \
-    list_insert_after(list, pred ? &((type *)(pred))->member : NULL,    \
+    cgc_list_insert_after(list, pred ? &((type *)(pred))->member : NULL,    \
             &(toadd)->member)
 
 /**
  * Insert a new node at the head of a list.
  *
  * @param list The list
- * @param toadd The node to add
+ * @param toadd The node to cgc_add
  */
 static inline void
-list_push_front(struct list *list, struct list_node *toadd)
+cgc_list_push_front(struct list *list, struct list_node *toadd)
 {
-    list_insert_before(list, list->head, toadd);
+    cgc_list_insert_before(list, list->head, toadd);
 }
 
 /**
@@ -275,21 +275,21 @@ list_push_front(struct list *list, struct list_node *toadd)
  * @param type The type of the list entry
  * @param member The member of each entry containing the list's nodes
  * @param list A pointer to the list
- * @param toadd The entry to add
+ * @param toadd The entry to cgc_add
  */
 #define list_push_entry_front(type, member, list, toadd)                \
-    list_push_front(list, &(toadd)->member)
+    cgc_list_push_front(list, &(toadd)->member)
 
 /**
  * Insert a new node at the tail of a list.
  *
  * @param list The list
- * @param toadd The node to add
+ * @param toadd The node to cgc_add
  */
 static inline void
-list_push_back(struct list *list, struct list_node *toadd)
+cgc_list_push_back(struct list *list, struct list_node *toadd)
 {
-    list_insert_after(list, list->tail, toadd);
+    cgc_list_insert_after(list, list->tail, toadd);
 }
 
 /**
@@ -298,30 +298,30 @@ list_push_back(struct list *list, struct list_node *toadd)
  * @param type The type of the list entry
  * @param member The member of each entry containing the list's nodes
  * @param list A pointer to the list
- * @param toadd The entry to add
+ * @param toadd The entry to cgc_add
  */
 #define list_push_entry_back(type, member, list, toadd)                 \
-    list_push_back(list, &(toadd)->member)
+    cgc_list_push_back(list, &(toadd)->member)
 
 /**
  * Insert a new node in order as specified by a comparison function.
  *
  * @param list The list
- * @param toadd The node to add
+ * @param toadd The node to cgc_add
  * @param cmp The comparison function
  */
 static inline void
-list_insert_in_order(struct list *list, struct list_node *toadd,
+cgc_list_insert_in_order(struct list *list, struct list_node *toadd,
         int (*cmp)(const struct list_node *, const struct list_node *))
 {
     struct list_node *cur;
     list_for_each(list, cur)
         if (cmp(toadd, cur) >= 0) {
-            list_insert_before(list, cur, toadd);
+            cgc_list_insert_before(list, cur, toadd);
             return;
         }
 
-    list_push_back(list, toadd);
+    cgc_list_push_back(list, toadd);
 }
 
 /**
@@ -332,11 +332,11 @@ list_insert_in_order(struct list *list, struct list_node *toadd,
  * @param type The type of each list entry
  * @param member The member of each entry containing the list's nodes
  * @param list A pointer to the list
- * @param toadd The entry to add
+ * @param toadd The entry to cgc_add
  * @param cmp The comparison function
  */
 #define list_insert_entry_in_order(type, member, list, toadd, cmp)      \
-    list_insert_in_order(list, &(toadd)->member, cmp)
+    cgc_list_insert_in_order(list, &(toadd)->member, cmp)
 
 /**
  * Find a node in the list based on a predicate function.
@@ -348,7 +348,7 @@ list_insert_in_order(struct list *list, struct list_node *toadd,
  *      if not found
  */
 static inline struct list_node *
-list_find(const struct list *list, int (*pred)(const struct list_node *, void *),
+cgc_list_find(const struct list *list, int (*pred)(const struct list_node *, void *),
         void *data)
 {
     struct list_node *cur;
@@ -373,7 +373,7 @@ list_find(const struct list *list, int (*pred)(const struct list_node *, void *)
  *      not found
  */
 #define list_find_entry(type, member, list, pred, data)                 \
-    list_entry(type, member, list_find(list, pred, data))
+    list_entry(type, member, cgc_list_find(list, pred, data))
 
 /**
  * Remove a node from a list.
@@ -382,7 +382,7 @@ list_find(const struct list *list, int (*pred)(const struct list_node *, void *)
  * @param torem The node to remove
  */
 static inline void
-list_remove(struct list *list, struct list_node *torem)
+cgc_list_remove(struct list *list, struct list_node *torem)
 {
     if (torem == NULL)
         return;
@@ -408,7 +408,7 @@ list_remove(struct list *list, struct list_node *torem)
  */
 #define list_remove_entry(type, member, list, torem) ({                 \
     type *__torem = (torem);                                            \
-    list_remove(list, __torem ? &__torem->member : NULL);               \
+    cgc_list_remove(list, __torem ? &__torem->member : NULL);               \
 })
 
 /**
@@ -418,10 +418,10 @@ list_remove(struct list *list, struct list_node *torem)
  * @return The node at the head of the list
  */
 static inline struct list_node *
-list_pop_front(struct list *list)
+cgc_list_pop_front(struct list *list)
 {
     struct list_node *ret = list->head;
-    list_remove(list, ret);
+    cgc_list_remove(list, ret);
     return ret;
 }
 
@@ -434,7 +434,7 @@ list_pop_front(struct list *list)
  * @return The entry at the head of the list
  */
 #define list_pop_entry_front(type, member, list)                        \
-    list_entry(type, member, list_pop_front(list))
+    list_entry(type, member, cgc_list_pop_front(list))
 
 /**
  * Remove and return the node at the tail of the list.
@@ -443,10 +443,10 @@ list_pop_front(struct list *list)
  * @return The node at the tail of the list
  */
 static inline struct list_node *
-list_pop_back(struct list *list)
+cgc_list_pop_back(struct list *list)
 {
     struct list_node *ret = list->tail;
-    list_remove(list, ret);
+    cgc_list_remove(list, ret);
     return ret;
 }
 
@@ -459,6 +459,6 @@ list_pop_back(struct list *list)
  * @return The entry at the tail of the list
  */
 #define list_pop_entry_back(type, member, list)                         \
-    list_entry(type, member, list_pop_back(list))
+    list_entry(type, member, cgc_list_pop_back(list))
 
 #endif /* LIST_H_ */

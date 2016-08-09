@@ -80,19 +80,19 @@ struct ast {
 /**
  * Parse a buffer of tokens into an AST.
  *
- * @param tokens The tokens to parse
+ * @param tokens The tokens to cgc_parse
  * @param n The number of tokens in the buffer 
- * @param out Pointer to the AST to parse into
+ * @param out Pointer to the AST to cgc_parse into
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int parse(struct token *tokens, size_t n, struct ast *out);
+int cgc_parse(struct token *tokens, cgc_size_t n, struct ast *out);
 
 /**
  * Destroy an AST and all nodes.
  *
  * @param ast The AST to destroy
  */
-void ast_destroy(struct ast *ast);
+void cgc_ast_destroy(struct ast *ast);
 
 #endif /* PARSER_H_ */
 

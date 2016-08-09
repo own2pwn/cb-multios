@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,7 +30,7 @@
 #define CURRENT_VER ((char) 103)
 #define MAX_BUF_LEN 2048
 
-lsimp_msg_t *head = NULL, *tail = NULL;
+cgc_lsimp_msg_t *head = NULL, *tail = NULL;
 
 enum op_t {
   OP_QUEUE = 0,
@@ -39,15 +39,15 @@ enum op_t {
 };
 
 typedef struct data_node {
-  lsimp_data_t *data;
+  cgc_lsimp_data_t *data;
   struct data_node *next;
-} data_node_t;
+} cgc_data_node_t;
 
-data_node_t* sorted(data_node_t *list)
+cgc_data_node_t* cgc_sorted(cgc_data_node_t *list)
 {
   if (list)
   {
-    data_node_t *s = NULL, *next = list, *cur = NULL, *c = NULL;;
+    cgc_data_node_t *s = NULL, *next = list, *cur = NULL, *c = NULL;;
     if (list->next == NULL)
       return list;
 
@@ -80,7 +80,7 @@ data_node_t* sorted(data_node_t *list)
   return NULL;
 }
 
-void queue_msg(lsimp_msg_t *msg)
+void cgc_queue_msg(cgc_lsimp_msg_t *msg)
 {
   if (msg == NULL)
     return;
@@ -95,43 +95,43 @@ void queue_msg(lsimp_msg_t *msg)
   printf("QUEUED\n");
 }
 
-void clear_queue()
+void cgc_clear_queue()
 {
   if (head)
   {
-    lsimp_msg_t *msg = head, *old = msg;
+    cgc_lsimp_msg_t *msg = head, *old = msg;
     while (msg)
     {
       if (msg->type == LMT_KEYX)
       {
         if (msg->keyx.key)
-          free(msg->keyx.key);
+          cgc_free(msg->keyx.key);
       }
       else if (msg->type == LMT_DATA)
       {
         if (msg->data.data)
-          free(msg->data.data);
+          cgc_free(msg->data.data);
       }
       else if (msg->type == LMT_TEXT)
       {
         if (msg->text.msg)
-          free(msg->text.msg);
+          cgc_free(msg->text.msg);
       }
       old = msg;
       msg = msg->next;
-      free(old);
+      cgc_free(old);
     }
   }
   printf("QUEUE CLEARED\n");
 }
 
-void process()
+void cgc_process()
 {
   int ttl = 0;
-  lsimp_keyx_t *keyx = NULL;
-  lsimp_helo_t *helo = NULL;
-  data_node_t *dchain = NULL, *dtail = NULL;
-  lsimp_msg_t *msg = head;
+  cgc_lsimp_keyx_t *keyx = NULL;
+  cgc_lsimp_helo_t *helo = NULL;
+  cgc_data_node_t *dchain = NULL, *dtail = NULL;
+  cgc_lsimp_msg_t *msg = head;
 
   if (head)
   {
@@ -207,7 +207,7 @@ void process()
         printf("DATA [SEQ %d] [LEN %d]\n", msg->data.seq, msg->data.data_len);
         if (dchain == NULL)
         {
-          if ((dchain = (data_node_t *)malloc(sizeof(data_node_t))) != NULL)
+          if ((dchain = (cgc_data_node_t *)cgc_malloc(sizeof(cgc_data_node_t))) != NULL)
           {
             dchain->data = &msg->data;
             dchain->next = NULL;
@@ -216,7 +216,7 @@ void process()
         }
         else
         {
-          if ((dtail->next = (data_node_t *)malloc(sizeof(data_node_t))) != NULL)
+          if ((dtail->next = (cgc_data_node_t *)cgc_malloc(sizeof(cgc_data_node_t))) != NULL)
           {
             dtail = dtail->next;
             dtail->data = &msg->data;
@@ -251,7 +251,7 @@ void process()
   if (dchain)
   {
     // dtail is wrong after this, but it's okay
-    data_node_t *p = sorted(dchain);
+    cgc_data_node_t *p = cgc_sorted(dchain);
     printf("SECURE MESSAGE:\n");
     int seq = 1, old = 0;
     while (p)
@@ -266,7 +266,7 @@ void process()
         printf("(SEQ #%d MISSING)", seq);
       else
       {
-        if (decode_data(keyx, p->data))
+        if (cgc_decode_data(keyx, p->data))
           printf("%s", p->data->data);
         p = p->next;
       }
@@ -276,45 +276,45 @@ void process()
   }
 
   printf("PROCESS DONE\n");
-  clear_queue();
+  cgc_clear_queue();
   head = tail = NULL;
 }
 
-void quit()
+void cgc_quit()
 {
   printf("QUIT\n");
-  exit(0);
+  cgc_exit(0);
 }
 
 int main()
 {
   unsigned int len;
   char buf[MAX_BUF_LEN];
-  lsimp_msg_t *msg;
+  cgc_lsimp_msg_t *msg;
 
   while (1)
   {
-    if (read_n(STDIN, (char *)&len, sizeof(len)) <= 0)
+    if (cgc_read_n(STDIN, (char *)&len, sizeof(len)) <= 0)
       return -1;
     if (len > MAX_BUF_LEN || len < sizeof(int))
       return -1;
-    if (read_n(STDIN, (char *)&buf, len) <= 0)
+    if (cgc_read_n(STDIN, (char *)&buf, len) <= 0)
       return -1;
 
     switch (*(int *)buf)
     {
       case OP_QUEUE:
-        msg = parse_msg(buf + sizeof(int), len - sizeof(int));
+        msg = cgc_parse_msg(buf + sizeof(int), len - sizeof(int));
         if (msg != NULL)
-          queue_msg(msg);
+          cgc_queue_msg(msg);
         else
           printf("FAILED TO QUEUE\n");
         break;
       case OP_PROCESS:
-        process();
+        cgc_process();
         break;
       case OP_QUIT:
-        quit();
+        cgc_quit();
         break;
       default:
         return -1;

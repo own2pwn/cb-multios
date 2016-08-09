@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,22 +25,22 @@
 #include "card.h"
 
 
-struct card *create_card(uint8_t suit, uint8_t rank) {
+struct card *cgc_create_card(cgc_uint8_t suit, cgc_uint8_t rank) {
 
-	if ((FALSE == is_valid_suit(suit)) || 
-		(FALSE == is_valid_rank(rank))) {
+	if ((FALSE == cgc_is_valid_suit(suit)) || 
+		(FALSE == cgc_is_valid_rank(rank))) {
 		return NULL;
 	}
 
 	struct card *c = NULL;
-	c = calloc(sizeof(struct card));
+	c = cgc_calloc(sizeof(struct card));
 	c->suit = suit;
 	c->rank = rank;
 
 	return c;
 }
 
-int is_rank(struct card *c, uint8_t rank) {
+int cgc_is_rank(struct card *c, cgc_uint8_t rank) {
 	if (NULL == c) {
 		return ERR_UNINITIALIZED_CARD;
 	}
@@ -51,11 +51,11 @@ int is_rank(struct card *c, uint8_t rank) {
 	}
 }
 
-void destroy_card(struct card *c) {
-	free(c);
+void cgc_destroy_card(struct card *c) {
+	cgc_free(c);
 }
 
-int is_valid_suit(uint8_t suit) {
+int cgc_is_valid_suit(cgc_uint8_t suit) {
 	if ((1 <= suit) && (4 >= suit)) {
 		return TRUE;
 	} else {
@@ -63,7 +63,7 @@ int is_valid_suit(uint8_t suit) {
 	}
 }
 
-int is_valid_rank(uint8_t rank) {
+int cgc_is_valid_rank(cgc_uint8_t rank) {
 	if ((1 <= rank) && (13 >= rank)) {
 		return TRUE;
 	} else {
@@ -71,7 +71,7 @@ int is_valid_rank(uint8_t rank) {
 	}
 }
 
-int is_equal(struct card *c1, struct card *c2) {
+int cgc_is_equal(struct card *c1, struct card *c2) {
 	if ((NULL == c1) && (NULL == c2)) {
 		return TRUE;
 	}
@@ -86,16 +86,16 @@ int is_equal(struct card *c1, struct card *c2) {
 	}
 }
 
-int is_set_equal(struct card *cards1[], struct card *cards2[], uint8_t qty) {
+int cgc_is_set_equal(struct card *cards1[], struct card *cards2[], cgc_uint8_t qty) {
 	if (0 == qty) {
-		return is_equal(cards1[0], cards2[0]);
+		return cgc_is_equal(cards1[0], cards2[0]);
 	}
 
 	unsigned int count = 0;
 	unsigned int found = 0;
 	for (int idx = 0; idx < qty; idx++) {
 		for (int idx2 = 0; idx2 < qty; idx2++) {
-			if (TRUE == is_equal(cards1[idx], cards2[idx2])) {
+			if (TRUE == cgc_is_equal(cards1[idx], cards2[idx2])) {
 				found++;
 				count++;
 			}

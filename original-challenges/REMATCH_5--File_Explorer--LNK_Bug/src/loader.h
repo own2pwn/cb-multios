@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -40,45 +40,45 @@ THE SOFTWARE.
 
 #pragma pack(push,1)
 typedef struct ExecutableFileHeader_s {
-  uint32_t  size;
-  uint32_t  magic;
-  uint8_t   type;
-  uint16_t  functionCount;
-  uint16_t  functionTableOffset;
-  uint16_t  resourceCount;
-  uint16_t  resourceOffset;
-  uint16_t  functionsSize;
-  uint16_t  functionsOffset;
-} ExecutableFileHeader;
+  cgc_uint32_t  size;
+  cgc_uint32_t  magic;
+  cgc_uint8_t   type;
+  cgc_uint16_t  functionCount;
+  cgc_uint16_t  functionTableOffset;
+  cgc_uint16_t  resourceCount;
+  cgc_uint16_t  resourceOffset;
+  cgc_uint16_t  functionsSize;
+  cgc_uint16_t  functionsOffset;
+} cgc_ExecutableFileHeader;
 // Followed by Function Table
 // Followed by Resource Entries
 // FOllowed by function bodies
 
 typedef struct FunctionTableEntry_s {
   char      name[64];
-  uint16_t  index;
-  uint32_t  offset; // offset within file when in file, offset in functions when in memory
-} FunctionTableEntry;
+  cgc_uint16_t  index;
+  cgc_uint32_t  offset; // offset within file when in file, offset in functions when in memory
+} cgc_FunctionTableEntry;
 
 typedef struct ResourceEntry_s {
-  uint16_t  type;
+  cgc_uint16_t  type;
   char      value[64];
-} ResourceEntry;
+} cgc_ResourceEntry;
 #pragma pack(pop)
 
 typedef struct ExecutableInMemory_s {
-  uint8_t             type;
-  uint16_t            functionCount;
-  FunctionTableEntry  *functionTable;
-  uint16_t            resourceCount;
-  ResourceEntry       *resourceTable;
-  uint8_t             *functions;
-} ExecutableInMemory;
+  cgc_uint8_t             type;
+  cgc_uint16_t            functionCount;
+  cgc_FunctionTableEntry  *functionTable;
+  cgc_uint16_t            resourceCount;
+  cgc_ResourceEntry       *resourceTable;
+  cgc_uint8_t             *functions;
+} cgc_ExecutableInMemory;
 
-ExecutableInMemory *LoadSharedLibrary(FileNode *file); // Calls SharedLibraryMain inside
-uint8_t *GetFunctionAddress(char *name, ExecutableInMemory *sl); // Get the address of the function
-void FreeLibrary(ExecutableInMemory *sl);
-int ExecuteFunction(uint8_t *address);
-char *LookupResource(ExecutableInMemory *sl, uint16_t index);
+cgc_ExecutableInMemory *cgc_LoadSharedLibrary(cgc_FileNode *file); // Calls SharedLibraryMain inside
+cgc_uint8_t *cgc_GetFunctionAddress(char *name, cgc_ExecutableInMemory *sl); // Get the address of the function
+void cgc_FreeLibrary(cgc_ExecutableInMemory *sl);
+int cgc_ExecuteFunction(cgc_uint8_t *address);
+char *cgc_LookupResource(cgc_ExecutableInMemory *sl, cgc_uint16_t index);
 
 #endif

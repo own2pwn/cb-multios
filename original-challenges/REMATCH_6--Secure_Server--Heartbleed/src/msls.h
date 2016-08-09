@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -55,22 +55,22 @@ THE SOFTWARE.
 
 
 
-SLS_FUNCTION_PTRS *msls_get_sls_functions();
-SLS_MESSAGE *msls_receive_msg(SERVER_STATE *state);
-int msls_send_msg(SLS_MESSAGE *msg);
-void msls_cleanup(SERVER_STATE *state);
-int msls_version_check(uint16_t version);
-void msls_destroy_msg(SLS_MESSAGE *msg);
-void msls_send_error_msg(uint16_t error_code, uint8_t severity);
-uint32_t msls_generate_checksum(SLS_MESSAGE *msg);
-uint32_t msls_generate_checksum_outgoing(SLS_MESSAGE *msg);
-void msls_handle_heartbeat(SLS_MESSAGE *msg);
-void msls_handle_handshake(SERVER_STATE *state, SLS_MESSAGE *msg);
-void msls_handle_error(SERVER_STATE *state, SLS_MESSAGE *msg);
-void msls_handle_changespec(SERVER_STATE *state,CLIENT_CONTEXT *connection, SLS_MESSAGE *msg);
-void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection, SLS_MESSAGE *msg);
+cgc_SLS_FUNCTION_PTRS *cgc_msls_get_sls_functions();
+cgc_SLS_MESSAGE *cgc_msls_receive_msg(cgc_SERVER_STATE *state);
+int cgc_msls_send_msg(cgc_SLS_MESSAGE *msg);
+void cgc_msls_cleanup(cgc_SERVER_STATE *state);
+int cgc_msls_version_check(cgc_uint16_t version);
+void cgc_msls_destroy_msg(cgc_SLS_MESSAGE *msg);
+void cgc_msls_send_error_msg(cgc_uint16_t error_code, cgc_uint8_t severity);
+cgc_uint32_t cgc_msls_generate_checksum(cgc_SLS_MESSAGE *msg);
+cgc_uint32_t cgc_msls_generate_checksum_outgoing(cgc_SLS_MESSAGE *msg);
+void cgc_msls_handle_heartbeat(cgc_SLS_MESSAGE *msg);
+void cgc_msls_handle_handshake(cgc_SERVER_STATE *state, cgc_SLS_MESSAGE *msg);
+void cgc_msls_handle_error(cgc_SERVER_STATE *state, cgc_SLS_MESSAGE *msg);
+void cgc_msls_handle_changespec(cgc_SERVER_STATE *state,cgc_CLIENT_CONTEXT *connection, cgc_SLS_MESSAGE *msg);
+void cgc_msls_handle_application(cgc_SERVER_STATE *state, cgc_CLIENT_CONTEXT *connection, cgc_SLS_MESSAGE *msg);
 
 
 
-uint32_t get_random();
+cgc_uint32_t cgc_get_cgc_random();
 #endif

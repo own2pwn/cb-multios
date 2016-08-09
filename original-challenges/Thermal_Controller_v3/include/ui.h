@@ -4,7 +4,7 @@ Author: James Connor (jymbo@cromulence.com)
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,9 +31,9 @@ THE SOFTWARE.
 #define MAGIC 			0x5AA5
 
 
-int ui_main();
-void get_bytes(unsigned char *buf, unsigned int num);
-void prime_buf(unsigned char *buf);
-int get_command(pState state);
+int cgc_ui_main();
+void cgc_get_bytes(unsigned char *buf, unsigned int num);
+void cgc_prime_buf(unsigned char *buf);
+int cgc_get_command(cgc_pState state);
 
 #endif

@@ -25,10 +25,10 @@
 #include <libcgc.h>
 #include <stdint.h>
 
-extern int memcmp(void *s1, const void *s2, size_t n)
+extern int cgc_memcmp(void *s1, const void *s2, cgc_size_t n)
 {
   unsigned char *p1 = (unsigned char *)s1, *p2 = (unsigned char *)s2;
-  size_t i = 0;
+  cgc_size_t i = 0;
   while (i < n)
   {
     if (*p1 == *p2)

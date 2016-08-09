@@ -31,7 +31,7 @@ enum {
 
 int main(void) {
 
-    uint32_t command[1] = {0};
+    cgc_uint32_t command[1] = {0};
     int ret = 0;
 
     char *syllables_buf_p;
@@ -41,14 +41,14 @@ int main(void) {
     ALLOC(BUFFER_LEN, &notes_buf_p);
 
     while (1) {
-        RECV(command, sizeof(uint32_t));
+        RECV(command, sizeof(cgc_uint32_t));
 
         switch (command[0]) {
             case CMD_TO_SYLLABLES:
-                ret = to_syllables(syllables_buf_p, notes_buf_p);
+                ret = cgc_to_syllables(syllables_buf_p, notes_buf_p);
                 break;
             case CMD_TO_NOTES:
-                ret = to_notes(syllables_buf_p, notes_buf_p);
+                ret = cgc_to_notes(syllables_buf_p, notes_buf_p);
                 break;
             default:
                 ret = ERR_INVALID_CMD;
@@ -58,8 +58,8 @@ int main(void) {
             SENDSI(ret);
             return ret;
         } else {
-            memset((void *)syllables_buf_p, 0, BUFFER_LEN);
-            memset((void *)notes_buf_p, 0, BUFFER_LEN);
+            cgc_memset((void *)syllables_buf_p, 0, BUFFER_LEN);
+            cgc_memset((void *)notes_buf_p, 0, BUFFER_LEN);
         }
     }
     return ret;

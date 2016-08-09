@@ -21,18 +21,18 @@ public:
     String upper( void ) const;
     String lower( void ) const;
 
-    String Trim( size_t length );
-    String SubString( size_t startPos, size_t endPos ) const;
+    String Trim( cgc_size_t length );
+    String SubString( cgc_size_t startPos, cgc_size_t endPos ) const;
     String StripSpaces( void ) const;
 
-    size_t length( void );
+    cgc_size_t length( void );
     bool empty( void );
 
 public:
-    const static size_t STRING_END_POS = 0xFFFFFFFF;
+    const static cgc_size_t STRING_END_POS = 0xFFFFFFFF;
 
 private:
-    size_t m_length;
+    cgc_size_t m_length;
     char *m_pData;
 };
 

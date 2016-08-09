@@ -25,25 +25,25 @@
 #include "conv.h"
 
 
-unsigned char is_non_printable(const unsigned char ch) {
-    if (FALSE == is_printable(ch)) {
+unsigned char cgc_is_non_printable(const unsigned char ch) {
+    if (FALSE == cgc_is_printable(ch)) {
         return TRUE;
     } else {
         return FALSE;
     }
 }
 
-unsigned char is_printable(const unsigned char ch) {
-    if ((TRUE == is_digit(ch)) ||
-        (TRUE == is_letter(ch)) ||
-        (TRUE == is_symbol(ch))) {
+unsigned char cgc_is_printable(const unsigned char ch) {
+    if ((TRUE == cgc_is_digit(ch)) ||
+        (TRUE == cgc_is_letter(ch)) ||
+        (TRUE == cgc_is_symbol(ch))) {
         return TRUE;
     } else {
         return FALSE;
     }
 }
 
-unsigned char is_digit(const unsigned char ch) {
+unsigned char cgc_is_digit(const unsigned char ch) {
     if ((0x30 <= ch) && (0x39 >= ch)) {
         return TRUE;
     } else {
@@ -51,8 +51,8 @@ unsigned char is_digit(const unsigned char ch) {
     }
 }
 
-unsigned char is_hexdigit(const unsigned char ch) {
-    if ((TRUE == is_digit(ch)) ||
+unsigned char cgc_is_hexdigit(const unsigned char ch) {
+    if ((TRUE == cgc_is_digit(ch)) ||
         (('a' <= ch) && ('f' >= ch)) ||
         (('A' <= ch) && ('F' >= ch))) {
         return TRUE;
@@ -61,16 +61,16 @@ unsigned char is_hexdigit(const unsigned char ch) {
     }
 }
 
-unsigned char is_letter(const unsigned char ch) {
-    if ((TRUE == is_upper(ch)) ||
-        (TRUE == is_lower(ch))) {
+unsigned char cgc_is_letter(const unsigned char ch) {
+    if ((TRUE == cgc_is_upper(ch)) ||
+        (TRUE == cgc_is_lower(ch))) {
         return TRUE;
     } else {
         return FALSE;
     }
 }
 
-unsigned char is_upper(const unsigned char ch) {
+unsigned char cgc_is_upper(const unsigned char ch) {
     if ((0x41 <= ch) && (0x5A >= ch)) {
         return TRUE;
     } else {
@@ -78,7 +78,7 @@ unsigned char is_upper(const unsigned char ch) {
     }
 }
 
-unsigned char is_lower(const unsigned char ch) {
+unsigned char cgc_is_lower(const unsigned char ch) {
     if ((0x61 <= ch) && (0x7A >= ch)) {
         return TRUE;
     } else {
@@ -86,7 +86,7 @@ unsigned char is_lower(const unsigned char ch) {
     }
 }
 
-unsigned char is_symbol(const unsigned char ch) {
+unsigned char cgc_is_symbol(const unsigned char ch) {
     if  (((0x21 <= ch) && (ch <= 0x2F)) || 
          ((0x3A <= ch) && (ch <= 0x40)) ||
          ((0x5B <= ch) && (ch <= 0x60)) ||
@@ -98,16 +98,16 @@ unsigned char is_symbol(const unsigned char ch) {
 }
 
 
-int toupper(int c) {
-    return is_lower(c) ? c - 'a' + 'A' : c;
+int cgc_toupper(int c) {
+    return cgc_is_lower(c) ? c - 'a' + 'A' : c;
 }
  
-int tolower(int c) {
-    return is_upper(c) ? c - 'A' + 'a' : c;
+int cgc_tolower(int c) {
+    return cgc_is_upper(c) ? c - 'A' + 'a' : c;
 }
 
 
-char todigit(unsigned int value, unsigned int base) {
+char cgc_todigit(unsigned int value, unsigned int base) {
     if (base < 2 || base > 16 || value >= base)
         return '\0';
 
@@ -117,14 +117,14 @@ char todigit(unsigned int value, unsigned int base) {
         return (value - 10) + 'a';
 }
 
-int fromdigit(char digit, unsigned int base) {
+int cgc_fromdigit(char digit, unsigned int base) {
     int ret;
 
     if (base < 2 || base > 16)
         return ERRNO_CONV;
 
-    digit = tolower(digit);
-    if (is_digit(digit))
+    digit = cgc_tolower(digit);
+    if (cgc_is_digit(digit))
         ret = digit - '0';
     else
         ret = digit - 'a' + 10;
@@ -132,7 +132,7 @@ int fromdigit(char digit, unsigned int base) {
     return (ret >= 0 && ret < (int)base) ? ret : ERRNO_CONV;
 }
 
-int utostr(char* str, unsigned int n, unsigned int i, const char term) {
+int cgc_utostr(char* str, unsigned int n, unsigned int i, const char term) {
 
     int idx = 0;
     unsigned long tmp = i;
@@ -172,7 +172,7 @@ int utostr(char* str, unsigned int n, unsigned int i, const char term) {
     return 0;
 }
 
-int itostr(char* str, unsigned int n, int i, const char term) {
+int cgc_itostr(char* str, unsigned int n, int i, const char term) {
 
     int idx = 0;
     unsigned long tmp = 0;
@@ -222,15 +222,15 @@ int itostr(char* str, unsigned int n, int i, const char term) {
     return 0;
 }
 
-ssize_t strtou(const char *str, unsigned int base, unsigned int *result) {
-    ssize_t ret = 0;
+cgc_ssize_t cgc_strtou(const char *str, unsigned int base, unsigned int *result) {
+    cgc_ssize_t ret = 0;
     unsigned long long acc = 0;
     int digit;
 
     if (base < 2 || base > 16)
         return ERRNO_CONV;
 
-    while (*str && (digit = fromdigit(*str++, base)) != ERRNO_CONV) {
+    while (*str && (digit = cgc_fromdigit(*str++, base)) != ERRNO_CONV) {
         if ((acc *= base) > UINT_MAX)
             return ERRNO_CONV;
 
@@ -245,15 +245,15 @@ ssize_t strtou(const char *str, unsigned int base, unsigned int *result) {
     return ret;
 }
 
-ssize_t strtoi(const char *str, unsigned int base, int *result) {
-    ssize_t ret;
+cgc_ssize_t cgc_strtoi(const char *str, unsigned int base, int *result) {
+    cgc_ssize_t ret;
     unsigned int u;
     int isnegative = 0;
 
     if (*str == '-')
         isnegative = 1;
 
-    if ((ret = strtou(str + isnegative, base, &u)) == ERRNO_CONV)
+    if ((ret = cgc_strtou(str + isnegative, base, &u)) == ERRNO_CONV)
         return ERRNO_CONV;
 
     if (u > ((unsigned int)INT_MAX + isnegative))

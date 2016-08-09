@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -59,135 +59,135 @@ static const char menuNewPrompt[] = \
     "4) White Noise [number of samples]\n" \
     "5) Cancel\n";
 
-Interface::Interface()
+cgc_Interface::cgc_Interface()
 {
 }
 
-Interface::~Interface()
+cgc_Interface::~cgc_Interface()
 {
 }
 
-void Interface::run()
+void cgc_Interface::cgc_run()
 {
-    menuMain();
+    cgc_menuMain();
 }
 
-bool Interface::menuMain()
+bool cgc_Interface::cgc_menuMain()
 {
-    AudioTrack *track, *other;
-    int value;
+    cgc_AudioTrack *track, *other;
+    int cgc_value;
     char line[100], *word, *buf;
     while (true)
     {
-        fwrite(menuMainPrompt, strlen(menuMainPrompt), stdout);
-        if (freaduntil(line, sizeof(line), '\n', stdin) < 0)
+        cgc_fwrite(menuMainPrompt, cgc_strlen(menuMainPrompt), stdout);
+        if (cgc_freaduntil(line, sizeof(line), '\n', stdin) < 0)
             return false;
 
         if (line[0] == '9')
             break;
         buf = line;
-        word = strsep(&buf, " ");
+        word = cgc_strsep(&buf, " ");
         switch(line[0])
         {
         case '1':
-            if (!menuNew())
+            if (!cgc_menuNew())
                 return false;
             break;
         case '2':
-            if (!importAudio())
+            if (!cgc_importAudio())
                 return false;
             break;
         case '3':
-            if (!menuExport())
+            if (!cgc_menuExport())
                 return false;
             break;
         case '4':
-            listTracks();
+            cgc_listTracks();
             break;
         case '5':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing track\n");
+                cgc_fprintf(stdout, "Missing track\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            track = mixer.getTrack(value);
+            cgc_value = cgc_strtol(word, NULL, 10);
+            track = mixer.cgc_getTrack(cgc_value);
             if (track == NULL)
             {
-                fprintf(stdout, "Invalid track\n");
+                cgc_fprintf(stdout, "Invalid track\n");
                 continue;
             }
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing gain\n");
+                cgc_fprintf(stdout, "Missing gain\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value < -1000 || value > 1000)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value < -1000 || cgc_value > 1000)
             {
-                fprintf(stdout, "Invalid gain (-10.00...10.00)\n");
+                cgc_fprintf(stdout, "Invalid gain (-10.00...10.00)\n");
                 continue;
             }
 
-            track->setGain(Gain::fromRational(value, 100));
+            track->cgc_setGain(cgc_Gain::cgc_fromRational(cgc_value, 100));
             break;
         case '6':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing track\n");
+                cgc_fprintf(stdout, "Missing track\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            track = mixer.getTrack(value);
+            cgc_value = cgc_strtol(word, NULL, 10);
+            track = mixer.cgc_getTrack(cgc_value);
             if (track == NULL)
             {
-                fprintf(stdout, "Invalid track\n");
+                cgc_fprintf(stdout, "Invalid track\n");
                 continue;
             }
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing pan\n");
+                cgc_fprintf(stdout, "Missing pan\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value < -100 || value > 100)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value < -100 || cgc_value > 100)
             {
-                fprintf(stdout, "Invalid pan (-1.00...1.00)\n");
+                cgc_fprintf(stdout, "Invalid pan (-1.00...1.00)\n");
                 continue;
             }
 
-            if (value == 100)
-                track->setPan(INT32_MAX);
+            if (cgc_value == 100)
+                track->cgc_setPan(INT32_MAX);
             else
-                track->setPan((double)value / 100 * INT32_MAX);
+                track->cgc_setPan((double)cgc_value / 100 * INT32_MAX);
             break;
         case '7':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing track 1\n");
+                cgc_fprintf(stdout, "Missing track 1\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            track = mixer.getTrack(value);
+            cgc_value = cgc_strtol(word, NULL, 10);
+            track = mixer.cgc_getTrack(cgc_value);
             if (track == NULL)
             {
-                fprintf(stdout, "Invalid track 1\n");
+                cgc_fprintf(stdout, "Invalid track 1\n");
                 continue;
             }
 
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word != NULL)
             {
-                value = strtol(word, NULL, 10);
-                other = mixer.getTrack(value);
+                cgc_value = cgc_strtol(word, NULL, 10);
+                other = mixer.cgc_getTrack(cgc_value);
                 if (other == NULL)
                 {
-                    fprintf(stdout, "Invalid track 2\n");
+                    cgc_fprintf(stdout, "Invalid track 2\n");
                     continue;
                 }
             }
@@ -198,42 +198,42 @@ bool Interface::menuMain()
 
             if (other == NULL)
             {
-                if (!track->getStereo())
+                if (!track->cgc_getStereo())
                 {
-                    fprintf(stdout, "Cannot split a mono track\n");
+                    cgc_fprintf(stdout, "Cannot split a mono track\n");
                     continue;
                 }
-                mixer.splitTrack(track->id);
+                mixer.cgc_splitTrack(track->id);
             }
             else
             {
-                if (track->getStereo() || other->getStereo())
+                if (track->cgc_getStereo() || other->cgc_getStereo())
                 {
-                    fprintf(stdout, "Cannot combine a stereo track\n");
+                    cgc_fprintf(stdout, "Cannot combine a stereo track\n");
                     continue;
                 }
-                mixer.combineTracks(track->id, other->id);
+                mixer.cgc_combineTracks(track->id, other->id);
             }
             break;
         case '8':
-            menuEffects();
+            cgc_menuEffects();
             break;
         default:
-            fprintf(stdout, "Invalid choice\n");
+            cgc_fprintf(stdout, "Invalid choice\n");
             break;
         }
     }
-    fprintf(stdout, "Thank you for trying out Grit! Please leave us a nice review on the app store.\n");
+    cgc_fprintf(stdout, "Thank you for trying out Grit! Please leave us a nice review on the app store.\n");
     return true;
 }
 
-bool Interface::menuExport()
+bool cgc_Interface::cgc_menuExport()
 {
     char line[100];
     while (true)
     {
-        fwrite(menuExportPrompt, strlen(menuExportPrompt), stdout);
-        if (freaduntil(line, sizeof(line), '\n', stdin) < 0)
+        cgc_fwrite(menuExportPrompt, cgc_strlen(menuExportPrompt), stdout);
+        if (cgc_freaduntil(line, sizeof(line), '\n', stdin) < 0)
             return false;
 
         if (line[0] == '4')
@@ -241,16 +241,16 @@ bool Interface::menuExport()
         switch(line[0])
         {
         case '1':
-            exportAudio(Compression32());
+            cgc_exportAudio(cgc_Compression32());
             break;
         case '2':
-            exportAudio(CompressionFour());
+            cgc_exportAudio(cgc_CompressionFour());
             break;
         case '3':
-            exportAudio(CompressionEight());
+            cgc_exportAudio(cgc_CompressionEight());
             break;
         default:
-            fprintf(stdout, "Invalid choice\n");
+            cgc_fprintf(stdout, "Invalid choice\n");
             continue;
         }
         break;
@@ -258,68 +258,68 @@ bool Interface::menuExport()
     return true;
 }
 
-bool Interface::menuNew()
+bool cgc_Interface::cgc_menuNew()
 {
     char line[100], *buf, *word;
     unsigned int samples, hz;
-    AudioTrack *track;
+    cgc_AudioTrack *track;
     while (true)
     {
-        fwrite(menuNewPrompt, strlen(menuNewPrompt), stdout);
-        if (freaduntil(line, sizeof(line), '\n', stdin) < 0)
+        cgc_fwrite(menuNewPrompt, cgc_strlen(menuNewPrompt), stdout);
+        if (cgc_freaduntil(line, sizeof(line), '\n', stdin) < 0)
             return false;
 
         if (line[0] == '5')
             break;
 
         buf = line;
-        word = strsep(&buf, " "); // ignore command
-        word = strsep(&buf, " ");
+        word = cgc_strsep(&buf, " "); // ignore command
+        word = cgc_strsep(&buf, " ");
         if (word == NULL)
         {
-            fprintf(stdout, "Missing samples\n");
+            cgc_fprintf(stdout, "Missing samples\n");
             continue;
         }
-        samples = strtoul(word, NULL, 10);
+        samples = cgc_strtoul(word, NULL, 10);
         if (samples > INT32_MAX)
         {
-            fprintf(stdout, "Invalid samples\n");
+            cgc_fprintf(stdout, "Invalid samples\n");
             continue;
         }
 
         switch(line[0])
         {
         case '1':
-            track = new AudioTrack(AudioStream::fromSilence(samples));
-            mixer.addTrack(track);
+            track = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSilence(samples));
+            mixer.cgc_addTrack(track);
             break;
         case '2':
         case '3':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing frequency\n");
+                cgc_fprintf(stdout, "Missing frequency\n");
                 continue;
             }
-            hz = strtoul(word, NULL, 10);
+            hz = cgc_strtoul(word, NULL, 10);
             if (hz >= 50000)
             {
-                fprintf(stdout, "Invalid frequency\n");
+                cgc_fprintf(stdout, "Invalid frequency\n");
                 continue;
             }
 
             if (line[0] == '2')
-                track = new AudioTrack(AudioStream::fromSineWave(samples, hz));
+                track = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSineWave(samples, hz));
             else
-                track = new AudioTrack(AudioStream::fromSquareWave(samples, hz));
-            mixer.addTrack(track);
+                track = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSquareWave(samples, hz));
+            mixer.cgc_addTrack(track);
             break;
         case '4':
-            track = new AudioTrack(mixer.generateWhiteNoise(samples));
-            mixer.addTrack(track);
+            track = new cgc_AudioTrack(mixer.cgc_generateWhiteNoise(samples));
+            mixer.cgc_addTrack(track);
             break;
         default:
-            fprintf(stdout, "Invalid choice\n");
+            cgc_fprintf(stdout, "Invalid choice\n");
             continue;
         }
 
@@ -328,65 +328,65 @@ bool Interface::menuNew()
     return true;
 }
 
-void Interface::listTracks()
+void cgc_Interface::cgc_listTracks()
 {
-    for (auto it = mixer.getTracks(); !it.empty(); it.next())
+    for (auto it = mixer.cgc_getTracks(); !it.cgc_empty(); it.cgc_next())
     {
-        AudioTrack *track = it.value();
-        fprintf(stdout, "%d) %s samples=%d\n", track->id, track->getStereo() ? "stereo" : "mono", track->getLength());
+        cgc_AudioTrack *track = it.cgc_value();
+        cgc_fprintf(stdout, "%d) %s samples=%d\n", track->id, track->cgc_getStereo() ? "stereo" : "mono", track->cgc_getLength());
     }
 }
 
-void Interface::exportAudio(const Compression &comp)
+void cgc_Interface::cgc_exportAudio(const cgc_Compression &comp)
 {
-    AudioTrack *track = mixer.exportMix();
-    unsigned int size = sizeof(AudioHeader) + comp.getMaxBufferSize(*track);
-    uint8_t *data = new uint8_t[size];
+    cgc_AudioTrack *track = mixer.cgc_exportMix();
+    unsigned int size = sizeof(AudioHeader) + comp.cgc_getMaxBufferSize(*track);
+    cgc_uint8_t *data = new cgc_uint8_t[size];
 
     AudioHeader *hdr = (AudioHeader *)data;
     hdr->magic = 0x2e617564;
     hdr->offset = sizeof(AudioHeader);
-    hdr->samples = track->getLength();
-    hdr->encoding = comp.getId();
+    hdr->samples = track->cgc_getLength();
+    hdr->encoding = comp.cgc_getId();
     hdr->sample_rate = SAMPLE_RATE;
-    hdr->channels = track->getStereo() ? 2 : 1;
+    hdr->channels = track->cgc_getStereo() ? 2 : 1;
 
-    comp.compress(*track, &data[sizeof(AudioHeader)]);
+    comp.cgc_compress(*track, &data[sizeof(AudioHeader)]);
 
-    fwrite(&size, sizeof(size), stdout);
-    fwrite(data, size, stdout);
+    cgc_fwrite(&size, sizeof(size), stdout);
+    cgc_fwrite(data, size, stdout);
 
     delete data;
     delete track;
 }
 
-bool Interface::importAudio()
+bool cgc_Interface::cgc_importAudio()
 {
     unsigned int size;
-    if (fread(&size, sizeof(size), stdin) != sizeof(size))
+    if (cgc_fread(&size, sizeof(size), stdin) != sizeof(size))
         return false;
     if (size >= INT32_MAX || size <= sizeof(AudioHeader))
         return false;
-    uint8_t *data = new uint8_t[size];
-    if (fread(data, size, stdin) != size)
+    cgc_uint8_t *data = new cgc_uint8_t[size];
+    if (cgc_fread(data, size, stdin) != size)
         return false;
 
     AudioHeader *hdr = (AudioHeader *)data;
     if (hdr->magic == 0x2e617564 && hdr->offset == sizeof(AudioHeader) && hdr->samples < INT32_MAX && hdr->sample_rate == SAMPLE_RATE)
     {
-        Compression *comp = Compression::fromId(hdr->encoding);
+        cgc_Compression *comp = cgc_Compression::cgc_fromId(hdr->encoding);
         if (comp != NULL)
         {
-            AudioTrack *track;
+            cgc_AudioTrack *track;
             if (hdr->channels == 1)
-                track = new AudioTrack(AudioStream::fromSilence(hdr->samples));
+                track = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSilence(hdr->samples));
             else
-                track = new AudioTrack(AudioStream::fromSilence(hdr->samples), AudioStream::fromSilence(hdr->samples));
+                track = new cgc_AudioTrack(cgc_AudioStream::cgc_fromSilence(hdr->samples), cgc_AudioStream::cgc_fromSilence(hdr->samples));
 #ifdef PATCHED_1
-            if (size - hdr->offset >= comp->getMaxBufferSize(*track))
+            if (size - hdr->offset >= comp->cgc_getMaxBufferSize(*track))
 #endif
-            comp->decompress(*track, &data[sizeof(AudioHeader)]);
-            mixer.addTrack(track);
+            comp->cgc_decompress(*track, &data[sizeof(AudioHeader)]);
+            mixer.cgc_addTrack(track);
             delete comp;
         }
     }
@@ -395,107 +395,107 @@ bool Interface::importAudio()
     return true;
 }
 
-bool Interface::menuEffects()
+bool cgc_Interface::cgc_menuEffects()
 {
     char line[100], *buf, *word;
-    int value;
-    AudioTrack *track;
+    int cgc_value;
+    cgc_AudioTrack *track;
     while (true)
     {
-        fwrite(menuEffectsPrompt, strlen(menuEffectsPrompt), stdout);
-        if (freaduntil(line, sizeof(line), '\n', stdin) < 0)
+        cgc_fwrite(menuEffectsPrompt, cgc_strlen(menuEffectsPrompt), stdout);
+        if (cgc_freaduntil(line, sizeof(line), '\n', stdin) < 0)
             return false;
 
         if (line[0] == '5')
             break;
 
         buf = line;
-        word = strsep(&buf, " "); // ignore command
-        word = strsep(&buf, " ");
+        word = cgc_strsep(&buf, " "); // ignore command
+        word = cgc_strsep(&buf, " ");
         if (word == NULL)
         {
-            fprintf(stdout, "Missing track\n");
+            cgc_fprintf(stdout, "Missing track\n");
             continue;
         }
-        value = strtol(word, NULL, 10);
-        track = mixer.getTrack(value);
+        cgc_value = cgc_strtol(word, NULL, 10);
+        track = mixer.cgc_getTrack(cgc_value);
         if (track == NULL)
         {
-            fprintf(stdout, "Invalid track\n");
+            cgc_fprintf(stdout, "Invalid track\n");
             continue;
         }
 
         switch(line[0])
         {
         case '1':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing gain\n");
+                cgc_fprintf(stdout, "Missing gain\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value < -1000 || value > 1000)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value < -1000 || cgc_value > 1000)
             {
-                fprintf(stdout, "Invalid gain (-10.00...10.00)\n");
+                cgc_fprintf(stdout, "Invalid gain (-10.00...10.00)\n");
                 continue;
             }
 
-            FxGain(Gain::fromRational(value, 100)).apply(*track);
+            cgc_FxGain(cgc_Gain::cgc_fromRational(cgc_value, 100)).cgc_apply(*track);
             break;
         case '2':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing pan\n");
+                cgc_fprintf(stdout, "Missing pan\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value < -100 || value > 100)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value < -100 || cgc_value > 100)
             {
-                fprintf(stdout, "Invalid pan (-1.00...1.00)\n");
+                cgc_fprintf(stdout, "Invalid pan (-1.00...1.00)\n");
                 continue;
             }
 
-            if (value == 100)
-                FxPan(INT32_MAX).apply(*track);
+            if (cgc_value == 100)
+                cgc_FxPan(INT32_MAX).cgc_apply(*track);
             else
-                FxPan((double)value / 100 * INT32_MAX).apply(*track);
+                cgc_FxPan((double)cgc_value / 100 * INT32_MAX).cgc_apply(*track);
             break;
         case '3':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing delay\n");
+                cgc_fprintf(stdout, "Missing delay\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value <= 0)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value <= 0)
             {
-                fprintf(stdout, "Invalid delay (>0)\n");
+                cgc_fprintf(stdout, "Invalid delay (>0)\n");
                 continue;
             }
 
-            FxReverb(value).apply(*track);
+            cgc_FxReverb(cgc_value).cgc_apply(*track);
             break;
         case '4':
-            word = strsep(&buf, " ");
+            word = cgc_strsep(&buf, " ");
             if (word == NULL)
             {
-                fprintf(stdout, "Missing samples\n");
+                cgc_fprintf(stdout, "Missing samples\n");
                 continue;
             }
-            value = strtol(word, NULL, 10);
-            if (value <= 0)
+            cgc_value = cgc_strtol(word, NULL, 10);
+            if (cgc_value <= 0)
             {
-                fprintf(stdout, "Invalid samples (>0)\n");
+                cgc_fprintf(stdout, "Invalid samples (>0)\n");
                 continue;
             }
 
-            track->setLength(track->getLength() + value);
+            track->cgc_setLength(track->cgc_getLength() + cgc_value);
             break;
         default:
-            fprintf(stdout, "Invalid choice\n");
+            cgc_fprintf(stdout, "Invalid choice\n");
             continue;
         }
 

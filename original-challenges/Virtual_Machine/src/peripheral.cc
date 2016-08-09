@@ -33,50 +33,50 @@ extern "C"
 
 #include "peripheral.h"
 
-CPeripheral::CPeripheral( uint8_t peripheralID )
+cgc_CPeripheral::cgc_CPeripheral( cgc_uint8_t peripheralID )
 	: m_peripheralID( peripheralID )
 {
 
 }
 
-CPeripheral::~CPeripheral( )
+cgc_CPeripheral::~cgc_CPeripheral( )
 {
 
 }
 
-CSendDevice::CSendDevice( uint8_t peripheralID )
-	: CPeripheral( peripheralID )
+cgc_CSendDevice::cgc_CSendDevice( cgc_uint8_t peripheralID )
+	: cgc_CPeripheral( peripheralID )
 {
 
 }
 
-CSendDevice::~CSendDevice( )
+cgc_CSendDevice::~cgc_CSendDevice( )
 {
 
 }
 
-bool CSendDevice::Init( void )
+bool cgc_CSendDevice::cgc_Init( void )
 {
 
 	return (true);
 }
 
-bool CSendDevice::Read( uint8_t *pDest, uint16_t length )
+bool cgc_CSendDevice::cgc_Read( cgc_uint8_t *pDest, cgc_uint16_t length )
 {
 	// Does nothing
 	return (true);
 }
 
-bool CSendDevice::Write( uint8_t *pDest, uint16_t length )
+bool cgc_CSendDevice::cgc_Write( cgc_uint8_t *pDest, cgc_uint16_t length )
 {
 	if ( !pDest )
 		return (false);
 
-	uint32_t writePos = 0;
+	cgc_uint32_t writePos = 0;
 	while ( writePos < length )
 	{
-		size_t tx_bytes;
-		uint32_t writeRemaining = (length - writePos);
+		cgc_size_t tx_bytes;
+		cgc_uint32_t writeRemaining = (length - writePos);
 
 		if ( transmit( STDOUT, (const void *)(pDest + writePos), writeRemaining, &tx_bytes ) != 0 )
 		      _terminate( -1 );
@@ -90,33 +90,33 @@ bool CSendDevice::Write( uint8_t *pDest, uint16_t length )
 	return (true);
 }
 
-CReadDevice::CReadDevice( uint8_t deviceID )
-	: CPeripheral( deviceID )
+cgc_CReadDevice::cgc_CReadDevice( cgc_uint8_t deviceID )
+	: cgc_CPeripheral( deviceID )
 {
 
 }
 
-CReadDevice::~CReadDevice( )
+cgc_CReadDevice::~cgc_CReadDevice( )
 {
 
 }
 
-bool CReadDevice::Init( void )
+bool cgc_CReadDevice::cgc_Init( void )
 {
 
 	return (true);
 }
 
-bool CReadDevice::Read( uint8_t *pDest, uint16_t length )
+bool cgc_CReadDevice::cgc_Read( cgc_uint8_t *pDest, cgc_uint16_t length )
 {
 	if ( !pDest )
 		return (false);
 
-	uint32_t readPos = 0;
+	cgc_uint32_t readPos = 0;
 	while ( readPos < length )
 	{
-		size_t rx_bytes;
-		uint32_t readRemaining = (length - readPos);
+		cgc_size_t rx_bytes;
+		cgc_uint32_t readRemaining = (length - readPos);
 
 		if ( receive( STDIN, (void *)(pDest + readPos), readRemaining, &rx_bytes ) != 0 )
 		      _terminate( -1 );
@@ -130,7 +130,7 @@ bool CReadDevice::Read( uint8_t *pDest, uint16_t length )
 	return (true);
 }
 
-bool CReadDevice::Write( uint8_t *pDest, uint16_t length )
+bool cgc_CReadDevice::cgc_Write( cgc_uint8_t *pDest, cgc_uint16_t length )
 {
 	// Does nothing
 	return (true);

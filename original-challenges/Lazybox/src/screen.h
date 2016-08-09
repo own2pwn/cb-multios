@@ -26,11 +26,11 @@ THE SOFTWARE.
 #ifndef SCREEN_H
 #define SCREEN_H
 
-void EraseToEOL(void);
-void EraseLine(uint8_t StartingX);
-void MoveCursor(uint8_t x, uint8_t y);
-void ClearScreen(void);
-void CursorRight(uint8_t NumSpaces);
-void CursorLeft(uint8_t NumSpaces);
+void cgc_EraseToEOL(void);
+void cgc_EraseLine(cgc_uint8_t StartingX);
+void cgc_MoveCursor(cgc_uint8_t x, cgc_uint8_t y);
+void cgc_ClearScreen(void);
+void cgc_CursorRight(cgc_uint8_t NumSpaces);
+void cgc_CursorLeft(cgc_uint8_t NumSpaces);
 
 #endif

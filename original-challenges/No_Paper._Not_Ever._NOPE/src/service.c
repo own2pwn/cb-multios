@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -37,11 +37,11 @@
 #include "comms.h"
 #include "taxpayer.h"
 
-typedef struct auditrecord AuditRecord;
+typedef struct auditrecord cgc_AuditRecord;
 struct auditrecord {
-    TaxPayer *tp;
-    uint16_t tax_years[3];
-    AuditRecord *next;
+    cgc_TaxPayer *tp;
+    cgc_uint16_t tax_years[3];
+    cgc_AuditRecord *next;
 };
 
 
@@ -79,17 +79,17 @@ const char LUCKY_DAY[11]            = "LUCKY DAY!";
 const char AUDIT_FAIL[11]           = "AUDIT_FAIL";
 
 
-Session *s_list = NULL;
-TaxPayer *tp_list = NULL;
-AuditRecord *audit_list = NULL;
+cgc_Session *s_list = NULL;
+cgc_TaxPayer *tp_list = NULL;
+cgc_AuditRecord *audit_list = NULL;
 
 /**
- * Get a new empty AuditRecord
+ * Get a new empty cgc_AuditRecord
  *
- * @return Pointer to AuditRecord
+ * @return Pointer to cgc_AuditRecord
  */
-AuditRecord *get_new_audit_record(void) {
-    AuditRecord *rec = calloc(sizeof(AuditRecord));
+cgc_AuditRecord *cgc_get_new_audit_record(void) {
+    cgc_AuditRecord *rec = cgc_calloc(sizeof(cgc_AuditRecord));
     MALLOC_OK(rec);
     return rec;
 }
@@ -97,11 +97,11 @@ AuditRecord *get_new_audit_record(void) {
 /**
  * Append an audit record to the audit list
  *
- * @param rec       AuditRecord to add to list
+ * @param rec       cgc_AuditRecord to add to list
  */
-void add_auditrecord_to_audit_list(AuditRecord *rec) {
-    AuditRecord *tmp = audit_list;
-    AuditRecord *prev = audit_list;
+void cgc_add_auditrecord_to_audit_list(cgc_AuditRecord *rec) {
+    cgc_AuditRecord *tmp = audit_list;
+    cgc_AuditRecord *prev = audit_list;
     if (NULL == tmp) {
         audit_list = rec;
     } else {
@@ -116,11 +116,11 @@ void add_auditrecord_to_audit_list(AuditRecord *rec) {
 /**
  * Determine if a taxpayer is already on the audit list
  *
- * @param tp        Pointer to TaxPayer
+ * @param tp        Pointer to cgc_TaxPayer
  * @return TRUE if on list, else FALSE
  */
-uint32_t is_taxpayer_scheduled_for_audit(TaxPayer *tp) {
-    AuditRecord *tmp = audit_list;
+cgc_uint32_t cgc_is_taxpayer_scheduled_for_audit(cgc_TaxPayer *tp) {
+    cgc_AuditRecord *tmp = audit_list;
 
     while (NULL != tmp) {
         if (tp == tmp->tp) {
@@ -137,18 +137,18 @@ uint32_t is_taxpayer_scheduled_for_audit(TaxPayer *tp) {
  * Find up to 3 tax_years to audit for taxpayer and populate audit record
  *
  * @param tp        Pointer to Taxpayer
- * @return Pointer to AuditRecord if taxpayer has at least 1 year of tax forms, else NULL
+ * @return Pointer to cgc_AuditRecord if taxpayer has at least 1 year of tax forms, else NULL
  */
-AuditRecord *find_three_tax_years_for_audit(TaxPayer *tp) {
-    AuditRecord *rec = NULL;
-    uint32_t tf_count = 0;
+cgc_AuditRecord *cgc_find_three_tax_years_for_audit(cgc_TaxPayer *tp) {
+    cgc_AuditRecord *rec = NULL;
+    cgc_uint32_t tf_count = 0;
 
-    tf_count = taxpayer_count_submitted_tax_years(tp);
+    tf_count = cgc_taxpayer_count_submitted_tax_years(tp);
     if (0 != tf_count) {
         // have 1 or more tax forms to audit, find last 3
-        rec = get_new_audit_record();
+        rec = cgc_get_new_audit_record();
         rec->tp = tp;
-        tenfourd_get_last_three_from_list(tp->tax_forms, tf_count, rec->tax_years);
+        cgc_tenfourd_get_last_three_from_list(tp->tax_forms, tf_count, rec->tax_years);
 
         return rec;
     } 
@@ -160,33 +160,33 @@ AuditRecord *find_three_tax_years_for_audit(TaxPayer *tp) {
 /**
  * Trigger this taxpayer for an audit. Today is their lucky day!
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  */
-int we_have_a_winner(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_we_have_a_winner(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
     int year_count = 0;
-    AuditRecord *rec = NULL;
+    cgc_AuditRecord *rec = NULL;
 
-    tp = taxpayer_get_by_username(tp_list, s);
-    if ((NULL != tp) && (FALSE == is_taxpayer_scheduled_for_audit(tp))) {
-        rec = find_three_tax_years_for_audit(tp);
+    tp = cgc_taxpayer_get_by_username(tp_list, s);
+    if ((NULL != tp) && (FALSE == cgc_is_taxpayer_scheduled_for_audit(tp))) {
+        rec = cgc_find_three_tax_years_for_audit(tp);
         if (NULL != rec) {
             rec->tp = tp;
-            add_auditrecord_to_audit_list(rec);
+            cgc_add_auditrecord_to_audit_list(rec);
             // have 1 or more tax forms to audit YOU WIN
-            memcpy(r->answer, YOU_WIN, sizeof(YOU_WIN)-1);
-            memcpy(r->answer + sizeof(YOU_WIN)-1, rec->tax_years, sizeof(rec->tax_years));
+            cgc_memcpy(r->answer, YOU_WIN, sizeof(YOU_WIN)-1);
+            cgc_memcpy(r->answer + sizeof(YOU_WIN)-1, rec->tax_years, sizeof(rec->tax_years));
         } else {
             // have no tax forms to audit, LUCKY DAY!
-            memcpy(r->answer, LUCKY_DAY, sizeof(LUCKY_DAY)-1);
+            cgc_memcpy(r->answer, LUCKY_DAY, sizeof(LUCKY_DAY)-1);
         }
 
         return SUCCESS;
     }
 
-    memcpy(r->answer, AUDIT_FAIL, sizeof(AUDIT_FAIL)-1);
+    cgc_memcpy(r->answer, AUDIT_FAIL, sizeof(AUDIT_FAIL)-1);
     return -1;
 }
 
@@ -197,10 +197,10 @@ int we_have_a_winner(Session *s, Response *r) {
  * @param expected_bytes    Number of bytes to read and store in data buffer
  * @return SUCCESS on success, else -1
  */
-int recv_cmd_data(Session *s, size_t expected_bytes) {
+int cgc_recv_cmd_data(cgc_Session *s, cgc_size_t expected_bytes) {
     if (expected_bytes == s->request.bytes) {
         if (0 < expected_bytes) {
-            s->request.data = calloc(expected_bytes);
+            s->request.data = cgc_calloc(expected_bytes);
             MALLOC_OK(s->request.data);
 
             RECV(s->request.data, expected_bytes);
@@ -214,16 +214,16 @@ int recv_cmd_data(Session *s, size_t expected_bytes) {
 /**
  * Authenticate this session
  *
- * @param s     Session to authenticate
- * @param r     Response
+ * @param s     cgc_Session to authenticate
+ * @param r     cgc_Response
  * @return SUCCESS if authenticated, else -1
  */
-int session_auth(Session *s, Response *r) {
-    Session *s_orig = session_get_by_username(s_list, s);
+int cgc_session_auth(cgc_Session *s, cgc_Response *r) {
+    cgc_Session *s_orig = cgc_session_get_by_username(s_list, s);
     if (NULL != s_orig) {
         // validate session data with stored session data (session key and password)
-        if ((0 == memcmp(s->login.key, s_orig->login.key, sizeof(s_orig->login.key))) &&
-            (0 == memcmp(s->login.password, s_orig->login.password, sizeof(s_orig->login.password)))) {
+        if ((0 == cgc_memcmp(s->login.key, s_orig->login.key, sizeof(s_orig->login.key))) &&
+            (0 == cgc_memcmp(s->login.password, s_orig->login.password, sizeof(s_orig->login.password)))) {
             return SUCCESS;
         }
     } 
@@ -235,117 +235,117 @@ int session_auth(Session *s, Response *r) {
 /**
  * Set the session key in the response
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  */
-void response_set_key(Session *s, Response *r) {
+void cgc_response_set_key(cgc_Session *s, cgc_Response *r) {
     // copy session key to response
-    memcpy(r->session_key, s->login.key, sizeof(s->login.key));
+    cgc_memcpy(r->session_key, s->login.key, sizeof(s->login.key));
 }
 
 
 /**
  * Process the get refund command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int get_refund(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_get_refund(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
-    size_t bytes_written = sizeof(year_buf) - sizeof(GET_REFUND_OK) - 1;
+    cgc_size_t bytes_written = sizeof(year_buf) - sizeof(GET_REFUND_OK) - 1;
 
-    tp = taxpayer_get_by_username(tp_list, s);
+    tp = cgc_taxpayer_get_by_username(tp_list, s);
     if (NULL != tp) {
-        ret = taxpayer_get_refund(tp, s, year_buf, &bytes_written);
+        ret = cgc_taxpayer_get_refund(tp, s, year_buf, &bytes_written);
 
         if ((SUCCESS == ret) && (bytes_written < (sizeof(year_buf) - sizeof(GET_REFUND_OK) - 1))) {
-            memcpy(r->answer, GET_REFUND_OK, sizeof(GET_REFUND_OK)-1);
-            memcpy(r->answer + sizeof(GET_REFUND_OK)-1, year_buf, bytes_written);
+            cgc_memcpy(r->answer, GET_REFUND_OK, sizeof(GET_REFUND_OK)-1);
+            cgc_memcpy(r->answer + sizeof(GET_REFUND_OK)-1, year_buf, bytes_written);
             return SUCCESS;
         }
     }
 
-    memcpy(r->answer, GET_REFUND_FAIL, sizeof(GET_REFUND_FAIL)-1);
+    cgc_memcpy(r->answer, GET_REFUND_FAIL, sizeof(GET_REFUND_FAIL)-1);
     return -1;
 }
 
 /**
  * Process the pay taxes command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int pay_taxes(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_pay_taxes(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
-    size_t bytes_written = sizeof(year_buf) - sizeof(PAY_TAXES_OK) - 1;
+    cgc_size_t bytes_written = sizeof(year_buf) - sizeof(PAY_TAXES_OK) - 1;
 
-    ret = recv_cmd_data(s, sizeof(uint32_t));
+    ret = cgc_recv_cmd_data(s, sizeof(cgc_uint32_t));
     if (SUCCESS == ret) {
-        tp = taxpayer_get_by_username(tp_list, s);
+        tp = cgc_taxpayer_get_by_username(tp_list, s);
         if (NULL != tp) {
-            ret = taxpayer_pay_taxes(tp, s, year_buf, &bytes_written);
+            ret = cgc_taxpayer_pay_taxes(tp, s, year_buf, &bytes_written);
 
             if ((SUCCESS == ret) && (bytes_written < (sizeof(year_buf) - sizeof(PAY_TAXES_OK) - 1))) {
-                memcpy(r->answer, PAY_TAXES_OK, sizeof(PAY_TAXES_OK)-1);
+                cgc_memcpy(r->answer, PAY_TAXES_OK, sizeof(PAY_TAXES_OK)-1);
                 // VULN: year_buf is 128 and so is r->answer
-                // memcpy will go OOB if bytes_written > 128-sizeof(TAXES_SUBMITTED_OK)-1
+                // cgc_memcpy will go OOB if bytes_written > 128-sizeof(TAXES_SUBMITTED_OK)-1
                 // Would that do any harm?
-                memcpy(r->answer + sizeof(PAY_TAXES_OK)-1, year_buf, bytes_written);
+                cgc_memcpy(r->answer + sizeof(PAY_TAXES_OK)-1, year_buf, bytes_written);
                 return SUCCESS;
             }
         }
     }
 
-    memcpy(r->answer, PAY_TAXES_FAIL, sizeof(PAY_TAXES_FAIL)-1);
+    cgc_memcpy(r->answer, PAY_TAXES_FAIL, sizeof(PAY_TAXES_FAIL)-1);
     return -1;
 }
 
 /**
- * Copy the list of submitted tax years into the Response.answer buffer.
+ * Copy the list of submitted tax years into the cgc_Response.answer buffer.
  *
- * @param r             Pointer to a Response
+ * @param r             Pointer to a cgc_Response
  * @param year_buf      Pointer to buffer of tax years
  * @param bytes_written Number of bytes to copy from year_buf into r.answer
  */
-void copy_yr_list_into_answer(Response *r, char *year_buf, size_t bytes_written) {
-    memcpy(r->answer, TAXES_SUBMITTED_OK, sizeof(TAXES_SUBMITTED_OK)-1);
+void cgc_copy_yr_list_into_answer(cgc_Response *r, char *year_buf, cgc_size_t bytes_written) {
+    cgc_memcpy(r->answer, TAXES_SUBMITTED_OK, sizeof(TAXES_SUBMITTED_OK)-1);
     // VULN: year_buf is 128 and so is r->answer
-    // memcpy will go OOB if bytes_written > 128-sizeof(TAXES_SUBMITTED_OK)-1
-    // Not POV-able because it will write into Session struct which doesn't hurt anything.
-    memcpy(r->answer + sizeof(TAXES_SUBMITTED_OK)-1, year_buf, bytes_written);
+    // cgc_memcpy will go OOB if bytes_written > 128-sizeof(TAXES_SUBMITTED_OK)-1
+    // Not POV-able because it will write into cgc_Session struct which doesn't hurt anything.
+    cgc_memcpy(r->answer + sizeof(TAXES_SUBMITTED_OK)-1, year_buf, bytes_written);
 }
 
 /**
  * Process the taxes submitted command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int taxes_submitted(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_taxes_submitted(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
-    copy_yr_fn do_copy = copy_yr_list_into_answer;
+    cgc_copy_yr_fn do_copy = cgc_copy_yr_list_into_answer;
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
 
 #ifdef PATCHED_2
-    size_t bytes_written = 128-sizeof(TAXES_SUBMITTED_OK)-1;
+    cgc_size_t bytes_written = 128-sizeof(TAXES_SUBMITTED_OK)-1;
 #else
-    size_t bytes_written = 0;
+    cgc_size_t bytes_written = 0;
 #endif
 
-    ret = recv_cmd_data(s, sizeof(DateRange));
+    ret = cgc_recv_cmd_data(s, sizeof(cgc_DateRange));
     if (SUCCESS == ret) {
-        tp = taxpayer_get_by_username(tp_list, s);
+        tp = cgc_taxpayer_get_by_username(tp_list, s);
         if (NULL != tp) {
             // VULN: year_buf has no protection from OOB write
-            ret = taxpayer_list_submitted_tax_years(tp, s, year_buf, &bytes_written);
+            ret = cgc_taxpayer_list_submitted_tax_years(tp, s, year_buf, &bytes_written);
 
             if (SUCCESS == ret) {
                 do_copy(r, year_buf, bytes_written);
@@ -354,7 +354,7 @@ int taxes_submitted(Session *s, Response *r) {
         }
     }
 
-    memcpy(r->answer, TAXES_SUBMITTED_FAIL, sizeof(TAXES_SUBMITTED_FAIL)-1);
+    cgc_memcpy(r->answer, TAXES_SUBMITTED_FAIL, sizeof(TAXES_SUBMITTED_FAIL)-1);
     return -1;
 }
 
@@ -363,54 +363,54 @@ int taxes_submitted(Session *s, Response *r) {
  *
  * Taxes due is the sum of the taxes the taxpayer owes (+) or will be refunded (-).
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int taxes_due(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_taxes_due(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
-    int32_t sum = 0;
+    cgc_int32_t sum = 0;
 
-    ret = recv_cmd_data(s, sizeof(DateRange));
+    ret = cgc_recv_cmd_data(s, sizeof(cgc_DateRange));
     if (SUCCESS == ret) {
-        tp = taxpayer_get_by_username(tp_list, s);
+        tp = cgc_taxpayer_get_by_username(tp_list, s);
         if (NULL != tp) {
-            ret = taxpayer_sum_taxes_due(tp, s, &sum);
+            ret = cgc_taxpayer_sum_taxes_due(tp, s, &sum);
 
             if (SUCCESS == ret) {
-                memcpy(r->answer, TAXES_DUE_OK, sizeof(TAXES_DUE_OK)-1);
-                memcpy(r->answer + sizeof(TAXES_DUE_OK)-1, &sum, sizeof(int32_t));
+                cgc_memcpy(r->answer, TAXES_DUE_OK, sizeof(TAXES_DUE_OK)-1);
+                cgc_memcpy(r->answer + sizeof(TAXES_DUE_OK)-1, &sum, sizeof(cgc_int32_t));
                 return SUCCESS;
             }
         }
     }
 
-    memcpy(r->answer, TAXES_DUE_FAIL, sizeof(TAXES_DUE_FAIL)-1);
-    memcpy(r->answer + sizeof(TAXES_DUE_FAIL)-1, &sum, sizeof(int32_t));
+    cgc_memcpy(r->answer, TAXES_DUE_FAIL, sizeof(TAXES_DUE_FAIL)-1);
+    cgc_memcpy(r->answer + sizeof(TAXES_DUE_FAIL)-1, &sum, sizeof(cgc_int32_t));
     return -1;
 }
 
 /**
  * Process the upload form command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int upload_form(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_upload_form(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
-    size_t data_sz = sizeof(TenFourD) - sizeof(uint32_t) - sizeof(char *);
+    cgc_size_t data_sz = sizeof(cgc_TenFourD) - sizeof(cgc_uint32_t) - sizeof(char *);
 
-    ret = recv_cmd_data(s, data_sz);
+    ret = cgc_recv_cmd_data(s, data_sz);
     if (SUCCESS == ret) {
-        tp = taxpayer_get_by_username(tp_list, s);
+        tp = cgc_taxpayer_get_by_username(tp_list, s);
         if (NULL != tp) {
-            ret = taxpayer_add_tenfourdee(tp, s, data_sz);
+            ret = cgc_taxpayer_add_tenfourdee(tp, s, data_sz);
 
             if (SUCCESS == ret) {
-                memcpy(r->answer, UPLOAD_OK, sizeof(UPLOAD_OK)-1);
+                cgc_memcpy(r->answer, UPLOAD_OK, sizeof(UPLOAD_OK)-1);
                 return SUCCESS;
             }
         }
@@ -419,8 +419,8 @@ int upload_form(Session *s, Response *r) {
 #ifdef DEBUG
     const char uf[] = "ERROR: UPLOAD FAILED FOR YEAR: ";
 
-    uint16_t yr = *(uint16_t *)s->request.data;
-    uint32_t yr32 = yr;
+    cgc_uint16_t yr = *(cgc_uint16_t *)s->request.data;
+    cgc_uint32_t yr32 = yr;
 
     char tmp[6] = {0};
     int2str(tmp, sizeof(tmp), yr32);
@@ -430,67 +430,67 @@ int upload_form(Session *s, Response *r) {
     sendall(2, "\n", 1);
 #endif
 
-    memcpy(r->answer, UPLOAD_FAIL, sizeof(UPLOAD_FAIL)-1);
+    cgc_memcpy(r->answer, UPLOAD_FAIL, sizeof(UPLOAD_FAIL)-1);
     return -1;
 }
 
 /**
- * Process the login command
+ * Process the cgc_login command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int login(Session *s, Response *r) {
+int cgc_login(cgc_Session *s, cgc_Response *r) {
     // existing taxpayer
-    TaxPayer *tp = taxpayer_get_by_username(tp_list, s);
+    cgc_TaxPayer *tp = cgc_taxpayer_get_by_username(tp_list, s);
 
     if ((NULL != tp) &&
-        (SUCCESS == taxpayer_compare_creds(tp, s))) {
+        (SUCCESS == cgc_taxpayer_compare_creds(tp, s))) {
 
-        // don't login the same taxpayer multiple times
-        Session *s_orig = session_get_by_username(s_list, s);
+        // don't cgc_login the same taxpayer multiple times
+        cgc_Session *s_orig = cgc_session_get_by_username(s_list, s);
         if ((NULL != s_orig) &&
-            (0 != memcmp(s->login.key, s_orig->login.key, sizeof(s_orig->login.key)))) {
+            (0 != cgc_memcmp(s->login.key, s_orig->login.key, sizeof(s_orig->login.key)))) {
                 goto l_fail;
         }
 
         // save session to s_list
-        session_append(&s_list, s);
+        cgc_session_append(&s_list, s);
 
-        // add LOGIN_OK to r->answer to send back to user
-        memcpy(r->answer, LOGIN_OK, sizeof(LOGIN_OK)-1);
+        // add LOGIN_OK to r->answer to cgc_send back to user
+        cgc_memcpy(r->answer, LOGIN_OK, sizeof(LOGIN_OK)-1);
 
         return SUCCESS;
     }
 l_fail:
-    // add LOGIN_FAIL to r->answer to send back to user
-    memcpy(r->answer, LOGIN_FAIL, sizeof(LOGIN_FAIL)-1);
+    // add LOGIN_FAIL to r->answer to cgc_send back to user
+    cgc_memcpy(r->answer, LOGIN_FAIL, sizeof(LOGIN_FAIL)-1);
 
     return -1;
 }
 
 /**
- * Process the logout command
+ * Process the cgc_logout command
  *
  * User is already auth'd and has validated session before calling this,
- * so just remove the session and free it.
+ * so just remove the session and cgc_free it.
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success
  */
-int logout(Session *s_cur, Response *r) {
-    Session *s = session_remove(&s_list, s_cur);
+int cgc_logout(cgc_Session *s_cur, cgc_Response *r) {
+    cgc_Session *s = cgc_session_remove(&s_list, s_cur);
     if (NULL != s) {
         if (NULL != s->request.data) {
-            free(s->request.data);
+            cgc_free(s->request.data);
         }
-        free(s);
+        cgc_free(s);
     }
 
-    // add LOGOUT_OK to r->answer to send back to user
-    memcpy(r->answer, LOGOUT_OK, sizeof(LOGOUT_OK)-1);
+    // add LOGOUT_OK to r->answer to cgc_send back to user
+    cgc_memcpy(r->answer, LOGOUT_OK, sizeof(LOGOUT_OK)-1);
 
     return SUCCESS;
 }
@@ -498,20 +498,20 @@ int logout(Session *s_cur, Response *r) {
 /**
  * Process the create account command
  *
- * @param s     Pointer to a Session
- * @param r     Pointer to a Response
+ * @param s     Pointer to a cgc_Session
+ * @param r     Pointer to a cgc_Response
  * @return SUCCESS on success, else -1
  */
-int create_account(Session *s, Response *r) {
-    TaxPayer *tp;
+int cgc_create_account(cgc_Session *s, cgc_Response *r) {
+    cgc_TaxPayer *tp;
     int ret = SUCCESS;
 
     // get taxpayer.ident
-    ret = recv_cmd_data(s, sizeof(Ident));
+    ret = cgc_recv_cmd_data(s, sizeof(cgc_Ident));
     if (SUCCESS == ret) {
-        tp = taxpayer_get_by_username(tp_list, s);
+        tp = cgc_taxpayer_get_by_username(tp_list, s);
         if (NULL == tp) {
-            taxpayer_new(s, r, &tp_list);
+            cgc_taxpayer_new(s, r, &tp_list);
             ret = SUCCESS;
         } else {
             ret = -1;
@@ -524,31 +524,31 @@ int create_account(Session *s, Response *r) {
 int main(void) {
 
     int ret = 0;
-    size_t bytes = 0;
+    cgc_size_t bytes = 0;
 
     while (TRUE) {
-        Session s = {0};
+        cgc_Session s = {0};
 
         // VULN: r is not zero'd, so will have stale info from prev loop(s)
 #ifdef PATCHED_1
-        Response r = {0};
+        cgc_Response r = {0};
 #else
-        Response r;
+        cgc_Response r;
 #endif        
 
-        RECV(&s, sizeof(Session) - 2*sizeof(char *));
+        RECV(&s, sizeof(cgc_Session) - 2*sizeof(char *));
 
         // auth
-        ret = session_auth(&s, &r);
+        ret = cgc_session_auth(&s, &r);
 
         // process auth'd commands
         if (SUCCESS == ret) {
 
-            if (0 == memcmp(LOGOUT, (const char *)s.request.cmd, sizeof(LOGOUT))) {
-                ret = logout(&s, &r);
+            if (0 == cgc_memcmp(LOGOUT, (const char *)s.request.cmd, sizeof(LOGOUT))) {
+                ret = cgc_logout(&s, &r);
 
-            } else if (0 == memcmp(UPLOAD_FORM, (const char *)s.request.cmd, sizeof(UPLOAD_FORM))) {
-                ret = upload_form(&s, &r);
+            } else if (0 == cgc_memcmp(UPLOAD_FORM, (const char *)s.request.cmd, sizeof(UPLOAD_FORM))) {
+                ret = cgc_upload_form(&s, &r);
 #ifdef DEBUG
                 const char uf[] = "INFO: UPLOAD FORM RET: ";
 
@@ -560,51 +560,51 @@ int main(void) {
                 sendall(2, "\n", 1);
 #endif
 
-            } else if (0 == memcmp(TAXES_DUE, (const char *)s.request.cmd, sizeof(TAXES_DUE))) {
-                ret = taxes_due(&s, &r);
+            } else if (0 == cgc_memcmp(TAXES_DUE, (const char *)s.request.cmd, sizeof(TAXES_DUE))) {
+                ret = cgc_taxes_due(&s, &r);
 
-            } else if (0 == memcmp(TAXES_SUBMITTED, (const char *)s.request.cmd, sizeof(TAXES_SUBMITTED))) {
-                ret = taxes_submitted(&s, &r);
+            } else if (0 == cgc_memcmp(TAXES_SUBMITTED, (const char *)s.request.cmd, sizeof(TAXES_SUBMITTED))) {
+                ret = cgc_taxes_submitted(&s, &r);
 
-            } else if (0 == memcmp(PAY_TAXES, (const char *)s.request.cmd, sizeof(PAY_TAXES))) {
-                ret = pay_taxes(&s, &r);
+            } else if (0 == cgc_memcmp(PAY_TAXES, (const char *)s.request.cmd, sizeof(PAY_TAXES))) {
+                ret = cgc_pay_taxes(&s, &r);
 
-            } else if (0 == memcmp(GET_REFUND, (const char *)s.request.cmd, sizeof(GET_REFUND))) {
-                ret = get_refund(&s, &r);
+            } else if (0 == cgc_memcmp(GET_REFUND, (const char *)s.request.cmd, sizeof(GET_REFUND))) {
+                ret = cgc_get_refund(&s, &r);
 
-            } else if (0 == memcmp(TRIGGER_AUDIT, (const char *)s.request.cmd, sizeof(TRIGGER_AUDIT))) {
-                ret = we_have_a_winner(&s, &r);
+            } else if (0 == cgc_memcmp(TRIGGER_AUDIT, (const char *)s.request.cmd, sizeof(TRIGGER_AUDIT))) {
+                ret = cgc_we_have_a_winner(&s, &r);
 
-            } else if (0 == memcmp(TRIGGER_AUDIT2, (const char *)s.request.cmd, sizeof(TRIGGER_AUDIT2))) {
-                ret = we_have_a_winner(&s, &r);
+            } else if (0 == cgc_memcmp(TRIGGER_AUDIT2, (const char *)s.request.cmd, sizeof(TRIGGER_AUDIT2))) {
+                ret = cgc_we_have_a_winner(&s, &r);
 
             } else {
-                // add NICE_TRY to r->answer to send back to user
-                memcpy(r.answer, NICE_TRY, sizeof(NICE_TRY)-1);
+                // add NICE_TRY to r->answer to cgc_send back to user
+                cgc_memcpy(r.answer, NICE_TRY, sizeof(NICE_TRY)-1);
                 ret = -1;
             }
 
-        // auth failed, check if cmd is to login
-        } else if (0 == memcmp(LOGIN, (const char *)s.request.cmd, sizeof(LOGIN))) {
-            ret = login(&s, &r);
+        // auth failed, check if cmd is to cgc_login
+        } else if (0 == cgc_memcmp(LOGIN, (const char *)s.request.cmd, sizeof(LOGIN))) {
+            ret = cgc_login(&s, &r);
 
         // auth failed, check if cmd is to create account
-        } else if (0 == memcmp(CREATE_ACCOUNT, (const char *)s.request.cmd, sizeof(CREATE_ACCOUNT))) {
-            ret = create_account(&s, &r);
+        } else if (0 == cgc_memcmp(CREATE_ACCOUNT, (const char *)s.request.cmd, sizeof(CREATE_ACCOUNT))) {
+            ret = cgc_create_account(&s, &r);
 
-        // auth failed, not creating account, not login => junk
+        // auth failed, not creating account, not cgc_login => junk
         } else {
-            // add NICE_TRY to r->answer to send back to user
-            memcpy(r.answer, NICE_TRY, sizeof(NICE_TRY)-1);
+            // add NICE_TRY to r->answer to cgc_send back to user
+            cgc_memcpy(r.answer, NICE_TRY, sizeof(NICE_TRY)-1);
             ret = -1;
         }
 
         if (0 <= ret) {
-            memcpy(r.result, OK, sizeof(OK));
-            response_set_key(&s, &r);
+            cgc_memcpy(r.result, OK, sizeof(OK));
+            cgc_response_set_key(&s, &r);
         } else {
-            memcpy(r.result, ERR, sizeof(ERR));
-            // VULN: no setting of Response.key on error, so can get previous session keys if the
+            cgc_memcpy(r.result, ERR, sizeof(ERR));
+            // VULN: no setting of cgc_Response.key on error, so can get previous session keys if the
             // response isn't initialized to 0's.
 
 #ifdef DEBUG
@@ -614,11 +614,11 @@ int main(void) {
 
         }
 
-        // send response
-        send((const char *)&r, sizeof(Response));
+        // cgc_send response
+        cgc_send((const char *)&r, sizeof(cgc_Response));
 
         if (NULL != s.request.data) {
-            free(s.request.data);
+            cgc_free(s.request.data);
         }
 
     }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,32 +28,32 @@
 int main(void) {
     uint32_t filesize;
     uint8_t *data;
-    dupefile_t *f;
+    cgc_dupefile_t *f;
 
-    __stack_cookie_init();
+    cgc___stack_cookie_init();
 
     RECV(sizeof(uint32_t),(char *)&filesize);
 
     if (filesize > MAX_DUPE_SIZE)
         return 1;
 
-    data = malloc(filesize);
+    data = cgc_malloc(filesize);
 
     if (!data)
         return 2;
 
     RECV(filesize,(char *)data);
 
-    f = dupe_open(data);
+    f = cgc_dupe_open(data);
 
-    if (!f || f->caplen != filesize-sizeof(dupefile_t)) {
+    if (!f || f->caplen != filesize-sizeof(cgc_dupefile_t)) {
         LOG("Bad file.")
         return 3;
     }
 
-    process_dupe(f);
+    cgc_process_dupe(f);
 
-    dupe_close(f);
+    cgc_dupe_close(f);
 
     return 0;
 }

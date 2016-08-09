@@ -1,12 +1,12 @@
 #ifndef ASCII_H
 #define ASCII_H
 
-class AsciiInterface
+class cgc_AsciiInterface
 {
 public:
-    AsciiInterface() {}
-    ~AsciiInterface() {}
-    virtual bool is_ascii(char *_stream) = 0;
+    cgc_AsciiInterface() {}
+    ~cgc_AsciiInterface() {}
+    virtual bool cgc_is_ascii(char *_stream) = 0;
 };
 
 #endif

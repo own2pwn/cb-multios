@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,21 +32,21 @@
 /**
  * Start the rider on the trail
  *
- * @param t 	Trail
- * @param r 	Rider
+ * @param t 	cgc_Trail
+ * @param r 	cgc_Rider
  */
-void trail_embark(Trail *t, Rider *r) {
-	rider_append(&t->riders, r);
+void cgc_trail_embark(cgc_Trail *t, cgc_Rider *r) {
+	cgc_rider_append(&t->riders, r);
 	t->rider_total++;
 }
 
 /**
  * Move the riders on the trail by one step
  *
- * @param t 	Trail
+ * @param t 	cgc_Trail
  */
-void trail_one_step(Trail *t) {
-	Rider *r;
+void cgc_trail_one_step(cgc_Trail *t) {
+	cgc_Rider *r;
 	// remove completed riders
 	t->disembark(t);
 	// update remaining riders
@@ -61,22 +61,22 @@ void trail_one_step(Trail *t) {
  * Remove all riders from the trail that have completed the trail
  * 	and add them to the end decider's queue
  *
- * @param t 	Trail
+ * @param t 	cgc_Trail
  * @return Count of disembarked riders
  */
-uint32_t trail_disembark(Trail *t) {
+cgc_uint32_t cgc_trail_disembark(cgc_Trail *t) {
 
-	uint32_t count = 0;
-	Decider *d = get_decider_by_id(t->end_decider);
+	cgc_uint32_t count = 0;
+	cgc_Decider *d = cgc_get_decider_by_id(t->end_decider);
 	if (NULL == d) {
 		return count;
 	}
-	// Rider *riders = t->riders;
-	Rider *r = t->riders;
+	// cgc_Rider *riders = t->riders;
+	cgc_Rider *r = t->riders;
 	while (NULL != r) {
 		if (t->length == r->trail_distance) {
 
-			r = rider_pop(&t->riders);
+			r = cgc_rider_pop(&t->riders);
 			r->trail_distance = 0;
 			r->trail_count++;
 			r->energy_level -= t->difficulty;
@@ -99,9 +99,9 @@ uint32_t trail_disembark(Trail *t) {
  * @param settings 	Array of trail settings
  * @return trail's ID on success, else -1
  */
-int32_t trail_new(Trail **t, uint32_t settings[5]) {
+cgc_int32_t cgc_trail_new(cgc_Trail **t, cgc_uint32_t settings[5]) {
 
-	Trail *new = calloc(sizeof(Trail));
+	cgc_Trail *new = cgc_calloc(sizeof(cgc_Trail));
 	MALLOC_OK(new);
 
 	new->id = settings[0];
@@ -109,14 +109,14 @@ int32_t trail_new(Trail **t, uint32_t settings[5]) {
 	new->end_decider = settings[2];
 	new->difficulty = settings[3];
 	new->length = settings[4];
-	new->embark = trail_embark;
-	new->step = trail_one_step;
-	new->disembark = trail_disembark;
+	new->embark = cgc_trail_embark;
+	new->step = cgc_trail_one_step;
+	new->disembark = cgc_trail_disembark;
 
 	if ((new->length == 0) ||
 		(new->start_decider == new->end_decider) ||
 		(new->difficulty == 0)) {
-		free(new);
+		cgc_free(new);
 		return -1;
 	}
 
@@ -127,13 +127,13 @@ int32_t trail_new(Trail **t, uint32_t settings[5]) {
 /**
  * Reset trail to initial state (no riders on chairs or in queue).
  *
- * @param l 		Lift
+ * @param l 		cgc_Lift
  * @param riders 	List of riders to store riders removed from lift.
  */
-void trail_reset(Trail *t, Rider **riders) {
+void cgc_trail_reset(cgc_Trail *t, cgc_Rider **riders) {
 
 	// remove riders from queue
-	rider_append(riders, t->riders);
+	cgc_rider_append(riders, t->riders);
 	t->riders = NULL;
 
 	t->rider_total = 0;
@@ -142,13 +142,13 @@ void trail_reset(Trail *t, Rider **riders) {
 /**
  * Destroy a trail and all riders on it
  *
- * @param t 	Trail
+ * @param t 	cgc_Trail
  */
-void trail_destroy(Trail **t, Rider **riders) {
-	Trail *this = *t;
+void cgc_trail_destroy(cgc_Trail **t, cgc_Rider **riders) {
+	cgc_Trail *this = *t;
 	// return all riders
-	rider_append(riders, this->riders);
-	free(*t);
+	cgc_rider_append(riders, this->riders);
+	cgc_free(*t);
 	*t = NULL;
 }
 

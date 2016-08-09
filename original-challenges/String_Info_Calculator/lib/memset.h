@@ -32,6 +32,6 @@
  * @param n Number of times to write ch into buf
  * @return Number of times ch was written into buf
  */
-unsigned int memset(void *buf, unsigned char ch, unsigned int n);
+unsigned int cgc_memset(void *buf, unsigned char ch, unsigned int n);
 
 #endif

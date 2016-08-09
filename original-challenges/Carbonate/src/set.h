@@ -34,9 +34,9 @@ THE SOFTWARE.
 #define SET_MASK 32767
 #define SET_MEMBERS_PER_CELL 8
 
-typedef uint8 set_cell, *set_t;
+typedef cgc_uint8 cgc_set_cell, *cgc_set_t;
 
-void with_set(void (^block)(set_t set));
-void add_set(set_t set, uint16 value);
-void subtract_set(set_t set, uint16 value);
-uint8 check_set(set_t set, uint16 value);
+void cgc_with_set(void (^block)(cgc_set_t set));
+void cgc_add_set(cgc_set_t set, cgc_uint16 value);
+void cgc_subtract_set(cgc_set_t set, cgc_uint16 value);
+cgc_uint8 cgc_check_set(cgc_set_t set, cgc_uint16 value);

@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,13 +24,13 @@
  */
 #include <stdlib.h>
 
-int readuntil(int fd, char *buf, size_t n, char delim)
+int cgc_readuntil(int fd, char *buf, cgc_size_t n, char delim)
 {
     char *bufend = buf + n - 1;
     int ret;
     while (buf != bufend)
     {
-        size_t rx;
+        cgc_size_t rx;
         if (receive(fd, buf, 1, &rx) != 0 || rx == 0)
             break;
         if (*buf == delim)
@@ -43,13 +43,13 @@ int readuntil(int fd, char *buf, size_t n, char delim)
     return 0;
 }
 
-int writeall(int fd, const void *buf, size_t n)
+int cgc_writeall(int fd, const void *buf, cgc_size_t n)
 {
     const void *wptr = buf;
     const void *bufend = buf + n;
     while (wptr != bufend)
     {
-        size_t tx;
+        cgc_size_t tx;
         if (transmit(fd, buf, bufend - wptr, &tx) != 0 || tx == 0)
             break;
         wptr += tx;

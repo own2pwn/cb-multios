@@ -22,21 +22,21 @@
  */
 #include "stdio_private.h"
 
-FILE _stdin = {
+cgc_FILE _stdin = {
     .fd = STDIN,
     .rw = F_READ,
     .idx = 0,
     .length = 0,
     .xlat_map = 0
 };
-FILE _stdout = {
+cgc_FILE _stdout = {
     .fd = STDOUT,
     .rw = F_WRITE,
     .idx = -1,
     .length = 0,
     .xlat_map = 0
 };
-FILE _stderr = {
+cgc_FILE _stderr = {
     .fd = STDERR,
     .rw = F_WRITE,
     .idx = -1,
@@ -44,6 +44,6 @@ FILE _stderr = {
     .xlat_map = 0
 };
 
-FILE * const stdin = &_stdin;
-FILE * const stdout = &_stdout;
-FILE * const stderr = &_stderr;
+cgc_FILE * const stdin = &_stdin;
+cgc_FILE * const stdout = &_stdout;
+cgc_FILE * const stderr = &_stderr;

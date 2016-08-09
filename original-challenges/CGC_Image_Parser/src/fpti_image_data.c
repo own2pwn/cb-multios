@@ -23,7 +23,7 @@ THE SOFTWARE.
 
 #include "fpti_image_data.h"
 
-int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at)
+int cgc_fpti_add_pixel( cgc_pfpti_image_data fid, int x, int y, char *image, int xlen, int ylen, int at)
 {
 	int pixel_index = 0;
 	char c = 0;
@@ -65,7 +65,7 @@ int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, i
 	}
 
 	if ( pixel_index > xlen * ylen ) {
-		printf("[ERROR] Pixel beyond image: @d > @d\n", pixel_index, xlen*ylen);
+		cgc_printf("[ERROR] Pixel beyond image: @d > @d\n", pixel_index, xlen*ylen);
 		return 0;
 	}
 
@@ -74,7 +74,7 @@ int fpti_add_pixel( pfpti_image_data fid, int x, int y, char *image, int xlen, i
 	return 1;
 }
 
-int fpti_display_img( pfpti_image_data fid )
+int cgc_fpti_display_img( cgc_pfpti_image_data fid )
 {
 	int xlen = 0;
 	int ylen = 0;
@@ -96,44 +96,44 @@ int fpti_display_img( pfpti_image_data fid )
 		return 0;
 	}
 
-	if ( fpti_read_magic( fid ) == 0 ) {
-		//printf("magic failed\n");
+	if ( cgc_fpti_read_magic( fid ) == 0 ) {
+		//cgc_printf("magic failed\n");
 		return 0;
 	}
 
-	xlen = fpti_read_xaxis( fid );
+	xlen = cgc_fpti_read_xaxis( fid );
 
 	if ( !xlen ) {
-		//printf("xlen fail\n");
+		//cgc_printf("xlen fail\n");
 		return xlen;
 	}
 
-	ylen = fpti_read_yaxis( fid );
+	ylen = cgc_fpti_read_yaxis( fid );
 
 	if ( !ylen ) {
 		return ylen;
 	}
 
-	//printf("Xlen: @d Ylen: @d\n", xlen, ylen);
+	//cgc_printf("Xlen: @d Ylen: @d\n", xlen, ylen);
 
-	if ( fpti_read_ptype( fid, &ptype) == 0 ) {
+	if ( cgc_fpti_read_ptype( fid, &ptype) == 0 ) {
 		ptype = 0;
 		return ptype;
 	}
 
-	axist = fpti_read_axist( fid );
+	axist = cgc_fpti_read_axist( fid );
 
-	//printf("Axis: @d\n", axist);
+	//cgc_printf("Axis: @d\n", axist);
 
 	if ( !axist ) {
 		return axist;
 	}
 
-	if ( fpti_read_check( fid, 15 ) ==0 ) {
+	if ( cgc_fpti_read_check( fid, 15 ) ==0 ) {
 		return 0;
 	}
 
-	if ( fpti_read_nbits( fid, 15, &x) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 15, &x) == 0 ) {
 		return 0;
 	}
 
@@ -169,12 +169,12 @@ int fpti_display_img( pfpti_image_data fid )
 			miny = -((ylen/2) - ((ylen+1)%2));
 			break;
 		default:
-			printf("[ERROR] Invalid FPTI Axis Type\n");
+			cgc_printf("[ERROR] Invalid FPTI Axis Type\n");
 			return 0;
 			break;
 	};		
 
-	//printf("maxx: @d minx: @d maxy: @d miny: @d\n", maxx, minx, maxy, miny);
+	//cgc_printf("maxx: @d minx: @d maxy: @d miny: @d\n", maxx, minx, maxy, miny);
 
 	image_length = xlen * ylen;
 
@@ -182,14 +182,14 @@ int fpti_display_img( pfpti_image_data fid )
 		return 0;
 	}
 
-	memset( image, ' ', image_length);
+	cgc_memset( image, ' ', image_length);
 	image[image_length] = '\x00';
 
-	while ( fpti_read_pixel( fid, &x, &y) ) {
-		//printf("@d, @d\n", x, y);
+	while ( cgc_fpti_read_pixel( fid, &x, &y) ) {
+		//cgc_printf("@d, @d\n", x, y);
 
 		if ( x < minx || x > maxx ) {
-			printf("X out of bounds: @d\n", x );
+			cgc_printf("X out of bounds: @d\n", x );
 			return 0;
 		}
 
@@ -199,28 +199,28 @@ int fpti_display_img( pfpti_image_data fid )
 #else
 		if ( y < miny && y > maxy ) {
 #endif
-			printf("Y out of bounds: @d\n", y );
+			cgc_printf("Y out of bounds: @d\n", y );
 			return 0;
 		}
 
-		if ( fpti_add_pixel( fid, x, y, image, xlen, ylen, axist) == 0 ) {
+		if ( cgc_fpti_add_pixel( fid, x, y, image, xlen, ylen, axist) == 0 ) {
 			return 0;
 		}
 	}
 	
         for (int i = 0; i < image_length; i++) {
                 if (i%xlen == 0 && i != 0) {
-                        printf("\n");
+                        cgc_printf("\n");
                 }
 
-                printf("@c", image[i]);
+                cgc_printf("@c", image[i]);
         }
 
-	printf("\n");
+	cgc_printf("\n");
 	return 1;
 }
 
-int fpti_read_pixel( pfpti_image_data fid, int *x, int *y )
+int cgc_fpti_read_pixel( cgc_pfpti_image_data fid, int *x, int *y )
 {
 	int retval = 0;
 	int py = 0;
@@ -237,23 +237,23 @@ int fpti_read_pixel( pfpti_image_data fid, int *x, int *y )
 		goto end;
 	}
 
-	if ( fpti_read_check( fid, 14 ) == 0 ) {
+	if ( cgc_fpti_read_check( fid, 14 ) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 1, &xsign) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 1, &xsign) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 6, &px ) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 6, &px ) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 1, &ysign) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 1, &ysign) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 6, &py ) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 6, &py ) == 0 ) {
 		goto end;
 	}
 
@@ -273,7 +273,7 @@ end:
 	return retval;
 }
 
-int fpti_read_axist( pfpti_image_data fid )
+int cgc_fpti_read_axist( cgc_pfpti_image_data fid )
 {
 	int retval = 0;
 
@@ -281,13 +281,13 @@ int fpti_read_axist( pfpti_image_data fid )
 		goto end;
 	}
 
-	retval = fpti_read_check( fid, 3 );
+	retval = cgc_fpti_read_check( fid, 3 );
 
 	if ( !retval ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 3, &retval ) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 3, &retval ) == 0 ) {
 		retval = 0;
 		goto end;
 	}
@@ -297,7 +297,7 @@ end:
 
 }
 
-int fpti_read_ptype( pfpti_image_data fid, int*ptype )
+int cgc_fpti_read_ptype( cgc_pfpti_image_data fid, int*ptype )
 {
 	int t = 0;
 	int retval = 0;
@@ -306,13 +306,13 @@ int fpti_read_ptype( pfpti_image_data fid, int*ptype )
 		return 0;
 	}
 
-	retval = fpti_read_check( fid, 2 );
+	retval = cgc_fpti_read_check( fid, 2 );
 
 	if ( !retval ) {
 		return retval;
 	}
 
-	retval = fpti_read_nbits( fid, 2, &t);
+	retval = cgc_fpti_read_nbits( fid, 2, &t);
 
 	if ( !retval) {
 		return retval;
@@ -326,7 +326,7 @@ int fpti_read_ptype( pfpti_image_data fid, int*ptype )
 	return retval;
 }
 
-int fpti_read_xaxis( pfpti_image_data fid )
+int cgc_fpti_read_xaxis( cgc_pfpti_image_data fid )
 {
 	int value = 0;
 
@@ -334,11 +334,11 @@ int fpti_read_xaxis( pfpti_image_data fid )
 		goto end;
 	}
 
-	if ( fpti_read_check( fid, 6 ) == 0 ) {
+	if ( cgc_fpti_read_check( fid, 6 ) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 6, &value) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 6, &value) == 0 ) {
 		value = 0;
 		goto end;
 	}
@@ -347,7 +347,7 @@ end:
 	return value;
 }
 
-int fpti_read_yaxis( pfpti_image_data fid )
+int cgc_fpti_read_yaxis( cgc_pfpti_image_data fid )
 {
 	int value = 0;
 
@@ -355,11 +355,11 @@ int fpti_read_yaxis( pfpti_image_data fid )
 		goto end;
 	}
 
-	if ( fpti_read_check(fid, 6 ) == 0 ) {
+	if ( cgc_fpti_read_check(fid, 6 ) == 0 ) {
 		goto end;
 	}
 
-	if ( fpti_read_nbits( fid, 6, &value) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 6, &value) == 0 ) {
 		value = 0;
 		goto end;
 	}
@@ -368,15 +368,15 @@ end:
 	return value;
 }
 
-int fpti_read_magic( pfpti_image_data fid )
+int cgc_fpti_read_magic( cgc_pfpti_image_data fid )
 {
 	int magic = 0;
 
-	if ( fpti_read_check( fid, 32 ) == 0 ) {
+	if ( cgc_fpti_read_check( fid, 32 ) == 0 ) {
 		return 0;
 	}
 
-	if ( fpti_read_nbits( fid, 32, &magic) == 0 ) {
+	if ( cgc_fpti_read_nbits( fid, 32, &magic) == 0 ) {
 		return 0;
 	}
 
@@ -387,7 +387,7 @@ int fpti_read_magic( pfpti_image_data fid )
 	return 1;
 }
 
-int fpti_read_check( pfpti_image_data fid, int bitcount)
+int cgc_fpti_read_check( cgc_pfpti_image_data fid, int bitcount)
 {
 	int total_bits = 0;
 	int end_bits = 0;
@@ -397,7 +397,7 @@ int fpti_read_check( pfpti_image_data fid, int bitcount)
 	}
 
 	if ( fid->buffer == NULL ) {
-		//printf("null buff\n");
+		//cgc_printf("null buff\n");
 		return 0;
 	}
 
@@ -409,14 +409,14 @@ int fpti_read_check( pfpti_image_data fid, int bitcount)
 	end_bits = (fid->cbyte * 8) + fid->cbit + bitcount;
 
 	if (total_bits < end_bits ) {
-		//printf("t: @d e: @d\n", total_bits, end_bits);
+		//cgc_printf("t: @d e: @d\n", total_bits, end_bits);
 		return 0;
 	}
 
 	return 1;
 }
 
-int fpti_read_nbits( pfpti_image_data fid, int bitcount, int *value)
+int cgc_fpti_read_nbits( cgc_pfpti_image_data fid, int bitcount, int *value)
 {
 	int index = 0;
 	int data = 0;
@@ -430,7 +430,7 @@ int fpti_read_nbits( pfpti_image_data fid, int bitcount, int *value)
 		return 0;
 	}
 
-	if ( fpti_read_check( fid, bitcount ) == 0 ) {
+	if ( cgc_fpti_read_check( fid, bitcount ) == 0 ) {
 		return 0;
 	}
 
@@ -438,7 +438,7 @@ int fpti_read_nbits( pfpti_image_data fid, int bitcount, int *value)
 	tcb = 8-fid->cbit;
 
 	if ( tcb > bitcount ) {
-		data = (fid->buffer[ fid->cbyte ] >> (tcb-bitcount)) & (expi(2, bitcount) - 1);
+		data = (fid->buffer[ fid->cbyte ] >> (tcb-bitcount)) & (cgc_expi(2, bitcount) - 1);
 		fid->cbit = (fid->cbit + bitcount) % 8;
 
 		if (fid->cbit == 0 ) {

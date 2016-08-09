@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -66,21 +66,21 @@ typedef struct jit {
     char *code_ptr;
     int *stack_ptr;
     int count;
-} jit_t;
+} cgc_jit_t;
 
 #define JITStackEnd (jit->stack + STACK_SZ/sizeof(int))
 
 #define MAX_OUTPUT (64*1024)
 static char *g_output_buf = NULL;
-static size_t g_output_len = 0;
+static cgc_size_t g_output_len = 0;
 
-int readuntil(int fd, char *buf, size_t len, char delim)
+int cgc_readuntil(int fd, char *buf, cgc_size_t len, char delim)
 {
-    size_t i;
+    cgc_size_t i;
     char *c = buf;
     for (i = 0; i < len; ++i)
     {
-        size_t rx;
+        cgc_size_t rx;
         if (receive(fd, c, 1, &rx) != 0 || rx == 0)
             break;
         if (*(c++) == delim)
@@ -90,7 +90,7 @@ int readuntil(int fd, char *buf, size_t len, char delim)
     return c - buf;
 }
 
-int jit_int(jit_t *jit, int n)
+int cgc_jit_int(cgc_jit_t *jit, int n)
 {
     /* Push the old value and pull in a new value.
      *
@@ -104,7 +104,7 @@ int jit_int(jit_t *jit, int n)
                     0x39, 0x97, 0xb8, BYTE1(n), BYTE2(n), BYTE3(n), BYTE4(n) };
 
     ASSERT_OVF(sizeof(code));
-    memcpy(jit->code_ptr, code, sizeof(code));
+    cgc_memcpy(jit->code_ptr, code, sizeof(code));
     jit->code_ptr += sizeof(code);
     jit->stack_ptr--;
     jit->count++;
@@ -112,7 +112,7 @@ int jit_int(jit_t *jit, int n)
     return ERR_OK;
 }
 
-int jit_op(jit_t *jit, char op)
+int cgc_jit_op(cgc_jit_t *jit, char op)
 {
     int sp = (int) (jit->stack_ptr);
 
@@ -216,70 +216,70 @@ int jit_op(jit_t *jit, char op)
 int main()
 {
     char buf[8192];
-    g_output_buf = malloc(MAX_OUTPUT);
+    g_output_buf = cgc_malloc(MAX_OUTPUT);
     if (g_output_buf == NULL)
     {
-        fdprintf(STDOUT, "Failed to allocate output buffer.\n");
+        cgc_fdprintf(STDOUT, "Failed to allocate output buffer.\n");
         return -1;
     }
 
     /* Allocate JIT struct */
-    jit_t *jit;
-    if (allocate(sizeof(jit_t), 1, (void **)&jit) != 0)
+    cgc_jit_t *jit;
+    if (allocate(sizeof(cgc_jit_t), 1, (void **)&jit) != 0)
     {
-        fdprintf(STDOUT, "Failed to allocate JIT struct.\n");
+        cgc_fdprintf(STDOUT, "Failed to allocate JIT struct.\n");
         return -1;
     }
 
-    fdprintf(STDOUT, "> ");
+    cgc_fdprintf(STDOUT, "> ");
     /* Main RPN loop */
-    while (readuntil(STDIN, buf, sizeof(buf), '\n') > 0)
+    while (cgc_readuntil(STDIN, buf, sizeof(buf), '\n') > 0)
     {
         int val = 0;
         int error = ERR_OK;
 
-        if (strcmp(buf, "quit") == 0)
+        if (cgc_strcmp(buf, "quit") == 0)
         {
-            fdprintf(STDOUT, "QUIT\n");
+            cgc_fdprintf(STDOUT, "QUIT\n");
             return 0;
         }
 
-        if (strlen(buf) > 0)
+        if (cgc_strlen(buf) > 0)
         {
             jit->code_ptr = jit->code;
             jit->stack_ptr = JITStackEnd;
             jit->count = 0;
 
             char prologue[] = { 0x55, 0x8b, 0xec, 0x81, 0xec, 0xff, 0x00, 0x00, 0x00, 0x51, 0x31, 0xc0, 0x89, 0xc2 };
-            memcpy(jit->code_ptr, prologue, sizeof(prologue));
+            cgc_memcpy(jit->code_ptr, prologue, sizeof(prologue));
             jit->code_ptr += sizeof(prologue);
 
             char *tok, *input = buf;
-            while (*input && input < buf + strlen(buf))
+            while (*input && input < buf + cgc_strlen(buf))
             {
-                if (isspace(*input))
+                if (cgc_isspace(*input))
                 {
                     input++;
                     continue;
                 }
 
-                int n = strtol(input, &tok, 0);
+                int n = cgc_strtol(input, &tok, 0);
                 if (input == tok)
                 {
                     /* Operator */
                     char c = *(input + 1);
-                    if (!isspace(c) && c != '\0')
+                    if (!cgc_isspace(c) && c != '\0')
                     {
                         error = ERR_INV;
                         break;
                     }
-                    error = jit_op(jit, *input);
+                    error = cgc_jit_op(jit, *input);
                     input++;
                 }
                 else
                 {
                     /* Number */
-                    error = jit_int(jit, n);
+                    error = cgc_jit_int(jit, n);
                     input = tok;
                 }
             }
@@ -290,7 +290,7 @@ int main()
             }
             else
             {
-                memcpy(jit->code_ptr, epilogue, sizeof(epilogue));
+                cgc_memcpy(jit->code_ptr, epilogue, sizeof(epilogue));
                 jit->code_ptr += sizeof(epilogue);
 
                 /* Execute JIT'd code */
@@ -299,10 +299,10 @@ int main()
         }
 
         if (error != ERR_OK)
-            fdprintf(STDOUT, "Error!\n");
+            cgc_fdprintf(STDOUT, "Error!\n");
         else
-            fdprintf(STDOUT, "%d (0x%08x)\n", val, val);
-        fdprintf(STDOUT, "> ");
+            cgc_fdprintf(STDOUT, "%d (0x%08x)\n", val, val);
+        cgc_fdprintf(STDOUT, "> ");
     }
 
     return 0;

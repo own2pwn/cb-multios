@@ -23,16 +23,16 @@
 #ifndef LIBC_H
 #define LIBC_H
 
-typedef unsigned char uint8_t; // NRFIN_00001
+typedef unsigned char cgc_uint8_t; // NRFIN_00001
 #define MAX_WIDTH 16
 
-extern int transmit_all(int fd, const char *buf, const size_t size); // NRFIN_00002
-int recvline(int fd, char *buf, size_t size); // NRFIN_00001
-int strncmp(const char *s1, const char *s2, size_t n);
-int strn2int(const char* str_buf, size_t max_chars); // NRFIN_00001 - modified
-void * memcpy(void* dst, const void* src, size_t cnt); // NRFIN_00001
-size_t strnlen(const char *string, size_t max_len); // NRFIN_00009 - modified
-size_t strlen(const char *string); // NRFIN_00009
-char * itoaB10(int value); // NRFIN_00007
-void * memset(void* str, int ch, size_t n); // NRFIN_00001
+extern int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size); // NRFIN_00002
+int cgc_recvline(int fd, char *buf, cgc_size_t size); // NRFIN_00001
+int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n);
+int cgc_strn2int(const char* str_buf, cgc_size_t max_chars); // NRFIN_00001 - modified
+void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt); // NRFIN_00001
+cgc_size_t cgc_strnlen(const char *string, cgc_size_t max_len); // NRFIN_00009 - modified
+cgc_size_t cgc_strlen(const char *string); // NRFIN_00009
+char * cgc_itoaB10(int value); // NRFIN_00007
+void * cgc_memset(void* str, int ch, cgc_size_t n); // NRFIN_00001
 #endif

@@ -44,7 +44,7 @@
         if (sizeof(__default_vtable_##parent)) \
         memcpy(&__default_vtable_##name, &__default_vtable_##parent, sizeof(__default_vtable_##parent)); \
     }; \
-    const __init_array_t __init_array_##cls##_##name __attribute__((section(".rodata.init"))) = { __level_##name, __init_##name }; \
+    const __init_array_t __init_array_##cls##_##name __attribute__((section("DATA,.rodata.init"))) = { __level_##name, __init_##name }; \
     name * __new_##name () { \
         name *o = malloc(sizeof(name)); \
         ASSERT_ALLOC(o); \
@@ -66,7 +66,7 @@
     static void __init_##cls##_##name () { \
         __default_vtable_##cls.name = (void *)__##cls##_##name; \
     }; \
-    const __init_array_t __init_array_##cls##_##name __attribute__((section(".rodata.init"))) = { __level_##cls, __init_##cls##_##name }; \
+    const __init_array_t __init_array_##cls##_##name __attribute__((section("DATA,.rodata.init"))) = { __level_##cls, __init_##cls##_##name }; \
     rtype __##cls##_##name (cls * this, ##__VA_ARGS__)
 
 #define $super(cls,this,func,...) __default_vtable_##cls.func((void *)(this), ##__VA_ARGS__)
@@ -112,7 +112,7 @@ static void __delete(Object *X)
 {
     if (X->__vtable->$destroy)
         X->__vtable->$destroy(X);
-    free(X);
+    cgc_free(X);
 }
 
 // exception support

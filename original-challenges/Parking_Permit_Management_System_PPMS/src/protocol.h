@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,14 +44,14 @@ enum __attribute__ ((__packed__)) cmd_t {
 typedef struct skey {
   char seesion_key[MASTER_KEY_LEN];
   int num_used;
-} skey_t;
+} cgc_skey_t;
 
-void handle_command(char *buf, int buf_len);
-void handle_auth(char *buf, int buf_len);
-void handle_new_permit(char *buf, int buf_len);
-void handle_new_permit_ring(char *buf, int buf_len);
-void handle_refactor_ring(char *buf, int buf_len);
-void handle_test_permit(char *buf, int buf_len);
-void handle_test_permit_ring(char *buf, int buf_len);
+void cgc_handle_command(char *buf, int buf_len);
+void cgc_handle_auth(char *buf, int buf_len);
+void cgc_handle_new_permit(char *buf, int buf_len);
+void cgc_handle_new_permit_ring(char *buf, int buf_len);
+void cgc_handle_refactor_ring(char *buf, int buf_len);
+void cgc_handle_test_permit(char *buf, int buf_len);
+void cgc_handle_test_permit_ring(char *buf, int buf_len);
 
 #endif

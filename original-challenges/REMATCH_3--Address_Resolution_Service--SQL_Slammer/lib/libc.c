@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,26 +29,26 @@ THE SOFTWARE.
 #include "libc.h"
 
 
-void InitializeRandomness()
+void cgc_InitializeRandomness()
 {
-  srand();
+  cgc_srand();
 }
 
-char *GenerateRandomString(int length) 
+char *cgc_GenerateRandomString(int length) 
 {
   if (length <= 0) 
   {
     return NULL;
   }
-  char *string = calloc(length + 1);
+  char *string = cgc_calloc(length + 1);
   for (int i=0; i < length; i++) 
   {
-    string[i] = random_in_range(0x41, 0x7a);
+    string[i] = cgc_random_in_range(0x41, 0x7a);
   }
   return string;
 }
 
-unsigned int GenerateRandomNumber(int min, int max) 
+unsigned int cgc_GenerateRandomNumber(int min, int max) 
 {
-  return random_in_range(min, max);
+  return cgc_random_in_range(min, max);
 }

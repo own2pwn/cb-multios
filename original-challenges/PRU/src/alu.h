@@ -54,32 +54,32 @@ typedef struct _aluInstruction {
 	enum aluEnum aluOp:4;
 	unsigned int io:1;
 	union _arg2 {
-		regTarget rs2;
+		cgc_regTarget rs2;
 		unsigned char imm;
 	} arg2;
 	unsigned int rs1Sel:3;
 	unsigned int rs1:5;
 	unsigned int rdSel:3;
 	unsigned int rd:5;
-} aluInstruction;
+} cgc_aluInstruction;
 
-void doAdd(pruCPU *cpu, aluInstruction inst);
-void doAdc(pruCPU *cpu, aluInstruction inst);
-void doSub(pruCPU *cpu, aluInstruction inst);
-void doSuc(pruCPU *cpu, aluInstruction inst);
-void doRsb(pruCPU *cpu, aluInstruction inst);
-void doRsc(pruCPU *cpu, aluInstruction inst);
-void doLsl(pruCPU *cpu, aluInstruction inst);
-void doLsr(pruCPU *cpu, aluInstruction inst);
-void doAnd(pruCPU *cpu, aluInstruction inst);
-void doOr(pruCPU *cpu, aluInstruction inst);
-void doXor(pruCPU *cpu, aluInstruction inst);
-void doNot(pruCPU *cpu, aluInstruction inst);
-void doMin(pruCPU *cpu, aluInstruction inst);
-void doMax(pruCPU *cpu, aluInstruction inst);
-void doSet(pruCPU *cpu, aluInstruction inst);
-void doClr(pruCPU *cpu, aluInstruction inst);
+void cgc_doAdd(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doAdc(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doSub(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doSuc(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doRsb(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doRsc(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doLsl(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doLsr(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doAnd(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doOr(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doXor(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doNot(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doMin(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doMax(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doSet(cgc_pruCPU *cpu, cgc_aluInstruction inst);
+void cgc_doClr(cgc_pruCPU *cpu, cgc_aluInstruction inst);
 
-void doQATB(pruCPU *cpu, fmtQatbInstruction qatb);
+void cgc_doQATB(cgc_pruCPU *cpu, cgc_fmtQatbInstruction qatb);
 
 #endif

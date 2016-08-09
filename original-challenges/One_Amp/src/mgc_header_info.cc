@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,22 +27,22 @@
 namespace MgcHeaderInfo
 {
 
-bool Synced(mgc_frame *mframe)
+bool cgc_Synced(cgc_mgc_frame *mframe)
 {
     return ((0xFF & mframe->raw_header[0]) == 0xFF && (0xF0 & mframe->raw_header[1]) == 0xF0);
 }
 
-bool SongV1(mgc_frame *mframe)
+bool cgc_SongV1(cgc_mgc_frame *mframe)
 {
     return (0x08 & mframe->raw_header[1]);
 }
 
-int Layer(mgc_frame *mframe)
+int cgc_Layer(cgc_mgc_frame *mframe)
 {
     return (0x06 & mframe->raw_header[1]) >> 1;
 }
 
-int Bitrate(mgc_frame *mframe)
+int cgc_Bitrate(cgc_mgc_frame *mframe)
 {
     unsigned char rate_idx = (0xF0 & mframe->raw_header[2]) >> 4;
     switch (rate_idx)
@@ -80,7 +80,7 @@ int Bitrate(mgc_frame *mframe)
     return 0;
 }
 
-int Freq(mgc_frame *mframe)
+int cgc_Freq(cgc_mgc_frame *mframe)
 {
     unsigned char freq_idx = mframe->raw_header[2];
     switch (((freq_idx & 0xC) >> 2))
@@ -101,9 +101,9 @@ int Freq(mgc_frame *mframe)
 
 }
 
-unsigned short SamplesPerFrame(mgc_frame *mframe)
+unsigned short cgc_SamplesPerFrame(cgc_mgc_frame *mframe)
 {
-    int spf_idx = Layer(mframe);
+    int spf_idx = cgc_Layer(mframe);
     switch (spf_idx)
     {
     case 0x1:
@@ -116,17 +116,17 @@ unsigned short SamplesPerFrame(mgc_frame *mframe)
     return 0;
 }
 
-unsigned short NumAdditionalFrames(mgc_frame *mframe)
+unsigned short cgc_NumAdditionalFrames(cgc_mgc_frame *mframe)
 {
     return mframe->num_frames_left;
 }
 
-unsigned int CalcFrameSize(mgc_frame *mframe)
+unsigned int cgc_CalcFrameSize(cgc_mgc_frame *mframe)
 {
-    if(!mframe || !Freq(mframe))
+    if(!mframe || !cgc_Freq(mframe))
         return 0;
 
-    unsigned int unpadded_size = ((SamplesPerFrame(mframe) / 8 * Bitrate(mframe)) / Freq(mframe));
+    unsigned int unpadded_size = ((cgc_SamplesPerFrame(mframe) / 8 * cgc_Bitrate(mframe)) / cgc_Freq(mframe));
     return (unpadded_size % 4 == 0) ? unpadded_size : unpadded_size + (4 - (unpadded_size % 4));
 }
 

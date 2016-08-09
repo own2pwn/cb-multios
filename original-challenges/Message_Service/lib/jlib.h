@@ -24,13 +24,13 @@ THE SOFTWARE.
 
 */
 
-void zero(char *, unsigned int);
-void print(char *);
-size_t strlen(char *);
-int read_until(char *, char, size_t);
-int strmatch(char *, char *);
-void strcopy(char *, char *);
-void memcopy(char *, char *, unsigned int);
-int isdigits(char *);
-int atoi(char *);
-void print_uint(unsigned int);
+void cgc_zero(char *, unsigned int);
+void cgc_print(char *);
+cgc_size_t cgc_strlen(char *);
+int cgc_read_until(char *, char, cgc_size_t);
+int cgc_strmatch(char *, char *);
+void cgc_strcopy(char *, char *);
+void cgc_memcopy(char *, char *, unsigned int);
+int cgc_isdigits(char *);
+int cgc_atoi(char *);
+void cgc_print_uint(unsigned int);

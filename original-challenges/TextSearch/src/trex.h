@@ -2,10 +2,10 @@
 #define TREP_H_
 #include "state.h"
 
-typedef enum {PARTIAL, ALL} match_type_e;
+typedef enum {PARTIAL, ALL} cgc_match_type_e;
 
-void debug_state(state_t *state);
-void match(state_t *state, unsigned char *str, match_type_e match_type);
-state_t *evalrpn(unsigned char *rpn);
+void cgc_debug_state(cgc_state_t *state);
+void cgc_match(cgc_state_t *state, unsigned char *str, cgc_match_type_e match_type);
+cgc_state_t *cgc_evalrpn(unsigned char *rpn);
 
 #endif

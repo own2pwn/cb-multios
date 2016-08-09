@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,58 +44,58 @@ enum {
 };
 
 typedef struct {
-    struct malloc_free *free_list[NUM_BINS];
+    struct cgc_malloc_free *free_list[NUM_BINS];
     unsigned char mem_map[NUM_RUNS];
 
     /* tiny-specific metadata */
     struct tiny_page *tiny_pages[NUM_TINY_BINS];
     void *tiny_run;
-    size_t tiny_offset;
-} malloc_t;
+    cgc_size_t tiny_offset;
+} cgc_malloc_t;
 
 typedef struct {
     union {
-        size_t prev_size; /* small allocations */
-        malloc_t *heap; /* large allocations */
+        cgc_size_t prev_size; /* small allocations */
+        cgc_malloc_t *heap; /* large allocations */
     };
-    size_t size_flags;
+    cgc_size_t size_flags;
     char data[0];
-} malloc_hdr_t;
+} cgc_malloc_hdr_t;
 
 typedef struct {
     int unused;
-} small_run_t;
+} cgc_small_run_t;
 
 typedef struct tiny_page {
     unsigned short size;
     unsigned short offset;
-} tiny_page_t;
+} cgc_tiny_page_t;
 
 typedef struct malloc_tiny_free {
     struct malloc_tiny_free *next;
-} malloc_tiny_free_t;
+} cgc_malloc_tiny_free_t;
 
 typedef struct malloc_small_free {
-    malloc_hdr_t hdr;
+    cgc_malloc_hdr_t hdr;
     struct malloc_small_free *prev, *next;
-} malloc_small_free_t;
+} cgc_malloc_small_free_t;
 
-typedef struct malloc_free {
+typedef struct cgc_malloc_free {
     union
     {
-        malloc_tiny_free_t tiny;
-        malloc_small_free_t small;
+        cgc_malloc_tiny_free_t tiny;
+        cgc_malloc_small_free_t small;
     };
-} malloc_free_t;
+} cgc_malloc_free_t;
 
-malloc_t g_heap;
+cgc_malloc_t g_heap;
 
-void *malloc_alloc(malloc_t *heap, size_t n);
-void malloc_free(malloc_t *heap, void *ptr);
-void *malloc_realloc(malloc_t *heap, void *ptr, size_t n);
-size_t malloc_size(malloc_t *heap, void *ptr);
+void *cgc_malloc_alloc(cgc_malloc_t *heap, cgc_size_t n);
+void cgc_malloc_free(cgc_malloc_t *heap, void *ptr);
+void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, cgc_size_t n);
+cgc_size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr);
 
-static inline int size_to_bin(size_t n)
+static inline int cgc_size_to_bin(cgc_size_t n)
 {
     if (n < SMALL_SIZE)
         return (n / 4) - 1;

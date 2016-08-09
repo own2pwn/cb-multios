@@ -16,7 +16,7 @@ typedef struct _Command
   char col;
   char dir; 
   char shipNum;
-}Command;
+}cgc_Command;
 
 typedef struct _PlayerState
 {
@@ -26,16 +26,16 @@ typedef struct _PlayerState
   int ship4Life;
   int ship5Life;
   char board[BOARD_SIZE][BOARD_SIZE]; //the board itself
-} PlayerState;
+} cgc_PlayerState;
 
-int getCommand(Command* cmd);
+int cgc_getCommand(cgc_Command* cmd);
 
-int clearPlayerState(PlayerState* ps);
+int cgc_clearPlayerState(cgc_PlayerState* ps);
 
-int dumpBoard(PlayerState* ps);
+int cgc_dumpBoard(cgc_PlayerState* ps);
 
-int processPlace(PlayerState* ps, Command* cmd);
-int processTarget(PlayerState* ps, Command* cmd);
+int cgc_processPlace(cgc_PlayerState* ps, cgc_Command* cmd);
+int cgc_processTarget(cgc_PlayerState* ps, cgc_Command* cmd);
 
-int printHelp();
+int cgc_printHelp();
 #endif//SAMPLE_SHIPGAME_H

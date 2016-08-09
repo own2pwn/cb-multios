@@ -23,8 +23,8 @@
 
 #include "hash.h"
 
-lhash_t get_lhash(char *str) {
-    lhash_t lhash;
+cgc_lhash_t cgc_get_lhash(char *str) {
+    cgc_lhash_t lhash;
     unsigned long hash1 = 261, hash2 = 0;
     unsigned char c;
 

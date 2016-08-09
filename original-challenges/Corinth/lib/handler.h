@@ -1,3 +1,3 @@
 #pragma once
 
-void run_loop();
+void cgc_run_loop();

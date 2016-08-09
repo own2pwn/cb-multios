@@ -1,8 +1,8 @@
 #ifndef CGC_MALLOC_H
 #define CGC_MALLOC_H
 
-void *calloc(size_t nmemb, size_t size);
-void  free(void *ptr);
-void *malloc(size_t size);
-void *realloc(void *ptr, size_t size);
+void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size);
+void  cgc_free(void *ptr);
+void *cgc_malloc(cgc_size_t size);
+void *cgc_realloc(void *ptr, cgc_size_t size);
 #endif

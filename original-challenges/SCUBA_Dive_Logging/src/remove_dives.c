@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,12 +27,12 @@ THE SOFTWARE.
 #include "stdlib.h"
 
 
-int remove_dives(logbook_type *Info)  {
+int cgc_remove_dives(cgc_logbook_type *Info)  {
 
 	char buf[1024];
 	int rcv_cnt;
 
-	dive_log_type *next_dive, *prev_dive, *temp_dive;
+	cgc_dive_log_type *next_dive, *prev_dive, *temp_dive;
 	struct dive_data *temp_ptr, *next_ptr;
 
 	next_dive = Info->dives;
@@ -43,23 +43,23 @@ int remove_dives(logbook_type *Info)  {
 
 	if (next_dive == 0) {
 
-		printf("\n");
-		printf("Dive Log is empty\n");
+		cgc_printf("\n");
+		cgc_printf("Dive Log is empty\n");
 		return 0;
 	}
 
 	// show all the dives
-	list_dives(Info);
+	cgc_list_dives(Info);
 
-	printf("\n");
-	printf("Enter Dive # to delete or blank to abort: ");
+	cgc_printf("\n");
+	cgc_printf("Enter Dive # to delete or blank to abort: ");
 
-	rcv_cnt=getline(buf, sizeof(buf));
+	rcv_cnt=cgc_getline(buf, sizeof(buf));
 		
 	if (rcv_cnt==0)
 		return 0;
 
-	dive_number_to_delete=atoi(buf);
+	dive_number_to_delete=cgc_atoi(buf);
 
 	next_dive = Info->dives;
 
@@ -77,14 +77,14 @@ int remove_dives(logbook_type *Info)  {
 
 				next_ptr=temp_ptr->next;
 
-				free(temp_ptr);
+				cgc_free(temp_ptr);
 
 				temp_ptr=next_ptr;
 			}
 
 		}
-		// now free the dive log entry
-		free(next_dive);
+		// now cgc_free the dive log entry
+		cgc_free(next_dive);
 
 		Info->dives = temp_dive;
 		return 0;
@@ -118,19 +118,19 @@ int remove_dives(logbook_type *Info)  {
 
 				next_ptr=temp_ptr->next;
 
-				free(temp_ptr);
+				cgc_free(temp_ptr);
 
 				temp_ptr=next_ptr;
 			}
 		
 		}
 
-		// now free the dive log entry
-		free (next_dive);
+		// now cgc_free the dive log entry
+		cgc_free (next_dive);
 	}
 	else {
 
-		printf("Invalid dive number entered\n");
+		cgc_printf("Invalid dive number entered\n");
 	}
 
 	return 0;

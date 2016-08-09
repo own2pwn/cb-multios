@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,17 +31,17 @@ THE SOFTWARE.
 #include "string.h"
 #include "malloc.h"
 
-int init_database( productDefType **database ) {
+int cgc_init_database( cgc_productDefType **database ) {
 
 
-	productDefType *pTemp;
+	cgc_productDefType *pTemp;
 
 	pTemp = *database;
 
 
 	if (pTemp == 0) {
 
-		pTemp = malloc(sizeof(productDefType));
+		pTemp = cgc_malloc(sizeof(cgc_productDefType));
 
 		if (pTemp == 0) 
 			_terminate(-1);
@@ -53,12 +53,12 @@ int init_database( productDefType **database ) {
 }
 
 
-int destroy_database ( productDefType **database ) {
+int cgc_destroy_database ( cgc_productDefType **database ) {
 
-productDefType *productPtr, *tmpProduct;
-sprintEntryType *sprintPtr, *tmpSprintPtr;
-backlogItemType *pblPtr, *tmpPBIPtr;
-backlogItemType *sblPtr, *tmpSBLPtr;
+cgc_productDefType *productPtr, *tmpProduct;
+cgc_sprintEntryType *sprintPtr, *tmpSprintPtr;
+cgc_backlogItemType *pblPtr, *tmpPBIPtr;
+cgc_backlogItemType *sblPtr, *tmpSBLPtr;
 
 
 	productPtr = *database;
@@ -72,13 +72,13 @@ backlogItemType *sblPtr, *tmpSBLPtr;
 
 
 			if (pblPtr->description != 0)
-				free(pblPtr->description);
+				cgc_free(pblPtr->description);
 
 			tmpPBIPtr = pblPtr;
 
 			pblPtr = pblPtr->next;
 
-			free(tmpPBIPtr);
+			cgc_free(tmpPBIPtr);
 
 		}
 
@@ -93,33 +93,33 @@ backlogItemType *sblPtr, *tmpSBLPtr;
 
 
 				if (sblPtr->description != 0)
-					free(sblPtr->description);
+					cgc_free(sblPtr->description);
 
 				tmpSBLPtr = sblPtr;
 				sblPtr = sblPtr->next;
 
-				free(tmpSBLPtr);
+				cgc_free(tmpSBLPtr);
 
 			}
 
 			if (sprintPtr->title != 0 ) 
-				free(sprintPtr->title);
+				cgc_free(sprintPtr->title);
 
 			tmpSprintPtr = sprintPtr;
 			sprintPtr = sprintPtr->next;
 
-			free(tmpSprintPtr);
+			cgc_free(tmpSprintPtr);
 
 
 		}
 
 		if (productPtr->title != 0)
-			free(productPtr->title);
+			cgc_free(productPtr->title);
 
 		tmpProduct = productPtr;
 		productPtr = productPtr->next;
 
-		free(tmpProduct);
+		cgc_free(tmpProduct);
 
 
 	}

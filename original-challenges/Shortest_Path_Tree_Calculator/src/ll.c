@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,13 +31,13 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "io.h"
 
-extern pNode Nodes;
-extern pEdge Edges;
-extern uint32_t NumNodes;
-extern uint32_t NumEdges;
+extern cgc_pNode Nodes;
+extern cgc_pEdge Edges;
+extern cgc_uint32_t NumNodes;
+extern cgc_uint32_t NumEdges;
 
 // add a node to a list
-pNode AddNode(pNode Element) {
+cgc_pNode cgc_AddNode(cgc_pNode Element) {
 
 	if (!Element) {
 		return(NULL);
@@ -59,7 +59,7 @@ pNode AddNode(pNode Element) {
 }
 
 // add an edge to a list
-pEdge AddEdge(pEdge Element) {
+cgc_pEdge cgc_AddEdge(cgc_pEdge Element) {
 
 	if (!Element) {
 		return(NULL);
@@ -80,9 +80,9 @@ pEdge AddEdge(pEdge Element) {
 }
 
 // remove a node from a list by pointer
-pNode RemoveNode(pNode Element) {
-	pNode n;
-	pNode prev;
+cgc_pNode cgc_RemoveNode(cgc_pNode Element) {
+	cgc_pNode n;
+	cgc_pNode prev;
 
 	if (!Nodes || !Element) {
 		return(NULL);
@@ -110,9 +110,9 @@ pNode RemoveNode(pNode Element) {
 }
 
 // remove an edge from a list by pointer
-pEdge RemoveEdge(pEdge Element) {
-	pEdge e;
-	pEdge prev;
+cgc_pEdge cgc_RemoveEdge(cgc_pEdge Element) {
+	cgc_pEdge e;
+	cgc_pEdge prev;
 
 	if (!Edges || !Element) {
 		return(NULL);
@@ -140,8 +140,8 @@ pEdge RemoveEdge(pEdge Element) {
 }
 
 // find a node in a list by its Name
-pNode FindNode(uint32_t TargetName) {
-	pNode Curr = Nodes;
+cgc_pNode cgc_FindNode(cgc_uint32_t TargetName) {
+	cgc_pNode Curr = Nodes;
 
 	if (!Nodes) {
 		return(NULL);
@@ -159,8 +159,8 @@ pNode FindNode(uint32_t TargetName) {
 }
 
 // find an edge in a list by its starting and ending node
-pEdge FindEdge(pNode NodeA, pNode NodeZ) {
-	pEdge Curr = Edges;
+cgc_pEdge cgc_FindEdge(cgc_pNode NodeA, cgc_pNode NodeZ) {
+	cgc_pEdge Curr = Edges;
 
 	if (!Edges) {
 		return(NULL);
@@ -181,9 +181,9 @@ pEdge FindEdge(pNode NodeA, pNode NodeZ) {
 }
 
 // Destroy a nodes list
-uint8_t DestroyNodes(void) {
-	pNode Curr = Nodes;
-	pNode Next;
+cgc_uint8_t cgc_DestroyNodes(void) {
+	cgc_pNode Curr = Nodes;
+	cgc_pNode Next;
 
 	if (!Nodes) {
 		return(0);
@@ -191,7 +191,7 @@ uint8_t DestroyNodes(void) {
 
 	while (Curr) {
 		Next = Curr->Next;
-		free(Curr);
+		cgc_free(Curr);
 		Curr = Next;
 	}
 
@@ -201,9 +201,9 @@ uint8_t DestroyNodes(void) {
 }
 
 // Destroy a edges list
-uint8_t DestroyEdges(void) {
-	pEdge Curr = Edges;
-	pEdge Next;
+cgc_uint8_t cgc_DestroyEdges(void) {
+	cgc_pEdge Curr = Edges;
+	cgc_pEdge Next;
 
 	if (!Edges) {
 		return(0);
@@ -211,7 +211,7 @@ uint8_t DestroyEdges(void) {
 
 	while (Curr) {
 		Next = Curr->Next;
-		free(Curr);
+		cgc_free(Curr);
 		Curr = Next;
 	}
 

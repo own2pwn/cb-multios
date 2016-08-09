@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,14 +26,14 @@
 #include "codes.h"
 
 typedef struct {
-    uint32_t P[18];
-    uint32_t S0[256];
-    uint32_t S1[256];
-    uint32_t S2[256];
-    uint32_t S3[256];
-} dolphin_priv_t;
+    cgc_uint32_t P[18];
+    cgc_uint32_t S0[256];
+    cgc_uint32_t S1[256];
+    cgc_uint32_t S2[256];
+    cgc_uint32_t S3[256];
+} cgc_dolphin_priv_t;
 
-static const uint32_t KSconst[18 + 1024] = {
+static const cgc_uint32_t KSconst[18 + 1024] = {
     0x191bfb0c, 0x6b4b7e20, 0x945c7331, 0x612e191d, 0x87519d84, 0x985c6bb9, 0x18694bd0, 0xbeefc48b, 0x81aba442, 0x6b6d3b24, 0xf22a189d, 0x28c488e9, 0xd3a2220a, 0xaa1a79eb, 0xc2cc2370, 0xd361d467,
     0x26a1efdd, 0x27276a0d, 0x1f3b8193, 0xd940b678, 0x950cb28d, 0x1e9b0548, 0xb5dffe7e, 0x49679407, 0x7fff83e5, 0x91d6b59a, 0x1ddac204, 0x8d09b0b0, 0x05de57a7, 0x0b0bb1b2, 0x51f82563, 0x7db18cea,
     0x381b1873, 0x4f806e8b, 0x28f687d6, 0x5284a2be, 0xf1cdd86c, 0xbc044799, 0xe071aa81, 0x3573a2cb, 0x90f2abff, 0xf99f4754, 0x16611cbf, 0x8d92c460, 0x12bee831, 0x918fe093, 0x62649d0a, 0xf2b26b8a,
@@ -102,9 +102,9 @@ static const uint32_t KSconst[18 + 1024] = {
     0xb6bb13ef, 0x3ea7b81e
 };
 
-static inline uint32_t __attribute__((always_inline)) F(dolphin_priv_t *priv, uint32_t x)
+static inline cgc_uint32_t __attribute__((always_inline)) cgc_F(cgc_dolphin_priv_t *priv, cgc_uint32_t x)
 {
-    uint8_t x0, x1, x2, x3;
+    cgc_uint8_t x0, x1, x2, x3;
     x0 = x >> 24;
     x1 = x >> 16;
     x2 = x >> 8;
@@ -112,18 +112,18 @@ static inline uint32_t __attribute__((always_inline)) F(dolphin_priv_t *priv, ui
     return ((priv->S0[x0] + priv->S1[x1]) ^ priv->S2[x2]) + priv->S3[x3];
 }
 
-static int dolphin_encode(code_t *code, unsigned char *b)
+static int cgc_dolphin_encode(cgc_code_t *code, unsigned char *b)
 {
-    uint32_t L, R, tmp;
-    uint32_t *b32 = (uint32_t *)b;
-    dolphin_priv_t *priv = code->priv;
+    cgc_uint32_t L, R, tmp;
+    cgc_uint32_t *b32 = (cgc_uint32_t *)b;
+    cgc_dolphin_priv_t *priv = code->priv;
 
     L = b32[0];
     R = b32[1];
 
 #define ROUND(x) { \
     L ^= priv->P[x]; \
-    tmp = R ^ F(priv, L); \
+    tmp = R ^ cgc_F(priv, L); \
     R = L; \
     L = tmp; \
 }
@@ -154,11 +154,11 @@ static int dolphin_encode(code_t *code, unsigned char *b)
     return SUCCESS;
 }
 
-static int dolphin_decode(code_t *code, unsigned char *b)
+static int cgc_dolphin_decode(cgc_code_t *code, unsigned char *b)
 {
-    uint32_t L, R, tmp;
-    uint32_t *b32 = (uint32_t *)b;
-    dolphin_priv_t *priv = code->priv;
+    cgc_uint32_t L, R, tmp;
+    cgc_uint32_t *b32 = (cgc_uint32_t *)b;
+    cgc_dolphin_priv_t *priv = code->priv;
 
     R = b32[0];
     L = b32[1];
@@ -168,7 +168,7 @@ static int dolphin_decode(code_t *code, unsigned char *b)
     L = tmp ^ priv->P[17];
 
 #define ROUND(x) { \
-    tmp = R ^ F(priv, L); \
+    tmp = R ^ cgc_F(priv, L); \
     L ^= priv->P[x]; \
     R = L; \
     L = tmp; \
@@ -196,13 +196,13 @@ static int dolphin_decode(code_t *code, unsigned char *b)
     return SUCCESS;
 }
 
-static int dolphin_init(code_t *code, const unsigned char *k)
+static int cgc_dolphin_init(cgc_code_t *code, const unsigned char *k)
 {
     int i, j;
-    const uint32_t *k32 = (const uint32_t *)k;
-    dolphin_priv_t *priv;
+    const cgc_uint32_t *k32 = (const cgc_uint32_t *)k;
+    cgc_dolphin_priv_t *priv;
 
-    code->priv = priv = malloc(sizeof(dolphin_priv_t));
+    code->priv = priv = cgc_malloc(sizeof(cgc_dolphin_priv_t));
     if (priv == NULL)
         return FAILURE;
 
@@ -222,31 +222,31 @@ static int dolphin_init(code_t *code, const unsigned char *k)
         priv->P[i] ^= k32[i % 8];
 
     for (i = 0; i < 18; i+=2)
-        dolphin_encode(code, (unsigned char *)&priv->P[i]);
+        cgc_dolphin_encode(code, (unsigned char *)&priv->P[i]);
     for (i = 0; i < 256; i+=2)
-        dolphin_encode(code, (unsigned char *)&priv->S0[i]);
+        cgc_dolphin_encode(code, (unsigned char *)&priv->S0[i]);
     for (i = 0; i < 256; i+=2)
-        dolphin_encode(code, (unsigned char *)&priv->S1[i]);
+        cgc_dolphin_encode(code, (unsigned char *)&priv->S1[i]);
     for (i = 0; i < 256; i+=2)
-        dolphin_encode(code, (unsigned char *)&priv->S2[i]);
+        cgc_dolphin_encode(code, (unsigned char *)&priv->S2[i]);
     for (i = 0; i < 256; i+=2)
-        dolphin_encode(code, (unsigned char *)&priv->S3[i]);
+        cgc_dolphin_encode(code, (unsigned char *)&priv->S3[i]);
 
     return SUCCESS;
 }
 
-static void dolphin_destroy(code_t *code)
+static void cgc_dolphin_destroy(cgc_code_t *code)
 {
-    free(code->priv);
+    cgc_free(code->priv);
 }
 
-const code_def_t dolphin_code = {
+const cgc_code_def_t dolphin_code = {
     .name = "Dolphin",
     .type = C_DOLPHIN,
     .bsize = 64,
     .ksize = 256,
-    .init = dolphin_init,
-    .destroy = dolphin_destroy,
-    .encode = dolphin_encode,
-    .decode = dolphin_decode
+    .init = cgc_dolphin_init,
+    .destroy = cgc_dolphin_destroy,
+    .encode = cgc_dolphin_encode,
+    .decode = cgc_dolphin_decode
 };

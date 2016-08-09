@@ -25,12 +25,12 @@
 #include "account.h"
 #include "option.h"
 
-uint32_t ORDER_ID = 1;
+cgc_uint32_t ORDER_ID = 1;
 
-option_holding_t * match_holding(uint32_t acct_id, option_order_t *order){
+cgc_option_holding_t * cgc_match_holding(cgc_uint32_t acct_id, cgc_option_order_t *order){
 	for(int i =0; i < MAX_HOLDINGS; i++){
-		option_holding_t *h = &(ACCOUNTS[acct_id].holdings[i]);
-		int mcp = memcmp(order->symbol, h->symbol, SYM_SIZE);
+		cgc_option_holding_t *h = &(ACCOUNTS[acct_id].holdings[i]);
+		int mcp = cgc_memcmp(order->symbol, h->symbol, SYM_SIZE);
 		if(mcp == 0)
 			return h;
 
@@ -39,9 +39,9 @@ option_holding_t * match_holding(uint32_t acct_id, option_order_t *order){
 	return NULL;
 }
 
-option_holding_t *add_holding(uint32_t acct_id, option_order_t *order){
+cgc_option_holding_t *cgc_add_holding(cgc_uint32_t acct_id, cgc_option_order_t *order){
 
-	option_holding_t *n = match_holding(acct_id, order);
+	cgc_option_holding_t *n = cgc_match_holding(acct_id, order);
 	// assume everyone has a bit of every holding
 	if(n == NULL)
 		_terminate(77);
@@ -52,9 +52,9 @@ option_holding_t *add_holding(uint32_t acct_id, option_order_t *order){
 
 }
 
-option_holding_t *dec_holding(uint32_t acct_id, option_order_t *order){
+cgc_option_holding_t *cgc_dec_holding(cgc_uint32_t acct_id, cgc_option_order_t *order){
 
-	option_holding_t *n = match_holding(acct_id, order);
+	cgc_option_holding_t *n = cgc_match_holding(acct_id, order);
 	// assume everyone has a bit of every holding
 	if(n == NULL)
 		_terminate(55);
@@ -65,9 +65,9 @@ option_holding_t *dec_holding(uint32_t acct_id, option_order_t *order){
 
 }
 
-OP_ERR fill_order(uint32_t acct_id, option_order_t *order, orderbook_order_t *matched_order){
+cgc_OP_ERR cgc_fill_order(cgc_uint32_t acct_id, cgc_option_order_t *order, cgc_orderbook_order_t *matched_order){
 	// this also assumes that the order account has the balance
-	option_order_t *match = &(matched_order->contract);
+	cgc_option_order_t *match = &(matched_order->contract);
 
 	float purchase_price = order->qty * match->price;
 	
@@ -78,20 +78,20 @@ OP_ERR fill_order(uint32_t acct_id, option_order_t *order, orderbook_order_t *ma
 
 
 	// this is the sell order
-	option_holding_t *debit_holding = match_holding(matched_order->acct_id, order);
+	cgc_option_holding_t *debit_holding = cgc_match_holding(matched_order->acct_id, order);
 
 	if(debit_holding == NULL)
 		_terminate(88);
-	dec_holding(matched_order->acct_id, order);
+	cgc_dec_holding(matched_order->acct_id, order);
 	
 	
 	// this is buy order	
-	option_holding_t * credit_holding = match_holding(acct_id, order);
+	cgc_option_holding_t * credit_holding = cgc_match_holding(acct_id, order);
 	if(credit_holding == NULL)
 		_terminate(88);
 
 
-	add_holding(acct_id, order);
+	cgc_add_holding(acct_id, order);
 
 	if(order->qty > match->qty)
 		_terminate(102);
@@ -115,16 +115,16 @@ OP_ERR fill_order(uint32_t acct_id, option_order_t *order, orderbook_order_t *ma
 
 }
 
-int match_symbol(option_order_t *l, option_order_t *r){
-	return memcmp(l->symbol, r->symbol, SYM_SIZE);
+int cgc_match_symbol(cgc_option_order_t *l, cgc_option_order_t *r){
+	return cgc_memcmp(l->symbol, r->symbol, SYM_SIZE);
 }
 
-float get_current_ask(char * sym){
+float cgc_get_current_ask(char * sym){
 	float price = 0.0;
-	uint32_t low_oid = 0;
+	cgc_uint32_t low_oid = 0;
 	for(int i = 0; i < NUM_ORDERS; i++){
 		if(ORDERBOOK[i].direction == SELL){
-			int mc = memcmp(ORDERBOOK[i].contract.symbol, sym, SYM_SIZE);
+			int mc = cgc_memcmp(ORDERBOOK[i].contract.symbol, sym, SYM_SIZE);
 			if(mc == 0 && ORDERBOOK[i].contract.qty > 0){
 				if(ORDERBOOK[i].order_id < low_oid || low_oid == 0){
 					low_oid = ORDERBOOK[i].order_id;
@@ -140,15 +140,15 @@ float get_current_ask(char * sym){
 
 
 
-orderbook_order_t * find_sell_order(option_order_t *order){
-	uint32_t low_oid = 0;
-	orderbook_order_t * o = NULL;
+cgc_orderbook_order_t * cgc_find_sell_order(cgc_option_order_t *order){
+	cgc_uint32_t low_oid = 0;
+	cgc_orderbook_order_t * o = NULL;
 	for(int i =0; i < NUM_ORDERS; ++i){
 
-		option_order_t *potential = &(ORDERBOOK[i].contract);
+		cgc_option_order_t *potential = &(ORDERBOOK[i].contract);
 		int ms =  1;
 		if(potential != NULL && potential->symbol[0] != 0x0){
-			ms = match_symbol(potential, order);
+			ms = cgc_match_symbol(potential, order);
 		} 
 				
 		if(potential != NULL && ms == 0 && potential->price <= order->price && potential->qty > 0 && potential->qty >= order->qty){
@@ -168,12 +168,12 @@ orderbook_order_t * find_sell_order(option_order_t *order){
 
 }
 
-OP_ERR add_to_order_book(option_order_t *o, uint32_t acct_id, OP_TYPE direction){
+cgc_OP_ERR cgc_add_to_order_book(cgc_option_order_t *o, cgc_uint32_t acct_id, cgc_OP_TYPE direction){
 	
 	for(int i = 0; i < NUM_ORDERS; ++i){
 		if(ORDERBOOK[i].contract.symbol[0] == 0x0){
 			char * obsym = ORDERBOOK[i].contract.symbol;
-			memcpy(o->symbol, obsym, SYM_SIZE);
+			cgc_memcpy(o->symbol, obsym, SYM_SIZE);
 			ORDERBOOK[i].contract.qty = o->qty;
 			ORDERBOOK[i].contract.price = o->price;
 			ORDERBOOK[i].acct_id = acct_id;
@@ -189,7 +189,7 @@ OP_ERR add_to_order_book(option_order_t *o, uint32_t acct_id, OP_TYPE direction)
 	return ORDERS_FULL;
 }
 
-OP_ERR check_account_balance_can_buy(option_order_t *o, uint32_t acct_id){
+cgc_OP_ERR cgc_check_account_balance_can_buy(cgc_option_order_t *o, cgc_uint32_t acct_id){
 	if(acct_id < NUM_ACCOUNTS){
 		
 		if((o->qty * o->price) < ACCOUNTS[acct_id].balance){
@@ -202,28 +202,28 @@ OP_ERR check_account_balance_can_buy(option_order_t *o, uint32_t acct_id){
 	return BAD_ACCT;
 }
 
-void generic_resp(packet_t *resp, OP_TYPE ot, uint32_t acct_id){
+void cgc_generic_resp(cgc_packet_t *resp, cgc_OP_TYPE ot, cgc_uint32_t acct_id){
 	resp->rt = RESPONSE;
 	resp->ot = ot;
 	resp->acct_id = acct_id;
 
 }
 
-size_t gen_order_fill_msg(packet_t *resp, OP_TYPE ot, char * sym, uint32_t qty, uint32_t acct_id){
-	generic_resp(resp, ot, acct_id);
+cgc_size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id){
+	cgc_generic_resp(resp, ot, acct_id);
 	if(ot != BUY && ot != SELL)
 		_terminate(99);
-	orderfill_t *of = (orderfill_t *) &(resp->op_data);
-	memcpy(sym, &(of->symbol), SYM_SIZE);
+	cgc_orderfill_t *of = (cgc_orderfill_t *) &(resp->op_data);
+	cgc_memcpy(sym, &(of->symbol), SYM_SIZE);
 	of->qty = qty;
-	return sizeof(orderfill_t)-sizeof(void *);
+	return sizeof(cgc_orderfill_t)-sizeof(void *);
 }
 
-OP_ERR check_account_holding_in_qty_sell(option_order_t *sell_order, uint32_t acct_id){
-	account_record_t *ar = &(ACCOUNTS[acct_id]);
+cgc_OP_ERR cgc_check_account_holding_in_qty_sell(cgc_option_order_t *sell_order, cgc_uint32_t acct_id){
+	cgc_account_record_t *ar = &(ACCOUNTS[acct_id]);
 	for(int i = 0; i < MAX_HOLDINGS; i++){
-		option_holding_t *h = &(ar->holdings[i]);
-		if(memcmp(h->symbol, sell_order->symbol, SYM_SIZE) == OK){
+		cgc_option_holding_t *h = &(ar->holdings[i]);
+		if(cgc_memcmp(h->symbol, sell_order->symbol, SYM_SIZE) == OK){
 			if(sell_order->qty <= h->qty){
 				return OK;
 			}
@@ -236,34 +236,34 @@ OP_ERR check_account_holding_in_qty_sell(option_order_t *sell_order, uint32_t ac
 }
 
 
-OP_ERR fill_buy_order(uint32_t acct_id, orderbook_order_t *matched_order, option_order_t *order){
+cgc_OP_ERR cgc_fill_buy_order(cgc_uint32_t acct_id, cgc_orderbook_order_t *matched_order, cgc_option_order_t *order){
 	if(matched_order == NULL){
 		return NO_MATCH;
 	}
-	return fill_order(acct_id, order, matched_order);
+	return cgc_fill_order(acct_id, order, matched_order);
 
 }
 
-OP_ERR run_option_transaction(uint32_t acct_id, option_order_t *order, OP_TYPE ot){
+cgc_OP_ERR cgc_run_option_transaction(cgc_uint32_t acct_id, cgc_option_order_t *order, cgc_OP_TYPE ot){
 	if(ot == BUY){
 
-		OP_ERR e = check_account_balance_can_buy(order, acct_id);
+		cgc_OP_ERR e = cgc_check_account_balance_can_buy(order, acct_id);
 		
 		if(e != OK)
 			return e;
 		// we reject buy orders with no sell order
-		orderbook_order_t * matched_order = find_sell_order(order);	
-		OP_ERR ofe = fill_buy_order(acct_id, matched_order, order);
+		cgc_orderbook_order_t * matched_order = cgc_find_sell_order(order);	
+		cgc_OP_ERR ofe = cgc_fill_buy_order(acct_id, matched_order, order);
 		if(ofe != OK)
 			return ofe;
 		return OK;
 
 	} else if(ot == SELL){
-		OP_ERR e = check_account_holding_in_qty_sell(order, acct_id);
+		cgc_OP_ERR e = cgc_check_account_holding_in_qty_sell(order, acct_id);
 		if(e != OK)
 			return e;
 
-		return add_to_order_book(order, acct_id, SELL);
+		return cgc_add_to_order_book(order, acct_id, SELL);
 	}
 	
 	return UNK_E;

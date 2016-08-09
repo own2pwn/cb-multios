@@ -29,16 +29,16 @@ THE SOFTWARE.
 #include "expression_parser.h"
 #include "database.h"
 
-extern tGlobalMemoryLayout g_memoryGlobal;
+extern cgc_tGlobalMemoryLayout g_memoryGlobal;
 
-uint8_t g_parseStackSize = 0;
+cgc_uint8_t g_parseStackSize = 0;
 
-tItemStack peek_parser_stack( void )
+cgc_tItemStack cgc_peek_parser_stack( void )
 {
     // Return top item
     if ( g_parseStackSize == 0 )
     {
-        tItemStack temp;
+        cgc_tItemStack temp;
 
         temp.type = ITEM_TYPE_EMPTY;
 
@@ -48,12 +48,12 @@ tItemStack peek_parser_stack( void )
     return (g_memoryGlobal.parseStack[g_parseStackSize-1]);
 }
 
-tItemStack pop_parser_stack( void )
+cgc_tItemStack cgc_pop_parser_stack( void )
 {
     // Return top item (pulling it off the stack)
     if ( g_parseStackSize == 0 )
     {
-        tItemStack temp;
+        cgc_tItemStack temp;
 
         temp.type = ITEM_TYPE_EMPTY;
 
@@ -65,7 +65,7 @@ tItemStack pop_parser_stack( void )
     return (g_memoryGlobal.parseStack[g_parseStackSize]);
 }
 
-void push_parser_stack( tItemStack item )
+void cgc_push_parser_stack( cgc_tItemStack item )
 {
 #ifdef PATCHED
     if ( g_parseStackSize < MAX_PARSE_STACKSIZE )
@@ -83,7 +83,7 @@ void push_parser_stack( tItemStack item )
 }
 
 
-tParserSymbolTable g_parseTable[] = {
+cgc_tParserSymbolTable g_parseTable[] = {
     { "(", SYM_OPEN_PARAN },
     { ")", SYM_CLOSE_PARAN },
     { "==", SYM_EQUAL },
@@ -103,9 +103,9 @@ tParserSymbolTable g_parseTable[] = {
     { NULL, SYM_NOTFOUND }
 };
 
-int32_t strbeg( const char *scanString, const char *searchString )
+cgc_int32_t cgc_strbeg( const char *scanString, const char *searchString )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -125,12 +125,12 @@ int32_t strbeg( const char *scanString, const char *searchString )
     return 0;
 }
 
-eParserSymbol parse_get_symbol( char *pszString, uint32_t *new_offset )
+cgc_eParserSymbol cgc_parse_get_symbol( char *pszString, cgc_uint32_t *new_offset )
 {
-    uint32_t symIndex;
-    uint32_t offset = 0;
+    cgc_uint32_t symIndex;
+    cgc_uint32_t offset = 0;
 
-    while ( isspace( pszString[offset] ) )
+    while ( cgc_isspace( pszString[offset] ) )
         offset++;
 
     if ( pszString[offset] == '\0' )
@@ -147,9 +147,9 @@ eParserSymbol parse_get_symbol( char *pszString, uint32_t *new_offset )
             return SYM_NOTFOUND;
         }
 
-        if ( strbeg( pszString+offset, g_parseTable[symIndex].text ) == 0 )
+        if ( cgc_strbeg( pszString+offset, g_parseTable[symIndex].text ) == 0 )
         {
-            offset += strlen( g_parseTable[symIndex].text );
+            offset += cgc_strlen( g_parseTable[symIndex].text );
             (*new_offset) = offset;
 
             return g_parseTable[symIndex].symbol;
@@ -160,7 +160,7 @@ eParserSymbol parse_get_symbol( char *pszString, uint32_t *new_offset )
     return SYM_NOTFOUND;
 }
 
-int32_t is_symbol_close_paran( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_close_paran( cgc_eParserSymbol symbol )
 {
     if ( symbol == SYM_CLOSE_PARAN )
         return 1;
@@ -168,7 +168,7 @@ int32_t is_symbol_close_paran( eParserSymbol symbol )
         return 0;
 }
 
-int32_t is_symbol_open_paran( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_open_paran( cgc_eParserSymbol symbol )
 {
     if ( symbol == SYM_OPEN_PARAN )
         return 1;
@@ -176,7 +176,7 @@ int32_t is_symbol_open_paran( eParserSymbol symbol )
         return 0;
 }
 
-int32_t is_symbol_result_operator( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_result_operator( cgc_eParserSymbol symbol )
 {
     switch( symbol )
     {
@@ -191,7 +191,7 @@ int32_t is_symbol_result_operator( eParserSymbol symbol )
     return 0;
 }
 
-int32_t is_symbol_db_operator( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_db_operator( cgc_eParserSymbol symbol )
 {
     switch ( symbol )
     {
@@ -208,7 +208,7 @@ int32_t is_symbol_db_operator( eParserSymbol symbol )
     return 0;
 }
 
-int32_t is_symbol_element( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_element( cgc_eParserSymbol symbol )
 {
     switch( symbol )
     {
@@ -225,7 +225,7 @@ int32_t is_symbol_element( eParserSymbol symbol )
     return 0;
 }
 
-int32_t is_symbol_birthdate( eParserSymbol symbol )
+cgc_int32_t cgc_is_symbol_birthdate( cgc_eParserSymbol symbol )
 {
     if ( symbol == SYM_BIRTHDATE )
         return 1;
@@ -233,20 +233,20 @@ int32_t is_symbol_birthdate( eParserSymbol symbol )
         return 0;
 }
 
-void do_date_search( eParserSymbol comparison_symbol, tDateTime dateCompare )
+void cgc_do_date_search( cgc_eParserSymbol comparison_symbol, cgc_tDateTime dateCompare )
 {
-    uint32_t index;
-    uint32_t record_total = db_get_record_count();
-    tItemStack results;
+    cgc_uint32_t index;
+    cgc_uint32_t record_total = cgc_db_get_record_count();
+    cgc_tItemStack results;
 
     results.type = ITEM_TYPE_RESULT;
     results.result_list_size = 0;
 
     for ( index = 0; index < record_total; index++ )
     {
-        tDDAPRecord *pCur = db_search_index( index );
-        int32_t comparison_result = date_compare( pCur->birthDate, dateCompare );
-        int32_t add_item = 0;
+        cgc_tDDAPRecord *pCur = cgc_db_search_index( index );
+        cgc_int32_t comparison_result = cgc_date_compare( pCur->birthDate, dateCompare );
+        cgc_int32_t add_item = 0;
 
         switch ( comparison_symbol )
         {
@@ -281,36 +281,36 @@ void do_date_search( eParserSymbol comparison_symbol, tDateTime dateCompare )
     }
 
     // Add results
-    push_parser_stack( results );
+    cgc_push_parser_stack( results );
 }
 
-void do_string_search( eParserSymbol object_type, eParserSymbol comparison_symbol, char *pszSearchString )
+void cgc_do_string_search( cgc_eParserSymbol object_type, cgc_eParserSymbol comparison_symbol, char *pszSearchString )
 {
-    uint32_t index;
-    uint32_t record_total = db_get_record_count();
-    tItemStack results;
+    cgc_uint32_t index;
+    cgc_uint32_t record_total = cgc_db_get_record_count();
+    cgc_tItemStack results;
 
     results.type = ITEM_TYPE_RESULT;
     results.result_list_size = 0;
 
     for ( index = 0; index < record_total; index++ )
     {
-        tDDAPRecord *pCur = db_search_index( index );
-        int32_t comparison_result;
-        int32_t add_item = 0;
+        cgc_tDDAPRecord *pCur = cgc_db_search_index( index );
+        cgc_int32_t comparison_result;
+        cgc_int32_t add_item = 0;
 
         switch( object_type )
         {
         case SYM_USERNAME:
-            comparison_result = strcmp( pCur->szUserName, pszSearchString );
+            comparison_result = cgc_strcmp( pCur->szUserName, pszSearchString );
             break;
 
         case SYM_FIRSTNAME:
-            comparison_result = strcmp( pCur->szFirstName, pszSearchString );
+            comparison_result = cgc_strcmp( pCur->szFirstName, pszSearchString );
             break;
 
         case SYM_LASTNAME:
-            comparison_result = strcmp( pCur->szLastName, pszSearchString );
+            comparison_result = cgc_strcmp( pCur->szLastName, pszSearchString );
             break;
 
         default:
@@ -351,18 +351,18 @@ void do_string_search( eParserSymbol object_type, eParserSymbol comparison_symbo
     }
 
     // Add results
-    push_parser_stack( results );
+    cgc_push_parser_stack( results );
 }
 
-void do_result_search( tItemStack lval, eParserSymbol operator_symbol, tItemStack rval )
+void cgc_do_result_search( cgc_tItemStack lval, cgc_eParserSymbol operator_symbol, cgc_tItemStack rval )
 {
     if ( operator_symbol == SYM_AND )
     {
-        uint32_t record_lval_count = lval.result_list_size;
-        uint32_t record_rval_count = rval.result_list_size;
-        uint32_t lval_idx, rval_idx;
+        cgc_uint32_t record_lval_count = lval.result_list_size;
+        cgc_uint32_t record_rval_count = rval.result_list_size;
+        cgc_uint32_t lval_idx, rval_idx;
 
-        tItemStack results;
+        cgc_tItemStack results;
 
         results.type = ITEM_TYPE_RESULT;
         results.result_list_size = 0;
@@ -377,24 +377,24 @@ void do_result_search( tItemStack lval, eParserSymbol operator_symbol, tItemStac
             }
 
         // Add new results
-        push_parser_stack( results );
+        cgc_push_parser_stack( results );
     }
     else if ( operator_symbol == SYM_OR )
     {
-        uint32_t record_lval_count = lval.result_list_size;
-        uint32_t record_rval_count = rval.result_list_size;
-        uint32_t lval_idx, rval_idx;
+        cgc_uint32_t record_lval_count = lval.result_list_size;
+        cgc_uint32_t record_rval_count = rval.result_list_size;
+        cgc_uint32_t lval_idx, rval_idx;
 
-        tItemStack results;
+        cgc_tItemStack results;
 
         results.type = ITEM_TYPE_RESULT;
         results.result_list_size = 0;
 
         for ( lval_idx = 0; lval_idx < record_lval_count; lval_idx++ )
         {
-            uint32_t result_idx = 0;
-            uint32_t result_count = results.result_list_size;
-            int32_t found = 0;
+            cgc_uint32_t result_idx = 0;
+            cgc_uint32_t result_count = results.result_list_size;
+            cgc_int32_t found = 0;
 
             for ( result_idx = 0; result_idx < result_count; result_idx++ )
             {
@@ -411,9 +411,9 @@ void do_result_search( tItemStack lval, eParserSymbol operator_symbol, tItemStac
 
         for ( rval_idx = 0; rval_idx < record_rval_count; rval_idx++ )
         {
-            uint32_t result_idx = 0;
-            uint32_t result_count = results.result_list_size;
-            int32_t found = 0;
+            cgc_uint32_t result_idx = 0;
+            cgc_uint32_t result_count = results.result_list_size;
+            cgc_int32_t found = 0;
 
             for ( result_idx = 0; result_idx < result_count; result_idx++ )
             {
@@ -429,12 +429,12 @@ void do_result_search( tItemStack lval, eParserSymbol operator_symbol, tItemStac
         }
 
         // Add the new results back
-        push_parser_stack( results );
+        cgc_push_parser_stack( results );
     }
 
 }
 
-void do_reduce_stack( void )
+void cgc_do_reduce_stack( void )
 {
     for (;;)
     {
@@ -442,28 +442,28 @@ void do_reduce_stack( void )
             break;
 
         if ( g_memoryGlobal.parseStack[g_parseStackSize-1].type == ITEM_TYPE_RESULT &&
-             (g_memoryGlobal.parseStack[g_parseStackSize-2].type == ITEM_TYPE_SYMBOL && is_symbol_result_operator( g_memoryGlobal.parseStack[g_parseStackSize-2].data.symbol )) &&
+             (g_memoryGlobal.parseStack[g_parseStackSize-2].type == ITEM_TYPE_SYMBOL && cgc_is_symbol_result_operator( g_memoryGlobal.parseStack[g_parseStackSize-2].data.symbol )) &&
              g_memoryGlobal.parseStack[g_parseStackSize-3].type == ITEM_TYPE_RESULT )
         {
-            tItemStack rval = pop_parser_stack();
-            tItemStack operator = pop_parser_stack();
-            tItemStack lval = pop_parser_stack();
+            cgc_tItemStack rval = cgc_pop_parser_stack();
+            cgc_tItemStack operator = cgc_pop_parser_stack();
+            cgc_tItemStack lval = cgc_pop_parser_stack();
 
             // Perform results search search
-            do_result_search( lval, operator.data.symbol, rval );
+            cgc_do_result_search( lval, operator.data.symbol, rval );
         }
         else
             break;
     }
 }
 
-void parse_search_expression( char *pszTemp )
+void cgc_parse_search_expression( char *pszTemp )
 {
-    int32_t bDone = 0;
-    eParserSymbol cur_symbol;
-    eParserSymbol last_symbol;
+    cgc_int32_t bDone = 0;
+    cgc_eParserSymbol cur_symbol;
+    cgc_eParserSymbol last_symbol;
     char *pszCur = pszTemp;
-    uint32_t symbol_offset;
+    cgc_uint32_t symbol_offset;
 
     // Reset parse stack
     g_parseStackSize = 0;
@@ -475,18 +475,18 @@ void parse_search_expression( char *pszTemp )
     do
     {
         symbol_offset = 0;
-        cur_symbol = parse_get_symbol( pszCur, &symbol_offset );
+        cur_symbol = cgc_parse_get_symbol( pszCur, &symbol_offset );
 
         pszCur += symbol_offset;
 
         // Push symbol onto stack if it is a db operator, open paran, operator, or result operator
-        if ( is_symbol_db_operator( cur_symbol ) )
+        if ( cgc_is_symbol_db_operator( cur_symbol ) )
         {
             // Check to make sure stack is valid
             // Top of stack should be element
-            tItemStack item_peek_top = pop_parser_stack();
+            cgc_tItemStack item_peek_top = cgc_pop_parser_stack();
 
-            if ( item_peek_top.type != ITEM_TYPE_SYMBOL || !is_symbol_element( item_peek_top.data.symbol ) )
+            if ( item_peek_top.type != ITEM_TYPE_SYMBOL || !cgc_is_symbol_element( item_peek_top.data.symbol ) )
             {
                 THROW( PARSER_EXCEPTION_SYNTAX_ERROR );
                 return;
@@ -495,10 +495,10 @@ void parse_search_expression( char *pszTemp )
             // Consume next (either string or birthdate)
             if ( item_peek_top.data.symbol == SYM_BIRTHDATE )
             {
-                tDateTime tempDate;
+                cgc_tDateTime tempDate;
 
                 // Parse birthdate
-                int32_t result = parse_date( pszCur, &tempDate );
+                cgc_int32_t result = cgc_parse_date( pszCur, &tempDate );
 
                 if ( result == 0 )
                 {
@@ -509,15 +509,15 @@ void parse_search_expression( char *pszTemp )
                 pszCur += result;
 
                 // Build result!
-                do_date_search( cur_symbol, tempDate );
+                cgc_do_date_search( cur_symbol, tempDate );
             }
             else
             {
                 char szTemp[MAX_STRING_LENGTH+1];
-                uint32_t cur_pos;
+                cgc_uint32_t cur_pos;
 
                 // Parse string
-                while ( isspace( *pszCur ) )
+                while ( cgc_isspace( *pszCur ) )
                     pszCur++;
 
                 if ( *pszCur != '\"' )
@@ -548,33 +548,33 @@ void parse_search_expression( char *pszTemp )
                 pszCur++;
 
                 // Perform search
-                do_string_search( item_peek_top.data.symbol, cur_symbol, szTemp );
+                cgc_do_string_search( item_peek_top.data.symbol, cur_symbol, szTemp );
             }
         }
-        else if ( is_symbol_open_paran( cur_symbol ) )
+        else if ( cgc_is_symbol_open_paran( cur_symbol ) )
         {
-            tItemStack item_peek_top = peek_parser_stack();
+            cgc_tItemStack item_peek_top = cgc_peek_parser_stack();
 
             // Open paran valid with either no symbol or result operator (AND, OR)
             if ( !(item_peek_top.type == ITEM_TYPE_EMPTY ||
                  (item_peek_top.type == ITEM_TYPE_SYMBOL && item_peek_top.data.symbol == SYM_OPEN_PARAN) ||
-                 (item_peek_top.type == ITEM_TYPE_SYMBOL && is_symbol_result_operator( item_peek_top.data.symbol ))) )
+                 (item_peek_top.type == ITEM_TYPE_SYMBOL && cgc_is_symbol_result_operator( item_peek_top.data.symbol ))) )
             {
                 THROW( PARSER_EXCEPTION_SYNTAX_ERROR );
                 return;
             }
 
             // Push
-            tItemStack new_item;
+            cgc_tItemStack new_item;
             new_item.type = ITEM_TYPE_SYMBOL;
             new_item.data.symbol = cur_symbol;
 
-            push_parser_stack( new_item );
+            cgc_push_parser_stack( new_item );
         }
-        else if ( is_symbol_close_paran( cur_symbol ) )
+        else if ( cgc_is_symbol_close_paran( cur_symbol ) )
         {
             // Should be result on top of stack
-            tItemStack item_top = pop_parser_stack();
+            cgc_tItemStack item_top = cgc_pop_parser_stack();
 
             if ( item_top.type != ITEM_TYPE_RESULT )
             {
@@ -582,7 +582,7 @@ void parse_search_expression( char *pszTemp )
                 return;
             }
 
-            tItemStack item_next = pop_parser_stack();
+            cgc_tItemStack item_next = cgc_pop_parser_stack();
 
             if ( !(item_next.type == ITEM_TYPE_SYMBOL && item_next.data.symbol == SYM_OPEN_PARAN) )
             {
@@ -591,12 +591,12 @@ void parse_search_expression( char *pszTemp )
             }
 
             // Push results back onto the stack
-            push_parser_stack( item_top );
+            cgc_push_parser_stack( item_top );
         }
-        else if ( is_symbol_result_operator( cur_symbol ) )
+        else if ( cgc_is_symbol_result_operator( cur_symbol ) )
         {
             // Check to make sure the previous items on top of the stack are valid
-            tItemStack item_peek_top = peek_parser_stack();
+            cgc_tItemStack item_peek_top = cgc_peek_parser_stack();
 
             // Result operator valid if top of stack is a DB result set
             if ( !(item_peek_top.type == ITEM_TYPE_RESULT) )
@@ -606,33 +606,33 @@ void parse_search_expression( char *pszTemp )
             }
 
             // Push operator on the stack
-            tItemStack new_item;
+            cgc_tItemStack new_item;
             new_item.type = ITEM_TYPE_SYMBOL;
             new_item.data.symbol = cur_symbol;
 
             // Push results back onto the stack
-            push_parser_stack( new_item );
+            cgc_push_parser_stack( new_item );
         }
-        else if ( is_symbol_element( cur_symbol ) )
+        else if ( cgc_is_symbol_element( cur_symbol ) )
         {
             // Check to make sure the previous items on top of the stack are valid
-            tItemStack item_peek_top = peek_parser_stack();
+            cgc_tItemStack item_peek_top = cgc_peek_parser_stack();
 
             if ( !(item_peek_top.type == ITEM_TYPE_EMPTY ||
-                  (item_peek_top.type == ITEM_TYPE_SYMBOL && is_symbol_open_paran( item_peek_top.data.symbol )) ||
-                 (item_peek_top.type == ITEM_TYPE_SYMBOL && is_symbol_result_operator( item_peek_top.data.symbol ))) )
+                  (item_peek_top.type == ITEM_TYPE_SYMBOL && cgc_is_symbol_open_paran( item_peek_top.data.symbol )) ||
+                 (item_peek_top.type == ITEM_TYPE_SYMBOL && cgc_is_symbol_result_operator( item_peek_top.data.symbol ))) )
             {
                 THROW( PARSER_EXCEPTION_SYNTAX_ERROR );
                 return;
             }
 
             // If it is an element push it on the stack
-            tItemStack new_item;
+            cgc_tItemStack new_item;
 
             new_item.type = ITEM_TYPE_SYMBOL;
             new_item.data.symbol = cur_symbol;
 
-            push_parser_stack( new_item );
+            cgc_push_parser_stack( new_item );
         }
         else if ( cur_symbol == SYM_END )
         {
@@ -644,11 +644,11 @@ void parse_search_expression( char *pszTemp )
         }
 
         // Reduce stack if necessary
-        do_reduce_stack();
+        cgc_do_reduce_stack();
     } while ( !bDone );
 
     // Show results
-    tItemStack results = pop_parser_stack();
+    cgc_tItemStack results = cgc_pop_parser_stack();
 
     if ( results.type != ITEM_TYPE_RESULT || g_parseStackSize != 0 )
     {
@@ -657,14 +657,14 @@ void parse_search_expression( char *pszTemp )
     }
     else
     {
-        uint32_t result_count = results.result_list_size;
-        uint32_t idx;
+        cgc_uint32_t result_count = results.result_list_size;
+        cgc_uint32_t idx;
 
         // Print search results
-        printf( "Search results, $d items found:\n", result_count );
+        cgc_printf( "Search results, $d items found:\n", result_count );
 
         for ( idx = 0; idx < result_count; idx++ )
-            print_record_helper( db_search_index( results.data.result_list[idx] ) );
+            cgc_print_record_helper( cgc_db_search_index( results.data.result_list[idx] ) );
     }
 }
 

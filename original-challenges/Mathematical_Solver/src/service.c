@@ -35,78 +35,78 @@ THE SOFTWARE.
 
 
 // Globals
-Statistics game_stats;
-Game_Info game_info;
+cgc_Statistics game_stats;
+cgc_Game_Info game_info;
 
 
-int print_menu()
+int cgc_print_menu()
 {
 	int ret;
-	printf("1. Solve Equation\n");
-	printf("2. Create Equation\n");
-	printf("3. Solve Area\n");
-	printf("4. Solve Perimeter\n");
-	printf("5. Solve Volume\n");
-	printf("6. View Statistics\n");
-	printf("7. Exit\n");
+	cgc_printf("1. Solve Equation\n");
+	cgc_printf("2. Create Equation\n");
+	cgc_printf("3. Solve Area\n");
+	cgc_printf("4. Solve Perimeter\n");
+	cgc_printf("5. Solve Volume\n");
+	cgc_printf("6. View cgc_Statistics\n");
+	cgc_printf("7. Exit\n");
 
-	get_user_answer(&ret);
+	cgc_get_user_answer(&ret);
 	return ret;
 }
 
-void print_statistics()
+void cgc_print_statistics()
 {
 	char name[32];
-	printf("Total won: @d\n", game_stats.num_won_total);
-	printf("Total lost: @d\n", game_stats.num_lost_total);
-	printf("Equations solved correctly: @d\n", game_stats.num_won_solved_equation);
-	printf("Equations solved incorrectly: @d\n", game_stats.num_lost_solved_equation);
-	printf("Equations created correctly: @d\n", game_stats.num_won_created_equations);
-	printf("Equations created incorrectly: @d\n", game_stats.num_lost_created_equations);
-	printf("Solved perimeter problems @d\n", game_stats.num_won_perimeter);
-	printf("Unsolved perimeter problems @d\n", game_stats.num_lost_perimeter);
-	printf("Solved volume problems @d\n", game_stats.num_won_volume);
-	printf("Unsolved volume problems @d\n", game_stats.num_lost_volume);
-	printf("Solved area problems @d\n", game_stats.num_won_area);
-	printf("Unsolved area problems @d\n", game_stats.num_lost_area);
+	cgc_printf("Total won: @d\n", game_stats.num_won_total);
+	cgc_printf("Total lost: @d\n", game_stats.num_lost_total);
+	cgc_printf("Equations solved correctly: @d\n", game_stats.num_won_solved_equation);
+	cgc_printf("Equations solved incorrectly: @d\n", game_stats.num_lost_solved_equation);
+	cgc_printf("Equations created correctly: @d\n", game_stats.num_won_created_equations);
+	cgc_printf("Equations created incorrectly: @d\n", game_stats.num_lost_created_equations);
+	cgc_printf("Solved perimeter problems @d\n", game_stats.num_won_perimeter);
+	cgc_printf("Unsolved perimeter problems @d\n", game_stats.num_lost_perimeter);
+	cgc_printf("Solved volume problems @d\n", game_stats.num_won_volume);
+	cgc_printf("Unsolved volume problems @d\n", game_stats.num_lost_volume);
+	cgc_printf("Solved area problems @d\n", game_stats.num_won_area);
+	cgc_printf("Unsolved area problems @d\n", game_stats.num_lost_area);
 	
 // Vulnerability 1
 	if (game_stats.num_won_created_equations == 20)
 	{
-		printf("Wow, you created 20 equations! What's your name?:");
-		bzero(name, sizeof(name));
+		cgc_printf("Wow, you created 20 equations! What's your name?:");
+		cgc_bzero(name, sizeof(name));
 		#ifdef PATCHED
 			receive(STDIN, name, sizeof(name) -1 , NULL);
 		#else
 			receive(STDIN, name, sizeof(name) + 45, NULL);
 		#endif
-		printf("Good job, @s!\n", name);
+		cgc_printf("Good job, @s!\n", name);
 	}
 
 // Vulnerability 2
 	if (game_stats.num_won_solved_equation == 20)
 	{
-		printf("Wow, you solved 20 equations! What's your name?:");
-		bzero(name, sizeof(name));
+		cgc_printf("Wow, you solved 20 equations! What's your name?:");
+		cgc_bzero(name, sizeof(name));
 		#ifdef PATCHED
 			receive(STDIN, name, sizeof(name) -1 , NULL);
 		#else
 			receive(STDIN, name, sizeof(name) + 45, NULL);
 		#endif
-		printf("Good job, @s!\n", name);
+		cgc_printf("Good job, @s!\n", name);
 	}
 
 // Vulnerability 3
 	if (game_stats.num_won_area == 20)
 	{
-		printf("Wow, you solved 20 area problems! What's your name?:");
-		bzero(name, sizeof(name));
+		cgc_printf("Wow, you solved 20 area problems! What's your name?:");
+		cgc_bzero(name, sizeof(name));
 		#ifdef PATCHED
 			receive(STDIN, name, sizeof(name) -1 , NULL);
 		#else
 			receive(STDIN, name, sizeof(name) + 45, NULL);
 		#endif
-		printf("Good job, @s!\n", name);
+		cgc_printf("Good job, @s!\n", name);
 	}
 }
 
@@ -115,25 +115,25 @@ int main()
 	int ret;
 
 	// zero out structs
-	game_stats = (const Statistics){0};
-	game_info = (const Game_Info){0};
+	game_stats = (const cgc_Statistics){0};
+	game_info = (const cgc_Game_Info){0};
 
 
-	if (seed_prng() != SUCCESS)
+	if (cgc_seed_prng() != SUCCESS)
 	{
-		debug_print("didn't succeed in seeding prng()");
+		debug_print("didn't succeed in seeding cgc_prng()");
 		return 1;
 	}
 
 	while (1)
 	{
-		ret = print_menu();
+		ret = cgc_print_menu();
 		switch(ret)
 		{
 			case 1:
 				// Solve Equation
 				// generate an equation and make the user solve it
-				if (generate_equation() == SUCCESS)
+				if (cgc_generate_equation() == SUCCESS)
 				{
 					game_stats.num_won_solved_equation++;
 				}
@@ -145,7 +145,7 @@ int main()
 			case 2:
 				// create equation
 				// prompt user to enter an equation that satisfies the given parameters
-				if (prompt_for_equation() == SUCCESS)
+				if (cgc_prompt_for_equation() == SUCCESS)
 				{
 					game_stats.num_won_created_equations++;
 				}
@@ -156,9 +156,9 @@ int main()
 				break;
 			case 3:
 				// area
-				if (random_in_range(0,1) == 0)
+				if (cgc_random_in_range(0,1) == 0)
 				{
-					if (request_area() == SUCCESS)
+					if (cgc_request_area() == SUCCESS)
 					{
 						game_stats.num_won_area++;
 					}
@@ -169,7 +169,7 @@ int main()
 				}
 				else
 				{
-					if (request_2d_area_dim() == SUCCESS)
+					if (cgc_request_2d_area_dim() == SUCCESS)
 					{
 						game_stats.num_won_area++;
 					}
@@ -181,9 +181,9 @@ int main()
 				break;
 			case 4:
 				// perimeter
-				if (random_in_range(676,677) == 676)
+				if (cgc_random_in_range(676,677) == 676)
 				{
-					if (request_perimeter() == SUCCESS)
+					if (cgc_request_perimeter() == SUCCESS)
 					{
 						game_stats.num_won_perimeter++;
 					}
@@ -194,7 +194,7 @@ int main()
 				}
 				else
 				{
-					if (request_2d_peri_dim() == SUCCESS)
+					if (cgc_request_2d_peri_dim() == SUCCESS)
 					{
 						game_stats.num_won_perimeter++;
 					}
@@ -206,9 +206,9 @@ int main()
 				break;
 			case 5:
 				// volume
-				if (random_in_range(44,45) == 45)
+				if (cgc_random_in_range(44,45) == 45)
 				{
-					if (request_volume() == SUCCESS)
+					if (cgc_request_volume() == SUCCESS)
 					{
 						game_stats.num_won_volume++;
 					}
@@ -219,7 +219,7 @@ int main()
 				}
 				else
 				{	
-					if (request_3d_dim_vol() == SUCCESS)
+					if (cgc_request_3d_dim_vol() == SUCCESS)
 					{
 						game_stats.num_won_volume++;
 					}
@@ -230,14 +230,14 @@ int main()
 				}
 				break;
 			case 6:
-				// View Statistics
-				print_statistics();
+				// View cgc_Statistics
+				cgc_print_statistics();
 				break;
 			case 7:
 				// Exit
 				return 0;
 			default:
-				printf("improper input. exiting\n");
+				cgc_printf("improper input. exiting\n");
 				return 0;
 		}
 	}

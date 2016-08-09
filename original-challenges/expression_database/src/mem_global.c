@@ -25,4 +25,4 @@ THE SOFTWARE.
 */
 #include "mem_global.h"
 
-tGlobalMemoryLayout g_memoryGlobal;
+cgc_tGlobalMemoryLayout g_memoryGlobal;

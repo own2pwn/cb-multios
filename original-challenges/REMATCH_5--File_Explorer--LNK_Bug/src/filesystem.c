@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,34 +31,34 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "filesystem.h"
 
-FileNode *root;
-uint16_t numFiles;
-uint16_t *pNextFileID = (uint16_t *)MAGIC_PAGE;
+cgc_FileNode *root;
+cgc_uint16_t numFiles;
+cgc_uint16_t *pNextFileID = (cgc_uint16_t *)MAGIC_PAGE;
 
 
-FileNode *InitializeFileSystem()
+cgc_FileNode *cgc_InitializeFileSystem()
 {
-  root = calloc(sizeof(FileNode));
-  memcpy((char *)&root->name, &"root", 4);
+  root = cgc_calloc(sizeof(cgc_FileNode));
+  cgc_memcpy((char *)&root->name, &"root", 4);
   root->type = FILE_DIRECTORY;
   numFiles = 1;
   return root;
 }
 
-uint16_t NextFileID()
+cgc_uint16_t cgc_NextFileID()
 {
-  uint16_t fileID = *pNextFileID++;
-  if (pNextFileID >= (uint16_t *)(MAGIC_PAGE + 4096))
+  cgc_uint16_t fileID = *pNextFileID++;
+  if (pNextFileID >= (cgc_uint16_t *)(MAGIC_PAGE + 4096))
   {
-    pNextFileID =  (uint16_t *)MAGIC_PAGE;
+    pNextFileID =  (cgc_uint16_t *)MAGIC_PAGE;
   }
   return (fileID & 0xff);
 }
 
 
-int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode *parent)
+int cgc_CreateFile(char *name, cgc_uint8_t type, cgc_uint32_t size, char *contents, cgc_FileNode *parent)
 {
-  int nameLength = strlen(name);
+  int nameLength = cgc_strlen(name);
   if (nameLength == 0)
   {
     return FS_ERROR_INVALID_INPUT;
@@ -67,7 +67,7 @@ int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode
   {
     parent = root;
   }
-  if (GetPathDepth(parent) >= MAX_FILESYSTEM_DEPTH)
+  if (cgc_GetPathDepth(parent) >= MAX_FILESYSTEM_DEPTH)
   {
     return FS_ERROR_ACCESS_DENIED;
   }
@@ -83,7 +83,7 @@ int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode
   {
     return FS_ERROR_FS_FULL;
   }
-  if (strcmp(name, "upone") == 0)
+  if (cgc_strcmp(name, "upone") == 0)
   {
     return FS_ERROR_INVALID_INPUT;
   }
@@ -91,20 +91,20 @@ int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode
   {
     size = 0;
   }
-  FileNode *newNode = calloc(sizeof(FileNode));
-  memcpy(newNode->name, name, nameLength);
+  cgc_FileNode *newNode = cgc_calloc(sizeof(cgc_FileNode));
+  cgc_memcpy(newNode->name, name, nameLength);
   newNode->type = type;
-  newNode->fileID = NextFileID();
+  newNode->fileID = cgc_NextFileID();
   numFiles++;
   if ((size > 0)&&(contents != NULL))
   {
-    newNode->contents = calloc(size);
-    memcpy(newNode->contents, contents, size);
+    newNode->contents = cgc_calloc(size);
+    cgc_memcpy(newNode->contents, contents, size);
     newNode->size = size;
   }
 
-  FileNode *prev = NULL;
-  FileNode *last = NULL;
+  cgc_FileNode *prev = NULL;
+  cgc_FileNode *last = NULL;
   prev = parent->child;
   newNode->parent = parent;
   if (prev == NULL)
@@ -116,10 +116,10 @@ int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode
 
   while (prev != NULL)
   {
-    int compare = strcmp(newNode->name, prev->name);
+    int compare = cgc_strcmp(newNode->name, prev->name);
     if (compare == 0)
     {
-      DestroyNode(newNode);
+      cgc_DestroyNode(newNode);
       return FS_ERROR_DUPLICATE_NAME;
     }
     if (compare < 0)
@@ -151,27 +151,27 @@ int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode
   return FS_SUCCESS;
 }
 
-void DestroyNode(FileNode *node)
+void cgc_DestroyNode(cgc_FileNode *node)
 {
   if (node)
   {
     numFiles--;
-    DestroyNode(node->child);
-    DestroyNode(node->next);
-    free(node->contents);
+    cgc_DestroyNode(node->child);
+    cgc_DestroyNode(node->next);
+    cgc_free(node->contents);
   }
 }
 
-FileNode *FindFile(char *name, FileNode *parent)
+cgc_FileNode *cgc_FindFile(char *name, cgc_FileNode *parent)
 {
   if ((parent == NULL)||(name == NULL))
   {
     return NULL;
   }
-  FileNode *file = parent->child;
+  cgc_FileNode *file = parent->child;
   while (file != NULL)
   {
-    int compare = strcmp(name, file->name);
+    int compare = cgc_strcmp(name, file->name);
     if (compare == 0)
     {
       return file;
@@ -185,7 +185,7 @@ FileNode *FindFile(char *name, FileNode *parent)
   return NULL;
 }
 
-FileNode *FindFileAbsolute(char *name)
+cgc_FileNode *cgc_FindFileAbsolute(char *name)
 {
   if (name == NULL)
   {
@@ -194,32 +194,32 @@ FileNode *FindFileAbsolute(char *name)
   char folder[65];
   char *namePtr = name;
   char *sepPtr = name;
-  FileNode *cwd = root;
+  cgc_FileNode *cwd = root;
   while (*namePtr != '\0')
   {
-    sepPtr = strchr(namePtr, '%');
+    sepPtr = cgc_strchr(namePtr, '%');
     if (sepPtr == NULL)
     {
       break;
     }
-    memset(folder, '\0', 65);
-    memcpy(folder, namePtr, (sepPtr - namePtr));
+    cgc_memset(folder, '\0', 65);
+    cgc_memcpy(folder, namePtr, (sepPtr - namePtr));
     namePtr = sepPtr + 1;
-    cwd = FindFile(folder, cwd);
+    cwd = cgc_FindFile(folder, cwd);
     if (cwd == NULL)
     {
       return NULL;
     }
   }
-  return FindFile(namePtr, cwd);
+  return cgc_FindFile(namePtr, cwd);
 }
 
 
 
 
-int DeleteFile(char *name, FileNode *parent)
+int cgc_DeleteFile(char *name, cgc_FileNode *parent)
 {
-  FileNode *file = FindFile(name, parent);
+  cgc_FileNode *file = cgc_FindFile(name, parent);
   if (file == NULL)
   {
     return FS_ERROR_FILE_NOT_FOUND;
@@ -242,11 +242,11 @@ int DeleteFile(char *name, FileNode *parent)
   }
   file->prev = NULL;
   file->next = NULL;
-  DestroyNode(file);
+  cgc_DestroyNode(file);
   return FS_SUCCESS;
 }
 
-uint8_t GetFileType(FileNode *file)
+cgc_uint8_t cgc_GetFileType(cgc_FileNode *file)
 {
   if (file == NULL)
   {
@@ -255,7 +255,7 @@ uint8_t GetFileType(FileNode *file)
   return file->type;
 }
 
-uint32_t GetFileSize(FileNode *file)
+cgc_uint32_t cgc_GetFileSize(cgc_FileNode *file)
 {
   if (file == NULL)
   {
@@ -264,7 +264,7 @@ uint32_t GetFileSize(FileNode *file)
   return file->size;
 }
 
-uint32_t GetFileID(FileNode *file)
+cgc_uint32_t cgc_GetFileID(cgc_FileNode *file)
 {
   if (file == NULL)
   {
@@ -273,7 +273,7 @@ uint32_t GetFileID(FileNode *file)
   return file->fileID;
 }
 
-char *GetFilePath(FileNode *file)
+char *cgc_GetFilePath(cgc_FileNode *file)
 {
   if (file == NULL)
   {
@@ -284,32 +284,32 @@ char *GetFilePath(FileNode *file)
     return NULL;
   }
   int pathLength = 4 + 1;
-  FileNode *parent = file->parent;
+  cgc_FileNode *parent = file->parent;
   while (parent != root)
   {
-    pathLength += strlen(parent->name) + 1;
+    pathLength += cgc_strlen(parent->name) + 1;
     parent = parent->parent;
   }
-  char *path = calloc(pathLength + 1);
+  char *path = cgc_calloc(pathLength + 1);
   parent = file->parent;
   char *pathPtr = path + pathLength;
   *--pathPtr = '%';
   while (parent != root)
   {
-    pathPtr -= strlen(parent->name);
-    memcpy(pathPtr, parent->name, strlen(parent->name));
+    pathPtr -= cgc_strlen(parent->name);
+    cgc_memcpy(pathPtr, parent->name, cgc_strlen(parent->name));
     pathPtr--;
     *pathPtr = '%';
     parent = parent->parent;
   }
-  memcpy(path, &"root", 4);
+  cgc_memcpy(path, &"root", 4);
   return path;
 }
 
-int GetPathDepth(FileNode *file)
+int cgc_GetPathDepth(cgc_FileNode *file)
 {
   int depth = 0;
-  FileNode *parent = file;
+  cgc_FileNode *parent = file;
   while ((parent != root)&&(parent != NULL))
   {
     depth++;
@@ -318,7 +318,7 @@ int GetPathDepth(FileNode *file)
   return depth;
 }
 
-char *ReadFile(FileNode *file)
+char *cgc_ReadFile(cgc_FileNode *file)
 {
   
   char *returnData = NULL;
@@ -328,18 +328,18 @@ char *ReadFile(FileNode *file)
   }
   if (file->size > 0)
   {
-    returnData = calloc(file->size + 1);
-    memcpy(returnData, file->contents, file->size);
+    returnData = cgc_calloc(file->size + 1);
+    cgc_memcpy(returnData, file->contents, file->size);
   }
   return returnData;
 }
 
-char *GetFileName(FileNode *file)
+char *cgc_GetFileName(cgc_FileNode *file)
 {
   return file->name;
 }
 
-FileNode *GetParent(FileNode *file)
+cgc_FileNode *cgc_GetParent(cgc_FileNode *file)
 {
   if (file == root)
   {

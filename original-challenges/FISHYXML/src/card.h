@@ -1,9 +1,9 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
+ * to cgc_deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
@@ -25,10 +25,10 @@
 #define CARD_H 1
 
 struct card {
-	uint8_t suit; // 1: Diamonds, 2: Clubs, 3: Hearts, 4: Spades
-	uint8_t rank; // 1: Ace, 2-10: Face Value, 11: Jack, 12: Queen, 13: King
-	uint8_t unk1; // push size to mult of 4 bytes
-	uint8_t unk2; // push size to mult of 4 bytes
+	cgc_uint8_t suit; // 1: Diamonds, 2: Clubs, 3: Hearts, 4: Spades
+	cgc_uint8_t rank; // 1: Ace, 2-10: Face Value, 11: Jack, 12: Queen, 13: King
+	cgc_uint8_t unk1; // push size to mult of 4 bytes
+	cgc_uint8_t unk2; // push size to mult of 4 bytes
 };
 
 /*
@@ -38,7 +38,7 @@ struct card {
  * @param rank Rank of the card
  * @return VA of new card. NULL if error
  */
-extern struct card *create_card(uint8_t suit, uint8_t rank);
+extern struct card *cgc_create_card(cgc_uint8_t suit, cgc_uint8_t rank);
 
 /*
  * Examine a card to see if it has the given rank.
@@ -47,14 +47,14 @@ extern struct card *create_card(uint8_t suit, uint8_t rank);
  * @param rank Rank to use for matching
  * @return TRUE if rank matches, else FALSE or ERR_UNINITIALIZED_CARD on error
  */
-extern int is_rank(struct card *c, uint8_t rank);
+extern int cgc_is_rank(struct card *c, cgc_uint8_t rank);
 
 /*
  * Deallocate a card.
  *
  * @param c Card to deallocate
  */
-extern void destroy_card(struct card *c);
+extern void cgc_destroy_card(struct card *c);
 
 /**
  * Check to see if the suit is valid.
@@ -62,7 +62,7 @@ extern void destroy_card(struct card *c);
  * @param suit Suit to test.
  * @return TRUE if valid, else FALSE
  */
-extern int is_valid_suit(uint8_t suit);
+extern int cgc_is_valid_suit(cgc_uint8_t suit);
 
 /**
  * Check to see if the rank is valid.
@@ -70,7 +70,7 @@ extern int is_valid_suit(uint8_t suit);
  * @param rank Rank to test.
  * @return TRUE if valid, else FALSE
  */
-extern int is_valid_rank(uint8_t rank);
+extern int cgc_is_valid_rank(cgc_uint8_t rank);
 
 /**
  * Compare 2 cards to see if they are equal rank and suit.
@@ -79,7 +79,7 @@ extern int is_valid_rank(uint8_t rank);
  * @param c2 Card 2
  * @return TRUE if equal, else FALSE
  */
-extern int is_equal(struct card *c1, struct card *c2);
+extern int cgc_is_equal(struct card *c1, struct card *c2);
 
 /**
  * Test if arrays cards1 and cards2 contain the same number of cards and 
@@ -95,6 +95,6 @@ extern int is_equal(struct card *c1, struct card *c2);
  * @param qty Number of cards expected in both arrays
  * @return TRUE if cards1 and cards2 have the same cards, FALSE if not.
  */
-extern int is_set_equal(struct card *cards1[], struct card *cards2[], uint8_t qty);
+extern int cgc_is_set_equal(struct card *cards1[], struct card *cards2[], cgc_uint8_t qty);
 
 #endif

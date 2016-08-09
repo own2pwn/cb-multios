@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -25,7 +25,7 @@
 #include "common.h"
 #include "sixer.h"
 
-char get_byte_mask(unsigned char num_high_bits_zerod) {
+char cgc_get_byte_mask(unsigned char num_high_bits_zerod) {
 	switch(num_high_bits_zerod) {
 		case 0: return 0x3F; // 63
 		case 1: return 0x1F; // 31
@@ -37,26 +37,26 @@ char get_byte_mask(unsigned char num_high_bits_zerod) {
 	return 0;
 }
 
-void init_sixer(struct sixer *s, const char *ais_msg) {
+void cgc_init_sixer(struct sixer *s, const char *ais_msg) {
 	s->bits_used = 0;
 	s->ais_msg = ais_msg;
 	s->p_idx = s->ais_msg;
 }
 
-unsigned int sixer_strlen(struct sixer *s) {
+unsigned int cgc_sixer_strlen(struct sixer *s) {
 	// ais_msg is 6bit ASCII encoded, so each byte/char has 6 bits of data encoded in it.
-	return (6 * strlen(s->p_idx)) - s->bits_used;
+	return (6 * cgc_strlen(s->p_idx)) - s->bits_used;
 }
 
-char get_msg_type(const char *ais_msg) {
+char cgc_get_msg_type(const char *ais_msg) {
 
 	struct sixer s;
-	init_sixer(&s, ais_msg);
+	cgc_init_sixer(&s, ais_msg);
 
-	return (char)get_bits_from_sixer(&s, 3);
+	return (char)cgc_get_bits_from_sixer(&s, 3);
 }
 
-int get_bits_from_sixer(struct sixer *s, int num_bits) {
+int cgc_get_bits_from_sixer(struct sixer *s, int num_bits) {
 
 	unsigned int accumulator = 0;
 	unsigned char byte = 0;
@@ -64,7 +64,7 @@ int get_bits_from_sixer(struct sixer *s, int num_bits) {
 	unsigned char shift_num = 0;
 
 	while (0 < num_bits) {
-		byte = unarmor_ASCII_char((unsigned char)*(s->p_idx));
+		byte = cgc_unarmor_ASCII_char((unsigned char)*(s->p_idx));
 		if (0 > byte) {
 			return ERR_INVALID_MESSAGE;
 		}
@@ -75,7 +75,7 @@ int get_bits_from_sixer(struct sixer *s, int num_bits) {
 				accumulator = (accumulator << 6) + byte;
 				num_bits -= 6;
 			} else {
-				accumulator = (accumulator << (6 - s->bits_used)) | (byte & get_byte_mask(s->bits_used));
+				accumulator = (accumulator << (6 - s->bits_used)) | (byte & cgc_get_byte_mask(s->bits_used));
 				num_bits -= 6 - s->bits_used;
 				s->bits_used = 0;
 			}
@@ -87,7 +87,7 @@ int get_bits_from_sixer(struct sixer *s, int num_bits) {
 			}
 
 			shift_num = 6 - s->bits_used - used_now;
-			accumulator = (accumulator << used_now) | ((byte & get_byte_mask(s->bits_used)) >> shift_num);
+			accumulator = (accumulator << used_now) | ((byte & cgc_get_byte_mask(s->bits_used)) >> shift_num);
 
 			if (6 == (s->bits_used + used_now)) {
 				s->p_idx++;
@@ -102,7 +102,7 @@ int get_bits_from_sixer(struct sixer *s, int num_bits) {
 	return accumulator;
 }
 
-int sixer_bits_twos_to_sint(int twos_int, int sign_bit) {
+int cgc_sixer_bits_twos_to_sint(int twos_int, int sign_bit) {
 
 	int accumulator = 0;
 	if (0 < (twos_int & sign_bit)) {
@@ -113,7 +113,7 @@ int sixer_bits_twos_to_sint(int twos_int, int sign_bit) {
 	return accumulator;
 }
 
-char sixer_bits_to_ASCII_str_char(unsigned char sixer_bits) {
+char cgc_sixer_bits_to_ASCII_str_char(unsigned char sixer_bits) {
 	if (63 < sixer_bits) {
 		return -1;
 	} else if (32 > sixer_bits) {
@@ -123,7 +123,7 @@ char sixer_bits_to_ASCII_str_char(unsigned char sixer_bits) {
 	}
 }
 
-char unarmor_ASCII_char(unsigned char armored_char) {
+char cgc_unarmor_ASCII_char(unsigned char armored_char) {
 	if ((119 < armored_char) || ((87 < armored_char) && 96 > armored_char)) {
 		return -1;
 	} else {

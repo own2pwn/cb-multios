@@ -39,66 +39,66 @@ extern "C"
 
 #define PAGE_SIZE	(4096)
 
-void TestFS( CNORFlash *pNORFlash )
+void cgc_TestFS( cgc_CNORFlash *pNORFlash )
 {
-	CFlashFS oFS;
+	cgc_CFlashFS oFS;
 
-	oFS.Init( pNORFlash );
+	oFS.cgc_Init( pNORFlash );
 
-	int32_t test1FD = oFS.OpenFile( "test.txt", OPEN_MODE_WRITE );
-	int32_t test2FD = oFS.OpenFile( "test2.txt", OPEN_MODE_WRITE );
-	int32_t test3FD = oFS.OpenFile( "test3.txt", OPEN_MODE_WRITE );
+	cgc_int32_t test1FD = oFS.cgc_OpenFile( "test.txt", OPEN_MODE_WRITE );
+	cgc_int32_t test2FD = oFS.cgc_OpenFile( "test2.txt", OPEN_MODE_WRITE );
+	cgc_int32_t test3FD = oFS.cgc_OpenFile( "test3.txt", OPEN_MODE_WRITE );
 
-	printf( "Test1 FD is: $d\n", test1FD );
-	printf( "Test2 FD is: $d\n", test2FD );
-	printf( "Test3 FD is: $d\n", test3FD );
+	cgc_printf( "Test1 FD is: $d\n", test1FD );
+	cgc_printf( "Test2 FD is: $d\n", test2FD );
+	cgc_printf( "Test3 FD is: $d\n", test3FD );
 
-	int32_t retValue = oFS.WriteFile( test1FD, (uint8_t*)"blah", 4 );
+	cgc_int32_t retValue = oFS.cgc_WriteFile( test1FD, (cgc_uint8_t*)"blah", 4 );
 
-	printf( "Ret value is: $d\n", retValue );
+	cgc_printf( "Ret value is: $d\n", retValue );
 
-	uint8_t testData[2048];
-	uint8_t testData2[2048];
+	cgc_uint8_t testData[2048];
+	cgc_uint8_t testData2[2048];
 	
-	retValue = oFS.WriteFile( test1FD, testData, 1792 );
+	retValue = oFS.cgc_WriteFile( test1FD, testData, 1792 );
 
-	printf( "Ret value is: $d\n", retValue );
+	cgc_printf( "Ret value is: $d\n", retValue );
 
-	retValue = oFS.CloseFile( test1FD );
+	retValue = oFS.cgc_CloseFile( test1FD );
 
-	printf( "Close ret: $d\n", retValue );
+	cgc_printf( "Close ret: $d\n", retValue );
 
-	test1FD = oFS.OpenFile( "test.txt", OPEN_MODE_READ );
+	test1FD = oFS.cgc_OpenFile( "test.txt", OPEN_MODE_READ );
 
-	printf( "Open read FD is: $d\n", test1FD );
+	cgc_printf( "Open read FD is: $d\n", test1FD );
 
-	uint8_t readBlahBuffer[6];
-	retValue = oFS.ReadFile( test1FD, readBlahBuffer, 4 );
+	cgc_uint8_t readBlahBuffer[6];
+	retValue = oFS.cgc_ReadFile( test1FD, readBlahBuffer, 4 );
 
-	printf( "Read return is: $d\n", retValue );
+	cgc_printf( "Read return is: $d\n", retValue );
 	readBlahBuffer[5] = '\0';
-	printf( "Read blah buffer is: $s\n", readBlahBuffer );
+	cgc_printf( "Read blah buffer is: $s\n", readBlahBuffer );
 
-	retValue = oFS.DeleteFile( "test.txt" );
+	retValue = oFS.cgc_DeleteFile( "test.txt" );
 
-	printf( "Delete test.txt ret: $d\n", retValue );
+	cgc_printf( "Delete test.txt ret: $d\n", retValue );
 
-	retValue = oFS.ReadFile( test1FD, readBlahBuffer, 4 );
+	retValue = oFS.cgc_ReadFile( test1FD, readBlahBuffer, 4 );
 		
-	printf( "Read from FD=1 is: $d\n", retValue );
+	cgc_printf( "Read from FD=1 is: $d\n", retValue );
 }
 	
-typedef struct TEST_COMMAND_RESPONSE
+typedef struct cgc_TEST_COMMAND_RESPONSE
 {
-	int32_t retValue;
-	uint32_t responseLen;
-} tTestCommandResponse;
+	cgc_int32_t retValue;
+	cgc_uint32_t responseLen;
+} cgc_tTestCommandResponse;
 
-bool SendCommandResponse( tTestCommandResponse *pResponse, uint8_t *pData, uint32_t dataLen )
+bool cgc_SendCommandResponse( cgc_tTestCommandResponse *pResponse, cgc_uint8_t *pData, cgc_uint32_t dataLen )
 {
 	pResponse->responseLen = dataLen;
 
-	if ( SendData( STDOUT, (uint8_t*)pResponse, sizeof(tTestCommandResponse) ) != sizeof(tTestCommandResponse) )
+	if ( cgc_SendData( STDOUT, (cgc_uint8_t*)pResponse, sizeof(cgc_tTestCommandResponse) ) != sizeof(cgc_tTestCommandResponse) )
 	{
 		// Comm error
 		return (false);
@@ -106,7 +106,7 @@ bool SendCommandResponse( tTestCommandResponse *pResponse, uint8_t *pData, uint3
 
 	if ( dataLen > 0 )
 	{
-		if ( SendData( STDOUT, pData, dataLen ) != dataLen )
+		if ( cgc_SendData( STDOUT, pData, dataLen ) != dataLen )
 		{
 			// Commm error
 			return (false);
@@ -118,25 +118,25 @@ bool SendCommandResponse( tTestCommandResponse *pResponse, uint8_t *pData, uint3
 
 #define MAX_TEMP_TEST_LEN	4096
 
-bool OpenFileCommand( CFlashFS *pFS )
+bool cgc_OpenFileCommand( cgc_CFlashFS *pFS )
 {
-	typedef struct OPEN_FILE_COMMAND
+	typedef struct cgc_OPEN_FILE_COMMAND
 	{
-		uint8_t fileNameLen;
-		uint8_t openMode;
-	} tOpenFileCommand;
+		cgc_uint8_t fileNameLen;
+		cgc_uint8_t openMode;
+	} cgc_tOpenFileCommand;
 
-	uint8_t openFileName[257];
-	tTestCommandResponse oResponse;
-	tOpenFileCommand oCommandData;
+	cgc_uint8_t openFileName[257];
+	cgc_tTestCommandResponse oResponse;
+	cgc_tOpenFileCommand oCommandData;
 
-	if ( RecvData( STDIN, (uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
+	if ( cgc_RecvData( STDIN, (cgc_uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
 	{
 		// Bad command
 		return true;
 	}
 
-	if ( RecvData( STDIN, openFileName, oCommandData.fileNameLen ) != oCommandData.fileNameLen )
+	if ( cgc_RecvData( STDIN, openFileName, oCommandData.fileNameLen ) != oCommandData.fileNameLen )
 	{
 		// Bad command
 		return true;
@@ -144,56 +144,56 @@ bool OpenFileCommand( CFlashFS *pFS )
 
 	openFileName[oCommandData.fileNameLen] = '\0';
 
-	int32_t retValue = pFS->OpenFile( (const char *)openFileName, oCommandData.openMode );
+	cgc_int32_t retValue = pFS->cgc_OpenFile( (const char *)openFileName, oCommandData.openMode );
 
 	// Set return value
 	oResponse.retValue = retValue;
 
 	// Send response!
-	SendCommandResponse( &oResponse, (uint8_t*)NULL, 0 );
+	cgc_SendCommandResponse( &oResponse, (cgc_uint8_t*)NULL, 0 );
 
 	return false;
 }
 
-bool CloseFileCommand( CFlashFS *pFS )
+bool cgc_CloseFileCommand( cgc_CFlashFS *pFS )
 {
-	typedef struct CLOSE_FILE_COMMAND
+	typedef struct cgc_CLOSE_FILE_COMMAND
 	{
-		int32_t fd;
-	} tCloseFileCommand;
+		cgc_int32_t fd;
+	} cgc_tCloseFileCommand;
 
-	tTestCommandResponse oResponse;
-	tCloseFileCommand oCommandData;
+	cgc_tTestCommandResponse oResponse;
+	cgc_tCloseFileCommand oCommandData;
 
-	if ( RecvData( STDIN, (uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
+	if ( cgc_RecvData( STDIN, (cgc_uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
 	{
 		// Bad command
 		return true;
 	}
 
-	int32_t retValue = pFS->CloseFile( oCommandData.fd );
+	cgc_int32_t retValue = pFS->cgc_CloseFile( oCommandData.fd );
 
 	// Set return value
 	oResponse.retValue = retValue;
 
 	// Send response!
-	SendCommandResponse( &oResponse, (uint8_t*)NULL, 0 );
+	cgc_SendCommandResponse( &oResponse, (cgc_uint8_t*)NULL, 0 );
 
 	return false;
 }
 
-bool ReadFileCommand( CFlashFS *pFS, uint8_t *tempData )
+bool cgc_ReadFileCommand( cgc_CFlashFS *pFS, cgc_uint8_t *tempData )
 {
-	typedef struct READ_FILE_COMMAND
+	typedef struct cgc_READ_FILE_COMMAND
 	{
-		int32_t fd;
-		uint32_t dataLen;
-	} tReadFileCommand;
+		cgc_int32_t fd;
+		cgc_uint32_t dataLen;
+	} cgc_tReadFileCommand;
 
-	tTestCommandResponse oResponse;
-	tReadFileCommand oCommandData;
+	cgc_tTestCommandResponse oResponse;
+	cgc_tReadFileCommand oCommandData;
 
-	if ( RecvData( STDIN, (uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
+	if ( cgc_RecvData( STDIN, (cgc_uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
 	{
 		// Bad command
 		return true;
@@ -202,32 +202,32 @@ bool ReadFileCommand( CFlashFS *pFS, uint8_t *tempData )
 	if ( oCommandData.dataLen > MAX_TEMP_TEST_LEN )
 		oCommandData.dataLen = MAX_TEMP_TEST_LEN;
 
-	int32_t retValue = pFS->ReadFile( oCommandData.fd, tempData, oCommandData.dataLen );
+	cgc_int32_t retValue = pFS->cgc_ReadFile( oCommandData.fd, tempData, oCommandData.dataLen );
 
 	// Set return value
 	oResponse.retValue = retValue;
 
 	// Send response!
 	if ( oResponse.retValue <= 0 )
-		SendCommandResponse( &oResponse, (uint8_t*)NULL, 0 );
+		cgc_SendCommandResponse( &oResponse, (cgc_uint8_t*)NULL, 0 );
 	else
-		SendCommandResponse( &oResponse, tempData, oCommandData.dataLen );
+		cgc_SendCommandResponse( &oResponse, tempData, oCommandData.dataLen );
 
 	return false;
 }
 
-bool WriteFileCommand( CFlashFS *pFS, uint8_t *tempData )
+bool cgc_WriteFileCommand( cgc_CFlashFS *pFS, cgc_uint8_t *tempData )
 {
-	typedef struct WRITE_FILE_COMMAND
+	typedef struct cgc_WRITE_FILE_COMMAND
 	{
-		int32_t fd;
-		uint32_t dataLen;
-	} tWriteFileCommand;
+		cgc_int32_t fd;
+		cgc_uint32_t dataLen;
+	} cgc_tWriteFileCommand;
 
-	tTestCommandResponse oResponse;
-	tWriteFileCommand oCommandData;
+	cgc_tTestCommandResponse oResponse;
+	cgc_tWriteFileCommand oCommandData;
 
-	if ( RecvData( STDIN, (uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
+	if ( cgc_RecvData( STDIN, (cgc_uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
 	{
 		// Bad command
 		return true;
@@ -236,41 +236,41 @@ bool WriteFileCommand( CFlashFS *pFS, uint8_t *tempData )
 	if ( oCommandData.dataLen > MAX_TEMP_TEST_LEN )
 		oCommandData.dataLen = MAX_TEMP_TEST_LEN;
 
-	if ( RecvData( STDIN, tempData, oCommandData.dataLen ) != oCommandData.dataLen )
+	if ( cgc_RecvData( STDIN, tempData, oCommandData.dataLen ) != oCommandData.dataLen )
 	{
 		// Bad command
 		return true;
 	}
 
-	int32_t retValue = pFS->WriteFile( oCommandData.fd, tempData, oCommandData.dataLen );
+	cgc_int32_t retValue = pFS->cgc_WriteFile( oCommandData.fd, tempData, oCommandData.dataLen );
 
 	// Set return value
 	oResponse.retValue = retValue;
 
 	// Send response!
-	SendCommandResponse( &oResponse, (uint8_t*)NULL, 0 );
+	cgc_SendCommandResponse( &oResponse, (cgc_uint8_t*)NULL, 0 );
 
 	return false;
 }	
 
-bool DeleteFileCommand( CFlashFS *pFS )
+bool cgc_DeleteFileCommand( cgc_CFlashFS *pFS )
 {
-	typedef struct DELETE_FILE_COMMAND
+	typedef struct cgc_DELETE_FILE_COMMAND
 	{
-		uint8_t fileNameLen;
-	} tDeleteFileCommand;
+		cgc_uint8_t fileNameLen;
+	} cgc_tDeleteFileCommand;
 
-	uint8_t deleteFileName[257];
-	tTestCommandResponse oResponse;
-	tDeleteFileCommand oCommandData;
+	cgc_uint8_t deleteFileName[257];
+	cgc_tTestCommandResponse oResponse;
+	cgc_tDeleteFileCommand oCommandData;
 
-	if ( RecvData( STDIN, (uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
+	if ( cgc_RecvData( STDIN, (cgc_uint8_t*)&oCommandData, sizeof(oCommandData) ) != sizeof(oCommandData) )
 	{
 		// Bad command
 		return true;
 	}
 
-	if ( RecvData( STDIN, deleteFileName, oCommandData.fileNameLen ) != oCommandData.fileNameLen )
+	if ( cgc_RecvData( STDIN, deleteFileName, oCommandData.fileNameLen ) != oCommandData.fileNameLen )
 	{
 		// Bad command
 		return true;
@@ -278,26 +278,26 @@ bool DeleteFileCommand( CFlashFS *pFS )
 
 	deleteFileName[oCommandData.fileNameLen] = '\0';
 
-	int32_t retValue = pFS->DeleteFile( (const char *)deleteFileName );
+	cgc_int32_t retValue = pFS->cgc_DeleteFile( (const char *)deleteFileName );
 
 	// Set return value
 	oResponse.retValue = retValue;
 
 	// Send response!
-	SendCommandResponse( &oResponse, (uint8_t*)NULL, 0 );
+	cgc_SendCommandResponse( &oResponse, (cgc_uint8_t*)NULL, 0 );
 
 	return false;
 }	
 
-void SetupDevice( int secret_page_i, CFlashFS *pFS, CNORFlash *pNORFlash )
+void cgc_SetupDevice( int secret_page_i, cgc_CFlashFS *pFS, cgc_CNORFlash *pNORFlash )
 {
-	uint8_t *pMagicPage = (uint8_t*)secret_page_i;
+	cgc_uint8_t *pMagicPage = (cgc_uint8_t*)secret_page_i;
 
-	CNORFlash oFlash;
-	CFlashFS oFS;
+	cgc_CNORFlash oFlash;
+	cgc_CFlashFS oFS;
 
 	// Use magic page data to init device
-	uint32_t blockSize, blocksPerSector, sectorCount;
+	cgc_uint32_t blockSize, blocksPerSector, sectorCount;
 	
 	if ( pMagicPage[0] < 0x80 )
 		blockSize = 256;
@@ -308,54 +308,54 @@ void SetupDevice( int secret_page_i, CFlashFS *pFS, CNORFlash *pNORFlash )
 
 	sectorCount = ((pMagicPage[2] % 32)+128) * 4; // 128 -> 252 sectors
  
-	pNORFlash->Init( blockSize, blocksPerSector, sectorCount );
+	pNORFlash->cgc_Init( blockSize, blocksPerSector, sectorCount );
 
-	pFS->Init( pNORFlash );
+	pFS->cgc_Init( pNORFlash );
 
-	printf( "Starting test for device ($d, $d, $d):\n", blockSize, blocksPerSector, sectorCount );
+	cgc_printf( "Starting test for device ($d, $d, $d):\n", blockSize, blocksPerSector, sectorCount );
 }
 
-void RunTestSystem( CFlashFS *pFS )
+void cgc_RunTestSystem( cgc_CFlashFS *pFS )
 {
-	uint8_t tempData[MAX_TEMP_TEST_LEN];
+	cgc_uint8_t tempData[MAX_TEMP_TEST_LEN];
 
 	bool bDone = false;
 	do
 	{
-		uint8_t commandNum;
+		cgc_uint8_t commandNum;
 	
-		if ( RecvData( STDIN, &commandNum, sizeof(commandNum) ) != sizeof(commandNum) )
+		if ( cgc_RecvData( STDIN, &commandNum, sizeof(commandNum) ) != sizeof(commandNum) )
 			break;
 
 		switch ( commandNum )
 		{
-		case 0:	// OpenFile
-			bDone = OpenFileCommand( pFS );
+		case 0:	// cgc_OpenFile
+			bDone = cgc_OpenFileCommand( pFS );
 			break;
 
-		case 1:	// CloseFile
-			bDone = CloseFileCommand( pFS );
+		case 1:	// cgc_CloseFile
+			bDone = cgc_CloseFileCommand( pFS );
 			break;
 
-		case 2:	// WriteFile
-			bDone = WriteFileCommand( pFS, tempData );
+		case 2:	// cgc_WriteFile
+			bDone = cgc_WriteFileCommand( pFS, tempData );
 			break;
 
-		case 3:	// ReadFile
-			bDone = ReadFileCommand( pFS, tempData );
+		case 3:	// cgc_ReadFile
+			bDone = cgc_ReadFileCommand( pFS, tempData );
 			break;
 
-		case 4:	// DeleteFile
-			bDone = DeleteFileCommand( pFS );
+		case 4:	// cgc_DeleteFile
+			bDone = cgc_DeleteFileCommand( pFS );
 			break;
 
 		case 5:
-			printf("Stop simulation\n" );
+			cgc_printf("Stop simulation\n" );
 			bDone = true;
 			break;
 
 		default:
-			printf( "Invalid command\n" );
+			cgc_printf( "Invalid command\n" );
 			bDone = true;
 			// Invalid command
 			break;
@@ -365,21 +365,21 @@ void RunTestSystem( CFlashFS *pFS )
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
 {
-	CNORFlash oFlash;
-	CFlashFS oFS;
+	cgc_CNORFlash oFlash;
+	cgc_CFlashFS oFS;
 
-	SetupDevice( secret_page_i, &oFS, &oFlash );
-	RunTestSystem( &oFS );
+	cgc_SetupDevice( secret_page_i, &oFS, &oFlash );
+	cgc_RunTestSystem( &oFS );
 }
 
 #if 0
-	CNORFlash oFlash;
+	cgc_CNORFlash oFlash;
 
-	oFlash.Init( 512, 16, 128 );
+	oFlash.cgc_Init( 512, 16, 128 );
 
-	printf( "$08X\n", secret_page_i );
+	cgc_printf( "$08X\n", secret_page_i );
 
-	TestFS( &oFlash );
+	cgc_TestFS( &oFlash );
 
 	return (0);
 }

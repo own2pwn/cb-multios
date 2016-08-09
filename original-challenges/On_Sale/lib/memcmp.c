@@ -21,7 +21,7 @@
 */
 #include "memcmp.h"
 
-int memcmp(void *s1, void *s2, unsigned int cnt) {
+int cgc_memcmp(void *s1, void *s2, unsigned int cnt) {
 	unsigned char *p_s1 = (unsigned char *)s1;
 	unsigned char *p_s2 = (unsigned char *)s2;
 

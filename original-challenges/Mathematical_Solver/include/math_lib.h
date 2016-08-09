@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 //#define DEBUG_PRINT_ON
 #ifdef DEBUG_PRINT_ON
-#	define debug_print(fmt, ...) printf(fmt, __VA_ARGS__);
+#	define debug_print(fmt, ...) cgc_printf(fmt, __VA_ARGS__);
 #else
 #	define debug_print(...) do{}while(0);
 #endif
@@ -45,11 +45,11 @@ THE SOFTWARE.
 #define TEST_LEN 12
 
 
-int get_user_answer(int *answer); // gets input, checks if integer, puts num in answer
-int generate_one_equation(char *equation);
-int generate_equation();
-int do_initial_equation();
-int prompt_for_equation();
-int seed_prng();
+int cgc_get_user_answer(int *answer); // gets input, checks if integer, cgc_puts num in answer
+int cgc_generate_one_equation(char *equation);
+int cgc_generate_equation();
+int cgc_do_initial_equation();
+int cgc_prompt_for_equation();
+int cgc_seed_prng();
 
 #endif

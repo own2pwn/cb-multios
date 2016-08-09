@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,11 +29,11 @@ THE SOFTWARE.
 #include "malloc.h"
 #include "cstring.h"
 
-int ReceiveBytes(char *buffer, int length)
+int cgc_ReceiveBytes(char *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue;
-  size_t bytesReceived;
+  cgc_size_t bytesReceived;
 
   if (buffer == NULL) 
   {
@@ -57,11 +57,11 @@ int ReceiveBytes(char *buffer, int length)
 }
 
 
-int TransmitBytes(char *buffer, int length)
+int cgc_TransmitBytes(char *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue = 0;
-  size_t bytesSent;
+  cgc_size_t bytesSent;
 
   while (totalBytes < length)
   {
@@ -79,43 +79,43 @@ int TransmitBytes(char *buffer, int length)
   return 0;
 }
 
-cString *ReceiveCString(int maxLen)
+cgc_cString *cgc_ReceiveCString(int maxLen)
 {
-  cString *newString = calloc(sizeof(cString));
-  if (ReceiveBytes((char *)&newString->length, sizeof(newString->length)) != sizeof(newString->length))
+  cgc_cString *newString = cgc_calloc(sizeof(cgc_cString));
+  if (cgc_ReceiveBytes((char *)&newString->length, sizeof(newString->length)) != sizeof(newString->length))
   {
-    DestroyCString(newString);
+    cgc_DestroyCString(newString);
     return NULL;
   }
   if (newString->length > maxLen)
   {
-    printf("FATAL\n");
+    cgc_printf("FATAL\n");
     _terminate(-2);
   }
   if (newString->length > 0)
     {
-    newString->string = calloc(newString->length + 1) ;
-    if (ReceiveBytes(newString->string, newString->length) != newString->length)
+    newString->string = cgc_calloc(newString->length + 1) ;
+    if (cgc_ReceiveBytes(newString->string, newString->length) != newString->length)
     {
-      DestroyCString(newString);
+      cgc_DestroyCString(newString);
       return NULL;
     }
   }
   return newString;
 }
 
-void DestroyCString(cString *s)
+void cgc_DestroyCString(cgc_cString *s)
 {
   if (s)
   {
-    free(s->string);
+    cgc_free(s->string);
   }
-  free(s);
+  cgc_free(s);
 }
 
-void TransmitCString(cString *s)
+void cgc_TransmitCString(cgc_cString *s)
 {
-  TransmitBytes((char *)&s->length, sizeof(s->length));
-  TransmitBytes(s->string, s->length);
+  cgc_TransmitBytes((char *)&s->length, sizeof(s->length));
+  cgc_TransmitBytes(s->string, s->length);
 }
 

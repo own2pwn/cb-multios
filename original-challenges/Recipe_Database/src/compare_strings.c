@@ -25,7 +25,7 @@ THE SOFTWARE.
 */
 
 
-int compare_strings(char *str1, char *str2) {
+int cgc_compare_strings(char *str1, char *str2) {
 
 	if (str1==0 && str2 != 0)
 		return -1;

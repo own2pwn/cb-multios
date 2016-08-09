@@ -1,7 +1,7 @@
 /*
  Copyright (c) 2014 Cromulence LLC
  
- Permission is hereby granted, free of charge, to any person obtaining a copy
+ Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,50 +31,50 @@
 #define FILE 0
 #define DIR 1
 
-typedef struct file {
+typedef struct cgc_file {
 	char name[256];
 	unsigned int type;
 	unsigned int length;
 	char *data;
-} file, *pfile;
+} cgc_file, *cgc_pfile;
 
-/// Allocates the file structure and zeros the buffer
-pfile init_file( void );
+/// Allocates the cgc_file structure and zeros the buffer
+cgc_pfile cgc_init_file( void );
 
 /// Sets the files name to that specified by name
-int set_name( pfile pf, char *name);
+int cgc_set_name( cgc_pfile pf, char *name);
 
-/// Sets the type of file as indicated by type only FILE or DIR are valid
-int set_type( pfile pf, int type);
+/// Sets the type of cgc_file as indicated by type only FILE or DIR are valid
+int cgc_set_type( cgc_pfile pf, int type);
 
 /// Allocates a new copy of the data buffer and inserts it into the structure
-int set_data( pfile pf, int length, char *data );
+int cgc_set_data( cgc_pfile pf, int length, char *data );
 
-/// Frees the file structure and associated data
-void free_file( pfile pf );
+/// Frees the cgc_file structure and associated data
+void cgc_free_file( cgc_pfile pf );
 
-/// Adds a file to the root node
-int add_file( pfile nf );
+/// Adds a cgc_file to the root node
+int cgc_add_file( cgc_pfile nf );
 
-/// Retrieves the file specified by name
-pfile get_file( char *name );
+/// Retrieves the cgc_file specified by name
+cgc_pfile cgc_get_file( char *name );
 
-/// Reallocates the pfile list to allow an additional file
-int fixup_dir_length( pfile d );
+/// Reallocates the cgc_pfile list to allow an additional cgc_file
+int cgc_fixup_dir_length( cgc_pfile d );
 
 /// Utility function to search for the next '/' in a string
-int find_next_slash( char *str, int start, int max );
+int cgc_find_next_slash( char *str, int start, int max );
 
-/// Retrieves the pfile beneath a given directory if it exists
-pfile retrieve_sub( pfile pf, char *name );
+/// Retrieves the cgc_pfile beneath a given directory if it exists
+cgc_pfile cgc_retrieve_sub( cgc_pfile pf, char *name );
 
-/// Frees the file structure associated with name
-int delete_file( char *name );
+/// Frees the cgc_file structure associated with name
+int cgc_delete_file( char *name );
 
-/// Returns 0 if file is not a sub 1 if it is
-int does_sub_file_exist( pfile pf, char *name);
+/// Returns 0 if cgc_file is not a sub 1 if it is
+int cgc_does_sub_file_exist( cgc_pfile pf, char *name);
 
 /// Bubble sort the files of a directory
-int bubble_sort( pfile parent );
+int cgc_bubble_sort( cgc_pfile parent );
 
 #endif

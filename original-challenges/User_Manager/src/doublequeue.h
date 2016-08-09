@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,126 +26,126 @@ THE SOFTWARE.
 #ifndef __DOUBLE_QUEUE_H__
 #define __DOUBLE_QUEUE_H__
 
-class CDoubleItemLink;
+class cgc_CDoubleItemLink;
 
-class CDoubleItemList
+class cgc_CDoubleItemList
 {
 public:
-    CDoubleItemList();
-    ~CDoubleItemList();
+    cgc_CDoubleItemList();
+    ~cgc_CDoubleItemList();
 
-    void DeleteAll();
+    void cgc_DeleteAll();
 
-    CDoubleItemLink *GetFirst( void )
+    cgc_CDoubleItemLink *cgc_GetFirst( void )
     {
         return (m_pFirst);
     }
 
-    CDoubleItemLink *GetLast( void )
+    cgc_CDoubleItemLink *cgc_GetLast( void )
     {
         return (m_pLast);
     }
 
-    CDoubleItemLink *GetNext( CDoubleItemLink *pItem );
-    CDoubleItemLink *GetPrev( CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_GetNext( cgc_CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_GetPrev( cgc_CDoubleItemLink *pItem );
 
-    CDoubleItemLink *RemoveFirst( void );
-    CDoubleItemLink *RemoveLast( void );
+    cgc_CDoubleItemLink *cgc_RemoveFirst( void );
+    cgc_CDoubleItemLink *cgc_RemoveLast( void );
 
-    CDoubleItemLink *RemoveItem( CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_RemoveItem( cgc_CDoubleItemLink *pItem );
 
-    CDoubleItemLink *AddFirst( CDoubleItemLink *pItem );
-    CDoubleItemLink *AddAfter( CDoubleItemLink *pPrev, CDoubleItemLink *pItem );
-    CDoubleItemLink *AddLast( CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_AddFirst( cgc_CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_AddAfter( cgc_CDoubleItemLink *pPrev, cgc_CDoubleItemLink *pItem );
+    cgc_CDoubleItemLink *cgc_AddLast( cgc_CDoubleItemLink *pItem );
 
 protected:
-    CDoubleItemLink *m_pFirst;
-    CDoubleItemLink *m_pLast;
+    cgc_CDoubleItemLink *m_pFirst;
+    cgc_CDoubleItemLink *m_pLast;
 };
 
-class CDoubleItemLink
+class cgc_CDoubleItemLink
 {
-friend class CDoubleItemList;
+friend class cgc_CDoubleItemList;
 
 public:
-    CDoubleItemLink();
-    ~CDoubleItemLink();
+    cgc_CDoubleItemLink();
+    ~cgc_CDoubleItemLink();
 
-    void Unlink( void );
+    void cgc_Unlink( void );
 
 private:
-    void AddList( CDoubleItemList *pList )
+    void cgc_AddList( cgc_CDoubleItemList *pList )
     {
         m_pList = pList;
     }
 
-    void ClearList( void )
+    void cgc_ClearList( void )
     {
         m_pList = NULL;
     }
 
 private:
-    CDoubleItemLink *m_pNext;
-    CDoubleItemLink *m_pPrev;
-    CDoubleItemList *m_pList;
+    cgc_CDoubleItemLink *m_pNext;
+    cgc_CDoubleItemLink *m_pPrev;
+    cgc_CDoubleItemList *m_pList;
 };
 
-class CDoubleQueue : public CDoubleItemList
+class cgc_CDoubleQueue : public cgc_CDoubleItemList
 {
 public:
-    CDoubleQueue();
-    ~CDoubleQueue();
+    cgc_CDoubleQueue();
+    ~cgc_CDoubleQueue();
 
-    uint32_t GetCount( void ) const
+    cgc_uint32_t cgc_GetCount( void ) const
     {
         return (m_itemCount);
     }
 
-    CDoubleItemLink *PopFront( void )
+    cgc_CDoubleItemLink *cgc_PopFront( void )
     {
-        CDoubleItemLink *pItem;
+        cgc_CDoubleItemLink *pItem;
 
-        if ( (pItem = RemoveFirst()) )
+        if ( (pItem = cgc_RemoveFirst()) )
             m_itemCount--;
 
         return (pItem);
     }
 
-    CDoubleItemLink *PopBack( void )
+    cgc_CDoubleItemLink *cgc_PopBack( void )
     {
-        CDoubleItemLink *pItem;
+        cgc_CDoubleItemLink *pItem;
 
-        if ( (pItem = RemoveLast()) )
+        if ( (pItem = cgc_RemoveLast()) )
             m_itemCount--;
 
         return (pItem);
     }
 
-    void PushFront( CDoubleItemLink *pItem )
+    void cgc_PushFront( cgc_CDoubleItemLink *pItem )
     {
-        if ( AddFirst( pItem ) )
+        if ( cgc_AddFirst( pItem ) )
             m_itemCount++;
     }
 
-    void PushBack( CDoubleItemLink *pItem )
+    void cgc_PushBack( cgc_CDoubleItemLink *pItem )
     {
-        if ( AddLast( pItem ) )
+        if ( cgc_AddLast( pItem ) )
             m_itemCount++;
     }
 
-    CDoubleItemLink *GetFront( void )
+    cgc_CDoubleItemLink *cgc_GetFront( void )
     {
         return (m_pFirst);
     }
 
-    CDoubleItemLink *GetBack( void )
+    cgc_CDoubleItemLink *cgc_GetBack( void )
     {
         return (m_pLast);
     }
 
-    bool DeleteItem( CDoubleItemLink *pItem )
+    bool cgc_DeleteItem( cgc_CDoubleItemLink *pItem )
     {
-        CDoubleItemLink *pRemovedItem = CDoubleItemList::RemoveItem( pItem );
+        cgc_CDoubleItemLink *pRemovedItem = cgc_CDoubleItemList::cgc_RemoveItem( pItem );
 
         if ( pRemovedItem )
             m_itemCount--;
@@ -157,7 +157,7 @@ public:
         return (true);
     }
 private:
-    uint32_t m_itemCount;
+    cgc_uint32_t m_itemCount;
 };
 
 #endif // __DOUBLE_QUEUE_H__

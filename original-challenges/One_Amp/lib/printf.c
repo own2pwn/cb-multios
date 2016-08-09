@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,7 +35,7 @@
 #define PRINTF_CHAR '%'
 #endif
 
-static void _convert_unsigned(char *buf, unsigned x, int base, int upper)
+static void cgc__convert_unsigned(char *buf, unsigned x, int base, int upper)
 {
     const char *numbers;
     char *tmp = buf + 20;
@@ -60,10 +60,10 @@ static void _convert_unsigned(char *buf, unsigned x, int base, int upper)
     }
 
     /* move to beginning of buf */
-    memmove(buf, tmp, 20 - (buf - tmp));
+    cgc_memmove(buf, tmp, 20 - (buf - tmp));
 }
 
-static void _convert_signed(char *buf, int x, int base, int upper)
+static void cgc__convert_signed(char *buf, int x, int base, int upper)
 {
     if (x < 0)
     {
@@ -71,16 +71,16 @@ static void _convert_signed(char *buf, int x, int base, int upper)
         x = -x;
     }
 
-    _convert_unsigned(buf, x, base, upper);
+    cgc__convert_unsigned(buf, x, base, upper);
 }
 
-static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size_t buf_size)
+static int cgc__vsfprintf(const char *fmt, cgc_va_list ap, cgc_FILE *stream, char *buf, cgc_size_t buf_size)
 {
     char ch;
     unsigned int num_size, field_size;
-    size_t count = 0;
+    cgc_size_t count = 0;
     char numbuf[64];
-    size_t numbuflen;
+    cgc_size_t numbuflen;
 
 #define OUTPUT_CHAR(_ch) \
     do { \
@@ -89,23 +89,23 @@ static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size
             break; \
         } \
         char __ch = _ch; \
-        if (stream) fwrite(&__ch, 1, stream); \
+        if (stream) cgc_fwrite(&__ch, 1, stream); \
         if (buf) buf[count] = __ch; \
         count++; \
     } while (0)
 
 #define OUTPUT_STRING(str, _sz) \
     do { \
-        size_t sz = _sz; \
+        cgc_size_t sz = _sz; \
         if (count >= buf_size) { \
-            if ((size_t)(count + sz) < (count)) _terminate(1); \
+            if ((cgc_size_t)(count + sz) < (count)) _terminate(1); \
             count += sz; break; \
         } \
-        size_t cnt = buf_size - count; \
+        cgc_size_t cnt = buf_size - count; \
         if (cnt > sz) cnt = sz; \
-        if (stream) fwrite(str, cnt, stream); \
-        if (buf) memcpy(buf + count, str, cnt); \
-        if ((size_t)(count + sz) < (count)) _terminate(1); \
+        if (stream) cgc_fwrite(str, cnt, stream); \
+        if (buf) cgc_memcpy(buf + count, str, cnt); \
+        if ((cgc_size_t)(count + sz) < (count)) _terminate(1); \
         count += sz; \
     } while (0)
 
@@ -146,7 +146,7 @@ static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size
 
         /* field width */
         if (*fmt >= '0' && *fmt <= '9')
-            field_size = strtoul(fmt, (char **)&fmt, 10);
+            field_size = cgc_strtoul(fmt, (char **)&fmt, 10);
 
         /* modifiers */
         switch ((ch = *fmt++))
@@ -200,7 +200,7 @@ static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size
                     intarg = va_arg(ap, int);
                 else goto done;
 
-                _convert_signed(numbuf, intarg, 10, 0);
+                cgc__convert_signed(numbuf, intarg, 10, 0);
             }
             else
             {
@@ -208,10 +208,10 @@ static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size
                     uintarg = va_arg(ap, unsigned int);
                 else goto done;
 
-                _convert_unsigned(numbuf, uintarg, ch == 'u' ? 10 : 16, ch == 'X');
+                cgc__convert_unsigned(numbuf, uintarg, ch == 'u' ? 10 : 16, ch == 'X');
             }
 
-            numbuflen = strlen(numbuf);
+            numbuflen = cgc_strlen(numbuf);
             if (numbuflen < field_size)
             {
                 field_size -= numbuflen;
@@ -228,7 +228,7 @@ static int _vsfprintf(const char *fmt, va_list ap, FILE *stream, char *buf, size
             break;
         case 's':
             strarg = va_arg(ap, const char *);
-            OUTPUT_STRING(strarg, strlen(strarg));
+            OUTPUT_STRING(strarg, cgc_strlen(strarg));
             break;
 #ifdef PRINTF_N_CHAR
         case PRINTF_N_CHAR:
@@ -251,48 +251,48 @@ done:
     return (int)count - 1; // - 1 since we don't count NULL
 }
 
-int printf(const char *fmt, ...)
+int cgc_printf(const char *fmt, ...)
 {
     int ret;
-    va_list ap;
+    cgc_va_list ap;
 
     va_start(ap, fmt);
-    ret = vprintf(fmt, ap);
+    ret = cgc_vprintf(fmt, ap);
     va_end(ap);
 
     return ret;
 }
 
-int fprintf(FILE *stream, const char *fmt, ...)
+int cgc_fprintf(cgc_FILE *stream, const char *fmt, ...)
 {
     int ret;
-    va_list ap;
+    cgc_va_list ap;
 
     va_start(ap, fmt);
-    ret = vfprintf(stream, fmt, ap);
+    ret = cgc_vfprintf(stream, fmt, ap);
     va_end(ap);
 
     return ret;
 }
 
-int sprintf(char *str, const char *fmt, ...)
+int cgc_sprintf(char *str, const char *fmt, ...)
 {
     int ret;
-    va_list ap;
+    cgc_va_list ap;
 
     va_start(ap, fmt);
-    ret = vsprintf(str, fmt, ap);
+    ret = cgc_vsprintf(str, fmt, ap);
     va_end(ap);
 
     return ret;
 }
 
-int vprintf(const char *fmt, va_list ap)
+int cgc_vprintf(const char *fmt, cgc_va_list ap)
 {
-    return vfprintf(stdout, fmt, ap);
+    return cgc_vfprintf(stdout, fmt, ap);
 }
 
-int vfprintf(FILE *stream, const char *fmt, va_list ap)
+int cgc_vfprintf(cgc_FILE *stream, const char *fmt, cgc_va_list ap)
 {
     int retval, buffered = 1;
     // switch to buffered mode temporarily
@@ -301,16 +301,16 @@ int vfprintf(FILE *stream, const char *fmt, va_list ap)
         buffered = 0;
         stream->idx = 0;
     }
-    retval = _vsfprintf(fmt, ap, stream, NULL, INT_MAX);
+    retval = cgc__vsfprintf(fmt, ap, stream, NULL, INT_MAX);
     if (!buffered)
     {
-        fflush(stream);
+        cgc_fflush(stream);
         stream->idx = -1;
     }
     return retval;
 }
 
-int vsprintf(char *str, const char *fmt, va_list ap)
+int cgc_vsprintf(char *str, const char *fmt, cgc_va_list ap)
 {
-    return _vsfprintf(fmt, ap, NULL, str, INT_MAX);
+    return cgc__vsfprintf(fmt, ap, NULL, str, INT_MAX);
 }

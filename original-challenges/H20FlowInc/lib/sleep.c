@@ -24,10 +24,10 @@
 #include <libcgc.h>
 
 // borrowed from CABLEGRIND and mod'd to add usec param
-void sleep(int secs, int usecs) {
-    struct timeval tv;
+void cgc_sleep(int secs, int usecs) {
+    struct cgc_timeval tv;
     tv.tv_sec = secs;
     tv.tv_usec = usecs;
-    fdwait(0, NULL, NULL, &tv, NULL);
+    cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }
 

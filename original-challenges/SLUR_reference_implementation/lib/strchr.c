@@ -25,7 +25,7 @@
 
 #include <libcgc.h>
 
-char *strchr(const char *s, int c)
+char *cgc_strchr(const char *s, int c)
 {
   const char *p = s;
 

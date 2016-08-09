@@ -26,15 +26,15 @@ THE SOFTWARE.
 #ifndef STDLIB_H
 #define STDLIB_H
 
-typedef unsigned char uint8_t;
-typedef unsigned short int uint16_t;
-typedef unsigned int uint32_t;
+typedef unsigned char cgc_uint8_t;
+typedef unsigned short int cgc_uint16_t;
+typedef unsigned int cgc_uint32_t;
 
-int strlen(char *s);
-void bzero(char *s, size_t length);
-void memcpy(char *d, char *s, size_t num);
-int count_strings(char *s);
-char *next_string(char *s);
-int atoi(char *s);
+int cgc_strlen(char *s);
+void cgc_bzero(char *s, cgc_size_t length);
+void cgc_memcpy(char *d, char *s, cgc_size_t num);
+int cgc_count_strings(char *s);
+char *cgc_next_string(char *s);
+int cgc_atoi(char *s);
 
 #endif

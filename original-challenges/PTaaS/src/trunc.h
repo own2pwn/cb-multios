@@ -31,7 +31,7 @@
  * @param d The double to truncate
  * @return The truncated value
  */
-double float_trunc(double d);
+double cgc_float_trunc(double d);
 
 /**
  * Truncate the bottom bits off of the components of a vector.
@@ -40,7 +40,7 @@ double float_trunc(double d);
  * @return The truncated value
  */
 
-struct vector vector_trunc(struct vector v);
+struct vector cgc_vector_trunc(struct vector v);
 
 #endif /* TRUNC_H_ */
 

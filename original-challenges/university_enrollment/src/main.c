@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -36,19 +36,19 @@
 static const int LINE_SIZE = 1024;
 static char line[LINE_SIZE];
 
-int yes_no_input()
+int cgc_yes_no_input()
 {
     printf("1 - Yes\n");
     printf("2 - No\n");
     printf("Choice: ");
-    return readnum(line, LINE_SIZE);
+    return cgc_readnum(line, LINE_SIZE);
 }
 
-char *answer_question(char *question)
+char *cgc_answer_question(char *question)
 {
     int socket_open = 1;
     printf("%s", question);
-    socket_open = readline(line, LINE_SIZE);
+    socket_open = cgc_readline(line, LINE_SIZE);
     while(socket_open && socket_open != -1) {
         printf("Bad Input\n");
         printf("%s", question);
@@ -57,20 +57,20 @@ char *answer_question(char *question)
     return line;
 }
 
-student_t *register_student()
+cgc_student_t *cgc_register_student()
 {
-    student_t *student = NULL;
+    cgc_student_t *student = NULL;
     char *answer;
 
-    answer = answer_question("Enter name: ");
-    student = create_student(answer);
+    answer = cgc_answer_question("Enter name: ");
+    student = cgc_create_student(answer);
 
     printf("Select a major\n");
     printf("List Departments?\n");
-    if (yes_no_input() == 1)
-        list_departments();
+    if (cgc_yes_no_input() == 1)
+        cgc_list_departments();
 
-    answer = answer_question("Enter your Major's Department Name: ");
+    answer = cgc_answer_question("Enter your Major's Department Name: ");
     if(!student->set_major(student, answer))
         printf("Bad Department Name\n");
 
@@ -78,7 +78,7 @@ student_t *register_student()
     return student;
 }
 
-void search_classes()
+void cgc_search_classes()
 {
     int done = FALSE;
     int choice = 0;
@@ -94,7 +94,7 @@ void search_classes()
         printf("3 - Search by Class ID (ex: MAT 150)\n");
         printf("4 - Search by Course ID (ex: 2600)\n");
         printf("Choice: ");
-        choice = readnum(line, LINE_SIZE);
+        choice = cgc_readnum(line, LINE_SIZE);
         if (choice == -1) {
             break;
         }
@@ -104,32 +104,32 @@ void search_classes()
             done = TRUE; break;
         case 1:
             printf("List Professors?\n");
-            if (yes_no_input() == 1)
-                list_professors();
-            answer = answer_question("Enter professor's full name: ");
-            list_classes_taught(get_professor(answer));
+            if (cgc_yes_no_input() == 1)
+                cgc_list_professors();
+            answer = cgc_answer_question("Enter professor's full name: ");
+            cgc_list_classes_taught(cgc_get_professor(answer));
             break;
         case 2:
             printf("List Departments?\n");
-            if (yes_no_input() == 1)
-                list_departments();
-            answer = answer_question("Enter Department name: ");
-            list_dept_courses(get_department(answer));
+            if (cgc_yes_no_input() == 1)
+                cgc_list_departments();
+            answer = cgc_answer_question("Enter Department name: ");
+            cgc_list_dept_courses(cgc_get_department(answer));
             break;
         case 3:
-            answer = answer_question("Enter Class ID: ");
-            dept_name = strsep(&answer, " ");
+            answer = cgc_answer_question("Enter Class ID: ");
+            dept_name = cgc_strsep(&answer, " ");
             if (answer) {
-                course_num = strtol(answer, NULL, 10);
-                list_courses_by_num(dept_name, course_num);
+                course_num = cgc_strtol(answer, NULL, 10);
+                cgc_list_courses_by_num(dept_name, course_num);
             } else {
                 printf("Bad Input\n");
             }
             break;
         case 4:
-            answer = answer_question("Enter Course ID: ");
-            course_id = strtol(answer, NULL, 10);
-            list_courses_by_id(course_id);
+            answer = cgc_answer_question("Enter Course ID: ");
+            course_id = cgc_strtol(answer, NULL, 10);
+            cgc_list_courses_by_id(course_id);
             break;
         default:
             printf("Bad Input\n");
@@ -139,14 +139,14 @@ void search_classes()
     printf("Returning to main menu\n");
 }
 
-void add_class(student_t *student)
+void cgc_add_class(cgc_student_t *student)
 {
     int done = FALSE;
     int choice = 0;
     char *answer, dept_name[8], *pdept_name;
     short course_num;
     int course_id;
-    course_t *course;
+    cgc_course_t *course;
 
     while(!done) {
         printf("Add Class to Schedule\n");
@@ -154,7 +154,7 @@ void add_class(student_t *student)
         printf("1 - Add by Class Num (ex: MAT 150)\n");
         printf("2 - Add by Course ID (ex: 2600)\n");
         printf("Choice: ");
-        choice = readnum(line, LINE_SIZE);
+        choice = cgc_readnum(line, LINE_SIZE);
         if (choice == -1)
             break;
 
@@ -162,20 +162,20 @@ void add_class(student_t *student)
         case 0:
             done = TRUE; break;
         case 1:
-            answer = answer_question("Enter Class ID: ");
-            pdept_name = strsep(&answer, " ");
-            if(!pdept_name || !answer || strlen(pdept_name) > 7) {
+            answer = cgc_answer_question("Enter Class ID: ");
+            pdept_name = cgc_strsep(&answer, " ");
+            if(!pdept_name || !answer || cgc_strlen(pdept_name) > 7) {
                 printf("Bad Input\n");
                 break;
             }
-            strcpy(dept_name, pdept_name);
-            course_num = strtol(answer, NULL, 10);
+            cgc_strcpy(dept_name, pdept_name);
+            course_num = cgc_strtol(answer, NULL, 10);
             printf("0 - Go Back\n");
-            list_courses_by_num(dept_name, course_num);
+            cgc_list_courses_by_num(dept_name, course_num);
             printf("Choice: ");
-            choice = readnum(line, LINE_SIZE);
+            choice = cgc_readnum(line, LINE_SIZE);
             if (choice && choice != -1) {
-                course = select_course_num(dept_name, course_num, --choice);
+                course = cgc_select_course_num(dept_name, course_num, --choice);
                 if (course) {
                     if (student->add_course(student, course))
                         printf("Successfully added course!\n");
@@ -187,14 +187,14 @@ void add_class(student_t *student)
             }
             break;
         case 2:
-            answer = answer_question("Enter Course ID: ");
-            course_id = strtol(answer, NULL, 10);
+            answer = cgc_answer_question("Enter Course ID: ");
+            course_id = cgc_strtol(answer, NULL, 10);
             printf("0 - Go Back\n");
-            list_courses_by_id(course_id);
+            cgc_list_courses_by_id(course_id);
             printf("Choice: ");
-            choice = readnum(line, LINE_SIZE);
+            choice = cgc_readnum(line, LINE_SIZE);
             if (choice && choice != -1) {
-                course = select_course_id(course_id, --choice);
+                course = cgc_select_course_id(course_id, --choice);
                 if (course) {
                     if (student->add_course(student, course))
                         printf("Successfully added course!\n");
@@ -213,7 +213,7 @@ void add_class(student_t *student)
     printf("Returning to main menu\n");
 }
 
-void remove_class(student_t *student)
+void cgc_remove_class(cgc_student_t *student)
 {
     int choice = 0;
 
@@ -221,7 +221,7 @@ void remove_class(student_t *student)
     printf("0 - Go Back\n");
     student->list_classes(student);
     printf("Choice: ");
-    choice = readnum(line, LINE_SIZE);
+    choice = cgc_readnum(line, LINE_SIZE);
     if (choice && choice != -1) {
         if (student->remove_course(student, --choice))
             printf("Successfully removed course!\n");
@@ -234,9 +234,9 @@ void remove_class(student_t *student)
 
 int main()
 {
-    generate_data();
+    cgc_generate_data();
     printf("University Course Scheduler\n\n");
-    student_t *student = register_student();
+    cgc_student_t *student = cgc_register_student();
     int exitted = FALSE;
     int choice = 0;
 
@@ -248,17 +248,17 @@ int main()
         printf("4 - Print Schedule\n");
         printf("5 - Exit\n");
         printf("Choice: ");
-        choice = readnum(line, LINE_SIZE);
+        choice = cgc_readnum(line, LINE_SIZE);
         if (choice == -1)
             break;
 
         switch(choice) {
         case 1:
-            search_classes(); break;
+            cgc_search_classes(); break;
         case 2:
-            add_class(student); break;
+            cgc_add_class(student); break;
         case 3:
-            remove_class(student); break;
+            cgc_remove_class(student); break;
         case 4:
             student->print_schedule(student); break;
         case 5:

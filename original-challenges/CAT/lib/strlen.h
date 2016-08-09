@@ -30,6 +30,6 @@
  * @param term String termination char
  * @returns Number of bytes preceeding the term char.
  */
-unsigned int my_strlen(const char *str, const char term);
+unsigned int cgc_my_strlen(const char *str, const char term);
 
 #endif

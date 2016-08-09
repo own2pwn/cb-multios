@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,23 +32,23 @@
 /**
  * Add one rider to the chair
  *
- * @param c 	Chair
- * @param r 	Rider
+ * @param c 	cgc_Chair
+ * @param r 	cgc_Rider
  */
-void chair_embark_rider(Chair *c, Rider *r) {
-	rider_append(&c->riders, r);
+void cgc_chair_embark_rider(cgc_Chair *c, cgc_Rider *r) {
+	cgc_rider_append(&c->riders, r);
 	c->empty_seats--;
 }
 
 /**
  * Remove one rider from the chair
  *
- * @param c 	Chair
- * @return pointer to Rider or NULL if chair is empty
+ * @param c 	cgc_Chair
+ * @return pointer to cgc_Rider or NULL if chair is empty
  */
-Rider *chair_disembark_rider(Chair *c) {
-	Rider *r = NULL;
-	r = rider_pop(&c->riders);
+cgc_Rider *cgc_chair_disembark_rider(cgc_Chair *c) {
+	cgc_Rider *r = NULL;
+	r = cgc_rider_pop(&c->riders);
 	if (NULL != r) {
 		c->empty_seats++;
 	}
@@ -63,17 +63,17 @@ Rider *chair_disembark_rider(Chair *c) {
  * @param seatas 	Number of seats on this chair
  * @return SUCCESS on success, else -1
  */
-int32_t chair_new(Chair **c, uint32_t id, uint32_t seats) {
+cgc_int32_t cgc_chair_new(cgc_Chair **c, cgc_uint32_t id, cgc_uint32_t seats) {
 	if (0 == seats) return -1;
 
-	Chair *new = calloc(sizeof(Chair));
+	cgc_Chair *new = cgc_calloc(sizeof(cgc_Chair));
 	MALLOC_OK(new);
 
 	new->id = id;
 	new->seats = seats;
 	new->empty_seats = seats;
-	new->embark = chair_embark_rider;
-	new->disembark = chair_disembark_rider;
+	new->embark = cgc_chair_embark_rider;
+	new->disembark = cgc_chair_disembark_rider;
 	*c = new;
 
 	return SUCCESS;
@@ -82,13 +82,13 @@ int32_t chair_new(Chair **c, uint32_t id, uint32_t seats) {
 /**
  * Reset chair to initial state.
  *
- * @param c 		Chair to reset
+ * @param c 		cgc_Chair to reset
  * @param riders 	List of riders to store riders removed from chair
  */
-void chair_reset(Chair *c, Rider **riders) {
-	Rider *r = NULL;
+void cgc_chair_reset(cgc_Chair *c, cgc_Rider **riders) {
+	cgc_Rider *r = NULL;
 	while (NULL != (r = c->disembark(c))) {
-		rider_append(riders, r);
+		cgc_rider_append(riders, r);
 	}
 }
 
@@ -98,10 +98,10 @@ void chair_reset(Chair *c, Rider **riders) {
  * @param chairs 	List of chairs
  * @param riders 	List of riders to store riders removed from chair list
  */
-void chair_reset_list(Chair *chairs, Rider **riders) {
-	Chair *c = chairs;
+void cgc_chair_reset_list(cgc_Chair *chairs, cgc_Rider **riders) {
+	cgc_Chair *c = chairs;
 	while (NULL != c) {
-		chair_reset(c, riders);
+		cgc_chair_reset(c, riders);
 		c = c->next;
 	}
 }
@@ -113,8 +113,8 @@ void chair_reset_list(Chair *chairs, Rider **riders) {
  * @param new 		New chair
  * @return pointer to new chair.
  */
-Chair *chair_append_new(Chair **chairs, Chair *new) {
-	Chair *prev = *chairs;
+cgc_Chair *cgc_chair_append_new(cgc_Chair **chairs, cgc_Chair *new) {
+	cgc_Chair *prev = *chairs;
 	if (NULL == prev) { // this is the first chair
 		*chairs = new;
 	} else { // other chairs exist
@@ -133,11 +133,11 @@ Chair *chair_append_new(Chair **chairs, Chair *new) {
  * @param chairs 	List of chairs
  * @return pointer to chair or NULL if list is empty
  */
-Chair *chair_pop(Chair **chairs) {
+cgc_Chair *cgc_chair_pop(cgc_Chair **chairs) {
 	if (NULL == *chairs) {
 		return NULL;
 	}
-	Chair *c = *chairs;
+	cgc_Chair *c = *chairs;
 	*chairs = c->next;
 	c->next = NULL;
 	return c;
@@ -146,11 +146,11 @@ Chair *chair_pop(Chair **chairs) {
 /**
  * Destroy one chair
  *
- * @param c 	Chair
+ * @param c 	cgc_Chair
  */
-void chair_destroy_single(Chair **c, Rider **riders) {
-	chair_reset(*c, riders);
-	free(*c);
+void cgc_chair_destroy_single(cgc_Chair **c, cgc_Rider **riders) {
+	cgc_chair_reset(*c, riders);
+	cgc_free(*c);
 	*c = NULL;
 }
 
@@ -159,24 +159,24 @@ void chair_destroy_single(Chair **c, Rider **riders) {
  *
  * @param chairs 	List of chairs
  */
-void chair_destroy_list(Chair **chairs, Rider **riders) {
-	Chair *c = NULL;
+void cgc_chair_destroy_list(cgc_Chair **chairs, cgc_Rider **riders) {
+	cgc_Chair *c = NULL;
 	while (NULL != *chairs) {
-		c = chair_pop(chairs);
-		chair_destroy_single(&c, riders);
+		c = cgc_chair_pop(chairs);
+		cgc_chair_destroy_single(&c, riders);
 	}
 }
 
 /**
  * Add riders to the lift queue
  *
- * @param l 		Lift
+ * @param l 		cgc_Lift
  * @param riders 	List of riders
  */
-void lift_enqueue_riders(Lift *l, Rider **riders) {
-	Rider *r = NULL;
-	while (NULL != (r = rider_pop(riders))) {
-		rider_append(&l->queue, r);
+void cgc_lift_enqueue_riders(cgc_Lift *l, cgc_Rider **riders) {
+	cgc_Rider *r = NULL;
+	while (NULL != (r = cgc_rider_pop(riders))) {
+		cgc_rider_append(&l->queue, r);
 	}
 }
 
@@ -184,15 +184,15 @@ void lift_enqueue_riders(Lift *l, Rider **riders) {
  * Remove riders from the lift queue and embark onto the next chair.
  * 	If enough riders in queue, fill the chair to capacity.
  *
- * @param l 	Lift
+ * @param l 	cgc_Lift
  * @return Number of riders that were embarked.
  */
-uint32_t lift_embark_riders(Lift *l) {
-	uint32_t count = 0;
-	Rider *r = NULL;
-	Chair *c = l->c_embark;
+cgc_uint32_t cgc_lift_embark_riders(cgc_Lift *l) {
+	cgc_uint32_t count = 0;
+	cgc_Rider *r = NULL;
+	cgc_Chair *c = l->c_embark;
 	while (0 != c->empty_seats) {
-		r = rider_pop(&l->queue);
+		r = cgc_rider_pop(&l->queue);
 		if (NULL == r) {
 			break;
 		}
@@ -212,9 +212,9 @@ uint32_t lift_embark_riders(Lift *l) {
 /**
  * Move all riders one step further through the lift
  *
- * @param l 	Lift
+ * @param l 	cgc_Lift
  */
-void lift_one_step(Lift *l) {
+void cgc_lift_one_step(cgc_Lift *l) {
 	// unload c_disembark chair and increment to the next chair
 	l->disembark(l);
 
@@ -226,18 +226,18 @@ void lift_one_step(Lift *l) {
  * Disembark riders from the chair and add to the lift's end decider queue.
  *  All riders on chair are disembarked.
  *
- * @param l 	Lift
+ * @param l 	cgc_Lift
  * @return Number of riders that were disembarked.
  */
-uint32_t lift_disembark_riders(Lift *l) {
-	uint32_t count = 0;
+cgc_uint32_t cgc_lift_disembark_riders(cgc_Lift *l) {
+	cgc_uint32_t count = 0;
 
-	Decider *d = get_decider_by_id(l->end_decider);
+	cgc_Decider *d = cgc_get_decider_by_id(l->end_decider);
 	if (NULL == d) {
 		return count;
 	}
-	Rider *r = NULL;
-	Chair *c = l->c_disembark;
+	cgc_Rider *r = NULL;
+	cgc_Chair *c = l->c_disembark;
 	while (c->empty_seats < c->seats) {
 		r = c->disembark(c);
 		if (NULL == r) {
@@ -263,9 +263,9 @@ uint32_t lift_disembark_riders(Lift *l) {
  * @param settings 	Array of lift settings
  * @return lift's ID on success, else -1
  */
-int32_t lift_new(Lift **l, uint32_t settings[5]) {
+cgc_int32_t cgc_lift_new(cgc_Lift **l, cgc_uint32_t settings[5]) {
 
-	Lift *new = calloc(sizeof(Lift));
+	cgc_Lift *new = cgc_calloc(sizeof(cgc_Lift));
 	MALLOC_OK(new);
 
 	new->id = settings[0];
@@ -273,23 +273,23 @@ int32_t lift_new(Lift **l, uint32_t settings[5]) {
 	new->end_decider = settings[2];
 	new->chair_count = settings[3];
 	new->chair_capacity = settings[4];
-	new->embark = lift_embark_riders;
-	new->step = lift_one_step;
-	new->disembark = lift_disembark_riders;
+	new->embark = cgc_lift_embark_riders;
+	new->step = cgc_lift_one_step;
+	new->disembark = cgc_lift_disembark_riders;
 
 	if ((new->chair_count == 0) ||										// at least 1 chair
 		(new->start_decider == new->end_decider) || 					// different start/end
 		((new->chair_capacity != 2) && (new->chair_capacity != 4))) { 	// valid chair size/qty
-		free(new);
+		cgc_free(new);
 		return -1;
 	}
 
-	Chair *c_new;
+	cgc_Chair *c_new;
 	// gen chairs
 	// set embark and disembark chairs
-	for (uint32_t i = 0; i < new->chair_count; i++) {
-		chair_new(&c_new, i, new->chair_capacity);
-		chair_append_new(&new->chairs, c_new);
+	for (cgc_uint32_t i = 0; i < new->chair_count; i++) {
+		cgc_chair_new(&c_new, i, new->chair_capacity);
+		cgc_chair_append_new(&new->chairs, c_new);
 		if (0 == i) { // first chair
 			new->c_embark = c_new;
 		}
@@ -305,22 +305,22 @@ int32_t lift_new(Lift **l, uint32_t settings[5]) {
 /**
  * Reset lift to initial state (no riders on chairs or in queue).
  *
- * @param l 		Lift
+ * @param l 		cgc_Lift
  * @param riders 	List of riders to store riders removed from lift.
  */
-void lift_reset(Lift *l, Rider **riders) {
+void cgc_lift_reset(cgc_Lift *l, cgc_Rider **riders) {
 
 	// empty all chairs
-	chair_reset_list(l->chairs, riders);
+	cgc_chair_reset_list(l->chairs, riders);
 
 	// remove riders from queue
-	rider_append(riders, l->queue);
+	cgc_rider_append(riders, l->queue);
 	l->queue = NULL;
 
 	l->rider_total = 0;
 	l->c_embark = l->chairs;
 	l->c_disembark = l->chairs;
-	for (uint32_t i = 0; i < l->chair_count; i++) {
+	for (cgc_uint32_t i = 0; i < l->chair_count; i++) {
 		if (l->chair_count/2 == i) { // middle chair
 			break;
 		}
@@ -331,16 +331,16 @@ void lift_reset(Lift *l, Rider **riders) {
 /**
  * Destroy a lift and remove all riders from it
  *
- * @param l 		Lift
+ * @param l 		cgc_Lift
  * @param riders 	List to store riders into
  */
-void lift_destroy(Lift **l, Rider **riders) {
-	Lift *this = *l;
+void cgc_lift_destroy(cgc_Lift **l, cgc_Rider **riders) {
+	cgc_Lift *this = *l;
 	// destroy all chairs and get the riders from them
-	chair_destroy_list(&this->chairs, riders);
+	cgc_chair_destroy_list(&this->chairs, riders);
 	// return all riders in queue
-	rider_append(riders, this->queue);
-	free(*l);
+	cgc_rider_append(riders, this->queue);
+	cgc_free(*l);
 	*l = NULL;
 }
 

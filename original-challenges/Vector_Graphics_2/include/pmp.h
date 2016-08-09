@@ -28,35 +28,35 @@ THE SOFTWARE.
 
 #pragma pack(push, 1)
 typedef struct PMP_Header_s {
-  uint16_t magic;
-  uint32_t filesize;
-  uint32_t reserved;
-  uint32_t header_size;
-} PMP_Header;
+  cgc_uint16_t magic;
+  cgc_uint32_t filesize;
+  cgc_uint32_t reserved;
+  cgc_uint32_t header_size;
+} cgc_PMP_Header;
 
 typedef struct PMP_Info_s {
-  uint32_t size;
-  uint32_t x_size;
-  uint32_t y_size;
-  uint32_t magic1;
-  uint32_t reserved1;
-  uint32_t image_size;
-  uint32_t magic2;
-  uint32_t magic3;
-  uint32_t reserved2;
-  uint32_t reserved3;
-} PMP_Info;
+  cgc_uint32_t size;
+  cgc_uint32_t x_size;
+  cgc_uint32_t y_size;
+  cgc_uint32_t magic1;
+  cgc_uint32_t reserved1;
+  cgc_uint32_t image_size;
+  cgc_uint32_t magic2;
+  cgc_uint32_t magic3;
+  cgc_uint32_t reserved2;
+  cgc_uint32_t reserved3;
+} cgc_PMP_Info;
 
 typedef struct PMP_File_s {
-  PMP_Header header;
-  PMP_Info info;
+  cgc_PMP_Header header;
+  cgc_PMP_Info info;
   int data_size;
   void *data;
-} PMP_File;
+} cgc_PMP_File;
 #pragma pack(pop)
 
-int PMPGenerate(PMP_File *pmp, Canvas *c);
-int PMPTransmit(PMP_File *pmp);
-void PMPDeallocate(PMP_File *pmp);
+int cgc_PMPGenerate(cgc_PMP_File *pmp, cgc_Canvas *c);
+int cgc_PMPTransmit(cgc_PMP_File *pmp);
+void cgc_PMPDeallocate(cgc_PMP_File *pmp);
 
 #endif

@@ -25,7 +25,7 @@
 
 #include <libcgc.h>
 
-/** Number of decimal values to include after the point in dtostr() */
+/** Number of decimal values to include after the point in cgc_dtostr() */
 #define DTOSTR_PRECISION 9
 
 /**
@@ -34,7 +34,7 @@
  * @param c The char to examine
  * @return 1 if c is a decimal digit, 0 otherwise
  */
-int isdigit(int c);
+int cgc_isdigit(int c);
 
 /**
  * Return 1 if c is a hexadecmimal digit, 0 otherwise.
@@ -42,7 +42,7 @@ int isdigit(int c);
  * @param c The char to examine
  * @return 1 if c is a hexadecimal digit, 0 otherwise
  */
-int ishexdigit(int c);
+int cgc_ishexdigit(int c);
 
 /**
  * Return 1 if c is an uppercase or lowercase alphabet character, 0 otherwise.
@@ -50,7 +50,7 @@ int ishexdigit(int c);
  * @param c The char to examine
  * @return 1 if c is an uppercase or lowercase alphabet character, 0 otherwise
  */
-int isalpha(int c);
+int cgc_isalpha(int c);
 
 /**
  * Return 1 if c is an uppercase alphabet character, 0 otherwise.
@@ -58,7 +58,7 @@ int isalpha(int c);
  * @param c The char to examine
  * @return 1 if c is an uppercase alphabet character, 0 otherwise
  */
-int islower(int c);
+int cgc_islower(int c);
 
 /**
  * Return 1 if c is a lowercase alphabet character, 0 otherwise.
@@ -66,7 +66,7 @@ int islower(int c);
  * @param c The char to examine
  * @return 1 if c is a lowercase alphabet character, 0 otherwise
  */
-int isupper(int c);
+int cgc_isupper(int c);
 
 /**
  * Convert c to an uppercase alphabet character if possible.
@@ -74,7 +74,7 @@ int isupper(int c);
  * @param c The char to examine
  * @return c as an uppercase alphabet character if possible, else c
  */
-int toupper(int c);
+int cgc_toupper(int c);
 
 /**
  * Convert c to a lowercase alphabet character if possible.
@@ -82,7 +82,7 @@ int toupper(int c);
  * @param c The char to examine
  * @return c as a lowercase alphabet character if possible, else c
  */
-int tolower(int c);
+int cgc_tolower(int c);
 
 /**
  * Convert value to a digit in a given base if possible, e.g. 0-15 -> '0'-'f' in
@@ -92,7 +92,7 @@ int tolower(int c);
  * @param base The base to use
  * @return The character representing value in base, or '\0'
  */
-char todigit(unsigned int value, unsigned int base);
+char cgc_todigit(unsigned int value, unsigned int base);
 
 /**
  * Convert c to a value in a given base if possible, e.g. '0'-'f' -> 0-15 in
@@ -102,7 +102,7 @@ char todigit(unsigned int value, unsigned int base);
  * @param base The base to use
  * @return The value of digit in base, or EXIT_FAILURE
  */
-int fromdigit(char digit, unsigned int base);
+int cgc_fromdigit(char digit, unsigned int base);
 
 /**
  * Convert unsigned int value to its string representation in base.
@@ -115,7 +115,7 @@ int fromdigit(char digit, unsigned int base);
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t num);
+int cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, cgc_size_t num);
 
 /**
  * Convert int value to its string representation in base.
@@ -128,7 +128,7 @@ int utostr(unsigned int value, unsigned int base, int uppercase, char *str, size
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int itostr(int value, unsigned int base, int uppercase, char *str, size_t num);
+int cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_t num);
 
 /**
  * Convert double value to its string representation in base.
@@ -144,7 +144,7 @@ int itostr(int value, unsigned int base, int uppercase, char *str, size_t num);
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int dtostr(double value, char *str, size_t num);
+int cgc_dtostr(double value, char *str, cgc_size_t num);
 
 /**
  * Convert string representation of a number in base to an unsigned int value.
@@ -154,7 +154,7 @@ int dtostr(double value, char *str, size_t num);
  * @param result Pointer to output result to
  * @return Characters used from str on success, else EXIT_FAILURE
  */
-ssize_t strtou(char *str, unsigned int base, unsigned int *result);
+cgc_ssize_t cgc_strtou(char *str, unsigned int base, unsigned int *result);
 
 /**
  * Convert string representation of a number in base to an int value.
@@ -164,7 +164,7 @@ ssize_t strtou(char *str, unsigned int base, unsigned int *result);
  * @param result Pointer to output result to
  * @return Characters used from str on success, else EXIT_FAILURE
  */
-ssize_t strtoi(char *str, unsigned int base, int *result);
+cgc_ssize_t cgc_strtoi(char *str, unsigned int base, int *result);
 
 /**
  * Convert string representation of a number to a double value.
@@ -176,7 +176,7 @@ ssize_t strtoi(char *str, unsigned int base, int *result);
  * @param result Pointer to output result to
  * @return Characters used from str on success, else EXIT_FAILURE
  */
-ssize_t strtod(char *str, double *result);
+cgc_ssize_t cgc_strtod(char *str, double *result);
 
 #endif /* CONV_H_ */
 

@@ -25,13 +25,13 @@
 #include <libcgc.h>
 #include <string.h>
 
-char *strsep(char **stringp, const char *delim)
+char *cgc_strsep(char **stringp, const char *delim)
 {
     if (*stringp == NULL)
         return NULL;
     char *start, *end;
     start = end = *stringp;
-    while (end[0] != '\0' && strchr(delim, end[0]) == NULL)
+    while (end[0] != '\0' && cgc_strchr(delim, end[0]) == NULL)
         end++;
     if (end[0] == '\0')
     {

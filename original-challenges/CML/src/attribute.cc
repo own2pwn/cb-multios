@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,20 +22,20 @@
  */
 #include "attribute.h"
 
-Attribute::Attribute(const String *name)
-    : d_name(name), d_value(nullptr)
+cgc_Attribute::cgc_Attribute(const cgc_String *cgc_name)
+    : d_name(cgc_name), d_value(nullptr)
 {
 }
 
-Attribute::~Attribute()
+cgc_Attribute::~cgc_Attribute()
 {
     if (d_value != nullptr)
-        d_value->destroy();;
+        d_value->cgc_destroy();;
 }
 
-void Attribute::set(String *value)
+void cgc_Attribute::cgc_set(cgc_String *value)
 {
     if (d_value != nullptr)
-        d_value->destroy();;
+        d_value->cgc_destroy();;
     d_value = value;
 }

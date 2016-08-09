@@ -26,57 +26,57 @@ THE SOFTWARE.
 
 #include "cityParsers.h"
 
-int cityMenu ( pCity ci )
+int cgc_cityMenu ( cgc_pCity ci )
 {
 	int choice = 0;
 	char selection[30];
-	pBorder pb = NULL;
+	cgc_pBorder pb = NULL;
 	
 	if ( ci == NULL ) {
 		return 0;
 	}
 
 	while (1) {
-		printf("\nCity: @s\n", ci->name);
-		printf("1) Display City Info\n");
-		printf("2) Set Mayor\n");
-		printf("3) Set Url\n");
-		printf("4) Set Population\n");
-		printf("5) Add Border\n");
-		printf("6) Delete City and Exit Menu\n");
-		printf("7) Exit Menu\n");
-		printf("Selection: ");
+		cgc_printf("\nCity: @s\n", ci->name);
+		cgc_printf("1) Display cgc_City Info\n");
+		cgc_printf("2) Set Mayor\n");
+		cgc_printf("3) Set Url\n");
+		cgc_printf("4) Set Population\n");
+		cgc_printf("5) Add cgc_Border\n");
+		cgc_printf("6) Delete cgc_City and Exit Menu\n");
+		cgc_printf("7) Exit Menu\n");
+		cgc_printf("Selection: ");
 
-		bzero( selection, 30 );
-		receive_until( selection, '\n', 4 );
-		choice = atoi( selection );
+		cgc_bzero( selection, 30 );
+		cgc_receive_until( selection, '\n', 4 );
+		choice = cgc_atoi( selection );
 
 		switch (choice) {
 			case 1:
-				printCityInfo( ci );
+				cgc_printCityInfo( ci );
 				break;
 			case 2:
-				printf("\n-> ");
-				bzero( selection, 30 );
-				receive_until( selection, '\n', 29);
+				cgc_printf("\n-> ");
+				cgc_bzero( selection, 30 );
+				cgc_receive_until( selection, '\n', 29);
 
 				choice = 0;
-				while ( isalnum(selection[choice]) || selection[choice] == ' ') {
+				while ( cgc_isalnum(selection[choice]) || selection[choice] == ' ') {
 					ci->mayor[choice] = selection[choice];
 					choice++;
 				}
 				ci->mayor[choice] = '\x00';
 				break;
 			case 3:
-				printf("\n-> ");
-				bzero( selection, 30 );
-				receive_until( selection, '\n', 29 );
+				cgc_printf("\n-> ");
+				cgc_bzero( selection, 30 );
+				cgc_receive_until( selection, '\n', 29 );
 
 				/// While it is valid url data copy loop and copy it
 				/// Since the buffer is zeroed and the max received is 29 this loop
 				///	should be safe
 				choice = 0;
-				while( isalnum(selection[choice]) || selection[choice] == ':' || selection[choice] == '.' || selection[choice] == '/') {
+				while( cgc_isalnum(selection[choice]) || selection[choice] == ':' || selection[choice] == '.' || selection[choice] == '/') {
 					ci->url[choice] = selection[choice];
 					choice++;
 				}
@@ -84,54 +84,54 @@ int cityMenu ( pCity ci )
 				ci->url[choice] = '\x00';
 				break;
 			case 4:
-				printf("\n-> ");
-				bzero( selection, 30);
-				receive_until( selection, '\n', 29 );
-				ci->population = atoi( selection);
+				cgc_printf("\n-> ");
+				cgc_bzero( selection, 30);
+				cgc_receive_until( selection, '\n', 29 );
+				ci->population = cgc_atoi( selection);
 				break;
 			case 5:
 				if ( ci->border_count > CITYBORDERMAX ) {
-					printf("Max Borders\n");
+					cgc_printf("Max Borders\n");
 					break;
 				}
 
-                                if ( allocate( sizeof(Border), 0, (void**)&pb) != 0 ) {
+                                if ( allocate( sizeof(cgc_Border), 0, (void**)&pb) != 0 ) {
                                         pb = NULL;
                                         continue;
                                 }
 
-                                printf("Lat Start: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->latStart = atof(selection);
+                                cgc_printf("Lat Start: ");
+                                cgc_bzero(selection, 30 );
+                                cgc_receive_until( selection, '\n', 19 );
+                                pb->latStart = cgc_atof(selection);
 
-                                printf("Long Start: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->lngStart = atof(selection);
+                                cgc_printf("Long Start: ");
+                                cgc_bzero(selection, 30 );
+                                cgc_receive_until( selection, '\n', 19 );
+                                pb->lngStart = cgc_atof(selection);
 
-                                printf("Lat End: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->latEnd = atof(selection);
+                                cgc_printf("Lat End: ");
+                                cgc_bzero(selection, 30 );
+                                cgc_receive_until( selection, '\n', 19 );
+                                pb->latEnd = cgc_atof(selection);
 
-                                printf("Long End: ");
-                                bzero(selection, 30 );
-                                receive_until( selection, '\n', 19 );
-                                pb->lngEnd = atof(selection);
+                                cgc_printf("Long End: ");
+                                cgc_bzero(selection, 30 );
+                                cgc_receive_until( selection, '\n', 19 );
+                                pb->lngEnd = cgc_atof(selection);
 
                                 ci->borders[ ci->border_count ] = pb;
                                 ci->border_count++;
 				break;
 			case 6:
-				freeCity(ci);
+				cgc_freeCity(ci);
 				return 0;
 				break;
 			case 7:
 				return 1;
 				break;
 			default:
-				printf("Invalid\n");
+				cgc_printf("Invalid\n");
 				break;
 		};
 	}
@@ -144,7 +144,7 @@ int cityMenu ( pCity ci )
  * @param buffer Pointer to the pointer to be freed
  * @return Returns nothing
  **/
-void freeCharPtr( char**buffer )
+void cgc_freeCharPtr( char**buffer )
 {
 	if ( buffer == NULL ) {
 		return;
@@ -154,7 +154,7 @@ void freeCharPtr( char**buffer )
 		return;
 	}
 
-	deallocate(*buffer, strlen(*buffer) + 1 );
+	deallocate(*buffer, cgc_strlen(*buffer) + 1 );
 
 	*buffer = NULL;
 
@@ -167,7 +167,7 @@ void freeCharPtr( char**buffer )
  * @param ci Pointer to a city structure
  * @return Returns nothing
  **/
-void freeCity( pCity ci )
+void cgc_freeCity( cgc_pCity ci )
 {
 	int index = 0;
 	if ( ci == NULL ) {
@@ -175,10 +175,10 @@ void freeCity( pCity ci )
 	}
 
 	for ( index = 0; index < ci->border_count; index++ ) {
-		deallocate( ci->borders, sizeof(Border) );
+		deallocate( ci->borders, sizeof(cgc_Border) );
 	}
 
-	deallocate( ci, sizeof(City) );
+	deallocate( ci, sizeof(cgc_City) );
 
 	return;
 }
@@ -188,7 +188,7 @@ void freeCity( pCity ci )
  * @param ci Pointer to a city structure
  * @return Returns nothing
  **/
-void initCity( pCity ci )
+void cgc_initCity( cgc_pCity ci )
 {
 	int index = 0;
 
@@ -217,40 +217,40 @@ void initCity( pCity ci )
  * @param ci Pointer to a city structure
  * @return Returns nothing
  **/
-void printCityInfo( pCity ci )
+void cgc_printCityInfo( cgc_pCity ci )
 {
 	int index = 0;
-	pBorder b = NULL;
+	cgc_pBorder b = NULL;
 
 	if ( ci == NULL ) {
 		return;
 	}
 
-	printf("\t\t\t\tCity: ");
+	cgc_printf("\t\t\t\tCity: ");
 
 	if ( ci->name[0] != '\x00' ) {
-		printf("@s\n", ci->name);
+		cgc_printf("@s\n", ci->name);
 	} else {
-		printf("Unknown\n");
+		cgc_printf("Unknown\n");
 	}
 
 	if (ci->population >= 0 ) {
-		printf("\t\t\t\t\tPopulation: @d\n", ci->population);
+		cgc_printf("\t\t\t\t\tPopulation: @d\n", ci->population);
 	}
 
 	if ( ci->mayor[0] != '\x00') {
-		printf("\t\t\t\t\tMayor: @s\n", ci->mayor);
+		cgc_printf("\t\t\t\t\tMayor: @s\n", ci->mayor);
 	}
 
 	if ( ci->url[0] != '\x00' ) {
-		printf("\t\t\t\t\tUrl: @s\n", ci->url);
+		cgc_printf("\t\t\t\t\tUrl: @s\n", ci->url);
 	}
 
 	for ( index = 0; index < ci->border_count; index++ ) {
 		b = ci->borders[index];
 
 		if ( b!= NULL ) {
-			printf("\t\t\t\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
+			cgc_printf("\t\t\t\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
 		}
 	}
 
@@ -260,35 +260,35 @@ void printCityInfo( pCity ci )
 
 /**
  * Skips the opening "{" or "{#" depending upon the ending flag
- * @param str Pointer to a string structure
+ * @param str Pointer to a cgc_string structure
  * @param ending Flag indicating if it is an ending structure to expect a '#'
  * @return Returns 0 on failure, 1 on success
  **/
-int skipOpen( pstring str, int ending )
+int cgc_skipOpen( cgc_pstring str, int ending )
 {
 	if (str == NULL ) {
 		return 0;
 	}
 
-	skipWhiteSpace(str);
-	if ( !atChar( str, '{' ) ) {
+	cgc_skipWhiteSpace(str);
+	if ( !cgc_atChar( str, '{' ) ) {
 		return 0;
 	}
 
 	/// Skip the opening brace
-	if ( incChar(str) == -1 ) {
+	if ( cgc_incChar(str) == -1 ) {
 		return 0;
 	}
 
-	/// Skip to the element id value or '#' if it is an end
-	skipWhiteSpace(str);
+	/// Skip to the cgc_element id value or '#' if it is an end
+	cgc_skipWhiteSpace(str);
 
 	if ( ending ) {
-		if (!atChar( str, '#') ) {
+		if (!cgc_atChar( str, '#') ) {
 			return 0;
 		}
 
-		if ( incChar( str ) == -1 ) {
+		if ( cgc_incChar( str ) == -1 ) {
 			return 0;
 		}
 	}
@@ -297,32 +297,32 @@ int skipOpen( pstring str, int ending )
 }
 
 /**
- * Top level function for parsing a City PML element
- * @param str Pointer to a string structure
+ * Top level function for parsing a cgc_City PML cgc_element
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to a filled in city structure or NULL on failure
  **/
-pCity cityTopLevel( pstring str )
+cgc_pCity cgc_cityTopLevel( cgc_pstring str )
 {
 	int lastGood = 0;
-	pCity newCity = NULL;
+	cgc_pCity newCity = NULL;
 	int startIndex = 0;
 	int endIndex = 0;
 	char *temp = NULL;
 	int tempInt = 0;
-	element el;
+	cgc_element el;
 
 	if ( str == NULL ) {
 		goto end;
 	}
 
 	/// Skip the opening "{"
-	if ( skipOpen( str, 0 ) == 0 ) {
+	if ( cgc_skipOpen( str, 0 ) == 0 ) {
 		goto end;
 	}
 
-	/// Get the start and end index of the element id
-	getIndex( str, &startIndex);
-	endIndex = skipAlpha(str);
+	/// Get the start and end index of the cgc_element id
+	cgc_getIndex( str, &startIndex);
+	endIndex = cgc_skipAlpha(str);
 
 	if ( endIndex == -1 ) {
 		goto end;
@@ -332,89 +332,89 @@ pCity cityTopLevel( pstring str )
 		goto end;
 	}
 
-	temp = copyData( str, startIndex, endIndex );
+	temp = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp == NULL ) {
 		goto end;
 	}
 
-	if ( strcmp( temp, "City") != 0 ) {
-		deallocate(temp, strlen(temp) + 1 );
+	if ( cgc_strcmp( temp, "cgc_City") != 0 ) {
+		deallocate(temp, cgc_strlen(temp) + 1 );
 		goto end;
 	}
 
-	deallocate(temp, strlen(temp) + 1 );
+	deallocate(temp, cgc_strlen(temp) + 1 );
 
-	skipWhiteSpace( str );
-	if ( !atChar( str, '}') ) {
+	cgc_skipWhiteSpace( str );
+	if ( !cgc_atChar( str, '}') ) {
 		goto end;
 	}
 
-	incChar( str );
-	skipWhiteSpace(str);
+	cgc_incChar( str );
+	cgc_skipWhiteSpace(str);
 
 	lastGood = str->index;
 
-	if ( allocate( sizeof(City), 0, (void**)&newCity) != 0 ) {
+	if ( allocate( sizeof(cgc_City), 0, (void**)&newCity) != 0 ) {
 		newCity = NULL;
 		goto error;
 	}
 
-	initCity( newCity );
+	cgc_initCity( newCity );
 
-	temp = pullNextElementName( str );
+	temp = cgc_pullNextElementName( str );
 
 	while ( temp != NULL ) {
-		el = elementNameToEnum( temp );
+		el = cgc_elementNameToEnum( temp );
 
-		deallocate(temp, strlen(temp) + 1 );
+		deallocate(temp, cgc_strlen(temp) + 1 );
 
 		switch (el) {
 			case name:
-				temp = extractName( str );
+				temp = cgc_extractName( str );
 
 				if ( temp == NULL ) {
 					goto error;
 				}
 
 				/// Clear it out
-				bzero( newCity->name, 20 );
+				cgc_bzero( newCity->name, 20 );
 
 				/// Copy the name data. It has already been filtered 
 				///	for invalid characters.
-				strncpy( newCity->name, temp, 19);
+				cgc_strncpy( newCity->name, temp, 19);
 
 				/// Free the buffer
-				deallocate( temp, strlen(temp) + 1 );
+				deallocate( temp, cgc_strlen(temp) + 1 );
 				temp = NULL;
 				break;
 			case mayor:
-				temp = extractMayor( str );
+				temp = cgc_extractMayor( str );
 
 				if ( temp == NULL ) {
 					goto error;
 				}
 			
-				bzero( newCity->mayor, 30 );
+				cgc_bzero( newCity->mayor, 30 );
 #ifdef PATCHED
-				strncpy( newCity->mayor, temp, 29 );
+				cgc_strncpy( newCity->mayor, temp, 29 );
 #else
-				strcpy( newCity->mayor, temp );
+				cgc_strcpy( newCity->mayor, temp );
 #endif
-				freeCharPtr( &temp );
+				cgc_freeCharPtr( &temp );
 
 				break;
 			case url:
-				temp = extractUrl( str );
+				temp = cgc_extractUrl( str );
 
 				if ( temp == NULL ) {
 					goto error;
 				}
 
-				bzero( newCity->url, 30 );
+				cgc_bzero( newCity->url, 30 );
 
-				strncpy( newCity->url, temp, 29 );
-				freeCharPtr( &temp );
+				cgc_strncpy( newCity->url, temp, 29 );
+				cgc_freeCharPtr( &temp );
 				break;
 			case border:
 				if ( newCity->border_count >= CITYBORDERMAX) {
@@ -423,7 +423,7 @@ pCity cityTopLevel( pstring str )
 
 				tempInt = newCity->border_count;
 
-				newCity->borders[ tempInt ] = extractBorder(str);
+				newCity->borders[ tempInt ] = cgc_extractBorder(str);
 
 				if ( newCity->borders[ tempInt] == NULL ) {
 					goto error;
@@ -432,7 +432,7 @@ pCity cityTopLevel( pstring str )
 				newCity->border_count++;
 				break;
 			case population:
-				newCity->population = extractPopulation( str );
+				newCity->population = cgc_extractPopulation( str );
 
 				if ( newCity->population < 0 ) {
 					goto error;
@@ -440,21 +440,21 @@ pCity cityTopLevel( pstring str )
 
 				break;
 			default:
-				printf("!!Invalid element ID for City\n");
+				cgc_printf("!!Invalid cgc_element ID for cgc_City\n");
 				goto error;
 				break;
 		};
 
 		lastGood = str->index;
-		temp = pullNextElementName(str);
+		temp = cgc_pullNextElementName(str);
 	}
 
-	if ( skipOpen( str, 1) == 0 ) {
+	if ( cgc_skipOpen( str, 1) == 0 ) {
 		goto error;
 	}
 
-	getIndex( str, &startIndex);
-	endIndex = skipAlpha( str );
+	cgc_getIndex( str, &startIndex);
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex == -1 ) {
 		goto error;
@@ -462,32 +462,32 @@ pCity cityTopLevel( pstring str )
 		goto error;
 	}
 
-	temp = copyData( str, startIndex, endIndex );
+	temp = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp, "City") != 0 ) {
-		deallocate(temp, strlen(temp) + 1 );
+	if ( cgc_strcmp( temp, "cgc_City") != 0 ) {
+		deallocate(temp, cgc_strlen(temp) + 1 );
 		goto error;
 	}
 
-	deallocate( temp, strlen(temp) + 1 );
-	skipWhiteSpace(str);
-	if ( !atChar( str, '}') ) {
+	deallocate( temp, cgc_strlen(temp) + 1 );
+	cgc_skipWhiteSpace(str);
+	if ( !cgc_atChar( str, '}') ) {
 		goto error;
 	}
 
-	incChar(str);
+	cgc_incChar(str);
 	goto end;
 error:
 	if ( newCity ) {
-		freeCity( newCity );
+		cgc_freeCity( newCity );
 		newCity = NULL;
 	}
 
-	printf("!!Error at: @s\n", str->buffer + lastGood);
+	cgc_printf("!!Error at: @s\n", str->buffer + lastGood);
 	str->index = lastGood;
 
 end:
@@ -495,12 +495,12 @@ end:
 }
 
 /**
- * Extracts the data from the Mayor element id
- * @param str Pointer to a string structure
+ * Extracts the data from the Mayor cgc_element id
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to the data or NULL on failure
  *	The caller must free the pointer
  **/
-char *extractMayor( pstring str )
+char *cgc_extractMayor( cgc_pstring str )
 {
 	char *mayor = NULL;
 	register int startIndex = 0;
@@ -512,106 +512,106 @@ char *extractMayor( pstring str )
 	}
 
 	/// This skips any whitespace and opening '{ '
-	if (skipOpen(str, 0 ) == 0 ) {
+	if (cgc_skipOpen(str, 0 ) == 0 ) {
 		return NULL;
 	}
 
 	startIndex = str->index;
-	endIndex = skipAlpha(str);
+	endIndex = cgc_skipAlpha(str);
 
 	if ( endIndex == -1 || startIndex == endIndex ) {
 		return NULL;
 	}
 
-	mayor = copyData( str, startIndex, endIndex );
+	mayor = cgc_copyData( str, startIndex, endIndex );
 
 	if ( mayor == NULL ) {
 		return NULL;
 	}
 
-	if ( strcmp( mayor, "Mayor") != 0 ) {
-		freeCharPtr( &mayor );
+	if ( cgc_strcmp( mayor, "Mayor") != 0 ) {
+		cgc_freeCharPtr( &mayor );
 		return NULL;
 	}
 
-	freeCharPtr( &mayor );
+	cgc_freeCharPtr( &mayor );
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if (!atChar( str, '}') ) {
+	if (!cgc_atChar( str, '}') ) {
 		return NULL;
 	}
 
 	/// Skip the Closing brace
-	incChar( str );
+	cgc_incChar( str );
 
-	startIndex = skipWhiteSpace(str);
+	startIndex = cgc_skipWhiteSpace(str);
 
 	/// Using this function allows things like Sir Winston Churchill 3rd
-	endIndex = skipToNonAlphaNumSpace( str );
+	endIndex = cgc_skipToNonAlphaNumSpace( str );
 
 	if ( endIndex < 0 || startIndex == endIndex ) {
 		return NULL;
 	}
 
-	while ( isspace( str->buffer[endIndex-1] ) ) {
+	while ( cgc_isspace( str->buffer[endIndex-1] ) ) {
 		endIndex--;
 	}
 
-	mayor = copyData( str, startIndex, endIndex );
+	mayor = cgc_copyData( str, startIndex, endIndex );
 
 	if ( mayor == NULL ) {
 		return NULL;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// Skip the opening brace and '#'
-	if ( skipOpen( str, 1 ) == 0 ) {
+	if ( cgc_skipOpen( str, 1 ) == 0 ) {
 		goto error;
 	}
 
 	startIndex = str->index;
-	endIndex = skipAlpha( str );
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex == -1 || startIndex == endIndex ) {
 		goto error;
 	}
 
-	temp = copyData( str, startIndex, endIndex );
+	temp = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp, "Mayor") != 0 ) {
-		freeCharPtr( &temp );
+	if ( cgc_strcmp( temp, "Mayor") != 0 ) {
+		cgc_freeCharPtr( &temp );
 		goto error;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '}' ) ) {
+	if ( !cgc_atChar( str, '}' ) ) {
 		goto error;
 	}
 
-	incChar(str);
+	cgc_incChar(str);
 	
 	goto end;
 error:
-	freeCharPtr( &mayor );
+	cgc_freeCharPtr( &mayor );
 end:
 	return mayor; 
 }
 
 /**
- * Extract the data from the Url element.
+ * Extract the data from the Url cgc_element.
  * 	This can be something such as http://www.rome.com
- * @param str Pointer to a string structure
- * @return Returns the element data or NULL on failure
+ * @param str Pointer to a cgc_string structure
+ * @return Returns the cgc_element data or NULL on failure
  *	The caller is responsible for freeing the pointer
  **/
-char *extractUrl( pstring str ) 
+char *cgc_extractUrl( cgc_pstring str ) 
 {
 	char *url = NULL;
 	int startIndex = 0;
@@ -621,74 +621,74 @@ char *extractUrl( pstring str )
 		goto end;
 	}
 
-	if ( skipOpen( str, 0 ) == 0 ) {
+	if ( cgc_skipOpen( str, 0 ) == 0 ) {
 		goto end;
 	}
 
-	getIndex( str, &startIndex );
+	cgc_getIndex( str, &startIndex );
 
-	skipAlpha(str);
+	cgc_skipAlpha(str);
 
-	url = copyData( str, startIndex, str->index);
+	url = cgc_copyData( str, startIndex, str->index);
 
 	if ( url == NULL ) {
 		goto end;
 	}
 
-	if ( strcmp( url, "Url" ) ) {
-		freeCharPtr( &url );
+	if ( cgc_strcmp( url, "Url" ) ) {
+		cgc_freeCharPtr( &url );
 		goto end;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if (!atChar( str, '}') ) {
+	if (!cgc_atChar( str, '}') ) {
 		goto end;
 	}
 
-	incChar(str);
-	skipWhiteSpace(str);
-	getIndex( str, &startIndex);
+	cgc_incChar(str);
+	cgc_skipWhiteSpace(str);
+	cgc_getIndex( str, &startIndex);
 
-	skipUrl( str );
+	cgc_skipUrl( str );
 
-	url = copyData( str, startIndex, str->index );
+	url = cgc_copyData( str, startIndex, str->index );
 
 	if ( url == NULL ) {
 		goto end;
 	}
 
-	skipWhiteSpace(str);
-	if ( skipOpen( str, 1 ) == 0 ) {
+	cgc_skipWhiteSpace(str);
+	if ( cgc_skipOpen( str, 1 ) == 0 ) {
 		goto error;
 	}
 
-	getIndex( str, &startIndex );
-	skipAlpha(str);
-	temp = copyData( str, startIndex, str->index);
+	cgc_getIndex( str, &startIndex );
+	cgc_skipAlpha(str);
+	temp = cgc_copyData( str, startIndex, str->index);
 
 	if ( temp == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp, "Url") != 0 ) {
-		freeCharPtr( &temp );
+	if ( cgc_strcmp( temp, "Url") != 0 ) {
+		cgc_freeCharPtr( &temp );
 		goto error;
 	}
 
-	freeCharPtr( &temp );
+	cgc_freeCharPtr( &temp );
 
-	skipWhiteSpace(str);
-	if ( !atChar( str, '}') ) {
+	cgc_skipWhiteSpace(str);
+	if ( !cgc_atChar( str, '}') ) {
 		goto error;
 	}
 
-	incChar(str);
+	cgc_incChar(str);
 
 	goto end;
 error:
 	if ( url ) {
-		freeCharPtr( &url );
+		cgc_freeCharPtr( &url );
 	}
 
 end:

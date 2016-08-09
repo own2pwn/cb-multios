@@ -30,7 +30,7 @@
  * @param digit A character
  * @return TRUE if yes, FALSE if not a hex digit.
  */
-int is_hex_digit(int8_t digit);
+int cgc_is_hex_digit(cgc_int8_t digit);
 
 
 /**
@@ -39,7 +39,7 @@ int is_hex_digit(int8_t digit);
  * @param hex_digit An ASCII char
  * @return 0 - 15 if valid hex_digit, -1 on error.
  */
-char ascii_hex_to_bin(int8_t hex_digit);
+char cgc_ascii_hex_to_bin(cgc_int8_t hex_digit);
 
 
 #endif

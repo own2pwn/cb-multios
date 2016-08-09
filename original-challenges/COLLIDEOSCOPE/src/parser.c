@@ -29,22 +29,22 @@
 #include "parser.h"
 
 static int
-stack_empty(struct ast_node **stack)
+cgc_stack_empty(struct ast_node **stack)
 {
     return *stack == NULL;
 }
 
 static void
-push_ast_node(struct ast_node **stack, struct ast_node *new)
+cgc_push_ast_node(struct ast_node **stack, struct ast_node *new)
 {
     new->next = *stack;
     *stack = new;
 }
 
 static int
-pop_ast_node(struct ast_node **stack, struct ast_node **out)
+cgc_pop_ast_node(struct ast_node **stack, struct ast_node **out)
 {
-    if (stack_empty(stack))
+    if (cgc_stack_empty(stack))
         return EXIT_FAILURE;
 
     *out = *stack;
@@ -53,9 +53,9 @@ pop_ast_node(struct ast_node **stack, struct ast_node **out)
 }
 
 static int
-peek_ast_node(struct ast_node **stack, struct ast_node **out)
+cgc_peek_ast_node(struct ast_node **stack, struct ast_node **out)
 {
-    if (stack_empty(stack))
+    if (cgc_stack_empty(stack))
         return EXIT_FAILURE;
 
     *out = *stack;
@@ -63,26 +63,26 @@ peek_ast_node(struct ast_node **stack, struct ast_node **out)
 }
 
 static int  
-push_bin_op(struct ast_node **output_stack, struct ast_node **operator_stack,
+cgc_push_bin_op(struct ast_node **output_stack, struct ast_node **operator_stack,
         struct ast_node *new)
 {
     static const int bin_op_precedence[] = { 0, 1, 1, 2, 2 };
     struct ast_node *cur_operator, *lhs, *rhs, *n;
 
-    while (!stack_empty(operator_stack)) {
-        if (peek_ast_node(operator_stack, &cur_operator) < 0)
+    while (!cgc_stack_empty(operator_stack)) {
+        if (cgc_peek_ast_node(operator_stack, &cur_operator) < 0)
             return EXIT_FAILURE;
 
         if (cur_operator->type == AST_BINARY_OPERATOR) {
             // All binary operators are left-associative
             if (bin_op_precedence[new->expr.bin_op.type] <=
                     bin_op_precedence[cur_operator->expr.bin_op.type]) {
-                if (pop_ast_node(operator_stack, &cur_operator) < 0)
+                if (cgc_pop_ast_node(operator_stack, &cur_operator) < 0)
                     return EXIT_FAILURE;
 
-                if (pop_ast_node(output_stack, &rhs) < 0)
+                if (cgc_pop_ast_node(output_stack, &rhs) < 0)
                     return EXIT_FAILURE;
-                if (pop_ast_node(output_stack, &lhs) < 0)
+                if (cgc_pop_ast_node(output_stack, &lhs) < 0)
                     return EXIT_FAILURE;
 
                 // Can only assign to l-values
@@ -96,15 +96,15 @@ push_bin_op(struct ast_node **output_stack, struct ast_node **operator_stack,
                 cur_operator->expr.bin_op.lhs = lhs;
                 cur_operator->expr.bin_op.rhs = rhs;
 
-                push_ast_node(output_stack, cur_operator);
+                cgc_push_ast_node(output_stack, cur_operator);
                 continue;
             } 
         } else if (cur_operator->type == AST_UNARY_OPERATOR) {
             // All unary operators have higher precedence than all binary operators
-            if (pop_ast_node(operator_stack, &cur_operator) < 0)
+            if (cgc_pop_ast_node(operator_stack, &cur_operator) < 0)
                 return EXIT_FAILURE;
 
-            if (pop_ast_node(output_stack, &n) < 0)
+            if (cgc_pop_ast_node(output_stack, &n) < 0)
                 return EXIT_FAILURE;
 
             // Can only take address of l-value
@@ -119,32 +119,32 @@ push_bin_op(struct ast_node **output_stack, struct ast_node **operator_stack,
 
             cur_operator->expr.un_op.n = n;
 
-            push_ast_node(output_stack, cur_operator);
+            cgc_push_ast_node(output_stack, cur_operator);
             continue;
         }
 
         break;
     }
 
-    push_ast_node(operator_stack, new);
+    cgc_push_ast_node(operator_stack, new);
     return EXIT_SUCCESS;
 }
 
 static int
-close_parenthesis(struct ast_node **output_stack, struct ast_node **operator_stack)
+cgc_close_parenthesis(struct ast_node **output_stack, struct ast_node **operator_stack)
 {
     struct ast_node *cur_operator, *lhs, *rhs, *n;
-    while (!stack_empty(operator_stack)) {
-        if (pop_ast_node(operator_stack, &cur_operator) < 0)
+    while (!cgc_stack_empty(operator_stack)) {
+        if (cgc_pop_ast_node(operator_stack, &cur_operator) < 0)
             return EXIT_FAILURE;
 
         if (cur_operator->type == AST_PARENTHESIS)
             return EXIT_SUCCESS;
 
         if (cur_operator->type == AST_BINARY_OPERATOR) {
-            if (pop_ast_node(output_stack, &rhs) < 0)
+            if (cgc_pop_ast_node(output_stack, &rhs) < 0)
                 return EXIT_FAILURE;
-            if (pop_ast_node(output_stack, &lhs) < 0)
+            if (cgc_pop_ast_node(output_stack, &lhs) < 0)
                 return EXIT_FAILURE;
 
             // Can only assign to l-values
@@ -158,9 +158,9 @@ close_parenthesis(struct ast_node **output_stack, struct ast_node **operator_sta
             cur_operator->expr.bin_op.lhs = lhs;
             cur_operator->expr.bin_op.rhs = rhs;
 
-            push_ast_node(output_stack, cur_operator);
+            cgc_push_ast_node(output_stack, cur_operator);
         } else if (cur_operator->type == AST_UNARY_OPERATOR) {
-            if (pop_ast_node(output_stack, &n) < 0)
+            if (cgc_pop_ast_node(output_stack, &n) < 0)
                 return EXIT_FAILURE;
 
             // Can only take address of l-value
@@ -175,7 +175,7 @@ close_parenthesis(struct ast_node **output_stack, struct ast_node **operator_sta
 
             cur_operator->expr.un_op.n = n;
 
-            push_ast_node(output_stack, cur_operator);
+            cgc_push_ast_node(output_stack, cur_operator);
         }
     }
 
@@ -183,112 +183,112 @@ close_parenthesis(struct ast_node **output_stack, struct ast_node **operator_sta
 }
 
 static int
-clear_operator_stack(struct ast_node **output_stack, struct ast_node **operator_stack)
+cgc_clear_operator_stack(struct ast_node **output_stack, struct ast_node **operator_stack)
 {
-    return close_parenthesis(output_stack, operator_stack) == EXIT_FAILURE ?
+    return cgc_close_parenthesis(output_stack, operator_stack) == EXIT_FAILURE ?
         EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 /* See https://en.wikipedia.org/wiki/Shunting-yard_algorithm */
 int
-parse(struct token *tokens, size_t n, struct ast *out)
+cgc_parse(struct token *tokens, cgc_size_t n, struct ast *out)
 {
-    size_t i;
+    cgc_size_t i;
     struct ast_node *cur_node, *output_stack = NULL, *operator_stack = NULL;
 
-    if (pool_init(&out->pool, sizeof(struct ast_node)) < 0)
+    if (cgc_pool_init(&out->pool, sizeof(struct ast_node)) < 0)
         return EXIT_FAILURE;
 
     for (i = 0; i < n; i++) {
-        if ((cur_node = pool_alloc(&out->pool)) == NULL)
+        if ((cur_node = cgc_pool_alloc(&out->pool)) == NULL)
             return EXIT_FAILURE;
 
-        memset(cur_node, '\0', sizeof(struct ast_node));
+        cgc_memset(cur_node, '\0', sizeof(struct ast_node));
 
         switch (tokens[i].type) {
         case TOK_CONSTANT:
             cur_node->type = AST_CONSTANT;
             cur_node->expr.constant = tokens[i].val.i;
-            push_ast_node(&output_stack, cur_node);
+            cgc_push_ast_node(&output_stack, cur_node);
             break;
         case TOK_VARIABLE:
             cur_node->type = AST_VARIABLE;
-            memset(cur_node->expr.variable, '\0', 4);
-            strncpy(cur_node->expr.variable, tokens[i].val.s, 4);
-            push_ast_node(&output_stack, cur_node);
+            cgc_memset(cur_node->expr.variable, '\0', 4);
+            cgc_strncpy(cur_node->expr.variable, tokens[i].val.s, 4);
+            cgc_push_ast_node(&output_stack, cur_node);
             break;
         case TOK_ASSIGNMENT:
             cur_node->type = AST_BINARY_OPERATOR;
             cur_node->expr.bin_op.type = BIN_ASSIGNMENT;
-            if (push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
+            if (cgc_push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
                 return EXIT_FAILURE;
             break;
         case TOK_ADD:
             cur_node->type = AST_BINARY_OPERATOR;
             cur_node->expr.bin_op.type = BIN_ADD;
-            if (push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
+            if (cgc_push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
                 return EXIT_FAILURE;
             break;
         case TOK_SUBTRACT:
             cur_node->type = AST_BINARY_OPERATOR;
             cur_node->expr.bin_op.type = BIN_SUBTRACT;
-            if (push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
+            if (cgc_push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
                 return EXIT_FAILURE;
             break;
         case TOK_MULTIPLY:
             cur_node->type = AST_BINARY_OPERATOR;
             cur_node->expr.bin_op.type = BIN_MULTIPLY;
-            if (push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
+            if (cgc_push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
                 return EXIT_FAILURE;
             break;
         case TOK_DIVIDE:
             cur_node->type = AST_BINARY_OPERATOR;
             cur_node->expr.bin_op.type = BIN_DIVIDE;
-            if (push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
+            if (cgc_push_bin_op(&output_stack, &operator_stack, cur_node) < 0)
                 return EXIT_FAILURE;
             break;
         case TOK_NEGATE:
             cur_node->type = AST_UNARY_OPERATOR;
             cur_node->expr.un_op.type = UN_NEGATE;
-            push_ast_node(&operator_stack, cur_node);
+            cgc_push_ast_node(&operator_stack, cur_node);
             break;
         case TOK_ADDRESS_OF:
             cur_node->type = AST_UNARY_OPERATOR;
             cur_node->expr.un_op.type = UN_ADDRESS_OF;
-            push_ast_node(&operator_stack, cur_node);
+            cgc_push_ast_node(&operator_stack, cur_node);
             break;
         case TOK_DEREFERENCE:
             cur_node->type = AST_UNARY_OPERATOR;
             cur_node->expr.un_op.type = UN_DEREFERENCE;
-            push_ast_node(&operator_stack, cur_node);
+            cgc_push_ast_node(&operator_stack, cur_node);
             break;
         case TOK_LEFT_PARENTHESIS:
             cur_node->type = AST_PARENTHESIS;
-            push_ast_node(&operator_stack, cur_node);
+            cgc_push_ast_node(&operator_stack, cur_node);
             break;
         case TOK_RIGHT_PARENTHESIS:
-            if (close_parenthesis(&output_stack, &operator_stack) < 0)
+            if (cgc_close_parenthesis(&output_stack, &operator_stack) < 0)
                 return EXIT_FAILURE;
             break;
         }
     }
 
-    if (clear_operator_stack(&output_stack, &operator_stack) < 0)
+    if (cgc_clear_operator_stack(&output_stack, &operator_stack) < 0)
         return EXIT_FAILURE;
 
-    if (pop_ast_node(&output_stack, &out->expr) < 0)
+    if (cgc_pop_ast_node(&output_stack, &out->expr) < 0)
         return EXIT_FAILURE;
 
-    if (!stack_empty(&output_stack))
+    if (!cgc_stack_empty(&output_stack))
         return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }
 
 void
-ast_destroy(struct ast *ast)
+cgc_ast_destroy(struct ast *ast)
 {
-    pool_destroy(&ast->pool);
+    cgc_pool_destroy(&ast->pool);
     ast->expr = NULL;
 }
 

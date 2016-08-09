@@ -41,7 +41,7 @@ DefineFunction(Buffer, void, $destroy)
     free(this->m_buf);
 }
 
-DefineFunction(Buffer, void, enlarge, size_t length)
+DefineFunction(Buffer, void, enlarge, cgc_size_t length)
 {
     if (this->m_length >= length)
         return;
@@ -51,7 +51,7 @@ DefineFunction(Buffer, void, enlarge, size_t length)
     ASSERT_ALLOC(this->m_buf);
 }
 
-DefineFunction(Buffer, void, seek, size_t pos)
+DefineFunction(Buffer, void, seek, cgc_size_t pos)
 {
     if (pos >= this->m_length)
         this->m_pos = this->m_length;
@@ -59,7 +59,7 @@ DefineFunction(Buffer, void, seek, size_t pos)
         this->m_pos = pos;
 }
 
-DefineFunction(Buffer, size_t, tell)
+DefineFunction(Buffer, cgc_size_t, tell)
 {
     return this->m_pos;
 }
@@ -111,7 +111,7 @@ DefineFunction(Buffer, void, write_string, const char *str)
     this->m_pos += size;
 }
 
-DefineFunction(Buffer, void, write_bytes, const uint8_t *bytes, size_t size)
+DefineFunction(Buffer, void, write_bytes, const uint8_t *bytes, cgc_size_t size)
 {
     $(this, write_number, (int) size);
     $(this, enlarge, this->m_pos + size);
@@ -183,7 +183,7 @@ DefineFunction(Buffer, char *, read_string)
     return result;
 }
 
-DefineFunction(Buffer, size_t, read_bytes, uint8_t *buf, size_t limit)
+DefineFunction(Buffer, cgc_size_t, read_bytes, uint8_t *buf, cgc_size_t limit)
 {
     int size, retval;
     size = retval = $(this, read_number);
@@ -201,7 +201,7 @@ DefineFunction(Buffer, size_t, read_bytes, uint8_t *buf, size_t limit)
 
 DefineFunction(Buffer, uint16_t, checksum)
 {
-    size_t i;
+    cgc_size_t i;
     uint16_t sum = 0xDEAD;
 
     for (i = 0; i < this->m_pos; i++)
@@ -212,7 +212,7 @@ DefineFunction(Buffer, uint16_t, checksum)
 
 DefineFunction(Buffer, int, dearmor, const char *asc)
 {
-    size_t i;
+    cgc_size_t i;
     uint16_t sum;
 
     if (strlen(asc) < 2)
@@ -239,7 +239,7 @@ DefineFunction(Buffer, int, dearmor, const char *asc)
 DefineFunction(Buffer, char *, armor)
 {
     char *result;
-    size_t i, count;
+    cgc_size_t i, count;
     uint16_t sum;
 
     sum = $(this, checksum);

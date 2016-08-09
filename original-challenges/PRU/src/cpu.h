@@ -33,6 +33,6 @@ typedef struct _pruCPU {
 	int code[0x1000];
 	char carry;
 	unsigned short numExecuted;
-} pruCPU;
+} cgc_pruCPU;
 
 #endif

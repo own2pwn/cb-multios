@@ -28,85 +28,85 @@ THE SOFTWARE.
 
 #define BSIZE 40
 
-int countryMenu( pCountry co )
+int cgc_countryMenu( cgc_pCountry co )
 {
 	int choice = 0;
-	size_t length = 0;
+	cgc_size_t length = 0;
 	char selection[BSIZE];
 	char *t = NULL;
-	pBorder pb = NULL;
+	cgc_pBorder pb = NULL;
 
 	if ( co == NULL ) {
 		return 0;
 	}
 
 	while (1) {
-		printf("\nCountry: @s\n", co->name);
-		printf("1) Display CountryInfo\n");
-		printf("2) Set Capitol\n");
-		printf("3) Set Population\n");
-		printf("4) Add Language\n");
-		printf("5) Add border\n");
-		printf("6) Add Territory\n");
-		printf("7) Select Territory\n");
-		printf("8) Delete Country and Exit Menu\n");
-		printf("9) Exit menu\n");
+		cgc_printf("\nCountry: @s\n", co->name);
+		cgc_printf("1) Display CountryInfo\n");
+		cgc_printf("2) Set Capitol\n");
+		cgc_printf("3) Set Population\n");
+		cgc_printf("4) Add Language\n");
+		cgc_printf("5) Add border\n");
+		cgc_printf("6) Add cgc_Territory\n");
+		cgc_printf("7) Select cgc_Territory\n");
+		cgc_printf("8) Delete cgc_Country and Exit Menu\n");
+		cgc_printf("9) Exit menu\n");
 
-		bzero(selection, BSIZE);
-		printf("Selection: ");
-		receive_until( selection, '\n', 3);
+		cgc_bzero(selection, BSIZE);
+		cgc_printf("Selection: ");
+		cgc_receive_until( selection, '\n', 3);
 
-		choice = atoi(selection);
+		choice = cgc_atoi(selection);
 
 		if ( choice < 1 || choice > 9 ) {
-			printf("Invalid...\n");
+			cgc_printf("Invalid...\n");
 			continue;
 		}
 
 		if ( choice == 1 ) {
-			printCountryInfo( co );
+			cgc_printCountryInfo( co );
 		} else if (choice == 2 ) {
-			printf("\n-> ");
-			bzero(selection, BSIZE);
+			cgc_printf("\n-> ");
+			cgc_bzero(selection, BSIZE);
 
 #ifdef PATCHED
-			receive_until(selection, '\n', 19);
+			cgc_receive_until(selection, '\n', 19);
 #else
-			receive_until( selection, '\n', BSIZE-1);
+			cgc_receive_until( selection, '\n', BSIZE-1);
 #endif
 
 			choice = 0;
-			while ( isalpha( selection[choice]) ) {
+			while ( cgc_isalpha( selection[choice]) ) {
 				co->capitol[choice] = selection[choice];
 				choice++;
 			}
 			co->capitol[choice] = '\x00';
 
 		} else if ( choice == 3 ) {
-			printf("\n-> ");
-			bzero(selection, BSIZE);
-			receive_until(selection, '\n', 19);
+			cgc_printf("\n-> ");
+			cgc_bzero(selection, BSIZE);
+			cgc_receive_until(selection, '\n', 19);
 
-			co->population = atoi( selection );
+			co->population = cgc_atoi( selection );
 		} else if ( choice == 4 ) {
 			if ( co->language_count >= COUNTRYLANGUAGEMAX ) {
-				printf("!!Max languages reached\n");
+				cgc_printf("!!Max languages reached\n");
 				continue;
 			}
 
-			printf("\n-> ");
-			bzero(selection, BSIZE );
+			cgc_printf("\n-> ");
+			cgc_bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
 
-			if ( allocate( strlen(selection)+1, 0, (void**)&(t)) != 0 ) {
+			if ( allocate( cgc_strlen(selection)+1, 0, (void**)&(t)) != 0 ) {
 				t = NULL;
 				continue;
 			}
 
-			bzero( t, strlen(selection)+1);
+			cgc_bzero( t, cgc_strlen(selection)+1);
 
 			choice = 0;
-			while ( isalpha( selection[choice] ) ) {
+			while ( cgc_isalpha( selection[choice] ) ) {
 				t[choice] = selection[choice];
 				choice++;
 			}
@@ -116,40 +116,40 @@ int countryMenu( pCountry co )
 			co->language_count++;
 		} else if ( choice == 5 ) {
 			if ( co->border_count >= COUNTRYBORDERMAX) {
-				printf("!!Max borders reached\n");
+				cgc_printf("!!Max borders reached\n");
 				continue;
 			}
 
-			if ( allocate( sizeof(Border), 0, (void**)&pb) != 0 ) {
+			if ( allocate( sizeof(cgc_Border), 0, (void**)&pb) != 0 ) {
 				pb = NULL;
 				continue;
 			}
 
-			printf("Lat Start: ");
-			bzero(selection, BSIZE );
+			cgc_printf("Lat Start: ");
+			cgc_bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->latStart = atof(selection);
+			pb->latStart = cgc_atof(selection);
 
-			printf("Long Start: ");
-			bzero(selection, BSIZE );
+			cgc_printf("Long Start: ");
+			cgc_bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->lngStart = atof(selection);
+			pb->lngStart = cgc_atof(selection);
 
-			printf("Lat End: ");
-			bzero(selection, BSIZE );
+			cgc_printf("Lat End: ");
+			cgc_bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->latEnd = atof(selection);
+			pb->latEnd = cgc_atof(selection);
 
-			printf("Long End: ");
-			bzero(selection, BSIZE );
+			cgc_printf("Long End: ");
+			cgc_bzero(selection, BSIZE );
 			receive(0, selection, 19, &length);
-			pb->lngEnd = atof(selection);
+			pb->lngEnd = cgc_atof(selection);
 
 			co->borders[ co->border_count ] = pb;
 			co->border_count++;
 		} else if ( choice == 6 ) {
 			if ( co->territory_count >= COUNTRYTERRITORYMAX) {
-				printf("!!Max Territories reached\n");
+				cgc_printf("!!Max Territories reached\n");
 				continue;
 			}
 
@@ -159,24 +159,24 @@ int countryMenu( pCountry co )
                         }
 
 			if ( choice == COUNTRYTERRITORYMAX ) {
-				printf("!!Max Territories reached\n");
+				cgc_printf("!!Max Territories reached\n");
 				continue;
 			}
 
-                        if ( allocate( sizeof(Territory), 0, (void**)(&co->territories[ choice ]) ) != 0 ) {
-                                printf("!!Failed to allocate structure\n");
+                        if ( allocate( sizeof(cgc_Territory), 0, (void**)(&co->territories[ choice ]) ) != 0 ) {
+                                cgc_printf("!!Failed to allocate structure\n");
                                 co->territories[ choice ] = NULL;
                                 continue;
                         }       
                         
-                        initTerritory( co->territories[choice] );
+                        cgc_initTerritory( co->territories[choice] );
                         
-			printf("\nNew Territory: ");
-			bzero(selection, BSIZE);
-                        receive_until(selection, '\n', 19);
+			cgc_printf("\nNew cgc_Territory: ");
+			cgc_bzero(selection, BSIZE);
+                        cgc_receive_until(selection, '\n', 19);
 
                         length = 0;
-                        while ( isalnum( selection[length] ) ) {
+                        while ( cgc_isalnum( selection[length] ) ) {
                                 co->territories[choice]->name[length] = selection[length];
                                 length++;
                         }       
@@ -185,30 +185,30 @@ int countryMenu( pCountry co )
                         
 		} else if ( choice == 7 ) {
 
-			printf("\nTerritories:\n");
+			cgc_printf("\nTerritories:\n");
 			for ( choice = 0; choice < COUNTRYTERRITORYMAX; choice++ ) {
 				if ( co->territories[choice] != NULL ) {
-					printf("@d) @s\n", choice+1, co->territories[ choice ] );
+					cgc_printf("@d) @s\n", choice+1, co->territories[ choice ] );
 				}
 			}
 
-			bzero(selection, BSIZE);
-			printf("\n-> ");
+			cgc_bzero(selection, BSIZE);
+			cgc_printf("\n-> ");
 			receive(0, selection, 3, &length);
-			choice = atoi(selection);
+			choice = cgc_atoi(selection);
 
 			if ( choice < 1 || choice > COUNTRYTERRITORYMAX || co->territories[choice-1] == NULL ) {
-				printf("Invalid choice...\n");
+				cgc_printf("Invalid choice...\n");
 				continue;
 			}
 
-			if ( territoryMenu( co->territories[choice-1]) == 0 ) {
+			if ( cgc_territoryMenu( co->territories[choice-1]) == 0 ) {
 				co->territories[choice-1] = NULL ;
 				co->territory_count--;
 			}
 
 		} else if ( choice == 8 ) {
-			freeCountry(co);
+			cgc_freeCountry(co);
 			return 0;
 		} else if ( choice == 9 ) {
 			return 1;
@@ -225,37 +225,37 @@ end:
  * @param co Pointer to the country structure.
  * @return Returns nothing
  */
-void printCountryInfo( pCountry co )
+void cgc_printCountryInfo( cgc_pCountry co )
 {
 	int index = 0;
-	pBorder b = NULL;
+	cgc_pBorder b = NULL;
 
 	if ( co == NULL ) {
 		return;
 	}
 	
-	printf("\tCountry: ");
+	cgc_printf("\tCountry: ");
 
 	if ( co->name[0] == '\x00' ) {
-		printf("Unknown\n");
+		cgc_printf("Unknown\n");
 	} else {
-		printf("@s\n", co->name);
+		cgc_printf("@s\n", co->name);
 	}
 
-	printf("\t\tCapitol: ");
+	cgc_printf("\t\tCapitol: ");
 	if ( co->capitol[0] == '\x00' ) {
-		printf("Unknown\n");
+		cgc_printf("Unknown\n");
 	} else {
-		printf("@s\n", co->capitol);
+		cgc_printf("@s\n", co->capitol);
 	}
 
 	if ( co->population >= 0 ) {
-		printf("\t\tPopulation: @d\n", co->population);
+		cgc_printf("\t\tPopulation: @d\n", co->population);
 	}
 
 	while ( index < co->language_count ) {
 		if ( co->languages[index] != NULL ) {
-			printf("\t\tLanguage: @s\n", co->languages[index]);
+			cgc_printf("\t\tLanguage: @s\n", co->languages[index]);
 		}
 		index++;
 	}
@@ -265,7 +265,7 @@ void printCountryInfo( pCountry co )
 	while ( index < co->border_count ) {
 		b = co->borders[index];
 		if ( b != NULL ) {
-			printf("\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
+			cgc_printf("\t\tBorder: @f @f @f @f\n", b->latStart, b->lngStart, b->latEnd, b->lngEnd);
 		}
 		index++;
 	}
@@ -274,7 +274,7 @@ void printCountryInfo( pCountry co )
 
 	while ( index < COUNTRYTERRITORYMAX ) {
 		if ( co->territories[index] != NULL ) {
-			printTerritoryInfo( co->territories[index] );
+			cgc_printTerritoryInfo( co->territories[index] );
 		}
 		index++;
 	}
@@ -287,7 +287,7 @@ void printCountryInfo( pCountry co )
  * @param co Pointer to a country structure to free
  * @return Returns nothing
  **/
-void freeCountry( pCountry co )
+void cgc_freeCountry( cgc_pCountry co )
 {
 	int index = 0;
 
@@ -297,7 +297,7 @@ void freeCountry( pCountry co )
 
 	while (index < co->border_count) {
 		if ( co->borders[index] != NULL ) {
-			deallocate( co->borders[index], sizeof( Border ) );
+			deallocate( co->borders[index], sizeof( cgc_Border ) );
 			co->borders[index] = NULL;
 		}
 		index++;
@@ -306,7 +306,7 @@ void freeCountry( pCountry co )
 	index = 0;
 	while ( index < co->language_count) {
 		if ( co->languages[index] != NULL ) {
-			deallocate( co->languages[index], strlen(co->languages[index]) + 1 );
+			deallocate( co->languages[index], cgc_strlen(co->languages[index]) + 1 );
 			co->languages[index] = NULL;
 		}
 		index++;
@@ -315,13 +315,13 @@ void freeCountry( pCountry co )
 	index = 0;
 	while ( index < COUNTRYTERRITORYMAX) {
 		if ( co->territories[index] != NULL ) {
-			freeTerritory( co->territories[index] );
+			cgc_freeTerritory( co->territories[index] );
 			co->territories[index] = NULL;
 		}
 		index++;
 	}
 
-	deallocate( co, sizeof(Country) );
+	deallocate( co, sizeof(cgc_Country) );
 
 	return;
 }
@@ -331,7 +331,7 @@ void freeCountry( pCountry co )
  * @param co Pointer to a country structure to initialize
  * @return Returns nothing
  **/
-void initCountry( pCountry co )
+void cgc_initCountry( cgc_pCountry co )
 {
 	int index = 0;
 
@@ -339,130 +339,130 @@ void initCountry( pCountry co )
 		return;
 	}
 
-	bzero( co->name, 20 );
+	cgc_bzero( co->name, 20 );
 
 	co->population = -1;
 	co->language_count = 0;
 
 	co->border_count = 0;
 
-	bzero( co->languages, sizeof(char*) * COUNTRYLANGUAGEMAX);
-	bzero( co->borders, sizeof(pBorder) * COUNTRYBORDERMAX);
-	bzero( co->territories, sizeof(pTerritory) * COUNTRYTERRITORYMAX);
+	cgc_bzero( co->languages, sizeof(char*) * COUNTRYLANGUAGEMAX);
+	cgc_bzero( co->borders, sizeof(cgc_pBorder) * COUNTRYBORDERMAX);
+	cgc_bzero( co->territories, sizeof(cgc_pTerritory) * COUNTRYTERRITORYMAX);
 
 	return;
 }
 
 /**
  * This function handles the top level parsing of country elements
- * @param str Pointer to a string structure
+ * @param str Pointer to a cgc_string structure
  * @return Returns a pointer to a country structure or NULL on failure
  **/
-pCountry countryTopLevel( pstring str )
+cgc_pCountry cgc_countryTopLevel( cgc_pstring str )
 {
-	pCountry newCountry = NULL;
+	cgc_pCountry newCountry = NULL;
 	char * temp_name = NULL;
 	int lastGood = 0;
 	int startIndex = 0;
 	int endIndex = 0;
-	element el = 0;
+	cgc_element el = 0;
 
 	if ( str == NULL ) {
 		goto end;
 	}
 
 	/// Allocate a new country structure
-	if ( allocate(sizeof(Country), 0, (void**)&newCountry) != 0 ) {
+	if ( allocate(sizeof(cgc_Country), 0, (void**)&newCountry) != 0 ) {
 		newCountry = NULL;
 		goto end;
 	}
 
-	initCountry( newCountry );
+	cgc_initCountry( newCountry );
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	lastGood = getIndex( str, &lastGood );
+	lastGood = cgc_getIndex( str, &lastGood );
 
-	if ( !atChar( str, '{' ) ) {
+	if ( !cgc_atChar( str, '{' ) ) {
 		goto error;
 	}
 
-	if ( skipLength( str, 1 ) < 0 ) {
+	if ( cgc_skipLength( str, 1 ) < 0 ) {
 		goto error;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	startIndex = str->index;
 
-	endIndex = skipAlpha( str );
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex == -1 || startIndex == endIndex ) {
 		goto error;
 	}
 	
-	/// Confirm the opening element;		
-	temp_name = copyData( str, startIndex, endIndex );
+	/// Confirm the opening cgc_element;		
+	temp_name = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp_name == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp_name, "Country" ) != 0 ) {
-		printf("!!Country: Invalid opening element id\n");
-		deallocate( temp_name, strlen(temp_name) + 1 );
+	if ( cgc_strcmp( temp_name, "cgc_Country" ) != 0 ) {
+		cgc_printf("!!cgc_Country: Invalid opening cgc_element id\n");
+		deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 		goto error;
 	}
 
-	deallocate(temp_name, strlen(temp_name) + 1 );
+	deallocate(temp_name, cgc_strlen(temp_name) + 1 );
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	if ( str->buffer[ str->index ] != '}' ) {
 		goto error;
 	}
 
-	incChar( str );
+	cgc_incChar( str );
 
 	lastGood = str->index;
 
-	temp_name = pullNextElementName( str );
+	temp_name = cgc_pullNextElementName( str );
 
 	while ( temp_name != NULL ) {
-		el = elementNameToEnum( temp_name );
+		el = cgc_elementNameToEnum( temp_name );
 
-		deallocate( temp_name, strlen(temp_name) + 1 );
+		deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 
 		switch (el) {
 			case name:
-				temp_name = extractName( str );
+				temp_name = cgc_extractName( str );
 
 				if ( temp_name == NULL ) {
 					goto error;
 				}
 
-				bzero( newCountry->name, 20);
-				strncpy( newCountry->name, temp_name, 19 );
+				cgc_bzero( newCountry->name, 20);
+				cgc_strncpy( newCountry->name, temp_name, 19 );
 
-				deallocate( temp_name, strlen(temp_name)+1);
+				deallocate( temp_name, cgc_strlen(temp_name)+1);
 				temp_name = NULL;
 				break;
 			case capitol:
 
-				temp_name = extractCapitol( str );
+				temp_name = cgc_extractCapitol( str );
 
 				if ( !temp_name ) {
 					goto error;
 				}
 
-				bzero( newCountry->capitol, 20 );
-				strncpy( newCountry->capitol, temp_name, 19 );
+				cgc_bzero( newCountry->capitol, 20 );
+				cgc_strncpy( newCountry->capitol, temp_name, 19 );
 
-				deallocate( temp_name, strlen(temp_name)+1);
+				deallocate( temp_name, cgc_strlen(temp_name)+1);
 				temp_name = NULL;
 				break;
 			case population:
-				newCountry->population = extractPopulation(str);
+				newCountry->population = cgc_extractPopulation(str);
 
 				if (newCountry->population < 0 ) {
 					goto error;
@@ -472,11 +472,11 @@ pCountry countryTopLevel( pstring str )
 			case language:
 
 				if ( newCountry->language_count >= COUNTRYLANGUAGEMAX ) {
-					printf("!!Max country language count is @d\n", COUNTRYLANGUAGEMAX);
+					cgc_printf("!!Max country language count is @d\n", COUNTRYLANGUAGEMAX);
 					goto error;
 				}
 
-				newCountry->languages[newCountry->language_count] = extractLanguage(str);
+				newCountry->languages[newCountry->language_count] = cgc_extractLanguage(str);
 
 				if ( newCountry->languages[ newCountry->language_count] == NULL ) {
 					goto error;
@@ -487,11 +487,11 @@ pCountry countryTopLevel( pstring str )
 				break;
 			case border:
 				if ( newCountry->border_count >= COUNTRYBORDERMAX ) {
-					printf("!!Max country border count is @d\n", COUNTRYBORDERMAX);
+					cgc_printf("!!Max country border count is @d\n", COUNTRYBORDERMAX);
 					goto error;
 				}
 
-				newCountry->borders[newCountry->border_count] = extractBorder(str);
+				newCountry->borders[newCountry->border_count] = cgc_extractBorder(str);
 
 				if ( newCountry->borders[ newCountry->border_count] == NULL ) {
 					goto error;
@@ -502,11 +502,11 @@ pCountry countryTopLevel( pstring str )
 				break;
 			case territory:
 				if ( newCountry->territory_count >= COUNTRYTERRITORYMAX) {
-					printf("!!Max territories is @d\n", COUNTRYTERRITORYMAX);
+					cgc_printf("!!Max territories is @d\n", COUNTRYTERRITORYMAX);
 					goto error;
 				}
 
-				newCountry->territories[newCountry->territory_count] = territoryTopLevel(str);
+				newCountry->territories[newCountry->territory_count] = cgc_territoryTopLevel(str);
 
 				if (newCountry->territories[newCountry->territory_count] == NULL ) {
 					goto error;
@@ -516,39 +516,39 @@ pCountry countryTopLevel( pstring str )
 
 				break;
 			default:
-				printf("Invalid for country\n");
+				cgc_printf("Invalid for country\n");
 				goto error;
 				break;
 		};
 
 		lastGood = str->index;
 
-		temp_name = pullNextElementName( str );
+		temp_name = cgc_pullNextElementName( str );
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if ( !atChar( str, '{' ) ) {
+	if ( !cgc_atChar( str, '{' ) ) {
 		goto error;
 	}
 
-	if ( skipLength( str, 1 ) < 0 ) {
+	if ( cgc_skipLength( str, 1 ) < 0 ) {
 		goto error;
 	}
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
-	if ( !atChar( str, '#' ) ) {
+	if ( !cgc_atChar( str, '#' ) ) {
 		goto error;
 	}
 
-	if ( skipLength( str, 1 ) < 0 ) {
+	if ( cgc_skipLength( str, 1 ) < 0 ) {
 		goto error;
 	}
 
 	startIndex = str->index;
 
-	endIndex = skipAlpha( str );
+	endIndex = cgc_skipAlpha( str );
 
 	if ( endIndex < 0 ) {
 		goto error;
@@ -558,48 +558,48 @@ pCountry countryTopLevel( pstring str )
 		goto error;
 	}
 
-	temp_name = copyData( str, startIndex, endIndex );
+	temp_name = cgc_copyData( str, startIndex, endIndex );
 
 	if ( temp_name == NULL ) {
 		goto error;
 	}
 
-	if ( strcmp( temp_name, "Country" ) != 0 ) {
-		deallocate(temp_name, strlen(temp_name) + 1 );
+	if ( cgc_strcmp( temp_name, "cgc_Country" ) != 0 ) {
+		deallocate(temp_name, cgc_strlen(temp_name) + 1 );
 		goto error;
 	}
 
-	deallocate( temp_name, strlen(temp_name) + 1 );
+	deallocate( temp_name, cgc_strlen(temp_name) + 1 );
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '}' ) ) {
+	if ( !cgc_atChar( str, '}' ) ) {
 		goto error;
 	}
 
-	incChar( str );
+	cgc_incChar( str );
 
 	goto end;
 error:
 	if (newCountry != NULL ) {
-		freeCountry( newCountry );
+		cgc_freeCountry( newCountry );
 		newCountry = NULL;
 	}
 
 	str->index = lastGood;
 
-	printf("Error at: @s\n", str->buffer + str->index);
+	cgc_printf("Error at: @s\n", str->buffer + str->index);
 
 end:
 	return newCountry;
 }
 
 /**
- * Parse the Language element and return the stored value
- * @param str Pointer to a string structure
- * @return Returns the language character string or NULL on failure
+ * Parse the Language cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
+ * @return Returns the language character cgc_string or NULL on failure
  **/
-char* extractLanguage( pstring str )
+char* cgc_extractLanguage( cgc_pstring str )
 {
 	char *temp = NULL;
 	char *language = NULL;
@@ -610,119 +610,119 @@ char* extractLanguage( pstring str )
 		return NULL;
 	}
 
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return language;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return language;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the element id\n");
+		cgc_printf("!!Failed to locate the end of the cgc_element id\n");
 		return language;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
-		printf("!!Copy from @d to @d failed\n", start, end);
+		cgc_printf("!!Copy from @d to @d failed\n", start, end);
 		return NULL;
 	}
 
-	/// If the element id is not "Language" then this is the wrong function
-	if ( strcmp( temp, "Language") != 0 ) {
-		printf("!!Element id is not \"Language\"\n");
-		deallocate( temp, strlen(temp) + 1 );
+	/// If the cgc_element id is not "Language" then this is the wrong function
+	if ( cgc_strcmp( temp, "Language") != 0 ) {
+		cgc_printf("!!Element id is not \"Language\"\n");
+		deallocate( temp, cgc_strlen(temp) + 1 );
 		temp = NULL;
 		return language;
 	}
 
 	/// The buffer is no longer needed so free it
-	deallocate(temp, strlen(temp) + 1);
+	deallocate(temp, cgc_strlen(temp) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate initial closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate initial closing brace\n");
 		return NULL;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip initial closing brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip initial closing brace\n");
 		return language;
 	}
 
-	start = skipWhiteSpace( str );
-	end = skipAlpha( str );
+	start = cgc_skipWhiteSpace( str );
+	end = cgc_skipAlpha( str );
 
 	if ( start == end ) {
-		printf("!!Failed to find language data\n");
+		cgc_printf("!!Failed to find language data\n");
 		return language;
 	}
 
-	/// Copy the language element data
-	language = copyData( str, start, end );
+	/// Copy the language cgc_element data
+	language = cgc_copyData( str, start, end );
 
 	if ( language == NULL ) {
-		printf("!!Failed to copy language data\n");
+		cgc_printf("!!Failed to copy language data\n");
 		return language;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		goto error;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		goto error;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		goto error;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		goto error;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -730,31 +730,31 @@ char* extractLanguage( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Language") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Language") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		goto error;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto error;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
 
 	goto end;
 
 error:
 	if (language != NULL) {
-		deallocate( language, strlen(language) + 1 );
+		deallocate( language, cgc_strlen(language) + 1 );
 		language = NULL;
 	}
 
@@ -763,11 +763,11 @@ end:
 }
 
 /**
- * Parse the Capitol element and return the stored value
- * @param str Pointer to a string structure
- * @return Returns the capitol string or NULL on failure
+ * Parse the Capitol cgc_element and return the stored value
+ * @param str Pointer to a cgc_string structure
+ * @return Returns the capitol cgc_string or NULL on failure
  **/
-char* extractCapitol( pstring str )
+char* cgc_extractCapitol( cgc_pstring str )
 {
 	char *temp = NULL;
 	char *capitol = NULL;
@@ -778,38 +778,38 @@ char* extractCapitol( pstring str )
 		return NULL;
 	}
 
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate opening brace\n");
 		return capitol;
 	}
 
 	/// Skip past the curly brace
-	if ( skipLength( str, 1 ) == -1 ) {
-		printf("!!Failed to skip opening brace\n");
+	if ( cgc_skipLength( str, 1 ) == -1 ) {
+		cgc_printf("!!Failed to skip opening brace\n");
 		return NULL;
 	}
 
 	/// Skip any additional whitespace
-	start = skipWhiteSpace(str);
+	start = cgc_skipWhiteSpace(str);
 
 	/// This should skip any to either whitespace or a closing '}'
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
 		return NULL;
 	}
 
-	/// Copy the element id from the string
-	temp = copyData( str, start, end );
+	/// Copy the cgc_element id from the cgc_string
+	temp = cgc_copyData( str, start, end );
 
 	if ( temp == NULL ) {
 		return NULL;
 	}
 
-	/// If the element id is not "Capitol" then this is the wrong function
-	if ( strcmp( temp, "Capitol") != 0 ) {
+	/// If the cgc_element id is not "Capitol" then this is the wrong function
+	if ( cgc_strcmp( temp, "Capitol") != 0 ) {
 		deallocate( temp, (end-start) + 1 );
 		temp = NULL;
 		return temp;
@@ -818,74 +818,74 @@ char* extractCapitol( pstring str )
 	/// The buffer is no longer needed so free it
 	deallocate(temp, (end-start) + 1);
 
-	/// Skip to the end of the element id
-	skipWhiteSpace( str );
+	/// Skip to the end of the cgc_element id
+	cgc_skipWhiteSpace( str );
 
 	/// If it is not a closing brace then this is improperly formatted.
-	if ( !atChar( str, '}' ) ) {
+	if ( !cgc_atChar( str, '}' ) ) {
 		return NULL;
 	}
 
 	/// Skip the closing brace as well as any whitespace
-	if ( incChar( str ) == -1 ) {
+	if ( cgc_incChar( str ) == -1 ) {
 		return NULL;
 	}
 
-	skipWhiteSpace( str );
-	getIndex( str, &start );
+	cgc_skipWhiteSpace( str );
+	cgc_getIndex( str, &start );
 
-	end = skipAlpha( str );
+	end = cgc_skipAlpha( str );
 
 	if ( !(start ^ end) ) {
 		return NULL;
 	}
 
-	/// Copy the capitol element data
-	capitol = copyData( str, start, end );
+	/// Copy the capitol cgc_element data
+	capitol = cgc_copyData( str, start, end );
 
 	if ( capitol == NULL ) {
 		return NULL;
 	}
 
 	/// The rest of this code is a check to ensure proper formatting except for the copy data
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// If this is not an opening curly brace then fail
-	if ( !atChar( str, '{' ) ) {
-		printf("!!Failed to locate the final opening brace\n");
+	if ( !cgc_atChar( str, '{' ) ) {
+		cgc_printf("!!Failed to locate the final opening brace\n");
 		goto error;
 	}
 
 	/// Skip past the brace
-	if ( incChar( str) == -1 ) {
-		printf("!!Failed to skip the final opening brace\n");
+	if ( cgc_incChar( str) == -1 ) {
+		cgc_printf("!!Failed to skip the final opening brace\n");
 		goto error;
 	}
 	
-	skipWhiteSpace(str);
+	cgc_skipWhiteSpace(str);
 
 	/// If this is not a # indicating the closing brace then fail
-	if ( !atChar( str, '#' ) ) {
-		printf("!!Failed to locate the closing mark\n");		
+	if ( !cgc_atChar( str, '#' ) ) {
+		cgc_printf("!!Failed to locate the closing mark\n");		
 		goto error;
 	}
 
 	/// Skip past the # but save the start
-	start = skipLength( str, 1 );
+	start = cgc_skipLength( str, 1 );
 
 	if ( start == -1 ) {
-		printf("!!Failed to skip closing mark\n");
+		cgc_printf("!!Failed to skip closing mark\n");
 		goto error;
 	}
 
-	end = skipToNonAlphaNum( str );
+	end = cgc_skipToNonAlphaNum( str );
 
 	if ( end == -1 ) {
-		printf("!!Failed to locate the end of the closing element id\n");
+		cgc_printf("!!Failed to locate the end of the closing cgc_element id\n");
 		goto error;
 	}
 	
-	temp = copyData( str, start, end );
+	temp = cgc_copyData( str, start, end );
 
 #ifdef PATCHED
 	if ( temp == NULL ) {
@@ -893,31 +893,31 @@ char* extractCapitol( pstring str )
 	}
 #endif
 
-	if ( strcmp( temp, "Capitol") != 0 ) {
-		printf("!!Invalid closing element id: @s\n", temp);
-		deallocate(temp, strlen(temp)+1);
+	if ( cgc_strcmp( temp, "Capitol") != 0 ) {
+		cgc_printf("!!Invalid closing cgc_element id: @s\n", temp);
+		deallocate(temp, cgc_strlen(temp)+1);
 		goto error;
 	}
 
-	deallocate(temp, strlen(temp)+1);
+	deallocate(temp, cgc_strlen(temp)+1);
 
-	skipWhiteSpace( str );
+	cgc_skipWhiteSpace( str );
 
 	/// Check the final curly brace
-	if ( !atChar( str, '}' ) ) {
-		printf("!!Failed to locate final closing brace\n");
+	if ( !cgc_atChar( str, '}' ) ) {
+		cgc_printf("!!Failed to locate final closing brace\n");
 		goto error;
 	}
 
 	/// Skip past the closing brace
-	skipLength( str, 1 );
+	cgc_skipLength( str, 1 );
 		
 
 	goto end;
 
 error:
 	if (capitol != NULL) {
-		deallocate( capitol, strlen(capitol) + 1 );
+		deallocate( capitol, cgc_strlen(capitol) + 1 );
 		capitol = NULL;
 	}
 

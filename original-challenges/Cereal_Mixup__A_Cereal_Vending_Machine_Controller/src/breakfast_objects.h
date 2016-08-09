@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,121 +28,121 @@
 // TODO: enable "other" types after the basic stuff is up and working.
 
 typedef enum SerialVersionUID {LIQUID, CEREAL, TOPPINGS, GENERIC_STRING,
-			PRINTER_STRING, COMMAND_RUNNER, SVU_COUNT} svu_t;
+			PRINTER_STRING, COMMAND_RUNNER, SVU_COUNT} cgc_svu_t;
 
 typedef enum LiquidsSubTypeID {DAIRY_MILK, DAIRY_CREAM,	WATER, SOY_MILK,
-			ALMOND_MILK, L_STI_COUNT} l_sti_t;
+			ALMOND_MILK, L_STI_COUNT} cgc_l_sti_t;
 
 typedef enum CerealsSubTypeID {SUGAR_LOOPS, MAIZE_FLAKES, MARSHMALLOW_FIGURINES,
 			CHOCOLATE_RICE_PELLETS, OHHS_OF_OATS, CRUNCHY_PUFFS, FRUITZ_N_NUTZ,
-			C_STI_COUNT} c_sti_t;
+			C_STI_COUNT} cgc_c_sti_t;
 
 typedef enum ToppingsSubTypeID {CHOCOLATE_DROPS, BLUEBERRIES, BERRY_MEDLEY,
-			SUGAR_CUBE,	STRAWBERRIES, T_STI_COUNT} t_sti_t;
+			SUGAR_CUBE,	STRAWBERRIES, T_STI_COUNT} cgc_t_sti_t;
 
 extern const char *typeName[];
 
 // Object types for the application
 
-typedef struct liquids Liquids;
+typedef struct liquids cgc_Liquids;
 struct liquids {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[8];
-	l_sti_t subTypeID;
-	int (*set_data)(Liquids *, svu_t, l_sti_t);
-	void (*destroy)(Liquids *);
+	cgc_l_sti_t subTypeID;
+	int (*set_data)(cgc_Liquids *, cgc_svu_t, cgc_l_sti_t);
+	void (*destroy)(cgc_Liquids *);
 };
 
-typedef struct cereals Cereals;
+typedef struct cereals cgc_Cereals;
 struct cereals {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[8];
-	c_sti_t subTypeID;
-	int (*set_data)(Cereals *, svu_t, c_sti_t);
-	void (*destroy)(Cereals *);
+	cgc_c_sti_t subTypeID;
+	int (*set_data)(cgc_Cereals *, cgc_svu_t, cgc_c_sti_t);
+	void (*destroy)(cgc_Cereals *);
 };
 
-typedef struct toppings Toppings;
+typedef struct toppings cgc_Toppings;
 struct toppings {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[9];
-	t_sti_t subTypeID;
-	int (*set_data)(Toppings *, svu_t, t_sti_t);
-	void (*destroy)(Toppings *);
+	cgc_t_sti_t subTypeID;
+	int (*set_data)(cgc_Toppings *, cgc_svu_t, cgc_t_sti_t);
+	void (*destroy)(cgc_Toppings *);
 };
 
 // Object types that come with the SDK (whether you ask for them or not)
-typedef struct genericString GenericString;
+typedef struct genericString cgc_GenericString;
 struct genericString {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[15];
 	char *str;
-	int (*set_data)(GenericString *, svu_t, char *);
-	void (*destroy)(GenericString *);
+	int (*set_data)(cgc_GenericString *, cgc_svu_t, char *);
+	void (*destroy)(cgc_GenericString *);
 };
 
-typedef struct printerString PrinterString;
+typedef struct printerString cgc_PrinterString;
 struct printerString {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[15];
 	char *str;
-	int (*set_data)(PrinterString *, svu_t, char *);
-	void (*destroy)(PrinterString *);
+	int (*set_data)(cgc_PrinterString *, cgc_svu_t, char *);
+	void (*destroy)(cgc_PrinterString *);
 };
 
-typedef __attribute__((regparm(2))) void (*run_fn)(int, int, int);
+typedef __attribute__((regparm(2))) void (*cgc_run_fn)(int, int, int);
 
-typedef struct commandRunner CommandRunner;
+typedef struct commandRunner cgc_CommandRunner;
 struct commandRunner {
-	svu_t serialVersionUID;
+	cgc_svu_t serialVersionUID;
 	unsigned char typeName[15];
-	run_fn fn;
+	cgc_run_fn fn;
 	unsigned short argc;
 	int argv[3];
-	int (*set_data)(CommandRunner *, svu_t, unsigned short, char *);
-	void (*destroy)(CommandRunner *);
+	int (*set_data)(cgc_CommandRunner *, cgc_svu_t, unsigned short, char *);
+	void (*destroy)(cgc_CommandRunner *);
 };
 
 /**
- * Construct an empty Liquids object
+ * Construct an empty cgc_Liquids object
  *
  * @return VA of object or NULL on error
  */
-Liquids *constructor_liquids(void);
+cgc_Liquids *cgc_constructor_liquids(void);
 /**
- * Construct an empty Cereals object
+ * Construct an empty cgc_Cereals object
  *
  * @return VA of object or NULL on error
  */
-Cereals *constructor_cereals(void);
+cgc_Cereals *cgc_constructor_cereals(void);
 /**
- * Construct an empty Toppings object
+ * Construct an empty cgc_Toppings object
  *
  * @return VA of object or NULL on error
  */
-Toppings *constructor_toppings(void);
+cgc_Toppings *cgc_constructor_toppings(void);
 
 /**
- * Deserialize a Liquids object from a given buffer
+ * Deserialize a cgc_Liquids object from a given buffer
  *
  * @param in 	Pointer to input buffer
  * @return VA of deserialized object or NULL on error
  */
-Liquids *deserialize_liquids(char **in);
+cgc_Liquids *cgc_deserialize_liquids(char **in);
 /**
- * Deserialize a Cereals object from a given buffer
+ * Deserialize a cgc_Cereals object from a given buffer
  *
  * @param in 	Pointer to input buffer
  * @return VA of deserialized object or NULL on error
  */
-Cereals *deserialize_cereals(char **in);
+cgc_Cereals *cgc_deserialize_cereals(char **in);
 /**
- * Deserialize a Toppings object from a given buffer
+ * Deserialize a cgc_Toppings object from a given buffer
  *
  * @param in 	Pointer to input buffer
  * @return VA of deserialized object or NULL on error
  */
-Toppings *deserialize_toppings(char **in);
+cgc_Toppings *cgc_deserialize_toppings(char **in);
 
 /**
  * Check input buffer for serialized forms of inherited types
@@ -151,7 +151,7 @@ Toppings *deserialize_toppings(char **in);
  * @param cur 				Pointer to input buffer
  * @return SUCCESS if inherited type was found/deserialized, else -1
  */
-ssize_t check_inherited_types(svu_t serialVersionUID, char **cur);
+cgc_ssize_t cgc_check_inherited_types(cgc_svu_t serialVersionUID, char **cur);
 
 #endif
 

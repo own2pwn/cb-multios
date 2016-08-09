@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include "libc.h"
 #include "utility.h"
 
-extern gamestate *state;
+extern cgc_gamestate *state;
 
-char *cardName(int cardNum) {
+char *cgc_cardName(int cardNum) {
 	switch(cardNum+1) {
 		case 1:
 			return "two";
@@ -60,7 +60,7 @@ char *cardName(int cardNum) {
 	return "?";
 }
 
-char *cardSuite(int cardNum) {
+char *cgc_cardSuite(int cardNum) {
 	switch(cardNum) {
 		case 0:
 			return "spades";
@@ -74,53 +74,53 @@ char *cardSuite(int cardNum) {
 	return "?";
 }
 
-void war() {
+void cgc_war() {
 	int wager;
 	unsigned int playerCard;
 	unsigned int dealerCard;
 
-	wager = getBet(state);
+	wager = cgc_getBet(state);
 	if(wager < 0)
 		return;
 
-	playerCard = hugsnextrand(state);
-	dealerCard = hugsnextrand(state);
+	playerCard = cgc_hugsnextrand(state);
+	dealerCard = cgc_hugsnextrand(state);
 	top:
 	if(dealerCard % 13 > playerCard % 13) {
-		put("Dealer's ");
-		put(cardName(dealerCard % 13));
-		put(" of ");
-		put(cardSuite(dealerCard % 4));
-		put(" beats player's ");
-		put(cardName(playerCard % 13));
-		put(" of ");
-		put(cardSuite(playerCard % 4));
-		put("\n");
-		handleOutcome(state, 0, wager);
+		cgc_put("Dealer's ");
+		cgc_put(cgc_cardName(dealerCard % 13));
+		cgc_put(" of ");
+		cgc_put(cgc_cardSuite(dealerCard % 4));
+		cgc_put(" beats player's ");
+		cgc_put(cgc_cardName(playerCard % 13));
+		cgc_put(" of ");
+		cgc_put(cgc_cardSuite(playerCard % 4));
+		cgc_put("\n");
+		cgc_handleOutcome(state, 0, wager);
 	} else if (dealerCard % 13 < playerCard % 13) {
-		put("Player's ");
-		put(cardName(playerCard % 13));
-		put(" of ");
-		put(cardSuite(playerCard % 4));
-		put(" beats dealer's ");
-		put(cardName(dealerCard % 13));
-		put(" of ");
-		put(cardSuite(dealerCard % 4));
-		put("\n");
-		handleOutcome(state, 1, wager);
+		cgc_put("Player's ");
+		cgc_put(cgc_cardName(playerCard % 13));
+		cgc_put(" of ");
+		cgc_put(cgc_cardSuite(playerCard % 4));
+		cgc_put(" beats dealer's ");
+		cgc_put(cgc_cardName(dealerCard % 13));
+		cgc_put(" of ");
+		cgc_put(cgc_cardSuite(dealerCard % 4));
+		cgc_put("\n");
+		cgc_handleOutcome(state, 1, wager);
 	} else {
-		put("Both players drew a ");
-		put(cardName(playerCard % 13));
-		put("\nTHIS MEANS WAR\n");
+		cgc_put("Both players drew a ");
+		cgc_put(cgc_cardName(playerCard % 13));
+		cgc_put("\nTHIS MEANS WAR\n");
 		wager *= 2;
-		hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		playerCard = hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		hugsnextrand(state);
-		dealerCard = hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		playerCard = cgc_hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		cgc_hugsnextrand(state);
+		dealerCard = cgc_hugsnextrand(state);
 		goto top;
 	}
 }

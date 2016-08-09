@@ -25,11 +25,11 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // MOD from REDPILL: bails substituted for immediate returns.
-int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  size_t bytes_left = count;
-  size_t rx_bytes_local = 0;
+  cgc_size_t bytes_left = count;
+  cgc_size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -37,7 +37,7 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
       if (SUCCESS != (ret = receive(STDIN, buf+(count-bytes_left), bytes_left, &rx_bytes_local))) {
 #ifdef DEBUG
-          fprintf(stderr, "[E] receive () call within receive_all() failed\n");
+          fprintf(stderr, "[E] receive () call within cgc_receive_all() failed\n");
 #endif
           return ret;
       }
@@ -51,7 +51,7 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
       }
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] in receive_all(), got %d bytes\n", rx_bytes_local);
+        fprintf(stderr, "[D] in cgc_receive_all(), got %d bytes\n", rx_bytes_local);
 #endif
       bytes_left -= rx_bytes_local;
   }
@@ -65,11 +65,11 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // MOD from REDPILL: bails substituted for immediate returns.
-int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
 
   int ret = SUCCESS;
-  size_t bytes_left = count;
-  size_t tx_bytes_local = 0;
+  cgc_size_t bytes_left = count;
+  cgc_size_t tx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -77,7 +77,7 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
     if (SUCCESS != (ret = transmit(STDIN, buf, bytes_left, &tx_bytes_local))) {
       #ifdef DEBUG
-        fprintf(stderr, "[E] transmit () call within transmit_all() failed\n");
+        fprintf(stderr, "[E] transmit () call within cgc_transmit_all() failed\n");
       #endif
         return ret;
     }
@@ -91,22 +91,22 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
   return ret;
 }
 
-// Wrapper for transmit_all() that terminates packets with our custom string 
+// Wrapper for cgc_transmit_all() that terminates packets with our custom string 
 // terminator.
-int transmit_with_term(int fd, const void *buf, size_t count, size_t *tx_bytes) {
+int cgc_transmit_with_term(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
 
    int ret = SUCCESS;
 
-   if (SUCCESS != (ret = transmit_all(fd, buf, count, tx_bytes))) { 
+   if (SUCCESS != (ret = cgc_transmit_all(fd, buf, count, tx_bytes))) { 
 #ifdef DEBUG
-      fprintf(stderr, "[E] in transmit_with_term(), during transmit (actual data)\n");
+      fprintf(stderr, "[E] in cgc_transmit_with_term(), during transmit (actual data)\n");
 #endif
       return ret;
    }
 
-   if (SUCCESS != (ret = transmit_all(fd, (void *)&STRING_TERMINATOR_STR, 1, tx_bytes))) { 
+   if (SUCCESS != (ret = cgc_transmit_all(fd, (void *)&STRING_TERMINATOR_STR, 1, tx_bytes))) { 
 #ifdef DEBUG
-      fprintf(stderr, "[E] in transmit_with_term(), during transmit (STRING_TERMINATOR)\n");
+      fprintf(stderr, "[E] in cgc_transmit_with_term(), during transmit (STRING_TERMINATOR)\n");
 #endif
       return ret;
    }
@@ -114,15 +114,15 @@ int transmit_with_term(int fd, const void *buf, size_t count, size_t *tx_bytes) 
    return ret;
 }
 
-// Wrapper for receive_all() that terminates buffers with our STRING_TERMINATOR.
+// Wrapper for cgc_receive_all() that terminates buffers with our STRING_TERMINATOR.
 // Destination buffer MUST be 1 byte larger than count (count+1).
-int receive_with_term(int fd, void *buf, size_t count, size_t *rx_bytes) {
+int cgc_receive_with_term(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 
    int ret = SUCCESS;
 
-   if (SUCCESS != (ret = receive_all(fd, buf, count, rx_bytes))) { 
+   if (SUCCESS != (ret = cgc_receive_all(fd, buf, count, rx_bytes))) { 
 #ifdef DEBUG
-      fprintf(stderr, "[E] in receive_with_term(), during receive (actual data)\n");
+      fprintf(stderr, "[E] in cgc_receive_with_term(), during receive (actual data)\n");
 #endif
       return ret;
    }
@@ -134,9 +134,9 @@ int receive_with_term(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
 // MOD FROM: KPRCA_00001
 // Changed definition of string (no longer terminated by NULL) + added n arg.
-char *strncpy(char *dest, const char *src, size_t n)
+char *cgc_strncpy(char *dest, const char *src, cgc_size_t n)
 {
-   size_t i;
+   cgc_size_t i;
    for (i = 0; (src[i] != STRING_TERMINATOR) && (0 < n--); i++) {
       dest[i] = src[i];
    }
@@ -145,19 +145,19 @@ char *strncpy(char *dest, const char *src, size_t n)
 }
 
 // From the docs:
-// The strcat() and strncat() functions append a copy of the null-terminated 
+// The strcat() and cgc_strncat() functions append a copy of the null-terminated 
 // string s2 to the end of the null-terminated string s1, then add a 
 // terminating `\0'.  
-// The strncat() function appends not more than n characters from s2, and then 
+// The cgc_strncat() function appends not more than n characters from s2, and then 
 // adds a terminating `\0'.
 // NOTE: not POSIX
-char * strncat(char *s1, const char *s2, size_t n) {
+char * cgc_strncat(char *s1, const char *s2, cgc_size_t n) {
 
    // Find the end of s1.
-   char *cat_begin = s1 + strlen(s1);
+   char *cat_begin = s1 + cgc_strlen(s1);
 
    // Copy the specified amount to the end of s1.
-   strncpy(cat_begin, s2, n);
+   cgc_strncpy(cat_begin, s2, n);
 
    // Add the STRING_TERMINATOR
    cat_begin[n] = STRING_TERMINATOR;
@@ -167,7 +167,7 @@ char * strncat(char *s1, const char *s2, size_t n) {
 }
 
 // IDENTICAL TO: REDPILL
-unsigned char * memset(void *b, char c, size_t len) {
+unsigned char * cgc_memset(void *b, char c, cgc_size_t len) {
 
   char *ptr = (char *)b; 
   while (len) {
@@ -182,17 +182,17 @@ unsigned char * memset(void *b, char c, size_t len) {
 // If no needle found, return NULL.
 // NOTE: This function is horribly inefficient... so it probably doesn't look 
 //    like a real function a CRS might be trained on.  Yey silver lining.
-char * strpos(char * haystack, char * needle) {
+char * cgc_strpos(char * haystack, char * needle) {
 
    char * pos = NULL;
-   size_t sz_haystack = strlen(haystack);
-   size_t sz_needle = strlen(needle);
+   cgc_size_t sz_haystack = cgc_strlen(haystack);
+   cgc_size_t sz_needle = cgc_strlen(needle);
 
    // If the substring is longer than the string, then we're not finding it.
    if (sz_haystack < sz_needle) { return NULL; }
 
    for (int i = 0; i <= (sz_haystack-sz_needle); i++) {
-      if (0 == strncmp(haystack + i, needle, sz_needle)) {
+      if (0 == cgc_strncmp(haystack + i, needle, sz_needle)) {
          pos = haystack + i;
          break;
       }
@@ -205,10 +205,10 @@ char * strpos(char * haystack, char * needle) {
 // Read until size or we see a '\n'.
 // If we receive 0 bytes, keep reading. 
 // MOD from FASTLANE: STRING_TERMINATOR substituted for '\n' 
-int recv_until_delim(int fd, char *buf, size_t size) {
+int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size) {
 
-    size_t bytes_read = 0;
-    size_t cursize = size;
+    cgc_size_t bytes_read = 0;
+    cgc_size_t cursize = size;
 
     if(!size)
         return 0;
@@ -248,7 +248,7 @@ int recv_until_delim(int fd, char *buf, size_t size) {
 
 // BASED ON: EAGLE_00004
 // MOD: changed delimeter, added length parameter
-int strncmp(const char *s1, const char *s2, size_t len) {
+int cgc_strncmp(const char *s1, const char *s2, cgc_size_t len) {
 
    while (*s1 != STRING_TERMINATOR && *s2 != STRING_TERMINATOR && *s1 == *s2) {
       if (--len == 0) { break; }
@@ -260,7 +260,7 @@ int strncmp(const char *s1, const char *s2, size_t len) {
 
 // BASED ON: EAGLE_00004
 // MOD: changed delimeter
-int strcmp(const char *s1, const char *s2) {
+int cgc_strcmp(const char *s1, const char *s2) {
 
    while (*s1 != STRING_TERMINATOR && *s2 != STRING_TERMINATOR && *s1 == *s2) {
       s1++;
@@ -271,8 +271,8 @@ int strcmp(const char *s1, const char *s2) {
 
 // BASED ON: EAGLE_00004
 // MOD: changed delimeter
-size_t strlen(const char *str) {
-   size_t res = 0;
+cgc_size_t cgc_strlen(const char *str) {
+   cgc_size_t res = 0;
    while (STRING_TERMINATOR != *str++) {res++;}
    return res;
 }
@@ -1164,7 +1164,7 @@ static void printf_core(unsigned int (*func)(char, void *, int), void *user, con
                }
                case 's': {
                   const char *s_arg = (const char *)args[field_arg];
-                  int len = strlen(s_arg);
+                  int len = cgc_strlen(s_arg);
                   if (width_value == -1) {
                      //by default min length is the entire string
                      width_value = len;

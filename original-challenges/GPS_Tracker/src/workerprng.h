@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,31 +34,31 @@ THE SOFTWARE.
 
 #define MAGIC_PAGE_SIZE_DWORD	(1024)
 
-class CPRNG
+class cgc_CPRNG
 {
 public:
-	CPRNG( uint32_t *pMagicPage, uint32_t magicPageByteSize );
-	~CPRNG( );
+	cgc_CPRNG( cgc_uint32_t *pMagicPage, cgc_uint32_t magicPageByteSize );
+	~cgc_CPRNG( );
 
-	uint32_t GetRandomU32( void );
-	uint16_t GetRandomU16( void );
-	uint8_t GetRandomU8( void );
+	cgc_uint32_t cgc_GetRandomU32( void );
+	cgc_uint16_t cgc_GetRandomU16( void );
+	cgc_uint8_t cgc_GetRandomU8( void );
 	
-	uint32_t GetRandomRange( uint32_t start, uint32_t end );
+	cgc_uint32_t cgc_GetRandomRange( cgc_uint32_t start, cgc_uint32_t end );
 
 private:
-	uint32_t GetRandomInternal( void );
+	cgc_uint32_t cgc_GetRandomInternal( void );
 
-	void GenerateMatrix( void );	
+	void cgc_GenerateMatrix( void );	
 
 private:
-	uint32_t m_matrixPosition;
-	uint32_t m_matrixSize;
-	uint32_t *m_pGeneratorMatrix;
+	cgc_uint32_t m_matrixPosition;
+	cgc_uint32_t m_matrixSize;
+	cgc_uint32_t *m_pGeneratorMatrix;
 	
-	uint32_t m_magicPagePosition;
-	uint32_t m_magicPageSize;	
-	uint32_t *m_pMagicPage;
+	cgc_uint32_t m_magicPagePosition;
+	cgc_uint32_t m_magicPageSize;	
+	cgc_uint32_t *m_pMagicPage;
 };
 
 #endif // __WORKER_PRNG_H__

@@ -19,7 +19,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-int isdigit(int c) {
+int cgc_isdigit(int c) {
 	switch(c) {
 	case '0':
 	case '1':
@@ -37,7 +37,7 @@ int isdigit(int c) {
 	}
 }
 
-int atoi(char* str) {
+int cgc_atoi(char* str) {
 
 	int ret = 0; 
 	int sign = -1;
@@ -54,7 +54,7 @@ int atoi(char* str) {
 	}
 
 	for(; str[index] != '\0'; index++) {
-		if(0 == isdigit(str[index]))
+		if(0 == cgc_isdigit(str[index]))
 			return 0;
 
 		ret = ret*10 + str[index] - '0';

@@ -3,14 +3,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-double strtod(const char *str, char **endptr)
+double cgc_strtod(const char *str, char **endptr)
 {
     const char *orig = str;
     char c;
     int n, neg = 0, point = 0;
     double val = 0, under = 1;
 
-    while (*str && isspace(*str))
+    while (*str && cgc_isspace(*str))
         str++;
 
     if (*str == '-')

@@ -28,17 +28,17 @@ THE SOFTWARE.
 #include "date.h"
 #include "database.h"
 
-tDDAPRecord g_ddapDatabase[MAX_DDAP_RECORDS];
-uint32_t g_recordCount;
+cgc_tDDAPRecord g_ddapDatabase[MAX_DDAP_RECORDS];
+cgc_uint32_t g_recordCount;
 
-void init_database( void )
+void cgc_init_database( void )
 {
     g_recordCount = 0;
 }
 
-uint32_t db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate )
+cgc_uint32_t cgc_db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName, cgc_tDateTime birthDate )
 {
-    uint32_t index;
+    cgc_uint32_t index;
 
     if ( g_recordCount >= MAX_DDAP_RECORDS )
         return (BAD_RECORD_ERROR);
@@ -46,34 +46,34 @@ uint32_t db_add_record( char *pszUserName, char *pszFirstName, char *pszLastName
     index = g_recordCount;
     g_ddapDatabase[g_recordCount].index = index;
 
-    strncpy( g_ddapDatabase[g_recordCount].szFirstName, pszFirstName, MAX_STRING_LENGTH );
-    strncpy( g_ddapDatabase[g_recordCount].szLastName, pszLastName, MAX_STRING_LENGTH );
-    strncpy( g_ddapDatabase[g_recordCount].szUserName, pszUserName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[g_recordCount].szFirstName, pszFirstName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[g_recordCount].szLastName, pszLastName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[g_recordCount].szUserName, pszUserName, MAX_STRING_LENGTH );
 
-    memcpy( &g_ddapDatabase[g_recordCount].birthDate, &birthDate, sizeof(tDateTime) );
+    cgc_memcpy( &g_ddapDatabase[g_recordCount].birthDate, &birthDate, sizeof(cgc_tDateTime) );
 
     g_recordCount++;
 
     return (index);
 }
 
-uint32_t db_update_record( uint32_t index, char *pszUserName, char *pszFirstName, char *pszLastName, tDateTime birthDate )
+cgc_uint32_t cgc_db_update_record( cgc_uint32_t index, char *pszUserName, char *pszFirstName, char *pszLastName, cgc_tDateTime birthDate )
 {
     if ( index >= g_recordCount )
         return (0);
 
-    strncpy( g_ddapDatabase[index].szFirstName, pszFirstName, MAX_STRING_LENGTH );
-    strncpy( g_ddapDatabase[index].szLastName, pszLastName, MAX_STRING_LENGTH );
-    strncpy( g_ddapDatabase[index].szUserName, pszUserName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[index].szFirstName, pszFirstName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[index].szLastName, pszLastName, MAX_STRING_LENGTH );
+    cgc_strncpy( g_ddapDatabase[index].szUserName, pszUserName, MAX_STRING_LENGTH );
 
-    memcpy( &g_ddapDatabase[index].birthDate, &birthDate, sizeof(tDateTime) );
+    cgc_memcpy( &g_ddapDatabase[index].birthDate, &birthDate, sizeof(cgc_tDateTime) );
 
     return (1);
 }
 
-uint32_t db_remove_record( uint32_t index )
+cgc_uint32_t cgc_db_remove_record( cgc_uint32_t index )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     if ( index >= g_recordCount )
         return 0;
@@ -86,75 +86,75 @@ uint32_t db_remove_record( uint32_t index )
     for ( i = index; i < g_recordCount; i++ )
     {
         g_ddapDatabase[i].index = g_ddapDatabase[i+1].index-1;
-        strcpy( g_ddapDatabase[i].szFirstName, g_ddapDatabase[i+1].szFirstName );
-        strcpy( g_ddapDatabase[i].szLastName, g_ddapDatabase[i+1].szLastName );
-        strcpy( g_ddapDatabase[i].szUserName, g_ddapDatabase[i+1].szUserName );
+        cgc_strcpy( g_ddapDatabase[i].szFirstName, g_ddapDatabase[i+1].szFirstName );
+        cgc_strcpy( g_ddapDatabase[i].szLastName, g_ddapDatabase[i+1].szLastName );
+        cgc_strcpy( g_ddapDatabase[i].szUserName, g_ddapDatabase[i+1].szUserName );
 
-        memcpy( &g_ddapDatabase[i].birthDate, &g_ddapDatabase[i+1].birthDate, sizeof(tDateTime) );
+        cgc_memcpy( &g_ddapDatabase[i].birthDate, &g_ddapDatabase[i+1].birthDate, sizeof(cgc_tDateTime) );
     }
 
     // 1 for successly deleting record
     return 1;
 }
 
-uint32_t db_get_record_count( void )
+cgc_uint32_t cgc_db_get_record_count( void )
 {
     return (g_recordCount);
 }
 
-tDDAPRecord *db_search_first_name( char *pszFirstName )
+cgc_tDDAPRecord *cgc_db_search_first_name( char *pszFirstName )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     for ( i = 0; i < g_recordCount; i++ )
     {
-        if ( strcmp( pszFirstName, g_ddapDatabase[i].szFirstName ) == 0 )
+        if ( cgc_strcmp( pszFirstName, g_ddapDatabase[i].szFirstName ) == 0 )
             return (&g_ddapDatabase[i]);
     }
 
     return (NULL);
 }
 
-tDDAPRecord *db_search_last_name( char *pszLastName )
+cgc_tDDAPRecord *cgc_db_search_last_name( char *pszLastName )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     for ( i = 0; i < g_recordCount; i++ )
     {
-        if ( strcmp( pszLastName, g_ddapDatabase[i].szLastName ) == 0 )
+        if ( cgc_strcmp( pszLastName, g_ddapDatabase[i].szLastName ) == 0 )
             return (&g_ddapDatabase[i]);
     }
 
     return (NULL);
 }
 
-tDDAPRecord *db_search_user_name( char *pszUserName )
+cgc_tDDAPRecord *cgc_db_search_user_name( char *pszUserName )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     for ( i = 0; i < g_recordCount; i++ )
     {
-        if ( strcmp( pszUserName, g_ddapDatabase[i].szUserName ) == 0 )
+        if ( cgc_strcmp( pszUserName, g_ddapDatabase[i].szUserName ) == 0 )
             return (&g_ddapDatabase[i]);
     }
 
     return (NULL);
 }
 
-tDDAPRecord *db_search_birth_date( tDateTime birthDate )
+cgc_tDDAPRecord *cgc_db_search_birth_date( cgc_tDateTime birthDate )
 {
-    uint32_t i;
+    cgc_uint32_t i;
 
     for ( i = 0; i < g_recordCount; i++ )
     {
-        if ( date_compare( g_ddapDatabase[i].birthDate, birthDate ) == 0 )
+        if ( cgc_date_compare( g_ddapDatabase[i].birthDate, birthDate ) == 0 )
             return (&g_ddapDatabase[i]);
     }
 
     return (NULL);
 }
 
-tDDAPRecord *db_search_index( uint32_t index )
+cgc_tDDAPRecord *cgc_db_search_index( cgc_uint32_t index )
 {
     if ( index < g_recordCount )
         return (&g_ddapDatabase[index]);
@@ -162,14 +162,14 @@ tDDAPRecord *db_search_index( uint32_t index )
     return (NULL);
 }
 
-void print_record_helper( tDDAPRecord *pRecord )
+void cgc_print_record_helper( cgc_tDDAPRecord *pRecord )
 {
     if ( pRecord == NULL )
         return;
 
-    printf( "Record [$d]\n", pRecord->index );
-    printf( "First name: $s\n", pRecord->szFirstName );
-    printf( "Last name: $s\n", pRecord->szLastName );
-    printf( "User name: $s\n", pRecord->szUserName );
-    printf( "Birthdate: $d/$d/$d $d:$d:$d\n", pRecord->birthDate.month, pRecord->birthDate.day, GET_DB_YEAR(pRecord->birthDate.year), pRecord->birthDate.hour, pRecord->birthDate.minute, pRecord->birthDate.second );
+    cgc_printf( "Record [$d]\n", pRecord->index );
+    cgc_printf( "First name: $s\n", pRecord->szFirstName );
+    cgc_printf( "Last name: $s\n", pRecord->szLastName );
+    cgc_printf( "User name: $s\n", pRecord->szUserName );
+    cgc_printf( "Birthdate: $d/$d/$d $d:$d:$d\n", pRecord->birthDate.month, pRecord->birthDate.day, GET_DB_YEAR(pRecord->birthDate.year), pRecord->birthDate.hour, pRecord->birthDate.minute, pRecord->birthDate.second );
 }

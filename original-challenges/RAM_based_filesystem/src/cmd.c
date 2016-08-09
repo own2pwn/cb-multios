@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,32 +29,32 @@ THE SOFTWARE.
 #include "fs.h"
 #include "cmd.h"
 
-ShellCmds cmds[] = {
-	{ "show",       LsHandler,     "List files in a directory" },
-	{ "dump",       CatHandler,    "Dump the contents of a file" },
-	{ "delete",     RmHandler,     "Delete a file" },
-	{ "mkfolder",   MkdirHandler,  "Make a new directory" },
-	{ "delfolder",  RmdirHandler,  "Delete a directory" },
-	{ "bye",        ExitHandler,   "Exit the program" },
-	{ "echo",       EchoHandler,   "Echo a string to the screen or into a file" },
-	{ "fsinfo",     DfHandler,     "Provides usage information about filesystem" },
-	{ "help",       HelpHandler,   "Help listing" },
-	{ "?",          HelpHandler,   "Help listing" },
+cgc_ShellCmds cmds[] = {
+	{ "show",       cgc_LsHandler,     "List files in a cgc_directory" },
+	{ "dump",       cgc_CatHandler,    "Dump the contents of a file" },
+	{ "delete",     cgc_RmHandler,     "Delete a file" },
+	{ "mkfolder",   cgc_MkdirHandler,  "Make a new cgc_directory" },
+	{ "delfolder",  cgc_RmdirHandler,  "Delete a cgc_directory" },
+	{ "bye",        cgc_ExitHandler,   "Exit the program" },
+	{ "echo",       cgc_EchoHandler,   "Echo a string to the screen or into a file" },
+	{ "fsinfo",     cgc_DfHandler,     "Provides usage information about filesystem" },
+	{ "help",       cgc_HelpHandler,   "Help listing" },
+	{ "?",          cgc_HelpHandler,   "Help listing" },
 	{ NULL,		NULL,		NULL},
 };
 
 extern char *ARGV[];
-extern uint32_t ARGC;
+extern cgc_uint32_t ARGC;
 extern char CWD[];
 
 /*
    read input until the specified delim char is seen or 
    we reach the max length
  */
-int readUntil(char *buf, int max, char delim) {
+int cgc_readUntil(char *buf, int max, char delim) {
 	unsigned char c[1];
-	size_t size;
-	uint32_t i = 0;
+	cgc_size_t size;
+	cgc_uint32_t i = 0;
 
 	while (i < max) {
 		if (receive(STDIN, c, 1, &size) != 0) {
@@ -76,9 +76,9 @@ int readUntil(char *buf, int max, char delim) {
 /*
    Bye command
  */
-int ExitHandler() {
+int cgc_ExitHandler() {
 
-	puts("bye");
+	cgc_puts("bye");
 	_terminate(0);
 
 }
@@ -86,27 +86,27 @@ int ExitHandler() {
 /* 
    mkfolder command 
  */
-int MkdirHandler() {
+int cgc_MkdirHandler() {
 	char pathname[MAX_CMD];
 
 	if (ARGC != 2) {
-		puts("usage: mkfolder <directory>");
+		cgc_puts("usage: mkfolder <cgc_directory>");
 		return(0);
 	}
 
 	if (ARGV[1][0] == '/') {
 		// we have a full path
-		return(mkdir(ARGV[1]));
+		return(cgc_mkdir(ARGV[1]));
 	} else {
 		// we need to prepend the CWD
-		bzero(pathname, MAX_CMD);
-		if ((strlen(CWD)+strlen(ARGV[1]) + 1) > MAX_CMD-1) {
-			puts("command too long");
+		cgc_bzero(pathname, MAX_CMD);
+		if ((cgc_strlen(CWD)+cgc_strlen(ARGV[1]) + 1) > MAX_CMD-1) {
+			cgc_puts("command too long");
 			return(0);
 		}
-		strcpy(pathname, CWD);
-		strcat(pathname, ARGV[1]);
-		return(mkdir(pathname));
+		cgc_strcpy(pathname, CWD);
+		cgc_strcat(pathname, ARGV[1]);
+		return(cgc_mkdir(pathname));
 	}
 
 	return(0);
@@ -115,27 +115,27 @@ int MkdirHandler() {
 /*
    delfolder command
  */ 
-int RmdirHandler() {
+int cgc_RmdirHandler() {
 	char pathname[MAX_CMD];
 
 	if (ARGC != 2) {
-		puts("usage: delfolder <directory>");
+		cgc_puts("usage: delfolder <cgc_directory>");
 		return(0);
 	}
 
 	if (ARGV[1][0] == '/') {
 		// we have a full path
-		return(rmdir(ARGV[1]));
+		return(cgc_rmdir(ARGV[1]));
 	} else {
 		// we need to prepend the CWD
-		bzero(pathname, MAX_CMD);
-		if ((strlen(CWD)+strlen(ARGV[1]) + 1) > MAX_CMD-1) {
-			puts("command too long");
+		cgc_bzero(pathname, MAX_CMD);
+		if ((cgc_strlen(CWD)+cgc_strlen(ARGV[1]) + 1) > MAX_CMD-1) {
+			cgc_puts("command too long");
 			return(0);
 		}
-		strcpy(pathname, CWD);
-		strcat(pathname, ARGV[1]);
-		return(rmdir(pathname));
+		cgc_strcpy(pathname, CWD);
+		cgc_strcat(pathname, ARGV[1]);
+		return(cgc_rmdir(pathname));
 	}
 
 	return(0);
@@ -144,31 +144,31 @@ int RmdirHandler() {
 /* 
    show command
  */
-int LsHandler() {
+int cgc_LsHandler() {
 	char pathname[MAX_CMD];
 
 	if (ARGC == 1) {
 		// no path given, assume CWD
-		return(ls(CWD));
+		return(cgc_ls(CWD));
 	}
 	if (ARGC != 2) {
-		puts("usage: show <directory>");
+		cgc_puts("usage: show <cgc_directory>");
 		return(0);
 	}
 
 	if (ARGV[1][0] == '/') {
 		// we have a full path
-		return(ls(ARGV[1]));
+		return(cgc_ls(ARGV[1]));
 	} else {
 		// we need to prepend the CWD
-		bzero(pathname, MAX_CMD);
-		if ((strlen(CWD)+strlen(ARGV[1]) + 1) > MAX_CMD-1) {
-			puts("command too long");
+		cgc_bzero(pathname, MAX_CMD);
+		if ((cgc_strlen(CWD)+cgc_strlen(ARGV[1]) + 1) > MAX_CMD-1) {
+			cgc_puts("command too long");
 			return(0);
 		}
-		strcpy(pathname, CWD);
-		strcat(pathname, ARGV[1]);
-		return(ls(pathname));
+		cgc_strcpy(pathname, CWD);
+		cgc_strcat(pathname, ARGV[1]);
+		return(cgc_ls(pathname));
 	}
 
 	return(0);
@@ -178,27 +178,27 @@ int LsHandler() {
 /* 
    delete command
  */
-int RmHandler() {
+int cgc_RmHandler() {
 	char pathname[MAX_CMD];
 
 	if (ARGC != 2) {
-		puts("usage: delete <file>");
+		cgc_puts("usage: delete <file>");
 		return(0);
 	}
 
 	if (ARGV[1][0] == '/') {
 		// no path given, assume CWD
-		return(unlink(ARGV[1]));
+		return(cgc_unlink(ARGV[1]));
 	} else {
 		// we need to prepend the CWD
-		bzero(pathname, MAX_CMD);
-		if ((strlen(CWD)+strlen(ARGV[1]) + 1) > MAX_CMD-1) {
-			puts("command too long");
+		cgc_bzero(pathname, MAX_CMD);
+		if ((cgc_strlen(CWD)+cgc_strlen(ARGV[1]) + 1) > MAX_CMD-1) {
+			cgc_puts("command too long");
 			return(0);
 		}
-		strcpy(pathname, CWD);
-		strcat(pathname, ARGV[1]);
-		return(unlink(pathname));
+		cgc_strcpy(pathname, CWD);
+		cgc_strcat(pathname, ARGV[1]);
+		return(cgc_unlink(pathname));
 	}
 
 	return(0);
@@ -208,79 +208,79 @@ int RmHandler() {
 /* 
    echo command
  */
-int EchoHandler() {
+int cgc_EchoHandler() {
 	char pathname[MAX_CMD];
 	char outstr[MAX_CMD];
-	FILE *out;
+	cgc_FILE *out;
 	int len;
 
 	if (ARGC < 2 || ARGC == 3) {
-		puts("usage: echo <text> [>|>>] [file]");
+		cgc_puts("usage: echo <text> [>|>>] [file]");
 		return(0);
 	}
 
 	if (ARGC == 2) {
 		// handle case of 'echo <text>'
-		bzero(outstr, MAX_CMD);
-		strncpy(outstr, ARGV[1], MAX_CMD-1);
-		if ((len = Unescape(outstr)) == -1) {
-			puts("unable to write to file");
+		cgc_bzero(outstr, MAX_CMD);
+		cgc_strncpy(outstr, ARGV[1], MAX_CMD-1);
+		if ((len = cgc_Unescape(outstr)) == -1) {
+			cgc_puts("unable to cgc_write to file");
 			return(-1);
 		}
-		write(outstr, len);
+		cgc_write(outstr, len);
 		return(0);
 	}
 
 	if (ARGC == 4) {
 		// redirecting to a file
-		bzero(pathname, MAX_CMD);
+		cgc_bzero(pathname, MAX_CMD);
 		if (ARGV[3][0] == '/') {
-			if (strlen(ARGV[3]) > MAX_CMD-1) {
-				puts("invalid file name");
+			if (cgc_strlen(ARGV[3]) > MAX_CMD-1) {
+				cgc_puts("invalid file name");
 				return(-1);
 			}
-			strcpy(pathname, ARGV[3]);
+			cgc_strcpy(pathname, ARGV[3]);
 		} else {
-			if ((strlen(CWD)+strlen(ARGV[3]) + 1) > MAX_CMD-1) {
-				puts("command too long");
+			if ((cgc_strlen(CWD)+cgc_strlen(ARGV[3]) + 1) > MAX_CMD-1) {
+				cgc_puts("command too long");
 				return(0);
 			}
-			strcpy(pathname, CWD);
-			strcat(pathname, ARGV[3]);
+			cgc_strcpy(pathname, CWD);
+			cgc_strcat(pathname, ARGV[3]);
 		}
 			
-		if (!strcmp(ARGV[2], ">")) {
-			// write to file
-			if ((out = fopen(pathname, "w")) == NULL) {
-				puts("unable to write to file");
+		if (!cgc_strcmp(ARGV[2], ">")) {
+			// cgc_write to file
+			if ((out = cgc_fopen(pathname, "w")) == NULL) {
+				cgc_puts("unable to cgc_write to file");
 				return(-1);
 			}
-			bzero(outstr, MAX_CMD);
-			strncpy(outstr, ARGV[1], MAX_CMD-1);
-			if ((len = Unescape(outstr)) == -1) {
-				puts("unable to write to file");
-				fclose(out);
+			cgc_bzero(outstr, MAX_CMD);
+			cgc_strncpy(outstr, ARGV[1], MAX_CMD-1);
+			if ((len = cgc_Unescape(outstr)) == -1) {
+				cgc_puts("unable to cgc_write to file");
+				cgc_fclose(out);
 				return(-1);
 			}
-			fwrite(outstr, len, 1, out);
-			fclose(out);
-		} else if (!strcmp(ARGV[2], ">>")) {
+			cgc_fwrite(outstr, len, 1, out);
+			cgc_fclose(out);
+		} else if (!cgc_strcmp(ARGV[2], ">>")) {
 			// append to file
-			if ((out = fopen(pathname, "a")) == NULL) {
-				puts("unable to write to file");
+			if ((out = cgc_fopen(pathname, "a")) == NULL) {
+				cgc_puts("unable to cgc_write to file");
 				return(-1);
 			}
-			bzero(outstr, MAX_CMD);
-			strncpy(outstr, ARGV[1], MAX_CMD-1);
-			if ((len = Unescape(outstr)) == -1) {
-				fclose(out);
-				puts("unable to write to file");
+			cgc_bzero(outstr, MAX_CMD);
+			cgc_strncpy(outstr, ARGV[1], MAX_CMD-1);
+			if ((len = cgc_Unescape(outstr)) == -1) {
+				cgc_fclose(out);
+				cgc_puts("unable to cgc_write to file");
 				return(-1);
 			}
-			fwrite(outstr, len, 1, out);
-			fclose(out);
+			cgc_fwrite(outstr, len, 1, out);
+			cgc_fclose(out);
 		} else {
-			puts("usage: echo <text> [>|>>] [file]");
+			cgc_puts("usage: echo <text> [>|>>] [file]");
 			return(0);
 		}
 	}
@@ -292,27 +292,27 @@ int EchoHandler() {
 /*
    show command
  */
-int CatHandler() {
+int cgc_CatHandler() {
 	char pathname[MAX_CMD];
 
 	if (ARGC != 2) {
-		puts("usage: dump <file>");
+		cgc_puts("usage: dump <file>");
 		return(0);
 	}
 
 	if (ARGV[1][0] == '/') {
 		// no path given, assume CWD
-		return(ReadFile(ARGV[1]));
+		return(cgc_ReadFile(ARGV[1]));
 	} else {
 		// we need to prepend the CWD
-		bzero(pathname, MAX_CMD);
-		if ((strlen(CWD)+strlen(ARGV[1]) + 1) > MAX_CMD-1) {
-			puts("command too long");
+		cgc_bzero(pathname, MAX_CMD);
+		if ((cgc_strlen(CWD)+cgc_strlen(ARGV[1]) + 1) > MAX_CMD-1) {
+			cgc_puts("command too long");
 			return(0);
 		}
-		strcpy(pathname, CWD);
-		strcat(pathname, ARGV[1]);
-		return(ReadFile(pathname));
+		cgc_strcpy(pathname, CWD);
+		cgc_strcat(pathname, ARGV[1]);
+		return(cgc_ReadFile(pathname));
 	}
 
 	return(0);
@@ -322,18 +322,18 @@ int CatHandler() {
 /* 
    help command
  */
-int HelpHandler() {
-	ShellCmds *c;
+int cgc_HelpHandler() {
+	cgc_ShellCmds *c;
 	int len;
 
 	c = cmds;
 	while (c->command) {
-		printf("@s", c->command);
-		len = 20-strlen(c->command);
+		cgc_printf("@s", c->command);
+		len = 20-cgc_strlen(c->command);
 		while (len-- > 0) {
-			printf(" ");
+			cgc_printf(" ");
 		}
-		printf("@s\n", c->help);
+		cgc_printf("@s\n", c->help);
 		c++;
 	}
 
@@ -343,14 +343,14 @@ int HelpHandler() {
 /* 
    fsinfo command
  */
-int DfHandler() {
+int cgc_DfHandler() {
 
 	if (ARGC != 1) {
-		puts("usage: fsinfo");
+		cgc_puts("usage: fsinfo");
 		return(0);
 	}
 
-	StatusFS();
+	cgc_StatusFS();
 
 	return(0);
 }
@@ -358,7 +358,7 @@ int DfHandler() {
 /*
    check if a given character is a valid hex digit
  */
-int IsHex(char c) {
+int cgc_IsHex(char c) {
 
 	if (c >= '0' && c <= '9') {
 		return(1);
@@ -376,7 +376,7 @@ int IsHex(char c) {
 /* 
    Convert a 1-byte hex value string to a char
  */
-char Hex2Char(char *c) {
+char cgc_Hex2Char(char *c) {
 	char val = 0;
 
 	if (*c >= '0' && *c <= '9') {
@@ -407,7 +407,7 @@ char Hex2Char(char *c) {
    Take a string of hex values in the form of \xAA\xBB and 
    convert them to their char equivalents
  */
-int Unescape(char *buf) {
+int cgc_Unescape(char *buf) {
 	char *c = buf;
 	char val;
 	char *t;
@@ -419,10 +419,10 @@ int Unescape(char *buf) {
 	while (*c) {
 		// if the next 4 char's match our escape pattern \x##
 		if (*c == '\\' && *(c+1) == 'x' &&
-			IsHex(*(c+2)) && IsHex(*(c+3))) {
+			cgc_IsHex(*(c+2)) && cgc_IsHex(*(c+3))) {
 	
 			// convert the hex value to char
-			*c = Hex2Char(c+2);
+			*c = cgc_Hex2Char(c+2);
 
 			// shift the rest of the string back
 			t = c+1;

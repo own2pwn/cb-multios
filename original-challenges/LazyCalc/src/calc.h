@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -34,19 +34,19 @@ typedef enum {
   OP_IMP = 0xA9A367A0,
   OP_EXP = 0xEC810F07,
   OP_CMP = 0x76FC2ED2
-} op_type;
+} cgc_op_type;
 
 typedef struct {
-  op_type type;
+  cgc_op_type type;
   int arg1;
   int arg2;
   int result;
-} op_t;
+} cgc_op_t;
 
-void calc_add(op_t *op);
-void calc_sub(op_t *op);
-void calc_mul(op_t *op);
-void calc_div(op_t *op);
-void calc_mod(op_t *op);
+void cgc_calc_add(cgc_op_t *op);
+void cgc_calc_sub(cgc_op_t *op);
+void cgc_calc_mul(cgc_op_t *op);
+void cgc_calc_div(cgc_op_t *op);
+void cgc_calc_mod(cgc_op_t *op);
 
-void calc_compute(op_t *op);
+void cgc_calc_compute(cgc_op_t *op);

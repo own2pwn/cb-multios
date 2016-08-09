@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -39,17 +39,17 @@ unsigned char encoder_values[] = { 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
 						};
 
 
-unsigned char *My64Encode(size_t data_size, unsigned char *data, size_t *out_data_size) {
+unsigned char *cgc_My64Encode(cgc_size_t data_size, unsigned char *data, cgc_size_t *out_data_size) {
 
 unsigned char *output_data;
 unsigned char *padded_input_data;
 
-size_t output_size;
-size_t padded_input_size;
+cgc_size_t output_size;
+cgc_size_t padded_input_size;
 
 unsigned char byteA, byteB, byteC, byteD;
 
-size_t i, j;
+cgc_size_t i, j;
 
 
 		switch (data_size%3) {
@@ -74,28 +74,28 @@ size_t i, j;
 				break;
 		}	
 
-		padded_input_data = malloc(padded_input_size);
+		padded_input_data = cgc_malloc(padded_input_size);
 
 		if (padded_input_data == 0) {
 
-			printf("unable to malloc()\n");
+			cgc_printf("unable to cgc_malloc()\n");
 			_terminate(-1);
 		}
 
-		bzero(padded_input_data, padded_input_size);
+		cgc_bzero(padded_input_data, padded_input_size);
 
-		memcpy(padded_input_data, data, data_size);
+		cgc_memcpy(padded_input_data, data, data_size);
 
-		output_data = malloc(output_size);
+		output_data = cgc_malloc(output_size);
 
 		if (output_data == 0) {
 
-			printf("unable to malloc()\n");
+			cgc_printf("unable to cgc_malloc()\n");
 			_terminate(-1);
 
 		}
 
-		bzero(output_data, output_size);
+		cgc_bzero(output_data, output_size);
 
 		for (i=0, j=0; i< padded_input_size; i+=3, j+=4) {
 
@@ -111,7 +111,7 @@ size_t i, j;
 
 		}
 
-		free(padded_input_data);
+		cgc_free(padded_input_data);
 
 		*out_data_size = output_size;
 
@@ -119,49 +119,49 @@ size_t i, j;
 }
 
 
-void encode_command(char *cmd) {
+void cgc_encode_command(char *cmd) {
 
 char buffer[1024];
 unsigned char *encoded;
-size_t encoded_size;
-size_t i;
+cgc_size_t encoded_size;
+cgc_size_t i;
 int count;
 unsigned char *input_data;
 
-	printf("How many bytes of data:\n");
+	cgc_printf("How many bytes of data:\n");
 
-	getline( buffer, 100 );
+	cgc_getline( buffer, 100 );
 
-	count = atoi(buffer);
+	count = cgc_atoi(buffer);
 
 	if (count > 0) {
 	
-		input_data = malloc(count);
+		input_data = cgc_malloc(count);
 
 		if (input_data == 0) {
 
-			printf("unable to malloc()\n");
+			cgc_printf("unable to cgc_malloc()\n");
 			_terminate(-1);
 		}
 	}
 	else
 		return;
 
-	printf("Enter data to be encoded:\n");
+	cgc_printf("Enter data to be encoded:\n");
 
-	receive_bytes( input_data, count );
+	cgc_receive_bytes( input_data, count );
 
-	encoded=My64Encode(count, input_data, &encoded_size);
+	encoded=cgc_My64Encode(count, input_data, &encoded_size);
 
 	// this was added to keep an extra long input from being passed onto the routine that reads the main menu
-	flush_input(STDIN);
+	cgc_flush_input(STDIN);
 
 	for (i=0; i< encoded_size; ++i)
-			printf("@c", encoded[i]);
+			cgc_printf("@c", encoded[i]);
 
-	printf("\n");
+	cgc_printf("\n");
 
-	free(encoded);
+	cgc_free(encoded);
 
 
 }

@@ -21,7 +21,7 @@
  *
  */
 #include "oo.h"
-const __init_array_t __init_array_begin __attribute__((section(".rodata.init")));
+const __init_array_t __init_array_begin __attribute__((section("DATA,.rodata.init")));
 
 __except_state_t *__except_current;
 void raise(int exc)

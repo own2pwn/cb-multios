@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,44 +31,44 @@ typedef struct address_s {
   char *home_server;
   int mode;
   struct address_s *next;
-}address;
+}cgc_address;
 
 typedef struct message_s {
-  address *sender;
-  address *recipient;
+  cgc_address *sender;
+  cgc_address *recipient;
   char *subject;
   int content_type;
   char *data;
   int data_length;
   struct message_s *next;
-}message;
+}cgc_message;
 
 typedef struct address_book_s {
   int num_entries;    
-  address *root;
-} address_book;
+  cgc_address *root;
+} cgc_address_book;
 
 typedef struct mail_queue_s {
   int num_messages;
   char *name;
-  message *root;
+  cgc_message *root;
   struct mail_queue_s *next;
-}mail_queue;
+}cgc_mail_queue;
 
-extern address_book *abook;
-extern mail_queue *root_queue;
-char *gen_random_string(int min, int max);
-address *add_random_addressbook_entry() ;
-void initialize_address_book() ;
-address *pick_address() ;
-mail_queue *add_random_queue() ;
-message *add_random_message(mail_queue *mq);
-void initialize_mail_queues();
-void print_address_book();
-void sendmail_post(char *line);
-mail_queue *locate_queue(char *name);
+extern cgc_address_book *abook;
+extern cgc_mail_queue *root_queue;
+char *cgc_gen_random_string(int min, int max);
+cgc_address *cgc_add_random_addressbook_entry() ;
+void cgc_initialize_address_book() ;
+cgc_address *cgc_pick_address() ;
+cgc_mail_queue *cgc_add_random_queue() ;
+cgc_message *cgc_add_random_message(cgc_mail_queue *mq);
+void cgc_initialize_mail_queues();
+void cgc_print_address_book();
+void cgc_sendmail_post(char *line);
+cgc_mail_queue *cgc_locate_queue(char *name);
 
-void list_queue(char *line);
-void list_all_queues() ;
+void cgc_list_queue(char *line);
+void cgc_list_all_queues() ;
 
 #endif

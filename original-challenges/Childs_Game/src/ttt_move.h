@@ -2,7 +2,7 @@
 #define TTT_MOVE_H_
 #include "board.h"
 
-int computer_move(board_t *board);
-int player_move(board_t *board);
+int cgc_computer_move(cgc_board_t *board);
+int cgc_player_move(cgc_board_t *board);
 
 #endif

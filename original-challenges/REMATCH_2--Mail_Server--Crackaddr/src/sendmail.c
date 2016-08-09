@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,25 +41,25 @@ THE SOFTWARE.
 
 int debug_mode = 0;
 
-address_book *abook;
-mail_queue *root_queue;
+cgc_address_book *abook;
+cgc_mail_queue *root_queue;
 
-char *gen_random_string(int min, int max) {
-    int length = random_in_range(min, max);
-    char *s = calloc(length);
+char *cgc_gen_random_string(int min, int max) {
+    int length = cgc_random_in_range(min, max);
+    char *s = cgc_calloc(length);
     for(int i=0; i<length - 2; i++) {
-        s[i] = random_in_range(0x2e, 0x7e);
+        s[i] = cgc_random_in_range(0x2e, 0x7e);
     }
     return s;
 }
 
-address *add_random_addressbook_entry() {
+cgc_address *cgc_add_random_addressbook_entry() {
     
-    address *a = calloc(sizeof(address));
-    a->name = gen_random_string(5, 32);
-    a->home_server = gen_random_string(5, 32);
-    a->mode = random_in_range(0,1);
-    address *n = abook->root;
+    cgc_address *a = cgc_calloc(sizeof(cgc_address));
+    a->name = cgc_gen_random_string(5, 32);
+    a->home_server = cgc_gen_random_string(5, 32);
+    a->mode = cgc_random_in_range(0,1);
+    cgc_address *n = abook->root;
     if (n == NULL) {
         // First Entry
         abook->root = a;
@@ -74,22 +74,22 @@ address *add_random_addressbook_entry() {
 }
 
 
-void initialize_address_book() {
+void cgc_initialize_address_book() {
     abook->num_entries = 0;
     abook->root = 0;
     for (int i = 0; i < 20; i++) {
-        add_random_addressbook_entry();
+        cgc_add_random_addressbook_entry();
     }
 } 
 
-address *pick_address() {
+cgc_address *cgc_pick_address() {
     int i = 0;
-    address *next = abook->root;
+    cgc_address *next = abook->root;
     while (next != NULL) {
         i++;
         next = next->next;
     }
-    int pick = random_in_range(0, i-1);
+    int pick = cgc_random_in_range(0, i-1);
     next = abook->root;
     while (next->next != NULL && pick > 0) {
         next = next->next;
@@ -98,10 +98,10 @@ address *pick_address() {
     return next;
 }
 
-address *lookup_name(char *name) {
-    address *next = abook->root;
+cgc_address *cgc_lookup_name(char *name) {
+    cgc_address *next = abook->root;
     while (next != NULL) {
-        if (strcmp(next->name, name) == 0) {
+        if (cgc_strcmp(next->name, name) == 0) {
             break;
         }
         next = next->next;
@@ -109,15 +109,15 @@ address *lookup_name(char *name) {
     return next;
 }
 
-mail_queue *add_random_queue() {
-    mail_queue *mq = calloc(sizeof(mail_queue));
-    address *sender = pick_address();
+cgc_mail_queue *cgc_add_random_queue() {
+    cgc_mail_queue *mq = cgc_calloc(sizeof(cgc_mail_queue));
+    cgc_address *sender = cgc_pick_address();
     mq->name = sender->name;
-    mq->root = add_random_message(mq);
+    mq->root = cgc_add_random_message(mq);
 // TODO add more messages
 
     if (root_queue != NULL) {
-        mail_queue *next = root_queue;
+        cgc_mail_queue *next = root_queue;
         while (next->next != NULL) {
             next = next->next;
         }
@@ -126,16 +126,16 @@ mail_queue *add_random_queue() {
     return mq;
 }
 
-message *add_random_message(mail_queue *mq) {
-    message *m = calloc(sizeof(message));
-    m->sender = pick_address();
-    m->recipient = pick_address();
-    m->subject = gen_random_string(5, 32);
-    m->data = gen_random_string(5,256);
-    m->data_length = strlen(m->data);
+cgc_message *cgc_add_random_message(cgc_mail_queue *mq) {
+    cgc_message *m = cgc_calloc(sizeof(cgc_message));
+    m->sender = cgc_pick_address();
+    m->recipient = cgc_pick_address();
+    m->subject = cgc_gen_random_string(5, 32);
+    m->data = cgc_gen_random_string(5,256);
+    m->data_length = cgc_strlen(m->data);
 
     if (mq->root != NULL) {
-        message *next = mq->root;
+        cgc_message *next = mq->root;
         while (next->next != NULL) {
             next = next->next;
         }
@@ -144,114 +144,114 @@ message *add_random_message(mail_queue *mq) {
     return m;
 }
 
-void initialize_mail_queues() {
+void cgc_initialize_mail_queues() {
     // Setup mail queues
-    root_queue = add_random_queue();
+    root_queue = cgc_add_random_queue();
     for(int i = 0; i< 32; i++) {
-        add_random_queue();
+        cgc_add_random_queue();
     }
 }
 
-void print_address_book() {
-    printf("Address Book:\n");
-    address *a = abook->root;
+void cgc_print_address_book() {
+    cgc_printf("Address Book:\n");
+    cgc_address *a = abook->root;
     int i = 1;
     while (a != NULL) {
-        printf("$d) $s@$s [$d]\n", i, a->name, a->home_server, a->mode);
+        cgc_printf("$d) $s@$s [$d]\n", i, a->name, a->home_server, a->mode);
         i++;
         a = a->next;
     }
 }
 
-char *make_string(char *str) {
+char *cgc_make_string(char *str) {
     if (str == NULL) {
         return NULL;
     }
-    char *s = calloc(strlen(str) + 1);
-    strcpy(s, str);
+    char *s = cgc_calloc(cgc_strlen(str) + 1);
+    cgc_strcpy(s, str);
     return s;
 }
 
-// Creates a new message and adds to appropriate mail queue. 
-void sendmail_post(char *line) {
+// Creates a new cgc_message and adds to appropriate mail queue. 
+void cgc_sendmail_post(char *line) {
     char output[MAX_NAME];
     char *sender, *recipient, *subject, *body;
     char *end;
-    sender = strstr(line, "sender:");
+    sender = cgc_strstr(line, "sender:");
     if (sender == NULL) {
         return;
     }
     sender += 7;
     
-    recipient = strstr(line, "recipient:");
+    recipient = cgc_strstr(line, "recipient:");
     if (recipient == NULL) {
         return;
     } 
     recipient += 10;
     
     
-    body = strstr(line, "body:");
+    body = cgc_strstr(line, "body:");
     if (body == NULL) {
         return;
     }
     body += 5;
     
-    subject = strstr(line, "subject:");
+    subject = cgc_strstr(line, "subject:");
     if (subject == NULL) {
         return;
     }
     subject += 8;
     
-    end = strstr(sender, "!");
+    end = cgc_strstr(sender, "!");
     if (end != NULL) {
         *end = '\0';
     }
-    end = strstr(recipient, "!");
+    end = cgc_strstr(recipient, "!");
     if (end != NULL) {
         *end = '\0';
     }
-    end = strstr(body, "!");
+    end = cgc_strstr(body, "!");
     if (end != NULL) {
         *end = '\0';
     }
-    end = strstr(subject, "!");
+    end = cgc_strstr(subject, "!");
     if (end != NULL) {
         *end = '\0';
     }
-    message *msg = calloc(sizeof(message));
-    msg->sender = lookup_name(sender);
+    cgc_message *msg = cgc_calloc(sizeof(cgc_message));
+    msg->sender = cgc_lookup_name(sender);
     
     if (recipient[0] == '+') {
         
-        crackaddr(recipient, output);
-        printf("addr:$s\n", output);
+        cgc_crackaddr(recipient, output);
+        cgc_printf("addr:$s\n", output);
         return;
     }
-    msg->recipient = lookup_name(recipient);
+    msg->recipient = cgc_lookup_name(recipient);
     if (msg->recipient == NULL) {
         return;
     }
     if (msg->sender == NULL) {
         return;
     }
-    msg->data = make_string(body);
-    msg->data_length = strlen(body);
-    msg->subject = make_string(subject);
+    msg->data = cgc_make_string(body);
+    msg->data_length = cgc_strlen(body);
+    msg->subject = cgc_make_string(subject);
 
  
 
-    mail_queue *mq = locate_queue(msg->sender->name);
+    cgc_mail_queue *mq = cgc_locate_queue(msg->sender->name);
     if (mq == NULL) {
-        mq = calloc(sizeof(mail_queue));
-        mq->name = make_string(msg->sender->name);
+        mq = cgc_calloc(sizeof(cgc_mail_queue));
+        mq->name = cgc_make_string(msg->sender->name);
         mq->root = msg;
-        mail_queue *next = root_queue;
+        cgc_mail_queue *next = root_queue;
         while (next->next != NULL) {
             next = next->next;
         }
         next->next = mq;
     } else {
-        message *next = mq->root;
+        cgc_message *next = mq->root;
         if (next == NULL) {
             mq->root = msg;
         } else {
@@ -261,14 +261,14 @@ void sendmail_post(char *line) {
             next->next = msg;
         }
     }
-    printf("Message Received\n");
+    cgc_printf("Message Received\n");
 }   
 
 
-mail_queue *locate_queue(char *name) {
-    mail_queue *mq = root_queue;
+cgc_mail_queue *cgc_locate_queue(char *name) {
+    cgc_mail_queue *mq = root_queue;
     while (mq != NULL) {
-        if (strcmp(mq->name, name)==0) {
+        if (cgc_strcmp(mq->name, name)==0) {
             return mq;
         }
         mq = mq->next;
@@ -276,64 +276,64 @@ mail_queue *locate_queue(char *name) {
     return 0;
 }
 
-void list_queue(char *line) {
+void cgc_list_queue(char *line) {
     char *name = line;
     // Find a queue for that username
-    mail_queue *mq = locate_queue(name);
+    cgc_mail_queue *mq = cgc_locate_queue(name);
     if (mq == 0) {
-        printf("Mail Queue Not Found\n");
+        cgc_printf("Mail Queue Not Found\n");
         return;
     }
     int i = 0;
-    message *msg = mq->root;
+    cgc_message *msg = mq->root;
     while (msg != NULL) {
         if (msg ->sender != NULL && msg->recipient!= NULL) {
-            printf("$d) From:$s To: $s SUBJECT:$s\n", i, msg->sender->name, msg->recipient->name, msg->subject);
+            cgc_printf("$d) From:$s To: $s SUBJECT:$s\n", i, msg->sender->name, msg->recipient->name, msg->subject);
         } else {
-            printf("$d) Malformed Message\n");
+            cgc_printf("$d) Malformed Message\n");
         }
         i++;
         msg = msg->next;
     }
 }
 
-void list_all_queues() {
-    mail_queue *mq = root_queue;
+void cgc_list_all_queues() {
+    cgc_mail_queue *mq = root_queue;
     while (mq != NULL) {
         int i = 0;
-        printf("QUEUE: $s\n", mq->name);
-        message *msg = mq->root;
+        cgc_printf("QUEUE: $s\n", mq->name);
+        cgc_message *msg = mq->root;
         while (msg != NULL) {
             if (msg ->sender != NULL && msg->recipient!= NULL) {
-                printf("$d) From:$s To: $s SUBJECT:$s\n", i, msg->sender->name, msg->recipient->name, msg->subject);
+                cgc_printf("$d) From:$s To: $s SUBJECT:$s\n", i, msg->sender->name, msg->recipient->name, msg->subject);
             } else {
-                printf("$d) Malformed Message\n");
+                cgc_printf("$d) Malformed Message\n");
             }
             i++;
             msg = msg->next;
         }
-        printf("\n");
+        cgc_printf("\n");
         mq = mq->next;
     }
 }
 
-void read_message(char *line) {
+void cgc_read_message(char *line) {
     char *name = line;
     while ((*line != ' ') && (*line != '\0')) line++;
     *line++ = '\0';
-    int msg_num = atoi(line);
-    mail_queue *mq = locate_queue(name);
+    int msg_num = cgc_atoi(line);
+    cgc_mail_queue *mq = cgc_locate_queue(name);
     if (mq == NULL) {
         return;
     }
     int i=0;
-    message *next = mq->root;
+    cgc_message *next = mq->root;
     while (next != NULL && i != msg_num) {
         i++;
         next = next->next;
     }
     if (msg_num == i) {
-        printf("$d) Subject:$s Body:$s\n", i, next->subject, next->data);
+        cgc_printf("$d) Subject:$s Body:$s\n", i, next->subject, next->data);
     }
 }
     
@@ -343,19 +343,19 @@ int main(void) {
     int quit = 0;
     
     // Initialize mail server
-    seed_prng(*(uint32_t *)FLAG_PAGE);
+    cgc_seed_prng(*(cgc_uint32_t *)FLAG_PAGE);
     int num_mailq = 0;
-    abook = calloc(sizeof(address_book));
-    initialize_address_book();
-    initialize_mail_queues();
+    abook = cgc_calloc(sizeof(cgc_address_book));
+    cgc_initialize_address_book();
+    cgc_initialize_mail_queues();
 
     // run a mail server
     char line[MAX_LINE+1];
     int line_size = 0;
-    printf("sendmail:");
+    cgc_printf("sendmail:");
     do {
         // Read a line
-        if ((line_size = receive_until(line, MAX_LINE, '\n')) <= 0) {
+        if ((line_size = cgc_receive_until(line, MAX_LINE, '\n')) <= 0) {
             break;
         }
         line[line_size] = '\0';
@@ -364,31 +364,31 @@ int main(void) {
         // Terminate first command word
         while ((*next != ' ') && (*next != '\0')) next++;
         *next++ = '\0';
-        if (strcmp(line, "LIST")==0) {
+        if (cgc_strcmp(line, "LIST")==0) {
             // List one mail queue
-            list_queue(next);
-        } else if (strcmp(line, "LISTALL")==0) {
+            cgc_list_queue(next);
+        } else if (cgc_strcmp(line, "LISTALL")==0) {
             // List all mail queues
-            list_all_queues();
-        } else if (strcmp(line, "POST")==0) {
-            // Post a message
-            sendmail_post(next);
-        } else if (strcmp(line, "READ")==0) {
-            // Read a message
-            read_message(next);
-        } else if (strcmp(line, "ADDRESSBOOK")==0) {
-            // Print address book
-            print_address_book();
-        } else if (strcmp(line, "QUIT")==0) {
+            cgc_list_all_queues();
+        } else if (cgc_strcmp(line, "POST")==0) {
+            // Post a cgc_message
+            cgc_sendmail_post(next);
+        } else if (cgc_strcmp(line, "READ")==0) {
+            // Read a cgc_message
+            cgc_read_message(next);
+        } else if (cgc_strcmp(line, "ADDRESSBOOK")==0) {
+            // Print cgc_address book
+            cgc_print_address_book();
+        } else if (cgc_strcmp(line, "QUIT")==0) {
             // Quit mail server
             break;
         } else {
             // Invalid command
-            printf("Invalid Command!\n");
+            cgc_printf("Invalid Command!\n");
             quit = 1;
         }
 
     } while (quit == 0);
 
-    printf("Goodbye.\n");
+    cgc_printf("Goodbye.\n");
 }

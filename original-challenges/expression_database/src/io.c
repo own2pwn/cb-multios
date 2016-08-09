@@ -29,12 +29,12 @@ THE SOFTWARE.
 
 int g_lasterror = 0;
 
-int readLine( int fd, char *buffer, size_t maxlen )
+int cgc_readLine( int fd, char *buffer, cgc_size_t maxlen )
 {
-    size_t pos;
+    cgc_size_t pos;
     char temp_buffer[2];
     int retvalue;
-    size_t rx_count;
+    cgc_size_t rx_count;
 
     for ( pos = 1; pos < maxlen; pos++ )
     {
@@ -57,7 +57,7 @@ int readLine( int fd, char *buffer, size_t maxlen )
     return pos;
 }
 
-char *sanitize_string( char *str )
+char *cgc_sanitize_string( char *str )
 {
     char *str_start = str;
     char c;

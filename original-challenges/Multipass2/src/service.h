@@ -35,9 +35,9 @@
 #define RECHARGE_FULL_MSG "Unable to recharge card. Balance near max."
 #define REFUND_FULL_MSG "Unable to refund card. Balance near max."
 #define NO_HISTORY_MSG "No matching transaction history."
-#define INVALID_OPCODE_MSG "Invalid OP_CODE."
-#define INVALID_PKT_TYPE_MSG "Invalid PKT_TYPE."
-#define INVALID_V_TYPE_MSG "Invalid VENDOR_TYPE."
+#define INVALID_OPCODE_MSG "Invalid cgc_OP_CODE."
+#define INVALID_PKT_TYPE_MSG "Invalid cgc_PKT_TYPE."
+#define INVALID_V_TYPE_MSG "Invalid cgc_VENDOR_TYPE."
 #define NO_AUTH_MSG "Transaction has not completed AUTH."
 #define NO_INIT_MSG "Transaction has not completed INIT."
 #define NO_OPS_MSG "Transaction has not completed OPS."
@@ -76,7 +76,7 @@ typedef enum {
 	ERRNO_MP_INVALID_CARD,	// Card does not exist or is invalid
 	ERRNO_MP_RECV,			// Failed to receive expected number of bytes
 	ERRNO_MP_UNK			// Unknown error
-} STATUS;
+} cgc_STATUS;
 
 
 #endif

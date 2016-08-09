@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int _add_course(student_t *student, course_t *course)
+int cgc__add_course(cgc_student_t *student, cgc_course_t *course)
 {
     if (!student || !course)
         return FALSE;
@@ -45,7 +45,7 @@ int _add_course(student_t *student, course_t *course)
 #endif
 
     for (i = 0; i < student->num_courses; i++) {
-        if (check_time_conflict(student->courses[i], course) != 0 || student->courses[i] == course) {
+        if (cgc_check_time_conflict(student->courses[i], course) != 0 || student->courses[i] == course) {
             //printf("Timing conflict\n");
             return FALSE;
         }
@@ -74,12 +74,12 @@ int _add_course(student_t *student, course_t *course)
     return TRUE;
 }
 
-int _set_major(student_t *student, char *dept_name)
+int cgc__set_major(cgc_student_t *student, char *dept_name)
 {
     if (!student || !dept_name)
         return FALSE;
 
-    department_t *dept = get_department(dept_name);
+    cgc_department_t *dept = cgc_get_department(dept_name);
     if (!dept)
         return FALSE;
 
@@ -87,7 +87,7 @@ int _set_major(student_t *student, char *dept_name)
     return TRUE;
 }
 
-int _remove_course(student_t *student, size_t idx)
+int cgc__remove_course(cgc_student_t *student, cgc_size_t idx)
 {
     if (!student || idx >= student->num_courses)
         return FALSE;
@@ -97,7 +97,7 @@ int _remove_course(student_t *student, size_t idx)
         student->num_major_courses--;
 
     if (idx < student->num_courses - 1) {
-        memcpy(&student->courses[idx], &student->courses[idx+1],
+        cgc_memcpy(&student->courses[idx], &student->courses[idx+1],
                 sizeof(void *) * (student->num_courses - idx - 1));
     }
 
@@ -106,48 +106,48 @@ int _remove_course(student_t *student, size_t idx)
     return TRUE;
 }
 
-void _list_classes(student_t *student)
+void cgc__list_classes(cgc_student_t *student)
 {
     if (!student)
         return;
 
     int i = 0;
-    print_course_banner();
+    cgc_print_course_banner();
     for (i = 0; i < student->num_courses; i++) {
         printf("#%d|", i+1);
         student->courses[i]->print_course(student->courses[i]);
     }
 }
 
-void _print_schedule(student_t *student)
+void cgc__print_schedule(cgc_student_t *student)
 {
     if (!student)
         return;
 
     int i = 0;
-    print_course_banner();
+    cgc_print_course_banner();
     for (i = 0; i < student->num_courses; i++) {
         printf("#%d|", i+1);
         student->courses[i]->print_course(student->courses[i]);
     }
 }
 
-student_t *create_student(char *name)
+cgc_student_t *cgc_create_student(char *name)
 {
     if (!name)
         return NULL;
 
-    student_t *student = malloc(sizeof(student_t));
-    student->name = strdup(name);
+    cgc_student_t *student = cgc_malloc(sizeof(cgc_student_t));
+    student->name = cgc_strdup(name);
     student->major = NULL;
     student->num_courses = 0;
     student->total_credits = 0;
 
-    student->add_course = &_add_course;
-    student->set_major = &_set_major;
-    student->remove_course = &_remove_course;
-    student->list_classes = &_list_classes;
-    student->print_schedule = &_print_schedule;
+    student->add_course = &cgc__add_course;
+    student->set_major = &cgc__set_major;
+    student->remove_course = &cgc__remove_course;
+    student->list_classes = &cgc__list_classes;
+    student->print_schedule = &cgc__print_schedule;
 
     return student;
 }

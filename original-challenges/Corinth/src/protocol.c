@@ -28,43 +28,43 @@ THE SOFTWARE.
 
 #include "protocol.h"
 
-void tx(char* bytes, size_t count);
-void rx(char* byte_buf, size_t count);
+void cgc_tx(char* bytes, cgc_size_t count);
+void cgc_rx(char* byte_buf, cgc_size_t count);
 
-void protocol_send(protocol_frame* frame) {
-  tx((char*)&(frame->id), sizeof(frame->id));
-  tx((char*)&(frame->length), sizeof(frame->length));
+void cgc_protocol_send(cgc_protocol_frame* frame) {
+  cgc_tx((char*)&(frame->id), sizeof(frame->id));
+  cgc_tx((char*)&(frame->length), sizeof(frame->length));
 
-  /* tx((char*)(void*)frame, frame_size); */
+  /* cgc_tx((char*)(void*)frame, frame_size); */
 
   if (frame->length == 0) return;
 
-  tx((char*)frame->value, frame->length);
+  cgc_tx((char*)frame->value, frame->length);
 }
 
-void protocol_with_recv_frame(uint8 (^block)(protocol_frame* frame)) {
-  protocol_frame frame;
+void cgc_protocol_with_recv_frame(cgc_uint8 (^block)(cgc_protocol_frame* frame)) {
+  cgc_protocol_frame frame;
   char header_buf[sizeof(frame.id) + sizeof(frame.length)];
   char* header_buf_ptr = (char*)&header_buf;
 
-  rx(header_buf_ptr, sizeof(frame.id) + sizeof(frame.length));
-  frame.id = *(uint8*)(&header_buf[0]);
-  frame.length = *(uint16*)(&header_buf[1]);
+  cgc_rx(header_buf_ptr, sizeof(frame.id) + sizeof(frame.length));
+  frame.id = *(cgc_uint8*)(&header_buf[0]);
+  frame.length = *(cgc_uint16*)(&header_buf[1]);
 
   char buf[frame.length];
 
-  rx((char*)&buf, frame.length);
+  cgc_rx((char*)&buf, frame.length);
 
   frame.value = (void*)&buf;
 
   block(&frame);
 }
 
-void tx(char* bytes, size_t count) {
-  size_t total_sent = 0;
+void cgc_tx(char* bytes, cgc_size_t count) {
+  cgc_size_t total_sent = 0;
 
   while(total_sent < count) {
-    size_t sent_this_time = 0;
+    cgc_size_t sent_this_time = 0;
 
     int status = transmit(STDOUT,
                           bytes + total_sent,
@@ -78,11 +78,11 @@ void tx(char* bytes, size_t count) {
   }
 }
 
-void rx(char* byte_buf, size_t count) {
-  size_t total_rcvd = 0;
+void cgc_rx(char* byte_buf, cgc_size_t count) {
+  cgc_size_t total_rcvd = 0;
 
   while(total_rcvd < count) {
-    size_t rcvd_this_time = 0;
+    cgc_size_t rcvd_this_time = 0;
 
     int status = receive(STDIN,
                          byte_buf + total_rcvd,

@@ -9,36 +9,36 @@ extern "C"
 };
 
 template <typename T>
-class List
+class cgc_List
 {
 private:
-    struct node
+    struct cgc_node
     {
-        node *next;
-        node *prev;
+        cgc_node *next;
+        cgc_node *prev;
         T data;
     };
 
-    size_t len;
-    node *head;
-    node *tail;
+    cgc_size_t len;
+    cgc_node *head;
+    cgc_node *tail;
 public:
-    List();
-    ~List();
-    int length();
-    bool find(T item);
-    bool add(T item);
-    bool remove(size_t idx);
-    bool pop(T &item);
-    void clear_list(bool delete_memory=false);
-    bool is_empty();
+    cgc_List();
+    ~cgc_List();
+    int cgc_length();
+    bool cgc_find(T item);
+    bool cgc_add(T item);
+    bool cgc_remove(cgc_size_t idx);
+    bool cgc_pop(T &item);
+    void cgc_clear_list(bool delete_memory=false);
+    bool cgc_is_empty();
 
-    T operator[](size_t idx) const;
+    T operator[](cgc_size_t idx) const;
 
 };
 
 template <typename T>
-List<T>::List()
+cgc_List<T>::cgc_List()
 {
     len = 0;
     head = NULL;
@@ -46,23 +46,23 @@ List<T>::List()
 }
 
 template <typename T>
-List<T>::~List()
+cgc_List<T>::~cgc_List()
 {
     len = 0;
-    clear_list();
+    cgc_clear_list();
 }
 
 template <typename T>
-int List<T>::length()
+int cgc_List<T>::cgc_length()
 {
     return len;
 }
 
 
 template <typename T>
-bool List<T>::find(T item)
+bool cgc_List<T>::cgc_find(T item)
 {
-    for (node *iter = head; iter; iter=iter->next) {
+    for (cgc_node *iter = head; iter; iter=iter->next) {
         if(iter->data == item)
             return true;
     }
@@ -71,9 +71,9 @@ bool List<T>::find(T item)
 }
 
 template <typename T>
-bool List<T>::add(T item)
+bool cgc_List<T>::cgc_add(T item)
 {
-    node *new_node = new node;
+    cgc_node *new_node = new cgc_node;
     if (!new_node)
         return false;
 
@@ -92,7 +92,7 @@ bool List<T>::add(T item)
 }
 
 template <typename T>
-bool List<T>::remove(size_t idx)
+bool cgc_List<T>::cgc_remove(cgc_size_t idx)
 {
     if (idx >= len || len == 0)
         return false;
@@ -107,7 +107,7 @@ bool List<T>::remove(size_t idx)
     }
 
     int i = 0;
-    node *iter = NULL;
+    cgc_node *iter = NULL;
     for (iter = head; i != idx; iter=iter->next, i++);
 
     if (iter == head) {
@@ -127,12 +127,12 @@ bool List<T>::remove(size_t idx)
 }
 
 template <typename T>
-bool List<T>::pop(T &item)
+bool cgc_List<T>::cgc_pop(T &item)
 {
     if (len == 0)
         return false;
 
-    node *temp;
+    cgc_node *temp;
     item = tail->data;
     if (len == 1) {
         delete head;
@@ -151,29 +151,29 @@ bool List<T>::pop(T &item)
 }
 
 template <typename T>
-void List<T>::clear_list(bool delete_memory)
+void cgc_List<T>::cgc_clear_list(bool delete_memory)
 {
     T temp;
-    while (pop(temp)) {
+    while (cgc_pop(temp)) {
         if (delete_memory)
             delete temp;
     }
 }
 
 template <typename T>
-bool List<T>::is_empty()
+bool cgc_List<T>::cgc_is_empty()
 {
     return (len == 0);
 }
 
 template <typename T>
-T List<T>::operator[](size_t idx) const
+T cgc_List<T>::operator[](cgc_size_t idx) const
 {
     if (idx >= len)
         return T();
 
     int i = 0;
-    node *iter = NULL;
+    cgc_node *iter = NULL;
     for (iter = head; i != idx; iter=iter->next, i++);
 
     return iter->data;

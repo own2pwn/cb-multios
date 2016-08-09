@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "libc.h"
 
-int strlen(char * string) {
+int cgc_strlen(char * string) {
     char *tmp;
     tmp = string;
     while(*tmp) {
@@ -35,14 +35,14 @@ int strlen(char * string) {
     return tmp-string;
 }
 
-unsigned int atoi(char *number)
+unsigned int cgc_atoi(char *number)
 {
     int i;
     int ret = 0;
     int tmp;
-    if(strlen(number) > 8)
+    if(cgc_strlen(number) > 8)
         return 0;
-    for(i=0;i<strlen(number);i++)
+    for(i=0;i<cgc_strlen(number);i++)
     {
         tmp = number[i]-'0';
         if(i == 0) {
@@ -56,7 +56,7 @@ unsigned int atoi(char *number)
     return ret;
 }
 
-char *itoa(unsigned int number)
+char *cgc_itoa(unsigned int number)
 {
     static char tmp[16];
     char *ret;
@@ -65,7 +65,7 @@ char *itoa(unsigned int number)
     ret = &tmp[15];
 
     remaining = number;
-    bzero(tmp, 16);
+    cgc_bzero(tmp, 16);
     do {
         *--ret = '0' + (number % 10);
         number = number / 10;
@@ -73,7 +73,7 @@ char *itoa(unsigned int number)
     return ret;
 }
 
-int recvUntil(int fd, char *buf, int max, char delim)
+int cgc_recvUntil(int fd, char *buf, int max, char delim)
 {
     char got = -1;
     int i;
@@ -89,7 +89,7 @@ int recvUntil(int fd, char *buf, int max, char delim)
     return 0;
 }
 
-void bzero(char *what, int howmany) {
+void cgc_bzero(char *what, int howmany) {
     char *tmp;
     int i;
     tmp = what;
@@ -98,11 +98,11 @@ void bzero(char *what, int howmany) {
     }
 }
 
-int put(char *string) {
+int cgc_put(char *string) {
     int i;
-    size_t len = strlen(string);
-    size_t tx_bytes;
-    size_t total_sent = 0;
+    cgc_size_t len = cgc_strlen(string);
+    cgc_size_t tx_bytes;
+    cgc_size_t total_sent = 0;
     int ret;
 
     while (total_sent < len) {
@@ -115,7 +115,7 @@ int put(char *string) {
     return 0;
 }
 
-int memcpy(char *dst, char *src, int size) {
+int cgc_memcpy(char *dst, char *src, int size) {
     while(size--)
         *dst++=*src++;
     return 0;

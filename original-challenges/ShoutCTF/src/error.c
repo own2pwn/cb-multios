@@ -43,7 +43,7 @@ const char* err_msgs[] =
     "Invalid value.",
 };
 
-const char* error_to_string(error_t err)
+const char* cgc_error_to_string(cgc_error_t err)
 {
     switch (err)
     {

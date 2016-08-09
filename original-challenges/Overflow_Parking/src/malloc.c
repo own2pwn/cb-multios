@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -22,40 +22,40 @@
 
 #include <libc.h>
 
-#define ADDHEAP(x) _addchunk(x,&heapl)
-#define ADDFREE(x) _addchunk(x,&freel)
+#define ADDHEAP(x) cgc__addchunk(x,&heapl)
+#define ADDFREE(x) cgc__addchunk(x,&freel)
 //just for readability
-#define RMHEAP(x) _rmchunk(x)
-#define RMFREE(x) _rmchunk(x)
+#define RMHEAP(x) cgc__rmchunk(x)
+#define RMFREE(x) cgc__rmchunk(x)
 
 struct chunk {
    struct chunk *prev;
    struct chunk *next;
-   size_t size;
-} typedef chunk_t;
+   cgc_size_t size;
+} typedef cgc_chunk_t;
 
 char *page;
-size_t page_remaining;
-chunk_t freel;
-chunk_t heapl;
+cgc_size_t page_remaining;
+cgc_chunk_t freel;
+cgc_chunk_t heapl;
 
-static void _addchunk(chunk_t *c, chunk_t *h) {
+static void cgc__addchunk(cgc_chunk_t *c, cgc_chunk_t *h) {
     c->prev = h->prev;
     c->next = h;
     h->prev->next = c;
     h->prev = c;
 }
 
-static void _rmchunk(chunk_t *c) {
+static void cgc__rmchunk(cgc_chunk_t *c) {
     c->prev->next = c->next;
     c->next->prev = c->prev;
 }
 
-void *malloc(size_t s) {
+void *cgc_malloc(cgc_size_t s) {
     void *p;
-    chunk_t *c = &freel;
-    size_t total = s;
-    //printf("Alloc @h\n",s);
+    cgc_chunk_t *c = &freel;
+    cgc_size_t total = s;
+    //cgc_printf("Alloc @h\n",s);
 
     if (s == 0) {
         return NULL;
@@ -76,15 +76,15 @@ void *malloc(size_t s) {
         heapl.prev = &heapl;
     }
 
-    total += sizeof(chunk_t);
+    total += sizeof(cgc_chunk_t);
 
-    //check free list to see if we have any matches
+    //check cgc_free list to see if we have any matches
     do {
         if (c->size >= total) {
             RMFREE(c);
             ADDHEAP(c);
-            //printf("Return 2 @h\n",c);
-            return (char*)c+sizeof(chunk_t);
+            //cgc_printf("Return 2 @h\n",c);
+            return (char*)c+sizeof(cgc_chunk_t);
         }
         c = c->next;
     } while(c != &freel);
@@ -94,18 +94,18 @@ void *malloc(size_t s) {
     if (page) {
         if (page_remaining >= total) {
             //we have enough, do it
-            c = (chunk_t*)page;
+            c = (cgc_chunk_t*)page;
             c->size = total;
             page += total;
             page_remaining -= total;
             ADDHEAP(c);
-            //printf("Return 1 @h\n",c);
-            return ((char*)c+sizeof(chunk_t));
+            //cgc_printf("Return 1 @h\n",c);
+            return ((char*)c+sizeof(cgc_chunk_t));
         } else {
-            //we don't have enough for a useful allocation. add remaining to free list
-            if (page_remaining > sizeof(chunk_t)) {
-                //we add page to free list
-                ADDFREE((chunk_t*)page);
+            //we don't have enough for a useful allocation. add remaining to cgc_free list
+            if (page_remaining > sizeof(cgc_chunk_t)) {
+                //we add page to cgc_free list
+                ADDFREE((cgc_chunk_t*)page);
                 page = NULL;
             } else {
                 //we leak mem because it's as useless as I am lazy :-/
@@ -116,37 +116,37 @@ void *malloc(size_t s) {
 
 
 
-    //no suitable free chunk
+    //no suitable cgc_free chunk
     //we need a new page, and will have returned at this point if we don't
     ALLOCRWX(total,p);
 
     page = (char *)p + total;
-    page = (char *)((uint32_t)page & ~(PAGE_SIZE-1));
-    //printf("@h\n",page);
-    page_remaining = PAGE_SIZE - ((size_t)((char *)p+total) - (size_t)page);
+    page = (char *)((cgc_uint32_t)page & ~(PAGE_SIZE-1));
+    //cgc_printf("@h\n",page);
+    page_remaining = PAGE_SIZE - ((cgc_size_t)((char *)p+total) - (cgc_size_t)page);
     page += PAGE_SIZE-page_remaining;
 
-    if (page_remaining <= sizeof(chunk_t))
+    if (page_remaining <= sizeof(cgc_chunk_t))
         page = NULL;
 
-    c = (chunk_t*)p;
+    c = (cgc_chunk_t*)p;
     c->size = s;
     ADDHEAP(c);
-    //printf("Return 3 @h\n",c);
+    //cgc_printf("Return 3 @h\n",c);
 
-    return (char*)c + sizeof(chunk_t);
+    return (char*)c + sizeof(cgc_chunk_t);
 }
 
-void free(void *p) {
-    //printf("Free @h\n",((char*)p - sizeof(chunk_t)));
-    RMHEAP((chunk_t*)((char*)p - sizeof(chunk_t)));
-    ADDFREE((chunk_t*)((char*)p - sizeof(chunk_t)));
+void cgc_free(void *p) {
+    //cgc_printf("Free @h\n",((char*)p - sizeof(cgc_chunk_t)));
+    RMHEAP((cgc_chunk_t*)((char*)p - sizeof(cgc_chunk_t)));
+    ADDFREE((cgc_chunk_t*)((char*)p - sizeof(cgc_chunk_t)));
 }
 
-void *calloc(size_t s) {
-    void *p = malloc(s);
+void *cgc_calloc(cgc_size_t s) {
+    void *p = cgc_malloc(s);
     if (!p)
         return NULL;
-    memset(p, '\0', s);
+    cgc_memset(p, '\0', s);
     return p;
 }

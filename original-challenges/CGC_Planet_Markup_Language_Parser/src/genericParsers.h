@@ -31,11 +31,11 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include "service.h"
 
-char *extractName( pstring str );
+char *cgc_extractName( cgc_pstring str );
 
-int extractPopulation( pstring str );
+int cgc_extractPopulation( cgc_pstring str );
 
-pBorder extractBorder( pstring str );
+cgc_pBorder cgc_extractBorder( cgc_pstring str );
 
 
 #endif

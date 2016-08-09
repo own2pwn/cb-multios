@@ -31,26 +31,26 @@
 
 #include "plane.h"
 
-static double __attribute__((regparm(3))) plane_intersect(struct plane *, struct ray *, void *);
+static double __attribute__((regparm(3))) cgc_plane_intersect(struct plane *, struct ray *, void *);
 
 void
-plane_init(struct plane *plane, struct vector normal)
+cgc_plane_init(struct plane *plane, struct vector normal)
 {
     plane->data = NULL;
     plane->normal = normal;
-    plane->intersect = plane_intersect;
+    plane->intersect = cgc_plane_intersect;
 }
 
 static double __attribute__((regparm(3)))
-plane_intersect(struct plane *plane, struct ray *ray, void *data)
+cgc_plane_intersect(struct plane *plane, struct ray *ray, void *data)
 {
     // See https://en.wikipedia.org/wiki/Line-plane_intersection
-    struct vector l0 = vector_add(ray->origin, vector_trunc(ray->direction));
-    struct vector p0_minus_l0 = vector_trunc(vector_sub(plane->shape.position, l0));
-    double p0_minus_l0_dot_n = vector_dot(p0_minus_l0, vector_trunc(vector_norm(plane->normal)));
+    struct vector l0 = cgc_vector_add(ray->origin, cgc_vector_trunc(ray->direction));
+    struct vector p0_minus_l0 = cgc_vector_trunc(cgc_vector_sub(plane->shape.position, l0));
+    double p0_minus_l0_dot_n = cgc_vector_dot(p0_minus_l0, cgc_vector_trunc(cgc_vector_norm(plane->normal)));
 
     if (fabs(p0_minus_l0_dot_n) > EPSILON)
-        return p0_minus_l0_dot_n / vector_dot(vector_trunc(ray->direction), vector_trunc(vector_norm(plane->normal)));
+        return p0_minus_l0_dot_n / cgc_vector_dot(cgc_vector_trunc(ray->direction), cgc_vector_trunc(cgc_vector_norm(plane->normal)));
     else
         return 0.0;
 }

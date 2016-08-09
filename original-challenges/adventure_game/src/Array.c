@@ -30,7 +30,7 @@ DefineFunction(Array, void, $init)
     this->m_elements = NULL;
 }
 
-DefineFunction(Array, void, enlarge, size_t min_count)
+DefineFunction(Array, void, enlarge, cgc_size_t min_count)
 {
     if (this->m_size >= min_count)
         return;
@@ -57,7 +57,7 @@ DefineFunction(Array, void *, pop)
     return this->m_elements[--this->m_count];
 }
 
-DefineFunction(Array, void, set, size_t idx, void *o)
+DefineFunction(Array, void, set, cgc_size_t idx, void *o)
 {
     $(this, enlarge, idx+1);
 
@@ -69,7 +69,7 @@ DefineFunction(Array, void, set, size_t idx, void *o)
     this->m_elements[idx] = o;
 }
 
-DefineFunction(Array, void *, get, size_t idx)
+DefineFunction(Array, void *, get, cgc_size_t idx)
 {
     if (idx >= this->m_count)
         return NULL;
@@ -77,7 +77,7 @@ DefineFunction(Array, void *, get, size_t idx)
     return this->m_elements[idx];
 }
 
-DefineFunction(Array, void *, remove, size_t idx)
+DefineFunction(Array, void *, remove, cgc_size_t idx)
 {
     if (idx >= this->m_count)
         return NULL;

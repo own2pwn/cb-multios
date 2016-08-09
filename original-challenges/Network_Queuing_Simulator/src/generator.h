@@ -4,7 +4,7 @@ Author: Joe Rogers <joe@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,14 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-int InitRandom(void);
-int RandomGenerator(void);
+int cgc_InitRandom(void);
+int cgc_RandomGenerator(void);
 
-double CalcDelta(unsigned int, double);
-int InitPoisson(void);
-int PoissonGenerator(void);
+double cgc_CalcDelta(unsigned int, double);
+int cgc_InitPoisson(void);
+int cgc_PoissonGenerator(void);
 
 #define MIN_MANUAL_PKTS 1
 #define MAX_MANUAL_PKTS 1000
-int InitManual(void);
-int ManualGenerator(void);
+int cgc_InitManual(void);
+int cgc_ManualGenerator(void);

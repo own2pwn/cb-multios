@@ -4,7 +4,7 @@ Copyright (c) 2016 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,18 +30,18 @@ THE SOFTWARE.
 
 #define RAND_MAX	2147483647
 
-int rand( void );
-void srand( unsigned int seed );
+int cgc_rand( void );
+void cgc_srand( unsigned int seed );
 
-int atoi( const char *pStr );
-double atof( char *pStr );
+int cgc_atoi( const char *pStr );
+double cgc_atof( char *pStr );
  
-char *strcpy( char *pDest, const char *pSource );
-char *strncpy( char *pDest, const char *pSource, size_t maxlen );
-void *memcpy( void *pDest, const void *pSrc, size_t nbytes );
+char *cgc_strcpy( char *pDest, const char *pSource );
+char *cgc_strncpy( char *pDest, const char *pSource, cgc_size_t maxlen );
+void *cgc_memcpy( void *pDest, const void *pSrc, cgc_size_t nbytes );
 
-int receive_bytes (unsigned char *buffer, size_t size) ;
+int cgc_receive_bytes (unsigned char *buffer, cgc_size_t size) ;
 
-int write(  void *, size_t );
+int cgc_write(  void *, cgc_size_t );
 
 #endif // STDLIB_H__

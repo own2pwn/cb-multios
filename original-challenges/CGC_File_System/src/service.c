@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,71 +23,71 @@ THE SOFTWARE.
 
 #include "service.h"
 
-pfile root = NULL;
+cgc_pfile root = NULL;
 
-void service_loop( void )
+void cgc_service_loop( void )
 {
 	int command = 0;
-    pfile nf = NULL;
+    cgc_pfile nf = NULL;
     
-    /// Create the root file
-    root = init_file();
+    /// Create the root cgc_file
+    root = cgc_init_file();
     
     if ( root == NULL ) {
-        printf("[ERROR] Failed to create the root node\n");
+        cgc_printf("[ERROR] Failed to create the root node\n");
         return;
     }
     
-    set_type( root, DIR );
-    set_name( root, "/");
+    cgc_set_type( root, DIR );
+    cgc_set_name( root, "/");
     
 	while (1) {
-		if ( recv( (char*)&command, 4 ) != 4 ) {
+		if ( cgc_recv( (char*)&command, 4 ) != 4 ) {
 			// Failed to receive send error
-			printf("[ERROR] Receive failed\n");
+			cgc_printf("[ERROR] Receive failed\n");
             return;
 		}
 
 		switch ( command ) {
 			/// SEND
 			case 0x444e4553:
-				if ( handle_send( ) == 0 ) {
+				if ( cgc_handle_send( ) == 0 ) {
                     continue;
                 }
                 
 				break;
             /// NDIR
             case 0x5249444e:
-                if ( handle_ndir( ) == 0 ) {
+                if ( cgc_handle_ndir( ) == 0 ) {
                     continue;
                 }
                 
                 break;
             /// RECV
 			case 0x56434552:
-                if ( handle_recv() == 0 ) {
+                if ( cgc_handle_recv() == 0 ) {
                     continue;
                 }
                 
 				break;
             /// STOP
             case 0x504f5453:
-                printf("[INFO] Terminating\n");
+                cgc_printf("[INFO] Terminating\n");
                 _terminate(0);
                 break;
             /// PRNT
 			case 0x544e5250:
-                printf("[INFO] Listing files\n");
+                cgc_printf("[INFO] Listing files\n");
                 
-                handle_prnt( root, "" );
+                cgc_handle_prnt( root, "" );
                 
 				break;
             /// REPO
             case 0x4f504552:
-                handle_repo( );
+                cgc_handle_repo( );
                 break;
 			default:
-				printf("[ERROR] Invalid command: $x\n", command);
+				cgc_printf("[ERROR] Invalid command: $x\n", command);
 				break;
 		};
 	}
@@ -98,7 +98,7 @@ void service_loop( void )
 
 int main(void)
 {
-	service_loop();
+	cgc_service_loop();
 
     return 0;
 }

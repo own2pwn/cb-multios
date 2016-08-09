@@ -42,38 +42,38 @@
 #include "service.h"
 
 // Globals
-namespace_t ns;
+cgc_namespace_t ns;
 char json[BUF_RX_SZ];
 
-object_t * object_find(uint8_t id) {
+cgc_object_t * cgc_object_find(uint8_t id) {
 
-    size_t i = 0;
+    cgc_size_t i = 0;
 
     for (i=0; i<NUM_OBJS; i++) {
         if (NULL != ns.obj[i] && id == ns.obj[i]->id) {
 #ifdef DEBUG
-            fprintf(stderr, "[D] object_find | found object at index %d\n", i);
+            fprintf(stderr, "[D] cgc_object_find | found object at index %d\n", i);
 #endif
             return ns.obj[i];
         }
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] object_find | object not found\n", i);
+    fprintf(stderr, "[D] cgc_object_find | object not found\n", i);
 #endif
 
     return NULL;
 }
 
-int parse_id(char **cursor, uint16_t *line_remaining, uint8_t *id) {
+int cgc_parse_id(char **cursor, uint16_t *line_remaining, uint8_t *id) {
 
     int ret = SUCCESS;
     char *delim = NULL;
     uint16_t consumed = 0;
 
-    if (NULL == (delim = strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
+    if (NULL == (delim = cgc_strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_id | unable to find delim (or remaining exceeded)\n");
+        fprintf(stderr, "[E] cgc_parse_id | unable to find delim (or remaining exceeded)\n");
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
@@ -81,9 +81,9 @@ int parse_id(char **cursor, uint16_t *line_remaining, uint8_t *id) {
     consumed = delim - *cursor;
 
     uint32_t tmp = 0;
-    if (SUCCESS != (ret = str2unt32n(*cursor, consumed, MAX_UINT8, &tmp))) {
+    if (SUCCESS != (ret = cgc_str2unt32n(*cursor, consumed, MAX_UINT8, &tmp))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_id | unable to convert ID; ret = %d\n", ret);
+        fprintf(stderr, "[E] cgc_parse_id | unable to convert ID; ret = %d\n", ret);
 #endif 
         goto bail;
     }
@@ -92,7 +92,7 @@ int parse_id(char **cursor, uint16_t *line_remaining, uint8_t *id) {
     *id = (uint8_t)tmp;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] parse_id | ID = %d\n", *id);
+    fprintf(stderr, "[D] cgc_parse_id | ID = %d\n", *id);
 #endif 
 
     // Advance cursor.
@@ -104,41 +104,41 @@ bail:
 }
 
 
-int parse_type(char **cursor, uint16_t *line_remaining, objtype_t *type) {
+int cgc_parse_type(char **cursor, uint16_t *line_remaining, cgc_objtype_t *type) {
     
     int ret = SUCCESS;
     char *delim = NULL;
     uint16_t consumed = 0;
 
-    if (NULL == (delim = strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
+    if (NULL == (delim = cgc_strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_type | unable to find delim (or remaining exceeded)\n");
+        fprintf(stderr, "[E] cgc_parse_type | unable to find delim (or remaining exceeded)\n");
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
     }
     consumed = delim - *cursor;
 
-    // Convert TYPE string to objtype_t
+    // Convert TYPE string to cgc_objtype_t
     // Promotion doesn't happen here; it happens during VAL parsing.
-    if (0 == memcmp("NUMBER", *cursor, SZ_INSN_TYPE)) {
+    if (0 == cgc_memcmp("NUMBER", *cursor, SZ_INSN_TYPE)) {
 
         *type = TYPE_NUMBER;
 
-    } else if (0 == memcmp("STRING", *cursor, SZ_INSN_TYPE)) {
+    } else if (0 == cgc_memcmp("STRING", *cursor, SZ_INSN_TYPE)) {
 
         *type = TYPE_STRING;
 
     } else {
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_type | got an invalid type: %d\n", *type);
+        fprintf(stderr, "[E] cgc_parse_type | got an invalid type: %d\n", *type);
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] parse_type | parsed type: %d\n", *type);
+    fprintf(stderr, "[D] cgc_parse_type | parsed type: %d\n", *type);
 #endif
 
     // Advance cursor.
@@ -150,29 +150,29 @@ bail:
 }
 
 
-int parse_number(char **cursor, uint16_t *line_remaining, uint32_t *number) {
+int cgc_parse_number(char **cursor, uint16_t *line_remaining, uint32_t *number) {
 
     int ret = SUCCESS;
     char *delim = NULL;
     uint16_t consumed = 0;
 
-    if (NULL == (delim = strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
+    if (NULL == (delim = cgc_strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_number | unable to find delim (or remaining exceeded)\n");
+        fprintf(stderr, "[E] cgc_parse_number | unable to find delim (or remaining exceeded)\n");
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
     }
     consumed = delim - *cursor;
 
-    if (SUCCESS != (ret = str2unt32n(*cursor, consumed, MAX_UINT32, number))) {
+    if (SUCCESS != (ret = cgc_str2unt32n(*cursor, consumed, MAX_UINT32, number))) {
 #ifdef DEBUG
-        fprintf(stderr, "[D] parse_number | non-SUCCESS from str2unt32n(), could be PROMOTION; ret = %d\n", ret);
+        fprintf(stderr, "[D] cgc_parse_number | non-SUCCESS from cgc_str2unt32n(), could be PROMOTION; ret = %d\n", ret);
 #endif 
         // We don't goto bail here because then we'd miss cursor advancement.
     } else {
 #ifdef DEBUG
-        fprintf(stderr, "[D] parse_number | number = %u\n", *number);
+        fprintf(stderr, "[D] cgc_parse_number | number = %u\n", *number);
 #endif  
     }
 
@@ -185,15 +185,15 @@ bail:
 }
 
 
-int parse_string(char **cursor, uint16_t *line_remaining, char *string) {
+int cgc_parse_string(char **cursor, uint16_t *line_remaining, char *string) {
 
     int ret = SUCCESS;
     char *delim = NULL;
     uint16_t consumed = 0;
 
-    if (NULL == (delim = strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
+    if (NULL == (delim = cgc_strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] parse_string | unable to find delim (or remaining exceeded)\n");
+        fprintf(stderr, "[E] cgc_parse_string | unable to find delim (or remaining exceeded)\n");
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
@@ -202,10 +202,10 @@ int parse_string(char **cursor, uint16_t *line_remaining, char *string) {
 
     // NOTE: minus 1 because we don't want to copy the newline
     // XXXX: underflow?
-    strncpy(string, *cursor, MIN(*line_remaining-1, MAX_SZ_STRING));
+    cgc_strncpy(string, *cursor, MIN(*line_remaining-1, MAX_SZ_STRING));
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] parse_string | string = %s\n", string);
+    fprintf(stderr, "[D] cgc_parse_string | string = %s\n", string);
 #endif 
 
     // Advance cursor.
@@ -220,24 +220,24 @@ bail:
 // Check whether or not we have enough space for another object.
 // If we have enough space, allocate backing memory, add object to namespace.
 // allocates space for an object, points *object at it
-int object_new(uint8_t id, objtype_t type, uint32_t number, char *string) {
+int cgc_object_new(uint8_t id, cgc_objtype_t type, uint32_t number, char *string) {
 
     int ret = SUCCESS;
 
-    object_t *object = NULL;
+    cgc_object_t *object = NULL;
 
     if (SUCCESS != (ret = allocate(SZ_PAGE, FALSE, (void **)&object))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] object_new | allocate() failed\n");
+        fprintf(stderr, "[E] cgc_object_new | allocate() failed\n");
 #endif    
         goto bail;
     }
 
     // Reject duplicate IDs
     // This appears to be in agreement with machine.py design.
-    if (NULL != object_find(id)) {
+    if (NULL != cgc_object_find(id)) {
 #ifdef DEBUG
-        fprintf(stderr, "[D] object_new | dupe ID; silently rejecting\n", id);
+        fprintf(stderr, "[D] cgc_object_new | dupe ID; silently rejecting\n", id);
 #endif 
         goto bail;
     }
@@ -259,10 +259,10 @@ int object_new(uint8_t id, objtype_t type, uint32_t number, char *string) {
         object->type = TYPE_STRING;
         object->string = (char *)(object + OFF_STRING);
         // If a VAL isn't specified, don't try to copy from NULL.
-        if (NULL != string) { strncpy(object->string, string, MAX_SZ_STRING); }
+        if (NULL != string) { cgc_strncpy(object->string, string, MAX_SZ_STRING); }
     } else {
 #ifdef DEBUG
-        fprintf(stderr, "[E] object_new | TYPE INVALID (shouldn't happen)\n", id);
+        fprintf(stderr, "[E] cgc_object_new | TYPE INVALID (shouldn't happen)\n", id);
 #endif 
         ret = ERRNO_MALFORMED_JSON;
         goto bail;
@@ -278,16 +278,16 @@ bail:
 
 // Format:
 // DEL <id>
-int op_del(char **cursor, uint16_t *line_remaining) {
+int cgc_op_del(char **cursor, uint16_t *line_remaining) {
 
     int ret = SUCCESS;
     uint8_t id = 0;
-    size_t i = 0;
+    cgc_size_t i = 0;
 
     // Get ID to DEL.
-    if (SUCCESS != (ret = parse_id(cursor, line_remaining, &id))) {
+    if (SUCCESS != (ret = cgc_parse_id(cursor, line_remaining, &id))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] op_del | non-SUCCESS from op_del()\n");
+        fprintf(stderr, "[E] cgc_op_del | non-SUCCESS from cgc_op_del()\n");
 #endif 
         goto bail;
     }
@@ -299,7 +299,7 @@ int op_del(char **cursor, uint16_t *line_remaining) {
 #endif
             if (SUCCESS != (ret = deallocate(ns.obj[i], SZ_PAGE))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] op_del | failed to deallocate backing memory for ID %03d\n", id);
+                fprintf(stderr, "[E] cgc_op_del | failed to deallocate backing memory for ID %03d\n", id);
 #endif  
             }     
             ns.obj[i] = NULL;
@@ -308,7 +308,7 @@ int op_del(char **cursor, uint16_t *line_remaining) {
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] op_del | attempted to DEL non-existant object %03d\n", id);
+    fprintf(stderr, "[D] cgc_op_del | attempted to DEL non-existant object %03d\n", id);
 #endif   
 
 bail:
@@ -318,39 +318,39 @@ bail:
 
 // Format:
 // SET <id> [<val>]
-int op_set(char **cursor, uint16_t *line_remaining) {
+int cgc_op_set(char **cursor, uint16_t *line_remaining) {
 
     int ret = SUCCESS;
     uint8_t id = 0;
-    object_t *object = NULL;
+    cgc_object_t *object = NULL;
     char *bak_cursor = NULL;
     uint16_t bak_line_remaining = 0;
 
     ////
     // Get ID
     ////
-    if (SUCCESS != (ret = parse_id(cursor, line_remaining, &id))) {
+    if (SUCCESS != (ret = cgc_parse_id(cursor, line_remaining, &id))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] op_set | non-SUCCESS from parse_id()\n");
+        fprintf(stderr, "[E] cgc_op_set | non-SUCCESS from cgc_parse_id()\n");
 #endif 
         goto bail;
     }
 
     // If ID doesn't exist, bail.
-    if (NULL == (object = object_find(id))) {
+    if (NULL == (object = cgc_object_find(id))) {
 #ifdef DEBUG
-        fprintf(stderr, "[D] op_set | could not find object; skipping assignment\n");
+        fprintf(stderr, "[D] cgc_op_set | could not find object; skipping assignment\n");
 #endif  
         
 #ifdef DEBUG
-        fprintf(stderr, "[D] op_set | DEBUG: prior to advancement: *cursor: '%s', *line_remaining: %d\n", *cursor, *line_remaining);
+        fprintf(stderr, "[D] cgc_op_set | DEBUG: prior to advancement: *cursor: '%s', *line_remaining: %d\n", *cursor, *line_remaining);
 #endif 
         // NOTE: minus one because we don't want to skip the \n
         *cursor += (*line_remaining - 1);
         *line_remaining = 0;
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] op_set | DEBUG: after advancement: *cursor: '%s', *line_remaining: %d\n", *cursor, *line_remaining);
+        fprintf(stderr, "[D] cgc_op_set | DEBUG: after advancement: *cursor: '%s', *line_remaining: %d\n", *cursor, *line_remaining);
 #endif 
         goto bail;
     }
@@ -365,11 +365,11 @@ int op_set(char **cursor, uint16_t *line_remaining) {
         bak_cursor = *cursor;
         bak_line_remaining = *line_remaining;
 
-        ret = parse_number(cursor, line_remaining, object->number);
+        ret = cgc_parse_number(cursor, line_remaining, object->number);
 
         if (SUCCESS == ret) {
 #ifdef DEBUG
-            fprintf(stderr, "[D] op_set | number update: %03d = %d\n", object->id, object->number);
+            fprintf(stderr, "[D] cgc_op_set | number update: %03d = %d\n", object->id, object->number);
 #endif          
         } else if (ERRNO_NUMBER_TOO_LARGE == ret) {
 
@@ -388,32 +388,32 @@ int op_set(char **cursor, uint16_t *line_remaining) {
             // Reset cursor and line_remaining and re-parse.
             *cursor = bak_cursor;
             *line_remaining = bak_line_remaining;
-            if (SUCCESS != (ret = parse_string(cursor, line_remaining, object->string))) {
+            if (SUCCESS != (ret = cgc_parse_string(cursor, line_remaining, object->string))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] op_set | something bad happened in parse_string()\n", object->id, object->string);
+                fprintf(stderr, "[E] cgc_op_set | something bad happened in cgc_parse_string()\n", object->id, object->string);
 #endif 
                 goto bail;
             }
 
 #ifdef DEBUG
-            fprintf(stderr, "[D] op_set | number->string promotion: %03d = %s\n", object->id, object->string);
+            fprintf(stderr, "[D] cgc_op_set | number->string promotion: %03d = %s\n", object->id, object->string);
 #endif 
         } else {
 #ifdef DEBUG
-            fprintf(stderr, "[E] op_set | parse_number returned error\n");
+            fprintf(stderr, "[E] cgc_op_set | cgc_parse_number returned error\n");
 #endif  
             goto bail;
         }
     } else if (TYPE_STRING == object->type) {
-        if (SUCCESS != (ret = parse_string(cursor, line_remaining, object->string))) {
+        if (SUCCESS != (ret = cgc_parse_string(cursor, line_remaining, object->string))) {
 #ifdef DEBUG
-            fprintf(stderr, "[E] op_set | something bad happened in parse_string()\n", object->id, object->string);
+            fprintf(stderr, "[E] cgc_op_set | something bad happened in cgc_parse_string()\n", object->id, object->string);
 #endif 
             goto bail;
         }
     } else {
 #ifdef DEBUG
-        fprintf(stderr, "[E] op_new | INVALID TYPE (SHOULDN'T HAPPEN)\n");
+        fprintf(stderr, "[E] cgc_op_new | INVALID TYPE (SHOULDN'T HAPPEN)\n");
 #endif  
     }
 
@@ -424,22 +424,22 @@ bail:
 
 // Format:
 // NEW <id> <type> [<val>]
-int op_new(char **cursor, uint16_t *line_remaining) {
+int cgc_op_new(char **cursor, uint16_t *line_remaining) {
 
     int ret = SUCCESS;
     char *delim = NULL;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] op_new | INIT\n");
+    fprintf(stderr, "[D] cgc_op_new | INIT\n");
 #endif
 
     ////
     // Get ID
     ////
     uint8_t id = 0;
-    if (SUCCESS != (ret = parse_id(cursor, line_remaining, &id))) {
+    if (SUCCESS != (ret = cgc_parse_id(cursor, line_remaining, &id))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] op_new | non-SUCCESS from parse_id()\n");
+        fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_parse_id()\n");
 #endif 
         goto bail;
     }
@@ -447,10 +447,10 @@ int op_new(char **cursor, uint16_t *line_remaining) {
     ////
     // Get TYPE
     ////
-    objtype_t type = TYPE_UNKNOWN;
-    if (SUCCESS != (ret = parse_type(cursor, line_remaining, &type))) {
+    cgc_objtype_t type = TYPE_UNKNOWN;
+    if (SUCCESS != (ret = cgc_parse_type(cursor, line_remaining, &type))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] op_new | non-SUCCESS from parse_type()\n");
+        fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_parse_type()\n");
 #endif 
         goto bail;
     }
@@ -458,16 +458,16 @@ int op_new(char **cursor, uint16_t *line_remaining) {
     ////
     // Get (optional) VAL
     ////
-    if (NULL == (delim = strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
+    if (NULL == (delim = cgc_strnchr(*cursor, ' ', (uint32_t)(*line_remaining)))) { 
         
         // We didn't find a VAL; we have everything we need to make the object.
 #ifdef DEBUG
-        fprintf(stderr, "[D] op_new | didn't find a VAL argument\n");
+        fprintf(stderr, "[D] cgc_op_new | didn't find a VAL argument\n");
 #endif 
 
-        if (SUCCESS != (ret = object_new(id, type, 0, NULL))) {
+        if (SUCCESS != (ret = cgc_object_new(id, type, 0, NULL))) {
 #ifdef DEBUG
-            fprintf(stderr, "[E] op_new | non-SUCCESS from object_new()\n");
+            fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_object_new()\n");
 #endif 
             goto bail;
         }
@@ -486,18 +486,18 @@ int op_new(char **cursor, uint16_t *line_remaining) {
             // updated to STRING and parsed as such.  The type is *not* updated 
             // in the SET command, which is where the vulnerability is.
             uint32_t number;
-            ret = parse_number(cursor, line_remaining, &number);
+            ret = cgc_parse_number(cursor, line_remaining, &number);
 
             if (SUCCESS == ret) {
                 // We successfully converted the string into a uint32_t.
                 // Now create the object.
 #ifdef DEBUG
-                fprintf(stderr, "[D] op_new | NUMBER = %u\n", number);
+                fprintf(stderr, "[D] cgc_op_new | NUMBER = %u\n", number);
 #endif 
 
-                if (SUCCESS != (ret = object_new(id, TYPE_NUMBER, number, NULL))) {
+                if (SUCCESS != (ret = cgc_object_new(id, TYPE_NUMBER, number, NULL))) {
 #ifdef DEBUG
-                    fprintf(stderr, "[E] op_new | non-SUCCESS from object_new()\n");
+                    fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_object_new()\n");
 #endif 
                     goto bail;
                 }
@@ -506,27 +506,27 @@ int op_new(char **cursor, uint16_t *line_remaining) {
                 // PROMOTION: The value provided cannot be represented by a 
                 // uint32_t, so we must store it as a string instead.
 #ifdef DEBUG
-                fprintf(stderr, "[D] op_new | im creating a new STRING via PROMOTION, VAL = '%s'\n", bak_cursor);
+                fprintf(stderr, "[D] cgc_op_new | im creating a new STRING via PROMOTION, VAL = '%s'\n", bak_cursor);
 #endif 
 
                 char string[MAX_SZ_STRING] = { 0 };
-                if (SUCCESS != (ret = parse_string(&bak_cursor, &bak_line_remaining, (char *)&string))) {
+                if (SUCCESS != (ret = cgc_parse_string(&bak_cursor, &bak_line_remaining, (char *)&string))) {
 #ifdef DEBUG
-                    fprintf(stderr, "[E] op_set | something bad happened in parse_string()\n");
+                    fprintf(stderr, "[E] cgc_op_set | something bad happened in cgc_parse_string()\n");
 #endif 
                     goto bail;
                 }
 
-                if (SUCCESS != (ret = object_new(id, TYPE_STRING, 0, (char *)&string))) {
+                if (SUCCESS != (ret = cgc_object_new(id, TYPE_STRING, 0, (char *)&string))) {
 #ifdef DEBUG
-                    fprintf(stderr, "[E] op_new | non-SUCCESS from object_new()\n");
+                    fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_object_new()\n");
 #endif 
                     goto bail;
                 }
 
             } else {
 #ifdef DEBUG
-                fprintf(stderr, "[E] op_new | something bad happeend during str2intn()\n");
+                fprintf(stderr, "[E] cgc_op_new | something bad happeend during str2intn()\n");
 #endif 
                 ret = ERRNO_MALFORMED_JSON;
                 goto bail;
@@ -537,27 +537,27 @@ int op_new(char **cursor, uint16_t *line_remaining) {
             // treat it as such.  There *shouldn't* be an issue with 
             // doing this.
             char string[MAX_SZ_STRING] = { 0 };
-            if (SUCCESS != (ret = parse_string(cursor, line_remaining, (char *)&string))) {
+            if (SUCCESS != (ret = cgc_parse_string(cursor, line_remaining, (char *)&string))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] op_set | something bad happened in parse_string()\n");
+                fprintf(stderr, "[E] cgc_op_set | something bad happened in cgc_parse_string()\n");
 #endif 
                 goto bail;
             }
 
 #ifdef DEBUG
-                fprintf(stderr, "[D] op_new | im creating a new STRING (not via promo), VAL = '%s'\n", string);
+                fprintf(stderr, "[D] cgc_op_new | im creating a new STRING (not via promo), VAL = '%s'\n", string);
 #endif 
 
-            if (SUCCESS != (ret = object_new(id, TYPE_STRING, 0, (char *)&string))) {
+            if (SUCCESS != (ret = cgc_object_new(id, TYPE_STRING, 0, (char *)&string))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] op_new | non-SUCCESS from object_new()\n");
+                fprintf(stderr, "[E] cgc_op_new | non-SUCCESS from cgc_object_new()\n");
 #endif 
                 goto bail;
             }
 
         } else {
 #ifdef DEBUG
-            fprintf(stderr, "[D] op_new | TYPE invalid (SHOULD NEVER HAPPEN)\n");
+            fprintf(stderr, "[D] cgc_op_new | TYPE invalid (SHOULD NEVER HAPPEN)\n");
 #endif 
             ret = ERRNO_MALFORMED_JSON;
             goto bail;
@@ -569,7 +569,7 @@ bail:
 }
 
 
-int parse_json(uint16_t json_sz) {
+int cgc_parse_json(uint16_t json_sz) {
 
     int ret = SUCCESS;
     char *cursor = json;
@@ -582,16 +582,16 @@ int parse_json(uint16_t json_sz) {
     // There's nothing to do; just return.
     if (0 == json_sz) {
 #ifdef DEBUG
-        fprintf(stderr, "[D] parse_json | json_sz = 0x%04x; nothing to do\n", json_sz);
+        fprintf(stderr, "[D] cgc_parse_json | json_sz = 0x%04x; nothing to do\n", json_sz);
 #endif 
         goto bail;
     }
 
     // For each INSN (1 per line)...
-    while (NULL != (line_start = strnchr(cursor, '\n', (uint32_t)remaining))) {
+    while (NULL != (line_start = cgc_strnchr(cursor, '\n', (uint32_t)remaining))) {
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] parse_json | top of loop; line_start = '%s'\n", line_start);
+        fprintf(stderr, "[D] cgc_parse_json | top of loop; line_start = '%s'\n", line_start);
 #endif 
 
         // Consume the newline.
@@ -601,15 +601,15 @@ int parse_json(uint16_t json_sz) {
         // If there's nothing left, we've parse it all.
         if (0 == remaining) { 
 #ifdef DEBUG
-            fprintf(stderr, "[D] parse_json | consumed all JSON\n", remaining);
+            fprintf(stderr, "[D] cgc_parse_json | consumed all JSON\n", remaining);
 #endif
             goto bail;
         }
 
         // Find next newline (so we have bounds to this line).
-        if (NULL == (line_end = strnchr(line_start, '\n', (uint32_t)remaining))) {
+        if (NULL == (line_end = cgc_strnchr(line_start, '\n', (uint32_t)remaining))) {
 #ifdef DEBUG
-            fprintf(stderr, "[E] parse_json | could not find next line ending; line_start is: '%s'\n", line_start);
+            fprintf(stderr, "[E] cgc_parse_json | could not find next line ending; line_start is: '%s'\n", line_start);
 #endif  
             ret = ERRNO_MALFORMED_JSON;
             goto bail;
@@ -618,7 +618,7 @@ int parse_json(uint16_t json_sz) {
         cursor = line_start;
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] parse_json | cursor = line_start = '%s'\n", cursor);
+        fprintf(stderr, "[D] cgc_parse_json | cursor = line_start = '%s'\n", cursor);
 #endif
 
         // Decrement from global remaining now, since we'll be consuming this line.
@@ -627,9 +627,9 @@ int parse_json(uint16_t json_sz) {
         ////
         // Get OP
         ////
-        if (NULL == (delim = strnchr(cursor, ' ', (uint32_t)(line_remaining)))) { 
+        if (NULL == (delim = cgc_strnchr(cursor, ' ', (uint32_t)(line_remaining)))) { 
 #ifdef DEBUG
-            fprintf(stderr, "[E] parse_json | cannot find OP delim\n");
+            fprintf(stderr, "[E] cgc_parse_json | cannot find OP delim\n");
 #endif   
             ret = ERRNO_MALFORMED_JSON;
             goto bail;
@@ -639,7 +639,7 @@ int parse_json(uint16_t json_sz) {
 
         if (SZ_INSN_OP != consumed) {
 #ifdef DEBUG
-            fprintf(stderr, "[E] parse_json | invalid OP length: %d\n", consumed);
+            fprintf(stderr, "[E] cgc_parse_json | invalid OP length: %d\n", consumed);
 #endif
             ret = ERRNO_MALFORMED_JSON;
             goto bail;
@@ -650,30 +650,30 @@ int parse_json(uint16_t json_sz) {
         ////
         op = cursor;
         cursor += SZ_INSN_OP+1;
-        if (0 == memcmp("NEW", op, SZ_INSN_OP)) {
-            if (SUCCESS != (ret = op_new(&cursor, &line_remaining))) {
+        if (0 == cgc_memcmp("NEW", op, SZ_INSN_OP)) {
+            if (SUCCESS != (ret = cgc_op_new(&cursor, &line_remaining))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] parse_json | NEW | non-SUCCESS from op_new()\n");
+                fprintf(stderr, "[E] cgc_parse_json | NEW | non-SUCCESS from cgc_op_new()\n");
 #endif         
                 goto bail;       
             }
-        } else if (0 == memcmp("SET", op, SZ_INSN_OP)) {
-            if (SUCCESS != (ret = op_set(&cursor, &line_remaining))) {
+        } else if (0 == cgc_memcmp("SET", op, SZ_INSN_OP)) {
+            if (SUCCESS != (ret = cgc_op_set(&cursor, &line_remaining))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] parse_json | NEW | non-SUCCESS from op_set()\n");
+                fprintf(stderr, "[E] cgc_parse_json | NEW | non-SUCCESS from cgc_op_set()\n");
 #endif         
                 goto bail;       
             }
-        } else if (0 == memcmp("DEL", op, SZ_INSN_OP)) {
-            if (SUCCESS != (ret = op_del(&cursor, &line_remaining))) {
+        } else if (0 == cgc_memcmp("DEL", op, SZ_INSN_OP)) {
+            if (SUCCESS != (ret = cgc_op_del(&cursor, &line_remaining))) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] parse_json | NEW | non-SUCCESS from op_del()\n");
+                fprintf(stderr, "[E] cgc_parse_json | NEW | non-SUCCESS from cgc_op_del()\n");
 #endif         
                 goto bail;       
             }
         } else {
 #ifdef DEBUG
-            fprintf(stderr, "[E] parse_json | unknown OP: '%.3s'\n", cursor);
+            fprintf(stderr, "[E] cgc_parse_json | unknown OP: '%.3s'\n", cursor);
 #endif
             ret = ERRNO_MALFORMED_JSON;
             goto bail;
@@ -685,45 +685,45 @@ bail:
 }
 
 // If we get DESERIALIZE command, then it should be followed by 2B of len + data.
-int deserialize(void) {
+int cgc_deserialize(void) {
 
     int ret = SUCCESS;
-    size_t rx_bytes = 0;
+    cgc_size_t rx_bytes = 0;
 
     uint16_t json_sz = 0;
 
     // Get json_sz.
     rx_bytes = 0;
-    if (SUCCESS != (ret = receive_all(STDIN, (void *)&json_sz, sizeof(json_sz), &rx_bytes)) || sizeof(json_sz) != rx_bytes) { 
+    if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&json_sz, sizeof(json_sz), &rx_bytes)) || sizeof(json_sz) != rx_bytes) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] deserialize | during receive_all() of json_sz\n");
+        fprintf(stderr, "[E] cgc_deserialize | during cgc_receive_all() of json_sz\n");
 #endif
         ret = ERRNO_RECV;
         goto bail;
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] deserialize | json_sz = 0x%04x\n", json_sz);
+    fprintf(stderr, "[D] cgc_deserialize | json_sz = 0x%04x\n", json_sz);
 #endif
 
     // Get json.
     rx_bytes = 0;
-    if (SUCCESS != (ret = receive_all(STDIN, (void *)&json, json_sz, &rx_bytes)) || json_sz != rx_bytes) { 
+    if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&json, json_sz, &rx_bytes)) || json_sz != rx_bytes) { 
 #ifdef DEBUG
-        fprintf(stderr, "[E] deserialize | during receive_all() of json\n");
+        fprintf(stderr, "[E] cgc_deserialize | during cgc_receive_all() of json\n");
 #endif
         ret = ERRNO_RECV;
         goto bail;
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] deserialize | read 0x%04x bytes of json\n", rx_bytes);
+    fprintf(stderr, "[D] cgc_deserialize | read 0x%04x bytes of json\n", rx_bytes);
 #endif
 
     // Parse json.
-    if (SUCCESS != (ret = parse_json(json_sz))) {
+    if (SUCCESS != (ret = cgc_parse_json(json_sz))) {
 #ifdef DEBUG
-        fprintf(stderr, "[E] deserialize | non-SUCCESS from parse_json(); bailing\n");
+        fprintf(stderr, "[E] cgc_deserialize | non-SUCCESS from cgc_parse_json(); bailing\n");
 #endif
         goto bail;
     }
@@ -735,15 +735,15 @@ bail:
 
 // Format: <id> <type> <val>
 // Example: 333 NUMBER 42
-int serialize(void) {
+int cgc_serialize(void) {
 
     int ret = SUCCESS;
     uint32_t consumed = 0;
-    object_t *object = NULL;
-    size_t i = 0;
+    cgc_object_t *object = NULL;
+    cgc_size_t i = 0;
 
 #ifdef DEBUG
-    fprintf(stderr, "[D] serialize | INIT\n");
+    fprintf(stderr, "[D] cgc_serialize | INIT\n");
 #endif  
 
     // Just bail if we can't fit serialization in a buffer?
@@ -761,37 +761,37 @@ int serialize(void) {
         if (NULL == (object = ns.obj[i])) { continue; }
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] serialize | obj %03d INIT\n", i);
+        fprintf(stderr, "[D] cgc_serialize | obj %03d INIT\n", i);
 #endif  
 
         // Do the ID.
-        consumed += uint2str32(tx_buf+consumed, MAX_SZ_LINE-consumed-1, object->id);
+        consumed += cgc_uint2str32(tx_buf+consumed, MAX_SZ_LINE-consumed-1, object->id);
 
 #ifdef DEBUG
-        fprintf(stderr, "[D] serialize | +=ID: tx_buf = '%s'\n", tx_buf);
+        fprintf(stderr, "[D] cgc_serialize | +=ID: tx_buf = '%s'\n", tx_buf);
 #endif 
 
         // Do the TYPE + VAL.
         if (TYPE_NUMBER == object->type) {
-            consumed += strncpy(tx_buf+consumed, " NUMBER ", MAX_SZ_LINE-consumed-1);
+            consumed += cgc_strncpy(tx_buf+consumed, " NUMBER ", MAX_SZ_LINE-consumed-1);
 #ifdef DEBUG
-            fprintf(stderr, "[D] serialize | += TYPE: tx_buf = '%s'\n", tx_buf);
+            fprintf(stderr, "[D] cgc_serialize | += TYPE: tx_buf = '%s'\n", tx_buf);
 #endif
 
             // NOTE: This is where the vuln gets triggered.  We assume that if 
             // the type is NUMBER, than the number field points to non-NULL. 
             // This asumption is invalid in the case of buggy promotion.
 #ifdef DEBUG
-            fprintf(stderr, "[D] serialize | *object->number = %u\n", *object->number);
+            fprintf(stderr, "[D] cgc_serialize | *object->number = %u\n", *object->number);
 #endif
-            consumed += uint2str32(tx_buf+consumed, MAX_SZ_LINE-consumed-1, *object->number);
+            consumed += cgc_uint2str32(tx_buf+consumed, MAX_SZ_LINE-consumed-1, *object->number);
 
         } else if (TYPE_STRING == object->type) {
-            consumed += strncpy(tx_buf+consumed, " STRING ", MAX_SZ_LINE-consumed-1);
-            consumed += strncpy(tx_buf+consumed, object->string, MAX_SZ_LINE-consumed-1);
+            consumed += cgc_strncpy(tx_buf+consumed, " STRING ", MAX_SZ_LINE-consumed-1);
+            consumed += cgc_strncpy(tx_buf+consumed, object->string, MAX_SZ_LINE-consumed-1);
         } else {
 #ifdef DEBUG
-            fprintf(stderr, "[E] serialize | INVALID TYPE (SHOULDN'T HAPPEN)\n");
+            fprintf(stderr, "[E] cgc_serialize | INVALID TYPE (SHOULDN'T HAPPEN)\n");
 #endif      
         }
 
@@ -800,13 +800,13 @@ int serialize(void) {
 
         // We've built a line.
 #ifdef DEBUG
-        fprintf(stderr, "[D] serialize | obj %03d DONE: %s", i, tx_buf);
+        fprintf(stderr, "[D] cgc_serialize | obj %03d DONE: %s", i, tx_buf);
 #endif
 
         // Send answer back to CRS.
-        if (SUCCESS != (ret = transmit_all(STDOUT, &tx_buf, consumed+1, NULL))) { 
+        if (SUCCESS != (ret = cgc_transmit_all(STDOUT, &tx_buf, consumed+1, NULL))) { 
 #ifdef DEBUG
-            fprintf(stderr, "[E] serialize | during transmit_all()\n");
+            fprintf(stderr, "[E] cgc_serialize | during cgc_transmit_all()\n");
 #endif
             ret = ERRNO_TRANSMIT;
             goto bail;
@@ -820,33 +820,33 @@ bail:
 
 // Protocol:
 // 1B: command
-//  - deserialize
-//  - serialize
+//  - cgc_deserialize
+//  - cgc_serialize
 //  - exit
-// if command is deserialize, then JSON follows:
+// if command is cgc_deserialize, then JSON follows:
 // 2B: length of JSON
 // ?B: JSON data
 int main(void) {
 
     int ret = SUCCESS;
-    size_t rx_bytes = 0;
-    size_t tx_bytes = 0;
+    cgc_size_t rx_bytes = 0;
+    cgc_size_t tx_bytes = 0;
 
-    memset((void *)&ns, 0, sizeof(ns));
+    cgc_memset((void *)&ns, 0, sizeof(ns));
 
     // Keep processing commands until told to exit (or error occurs).
     while (TRUE) {
 
         // Keep trying to get a command byte.
         uint32_t got_command = FALSE;
-        command_t command = CMD_UNKNOWN;
+        cgc_command_t command = CMD_UNKNOWN;
 
         while (FALSE == got_command) {
 
             // Get command (1B).
-            if (SUCCESS != (ret = receive_all(STDIN, (void *)&command, sizeof(command), &rx_bytes))) { 
+            if (SUCCESS != (ret = cgc_receive_all(STDIN, (void *)&command, sizeof(command), &rx_bytes))) { 
 #ifdef DEBUG
-                fprintf(stderr, "[E] during receive_all() of command\n");
+                fprintf(stderr, "[E] during cgc_receive_all() of command\n");
 #endif
                 ret = ERRNO_RECV;
                 goto bail;
@@ -861,16 +861,16 @@ int main(void) {
 
         // Dispatch command.
         if (CMD_DESERIALIZE == command) {
-            if (SUCCESS != (ret = deserialize())) {
+            if (SUCCESS != (ret = cgc_deserialize())) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] non-SUCCESS from deserialize(); bailing...\n");
+                fprintf(stderr, "[E] non-SUCCESS from cgc_deserialize(); bailing...\n");
 #endif
                 goto bail;
             }
         } else if (CMD_SERIALIZE == command) {
-            if (SUCCESS != (ret = serialize())) {
+            if (SUCCESS != (ret = cgc_serialize())) {
 #ifdef DEBUG
-                fprintf(stderr, "[E] non-SUCCESS from serialize(); bailing...\n");
+                fprintf(stderr, "[E] non-SUCCESS from cgc_serialize(); bailing...\n");
 #endif
                 goto bail;
             }

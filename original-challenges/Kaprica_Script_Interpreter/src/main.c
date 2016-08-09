@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,14 +27,14 @@
 
 int main()
 {
-    io_t io;
-    program_t p;
+    cgc_io_t io;
+    cgc_program_t p;
 
-    io_init_fd(&io, STDIN);
-    program_init(&p, &io);
-    if (program_parse(&p))
+    cgc_io_init_fd(&io, STDIN);
+    cgc_program_init(&p, &io);
+    if (cgc_program_parse(&p))
     {
-        if (!program_run(&p, &io))
+        if (!cgc_program_run(&p, &io))
             printf("RUNTIME ERROR\n");
     }
     else

@@ -72,7 +72,7 @@ unsigned long table[256] = {
  * 
  * @return CRC value
  */
-unsigned int crc32(char *buf, int len) {
+unsigned int cgc_crc32(char *buf, int len) {
     unsigned int c = 0xffffffff;
     int n;
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,8 +27,8 @@ extern "C" int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
     char *secret_page = (char *)secret_page_i;
     (void) secret_page;
 
-    Interface ui;
-    ui.run();
+    cgc_Interface ui;
+    ui.cgc_run();
 
     return 0;
 }

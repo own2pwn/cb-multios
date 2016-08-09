@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,7 +41,7 @@
 static unsigned int a=111111111, b=222222222, c=333333333, d=444444444;
 
 /*** GLOBAL VARIABLES ***/
-static qtree_t *g_game_board = NULL;
+static cgc_qtree_t *g_game_board = NULL;
 static int g_board_revealed = FALSE;
 static int g_high_score = 0;
 static int g_current_score = 0;
@@ -50,12 +50,12 @@ static int g_shots_left = 0;
 static int g_bombs_left = 0;
 static char g_buf[MAX_LINE_SIZE];
 
-static char readopt(int fd) {
+static char cgc_readopt(int fd) {
     char c = 0;
     char d = 0;
     char delim = '\n';
 
-    size_t rx;
+    cgc_size_t rx;
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
         return -1;
 
@@ -73,14 +73,14 @@ static char readopt(int fd) {
     return c;
 }
 
-static int readline(int fd, char *line, size_t line_size)
+static int cgc_readline(int fd, char *line, cgc_size_t line_size)
 {
-    size_t i;
-    size_t rx;
+    cgc_size_t i;
+    cgc_size_t rx;
 
     for (i = 0; i < line_size; i++) {
         if (receive(fd, line, 1, &rx) != 0 || rx == 0)
-            exit(0);
+            cgc_exit(0);
         if (*line == '\n')
             break;
         line++;
@@ -96,15 +96,15 @@ static int readline(int fd, char *line, size_t line_size)
     return 0;
 }
 
-static int parse_num_steps(char *line, size_t line_size)
+static int cgc_parse_num_steps(char *line, cgc_size_t line_size)
 {
     char *temp = line;
     while(*temp) {
-        if (!isdigit(*temp++))
+        if (!cgc_isdigit(*temp++))
             return -1;
     }
 
-    int num_steps = strtol(line, NULL, 10);
+    int num_steps = cgc_strtol(line, NULL, 10);
     if (num_steps < MIN_STEPS || num_steps > MAX_STEPS)
         return -1;
 
@@ -112,48 +112,48 @@ static int parse_num_steps(char *line, size_t line_size)
     return num_steps;
 }
 
-static coord_t parse_coordinate(char *line, size_t line_size)
+static cgc_coord_t cgc_parse_coordinate(char *line, cgc_size_t line_size)
 {
-    coord_t coord;
+    cgc_coord_t coord;
     UNSET_COORD(coord);
-    char *xcoord = strsep(&line, ",");
-    char *ycoord = strsep(&line, " ");
+    char *xcoord = cgc_strsep(&line, ",");
+    char *ycoord = cgc_strsep(&line, " ");
     if (line != NULL)
         ycoord = line;
 
-    if(!xcoord || !ycoord || !strlen(xcoord) || !strlen(ycoord))
+    if(!xcoord || !ycoord || !cgc_strlen(xcoord) || !cgc_strlen(ycoord))
         return coord;
 
     char *temp = xcoord;
     while(*temp) {
-        if (!isdigit(*temp++))
+        if (!cgc_isdigit(*temp++))
             return coord;
     }
 
     temp = ycoord;
     while(*temp) {
-        if (!isdigit(*temp++))
+        if (!cgc_isdigit(*temp++))
             return coord;
     }
 
-    coord.x = strtol(xcoord, NULL, 10);
-    coord.y = strtol(ycoord, NULL, 10);
+    coord.x = cgc_strtol(xcoord, NULL, 10);
+    coord.y = cgc_strtol(ycoord, NULL, 10);
 
     return coord;
 }
 
-static void take_shot()
+static void cgc_take_shot()
 {
     int score = 0;
-    coord_t coord;
+    cgc_coord_t coord;
 
     printf("Enter Shot Coordinates Ex: 100, 100:: ");
-    if (readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
+    if (cgc_readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
         printf("Invalid coordinates\n");
         return;
     }
 
-    coord = parse_coordinate(g_buf, MAX_LINE_SIZE);
+    coord = cgc_parse_coordinate(g_buf, MAX_LINE_SIZE);
     if (coord.x < 0 || coord.y < 0) {
         printf("Invalid coordinates\n");
         return;
@@ -177,17 +177,17 @@ static void take_shot()
     g_current_score += score;
 }
 
-static void place_bomb()
+static void cgc_place_bomb()
 {
-    coord_t coord;
+    cgc_coord_t coord;
 
     printf("Enter Bomb Coordinates Ex: 100, 100:: ");
-    if (readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
+    if (cgc_readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
         printf("Invalid coordinates\n");
         return;
     }
 
-    coord = parse_coordinate(g_buf, MAX_LINE_SIZE);
+    coord = cgc_parse_coordinate(g_buf, MAX_LINE_SIZE);
     if (coord.x < 0 || coord.y < 0 || coord.x >= MAX_BOARD_WIDTH || coord.y >= MAX_BOARD_WIDTH) {
         printf("Invalid coordinates\n");
         return;
@@ -203,16 +203,16 @@ static void place_bomb()
     }
 }
 
-static void reveal_board()
+static void cgc_reveal_board()
 {
     g_board_revealed = TRUE;
-    gld_print_board("GAME BOARD\n");
+    cgc_gld_print_board("GAME BOARD\n");
     printf("\n");
 }
 
-static void place_runner(int x, int y)
+static void cgc_place_runner(int x, int y)
 {
-    conway_pixel_t px;
+    cgc_conway_pixel_t px;
     px.is_alive = TRUE;
     px.bomb_set = 0;
 
@@ -257,7 +257,7 @@ static void place_runner(int x, int y)
     }
 }
 
-static void create_runner() {
+static void cgc_create_runner() {
     unsigned int temp = 0;
     unsigned int x = 0, y = 0;
 
@@ -271,18 +271,18 @@ static void create_runner() {
     d = (d ^ (d >> 19)) ^ (temp ^ (temp >> 8));
     y = d % MAX_BOARD_WIDTH;
 
-    place_runner(x, y);
+    cgc_place_runner(x, y);
 }
 
-static void new_game()
+static void cgc_new_game()
 {
-    gld_clear_board();
+    cgc_gld_clear_board();
     if(g_high_score < g_current_score)
         g_high_score = g_current_score;
 
     int i = 0;
     for(i = 0; i < RUNNERS_PER_GAME; i++)
-        create_runner();
+        cgc_create_runner();
 
     g_board_revealed = FALSE;
     g_current_score = 0;
@@ -293,16 +293,16 @@ static void new_game()
 }
 
 
-static void run()
+static void cgc_run()
 {
     int num_steps = 0, score = 0;
-    printf("Enter amount of time to run: [%d-%d]:: ", MIN_STEPS, MAX_STEPS);
-    if (readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
+    printf("Enter amount of time to cgc_run: [%d-%d]:: ", MIN_STEPS, MAX_STEPS);
+    if (cgc_readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
         printf("Invalid amount of time\n");
         return;
     }
 
-    num_steps = parse_num_steps(g_buf, MAX_LINE_SIZE);
+    num_steps = cgc_parse_num_steps(g_buf, MAX_LINE_SIZE);
     if (num_steps == -1) {
         printf("Invalid amount of time\n");
         return;
@@ -317,14 +317,14 @@ static void run()
     g_board_revealed = FALSE;
 }
 
-static int quit()
+static int cgc_quit()
 {
     printf("Thanks for Playing\n");
     return 0;
 }
 
 
-static void print_menu()
+static void cgc_print_menu()
 {
     if (g_num_steps_left <= 0 || (!g_shots_left && !g_bombs_left)) {
         g_num_steps_left = 0;
@@ -363,9 +363,9 @@ static void print_menu()
     printf("Selection-: ");
 }
 
-static int game_selection()
+static int cgc_game_selection()
 {
-    char choice = readopt(STDIN);
+    char choice = cgc_readopt(STDIN);
 
     if (choice == -1) {
         printf("Bad Input\n");
@@ -375,10 +375,10 @@ static int game_selection()
     if (g_num_steps_left <= 0) {
         switch(choice) {
         case '1':
-            new_game();
+            cgc_new_game();
             break;
         case '2':
-            quit();
+            cgc_quit();
             return 0;
         default:
             printf("Bad Choice\n");
@@ -387,16 +387,16 @@ static int game_selection()
     } else if (!g_board_revealed) {
         switch(choice) {
         case '1':
-            take_shot();
+            cgc_take_shot();
             break;
         case '2':
-            reveal_board();
+            cgc_reveal_board();
             break;
         case '3':
-            new_game();
+            cgc_new_game();
             break;
         case '4':
-            quit();
+            cgc_quit();
             return 0;
         default:
             printf("Bad Choice\n");
@@ -405,19 +405,19 @@ static int game_selection()
     } else {
         switch(choice) {
         case '1':
-            place_bomb();
+            cgc_place_bomb();
             break;
         case '2':
-            reveal_board();
+            cgc_reveal_board();
             break;
         case '3':
-            run();
+            cgc_run();
             break;
         case '4':
-            new_game();
+            cgc_new_game();
             break;
         case '5':
-            quit();
+            cgc_quit();
             return 0;
         default:
             printf("Bad Choice\n");
@@ -427,7 +427,7 @@ static int game_selection()
 
     return 1;
 }
-static void init_randomness()
+static void cgc_init_randomness()
 {
     char *temp;
 
@@ -435,27 +435,27 @@ try_again:
     printf("Before we begin. Enter a number [1 - 4294967295]\n"     \
             "Or any number. We'll figure it out: ");
 
-    while (readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
+    while (cgc_readline(STDIN, g_buf, MAX_LINE_SIZE) != 0) {
         printf("Bad input\n");
     }
 
     temp = g_buf;
     while(temp && *temp) {
-        if(!isdigit(*temp++)) {
+        if(!cgc_isdigit(*temp++)) {
             printf("Invalid number\n");
             goto try_again;
         }
     }
-    a = strtol(g_buf, NULL, 10);
+    a = cgc_strtol(g_buf, NULL, 10);
 }
 int main() {
-    init_randomness();
-    g_game_board = gld_init_game();
-    new_game();
+    cgc_init_randomness();
+    g_game_board = cgc_gld_init_game();
+    cgc_new_game();
     int status = 1;
     do {
-        print_menu();
-        status = game_selection();
+        cgc_print_menu();
+        status = cgc_game_selection();
     } while (status);
 
     printf("EXITING...\n");

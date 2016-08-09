@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,25 +25,25 @@
 
 #include "skill.h"
 
-class CExplorer
+class cgc_CExplorer
 {
     public:
-        CExplorer(const char *name);
-        ~CExplorer() {};
+        cgc_CExplorer(const char *name);
+        ~cgc_CExplorer() {};
 
-        const char* GetName() { return m_name; }
-        int GetLevel() { return m_level; }
-        int GetExp() { return m_exp; }
-        int GetNextExp();
-        bool GainExp(int exp);
-        void ReplaceSkill(CSkill* skill, int idx);
-        CRequirement::Type GetCounters();
-        bool IsAvail() { return m_avail; }
-        bool IsHired() { return m_hired; }
-        void SetHired(bool flag) { m_hired = flag; }
-        void SetAvail(bool flag) { m_avail = flag; }
-        CSkill** GetSkills() { return m_skills; }
-        virtual void ChangeName(const char *name);
+        const char* cgc_GetName() { return m_name; }
+        int cgc_GetLevel() { return m_level; }
+        int cgc_GetExp() { return m_exp; }
+        int cgc_GetNextExp();
+        bool cgc_GainExp(int exp);
+        void cgc_ReplaceSkill(cgc_CSkill* skill, int idx);
+        cgc_CRequirement::Type cgc_GetCounters();
+        bool cgc_IsAvail() { return m_avail; }
+        bool cgc_IsHired() { return m_hired; }
+        void cgc_SetHired(bool flag) { m_hired = flag; }
+        void cgc_SetAvail(bool flag) { m_avail = flag; }
+        cgc_CSkill** cgc_GetSkills() { return m_skills; }
+        virtual void cgc_ChangeName(const char *name);
         static const int k_maxNameLength = 16;
 
     private:
@@ -53,7 +53,7 @@ class CExplorer
 
         int m_exp;
         int m_level;
-        CSkill* m_skills[2];
+        cgc_CSkill* m_skills[2];
         char m_name[k_maxNameLength + 1];
         bool m_avail;
         bool m_hired;

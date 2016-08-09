@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,13 +23,13 @@
 #include "list.h"
 #include <cstring.h>
 
-List::List(void)
+cgc_List::cgc_List(void)
 {
   cap = MAX_WORKERS;
   size = 0;
 }
 
-bool List::Append(Support* s)
+bool cgc_List::cgc_Append(cgc_Support* s)
 {
   if (size == cap)
     return false;
@@ -38,7 +38,7 @@ bool List::Append(Support* s)
   return true;
 }
 
-Support* List::Get(uint32_t idx)
+cgc_Support* cgc_List::cgc_Get(cgc_uint32_t idx)
 {
   if (idx >= size)
   {
@@ -48,17 +48,17 @@ Support* List::Get(uint32_t idx)
   return data[idx];
 }
 
-Support* List::Remove(uint32_t idx)
+cgc_Support* cgc_List::cgc_Remove(cgc_uint32_t idx)
 {
   if (idx >= size)
   {
     return nullptr;
   }
 
-  Support *support = data[idx];
+  cgc_Support *support = data[idx];
   if (idx < size - 1)
   {
-    memmove(&(data[idx]), &(data[idx + 1]), (size - 1 - idx) * sizeof(idx));
+    cgc_memmove(&(data[idx]), &(data[idx + 1]), (size - 1 - idx) * sizeof(idx));
   }
 
   data[size - 1] = nullptr;
@@ -66,7 +66,7 @@ Support* List::Remove(uint32_t idx)
   return support;
 }
 
-uint32_t List::Length()
+cgc_uint32_t cgc_List::cgc_Length()
 {
     return size;
 }

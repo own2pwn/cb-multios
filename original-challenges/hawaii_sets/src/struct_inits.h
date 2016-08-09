@@ -29,12 +29,12 @@ THE SOFTWARE.
 
 #include "service.h"
 
-psetElement create_element( char*value, int type);
-int add_element_to_set( psetArray psa, psetElement pse );
-void free_set_array( psetArray psa );
-int element_in_set( psetArray set, psetElement element);
-psetElement copy_element( psetElement element );
-void free_element( psetElement element);
-psetArray copy_set( psetArray set );
-void print_set( psetArray psa );
+cgc_psetElement cgc_create_element( char*value, int type);
+int cgc_add_element_to_set( cgc_psetArray psa, cgc_psetElement pse );
+void cgc_free_set_array( cgc_psetArray psa );
+int cgc_element_in_set( cgc_psetArray set, cgc_psetElement element);
+cgc_psetElement cgc_copy_element( cgc_psetElement element );
+void cgc_free_element( cgc_psetElement element);
+cgc_psetArray cgc_copy_set( cgc_psetArray set );
+void cgc_print_set( cgc_psetArray psa );
 #endif

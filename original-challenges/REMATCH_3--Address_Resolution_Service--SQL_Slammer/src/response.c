@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "string.h"
 #include "service.h"
 
-response *DestroyResponse(response *pResponse)
+cgc_response *cgc_DestroyResponse(cgc_response *pResponse)
 {
   if (pResponse == NULL) 
   {
@@ -40,76 +40,76 @@ response *DestroyResponse(response *pResponse)
 
   if (pResponse->data != NULL) 
   {
-    free(pResponse->data);
+    cgc_free(pResponse->data);
   }
-  free(pResponse);
+  cgc_free(pResponse);
   return NULL;
 }
 
-response *GenerateBlankResponse() 
+cgc_response *cgc_GenerateBlankResponse() 
 {
-  response *pResponse;
-  pResponse = calloc(sizeof(response));
+  cgc_response *pResponse;
+  pResponse = cgc_calloc(sizeof(cgc_response));
   return pResponse;
 }
 
-int AddToResponse(response *pResponse, char *pString) 
+int cgc_AddToResponse(cgc_response *pResponse, char *pString) 
 {
   if (pString == NULL) 
   {
     return -1;
   }
-  int newLength = strlen(pString);
+  int newLength = cgc_strlen(pString);
   if (pResponse->data != NULL) 
   {
     newLength += pResponse->size;
   }
-  char *newData = calloc(newLength + 1);
+  char *newData = cgc_calloc(newLength + 1);
   char *newDataPtr = newData;
 
   if (pResponse->data != NULL) 
   {
-    strncpy(newData, (char *)pResponse->data, pResponse->size);
+    cgc_strncpy(newData, (char *)pResponse->data, pResponse->size);
     newDataPtr += pResponse->size;
   }
-  strcpy(newDataPtr, pString);
-  free(pResponse->data);
-  pResponse->data = (uint8_t *)newData;
+  cgc_strcpy(newDataPtr, pString);
+  cgc_free(pResponse->data);
+  pResponse->data = (cgc_uint8_t *)newData;
   pResponse->size = newLength;
   return 1;
 }
 
-int DumpResponse(response *pResponse) 
+int cgc_DumpResponse(cgc_response *pResponse) 
 {
   if (pResponse == NULL) 
   {
     return -1;
   }
-  printf("Response Length: $d\n", pResponse->size);
-  printf("Response Data: $s\n", pResponse->data);
+  cgc_printf("Response Length: $d\n", pResponse->size);
+  cgc_printf("Response Data: $s\n", pResponse->data);
   return 0;
 }
 
-int SendResponse(response *pResponse) 
+int cgc_SendResponse(cgc_response *pResponse) 
 {
   if (pResponse == NULL) 
   {
     return -1;
   }
   char byte = RESPONSE;
-  if (SendBytes(&byte, 1) != 1) 
+  if (cgc_SendBytes(&byte, 1) != 1) 
   {
     return -1;
   }
-  if (SendBytes((char *)&(pResponse->size), sizeof(pResponse->size)) != 2)
+  if (cgc_SendBytes((char *)&(pResponse->size), sizeof(pResponse->size)) != 2)
   {
     return -1;
   }
-  if (SendBytes((char *)pResponse->data, pResponse->size) != pResponse->size) 
+  if (cgc_SendBytes((char *)pResponse->data, pResponse->size) != pResponse->size) 
   {
     return -1;
   }
-  if (SendBytes("\0", 1) != 1) 
+  if (cgc_SendBytes("\0", 1) != 1) 
   {
     return -1;
   }

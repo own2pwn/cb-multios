@@ -11,47 +11,47 @@ extern "C"
 };
 
 template <typename T>
-class List
+class cgc_List
 {
 private:
     T data[MAX_LIST_SIZE];
-    size_t len;
+    cgc_size_t len;
 public:
-    List();
-    ~List();
-    int length();
-    bool add(T item);
-    bool remove(size_t idx);
-    bool pop(T &item);
-    bool is_empty();
-    bool is_full();
-    void print_list(void (*print_func)(void *));
+    cgc_List();
+    ~cgc_List();
+    int cgc_length();
+    bool cgc_add(T item);
+    bool cgc_remove(cgc_size_t idx);
+    bool cgc_pop(T &item);
+    bool cgc_is_empty();
+    bool cgc_is_full();
+    void cgc_print_list(void (*print_func)(void *));
 
-    T operator[](size_t idx) const;
-    T &operator[](size_t idx);
+    T operator[](cgc_size_t idx) const;
+    T &operator[](cgc_size_t idx);
 
 };
 
 template <typename T>
-List<T>::List()
+cgc_List<T>::cgc_List()
 {
     len = 0;
 }
 
 template <typename T>
-List<T>::~List()
+cgc_List<T>::~cgc_List()
 {
     len = 0;
 }
 
 template <typename T>
-int List<T>::length()
+int cgc_List<T>::cgc_length()
 {
     return len;
 }
 
 template <typename T>
-bool List<T>::add(T item)
+bool cgc_List<T>::cgc_add(T item)
 {
     if (len == MAX_LIST_SIZE)
         return false;
@@ -61,18 +61,18 @@ bool List<T>::add(T item)
 }
 
 template <typename T>
-bool List<T>::remove(size_t idx)
+bool cgc_List<T>::cgc_remove(cgc_size_t idx)
 {
     if (idx >= len)
         return false;
 
-    memcpy(&data[idx], &data[idx+1], (len - idx) * sizeof(T));
+    cgc_memcpy(&data[idx], &data[idx+1], (len - idx) * sizeof(T));
     len--;
     return true;
 }
 
 template <typename T>
-bool List<T>::pop(T &item)
+bool cgc_List<T>::cgc_pop(T &item)
 {
     if (len == 0)
         return false;
@@ -83,19 +83,19 @@ bool List<T>::pop(T &item)
 
 
 template <typename T>
-bool List<T>::is_empty()
+bool cgc_List<T>::cgc_is_empty()
 {
     return (len == 0);
 }
 
 template <typename T>
-bool List<T>::is_full()
+bool cgc_List<T>::cgc_is_full()
 {
     return (len == MAX_LIST_SIZE);
 }
 
 template <typename T>
-T List<T>::operator[](size_t idx) const
+T cgc_List<T>::operator[](cgc_size_t idx) const
 {
     if (idx >= len)
         return data[0];
@@ -104,7 +104,7 @@ T List<T>::operator[](size_t idx) const
 }
 
 template <typename T>
-T &List<T>::operator[](size_t idx)
+T &cgc_List<T>::operator[](cgc_size_t idx)
 {
     if (idx >= len)
         return data[len];
@@ -113,7 +113,7 @@ T &List<T>::operator[](size_t idx)
 }
 
 template <typename T>
-void List<T>::print_list(void (*print_func)(void *))
+void cgc_List<T>::cgc_print_list(void (*print_func)(void *))
 {
     int i;
     for (i = 0; i < len; i++) {

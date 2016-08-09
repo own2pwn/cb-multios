@@ -4,7 +4,7 @@ Copyright (c) 2015 Cromulence LLC
 
 Authors: Cromulence <cgc@cromulence.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,42 +41,42 @@ THE SOFTWARE.
 typedef struct _inode {
         char *Filename;
         char *Owner;
-        uint8_t Mode;
-        uint32_t FileSize;
+        cgc_uint8_t Mode;
+        cgc_uint32_t FileSize;
         unsigned char *Data;
-} Inode, *pInode;
+} cgc_Inode, *cgc_pInode;
 
 typedef struct _fs {
-        uint32_t MaxSize;
-        uint32_t MaxFiles;
-        pInode *Inodes;
-} Filesystem, *pFilesystem;
+        cgc_uint32_t MaxSize;
+        cgc_uint32_t MaxFiles;
+        cgc_pInode *Inodes;
+} cgc_Filesystem, *cgc_pFilesystem;
 
 typedef struct _file {
-	pInode Inode;
-	uint8_t Mode;
-	uint32_t CurrPosition;
-} FILE;
+	cgc_pInode cgc_Inode;
+	cgc_uint8_t Mode;
+	cgc_uint32_t CurrPosition;
+} cgc_FILE;
 
-char *FsError(void);
-uint8_t DestroyFilesystem(void);
-uint8_t InitFilesystem(uint32_t MaxFiles, char *RootPassword);
-uint8_t RenameFile(char *OldFilename, char *NewFilename);
-uint8_t DeleteFile(char *Filename);
-uint8_t InitPasswd(char *RootPassword);
-FILE *fopen(char *Filename, char *Mode);
-uint32_t fread(char *buf, uint32_t size, uint32_t nitems, FILE *fp);
-uint32_t fwrite(char *buf, uint32_t size, uint32_t nitems, FILE *fp);
-uint8_t fclose(FILE *fp);
-uint8_t ListFiles(char **Buf);
-uint8_t Login(char *Username);
-void Uid(void);
-uint8_t Logout(void);
-uint8_t AddUser(char *Username, char *Password);
-uint8_t DeleteUser(char *Username);
-uint8_t ChangePasswd(char *Username, char *NewPasswd);
-uint8_t CheckPasswd(char *Username, char *Password);
-uint8_t UserExists(char *Username);
-char *fgets(char *buf, uint32_t size, FILE *fp);
+char *cgc_FsError(void);
+cgc_uint8_t cgc_DestroyFilesystem(void);
+cgc_uint8_t cgc_InitFilesystem(cgc_uint32_t MaxFiles, char *RootPassword);
+cgc_uint8_t cgc_RenameFile(char *OldFilename, char *NewFilename);
+cgc_uint8_t cgc_DeleteFile(char *Filename);
+cgc_uint8_t cgc_InitPasswd(char *RootPassword);
+cgc_FILE *cgc_fopen(char *Filename, char *Mode);
+cgc_uint32_t cgc_fread(char *buf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_FILE *fp);
+cgc_uint32_t cgc_fwrite(char *buf, cgc_uint32_t size, cgc_uint32_t nitems, cgc_FILE *fp);
+cgc_uint8_t cgc_fclose(cgc_FILE *fp);
+cgc_uint8_t cgc_ListFiles(char **Buf);
+cgc_uint8_t cgc_Login(char *Username);
+void cgc_Uid(void);
+cgc_uint8_t cgc_Logout(void);
+cgc_uint8_t cgc_AddUser(char *Username, char *Password);
+cgc_uint8_t cgc_DeleteUser(char *Username);
+cgc_uint8_t cgc_ChangePasswd(char *Username, char *NewPasswd);
+cgc_uint8_t cgc_CheckPasswd(char *Username, char *Password);
+cgc_uint8_t cgc_UserExists(char *Username);
+char *cgc_fgets(char *buf, cgc_uint32_t size, cgc_FILE *fp);
 
 #endif // __FS_H__

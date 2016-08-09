@@ -42,10 +42,10 @@
  "Edgar: What doth the raven say?\n\n"\
  "Our authors provide various services, please give them a try...\n"
 
-int prompt(char *pmpt, char *buf, size_t size) {
+int cgc_prompt(char *pmpt, char *buf, cgc_size_t size) {
     int ret;
 
-    SEND(pmpt, strlen(pmpt), ret);
+    SEND(pmpt, cgc_strlen(pmpt), ret);
 
     RECV(buf, size, ret);
 
@@ -54,35 +54,35 @@ int prompt(char *pmpt, char *buf, size_t size) {
 
 int main(void) {
     int ret;
-    htreq *req;
+    cgc_htreq *req;
 
-    ALLOC(sizeof(htreq),0,(void**)&req,ret);
+    ALLOC(sizeof(cgc_htreq),0,(void**)&req,ret);
 
     //make sure our CB will crash on out of bounds read/write
-    req = (htreq *)(((char *)req)+4096-sizeof(htreq));
+    req = (cgc_htreq *)(((char *)req)+4096-sizeof(cgc_htreq));
 
     SENDL(GREET, sizeof(GREET)-1, ret);
 
     while (1) {
-        ret = prompt("> ", req->recv, sizeof(req->recv));
-        if (startswith(req->recv,EDGRBUF)) {
-            do_edgar(req);
-            req->resplen = strlen(req->resp);
-        } else if (startswith(req->recv,WILLBUF)) {
-            do_will(req);
-        } else if (startswith(req->recv,ELIZBUF)) {
-            do_eliz(req);
-            req->resplen = strlen(req->resp);
-        } else if (startswith(req->recv,JOHNBUF)) {
-            do_john(req);
-            req->resplen = strlen(req->resp);
-        } else if (streq(req->recv,"quit")) {
+        ret = cgc_prompt("> ", req->recv, sizeof(req->recv));
+        if (cgc_startswith(req->recv,EDGRBUF)) {
+            cgc_do_edgar(req);
+            req->resplen = cgc_strlen(req->resp);
+        } else if (cgc_startswith(req->recv,WILLBUF)) {
+            cgc_do_will(req);
+        } else if (cgc_startswith(req->recv,ELIZBUF)) {
+            cgc_do_eliz(req);
+            req->resplen = cgc_strlen(req->resp);
+        } else if (cgc_startswith(req->recv,JOHNBUF)) {
+            cgc_do_john(req);
+            req->resplen = cgc_strlen(req->resp);
+        } else if (cgc_streq(req->recv,"quit")) {
             _terminate(0);
-        } else if (streq(req->recv,"")) {
+        } else if (cgc_streq(req->recv,"")) {
 	        continue;
         } else {
-	        strcpy(req->resp,"Error");
-            req->resplen = strlen(req->resp);
+	        cgc_strcpy(req->resp,"Error");
+            req->resplen = cgc_strlen(req->resp);
 	    }
 
         SENDL(req->resp, req->resplen, ret); 

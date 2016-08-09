@@ -51,113 +51,113 @@ extern "C"
 
 #define AMBIENT_TEMP 75
 
-class ControllerProgram
+class cgc_ControllerProgram
 {
 private:
-	int32_t m_step_type;
-	int32_t m_sensor_id;
-	int32_t m_set_temp;
-	int32_t m_duration;
+	cgc_int32_t m_step_type;
+	cgc_int32_t m_sensor_id;
+	cgc_int32_t m_set_temp;
+	cgc_int32_t m_duration;
 
 public:
-	int32_t getStepType() { return m_step_type; }
-	int32_t getSensorId() { return m_sensor_id; }
-	int32_t getSetTemp() { return m_set_temp; }
-	int32_t getDuration() { return m_duration; }
+	cgc_int32_t cgc_getStepType() { return m_step_type; }
+	cgc_int32_t cgc_getSensorId() { return m_sensor_id; }
+	cgc_int32_t cgc_getSetTemp() { return m_set_temp; }
+	cgc_int32_t cgc_getDuration() { return m_duration; }
 
-	void setStepType( int32_t val ) { m_step_type = val; }
-	void setSensorId( int32_t val ) { m_sensor_id = val; }
-	void setSetTemp( int32_t val ) { m_set_temp = val; }
-	void setDuration( int32_t val ) { m_duration = val; }
+	void cgc_setStepType( cgc_int32_t val ) { m_step_type = val; }
+	void cgc_setSensorId( cgc_int32_t val ) { m_sensor_id = val; }
+	void cgc_setSetTemp( cgc_int32_t val ) { m_set_temp = val; }
+	void cgc_setDuration( cgc_int32_t val ) { m_duration = val; }
 };
 
-class Controller
+class cgc_Controller
 {
 private:
-	// Sensor list vars
-	CUtil::DLL_LIST( Sensor, m_sensorLink ) m_sensor_list; // use this doubly linked list
+	// cgc_Sensor list vars
+	CUtil::DLL_LIST( cgc_Sensor, m_sensorLink ) m_sensor_list; // use this doubly linked list
 	
-	uint16_t m_current_sensor_count;
+	cgc_uint16_t m_current_sensor_count;
 
-	// Controller vars
+	// cgc_Controller vars
 	
-	int32_t m_currentProgramStep;
+	cgc_int32_t m_currentProgramStep;
 	bool m_powerOn;
 	bool m_heaterOn;
 	double m_currentTemp;
-	int32_t m_version;
-	int32_t m_set_temp;
+	cgc_int32_t m_version;
+	cgc_int32_t m_set_temp;
 	bool m_smokeSensorPresent;
 
-	Sensor m_smokeSensor;
+	cgc_Sensor m_smokeSensor;
 
-	OutgoingMessage msg_out;
-	IncomingMessage msg_in;
+	cgc_OutgoingMessage msg_out;
+	cgc_IncomingMessage msg_in;
 
 
 public:
-	Controller();
-	~Controller();
+	cgc_Controller();
+	~cgc_Controller();
 
 
 
-	OutgoingMessage* GetMsgOut() { return &msg_out; }
-	IncomingMessage* GetMsgIn() { return &msg_in; }
+	cgc_OutgoingMessage* cgc_GetMsgOut() { return &msg_out; }
+	cgc_IncomingMessage* cgc_GetMsgIn() { return &msg_in; }
 
 	// Programs
-	ControllerProgram m_controllerProgram[10];
-	ControllerProgram m_controllerProgramBackup[10];
+	cgc_ControllerProgram m_controllerProgram[10];
+	cgc_ControllerProgram m_controllerProgramBackup[10];
 
-	void RevertProgram();
-	void BackupProgram();
-	void ClearBackupProgram();
-	void ClearProgram();
-	void PrintPrograms(); // test only
+	void cgc_RevertProgram();
+	void cgc_BackupProgram();
+	void cgc_ClearBackupProgram();
+	void cgc_ClearProgram();
+	void cgc_PrintPrograms(); // test only
 
 	// GET / SET
-	double getCurrentTemp() { return m_currentTemp; }
-	void setCurrentTemp( double val ) { m_currentTemp = val; }
+	double cgc_getCurrentTemp() { return m_currentTemp; }
+	void cgc_setCurrentTemp( double val ) { m_currentTemp = val; }
 
-	int32_t getCurrentProgramStep() { return m_currentProgramStep; }
-	void setCurrentProgramStep( int32_t val ) { m_currentProgramStep = val; }
+	cgc_int32_t cgc_getCurrentProgramStep() { return m_currentProgramStep; }
+	void cgc_setCurrentProgramStep( cgc_int32_t val ) { m_currentProgramStep = val; }
 	
-	bool getPowerOn() { return m_powerOn; }
-	void setPowerOn( bool val );
+	bool cgc_getPowerOn() { return m_powerOn; }
+	void cgc_setPowerOn( bool val );
 	
-	bool getHeaterOn() { return m_heaterOn; }
-	void setHeaterOn( bool val ) { m_heaterOn = val; }
+	bool cgc_getHeaterOn() { return m_heaterOn; }
+	void cgc_setHeaterOn( bool val ) { m_heaterOn = val; }
 
-	int32_t getSetTemp() { return m_set_temp; }
-	bool setSetTemp( int32_t val );
+	cgc_int32_t cgc_getSetTemp() { return m_set_temp; }
+	bool cgc_setSetTemp( cgc_int32_t val );
 
 
 	// Sensors
-	bool AddSensor( Sensor* );
-	bool IsSensorInList ( uint16_t id );
-	bool RemoveSensor( uint16_t sensor_id );
-	uint16_t GetSensorCount();
-	bool SetSensor( uint16_t sensor_type, bool val );
+	bool cgc_AddSensor( cgc_Sensor* );
+	bool cgc_IsSensorInList ( cgc_uint16_t id );
+	bool cgc_RemoveSensor( cgc_uint16_t sensor_id );
+	cgc_uint16_t cgc_GetSensorCount();
+	bool cgc_SetSensor( cgc_uint16_t sensor_type, bool val );
 
-	void PrintSensorList();
+	void cgc_PrintSensorList();
 
-	uint16_t GetVersion() { return m_version; }
+	cgc_uint16_t cgc_GetVersion() { return m_version; }
 
 	// firmware
 	//  get?
 	//  validate
-	bool ValidateFirmware();
+	bool cgc_ValidateFirmware();
 
 
 	// Smoke sensor
-	bool IsSmokeSensorEnabled() { return m_smokeSensor.GetEnabled(); }
-	void EnableSmokeSensor() { m_smokeSensor.SetEnabled( true ); }
-	void DisableSmokeSensor() { m_smokeSensor.SetEnabled( false ); }
+	bool cgc_IsSmokeSensorEnabled() { return m_smokeSensor.cgc_GetEnabled(); }
+	void cgc_EnableSmokeSensor() { m_smokeSensor.cgc_SetEnabled( true ); }
+	void cgc_DisableSmokeSensor() { m_smokeSensor.cgc_SetEnabled( false ); }
 
 	//
 	// Send a response back with the following code
 	//
-	void SendBasicResponse( CUtil::String code );
-	void SendExtendedResponse( uint16_t code, CUtil::String desc );
+	void cgc_SendBasicResponse( CUtil::cgc_String code );
+	void cgc_SendExtendedResponse( cgc_uint16_t code, CUtil::cgc_String desc );
 };
 
 

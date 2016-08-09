@@ -33,12 +33,12 @@
 #include <string.h>
 
 static unsigned int g_next_id = 1;
-static fib_t *g_fib;
-static fib_t *g_active_fibs;
+static cgc_fib_t *g_fib;
+static cgc_fib_t *g_active_fibs;
 
-void filaments_init()
+void cgc_filaments_init()
 {
-    fib_t *fib;
+    cgc_fib_t *fib;
     if (allocate(0x1000, 0, (void **)&fib) != 0) _terminate(-1);
 
     fib->id = 0;
@@ -48,7 +48,7 @@ void filaments_init()
     g_active_fibs = fib;
 }
 
-void filaments_switch(fib_t *new_fib)
+void cgc_filaments_switch(cgc_fib_t *new_fib)
 {
     if (new_fib == g_fib)
         return;
@@ -66,27 +66,27 @@ void filaments_switch(fib_t *new_fib)
     }
 }
 
-void filaments_yield()
+void cgc_filaments_yield()
 {
-    fib_t *next = g_fib->next;
+    cgc_fib_t *next = g_fib->next;
     if (next == NULL)
         next = g_active_fibs;
 
-    filaments_switch(next);
+    cgc_filaments_switch(next);
 }
 
-void __filaments_new()
+void cgc___filaments_new()
 {
     g_fib->start_func(g_fib->userdata);
 
     // TODO destroy the filament
     while (1)
-        filaments_yield();
+        cgc_filaments_yield();
 }
 
-void filaments_new(start_func_t func, void *userdata)
+void cgc_filaments_new(cgc_start_func_t func, void *userdata)
 {
-    fib_t *fib;
+    cgc_fib_t *fib;
     if (allocate(0x1000, 0, (void **)&fib) != 0) _terminate(-1);
 
     fib->id = g_next_id++;
@@ -94,76 +94,76 @@ void filaments_new(start_func_t func, void *userdata)
 
     fib->start_func = func;
     fib->userdata = userdata;
-    memset(fib->env, 0, sizeof(fib->env));
-    fib->env->_b[0] = (long)__filaments_new;
+    cgc_memset(fib->env, 0, sizeof(fib->env));
+    fib->env->_b[0] = (long)cgc___filaments_new;
     fib->env->_b[2] = (long)fib->stack + 0x7ffc;
 
     fib->next = g_active_fibs;
     g_active_fibs = fib;
 }
 
-fib_t *filaments_current()
+cgc_fib_t *cgc_filaments_current()
 {
     return g_fib;
 }
 
-int __filaments_transmit(int fd, const void *buf, size_t count, size_t *tx_bytes)
+int cgc___filaments_transmit(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes)
 {
-    filaments_yield();
+    cgc_filaments_yield();
     int retval = transmit(fd, buf, count, tx_bytes);
     return retval;
 }
 
-int __filaments_receive(int fd, void *buf, size_t count, size_t *rx_bytes)
+int cgc___filaments_receive(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes)
 {
     while (1)
     {
-        struct timeval tv;
-        fd_set rfds;
+        struct cgc_timeval tv;
+        cgc_fd_set rfds;
         FD_ZERO(&rfds);
         FD_SET(fd, &rfds);
         tv.tv_sec = 0;
         tv.tv_usec = 0;
 
-        if (fdwait(fd + 1, &rfds, NULL, &tv, NULL) != 0)
+        if (cgc_fdwait(fd + 1, &rfds, NULL, &tv, NULL) != 0)
             break;
 
         if (FD_ISSET(fd, &rfds))
             break;
 
-        filaments_yield();
+        cgc_filaments_yield();
     }
 
     int retval = receive(fd, buf, count, rx_bytes);
     return retval;
 }
 
-int __filaments_fdwait(int nfds, fd_set *readfds, fd_set *writefds,
-	   const struct timeval *timeout, int *readyfds)
+int cgc___filaments_cgc_fdwait(int nfds, cgc_fd_set *readfds, cgc_fd_set *writefds,
+	   const struct cgc_timeval *timeout, int *readyfds)
 {
-    filaments_yield();
-    int retval = fdwait(nfds, readfds, writefds, timeout, readyfds);
+    cgc_filaments_yield();
+    int retval = cgc_fdwait(nfds, readfds, writefds, timeout, readyfds);
     return retval;
 }
 
-int __filaments_allocate(size_t length, int is_X, void **addr)
+int cgc___filaments_allocate(cgc_size_t length, int is_X, void **addr)
 {
-    filaments_yield();
+    cgc_filaments_yield();
     int retval = allocate(length, is_X, addr);
     return retval;
 }
 
-int __filaments_deallocate(void *addr, size_t length)
+int cgc___filaments_deallocate(void *addr, cgc_size_t length)
 {
-    filaments_yield();
+    cgc_filaments_yield();
     int retval = deallocate(addr, length);
     return retval;
 }
 
-int __filaments_random(void *buf, size_t count, size_t *rnd_bytes)
+int cgc___filaments_cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes)
 {
-    filaments_yield();
-    int retval = random(buf, count, rnd_bytes);
+    cgc_filaments_yield();
+    int retval = cgc_random(buf, count, rnd_bytes);
     return retval;
 }
 

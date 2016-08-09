@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -26,14 +26,14 @@
 #include <libcgc.h>
 
 /* memory allocation functions */
-void *malloc(size_t size);
-void *calloc(size_t nmemb, size_t size);
-void *realloc(void *ptr, size_t size);
-void free(void *ptr);
+void *cgc_malloc(cgc_size_t cgc_size);
+void *cgc_calloc(cgc_size_t nmemb, cgc_size_t cgc_size);
+void *cgc_realloc(void *ptr, cgc_size_t cgc_size);
+void cgc_free(void *ptr);
 
 /* miscellaneous functions */
-void exit(int ret);
-long strtol(const char *str, char **endptr, int base);
-unsigned long strtoul(const char *str, char **endptr, int base);
+void cgc_exit(int ret);
+long cgc_strtol(const char *str, char **endptr, int base);
+unsigned long cgc_strtoul(const char *str, char **endptr, int base);
 
 #endif

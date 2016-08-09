@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,7 +23,7 @@
 #ifndef SYSLOG_H
 #define SYSLOG_H 1
 
-// syslog priorities
+// cgc_syslog priorities
 #define LOG_DEBUG 7		// debug-level message
 #define LOG_INFO 6		// informational message
 #define LOG_NOTICE 5	// normal, but interesting condition
@@ -35,14 +35,14 @@
 #define LOGLEVEL LOG_INFO
 
 /**
- * Write syslog string to STDERR
- * Terminates with ERRNO_SEND on a failed send
+ * Write cgc_syslog string to STDERR
+ * Terminates with ERRNO_SEND on a failed cgc_send
  *
  * @param priority Syslog priority level
  * @param format Format string
  * @param ... Variable argument list to fill into format string
  * @return 0
  */
-extern int syslog(int priority, const char *format, ...);
+extern int cgc_syslog(int priority, const char *format, ...);
 
 #endif

@@ -22,7 +22,7 @@
  
 #ifndef LIBC_H
 #define LIBC_H
-typedef unsigned char uint8_t; // NRFIN_00001
+typedef unsigned char cgc_uint8_t; // NRFIN_00001
 #define MAX_WIDTH 16
 
 /**
@@ -33,14 +33,14 @@ typedef unsigned char uint8_t; // NRFIN_00001
  * @param size Number of bytes to receive
  * @return Number of bytes received, -1 on error
  */
-int recv(int fd, char *buf, size_t size); // NRFIN_00024
+int cgc_recv(int fd, char *buf, cgc_size_t size); // NRFIN_00024
 
-int recvline(int fd, char *buf, size_t size); // NRFIN_00001
-void * memcpy(void* dst, const void* src, size_t cnt); // NRFIN_00001
-char * itoaB10(int value); // NRFIN_00007
-char *strcat(char *dest, const char *src); // NRFIN_00009
-void * memset(void* str, int ch, size_t n); // NRFIN_00001
-extern int transmit_all(int fd, const char *buf, const size_t size); // NRFIN_00002
-size_t strlen(const char *string); // NRFIN_00009
-size_t strnlen(const char *string, size_t max_len); // NRFIN_00009 - modified
+int cgc_recvline(int fd, char *buf, cgc_size_t size); // NRFIN_00001
+void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt); // NRFIN_00001
+char * cgc_itoaB10(int value); // NRFIN_00007
+char *cgc_strcat(char *dest, const char *src); // NRFIN_00009
+void * cgc_memset(void* str, int ch, cgc_size_t n); // NRFIN_00001
+extern int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size); // NRFIN_00002
+cgc_size_t cgc_strlen(const char *string); // NRFIN_00009
+cgc_size_t cgc_strnlen(const char *string, cgc_size_t max_len); // NRFIN_00009 - modified
 #endif

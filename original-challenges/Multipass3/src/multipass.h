@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -37,7 +37,7 @@ typedef enum {
 	MOVIE,			// 5
 	CAR 			// 6
 
-} VENDOR_TYPE;
+} cgc_VENDOR_TYPE;
 
 /* Types of Operations */
 typedef enum {
@@ -47,7 +47,7 @@ typedef enum {
 	HISTORY,		// 3
 	ISSUE,			// 4
 	REFUND			// 5
-} OP_CODE;
+} cgc_OP_CODE;
 
 /* Types of Packets */
 typedef enum {
@@ -55,7 +55,7 @@ typedef enum {
 	AUTH,		// 1
 	OPS,		// 2
 	FIN 		// 3
-} PKT_TYPE;
+} cgc_PKT_TYPE;
 
 /* Types of Errors */
 #define LIST_PUSH_MSG "Failed to extend list."
@@ -66,9 +66,9 @@ typedef enum {
 #define RECHARGE_FULL_MSG "Unable to recharge card. Balance near max."
 #define REFUND_FULL_MSG "Unable to refund card. Balance near max."
 #define NO_HISTORY_MSG "No matching transaction history."
-#define INVALID_OPCODE_MSG "Invalid OP_CODE."
-#define INVALID_PKT_TYPE_MSG "Invalid PKT_TYPE."
-#define INVALID_V_TYPE_MSG "Invalid VENDOR_TYPE."
+#define INVALID_OPCODE_MSG "Invalid cgc_OP_CODE."
+#define INVALID_PKT_TYPE_MSG "Invalid cgc_PKT_TYPE."
+#define INVALID_V_TYPE_MSG "Invalid cgc_VENDOR_TYPE."
 #define NO_AUTH_MSG "Transaction has not completed AUTH."
 #define NO_INIT_MSG "Transaction has not completed INIT."
 #define NO_OPS_MSG "Transaction has not completed OPS."
@@ -99,7 +99,7 @@ typedef enum {
 	ERRNO_MP_INVALID_CARD,	// Card does not exist or is invalid
 	ERRNO_MP_RECV,			// Failed to receive expected number of bytes
 	ERRNO_MP_UNK			// Unknown error
-} STATUS;
+} cgc_STATUS;
 
 static char * ERROR_MSGS[] = {
 	"NOERROR",
@@ -137,108 +137,108 @@ static char * ERROR_MSGS[] = {
 
 /* Common Packet Header */
 typedef struct packet_head {
-	uint32_t card_id;			// 4 bytes
-	uint32_t auth_code;			// 4 bytes
-	PKT_TYPE pkt_type : 8;		// 1 byte
-	OP_CODE op_code : 8;		// 1 byte
-	STATUS status : 8;			// 1 byte
-	uint32_t transaction_id;	// 4 bytes
-} packet_head_t;
+	cgc_uint32_t card_id;			// 4 bytes
+	cgc_uint32_t auth_code;			// 4 bytes
+	cgc_PKT_TYPE pkt_type : 8;		// 1 byte
+	cgc_OP_CODE op_code : 8;		// 1 byte
+	cgc_STATUS status : 8;			// 1 byte
+	cgc_uint32_t transaction_id;	// 4 bytes
+} cgc_packet_head_t;
 
 /* Error Data */
 typedef struct packet_data_error {
-	uint32_t length;
+	cgc_uint32_t length;
 	char * msg;
-} packet_data_error_t;
+} cgc_packet_data_error_t;
 
 /* Vendor Data */
 typedef struct vendor {
-	uint32_t vendor_id;			
-	VENDOR_TYPE vendor_type : 8;
-	uint8_t vendor_location_sz;
+	cgc_uint32_t vendor_id;			
+	cgc_VENDOR_TYPE vendor_type : 8;
+	cgc_uint8_t vendor_location_sz;
 	char * vendor_location;
-} vendor_t;
+} cgc_vendor_t;
 
 /* Issue Data */
 typedef struct packet_data_issue {
-	uint32_t amount;
-} packet_data_issue_t;
+	cgc_uint32_t amount;
+} cgc_packet_data_issue_t;
 
 /* Balance Data */
 typedef struct packet_data_balance {
-	uint32_t balance;
-} packet_data_balance_t;
+	cgc_uint32_t balance;
+} cgc_packet_data_balance_t;
 
 /* History Data */
 typedef struct packet_data_history {
-	uint32_t count;
-} packet_data_history_t;
+	cgc_uint32_t count;
+} cgc_packet_data_history_t;
 
 /* Purchase Data */
 typedef struct packet_data_purchase {
-	uint32_t purchase_id;
-	uint32_t cost;
-	vendor_t v;
-} packet_data_purchase_t;
+	cgc_uint32_t purchase_id;
+	cgc_uint32_t cost;
+	cgc_vendor_t v;
+} cgc_packet_data_purchase_t;
 
 /* Recharge Data */
 typedef struct packet_data_recharge {
-	uint32_t amount;
-	vendor_t v;
-} packet_data_recharge_t;
+	cgc_uint32_t amount;
+	cgc_vendor_t v;
+} cgc_packet_data_recharge_t;
 
 /* Refund Data */
 typedef struct packet_data_refund {
-	uint32_t purchase_id;
-	uint32_t transaction_id;
-} packet_data_refund_t;
+	cgc_uint32_t purchase_id;
+	cgc_uint32_t transaction_id;
+} cgc_packet_data_refund_t;
 
 
 
 
 typedef struct transaction {
-        OP_CODE op_code : 8;
-        PKT_TYPE state : 8;
-        STATUS status : 8;
-        uint32_t card_id;
-        uint32_t transaction_id;
+        cgc_OP_CODE op_code : 8;
+        cgc_PKT_TYPE state : 8;
+        cgc_STATUS status : 8;
+        cgc_uint32_t card_id;
+        cgc_uint32_t transaction_id;
         void * details;
-} transaction_t;
+} cgc_transaction_t;
 
 
-extern uint32_t NEXT_CARD_ID;
-extern uint32_t NEXT_TXN_ID;
-extern uint32_t NEXT_AUTH_CODE;
+extern cgc_uint32_t NEXT_CARD_ID;
+extern cgc_uint32_t NEXT_TXN_ID;
+extern cgc_uint32_t NEXT_AUTH_CODE;
 // used when we return null for some packet ...
-extern uint32_t ERRNO;
-extern size_t HIST_SZ;
+extern cgc_uint32_t ERRNO;
+extern cgc_size_t HIST_SZ;
 
 typedef struct pack_and_data {
-    packet_head_t *ph;
-    size_t pay_data_l;
+    cgc_packet_head_t *ph;
+    cgc_size_t pay_data_l;
 
     void * data;
-} pack_and_data_t;
+} cgc_pack_and_data_t;
 
 
 
 
 
-int recv_header(packet_head_t *p);
-void init_resp_structs();
-pack_and_data_t * generate_new_init_and_init_resp(pack_and_data_t *pin);
-packet_head_t * alloc_new_pkt();
-pack_and_data_t * process_client_fin(pack_and_data_t *fin_pkt);
-pack_and_data_t * create_auth_resp(uint32_t cid, uint32_t acd, uint32_t txn_id);
-packet_head_t * create_basic_packet_head(uint32_t card_id, uint32_t auth_id, uint32_t txn_id, size_t payload_sz);
-uint32_t register_card_id();
-uint32_t register_transaction();
-uint32_t register_auth_code();
-pack_and_data_t * generate_error(packet_head_t *ph);
-pack_and_data_t * process_client_purchase_op(pack_and_data_t * pin);
-pack_and_data_t * process_client_recharge_op(pack_and_data_t *pad);
-pack_and_data_t * process_client_balance(pack_and_data_t *pin);
-pack_and_data_t * process_client_history(pack_and_data_t *padi, size_t *ds);
-pack_and_data_t * process_client_refund_op(pack_and_data_t * pin);
-pack_and_data_t * process_client_auth(pack_and_data_t * pin);
+int cgc_recv_header(cgc_packet_head_t *p);
+void cgc_init_resp_structs();
+cgc_pack_and_data_t * cgc_generate_new_init_and_init_resp(cgc_pack_and_data_t *pin);
+cgc_packet_head_t * cgc_alloc_new_pkt();
+cgc_pack_and_data_t * cgc_process_client_fin(cgc_pack_and_data_t *fin_pkt);
+cgc_pack_and_data_t * cgc_create_auth_resp(cgc_uint32_t cid, cgc_uint32_t acd, cgc_uint32_t txn_id);
+cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint32_t auth_id, cgc_uint32_t txn_id, cgc_size_t payload_sz);
+cgc_uint32_t cgc_register_card_id();
+cgc_uint32_t cgc_register_transaction();
+cgc_uint32_t cgc_register_auth_code();
+cgc_pack_and_data_t * cgc_generate_error(cgc_packet_head_t *ph);
+cgc_pack_and_data_t * cgc_process_client_purchase_op(cgc_pack_and_data_t * pin);
+cgc_pack_and_data_t * cgc_process_client_recharge_op(cgc_pack_and_data_t *pad);
+cgc_pack_and_data_t * cgc_process_client_balance(cgc_pack_and_data_t *pin);
+cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_size_t *ds);
+cgc_pack_and_data_t * cgc_process_client_refund_op(cgc_pack_and_data_t * pin);
+cgc_pack_and_data_t * cgc_process_client_auth(cgc_pack_and_data_t * pin);
 #endif

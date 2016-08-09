@@ -25,7 +25,7 @@
 #include "utf8.h"
 
 enum utf8_decode_state
-utf8_decode(enum utf8_decode_state state, utf8char c, ucscodepoint *out)
+cgc_utf8_decode(enum utf8_decode_state state, cgc_utf8char c, cgc_ucscodepoint *out)
 {
     switch (state) {
     case ACCEPT:
@@ -84,8 +84,8 @@ utf8_decode(enum utf8_decode_state state, utf8char c, ucscodepoint *out)
     return REJECT;
 }
 
-ssize_t
-utf8_encode(ucscodepoint in, utf8char *out, size_t size)
+cgc_ssize_t
+cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, cgc_size_t size)
 {
     if (in < 0x80) {
         if (size < 1)
@@ -125,21 +125,21 @@ utf8_encode(ucscodepoint in, utf8char *out, size_t size)
     return -1;
 }
 
-size_t
-utf8_canonicalize(utf8char *dst, const utf8char *src, size_t n)
+cgc_size_t
+cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, cgc_size_t n)
 {
-    size_t i, ret = 0;
-    ucscodepoint cp;
-    ssize_t encoded;
+    cgc_size_t i, ret = 0;
+    cgc_ucscodepoint cp;
+    cgc_ssize_t encoded;
     enum utf8_decode_state state = ACCEPT;
 
     // Guarantee we have space for null terminator
     n--;
 
     for (i = 0; n && src[i]; i++) {
-        state = utf8_decode(state, src[i], &cp);
+        state = cgc_utf8_decode(state, src[i], &cp);
         if (state == ACCEPT || state == REJECT) {
-            encoded = utf8_encode(cp, dst, n);
+            encoded = cgc_utf8_encode(cp, dst, n);
             if (encoded < 0)
                 return ret;
 

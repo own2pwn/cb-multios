@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,67 +33,67 @@ THE SOFTWARE.
 
 int main(void)
 {
-    setup_io( STDIN, STDOUT );
+    cgc_setup_io( STDIN, STDOUT );
 
-    tVGFParsedFile *pFile;
+    cgc_tVGFParsedFile *pFile;
 
 #ifdef PATCHED
-    uint16_t fileSize = read_u16();
+    cgc_uint16_t fileSize = cgc_read_u16();
 #else
-    int16_t fileSize = read_u16();
+    cgc_int16_t fileSize = cgc_read_u16();
 #endif
 
     if ( fileSize > INPUT_FILE_SIZE_MAXIMUM )
         _terminate( -3 );
 
     // Read in file data
-    uint8_t *pFileData = (uint8_t*)malloc( INPUT_FILE_SIZE_MAXIMUM );
+    cgc_uint8_t *pFileData = (cgc_uint8_t*)cgc_malloc( INPUT_FILE_SIZE_MAXIMUM );
 
     // Read loop for file data
-    uint32_t readCount = 0;
+    cgc_uint32_t readCount = 0;
     for ( readCount = 0; readCount < fileSize; readCount++ )
-        pFileData[readCount] = read_u8();
+        pFileData[readCount] = cgc_read_u8();
 
     if ( readCount != fileSize )
         _terminate( -3 );
 
-    if ( vgf_parse_data( pFileData, fileSize, &pFile ) != VGF_PARSE_SUCCESS )
+    if ( cgc_vgf_parse_data( pFileData, fileSize, &pFile ) != VGF_PARSE_SUCCESS )
         _terminate( -3 );
 
     // Free memory
-    free( pFileData );
+    cgc_free( pFileData );
 
-    int32_t renderSize;
-    uint8_t *pRenderData;
+    cgc_int32_t renderSize;
+    cgc_uint8_t *pRenderData;
 
-    if ( (renderSize = vgf_get_render_size( pFile )) <= 0 )
+    if ( (renderSize = cgc_vgf_get_render_size( pFile )) <= 0 )
         _terminate( -3 );
 
     // Allocate render buffer
-    uint32_t destLen = renderSize;
-    pRenderData = (uint8_t*)malloc( destLen );
+    cgc_uint32_t destLen = renderSize;
+    pRenderData = (cgc_uint8_t*)cgc_malloc( destLen );
 
-    if ( vgf_render_file( pFile, pRenderData, &destLen ) != 0 )
+    if ( cgc_vgf_render_file( pFile, pRenderData, &destLen ) != 0 )
         _terminate( -3 );
 
-    uint32_t pmSize;
-    uint8_t *pPMFileData;
+    cgc_uint32_t pmSize;
+    cgc_uint8_t *pPMFileData;
 
-    if ( pixelmap_write_file( &pPMFileData, &pmSize, pRenderData, vgf_get_width( pFile ), vgf_get_height( pFile ) ) <= 0 )
+    if ( cgc_pixelmap_write_file( &pPMFileData, &pmSize, pRenderData, cgc_vgf_get_width( pFile ), cgc_vgf_get_height( pFile ) ) <= 0 )
         _terminate( -3 );
 
     // Free the render buffer
-    free( pRenderData );
+    cgc_free( pRenderData );
 
     // Send the complete file
-    size_t tx_bytes = pmSize;
-    size_t writeCur;
+    cgc_size_t tx_bytes = pmSize;
+    cgc_size_t writeCur;
     for ( writeCur = 0; writeCur < tx_bytes; writeCur++ )
-        write_u8( pPMFileData[writeCur] );
+        cgc_write_u8( pPMFileData[writeCur] );
 
-    free( pPMFileData );
+    cgc_free( pPMFileData );
 
-    vgf_destroy_file( pFile );
+    cgc_vgf_destroy_file( pFile );
 
     return 0;
 }

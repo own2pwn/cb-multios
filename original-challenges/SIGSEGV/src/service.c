@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -35,10 +35,10 @@ char *responses[] = {
     "You can't stop the signal, Mal.",
 };
 
-void scramble(uint8_t *in, uint8_t *out, size_t len) {
-    uint8_t state[256] = {0};
-    uint8_t *key = in; //our data is the key!
-    uint32_t i,j,k,l;
+void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, cgc_size_t len) {
+    cgc_uint8_t state[256] = {0};
+    cgc_uint8_t *key = in; //our data is the key!
+    cgc_uint32_t i,j,k,l;
     char c;
 
 
@@ -69,57 +69,57 @@ void scramble(uint8_t *in, uint8_t *out, size_t len) {
     }
 }
 
-int run_seg(segnode_t *curnode) {
+int cgc_run_seg(cgc_segnode_t *curnode) {
     char *n;
     char *d;
     int i;
 
-    if (!(n = calloc(MEMBERSIZE(seg_t,name)))) {
+    if (!(n = cgc_calloc(MEMBERSIZE(cgc_seg_t,name)))) {
         TERM(SEGERR,3);
     }
 
-    if (!(d = calloc(MEMBERSIZE(seg_t,desc)))) {
+    if (!(d = cgc_calloc(MEMBERSIZE(cgc_seg_t,desc)))) {
         TERM(SEGERR,3);
     }
 
     do { 
         //could overflow if not patched
-        strcpy(n,curnode->s->name);
-        strcpy(d,curnode->s->desc);
-        SSENDL(strlen(n),n);
-        SSENDL(strlen(d),d);
+        cgc_strcpy(n,curnode->s->name);
+        cgc_strcpy(d,curnode->s->desc);
+        SSENDL(cgc_strlen(n),n);
+        SSENDL(cgc_strlen(d),d);
         //note, this may not work on some platforms without a cache flush
         //surprisingly, this can indeed crash if f()
         //contains unsafe code.
         i = curnode->f();
-        SSENDL(strlen(responses[i-1]),responses[i-1]); //gogogo
+        SSENDL(cgc_strlen(responses[i-1]),responses[i-1]); //gogogo
     } while ((curnode = curnode->next));
 
-    free(n);
-    free(d);
+    cgc_free(n);
+    cgc_free(d);
     return 0;
 }
 
-int load_seg(segnode_t *curnode) {
+int cgc_load_seg(cgc_segnode_t *curnode) {
     int err = 0;
 
     do {
 
-        ALLOC(1,(void**)&(curnode->f),MEMBERSIZE(seg_t,code));
+        ALLOC(1,(void**)&(curnode->f),MEMBERSIZE(cgc_seg_t,code));
 
-        memcpy((void *)curnode->f,curnode->s->code,MEMBERSIZE(seg_t,code));
+        cgc_memcpy((void *)curnode->f,curnode->s->code,MEMBERSIZE(cgc_seg_t,code));
 
     } while ((curnode = curnode->next));
 
     return err;
 }
 
-int sanitycheck(seg_t *s) {
-    return !(strlen(s->name) > 0 && strlen(s->desc) > 0);
+int cgc_sanitycheck(cgc_seg_t *s) {
+    return !(cgc_strlen(s->name) > 0 && cgc_strlen(s->desc) > 0);
 }
 
-int validate_seg(segnode_t *curnode) {
-    uint8_t res[17];
+int cgc_validate_seg(cgc_segnode_t *curnode) {
+    cgc_uint8_t res[17];
     int err = 0;
     int i = 0;
     int j = 0;
@@ -128,20 +128,20 @@ int validate_seg(segnode_t *curnode) {
 
         //segs 1 and 2 are allowed to have null names/desc!
         if (j++ > 1) {
-            if ((err = sanitycheck(curnode->s)))
+            if ((err = cgc_sanitycheck(curnode->s)))
                 goto flail;
         #ifndef PATCHED_2
                 goto flail;
         #endif
         }
 
-        memset(res,0,sizeof(res));
-        scramble(curnode->s->code, res, MEMBERSIZE(seg_t,code));
+        cgc_memset(res,0,sizeof(res));
+        cgc_scramble(curnode->s->code, res, MEMBERSIZE(cgc_seg_t,code));
 
         #ifndef PATCHED_1
-        for (i=0; i < NUM_TRUSTED && (err = strncmp((char*)res,(char*)trusted[i],16)); i++);
+        for (i=0; i < NUM_TRUSTED && (err = cgc_strncmp((char*)res,(char*)trusted[i],16)); i++);
         #else
-        for (i=0; i < NUM_TRUSTED && (err = memcmp(res,trusted[i],16)); i++);
+        for (i=0; i < NUM_TRUSTED && (err = cgc_memcmp(res,trusted[i],16)); i++);
         #endif
         if (err)
             goto flail;
@@ -152,13 +152,13 @@ flail:
     return err;
 }
 
-segnode_t *recv_seg() {
+cgc_segnode_t *cgc_recv_seg() {
     int i;
-    uint32_t nsegs = 0;
-    segnode_t *head = NULL;
-    segnode_t *curnode = NULL;
-    segnode_t *lastnode = NULL;
-    seg_t *new = NULL;
+    cgc_uint32_t nsegs = 0;
+    cgc_segnode_t *head = NULL;
+    cgc_segnode_t *curnode = NULL;
+    cgc_segnode_t *lastnode = NULL;
+    cgc_seg_t *new = NULL;
 
 
     RECV(sizeof(nsegs),(char *)&nsegs);
@@ -170,26 +170,26 @@ segnode_t *recv_seg() {
     for (i = 0; i < nsegs; i++) {
 
 
-        if (!(new = calloc(sizeof(seg_t)))) {
+        if (!(new = cgc_calloc(sizeof(cgc_seg_t)))) {
             TERM(SEGERR,2);
         }
 
-        if (!(curnode = calloc(sizeof(segnode_t)))) {
+        if (!(curnode = cgc_calloc(sizeof(cgc_segnode_t)))) {
             TERM(SEGERR,2);
         }
 
         curnode->s = new;
 
 
-        RECV(sizeof(seg_t),(char *)curnode->s);
+        RECV(sizeof(cgc_seg_t),(char *)curnode->s);
 
-        if (curnode->s->size != MEMBERSIZE(seg_t,code)) {
+        if (curnode->s->size != MEMBERSIZE(cgc_seg_t,code)) {
 
             TERM(SEGERR,2);
         }
 
-        curnode->s->name[MEMBERSIZE(seg_t,name)-1] = '\0';
-        curnode->s->desc[MEMBERSIZE(seg_t,desc)-1] = '\0';
+        curnode->s->name[MEMBERSIZE(cgc_seg_t,name)-1] = '\0';
+        curnode->s->desc[MEMBERSIZE(cgc_seg_t,desc)-1] = '\0';
 
         if (lastnode)
             lastnode->next = curnode;
@@ -207,39 +207,39 @@ segnode_t *recv_seg() {
 }
 
 int main(void) {
-    segnode_t *head = NULL;
-    segnode_t *prev = NULL;
+    cgc_segnode_t *head = NULL;
+    cgc_segnode_t *prev = NULL;
     int err = 0;
-    uint32_t *flag = (uint32_t*)FLAG_PAGE;
-    uint32_t val = flag[0]^flag[1]^flag[2]^flag[3];
+    cgc_uint32_t *flag = (cgc_uint32_t*)FLAG_PAGE;
+    cgc_uint32_t val = flag[0]^flag[1]^flag[2]^flag[3];
 
     SSEND(sizeof(val),(char*)&val);
 
-    head = recv_seg();
+    head = cgc_recv_seg();
 
-    if (validate_seg(head)) {
+    if (cgc_validate_seg(head)) {
         err = 1;
         goto done;
     }
 
-    if (load_seg(head)) {
+    if (cgc_load_seg(head)) {
         err = 2;
         goto done;
     }
 
-    run_seg(head);
+    cgc_run_seg(head);
 
 done:
     do { 
         if (prev)
-            free(prev);
+            cgc_free(prev);
 
-        free(head->s);
-        DEALLOC(head->f,MEMBERSIZE(seg_t,code));
+        cgc_free(head->s);
+        DEALLOC(head->f,MEMBERSIZE(cgc_seg_t,code));
         prev = head;
     } while ((head = head->next));
 
-    free(prev);
+    cgc_free(prev);
 
     LOG(SEGDONE);
     return err;

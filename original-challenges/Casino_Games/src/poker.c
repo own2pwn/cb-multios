@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "poker.h"
 
 // Sorts the hand in increasing numerical order including suit
-void sort_by_suit(char *hand, size_t size)
+void cgc_sort_by_suit(char *hand, cgc_size_t size)
 {
 	for (int i=1; i<size; i++)
 	{	
@@ -46,7 +46,7 @@ void sort_by_suit(char *hand, size_t size)
 }
 
 // Sorts the hand in increasing value ignoring suit
-void sort_by_value(char *hand, size_t size)
+void cgc_sort_by_value(char *hand, cgc_size_t size)
 {
 	for (int i=1; i<size; i++)
 	{	
@@ -63,7 +63,7 @@ void sort_by_value(char *hand, size_t size)
 }
 
 // Counts instances of a card in the hand assuming only face value (ignoring suit)
-int count_cards(char *hand, size_t size, char card)
+int cgc_count_cards(char *hand, cgc_size_t size, char card)
 {
 	int count = 0;
 	for (int i=0; i<size; i++)
@@ -76,14 +76,14 @@ int count_cards(char *hand, size_t size, char card)
 	return count;
 }
 
-// Plays poker until user enters q to quit
-void poker(player_info *player)
+// Plays cgc_poker until user enters q to quit
+void cgc_poker(cgc_player_info *player)
 {
-	standard_deck deck;
+	cgc_standard_deck deck;
 	char hand[5];
 	char input[5];
 
-	player_info placeholder;
+	cgc_player_info placeholder;
 	if (player == 0)
 	{
 		player = &placeholder;
@@ -92,20 +92,20 @@ void poker(player_info *player)
 	while (1)
 	{
 		
-		shuffle(&deck);
+		cgc_shuffle(&deck);
 
-		hand[0] = draw(&deck);
-		hand[1] = draw(&deck);
-		hand[2] = draw(&deck);
-		hand[3] = draw(&deck);
-		hand[4] = draw(&deck);
+		hand[0] = cgc_draw(&deck);
+		hand[1] = cgc_draw(&deck);
+		hand[2] = cgc_draw(&deck);
+		hand[3] = cgc_draw(&deck);
+		hand[4] = cgc_draw(&deck);
 
-		print_hand(hand, sizeof(hand));
+		cgc_print_hand(hand, sizeof(hand));
 
 		// Allow User Hold
-		bzero(input, sizeof(input));
-		printf("Enter cards to hold by number (ex: 13 or 12345). Others will be replaced.\n");
-		receive_fixed_input(input, '\n', sizeof(input));
+		cgc_bzero(input, sizeof(input));
+		cgc_printf("Enter cards to hold by number (ex: 13 or 12345). Others will be replaced.\n");
+		cgc_receive_fixed_input(input, '\n', sizeof(input));
 		
 		if (input[0] == 'q')
 		{
@@ -120,7 +120,7 @@ void poker(player_info *player)
 
 		// Mark any cards to hold (Card positions are numbered 1 through 5)
 		char hold[5];
-		bzero(hold, sizeof(hold));
+		cgc_bzero(hold, sizeof(hold));
 		for (int i=0; i<5; i++)
 		{
 			if ((input[i] >= '1')&&(input[i]<= '5'))
@@ -133,14 +133,14 @@ void poker(player_info *player)
 		{
 			if (hold[i] == 0)
 			{
-				hand[i] = draw(&deck);
+				hand[i] = cgc_draw(&deck);
 			}
 		}
 
 		// Resolve
-		print_hand(hand, sizeof(hand));
+		cgc_print_hand(hand, sizeof(hand));
 
-		sort_by_suit(hand, sizeof(hand));
+		cgc_sort_by_suit(hand, sizeof(hand));
 
 		// 	Poker hand rankings:
 		//		Straight Flush 
@@ -155,35 +155,35 @@ void poker(player_info *player)
 		// others (if its a flush it cannot be a full house, etc).
 
 		// Check for Flush
-		if (get_suit(hand[0])==get_suit(hand[1]) &&
-			get_suit(hand[0])==get_suit(hand[2]) &&
-			get_suit(hand[0])==get_suit(hand[3]) &&
-			get_suit(hand[0])==get_suit(hand[4]) )
+		if (cgc_get_suit(hand[0])==cgc_get_suit(hand[1]) &&
+			cgc_get_suit(hand[0])==cgc_get_suit(hand[2]) &&
+			cgc_get_suit(hand[0])==cgc_get_suit(hand[3]) &&
+			cgc_get_suit(hand[0])==cgc_get_suit(hand[4]) )
 		{
 			// Check for royal flush
 			if (hand[0]==9 || hand[0]==22 || hand[0]==35 || hand[0]==48)
 			{
-				printf("Royal Flush!\n");
+				cgc_printf("Royal Flush!\n");
 				player->wallet += payouts[POKER_ROYAL_FLUSH];
 				goto DONE;
 			}
 			// Check for straight flush
 			else if (hand[4] == hand[0] + 4)
 			{
-				printf("Straight Flush!\n");
+				cgc_printf("Straight Flush!\n");
 				player->wallet += payouts[POKER_STRAIGHT_FLUSH];
 				goto DONE;
 			} 
 			else
 			{
-				printf("Flush!\n");
+				cgc_printf("Flush!\n");
 				player->wallet += payouts[POKER_FLUSH];
 				goto DONE;
 			}
 			
 		}
 
-		sort_by_value(hand, sizeof(hand));
+		cgc_sort_by_value(hand, sizeof(hand));
 
 		// Check for multiples
 		int i = 0;
@@ -194,10 +194,10 @@ void poker(player_info *player)
 
 		while (i < sizeof(hand))
 		{
-			int count = count_cards(hand, sizeof(hand), hand[i]);
+			int count = cgc_count_cards(hand, sizeof(hand), hand[i]);
 			if (count == 4)
 			{
-				printf("Four of a kind!\n");
+				cgc_printf("Four of a kind!\n");
 				player->wallet += payouts[POKER_FOUR_OF_A_KIND];
 				goto DONE;
 			}
@@ -205,7 +205,7 @@ void poker(player_info *player)
 			{
 				if (pair == 1)
 				{
-					printf("Full House!\n");
+					cgc_printf("Full House!\n");
 					player->wallet += payouts[POKER_FULL_HOUSE];
 					goto DONE;
 				}
@@ -215,7 +215,7 @@ void poker(player_info *player)
 			{
 				if (three_of_a_kind == 1)
 				{
-					printf("Full House!\n");
+					cgc_printf("Full House!\n");
 					player->wallet += payouts[POKER_FULL_HOUSE];
 					goto DONE;
 				}
@@ -225,7 +225,7 @@ void poker(player_info *player)
 				}
 				if (pair == 1)
 				{
-					printf("Two Pair!\n");
+					cgc_printf("Two Pair!\n");
 					player->wallet += payouts[POKER_TWO_PAIR];
 					goto DONE;
 				}
@@ -235,13 +235,13 @@ void poker(player_info *player)
 		}
 		if (three_of_a_kind == 1)
 		{
-			printf("Three of a kind!\n");
+			cgc_printf("Three of a kind!\n");
 			player->wallet += payouts[POKER_THREE_OF_A_KIND] ;
 			goto DONE;
 		}
 		if (jacks_or_better == 1)
 		{
-			printf("Jacks or better!\n");
+			cgc_printf("Jacks or better!\n");
 			player->wallet += payouts[POKER_JACKS_OR_BETTER];
 			goto DONE;
 		}
@@ -249,12 +249,12 @@ void poker(player_info *player)
 		// Check for straight
 		if ((pair == 0) && (poker_value[hand[4]] == poker_value[hand[0]] + 4))
 		{
-			printf("Straight!\n");
+			cgc_printf("Straight!\n");
 			player->wallet += payouts[POKER_STRAIGHT];
 			goto DONE;
 		}
 
-		printf("You Lose!\n");
+		cgc_printf("You Lose!\n");
 		goto DONE;
 	
 	DONE:

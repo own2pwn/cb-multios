@@ -36,8 +36,8 @@
 typedef struct {
 	int x;
 	int y;
-} Position;
+} cgc_Position;
 
 typedef struct {
-	Position location;
-} Vehicle;
+	cgc_Position location;
+} cgc_Vehicle;

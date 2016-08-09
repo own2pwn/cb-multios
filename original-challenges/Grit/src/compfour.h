@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,11 +24,11 @@
 
 #include "comp.h"
 
-class CompressionFour : public Compression
+class cgc_CompressionFour : public cgc_Compression
 {
 public:
-    unsigned int getId() const;
-    unsigned int getMaxBufferSize(const AudioTrack &track) const;
-    void compress(const AudioTrack &track, uint8_t *dest) const;
-    void decompress(AudioTrack &track, uint8_t *src) const;
+    unsigned int cgc_getId() const;
+    unsigned int cgc_getMaxBufferSize(const cgc_AudioTrack &track) const;
+    void cgc_compress(const cgc_AudioTrack &track, cgc_uint8_t *dest) const;
+    void cgc_decompress(cgc_AudioTrack &track, cgc_uint8_t *src) const;
 };

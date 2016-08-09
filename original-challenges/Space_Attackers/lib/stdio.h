@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,24 +26,24 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-typedef struct FILE FILE;
+typedef struct cgc_FILE cgc_FILE;
 
-extern FILE * const stdin;
-extern FILE * const stdout;
-extern FILE * const stderr;
+extern cgc_FILE * const stdin;
+extern cgc_FILE * const stdout;
+extern cgc_FILE * const stderr;
 
-int printf(const char *fmt, ...);
-int fprintf(FILE *stream, const char *fmt, ...);
-int sprintf(char *str, const char *fmt, ...);
+int cgc_printf(const char *fmt, ...);
+int cgc_fprintf(cgc_FILE *stream, const char *fmt, ...);
+int cgc_sprintf(char *str, const char *fmt, ...);
 
-int vprintf(const char *fmt, va_list ap);
-int vfprintf(FILE *stream, const char *fmt, va_list ap);
-int vsprintf(char *str, const char *fmt, va_list ap);
+int cgc_vprintf(const char *fmt, cgc_va_list ap);
+int cgc_vfprintf(cgc_FILE *stream, const char *fmt, cgc_va_list ap);
+int cgc_vsprintf(char *str, const char *fmt, cgc_va_list ap);
 
-ssize_t fread(void *ptr, size_t size, FILE *stream);
-ssize_t freaduntil(char *str, size_t size, char term, FILE *stream);
-ssize_t fwrite(const void *ptr, size_t size, FILE *stream);
-int fflush(FILE *stream);
-void fbuffered(FILE *stream, int enable);
+cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_freaduntil(char *str, cgc_size_t size, char term, cgc_FILE *stream);
+cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream);
+int cgc_fflush(cgc_FILE *stream);
+void cgc_fbuffered(cgc_FILE *stream, int enable);
 
 #endif

@@ -1,18 +1,18 @@
 #include <libcgc.h>
 #include "mylibc.h"
 
-typedef void (*handler_func_t)(void);
+typedef void (*cgc_handler_func_t)(void);
 
 //The 256bit large int is bytes[0] is the highest byte and bytes[7]
 #define LARGE_INT_BITS 256
 #define LARGE_INT_BYTES (LARGE_INT_BITS/8)
-#define LARGE_INT_ARR_LEN (LARGE_INT_BYTES / sizeof(uint32_t))
-#define BITS_IN_UINT32 (sizeof(uint32_t) * 8)
+#define LARGE_INT_ARR_LEN (LARGE_INT_BYTES / sizeof(cgc_uint32_t))
+#define BITS_IN_UINT32 (sizeof(cgc_uint32_t) * 8)
 
 typedef struct _ulargeint_t 
 {
-  uint32_t bytes[LARGE_INT_ARR_LEN];
-} ulargeint_t;
+  cgc_uint32_t bytes[LARGE_INT_ARR_LEN];
+} cgc_ulargeint_t;
 
 #define ZERO_LARGE_INT(_li) 				\
 do							\
@@ -34,7 +34,7 @@ do							\
 }							\
 while (0)
 
-static inline void intToLargeInt(ulargeint_t* plint, uint32_t i)
+static inline void cgc_intToLargeInt(cgc_ulargeint_t* plint, cgc_uint32_t i)
 {
   if (plint == NULL)
   {
@@ -44,7 +44,7 @@ static inline void intToLargeInt(ulargeint_t* plint, uint32_t i)
   plint->bytes[LARGE_INT_ARR_LEN - 1] = i;  
 }
 
-static inline void largeIntToInt(uint32_t* pi, ulargeint_t* plint)
+static inline void cgc_largeIntToInt(cgc_uint32_t* pi, cgc_ulargeint_t* plint)
 {
   if ( (pi == NULL) || (plint == NULL) )
   {
@@ -54,7 +54,7 @@ static inline void largeIntToInt(uint32_t* pi, ulargeint_t* plint)
   *pi = plint->bytes[LARGE_INT_ARR_LEN - 1];
 }
 
-void printLargeInt(ulargeint_t* plint)
+void cgc_printLargeInt(cgc_ulargeint_t* plint)
 {
   int i = 0; 
 
@@ -69,11 +69,11 @@ void printLargeInt(ulargeint_t* plint)
   }
 }
 
-void largeIntAdd(ulargeint_t* sum, ulargeint_t* op1, ulargeint_t* op2)
+void cgc_largeIntAdd(cgc_ulargeint_t* sum, cgc_ulargeint_t* op1, cgc_ulargeint_t* op2)
 {
-  uint64_t tempSum = 0;
-  uint64_t tempOp1 = 0;
-  uint64_t tempOp2 = 0;
+  cgc_uint64_t tempSum = 0;
+  cgc_uint64_t tempOp1 = 0;
+  cgc_uint64_t tempOp2 = 0;
   int i = 0;
 
   if ( (sum == NULL) || (op1 == NULL) || (op2 == NULL) )
@@ -86,12 +86,12 @@ void largeIntAdd(ulargeint_t* sum, ulargeint_t* op1, ulargeint_t* op2)
     tempOp1 = op1->bytes[LARGE_INT_ARR_LEN - 1 - i];
     tempOp2 = op2->bytes[LARGE_INT_ARR_LEN - 1 - i];
     tempSum = tempSum + tempOp1 + tempOp2;
-    sum->bytes[LARGE_INT_ARR_LEN - 1 - i] = (uint32_t)(tempSum & 0xFFFFFFFF);
+    sum->bytes[LARGE_INT_ARR_LEN - 1 - i] = (cgc_uint32_t)(tempSum & 0xFFFFFFFF);
     tempSum = tempSum >> (BITS_IN_UINT32);
   }
 }
 
-void largeIntShl1(ulargeint_t* op)
+void cgc_largeIntShl1(cgc_ulargeint_t* op)
 {
   int i = 0;
   if (op == NULL)
@@ -107,20 +107,20 @@ void largeIntShl1(ulargeint_t* op)
   op->bytes[LARGE_INT_ARR_LEN - 1] = op->bytes[LARGE_INT_ARR_LEN - 1] << 1;
 }
 
-void largeIntShl(ulargeint_t* op, int amt)
+void cgc_largeIntShl(cgc_ulargeint_t* op, int amt)
 {
   int i = 0;
   amt = amt % LARGE_INT_BITS;
   for (i = 0; i < LARGE_INT_BITS; i++)
   {
-    largeIntShl1(op);
+    cgc_largeIntShl1(op);
   }
 }
 
-void largeIntMul(ulargeint_t* product, ulargeint_t* op1, ulargeint_t* op2)
+void cgc_largeIntMul(cgc_ulargeint_t* product, cgc_ulargeint_t* op1, cgc_ulargeint_t* op2)
 {
-  ulargeint_t tempOp1;
-  ulargeint_t tempProduct;
+  cgc_ulargeint_t tempOp1;
+  cgc_ulargeint_t tempProduct;
 
   int i = 0;
 
@@ -136,15 +136,15 @@ void largeIntMul(ulargeint_t* product, ulargeint_t* op1, ulargeint_t* op2)
   {
     if (op2->bytes[LARGE_INT_ARR_LEN - 1 - (i / (BITS_IN_UINT32))] & (0x1 << (i % (BITS_IN_UINT32))))
     {
-      largeIntAdd(&tempProduct, &tempProduct, &tempOp1);
+      cgc_largeIntAdd(&tempProduct, &tempProduct, &tempOp1);
     }
-    largeIntShl1(&tempOp1);
+    cgc_largeIntShl1(&tempOp1);
   }
 
   COPY_LARGE_INT(product, &tempProduct);
 }
 
-int largeIntCmp(ulargeint_t* px, ulargeint_t* py)
+int cgc_largeIntCmp(cgc_ulargeint_t* px, cgc_ulargeint_t* py)
 {
   int i = 0;
 
@@ -170,116 +170,116 @@ int largeIntCmp(ulargeint_t* px, ulargeint_t* py)
 
 
 #define HANDLER_TABLE_SIZE 50
-handler_func_t handlerTable[HANDLER_TABLE_SIZE][HANDLER_TABLE_SIZE][HANDLER_TABLE_SIZE];
+cgc_handler_func_t handlerTable[HANDLER_TABLE_SIZE][HANDLER_TABLE_SIZE][HANDLER_TABLE_SIZE];
 
-void userMenu(uint32_t u);
+void cgc_userMenu(cgc_uint32_t u);
 
-void userMenu1()
+void cgc_userMenu1()
 {
-  userMenu(1);
+  cgc_userMenu(1);
 }
 
-void userMenu2()
+void cgc_userMenu2()
 {
-  userMenu(2);
+  cgc_userMenu(2);
 }
 
-void userMenu3()
+void cgc_userMenu3()
 {
-  userMenu(3);
+  cgc_userMenu(3);
 }
 
-void userMenu4()
+void cgc_userMenu4()
 {
-  userMenu(4);
+  cgc_userMenu(4);
 }
 
-void userMenu5()
+void cgc_userMenu5()
 {
-  userMenu(5);
+  cgc_userMenu(5);
 }
 
-void userMenu6()
+void cgc_userMenu6()
 {
-  userMenu(6);
+  cgc_userMenu(6);
 }
 
-void userMenu7()
+void cgc_userMenu7()
 {
-  userMenu(7);
+  cgc_userMenu(7);
 }
 
-void userMenu8()
+void cgc_userMenu8()
 {
-  userMenu(8);
+  cgc_userMenu(8);
 }
 
-void userMenu9()
+void cgc_userMenu9()
 {
-  userMenu(9);
+  cgc_userMenu(9);
 }
 
-void userMenu10()
+void cgc_userMenu10()
 {
-  userMenu(10);
+  cgc_userMenu(10);
 }
 
-void userMenu11()
+void cgc_userMenu11()
 {
-  userMenu(11);
+  cgc_userMenu(11);
 }
 
-void userMenu12()
+void cgc_userMenu12()
 {
-  userMenu(12);
+  cgc_userMenu(12);
 }
 
-void userMenu13()
+void cgc_userMenu13()
 {
-  userMenu(13);
+  cgc_userMenu(13);
 }
 
-void userMenu14()
+void cgc_userMenu14()
 {
-  userMenu(14);
+  cgc_userMenu(14);
 }
 
-void userMenu15()
+void cgc_userMenu15()
 {
-  userMenu(15);
+  cgc_userMenu(15);
 }
 
-void userMenu16()
+void cgc_userMenu16()
 {
-  userMenu(16);
+  cgc_userMenu(16);
 }
 
-void userMenu17()
+void cgc_userMenu17()
 {
-  userMenu(17);
+  cgc_userMenu(17);
 }
 
-void userMenu18()
+void cgc_userMenu18()
 {
-  userMenu(18);
+  cgc_userMenu(18);
 }
 
-void userMenu19()
+void cgc_userMenu19()
 {
-  userMenu(19);
+  cgc_userMenu(19);
 }
 
-void userMenu20()
+void cgc_userMenu20()
 {
-  userMenu(20);
+  cgc_userMenu(20);
 }
 
-void userMenu21()
+void cgc_userMenu21()
 {
-  userMenu(21);
+  cgc_userMenu(21);
 }
 
-void initTable(void)
+void cgc_initTable(void)
 {
   int i = 0;
   int j = 0;
@@ -295,33 +295,33 @@ void initTable(void)
     }
   }
 
-  handlerTable[3][4][5] = userMenu1; //6
-  handlerTable[1][6][8] = userMenu2; //9
-  handlerTable[6][8][10] = userMenu3; //12
-  handlerTable[9][12][15] = userMenu4; //18
-  handlerTable[3][10][18] = userMenu5; //19
-  handlerTable[7][14][17] = userMenu6; //20
-  handlerTable[12][16][20] = userMenu7; //24
-  handlerTable[4][17][22] = userMenu8; //25
-  handlerTable[3][18][24] = userMenu9; //27
-  handlerTable[18][19][21] = userMenu10; //28
-  handlerTable[11][15][27] = userMenu11; //29
-  handlerTable[15][20][25] = userMenu12; //30
-  handlerTable[18][24][30] = userMenu13; //36
-  handlerTable[6][20][36] = userMenu14; //38
-  handlerTable[14][28][34] = userMenu15; //40
-  handlerTable[6][32][33] = userMenu16; //41
-  handlerTable[21][28][35] = userMenu17; //42
-  handlerTable[16][23][41] = userMenu18; //44
-  handlerTable[5][30][40] = userMenu19; //45
-  handlerTable[27][30][37] = userMenu20; //46
-  handlerTable[24][32][40] = userMenu21; //48
+  handlerTable[3][4][5] = cgc_userMenu1; //6
+  handlerTable[1][6][8] = cgc_userMenu2; //9
+  handlerTable[6][8][10] = cgc_userMenu3; //12
+  handlerTable[9][12][15] = cgc_userMenu4; //18
+  handlerTable[3][10][18] = cgc_userMenu5; //19
+  handlerTable[7][14][17] = cgc_userMenu6; //20
+  handlerTable[12][16][20] = cgc_userMenu7; //24
+  handlerTable[4][17][22] = cgc_userMenu8; //25
+  handlerTable[3][18][24] = cgc_userMenu9; //27
+  handlerTable[18][19][21] = cgc_userMenu10; //28
+  handlerTable[11][15][27] = cgc_userMenu11; //29
+  handlerTable[15][20][25] = cgc_userMenu12; //30
+  handlerTable[18][24][30] = cgc_userMenu13; //36
+  handlerTable[6][20][36] = cgc_userMenu14; //38
+  handlerTable[14][28][34] = cgc_userMenu15; //40
+  handlerTable[6][32][33] = cgc_userMenu16; //41
+  handlerTable[21][28][35] = cgc_userMenu17; //42
+  handlerTable[16][23][41] = cgc_userMenu18; //44
+  handlerTable[5][30][40] = cgc_userMenu19; //45
+  handlerTable[27][30][37] = cgc_userMenu20; //46
+  handlerTable[24][32][40] = cgc_userMenu21; //48
 
 #ifdef PATCHED
-  handlerTable[2][12][16] = userMenu4; //18
-  handlerTable[4][24][32] = userMenu13; //36
-  handlerTable[2][17][40] = userMenu16; //41
-  handlerTable[3][36][37] = userMenu20; //46
+  handlerTable[2][12][16] = cgc_userMenu4; //18
+  handlerTable[4][24][32] = cgc_userMenu13; //36
+  handlerTable[2][17][40] = cgc_userMenu16; //41
+  handlerTable[3][36][37] = cgc_userMenu20; //46
 #endif
 }
 
@@ -331,9 +331,9 @@ int userToPassword[MAX_USERS] = {6,9,12,18,19,20,24,25,27,28,29,30,36,38,40,41,4
 
 #define MAX_PASSWORDS 10
 
-uint32_t userPasswords[MAX_USERS][MAX_PASSWORDS][3];
+cgc_uint32_t userPasswords[MAX_USERS][MAX_PASSWORDS][3];
 
-void initPasswords()
+void cgc_initPasswords()
 {
   for (int i = 0; i < MAX_USERS; i++)
   {
@@ -346,7 +346,7 @@ void initPasswords()
   }
 }
     
-int addPW(uint32_t u, uint32_t x, uint32_t y, uint32_t z)
+int cgc_addPW(cgc_uint32_t u, cgc_uint32_t x, cgc_uint32_t y, cgc_uint32_t z)
 {
   int i = 0;
   for (i = 0; i < MAX_PASSWORDS; i++)
@@ -366,7 +366,7 @@ int addPW(uint32_t u, uint32_t x, uint32_t y, uint32_t z)
   return (-1);
 }
 
-int rmPW(uint32_t u, uint32_t pwNum)
+int cgc_rmPW(cgc_uint32_t u, cgc_uint32_t pwNum)
 {
   int i = 0;
   int j = 0;
@@ -394,7 +394,7 @@ int rmPW(uint32_t u, uint32_t pwNum)
   return (-1);
 }
 
-void printPW(uint32_t u)
+void cgc_printPW(cgc_uint32_t u)
 {
   int i = 0;
   int j = 0;
@@ -407,67 +407,67 @@ void printPW(uint32_t u)
         || (userPasswords[u][i][2] != 0)
        )
     {
-      my_printf("Password ");
-      snprintdecimal(buf, 64, j);
-      my_printf(buf);
+      cgc_my_printf("Password ");
+      cgc_snprintdecimal(buf, 64, j);
+      cgc_my_printf(buf);
 
-      my_printf(" : ");
-      snprintdecimal(buf, 64, userPasswords[u][i][0]);
-      my_printf(buf);
+      cgc_my_printf(" : ");
+      cgc_snprintdecimal(buf, 64, userPasswords[u][i][0]);
+      cgc_my_printf(buf);
        
-      my_printf(" , ");
-      snprintdecimal(buf, 64, userPasswords[u][i][1]);
-      my_printf(buf);
+      cgc_my_printf(" , ");
+      cgc_snprintdecimal(buf, 64, userPasswords[u][i][1]);
+      cgc_my_printf(buf);
        
-      my_printf(" , ");
-      snprintdecimal(buf, 64, userPasswords[u][i][2]);
-      my_printf(buf);
+      cgc_my_printf(" , ");
+      cgc_snprintdecimal(buf, 64, userPasswords[u][i][2]);
+      cgc_my_printf(buf);
       
-      my_printf("\n"); 
+      cgc_my_printf("\n"); 
       j++;
     }
   }
 }
 
-void userMenu(uint32_t u)
+void cgc_userMenu(cgc_uint32_t u)
 {
   char cmd = 0;
-  uint32_t x, y, z;
+  cgc_uint32_t x, y, z;
   char buf[64];
 
   do 
   { 
-    readLine(STDIN, buf, 64);
+    cgc_readLine(STDIN, buf, 64);
     switch(buf[0])
     {
       case ('P'):
       {
-        printPW(u);
+        cgc_printPW(u);
         break;
       }
       case ('A'):
       {
-        my_printf("First Secret\n");
-        readLine(STDIN, buf, 64);
-        x = strToUint32(buf);
+        cgc_my_printf("First Secret\n");
+        cgc_readLine(STDIN, buf, 64);
+        x = cgc_strToUint32(buf);
   
-        my_printf("Second Secret\n");
-        readLine(STDIN, buf, 64);
-        y = strToUint32(buf);
+        cgc_my_printf("Second Secret\n");
+        cgc_readLine(STDIN, buf, 64);
+        y = cgc_strToUint32(buf);
 
-        my_printf("Third Secret\n");
-        readLine(STDIN, buf, 64);
-        z = strToUint32(buf);
+        cgc_my_printf("Third Secret\n");
+        cgc_readLine(STDIN, buf, 64);
+        z = cgc_strToUint32(buf);
       
-        addPW(u, x, y, z);
+        cgc_addPW(u, x, y, z);
         break;
       }
       case ('R'):
       {
-        my_printf("Remove PW NUm?\n");
-        readLine(STDIN, buf, 64);
-        x = strToUint32(buf);
-        rmPW(u, x);
+        cgc_my_printf("Remove PW NUm?\n");
+        cgc_readLine(STDIN, buf, 64);
+        x = cgc_strToUint32(buf);
+        cgc_rmPW(u, x);
         break;
       }
       case ('L'):
@@ -476,27 +476,27 @@ void userMenu(uint32_t u)
       }
       default:
       {
-        my_printf("Bad command\n");
+        cgc_my_printf("Bad command\n");
         break;
       }
     }
   } while (1);
 }
 
-int checkLogin(ulargeint_t* pUserNum, ulargeint_t* px, ulargeint_t* py, ulargeint_t* pz)
+int cgc_checkLogin(cgc_ulargeint_t* pUserNum, cgc_ulargeint_t* px, cgc_ulargeint_t* py, cgc_ulargeint_t* pz)
 {
-  ulargeint_t tempSum;
-  ulargeint_t tempProduct;
+  cgc_ulargeint_t tempSum;
+  cgc_ulargeint_t tempProduct;
 
 #ifdef PATCHED
-  if ( (largeIntCmp(px, py) >= 0) 
-       || (largeIntCmp(py, pz) >= 0)
-       || (largeIntCmp(pz, pUserNum) >= 0)
+  if ( (cgc_largeIntCmp(px, py) >= 0) 
+       || (cgc_largeIntCmp(py, pz) >= 0)
+       || (cgc_largeIntCmp(pz, pUserNum) >= 0)
      )
 #else
-  if ( (largeIntCmp(px, py) > 0) 
-       || (largeIntCmp(py, pz) > 0)
-       || (largeIntCmp(pz, pUserNum) > 0)
+  if ( (cgc_largeIntCmp(px, py) > 0) 
+       || (cgc_largeIntCmp(py, pz) > 0)
+       || (cgc_largeIntCmp(pz, pUserNum) > 0)
      )
 #endif
   {
@@ -505,78 +505,78 @@ int checkLogin(ulargeint_t* pUserNum, ulargeint_t* px, ulargeint_t* py, ulargein
 
   ZERO_LARGE_INT(&tempSum);
   
-  largeIntMul(&tempProduct, px, px);  
-  largeIntMul(&tempProduct, &tempProduct, px);  
-  largeIntAdd(&tempSum, &tempSum, &tempProduct);
+  cgc_largeIntMul(&tempProduct, px, px);  
+  cgc_largeIntMul(&tempProduct, &tempProduct, px);  
+  cgc_largeIntAdd(&tempSum, &tempSum, &tempProduct);
 
-  largeIntMul(&tempProduct, py, py);  
-  largeIntMul(&tempProduct, &tempProduct, py);  
-  largeIntAdd(&tempSum, &tempSum, &tempProduct);
+  cgc_largeIntMul(&tempProduct, py, py);  
+  cgc_largeIntMul(&tempProduct, &tempProduct, py);  
+  cgc_largeIntAdd(&tempSum, &tempSum, &tempProduct);
 
-  largeIntMul(&tempProduct, pz, pz);  
-  largeIntMul(&tempProduct, &tempProduct, pz);  
-  largeIntAdd(&tempSum, &tempSum, &tempProduct);
+  cgc_largeIntMul(&tempProduct, pz, pz);  
+  cgc_largeIntMul(&tempProduct, &tempProduct, pz);  
+  cgc_largeIntAdd(&tempSum, &tempSum, &tempProduct);
 
-  largeIntMul(&tempProduct, pUserNum, pUserNum);  
-  largeIntMul(&tempProduct, &tempProduct, pUserNum);  
+  cgc_largeIntMul(&tempProduct, pUserNum, pUserNum);  
+  cgc_largeIntMul(&tempProduct, &tempProduct, pUserNum);  
 
-  return ( largeIntCmp(&tempProduct, &tempSum) == 0 );
+  return ( cgc_largeIntCmp(&tempProduct, &tempSum) == 0 );
 }
 
 int main(void)
 {
-  ulargeint_t luserPW;
-  ulargeint_t lx;
-  ulargeint_t ly;
-  ulargeint_t lz;
-  uint32_t userNum = 0;
-  uint32_t x = 0;
-  uint32_t y = 0;
-  uint32_t z = 0;
+  cgc_ulargeint_t luserPW;
+  cgc_ulargeint_t lx;
+  cgc_ulargeint_t ly;
+  cgc_ulargeint_t lz;
+  cgc_uint32_t userNum = 0;
+  cgc_uint32_t x = 0;
+  cgc_uint32_t y = 0;
+  cgc_uint32_t z = 0;
   char buf[64];
 
-  initTable();
-  initPasswords();
+  cgc_initTable();
+  cgc_initPasswords();
 
   do 
   {
-    my_printf("Welcome to the Diophantine Password Wallet\n");
+    cgc_my_printf("Welcome to the Diophantine Password Wallet\n");
 
-    my_printf("Login\n");
-    readLine(STDIN, buf, 64);
-    userNum = strToUint32(buf);
+    cgc_my_printf("Login\n");
+    cgc_readLine(STDIN, buf, 64);
+    userNum = cgc_strToUint32(buf);
   
-    my_printf("First Secret\n");
-    readLine(STDIN, buf, 64);
-    x = strToUint32(buf);
+    cgc_my_printf("First Secret\n");
+    cgc_readLine(STDIN, buf, 64);
+    x = cgc_strToUint32(buf);
 
-    my_printf("Second Secret\n");
-    readLine(STDIN, buf, 64);
-    y = strToUint32(buf);
+    cgc_my_printf("Second Secret\n");
+    cgc_readLine(STDIN, buf, 64);
+    y = cgc_strToUint32(buf);
 
-    my_printf("Third Secret\n");
-    readLine(STDIN, buf, 64);
-    z = strToUint32(buf);
+    cgc_my_printf("Third Secret\n");
+    cgc_readLine(STDIN, buf, 64);
+    z = cgc_strToUint32(buf);
 
 
     if (userNum >= MAX_USERS)
     {
-      my_printf("User Not Found\n");
+      cgc_my_printf("User Not Found\n");
       return (0);
     }
 
-    intToLargeInt(&luserPW, userToPassword[userNum]);
-    intToLargeInt(&lx, x);
-    intToLargeInt(&ly, y);
-    intToLargeInt(&lz, z);
+    cgc_intToLargeInt(&luserPW, userToPassword[userNum]);
+    cgc_intToLargeInt(&lx, x);
+    cgc_intToLargeInt(&ly, y);
+    cgc_intToLargeInt(&lz, z);
 
-    if(checkLogin(&luserPW, &lx, &ly, &lz))
+    if(cgc_checkLogin(&luserPW, &lx, &ly, &lz))
     {
       handlerTable[x][y][z](); 
     }
     else
     {
-      my_printf("Login failed\n");
+      cgc_my_printf("Login failed\n");
       return (0);
     }
   } while (1);

@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 int main(void) {
 
-playerInfoType players[MAX_PLAYERS];	
+cgc_playerInfoType players[MAX_PLAYERS];	
 char buffer[4];
 int silentMenu;
 int selection;
@@ -50,49 +50,49 @@ unsigned short card_ptr;
 
 
 		if (silentMenu == 0) {
-			printf("\n");
-			printf("1) Add Player\n");
-			printf("2) Delete Player\n");
-			printf("3) Play\n");
-			printf("4) Statistics\n");
+			cgc_printf("\n");
+			cgc_printf("1) Add Player\n");
+			cgc_printf("2) Delete Player\n");
+			cgc_printf("3) Play\n");
+			cgc_printf("4) Statistics\n");
 
-			printf("0) Exit\n");
+			cgc_printf("0) Exit\n");
 		}
 
 #ifdef PATCHED_1
 
-		if(receive_until( buffer, '\n', 4 ) == 0)
+		if(cgc_receive_until( buffer, '\n', 4 ) == 0)
 			continue;
 
 #else
 
-		if(receive_until( buffer, '\n', 21 ) == 0)
+		if(cgc_receive_until( buffer, '\n', 21 ) == 0)
 			continue;
 
 #endif
-		selection = atoi(buffer);
+		selection = cgc_atoi(buffer);
 
 		switch (selection) {
 
 			case 1:
 
-				add_player(players);
+				cgc_add_player(players);
 
 				break;
 
 			case 2:
 
-				delete_player(players); 
+				cgc_delete_player(players); 
 				break;
 
 			case 3:
 
-				play_round(players, &card_ptr);
+				cgc_play_round(players, &card_ptr);
 				break;
 
 			case 4:
 
-				show_players(players);
+				cgc_show_players(players);
 				break;
 
 			default:

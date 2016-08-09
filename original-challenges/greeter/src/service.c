@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -30,36 +30,36 @@
 const char secret[] = "s00pEr5eCretsAUc3";
 
 static char *
-make_token(char *name)
+cgc_make_token(char *name)
 {
-    size_t size = 1;
+    cgc_size_t size = 1;
     unsigned int *counter;
     char *token;
 
-    if ((counter = calloc(sizeof(unsigned int))) == NULL)
+    if ((counter = cgc_calloc(sizeof(unsigned int))) == NULL)
         return NULL;
 
-    size += strlen("counter=") + 2 * sizeof(unsigned int *) + 1;
-    size += strlen("name=") + strlen(name);
+    size += cgc_strlen("counter=") + 2 * sizeof(unsigned int *) + 1;
+    size += cgc_strlen("name=") + cgc_strlen(name);
 
-    if ((token = calloc(size)) == NULL) {
-        free(counter);
+    if ((token = cgc_calloc(size)) == NULL) {
+        cgc_free(counter);
         return NULL;
     }
 
-    strcpy(token, "counter=");
-    bin_to_hex(token + strlen(token), &counter, sizeof(unsigned int *));
-    strcat(token, "|name=");
-    strcat(token, name);
+    cgc_strcpy(token, "counter=");
+    cgc_bin_to_hex(token + cgc_strlen(token), &counter, sizeof(unsigned int *));
+    cgc_strcat(token, "|name=");
+    cgc_strcat(token, name);
 
     return token;
 }
 
-static size_t
-xor_sig(const char *token, size_t token_size, char *sig)
+static cgc_size_t
+cgc_xor_sig(const char *token, cgc_size_t token_size, char *sig)
 {
-    size_t sig_size = MIN(token_size, sizeof(secret) - 1);
-    size_t i;
+    cgc_size_t sig_size = MIN(token_size, sizeof(secret) - 1);
+    cgc_size_t i;
 
     for (i = 0; i < sig_size; i++)
         sig[i] = token[i] ^ secret[i];
@@ -68,159 +68,159 @@ xor_sig(const char *token, size_t token_size, char *sig)
 }
 
 static int
-xor_login(char *name)
+cgc_xor_login(char *name)
 {
-    size_t secret_size = sizeof(secret) - 1;
-    size_t token_size, sig_size, signed_token_size;
+    cgc_size_t secret_size = sizeof(secret) - 1;
+    cgc_size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     char sig[secret_size];
 
-    if ((token = make_token(name)) == NULL)
+    if ((token = cgc_make_token(name)) == NULL)
         return -1;
 
-    token_size = strlen(token);
+    token_size = cgc_strlen(token);
     signed_token_size = token_size + 2 * secret_size + 2;
 
-    if ((signed_token = realloc(token, signed_token_size)) == NULL) {
-        free(token);
+    if ((signed_token = cgc_realloc(token, signed_token_size)) == NULL) {
+        cgc_free(token);
         return -1;
     }
 
-    if ((sig_size = xor_sig(signed_token, token_size, sig)) == 0) {
-        free(signed_token);
+    if ((sig_size = cgc_xor_sig(signed_token, token_size, sig)) == 0) {
+        cgc_free(signed_token);
         return -1;
     }
 
     signed_token[token_size] = '|';
-    bin_to_hex(signed_token + token_size + 1, sig, sig_size);
+    cgc_bin_to_hex(signed_token + token_size + 1, sig, sig_size);
     signed_token[signed_token_size - 1] = '\n';
 
-    if (write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
+    if (cgc_write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
         return -1;
 
-    memset(sig, '\x00', sig_size);
-    memset(signed_token, '\x00', signed_token_size);
-    free(signed_token);
+    cgc_memset(sig, '\x00', sig_size);
+    cgc_memset(signed_token, '\x00', signed_token_size);
+    cgc_free(signed_token);
 
     return 0;
 }
 
-static size_t
-adler32_sig(const char *token, size_t token_size, char *sig)
+static cgc_size_t
+cgc_adler32_sig(const char *token, cgc_size_t token_size, char *sig)
 {
-    size_t secret_token_size = sizeof(secret) + token_size;
+    cgc_size_t secret_token_size = sizeof(secret) + token_size;
     char *secret_token;
 
-    if ((secret_token = calloc(secret_token_size)) == NULL)
+    if ((secret_token = cgc_calloc(secret_token_size)) == NULL)
         return 0;
 
-    strcpy(secret_token, secret);
-    strcat(secret_token, token);
-    *(unsigned int *)sig = adler32ish((unsigned char *)secret_token, secret_token_size - 1);
+    cgc_strcpy(secret_token, secret);
+    cgc_strcat(secret_token, token);
+    *(unsigned int *)sig = cgc_adler32ish((unsigned char *)secret_token, secret_token_size - 1);
     
-    memset(secret_token, '\x00', secret_token_size);
-    free(secret_token);
+    cgc_memset(secret_token, '\x00', secret_token_size);
+    cgc_free(secret_token);
 
     return sizeof(unsigned int);
 }
 
 static int
-adler32_login(char *name)
+cgc_adler32_login(char *name)
 {
-    size_t token_size, sig_size, signed_token_size;
+    cgc_size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned int sig;
 
-    if ((token = make_token(name)) == NULL)
+    if ((token = cgc_make_token(name)) == NULL)
         return -1;
 
-    token_size = strlen(token);
+    token_size = cgc_strlen(token);
     signed_token_size = token_size + 2 * sizeof(sig) + 2;
 
-    if ((signed_token = realloc(token, signed_token_size)) == NULL) {
-        free(token);
+    if ((signed_token = cgc_realloc(token, signed_token_size)) == NULL) {
+        cgc_free(token);
         return -1;
     }
 
-    if ((sig_size = adler32_sig(signed_token, token_size, (char *)(&sig))) == 0) {
-        free(signed_token);
+    if ((sig_size = cgc_adler32_sig(signed_token, token_size, (char *)(&sig))) == 0) {
+        cgc_free(signed_token);
         return -1;
     }
 
     signed_token[token_size] = '|';
-    bin_to_hex(signed_token + token_size + 1, &sig, sig_size);
+    cgc_bin_to_hex(signed_token + token_size + 1, &sig, sig_size);
     signed_token[signed_token_size - 1] = '\n';
 
-    if (write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
+    if (cgc_write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
         return -1;
 
     sig = 0;
-    memset(signed_token, '\x00', signed_token_size);
-    free(signed_token);
+    cgc_memset(signed_token, '\x00', signed_token_size);
+    cgc_free(signed_token);
 
     return 0;
 }
 
-static size_t
-md5_sig(const char *token, size_t token_size, char *sig)
+static cgc_size_t
+cgc_md5_sig(const char *token, cgc_size_t token_size, char *sig)
 {
-    size_t secret_token_size = sizeof(secret) + token_size;
+    cgc_size_t secret_token_size = sizeof(secret) + token_size;
     char *secret_token;
 
-    if ((secret_token = calloc(secret_token_size)) == NULL)
+    if ((secret_token = cgc_calloc(secret_token_size)) == NULL)
         return 0;
 
-    strcpy(secret_token, secret);
-    strcat(secret_token, token);
-    md5((const unsigned char *)secret_token, secret_token_size - 1, (unsigned char *)sig);
+    cgc_strcpy(secret_token, secret);
+    cgc_strcat(secret_token, token);
+    cgc_md5((const unsigned char *)secret_token, secret_token_size - 1, (unsigned char *)sig);
     
-    memset(secret_token, '\x00', secret_token_size);
-    free(secret_token);
+    cgc_memset(secret_token, '\x00', secret_token_size);
+    cgc_free(secret_token);
 
     return 16;
 }
 
 static int
-md5_login(char *name)
+cgc_md5_login(char *name)
 {
-    size_t token_size, sig_size, signed_token_size;
+    cgc_size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned char sig[16];
 
-    if ((token = make_token(name)) == NULL)
+    if ((token = cgc_make_token(name)) == NULL)
         return -1;
 
-    token_size = strlen(token);
+    token_size = cgc_strlen(token);
     signed_token_size = token_size + 2 * sizeof(sig) + 2;
 
-    if ((signed_token = realloc(token, signed_token_size)) == NULL) {
-        free(token);
+    if ((signed_token = cgc_realloc(token, signed_token_size)) == NULL) {
+        cgc_free(token);
         return -1;
     }
 
-    if ((sig_size = md5_sig(signed_token, token_size, (char *)sig)) == 0) {
-        free(signed_token);
+    if ((sig_size = cgc_md5_sig(signed_token, token_size, (char *)sig)) == 0) {
+        cgc_free(signed_token);
         return -1;
     }
 
     signed_token[token_size] = '|';
-    bin_to_hex(signed_token + token_size + 1, sig, sig_size);
+    cgc_bin_to_hex(signed_token + token_size + 1, sig, sig_size);
     signed_token[signed_token_size - 1] = '\n';
 
-    if (write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
+    if (cgc_write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
         return -1;
 
-    memset(sig, '\x00', sig_size);
-    memset(signed_token, '\x00', signed_token_size);
-    free(signed_token);
+    cgc_memset(sig, '\x00', sig_size);
+    cgc_memset(signed_token, '\x00', signed_token_size);
+    cgc_free(signed_token);
 
     return 0;
 }
 
-static size_t
-md5_hmac_sig(const char *token, size_t token_size, char *sig)
+static cgc_size_t
+cgc_md5_hmac_sig(const char *token, cgc_size_t token_size, char *sig)
 {
-    md5_hmac((const unsigned char *)secret, sizeof(secret) - 1,
+    cgc_md5_hmac((const unsigned char *)secret, sizeof(secret) - 1,
             (const unsigned char *)token, token_size,
             (unsigned char *)sig);
 
@@ -228,67 +228,67 @@ md5_hmac_sig(const char *token, size_t token_size, char *sig)
 }
 
 static int
-md5_hmac_login(char *name)
+cgc_md5_hmac_login(char *name)
 {
-    size_t token_size, sig_size, signed_token_size;
+    cgc_size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned char sig[16];
 
-    if ((token = make_token(name)) == NULL)
+    if ((token = cgc_make_token(name)) == NULL)
         return -1;
 
-    token_size = strlen(token);
+    token_size = cgc_strlen(token);
     signed_token_size = token_size + 2 * sizeof(sig) + 2;
 
-    if ((signed_token = realloc(token, signed_token_size)) == NULL) {
-        free(token);
+    if ((signed_token = cgc_realloc(token, signed_token_size)) == NULL) {
+        cgc_free(token);
         return -1;
     }
 
-    if ((sig_size = md5_hmac_sig(signed_token, token_size, (char *)sig)) == 0) {
-        free(signed_token);
+    if ((sig_size = cgc_md5_hmac_sig(signed_token, token_size, (char *)sig)) == 0) {
+        cgc_free(signed_token);
         return -1;
     }
 
     signed_token[token_size] = '|';
-    bin_to_hex(signed_token + token_size + 1, sig, sig_size);
+    cgc_bin_to_hex(signed_token + token_size + 1, sig, sig_size);
     signed_token[signed_token_size - 1] = '\n';
 
-    if (write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
+    if (cgc_write_all(STDOUT, signed_token, signed_token_size) != signed_token_size)
         return -1;
 
-    memset(sig, '\x00', sig_size);
-    memset(signed_token, '\x00', signed_token_size);
-    free(signed_token);
+    cgc_memset(sig, '\x00', sig_size);
+    cgc_memset(signed_token, '\x00', signed_token_size);
+    cgc_free(signed_token);
 
     return 0;
 }
     
 static int
-login(char *args)
+cgc_login(char *args)
 {
     int ret;
     static unsigned int cur = 0;
 
     int (*methods[])(char *) = {
 #ifndef PATCHED
-        xor_login,
-        adler32_login,
-        md5_login
+        cgc_xor_login,
+        cgc_adler32_login,
+        cgc_md5_login
 #else
-        md5_hmac_login
+        cgc_md5_hmac_login
 #endif
     };
 
 #ifndef PATCHED
-    if (strlen(args) > MAX_NAME_LENGTH)
+    if (cgc_strlen(args) > MAX_NAME_LENGTH)
         return -1;
 #else
-    if (strlen(args) > MAX_NAME_LENGTH || strchr(args, '|') != NULL)
+    if (cgc_strlen(args) > MAX_NAME_LENGTH || cgc_strchr(args, '|') != NULL)
         return -1;
 #endif
 
-    size_t num_methods = sizeof(methods) / sizeof(methods[0]);
+    cgc_size_t num_methods = sizeof(methods) / sizeof(methods[0]);
 
     ret = methods[cur](args);
 
@@ -299,34 +299,34 @@ login(char *args)
 }
 
 static int
-greet(char *token)
+cgc_greet(char *token)
 {
     char *user_sig, *tok;
     char calc_sig[32], hex_sig[64], message[200];
     char name[MAX_NAME_LENGTH + 1];
     unsigned int *counter = NULL;
-    size_t sig_size, i;
+    cgc_size_t sig_size, i;
     int matched = 0;
 
-    size_t (*sig_methods[])(const char *, size_t, char *) = {
+    cgc_size_t (*sig_methods[])(const char *, cgc_size_t, char *) = {
 #ifndef PATCHED
-        xor_sig,
-        adler32_sig,
-        md5_sig
+        cgc_xor_sig,
+        cgc_adler32_sig,
+        cgc_md5_sig
 #else
-        md5_hmac_sig
+        cgc_md5_hmac_sig
 #endif
     };
 
-    if ((user_sig = strrchr(token, '|')) == NULL)
+    if ((user_sig = cgc_strrchr(token, '|')) == NULL)
         return -1;
     *user_sig++ = '\0';
 
     for (i = 0; i < sizeof(sig_methods) / sizeof(sig_methods[0]); i++) {
-        sig_size = sig_methods[i](token, strlen(token), calc_sig);
-        bin_to_hex(hex_sig, calc_sig, sig_size);
+        sig_size = sig_methods[i](token, cgc_strlen(token), calc_sig);
+        cgc_bin_to_hex(hex_sig, calc_sig, sig_size);
 
-        if (strncmp(user_sig, hex_sig, 2 * sig_size) == 0) {
+        if (cgc_strncmp(user_sig, hex_sig, 2 * sig_size) == 0) {
             matched = 1;
             break;
         }
@@ -335,40 +335,40 @@ greet(char *token)
     if (!matched)
         return -1;
 
-    memset(name, '\x00', MAX_NAME_LENGTH + 1);
-    for (tok = strtok(token, '|'); tok != NULL; tok = strtok(NULL, '|')) {
-        if (strncmp(tok, "name=", 5) == 0) {
+    cgc_memset(name, '\x00', MAX_NAME_LENGTH + 1);
+    for (tok = cgc_strtok(token, '|'); tok != NULL; tok = cgc_strtok(NULL, '|')) {
+        if (cgc_strncmp(tok, "name=", 5) == 0) {
 #ifndef PATCHED
-            strcpy(name, tok + 5);
+            cgc_strcpy(name, tok + 5);
 #else
-            strncpy(name, tok + 5, MAX_NAME_LENGTH);
+            cgc_strncpy(name, tok + 5, MAX_NAME_LENGTH);
 #endif
-        } else if (strncmp(tok, "counter=", 8) == 0) {
-            if (strlen(tok + 8) == 8)
-                counter = (unsigned int *)hex_to_uint(tok + 8);
+        } else if (cgc_strncmp(tok, "counter=", 8) == 0) {
+            if (cgc_strlen(tok + 8) == 8)
+                counter = (unsigned int *)cgc_hex_to_uint(tok + 8);
         }
     }
 
-    if (strlen(name) == 0 || counter == NULL)
+    if (cgc_strlen(name) == 0 || counter == NULL)
         return -1;
 
-    memset(message, '\x00', sizeof(message));
+    cgc_memset(message, '\x00', sizeof(message));
     (*counter)++;
 
-    strcpy(message, "Hello ");
-    strcat(message, name);
-    strcat(message, ", we've seen you ");
-    itoa(*counter, message + strlen(message));
-    strcat(message, " times!\n");
+    cgc_strcpy(message, "Hello ");
+    cgc_strcat(message, name);
+    cgc_strcat(message, ", we've seen you ");
+    cgc_itoa(*counter, message + cgc_strlen(message));
+    cgc_strcat(message, " times!\n");
 
-    if (write_all(STDOUT, message, strlen(message)) != strlen(message))
+    if (cgc_write_all(STDOUT, message, cgc_strlen(message)) != cgc_strlen(message))
         return -1;
 
     return 0;
 }
 
 static int
-quit(char *args)
+cgc_quit(char *args)
 {
     (void)(args);
     _terminate(0);
@@ -377,22 +377,22 @@ quit(char *args)
 int
 main(void) {
     char *line;
-    ssize_t read;
+    cgc_ssize_t read;
     int ret;
     char ret_buffer[9];
-    size_t i;
+    cgc_size_t i;
 
     struct command {
         const char *name;
         int (*cmd)(char *);
     } cmds[] = {
-        { "login ", login },
-        { "greet ", greet },
-        { "quit", quit }
+        { "cgc_login ", cgc_login },
+        { "cgc_greet ", cgc_greet },
+        { "cgc_quit", cgc_quit }
     };
 
     while (1) {
-        if ((read = read_line(STDIN, &line)) < 0)
+        if ((read = cgc_read_line(STDIN, &line)) < 0)
             return -1;
 
         if (line[read - 1] == '\n')
@@ -400,19 +400,19 @@ main(void) {
 
         ret = -1;
         for (i = 0; i < sizeof(cmds) / sizeof(cmds[0]); i++) {
-            if (strncmp(line, cmds[i].name, strlen(cmds[i].name)) == 0) {
-                ret = cmds[i].cmd(line + strlen(cmds[i].name));
+            if (cgc_strncmp(line, cmds[i].name, cgc_strlen(cmds[i].name)) == 0) {
+                ret = cmds[i].cmd(line + cgc_strlen(cmds[i].name));
                 break;
             }
         }
 
-        memset(line, '\0', read);
-        free(line);
+        cgc_memset(line, '\0', read);
+        cgc_free(line);
 
-        bin_to_hex(ret_buffer, &ret, sizeof(ret));
+        cgc_bin_to_hex(ret_buffer, &ret, sizeof(ret));
         ret_buffer[2 * sizeof(ret)] = '\n';
 
-        if (write_all(STDOUT, ret_buffer, sizeof(ret_buffer)) != sizeof(ret_buffer))
+        if (cgc_write_all(STDOUT, ret_buffer, sizeof(ret_buffer)) != sizeof(ret_buffer))
             return -1;
     }
 

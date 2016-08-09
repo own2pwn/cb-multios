@@ -29,10 +29,10 @@
 #define MAX_NUM_STATES 255
 #define SENTINEL (MAX_NUM_STATES)
 
-typedef __attribute__((regparm(1))) void (*onmatch_handler)(void *);
+typedef __attribute__((regparm(1))) void (*cgc_onmatch_handler)(void *);
 
 struct state {
-    onmatch_handler onmatch;
+    cgc_onmatch_handler onmatch;
     void *data;
 #ifdef PATCHED_1
     unsigned char transitions[256];
@@ -56,14 +56,14 @@ struct dfa {
  *
  * @param dfa The DFA to initialize
  */
-void dfa_init(struct dfa *dfa);
+void cgc_dfa_init(struct dfa *dfa);
 
 /**
  * Reset an initialized DFA to its start state.
  *
  * @param dfa The DFA to reset
  */
-void dfa_reset(struct dfa *dfa);
+void cgc_dfa_reset(struct dfa *dfa);
 
 /**
  * Update the onmatch event handler for all accept states in a DFA.
@@ -71,7 +71,7 @@ void dfa_reset(struct dfa *dfa);
  * @param dfa The DFA to update
  * @param onmatch The new event handler
  */
-void dfa_update_onmatch(struct dfa *dfa, onmatch_handler onmatch, void *data);
+void cgc_dfa_update_onmatch(struct dfa *dfa, cgc_onmatch_handler onmatch, void *data);
 
 /**
  * Parse a line describing the structure of a DFA and update the given DFA.
@@ -83,7 +83,7 @@ void dfa_update_onmatch(struct dfa *dfa, onmatch_handler onmatch, void *data);
  * @return 1 if parsing is done, EXIT_SUCCESS on success, EXIT_FAILURE on
  *      failure
  */
-int dfa_parse_desc(struct dfa *dfa, char *line, onmatch_handler onmatch, void *data);
+int cgc_dfa_parse_desc(struct dfa *dfa, char *line, cgc_onmatch_handler onmatch, void *data);
 
 /**
  * Parse an input to see if it matches the language accepted by a DFA.
@@ -92,7 +92,7 @@ int dfa_parse_desc(struct dfa *dfa, char *line, onmatch_handler onmatch, void *d
  * @c The symbol to process
  * @return 1 if accepted, 0 if more data needed, EXIT_FAILURE if rejected
  */
-int dfa_process_input(struct dfa *dfa, char c);
+int cgc_dfa_process_input(struct dfa *dfa, char c);
 
 /**
  * Give an example of a string accepted by the DFA.
@@ -102,7 +102,7 @@ int dfa_process_input(struct dfa *dfa, char c);
  * @param len The maximum length of the string
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int dfa_give_example(struct dfa *dfa, char *str, size_t len);
+int cgc_dfa_give_example(struct dfa *dfa, char *str, cgc_size_t len);
 
 #endif /* DFA_H_ */
 

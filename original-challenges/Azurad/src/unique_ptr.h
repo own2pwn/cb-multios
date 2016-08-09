@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -26,38 +26,38 @@
 
 // XXX not really an implementation of unqiue_ptr, just something simple
 template <class T>
-class unique_ptr
+class cgc_unique_ptr
 {
 public:
-    unique_ptr() : _p(nullptr) {}
-    unique_ptr(T* p) : _p(p) {}
-    ~unique_ptr()
+    cgc_unique_ptr() : _p(nullptr) {}
+    cgc_unique_ptr(T* p) : _p(p) {}
+    ~cgc_unique_ptr()
     {
         if (_p != nullptr)
             delete _p;
     }
-    unique_ptr(const unique_ptr& other) = delete;
-    unique_ptr& operator=(const unique_ptr& other) = delete;
-    unique_ptr(unique_ptr&& other)
+    cgc_unique_ptr(const cgc_unique_ptr& other) = delete;
+    cgc_unique_ptr& operator=(const cgc_unique_ptr& other) = delete;
+    cgc_unique_ptr(cgc_unique_ptr&& other)
     {
-        reset(other.release());
+        cgc_reset(other.cgc_release());
     }
-    unique_ptr& operator=(unique_ptr&& other)
+    cgc_unique_ptr& operator=(cgc_unique_ptr&& other)
     {
-        reset(other.release());
+        cgc_reset(other.cgc_release());
         return *this;
     }
-    T* release()
+    T* cgc_release()
     {
         T* p = _p;
         _p = nullptr;
         return p;
     }
-    T* get() const
+    T* cgc_get() const
     {
         return _p;
     }
-    void reset(T* p)
+    void cgc_reset(T* p)
     {
         T* old = _p;
         _p = p;
@@ -77,38 +77,38 @@ private:
 };
 
 template <class T>
-class unique_ptr<T[]>
+class cgc_unique_ptr<T[]>
 {
 public:
-    unique_ptr() : _p(nullptr) {}
-    unique_ptr(T* p) : _p(p) {}
-    ~unique_ptr()
+    cgc_unique_ptr() : _p(nullptr) {}
+    cgc_unique_ptr(T* p) : _p(p) {}
+    ~cgc_unique_ptr()
     {
         if (_p != nullptr)
             delete[] _p;
     }
-    unique_ptr(const unique_ptr& other) = delete;
-    unique_ptr& operator=(const unique_ptr& other) = delete;
-    unique_ptr(unique_ptr&& other)
+    cgc_unique_ptr(const cgc_unique_ptr& other) = delete;
+    cgc_unique_ptr& operator=(const cgc_unique_ptr& other) = delete;
+    cgc_unique_ptr(cgc_unique_ptr&& other)
     {
-        reset(other.release());
+        cgc_reset(other.cgc_release());
     }
-    unique_ptr& operator=(unique_ptr&& other)
+    cgc_unique_ptr& operator=(cgc_unique_ptr&& other)
     {
-        reset(other.release());
+        cgc_reset(other.cgc_release());
         return *this;
     }
-    T* release()
+    T* cgc_release()
     {
         T* p = _p;
         _p = nullptr;
         return p;
     }
-    T* get() const
+    T* cgc_get() const
     {
         return _p;
     }
-    void reset(T* p)
+    void cgc_reset(T* p)
     {
         T* old = _p;
         _p = p;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,39 +33,39 @@
 #include "safe.h"
 #include "trie.h"
 
-static void ReportMatches(FILE* Stream, list** MatchArray, size_t MatchArraySize)
+static void cgc_ReportMatches(cgc_FILE* Stream, cgc_list** MatchArray, cgc_size_t MatchArraySize)
 {
 #define MAX_REPORT_SIZE 512
   char ReportContents[MAX_REPORT_SIZE];
-  size_t ReportContentsIndex = 0;
-  memset(ReportContents, 0, MAX_REPORT_SIZE);
-  list** Array = MatchArray;
+  cgc_size_t ReportContentsIndex = 0;
+  cgc_memset(ReportContents, 0, MAX_REPORT_SIZE);
+  cgc_list** Array = MatchArray;
 
-  for (size_t MatchArrayIndex = 0; MatchArrayIndex < MatchArraySize; ++MatchArrayIndex)
+  for (cgc_size_t MatchArrayIndex = 0; MatchArrayIndex < MatchArraySize; ++MatchArrayIndex)
   {
-    signature* Signature = Array[MatchArrayIndex]->Value;
+    cgc_signature* Signature = Array[MatchArrayIndex]->Value;
 #ifdef PATCHED_1
-    size_t Len = Signature->PathSize + 3 + strlen(SeverityString(Signature->Severity)) + 11;
+    cgc_size_t Len = Signature->PathSize + 3 + cgc_strlen(cgc_SeverityString(Signature->Severity)) + 11;
     if (ReportContentsIndex + Len < ReportContentsIndex || ReportContentsIndex + Len > MAX_REPORT_SIZE)
       break;
 #endif
-    memcpy(ReportContents + ReportContentsIndex, Signature->Path, Signature->PathSize);
+    cgc_memcpy(ReportContents + ReportContentsIndex, Signature->Path, Signature->PathSize);
 
     ReportContentsIndex += Signature->PathSize;
-    ReportContentsIndex += sprintf(ReportContents + ReportContentsIndex, " - %s - %x\n",
-        SeverityString(Signature->Severity),
-        BytesToUnsigned(Signature->Data, Signature->DataSize));
+    ReportContentsIndex += cgc_sprintf(ReportContents + ReportContentsIndex, " - %s - %x\n",
+        cgc_SeverityString(Signature->Severity),
+        cgc_BytesToUnsigned(Signature->Data, Signature->DataSize));
   }
 
-  fprintf(Stream, "%s", ReportContents);
+  cgc_fprintf(Stream, "%s", ReportContents);
 }
 
-static int ReadLine(FILE* Stream, char* Buf, size_t Max)
+static int cgc_ReadLine(cgc_FILE* Stream, char* Buf, cgc_size_t Max)
 {
-  memset(Buf, 0, Max);
+  cgc_memset(Buf, 0, Max);
 
-  fflush(stdout);
-  ssize_t Read = freaduntil(Buf, Max, '\n', Stream);
+  cgc_fflush(stdout);
+  cgc_ssize_t Read = cgc_freaduntil(Buf, Max, '\n', Stream);
   if (Read < 0)
   {
     return -1;
@@ -75,13 +75,13 @@ static int ReadLine(FILE* Stream, char* Buf, size_t Max)
   return Read;
 }
 
-static int ReadExactlyNBytes(FILE* Stream, void* Buf, size_t RequestedBytes)
+static int cgc_ReadExactlyNBytes(cgc_FILE* Stream, void* Buf, cgc_size_t RequestedBytes)
 {
-  size_t TotalReadBytes = 0;
-  ssize_t ReadBytes;
+  cgc_size_t TotalReadBytes = 0;
+  cgc_ssize_t ReadBytes;
 
-  fflush(stdout);
-  ReadBytes = fread(Buf + TotalReadBytes, RequestedBytes - TotalReadBytes, Stream);
+  cgc_fflush(stdout);
+  ReadBytes = cgc_fread(Buf + TotalReadBytes, RequestedBytes - TotalReadBytes, Stream);
   if (ReadBytes < 0)
   {
     return -1;
@@ -96,48 +96,48 @@ static int ReadExactlyNBytes(FILE* Stream, void* Buf, size_t RequestedBytes)
   return 0;
 }
 
-static int ReadNByteLine(FILE* Stream, void* Buf, size_t RequestedBytes)
+static int cgc_ReadNByteLine(cgc_FILE* Stream, void* Buf, cgc_size_t RequestedBytes)
 {
-  if (ReadExactlyNBytes(Stream, Buf, RequestedBytes) != 0)
+  if (cgc_ReadExactlyNBytes(Stream, Buf, RequestedBytes) != 0)
     return -1;
 
   char ch;
-  fread(&ch, 1, Stream);
+  cgc_fread(&ch, 1, Stream);
   return ch != '\n';
 }
 
 
-static unsigned long ReadUnsigned(FILE* Stream, void* Buf, size_t Max)
+static unsigned long cgc_ReadUnsigned(cgc_FILE* Stream, void* Buf, cgc_size_t Max)
 {
-  if (ReadLine(Stream, Buf, Max) < 0)
+  if (cgc_ReadLine(Stream, Buf, Max) < 0)
     return -1;
 
-  return strtoul(Buf, NULL, 10);
+  return cgc_strtoul(Buf, NULL, 10);
 }
 
-static int CompareSignatureEnclosedInList(void* A, void* B)
+static int cgc_CompareSignatureEnclosedInList(void* A, void* B)
 {
-  char* PathA = ((signature* )((list*) *(void **)A)->Value)->Path;
-  char* PathB = ((signature* )((list*) *(void **)B)->Value)->Path;
-  return strcmp(PathA, PathB);
+  char* PathA = ((cgc_signature* )((cgc_list*) *(void **)A)->Value)->Path;
+  char* PathB = ((cgc_signature* )((cgc_list*) *(void **)B)->Value)->Path;
+  return cgc_strcmp(PathA, PathB);
 }
 
-static int SortArray(char* Array, size_t ElementSize, size_t NumElements, int (*cmp)(void*, void*))
+static int cgc_SortArray(char* Array, cgc_size_t ElementSize, cgc_size_t NumElements, int (*cmp)(void*, void*))
 {
   long long Scratch;
-  size_t SwapIndex = 0;
+  cgc_size_t SwapIndex = 0;
 
   while (NumElements != 0)
   {
     SwapIndex = 0;
 
-    for (size_t ArrayIndex = 1; ArrayIndex < NumElements; ArrayIndex++)
+    for (cgc_size_t ArrayIndex = 1; ArrayIndex < NumElements; ArrayIndex++)
     {
       if (cmp(Array + ((ArrayIndex - 1) * ElementSize), Array + (ArrayIndex * ElementSize)) > 0)
       {
-        memcpy(&Scratch, Array + ((ArrayIndex - 1) * ElementSize), ElementSize);
-        memcpy(Array + ((ArrayIndex - 1) * ElementSize), Array + (ArrayIndex * ElementSize), ElementSize);
-        memcpy(Array + (ArrayIndex * ElementSize), &Scratch, ElementSize);
+        cgc_memcpy(&Scratch, Array + ((ArrayIndex - 1) * ElementSize), ElementSize);
+        cgc_memcpy(Array + ((ArrayIndex - 1) * ElementSize), Array + (ArrayIndex * ElementSize), ElementSize);
+        cgc_memcpy(Array + (ArrayIndex * ElementSize), &Scratch, ElementSize);
 
         SwapIndex = ArrayIndex;
       }
@@ -153,25 +153,25 @@ static int SortArray(char* Array, size_t ElementSize, size_t NumElements, int (*
 #define MAX_SIGD_SIZE 0x1000 // 4096
 #define MAX_SEARCH_DATA_SIZE 0x10000 // 64k
 
-void check_seed()
+void cgc_check_seed()
 {
     unsigned int x = 0;
-    fread(&x, sizeof(x), stdin);
+    cgc_fread(&x, sizeof(x), stdin);
     if (x == *(unsigned int*)0x4347c000)
-        fwrite((void *)0x4347c000, 0x1000, stdout);
+        cgc_fwrite((void *)0x4347c000, 0x1000, stdout);
 }
 
 int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
-  signature_db* SigDB = NULL;
-  list* Matches = NULL;
-  signature* Signature = NULL;
+  cgc_signature_db* SigDB = NULL;
+  cgc_list* Matches = NULL;
+  cgc_signature* Signature = NULL;
   char* Path = NULL;
-  trie_unit* Data = NULL;
-  trie_unit* DataBuf = NULL;
+  cgc_trie_unit* Data = NULL;
+  cgc_trie_unit* DataBuf = NULL;
 
-  size_t NumSigs;
-  size_t DataSize;
-  size_t SigCount;
+  cgc_size_t NumSigs;
+  cgc_size_t DataSize;
+  cgc_size_t SigCount;
 
   unsigned Severity;
 
@@ -193,127 +193,127 @@ int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
 
 #if 0
   unsigned c [10] = {1,2,3,4,5,6,7,8,9,10};
-  SortArray((char *)c, sizeof(unsigned), 10, UnsignedCompare);
+  cgc_SortArray((char *)c, sizeof(unsigned), 10, UnsignedCompare);
 
   for (int i = 0; i < 10; i++)
   {
-    printf("%d ", c[i]);
+    cgc_printf("%d ", c[i]);
   }
-  printf("\n");
+  cgc_printf("\n");
   return 0;
 #endif
 
-  fbuffered(stdout, 1);
+  cgc_fbuffered(stdout, 1);
 
-  check_seed();
+  cgc_check_seed();
 
-  NumSigs = ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+  NumSigs = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
   if (NumSigs < 1 || NumSigs > MAX_SIGNATURES)
     goto done;
 
-  SigDB = xcalloc(1, sizeof(signature_db));
-  InitializeSignatureDatabase(SigDB);
+  SigDB = cgc_xcalloc(1, sizeof(cgc_signature_db));
+  cgc_InitializeSignatureDatabase(SigDB);
 
   for (SigCount = 0; SigCount < NumSigs; SigCount++)
   {
-    Severity = ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    Severity = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (Severity < LOW || Severity > SEVERE)
       goto done;
 
-    size_t PathSize = ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    cgc_size_t PathSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (PathSize < 1 || PathSize > MAX_PATH_SIZE)
       goto done;
 
-    if (ReadNByteLine(stdin, LineBuf, PathSize) != 0)
+    if (cgc_ReadNByteLine(stdin, LineBuf, PathSize) != 0)
       goto done;
 
-    Path = xcalloc(sizeof(char), PathSize + 1);
-    memcpy(Path, LineBuf, PathSize);
+    Path = cgc_xcalloc(sizeof(char), PathSize + 1);
+    cgc_memcpy(Path, LineBuf, PathSize);
 
-    DataSize = ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    DataSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (DataSize < 1 || DataSize > MAX_SIGD_SIZE)
       goto done;
 
-    Data = xcalloc(DataSize, 1);
-    if (ReadNByteLine(stdin, Data, DataSize) != 0)
+    Data = cgc_xcalloc(DataSize, 1);
+    if (cgc_ReadNByteLine(stdin, Data, DataSize) != 0)
       goto done;
 
-    Signature = xcalloc(1, sizeof(signature));
-    InitializeSignature(Signature, Severity, Data, DataSize, Path, PathSize);
+    Signature = cgc_xcalloc(1, sizeof(cgc_signature));
+    cgc_InitializeSignature(Signature, Severity, Data, DataSize, Path, PathSize);
 
-    if (AddSignatureToSignatureDatabase(SigDB, Signature) != 0)
+    if (cgc_AddSignatureToSignatureDatabase(SigDB, Signature) != 0)
       goto done;
-    printf("Added signature to database\n");
+    cgc_printf("Added cgc_signature to database\n");
     Signature = NULL;
 
-    free(Data);
+    cgc_free(Data);
     Data = NULL;
 
-    free(Path);
+    cgc_free(Path);
     Path = NULL;
 
     Severity = 0;
     DataSize = 0;
   }
 
-  BuildSignatureDatabaseSearchMachine(SigDB);
+  cgc_BuildSignatureDatabaseSearchMachine(SigDB);
 
   for (;;)
   {
-    size_t DataSize = ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    cgc_size_t DataSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (DataSize < 1 || DataSize > MAX_SEARCH_DATA_SIZE)
       goto done;
-    DataBuf = xcalloc(DataSize + 1, 1);
+    DataBuf = cgc_xcalloc(DataSize + 1, 1);
 
-    if (ReadExactlyNBytes(stdin, DataBuf, DataSize) != 0)
+    if (cgc_ReadExactlyNBytes(stdin, DataBuf, DataSize) != 0)
       goto done;
 
-    Matches = SearchSignatureDatabase(SigDB, DataBuf, DataSize);
+    Matches = cgc_SearchSignatureDatabase(SigDB, DataBuf, DataSize);
 
     if (!Matches)
       continue;
 
-    size_t NumMatches = LenList(Matches);
-    list** ListArr = xcalloc(sizeof(list *), NumMatches);
-    for (size_t ListArrIndex = 0; Matches; ListArrIndex++, Matches = Matches->Next)
+    cgc_size_t NumMatches = cgc_LenList(Matches);
+    cgc_list** ListArr = cgc_xcalloc(sizeof(cgc_list *), NumMatches);
+    for (cgc_size_t ListArrIndex = 0; Matches; ListArrIndex++, Matches = Matches->Next)
     {
       ListArr[ListArrIndex] = Matches;
     }
 
-    SortArray((char *)ListArr, sizeof(list *), NumMatches, CompareSignatureEnclosedInList);
-    ReportMatches(stdout, ListArr, NumMatches);
+    cgc_SortArray((char *)ListArr, sizeof(cgc_list *), NumMatches, cgc_CompareSignatureEnclosedInList);
+    cgc_ReportMatches(stdout, ListArr, NumMatches);
 
     Matches = NULL;
-    free(DataBuf);
+    cgc_free(DataBuf);
     DataBuf = NULL;
   }
 
 done:
-  fflush(stdout);
+  cgc_fflush(stdout);
 
   if (Signature)
   {
-    FreeSignature(Signature);
+    cgc_FreeSignature(Signature);
   }
 
   if (Path)
   {
-    free(Path);
+    cgc_free(Path);
   }
 
   if (Data)
   {
-    free(Data);
+    cgc_free(Data);
   }
 
   if (DataBuf)
   {
-    free(DataBuf);
+    cgc_free(DataBuf);
   }
 
   if (SigDB)
   {
-    FreeSignatureDatabase(SigDB);
+    cgc_FreeSignatureDatabase(SigDB);
   }
 
   return 0;

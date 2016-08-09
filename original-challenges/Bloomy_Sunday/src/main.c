@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,52 +38,52 @@ const char* depressing_words[] = {
   "torture", "distress", "grief", "sorrow", "pathetic", "terrified", "scared"
 };
 
-bloomy_t *bloomy = NULL;
+cgc_bloomy_t *bloomy = NULL;
 
-uint8_t submit_lyrics(char *lyrics, size_t len)
+cgc_uint8_t cgc_submit_lyrics(char *lyrics, cgc_size_t len)
 {
   int i, nl = 0, n = 0;
-  size_t olen = len;
+  cgc_size_t olen = len;
   char line[128], *s = lyrics;
-  memset(lyrics, 0, len);
+  cgc_memset(lyrics, 0, len);
   while (1)
   {
-    if (read_until(STDIN, line, sizeof(line), '\n') < 0)
+    if (cgc_read_until(STDIN, line, sizeof(line), '\n') < 0)
       return 0;
-    if (strcmp(line, "EOF") == 0)
+    if (cgc_strcmp(line, "EOF") == 0)
       break;
 
     nl = 1;
     char *word, *input = line;
     while (1)
     {
-      word = strsep(&input, " ");
+      word = cgc_strsep(&input, " ");
       if (word == NULL)
         break;
-      n = bloomy_check(bloomy, word);
+      n = cgc_bloomy_check(bloomy, word);
       if (n == 1)
       {
         for (i = 0; i < sizeof(depressing_words) / sizeof(char*); ++i)
         {
-          if (strcmp(depressing_words[i], word) == 0)
+          if (cgc_strcmp(depressing_words[i], word) == 0)
           {
             printf("depressing word detected.\n");
             return 0;
           }
         }
 #if PATCHED
-        if (strlen(word) < len - 1)
+        if (cgc_strlen(word) < len - 1)
         {
 #endif
         if (!nl)
         {
-          strcat(s, " ");
+          cgc_strcat(s, " ");
           s++;
           len--;
         }
-        strcat(s, word);
-        s += strlen(word);
-        len -= strlen(word);
+        cgc_strcat(s, word);
+        s += cgc_strlen(word);
+        len -= cgc_strlen(word);
 #if PATCHED
         }
         else
@@ -95,17 +95,17 @@ uint8_t submit_lyrics(char *lyrics, size_t len)
       }
       else if (n == 0)
       {
-        if (strlen(word) < len - 1)
+        if (cgc_strlen(word) < len - 1)
         {
           if (!nl)
           {
-            strcat(s, " ");
+            cgc_strcat(s, " ");
             s++;
             len--;
           }
-          strcat(s, word);
-          s += strlen(word);
-          len -= strlen(word);
+          cgc_strcat(s, word);
+          s += cgc_strlen(word);
+          len -= cgc_strlen(word);
         }
         else
         {
@@ -118,12 +118,12 @@ uint8_t submit_lyrics(char *lyrics, size_t len)
       nl = 0;
     }
 #ifdef PATCHED
-    if (strlen(lyrics) < olen - 1)
+    if (cgc_strlen(lyrics) < olen - 1)
 #else
-    if (strlen(lyrics) < olen)
+    if (cgc_strlen(lyrics) < olen)
 #endif
     {
-      strcat(s, "\n");
+      cgc_strcat(s, "\n");
       s++;
       len--;
     }
@@ -132,43 +132,43 @@ uint8_t submit_lyrics(char *lyrics, size_t len)
   return 1;
 }
 
-void print_menu()
+void cgc_print_menu()
 {
   printf("1. Submit lyrics\n");
   printf("2. View lyrics\n");
   printf("-3. Quit\n");
 }
 
-void init()
+void cgc_init()
 {
   int i;
-  bloomy = bloomy_new(128, moomoo, yooyoo, geegee);
+  bloomy = cgc_bloomy_new(128, cgc_moomoo, cgc_yooyoo, cgc_geegee);
   if (bloomy == NULL)
-    exit(-1);
+    cgc_exit(-1);
 
   for (i = 0; i < sizeof(depressing_words) / sizeof(char*); ++i)
-    bloomy_add(bloomy, depressing_words[i]);
+    cgc_bloomy_add(bloomy, depressing_words[i]);
 }
 
 int main()
 {
-  uint8_t good = 0;
+  cgc_uint8_t good = 0;
   char buf[8], lyrics[2048];
 
   printf("~=~=~=~= Bloomy Sunday =~=~=~=~\n");
-  init();
+  cgc_init();
 
   while (1)
   {
-    print_menu();
+    cgc_print_menu();
     printf("> ");
 
-   if (read_until(STDIN, buf, sizeof(buf), '\n') < 0)
+   if (cgc_read_until(STDIN, buf, sizeof(buf), '\n') < 0)
      goto fail;
-   switch (strtol(buf, NULL, 10))
+   switch (cgc_strtol(buf, NULL, 10))
    {
      case 1:
-       good = submit_lyrics(lyrics, sizeof(lyrics));
+       good = cgc_submit_lyrics(lyrics, sizeof(lyrics));
        break;
      case 2:
        if (!good)
@@ -178,7 +178,7 @@ int main()
        break;
      case -3:
        printf("Don't let the sadness grow.\n\n");
-       exit(0);
+       cgc_exit(0);
        break;
      default:
        printf("Nope!\n");

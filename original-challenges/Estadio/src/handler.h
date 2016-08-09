@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "protocol.h"
 
-#define HANDLER(name) void handle_##name(protocol_frame* frame)
+#define HANDLER(name) void cgc_handle_##name(cgc_protocol_frame* frame)
 
 HANDLER(seed);
 HANDLER(rand);

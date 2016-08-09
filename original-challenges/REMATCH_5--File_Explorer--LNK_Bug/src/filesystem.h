@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,18 +30,18 @@ THE SOFTWARE.
 
 typedef struct FileNode_s {
   char      name[MAX_FILENAME + 1];
-  uint8_t   type;
-  uint32_t  size;
-  uint16_t  fileID;
+  cgc_uint8_t   type;
+  cgc_uint32_t  size;
+  cgc_uint16_t  fileID;
   struct FileNode_s *prev;
   struct FileNode_s *next;
   struct FileNode_s *parent;
   struct FileNode_s *child;
   char   *contents;
-} FileNode;
+} cgc_FileNode;
 
-extern FileNode *root;
-extern uint16_t numFiles;
+extern cgc_FileNode *root;
+extern cgc_uint16_t numFiles;
 
 // File Types (keep in order)
 #define FILE_TEXT       0xf1
@@ -64,20 +64,20 @@ extern uint16_t numFiles;
 #define FS_ERROR_ACCESS_DENIED  -4
 #define FS_ERROR_FS_FULL        -5
 
-FileNode *InitializeFileSystem();
-int CreateFile(char *name, uint8_t type, uint32_t size, char *contents, FileNode *parent);
-int DeleteFile(char *name, FileNode *parent);
-FileNode *FindFile(char *name, FileNode *parent);
-uint16_t NextFileID();
-uint8_t GetFileType(FileNode *file);
-uint32_t GetFileSize(FileNode *file);
-uint32_t GetFileID(FileNode *file);
-char *GetFileName(FileNode *file);
-char *GetFilePath(FileNode *file);
-char *ReadFile(FileNode *file);
-FileNode *GetParent(FileNode *file);
-void DestroyNode(FileNode *node);
-int GetPathDepth(FileNode *file);
-FileNode *FindFileAbsolute(char *name);
+cgc_FileNode *cgc_InitializeFileSystem();
+int cgc_CreateFile(char *name, cgc_uint8_t type, cgc_uint32_t size, char *contents, cgc_FileNode *parent);
+int cgc_DeleteFile(char *name, cgc_FileNode *parent);
+cgc_FileNode *cgc_FindFile(char *name, cgc_FileNode *parent);
+cgc_uint16_t cgc_NextFileID();
+cgc_uint8_t cgc_GetFileType(cgc_FileNode *file);
+cgc_uint32_t cgc_GetFileSize(cgc_FileNode *file);
+cgc_uint32_t cgc_GetFileID(cgc_FileNode *file);
+char *cgc_GetFileName(cgc_FileNode *file);
+char *cgc_GetFilePath(cgc_FileNode *file);
+char *cgc_ReadFile(cgc_FileNode *file);
+cgc_FileNode *cgc_GetParent(cgc_FileNode *file);
+void cgc_DestroyNode(cgc_FileNode *node);
+int cgc_GetPathDepth(cgc_FileNode *file);
+cgc_FileNode *cgc_FindFileAbsolute(char *name);
 
 #endif

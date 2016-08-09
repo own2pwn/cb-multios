@@ -24,10 +24,10 @@
  */
 #include "huffman.h"
 
-void huffman_decode_table(ht_t *output, const uint8_t input[])
+void cgc_huffman_decode_table(cgc_ht_t *output, const cgc_uint8_t input[])
 {
-    uint8_t tmpsizes[256];
-    uint16_t tmpcodes[256];
+    cgc_uint8_t tmpsizes[256];
+    cgc_uint16_t tmpcodes[256];
     int i, j, k;
 
     for (k = 0, i = 0; i < 16; i++)

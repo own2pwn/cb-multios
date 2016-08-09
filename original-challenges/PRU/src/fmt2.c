@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "cpu.h"
 #include "stdio.h"
 
-void doBranch(pruCPU *cpu, fmt2BranchInstruction inst) {
+void cgc_doBranch(cgc_pruCPU *cpu, cgc_fmt2BranchInstruction inst) {
 	if(inst.header.subOp == 1) {
 		cpu->r[inst.rd.reg] = cpu->pc+1;
 	}
@@ -39,11 +39,11 @@ void doBranch(pruCPU *cpu, fmt2BranchInstruction inst) {
 	}
 }
 
-void doLdi(pruCPU *cpu, fmt2LdiInstruction inst) {
+void cgc_doLdi(cgc_pruCPU *cpu, cgc_fmt2LdiInstruction inst) {
 	cpu->r[inst.rd.reg] = inst.imm;
 }
 
-void doLmbd(pruCPU *cpu, fmt2LmbdInstruction inst) {
+void cgc_doLmbd(cgc_pruCPU *cpu, cgc_fmt2LmbdInstruction inst) {
 	int i;
 	int arg;
 	if(inst.header.other == 0)
@@ -61,7 +61,7 @@ void doLmbd(pruCPU *cpu, fmt2LmbdInstruction inst) {
 		
 }
 
-void doScan(pruCPU *cpu, fmt2ScanInstruction inst) {
+void cgc_doScan(cgc_pruCPU *cpu, cgc_fmt2ScanInstruction inst) {
 	if(inst.header.other == 1)
 	{
 		if(cpu->r[inst.rs1.reg]+inst.arg2.imm < 0x1000)

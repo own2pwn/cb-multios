@@ -25,9 +25,9 @@
 
 // mod from recvline to make delimiter generic
 // does not NULL terminate buf
-int recv_until_delim(int fd, char *buf, size_t size, char delim) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size, char delim) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return ERRNO_RECV;

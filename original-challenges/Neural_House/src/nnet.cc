@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,59 +22,59 @@
  */
 #include "nnet.h"
 
-NeuralNet::NeuralNet(vector<unsigned int> &t)
+cgc_NeuralNet::cgc_NeuralNet(cgc_vector<unsigned int> &t)
 {
   unsigned int i, j;
-  for (i = 0; i < t.size(); ++i)
+  for (i = 0; i < t.cgc_size(); ++i)
   {
-    m_layers.push_back(Layer());
+    m_layers.cgc_push_back(cgc_Layer());
     for (j = 0; j <= t[i]; ++j)
-      m_layers.back().push_back(Neuron(j, i == t.size() - 1 ? 0 : t[i+1]));
-    m_layers.back().back().setValue(BIAS_VAL);
+      m_layers.cgc_back().cgc_push_back(cgc_Neuron(j, i == t.cgc_size() - 1 ? 0 : t[i+1]));
+    m_layers.cgc_back().cgc_back().cgc_setValue(BIAS_VAL);
   }
 }
 
-void NeuralNet::feedForward(vector<double> &in)
+void cgc_NeuralNet::cgc_feedForward(cgc_vector<double> &in)
 {
   unsigned int i, j;
-  Layer &inputLayer = m_layers.front();
-  for (i = 0; i < in.size(); ++i)
-    inputLayer[i].setValue(in[i]);
-  for (i = 1; i < m_layers.size(); ++i)
+  cgc_Layer &inputLayer = m_layers.cgc_front();
+  for (i = 0; i < in.cgc_size(); ++i)
+    inputLayer[i].cgc_setValue(in[i]);
+  for (i = 1; i < m_layers.cgc_size(); ++i)
   {
-    Layer &prev = m_layers[i - 1];
-    for (j = 0; j < m_layers[i].size() - 1; ++j)
-      m_layers[i][j].feedForward(prev);
+    cgc_Layer &prev = m_layers[i - 1];
+    for (j = 0; j < m_layers[i].cgc_size() - 1; ++j)
+      m_layers[i][j].cgc_feedForward(prev);
   }
 }
 
-void NeuralNet::backProp(vector<double> &target)
+void cgc_NeuralNet::cgc_backProp(cgc_vector<double> &target)
 {
   unsigned int i, j;
-  Layer &outputLayer = m_layers.back();
-  for (i = 0; i < outputLayer.size() - 1; ++i)
-    outputLayer[i].computeOutGrad(target[i]);
-  for (i = m_layers.size() - 2; i > 0; --i)
+  cgc_Layer &outputLayer = m_layers.cgc_back();
+  for (i = 0; i < outputLayer.cgc_size() - 1; ++i)
+    outputLayer[i].cgc_computeOutGrad(target[i]);
+  for (i = m_layers.cgc_size() - 2; i > 0; --i)
   {
-    Layer &hiddenLayer = m_layers[i];
-    Layer &next = m_layers[i+1];
-    for (j = 0; j < hiddenLayer.size(); ++j)
-      hiddenLayer[j].computeHiddenGrad(next);
+    cgc_Layer &hiddenLayer = m_layers[i];
+    cgc_Layer &next = m_layers[i+1];
+    for (j = 0; j < hiddenLayer.cgc_size(); ++j)
+      hiddenLayer[j].cgc_computeHiddenGrad(next);
   }
-  for (i = m_layers.size() - 1; i > 0; --i)
+  for (i = m_layers.cgc_size() - 1; i > 0; --i)
   {
-    Layer &l = m_layers[i];
-    Layer &prev = m_layers[i-1];
-    for (j = 0; j < l.size() - 1; ++j)
-      l[j].updateWeights(prev);
+    cgc_Layer &l = m_layers[i];
+    cgc_Layer &prev = m_layers[i-1];
+    for (j = 0; j < l.cgc_size() - 1; ++j)
+      l[j].cgc_updateWeights(prev);
   }
 }
 
-void NeuralNet::getOutput(vector<double> &out)
+void cgc_NeuralNet::cgc_getOutput(cgc_vector<double> &out)
 {
   unsigned int i;
-  out.clear();
-  Layer &outputLayer = m_layers.back();
-  for (i = 0; i < outputLayer.size() - 1; ++i)
-    out.push_back(outputLayer[i].getValue());
+  out.cgc_clear();
+  cgc_Layer &outputLayer = m_layers.cgc_back();
+  for (i = 0; i < outputLayer.cgc_size() - 1; ++i)
+    out.cgc_push_back(outputLayer[i].cgc_getValue());
 }

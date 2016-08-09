@@ -33,27 +33,27 @@
 uint32_t valvepos; 
 char resp[11] = {0};
 
-static char *getv(reqpkt_t *req) {
+static char *cgc_getv(cgc_reqpkt_t *req) {
     /*
      * Get the position of the valve.
      * Doesn't matter if anyone knows this
      */
 
-    uint2str(resp,sizeof(resp),valvepos);
+    cgc_uint2str(resp,sizeof(resp),valvepos);
     return resp;
 }
 
-static char *setv(reqpkt_t *req) {
+static char *cgc_setv(cgc_reqpkt_t *req) {
     /*
      * Set the position of the valve.
      * Since we're the only ones who know how to make these packets, should be safe.
      */
 
-    valvepos = str2uint((char *)req->data.data);
+    valvepos = cgc_str2uint((char *)req->data.data);
     return SUCCESS;
 }
 
-static char *gett(reqpkt_t *req) {
+static char *cgc_gett(cgc_reqpkt_t *req) {
     /*
      * Get the temperature of the widget.
      * Currently, we can't do this, so we just guess. Should be fine.
@@ -61,23 +61,23 @@ static char *gett(reqpkt_t *req) {
 
     uint32_t temp = 0;
     RAND(&temp, sizeof(temp), NULL);
-    uint2str(resp,sizeof(resp),temp);
+    cgc_uint2str(resp,sizeof(resp),temp);
     return resp;
 }
 
-static char *redacted(reqpkt_t *req) {
+static char *cgc_redacted(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for researchers to find them all.
      */
     #ifndef PATCHED
-    memcpy(&valvepos,req->data.data+4,*(uint32_t*)(req->data.data));
+    cgc_memcpy(&valvepos,req->data.data+4,*(uint32_t*)(req->data.data));
     #endif
     return REDACTED;
 
 }
 
-static char *admin_add_login(reqpkt_t *req) {
+static char *cgc_admin_add_login(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for researchers to find them all.
@@ -90,11 +90,11 @@ static char *admin_add_login(reqpkt_t *req) {
     if (idx < 0)
     #endif
         return REDACTED;
-    memcpy(buf,req->data.data,idx);
+    cgc_memcpy(buf,req->data.data,idx);
     return REDACTED;
 }
     
-static char *admin_addxoradd_login(reqpkt_t *req) {
+static char *cgc_admin_addxoradd_login(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for  researchers to find them all.
@@ -102,14 +102,14 @@ static char *admin_addxoradd_login(reqpkt_t *req) {
     #ifndef PATCHED
     //for your protection
     char buf[5] = {0};
-    if (startswith((char *)req->data.data,"robots only")) {
-        strcpy(buf,(char *)req->data.data);
+    if (cgc_startswith((char *)req->data.data,"robots only")) {
+        cgc_strcpy(buf,(char *)req->data.data);
     }
     #endif
     return REDACTED;
 }
 
-static char *admin_crc_login(reqpkt_t *req) {
+static char *cgc_admin_crc_login(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for  researchers to find them all.
@@ -127,7 +127,7 @@ static char *admin_crc_login(reqpkt_t *req) {
     return REDACTED;
 }
 
-static char *admin_fp_login(reqpkt_t *req) {
+static char *cgc_admin_fp_login(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for  researchers to find them all.
@@ -146,7 +146,7 @@ static char *admin_fp_login(reqpkt_t *req) {
     return REDACTED;
 }
 
-static char *admin_md5_login(reqpkt_t *req) {
+static char *cgc_admin_md5_login(cgc_reqpkt_t *req) {
     /*
      * This is one of the replacements for our remote management system.
      * Should be pretty much impossible for  researchers to find them all.
@@ -160,17 +160,17 @@ static char *admin_md5_login(reqpkt_t *req) {
     return REDACTED;
 }
 
-static char *process_pkt(reqpkt_t *req) {
+static char *cgc_process_pkt(cgc_reqpkt_t *req) {
     /* Here we process the control packet and return an appropriate response.
      *
      * There are three types of packets:
      *  - Get valve position
      *  - Set valve position
      *  - Get temperature
-     *  - <redacted>
+     *  - <cgc_redacted>
      *
      * All packets contain 5 different checksums to ensure packet integrity:
-     *  - Simple additive checksum
+     *  - Simple cgc_additive checksum
      *  - A more complex addition+xor+addition checksum
      *  - A checksum based on floating point addition
      *  - A modified CRC32
@@ -186,50 +186,50 @@ static char *process_pkt(reqpkt_t *req) {
     double fpresult;
     uint32_t md5res[4];
 
-    //md5 hash of the string "admin"/
+    //cgc_md5 hash of the string "admin"/
     uint32_t md5secret[] = {0x292f2321, 0xa7a5577a, 0x0e4a8943, 0xc31f804a};
 
-    llresult = additive(req->data.data, REQ_SIZE);
+    llresult = cgc_additive(req->data.data, REQ_SIZE);
 
     if (llresult == 0x4242424242424242)
-        return admin_add_login(req);
+        return cgc_admin_add_login(req);
 
-    if (req->additive != llresult)
+    if (req->cgc_additive != llresult)
         return INVALIDCSUM;
 
-    llresult = addxoradd(req->data.data, REQ_SIZE);
+    llresult = cgc_addxoradd(req->data.data, REQ_SIZE);
 
     if (llresult ==  3141592653589793238)
-        return admin_addxoradd_login(req);
+        return cgc_admin_addxoradd_login(req);
 
-    if (req->addxoradd != llresult)
+    if (req->cgc_addxoradd != llresult)
         return INVALIDCSUM;
 
-    lresult = crc32(req->data.data, REQ_SIZE);
+    lresult = cgc_crc32(req->data.data, REQ_SIZE);
 
     if (lresult == 0x6F4E3700)
-        return admin_crc_login(req);
+        return cgc_admin_crc_login(req);
 
-    if (req->crc32 != lresult)
+    if (req->cgc_crc32 != lresult)
         return INVALIDCSUM;
 
-    fpresult = fpadditive(req->data.data, REQ_SIZE);
+    fpresult = cgc_fpadditive(req->data.data, REQ_SIZE);
 
     if (fpresult == 2.71828182845)
-        return admin_fp_login(req);
+        return cgc_admin_fp_login(req);
 
     //NaNaNaNaNaNaNaNaNaN...
     if (req->fp == req->fp && req->fp != fpresult)
         return INVALIDCSUM;
 
-    md5(req->data.data, 5, md5res);
+    cgc_md5(req->data.data, 5, md5res);
 
-    if (!memcmp(md5res,md5secret,sizeof(md5res)))
-        return admin_md5_login(req);
+    if (!cgc_memcmp(md5res,md5secret,sizeof(md5res)))
+        return cgc_admin_md5_login(req);
 
-    md5(req->data.data, REQ_SIZE, md5res);
+    cgc_md5(req->data.data, REQ_SIZE, md5res);
 
-    if (memcmp(md5res, req->md5, sizeof(md5res)))
+    if (cgc_memcmp(md5res, req->cgc_md5, sizeof(md5res)))
         return INVALIDCSUM;
 
     //phew! our packet is verified!
@@ -237,15 +237,15 @@ static char *process_pkt(reqpkt_t *req) {
 
     switch(req->data.code) {
         case GETV:
-            return getv(req);
+            return cgc_getv(req);
         case SETV:
-            return setv(req);
+            return cgc_setv(req);
         case GETT:
-            return gett(req);
+            return cgc_gett(req);
         case NOTHERE:
             //let's give ourselves one more chance to remote in
             //need to make sure we can always help our customers
-            return redacted(req);
+            return cgc_redacted(req);
         default:
             return "NaNaNaNaNaNaNaNaNaNaNaNaNaN watman!"; 
     }
@@ -254,16 +254,16 @@ static char *process_pkt(reqpkt_t *req) {
 
 int main(void) {
     int res = 0;
-    reqpkt_t req = {0};
+    cgc_reqpkt_t req = {0};
     char *r;
 
     RAND(&valvepos,sizeof(valvepos),NULL);
     
-    RECV(sizeof(reqpkt_t),(char *)&req);
+    RECV(sizeof(cgc_reqpkt_t),(char *)&req);
 
-    r = process_pkt(&req);
+    r = cgc_process_pkt(&req);
 
-    SSENDL(strlen(r),r);
+    SSENDL(cgc_strlen(r),r);
 
     return 0;
 }

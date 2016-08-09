@@ -34,18 +34,18 @@ extern "C"
 #include "clf.h"
 #include "vm.h"
 
-CVM::CVM( void *pMagicPage )
+cgc_CVM::cgc_CVM( void *pMagicPage )
 	: m_pMagicPage( pMagicPage ), m_oCPU( pMagicPage )
 {
 
 }
 
-CVM::~CVM( )
+cgc_CVM::~cgc_CVM( )
 {
 
 }
 
-bool CVM::Init( CCLF *pLoader )
+bool cgc_CVM::cgc_Init( cgc_CCLF *pLoader )
 {
 	if ( !pLoader )
 		return (false);
@@ -57,52 +57,52 @@ bool CVM::Init( CCLF *pLoader )
 		return (false);
 
 	// Begin loading
-	for ( uint32_t i = 0; i < pLoader->m_sectionCount; i++ )
+	for ( cgc_uint32_t i = 0; i < pLoader->m_sectionCount; i++ )
 	{
-		uint16_t sectionAddress = pLoader->m_pSections[i].sectionAddress;
-		uint16_t sectionSize = pLoader->m_pSections[i].sectionSize;
-		uint8_t *pSectionData = pLoader->m_pSections[i].pSectionData;
-		uint8_t sectionType = pLoader->m_pSections[i].sectionType;
+		cgc_uint16_t sectionAddress = pLoader->m_pSections[i].sectionAddress;
+		cgc_uint16_t sectionSize = pLoader->m_pSections[i].sectionSize;
+		cgc_uint8_t *pSectionData = pLoader->m_pSections[i].pSectionData;
+		cgc_uint8_t sectionType = pLoader->m_pSections[i].sectionType;
 
-		uint8_t mmuFlags = 0;
-		if ( sectionType == CCLF::SECTION_TYPE_EXECUTE )
+		cgc_uint8_t mmuFlags = 0;
+		if ( sectionType == cgc_CCLF::SECTION_TYPE_EXECUTE )
 			mmuFlags |= MMU_PAGE_READ | MMU_PAGE_EXEC;
-		else if ( sectionType == CCLF::SECTION_TYPE_DATA )
+		else if ( sectionType == cgc_CCLF::SECTION_TYPE_DATA )
 			mmuFlags |= MMU_PAGE_READ | MMU_PAGE_WRITE;
-		else if ( sectionType == CCLF::SECTION_TYPE_COMMENT )
+		else if ( sectionType == cgc_CCLF::SECTION_TYPE_COMMENT )
 			continue;
 
-		if ( !m_oMMU.AddMemorySection( sectionAddress, pSectionData, sectionSize, mmuFlags ) )
+		if ( !m_oMMU.cgc_AddMemorySection( sectionAddress, pSectionData, sectionSize, mmuFlags ) )
 			return (false);
 	}
 
 	// Initialize DMA
-	m_oDMA.InitDMA();
+	m_oDMA.cgc_InitDMA();
 
 	// Initialize CPU
-	m_oCPU.Init( &m_oMMU, this, &m_oDMA, pLoader->m_entryAddress );
+	m_oCPU.cgc_Init( &m_oMMU, this, &m_oDMA, pLoader->m_entryAddress );
 
-	CSendDevice *pSendDevice = new CSendDevice( 1 );
-	CReadDevice *pReadDevice = new CReadDevice( 2 );
+	cgc_CSendDevice *pSendDevice = new cgc_CSendDevice( 1 );
+	cgc_CReadDevice *pReadDevice = new cgc_CReadDevice( 2 );
 
-	m_oPeripheralList.AddLast( pSendDevice );
-	m_oPeripheralList.AddLast( pReadDevice );
+	m_oPeripheralList.cgc_AddLast( pSendDevice );
+	m_oPeripheralList.cgc_AddLast( pReadDevice );
 
 	// Add peripherals
-	m_oDMA.AddPeripheral( 1, pSendDevice );
-	m_oDMA.AddPeripheral( 2, pReadDevice );
+	m_oDMA.cgc_AddPeripheral( 1, pSendDevice );
+	m_oDMA.cgc_AddPeripheral( 2, pReadDevice );
 
 	return (true);
 }
 
-bool CVM::Run( void )
+bool cgc_CVM::cgc_Run( void )
 {
-	m_oCPU.Run();
+	m_oCPU.cgc_Run();
 
-	if ( m_oCPU.HasException() )
-		printf( "Exception: $s\n", m_oCPU.GetExceptionText().c_str() );
+	if ( m_oCPU.cgc_HasException() )
+		cgc_printf( "Exception: $s\n", m_oCPU.cgc_GetExceptionText().cgc_c_str() );
 
-	printf( "Registers:\n$s\nEnd Registers\n", m_oCPU.DumpRegisters().c_str() );
+	cgc_printf( "Registers:\n$s\nEnd Registers\n", m_oCPU.cgc_DumpRegisters().cgc_c_str() );
 
 	return (true);
 }

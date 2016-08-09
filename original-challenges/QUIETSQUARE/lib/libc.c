@@ -25,19 +25,19 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // MOD from TAINTEDLOVE: changed loop counter, moved FD_ZERO, FD_SET out of loop.
-int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  size_t bytes_left = count;
-  size_t rx_bytes_local = 0;
+  cgc_size_t bytes_left = count;
+  cgc_size_t rx_bytes_local = 0;
 
-  fd_set fdsToWait;
+  cgc_fd_set fdsToWait;
   int fdsReady = 0;
   FD_ZERO(&fdsToWait);
   FD_SET(STDIN, &fdsToWait);
 
   // XXXX: Guessed and tested for sweet spot.
-  struct timeval timeToWait;
+  struct cgc_timeval timeToWait;
   timeToWait.tv_sec = 0; 
   timeToWait.tv_usec = 50000;
 
@@ -48,9 +48,9 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
     // Check to see if the pipe has more to be read.
     fdsReady = 0;
 
-    if (SUCCESS != fdwait(STDIN+1, &fdsToWait, NULL, &timeToWait, &fdsReady)) {
+    if (SUCCESS != cgc_fdwait(STDIN+1, &fdsToWait, NULL, &timeToWait, &fdsReady)) {
 #ifdef DEBUG
-      fprintf(stderr, "[E] error during fdwait()\n");
+      fprintf(stderr, "[E] error during cgc_fdwait()\n");
 #endif
     }
 
@@ -62,7 +62,7 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
     if (SUCCESS != (ret = receive(STDIN, buf+(count-bytes_left), bytes_left, &rx_bytes_local))) {
 #ifdef DEBUG
-      fprintf(stderr, "[E] receive () call within receive_all() failed\n");
+      fprintf(stderr, "[E] receive () call within cgc_receive_all() failed\n");
 #endif
       return ret;
     }
@@ -87,11 +87,11 @@ int receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // MOD from TAINTEDLOVE: loop counter reset to GREYMATTER, some bogus ops added.
-int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
 
   int ret = SUCCESS;
-  size_t bytes_left = count+1;
-  size_t tx_bytes_local = 0;
+  cgc_size_t bytes_left = count+1;
+  cgc_size_t tx_bytes_local = 0;
 
   while (bytes_left-1) {
 
@@ -99,7 +99,7 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
     if (SUCCESS != (ret = transmit(STDIN, buf, bytes_left-1, &tx_bytes_local))) {
 #ifdef DEBUG
-      fprintf(stderr, "[E] transmit () call within transmit_all() failed\n");
+      fprintf(stderr, "[E] transmit () call within cgc_transmit_all() failed\n");
 #endif
       return ret;
     }
@@ -115,11 +115,11 @@ int transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
 // MODIFIED FROM: FASTLANE (some bogus ops involving len added)
 // RETURN: the first argument
-unsigned char * memset(unsigned char *b, unsigned char c, size_t len) {
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
 
    len++;
 
-    size_t i = 0;
+    cgc_size_t i = 0;
     while (len-1) {
         b[len-2] = c;
         len--;
@@ -131,7 +131,7 @@ unsigned char * memset(unsigned char *b, unsigned char c, size_t len) {
 // NOTE: not POSIX
 // MOD: returns +/- i (the iterator)
 // RETURN: +/- i
-int memcmp(const char *s1, const char *s2, size_t n) {
+int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
 
    n++;
 
@@ -152,7 +152,7 @@ int memcmp(const char *s1, const char *s2, size_t n) {
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: void
-void memcpy(unsigned char *dst, const unsigned char *src, size_t n) {
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n) {
 
    n++;
 
@@ -238,8 +238,8 @@ int toupper(int c) {
    return c;
 }
 
-size_t strlen(const char *str) {
-   size_t res = 0;
+cgc_size_t strlen(const char *str) {
+   cgc_size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

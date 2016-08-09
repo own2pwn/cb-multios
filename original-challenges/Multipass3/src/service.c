@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -28,24 +28,24 @@
 #include "multipass.h"
 #include "account.h"
 
-pack_and_data_t *PAD;
+cgc_pack_and_data_t *PAD;
 void * BACKING_DATA;
 
-void init_recv_structs(){
-    PAD = (pack_and_data_t *) malloc(sizeof(pack_and_data_t));
+void cgc_init_recv_structs(){
+    PAD = (cgc_pack_and_data_t *) cgc_malloc(sizeof(cgc_pack_and_data_t));
     
-    BACKING_DATA = malloc(sizeof(packet_head_t) + sizeof(packet_data_recharge_t) + 1024);
+    BACKING_DATA = cgc_malloc(sizeof(cgc_packet_head_t) + sizeof(cgc_packet_data_recharge_t) + 1024);
 
     PAD->ph = BACKING_DATA;
     PAD->data = PAD->ph + 1;
     PAD->pay_data_l = 0;
 }
 
-int recv_all(void * buf, size_t count, size_t *rx_bytes){
+int cgc_recv_all(void * buf, cgc_size_t count, cgc_size_t *rx_bytes){
     int r = EPIPE;
     assert(rx_bytes != NULL);
-    size_t total_bytes = 0;
-    size_t call_recvd = 0;
+    cgc_size_t total_bytes = 0;
+    cgc_size_t call_recvd = 0;
     for(; total_bytes < count; total_bytes += call_recvd){
        r = receive(STDIN, buf+total_bytes, count-total_bytes, &call_recvd);
        if(call_recvd == 0){
@@ -61,41 +61,41 @@ int recv_all(void * buf, size_t count, size_t *rx_bytes){
 }
 
 // reuse same pack head
-pack_and_data_t * recv_pack_and_data(){
-    packet_head_t *ph = PAD->ph;
+cgc_pack_and_data_t * cgc_recv_pack_and_data(){
+    cgc_packet_head_t *ph = PAD->ph;
 
-    size_t ph_sz = sizeof(packet_head_t);
-    size_t rx_b = 0;
-    size_t rx_pay = 0;
+    cgc_size_t ph_sz = sizeof(cgc_packet_head_t);
+    cgc_size_t rx_b = 0;
+    cgc_size_t rx_pay = 0;
 
-    int r = recv_all(ph, ph_sz, &rx_b);
+    int r = cgc_recv_all(ph, ph_sz, &rx_b);
     if(r != OK || ph_sz != rx_b)
         return NULL;
 
     PAD->pay_data_l = 0;
     PAD->data = NULL;
 
-    size_t data_sz = get_size_of_data_for_pkt_head_only(ph, 1);
-    size_t data_rc = 0;
+    cgc_size_t data_sz = cgc_get_size_of_data_for_pkt_head_only(ph, 1);
+    cgc_size_t data_rc = 0;
 
 
     if(data_sz > 0){
         PAD->data = (PAD->ph + 1);
         void *data = PAD->data;
         
-        int x = recv_all(data, data_sz, &data_rc);
+        int x = cgc_recv_all(data, data_sz, &data_rc);
         if(x != OK || data_rc != data_sz)
             return NULL;
         assert(data_rc == data_sz);
         
 
-        size_t ds = 0;
+        cgc_size_t ds = 0;
         if(ph->pkt_type == OPS && ( ph->op_code == PURCHASE || ph->op_code == RECHARGE)){
             // then we also must receive vendor data...
             
             void *d;
-            packet_data_purchase_t * pur;
-            packet_data_recharge_t * pr;
+            cgc_packet_data_purchase_t * pur;
+            cgc_packet_data_recharge_t * pr;
             
             // we already recvd first 4 bytes of vendor loc with above
             int inner_recv = 0;
@@ -104,16 +104,16 @@ pack_and_data_t * recv_pack_and_data(){
                     pur = data;
                     ds = pur->v.vendor_location_sz;
                     // instead of pointer math because sizeof isn't handled right
-                    d = data+get_size_of_data_for_pkt_head_only(ph, 1);
-                    inner_recv = recv_all(d, ds, &rx_pay);
+                    d = data+cgc_get_size_of_data_for_pkt_head_only(ph, 1);
+                    inner_recv = cgc_recv_all(d, ds, &rx_pay);
                     if(inner_recv != OK || ds != rx_pay)
                         return NULL;
                     break;
                 case RECHARGE:
                     pr = data;
                     ds = pr->v.vendor_location_sz;
-                    d = data+get_size_of_data_for_pkt_head_only(ph, 1);
-                    inner_recv = recv_all(d, ds, &rx_pay);
+                    d = data+cgc_get_size_of_data_for_pkt_head_only(ph, 1);
+                    inner_recv = cgc_recv_all(d, ds, &rx_pay);
                     if(inner_recv != OK || ds != rx_pay)
                         return NULL;
                     break;
@@ -130,23 +130,23 @@ pack_and_data_t * recv_pack_and_data(){
 
 
 
-pack_and_data_t * ops_delegate(pack_and_data_t *pad, size_t *data_sz){
-    packet_head_t *ph = pad->ph;
+cgc_pack_and_data_t * cgc_ops_delegate(cgc_pack_and_data_t *pad, cgc_size_t *data_sz){
+    cgc_packet_head_t *ph = pad->ph;
 
     switch(ph->op_code){
         case PURCHASE:
-            return process_client_purchase_op(pad);
+            return cgc_process_client_purchase_op(pad);
         case RECHARGE:
 
-            return process_client_recharge_op(pad);
+            return cgc_process_client_recharge_op(pad);
         case BALANCE:
-            return process_client_balance(pad);
+            return cgc_process_client_balance(pad);
         case HISTORY:
-            return process_client_history(pad, data_sz);
+            return cgc_process_client_history(pad, data_sz);
         case ISSUE:
             return NULL;
         case REFUND:
-            return process_client_refund_op(pad);
+            return cgc_process_client_refund_op(pad);
 
     }
     ERRNO = ERRNO_MP_INVALID_OPCODE;
@@ -155,38 +155,38 @@ pack_and_data_t * ops_delegate(pack_and_data_t *pad, size_t *data_sz){
 
 }
 
-void free_pad(pack_and_data_t *pad){
+void cgc_free_pad(cgc_pack_and_data_t *pad){
     void * ph = pad->ph;
     void * data = pad->data;
-    if(data-ph == sizeof(packet_head_t)){
+    if(data-ph == sizeof(cgc_packet_head_t)){
 
-        free(ph);
+        cgc_free(ph);
         return;
        
     }
-    free(ph);
+    cgc_free(ph);
     if(data != NULL)
-        free(data);
+        cgc_free(data);
 
 };
 
 int main(void) {
     int ret;
-    size_t size;
+    cgc_size_t size;
 
-    malloc_init();
-    init_recv_structs();
-    init_resp_structs();
+    cgc_malloc_init();
+    cgc_init_recv_structs();
+    cgc_init_resp_structs();
 
     int i = 0;
     while(1){
-        pack_and_data_t *pad = recv_pack_and_data();
+        cgc_pack_and_data_t *pad = cgc_recv_pack_and_data();
         if(pad == NULL)
             _terminate(1);
 
-        packet_head_t *ph = pad->ph;
-        pack_and_data_t * resp = NULL;
-        size_t data_sz = 0;
+        cgc_packet_head_t *ph = pad->ph;
+        cgc_pack_and_data_t * resp = NULL;
+        cgc_size_t data_sz = 0;
         if( pad == NULL || ph == NULL){
             _terminate(1);
         }
@@ -195,31 +195,31 @@ int main(void) {
 
             case INIT:
                 i += 1;
-                resp = generate_new_init_and_init_resp(pad);
+                resp = cgc_generate_new_init_and_init_resp(pad);
                 break;
             case AUTH:
-                resp = process_client_auth(pad);
+                resp = cgc_process_client_auth(pad);
                 break;
             case OPS:
-                resp = ops_delegate(pad, &data_sz);
+                resp = cgc_ops_delegate(pad, &data_sz);
                 break;
             case FIN:
-                resp = process_client_fin(pad);
+                resp = cgc_process_client_fin(pad);
                 break;
             default:
                 break;
         }
         
         if(resp == NULL){
-            resp = generate_error(ph);
+            resp = cgc_generate_error(ph);
         }
 
 
         if(resp == NULL)
             break;
-        transmit_all(STDOUT, (const char *) resp->ph, sizeof(packet_head_t));
+        cgc_transmit_all(STDOUT, (const char *) resp->ph, sizeof(cgc_packet_head_t));
         if(resp->pay_data_l != 0)
-            transmit_all(STDOUT, (const char *) resp->data, resp->pay_data_l);
+            cgc_transmit_all(STDOUT, (const char *) resp->data, resp->pay_data_l);
 
         
         data_sz = 0;

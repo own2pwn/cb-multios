@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -26,25 +26,25 @@ THE SOFTWARE.
 #include "service.h"
 #include "stdlib.h"
 
-int list_dives(logbook_type *Info) {
-	dive_log_type *next_dive;
+int cgc_list_dives(cgc_logbook_type *Info) {
+	cgc_dive_log_type *next_dive;
 	int dive_count = 1;
 
 	next_dive = Info->dives;
 
-	printf("\n");
+	cgc_printf("\n");
 
 	if (next_dive == 0) {
 
-		printf("Dive Log is empty\n");
+		cgc_printf("Dive Log is empty\n");
 		return -1;
 	}
 
-	printf("Dive# @-10s @-8s @-25s @-25s\n","Date","Time","Dive Site","Location");
+	cgc_printf("Dive# @-10s @-8s @-25s @-25s\n","Date","Time","Dive Site","Location");
 
 	while (next_dive != 0) {
 
-		printf("@4d: @-10s @-8s @-25s @-25s\n", dive_count, next_dive->dive_date, next_dive->dive_time, next_dive->dive_site_name,
+		cgc_printf("@4d: @-10s @-8s @-25s @-25s\n", dive_count, next_dive->dive_date, next_dive->dive_time, next_dive->dive_site_name,
 									next_dive->location);
 
 		next_dive = next_dive->next;
@@ -56,25 +56,25 @@ int list_dives(logbook_type *Info) {
 
 }
 
-int print_dives(logbook_type *Info)  {
-	dive_log_type *next_dive;
+int cgc_print_dives(cgc_logbook_type *Info)  {
+	cgc_dive_log_type *next_dive;
 	int dive_count;
 	int dive_number_to_display;
 	int rcv_cnt;
 	char buf[100];
 
-	if (list_dives(Info) == -1)
+	if (cgc_list_dives(Info) == -1)
 		return -1;
 
-	printf("\n");
-	printf("Enter Dive # to display: ");
+	cgc_printf("\n");
+	cgc_printf("Enter Dive # to display: ");
 
-	rcv_cnt=getline(buf, sizeof(buf));
+	rcv_cnt=cgc_getline(buf, sizeof(buf));
 		
 	if (rcv_cnt==0)
 		return 0;
 
-	dive_number_to_display=atoi(buf);
+	dive_number_to_display=cgc_atoi(buf);
 
 	next_dive = Info->dives;
 	dive_count = 1;
@@ -87,25 +87,25 @@ int print_dives(logbook_type *Info)  {
 
 	if (dive_count==dive_number_to_display && next_dive != 0) {
 
-		printf("\n");
+		cgc_printf("\n");
 
-		printf("          Date: @s\n", next_dive->dive_date);
-		printf("          Time: @s\n", next_dive->dive_time);
-		printf("     Dive Site: @s\n", next_dive->dive_site_name);
-		printf("      Location: @s\n", next_dive->location);
-		printf("     Max Depth: @d\n", next_dive->max_depth);
-		printf("     Avg Depth: @d\n", next_dive->avg_depth);
-		printf("      Duration: @d\n", next_dive->dive_length);
-		printf("    O2 Percent: @d\n", next_dive->O2_percent);
-		printf("Start Pressure: @d\n", next_dive->pressure_in);
-		printf("  End Pressure: @d\n", next_dive->pressure_out);
-		printf("     Bin Count: @d\n", next_dive->bincount);
-		printf("\n");
+		cgc_printf("          Date: @s\n", next_dive->dive_date);
+		cgc_printf("          Time: @s\n", next_dive->dive_time);
+		cgc_printf("     Dive Site: @s\n", next_dive->dive_site_name);
+		cgc_printf("      Location: @s\n", next_dive->location);
+		cgc_printf("     Max Depth: @d\n", next_dive->max_depth);
+		cgc_printf("     Avg Depth: @d\n", next_dive->avg_depth);
+		cgc_printf("      Duration: @d\n", next_dive->dive_length);
+		cgc_printf("    O2 Percent: @d\n", next_dive->O2_percent);
+		cgc_printf("Start Pressure: @d\n", next_dive->pressure_in);
+		cgc_printf("  End Pressure: @d\n", next_dive->pressure_out);
+		cgc_printf("     Bin Count: @d\n", next_dive->bincount);
+		cgc_printf("\n");
 
 	}
 	else {
 
-		printf("Invalid dive number entered\n");
+		cgc_printf("Invalid dive number entered\n");
 
 	}
 

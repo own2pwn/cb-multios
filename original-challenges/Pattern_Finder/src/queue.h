@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -22,19 +22,19 @@
  */
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
-typedef struct queue queue;
-struct queue
+typedef struct cgc_queue cgc_queue;
+struct cgc_queue
 {
-  size_t Capacity;
-  size_t Size;
-  ssize_t KnownHead;
+  cgc_size_t Capacity;
+  cgc_size_t Size;
+  cgc_ssize_t KnownHead;
   void** Elements;
 };
 
-void InitializeQueue(queue* Queue);
-void FreeQueue(queue* Queue);
-void Enqueue(queue* Queue, void* Element);
-void* Dequeue(queue* Queue);
-void* Peek(queue* Queue);
+void cgc_InitializeQueue(cgc_queue* Queue);
+void cgc_FreeQueue(cgc_queue* Queue);
+void cgc_Enqueue(cgc_queue* Queue, void* Element);
+void* cgc_Dequeue(cgc_queue* Queue);
+void* cgc_Peek(cgc_queue* Queue);
 
 #endif /* __QUEUE_H__ */

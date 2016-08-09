@@ -4,7 +4,7 @@ Author: Steve Wood <swood@cromulence.co>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #include "dates.h"
 
-typedef unsigned long datetime_type;
+typedef unsigned long cgc_datetime_type;
 
 typedef struct {
 
@@ -43,22 +43,22 @@ typedef struct {
     char padi_number[20];
     char cert_date[11];
 
-} diver_info_type;
+} cgc_diver_info_type;
 
 typedef struct dive_data {
 
-    datetime_type timestamp;
+    cgc_datetime_type timestamp;
     unsigned int depth;
     struct dive_data *next;
 
-} dive_data_type;
+} cgc_dive_data_type;
 
 typedef struct dive_log {
 
     char dive_site_name[26];
     char dive_date[11];
     char dive_time[9];
-    time_t timestamp;
+    cgc_time_t timestamp;
     unsigned int max_depth;  // in feet
     unsigned int avg_depth;  // in feet
     unsigned int dive_length;  // in minutes
@@ -69,31 +69,31 @@ typedef struct dive_log {
     unsigned int water_temp; // Celsius
     unsigned int bincount;
     char location[26];
-    dive_data_type *data;  // linked list of time/depth
+    cgc_dive_data_type *data;  // linked list of time/depth
     struct dive_log *next;
 
 
-} dive_log_type;
+} cgc_dive_log_type;
 
 typedef struct {
 
-    diver_info_type diver;
-    dive_log_type *dives;
+    cgc_diver_info_type diver;
+    cgc_dive_log_type *dives;
 
-} logbook_type;
+} cgc_logbook_type;
 
 
-int edit_diver(logbook_type *);
-int log_dives(logbook_type *);
-int print_dives(logbook_type *);
-int list_dives(logbook_type *);
-int download_dive(logbook_type *);
-int dive_statistics(logbook_type *);
-int exit_app(int retcode);
-int print_diver_info(logbook_type *Info);
-int edit_dives(logbook_type *Info);
-int remove_dives(logbook_type *Info);
-int update_dive(dive_log_type *);
+int cgc_edit_diver(cgc_logbook_type *);
+int cgc_log_dives(cgc_logbook_type *);
+int cgc_print_dives(cgc_logbook_type *);
+int cgc_list_dives(cgc_logbook_type *);
+int cgc_download_dive(cgc_logbook_type *);
+int cgc_dive_statistics(cgc_logbook_type *);
+int cgc_exit_app(int retcode);
+int cgc_print_diver_info(cgc_logbook_type *Info);
+int cgc_edit_dives(cgc_logbook_type *Info);
+int cgc_remove_dives(cgc_logbook_type *Info);
+int cgc_update_dive(cgc_dive_log_type *);
 
 
 #endif

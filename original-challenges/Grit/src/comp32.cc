@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,36 +23,36 @@
 #include <cstdint.h>
 #include "comp32.h"
 
-unsigned int Compression32::getId() const
+unsigned int cgc_Compression32::cgc_getId() const
 {
     return COMPRESSION_32;
 }
 
-unsigned int Compression32::getMaxBufferSize(const AudioTrack &track) const
+unsigned int cgc_Compression32::cgc_getMaxBufferSize(const cgc_AudioTrack &track) const
 {
-    return (track.getStereo() ? 2 : 1) * track.getLength() * sizeof(int32_t);
+    return (track.cgc_getStereo() ? 2 : 1) * track.cgc_getLength() * sizeof(cgc_int32_t);
 }
 
-void Compression32::compress(const AudioTrack &track, uint8_t *dest) const
+void cgc_Compression32::cgc_compress(const cgc_AudioTrack &track, cgc_uint8_t *dest) const
 {
-    int32_t *dest32 = (int32_t *)dest;
-    for (unsigned int i = 0; i < track.getLength(); i++)
+    cgc_int32_t *dest32 = (cgc_int32_t *)dest;
+    for (unsigned int i = 0; i < track.cgc_getLength(); i++)
     {
         // interleave channels
-        *dest32++ = track.getChannel(0)->getSample(i);
-        if (track.getStereo())
-            *dest32++ = track.getChannel(1)->getSample(i);
+        *dest32++ = track.cgc_getChannel(0)->cgc_getSample(i);
+        if (track.cgc_getStereo())
+            *dest32++ = track.cgc_getChannel(1)->cgc_getSample(i);
     }
 }
 
-void Compression32::decompress(AudioTrack &track, uint8_t *src) const
+void cgc_Compression32::cgc_decompress(cgc_AudioTrack &track, cgc_uint8_t *src) const
 {
-    int32_t *src32 = (int32_t *)src;
-    for (unsigned int i = 0; i < track.getLength(); i++)
+    cgc_int32_t *src32 = (cgc_int32_t *)src;
+    for (unsigned int i = 0; i < track.cgc_getLength(); i++)
     {
         // un-interleave channels
-        track.getChannel(0)->setSample(i, *src32++);
-        if (track.getStereo())
-            track.getChannel(1)->setSample(i, *src32++);
+        track.cgc_getChannel(0)->cgc_setSample(i, *src32++);
+        if (track.cgc_getStereo())
+            track.cgc_getChannel(1)->cgc_setSample(i, *src32++);
     }
 }

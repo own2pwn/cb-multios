@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,9 +25,9 @@
 #include <stdint.h>
 
 #ifdef STRTOUL
-unsigned long strtoul(const char *str, char **endptr, int base)
+unsigned long cgc_strtoul(const char *str, char **endptr, int base)
 #else
-long strtol(const char *str, char **endptr, int base)
+long cgc_strtol(const char *str, char **endptr, int base)
 #endif
 {
     const char *orig = str;
@@ -39,7 +39,7 @@ long strtol(const char *str, char **endptr, int base)
 #endif
 
     /* 1. initial sequence of white-space characters */
-    while (isspace(*str))
+    while (cgc_isspace(*str))
     {
         if (*str == 0)
             goto error;
@@ -61,7 +61,7 @@ long strtol(const char *str, char **endptr, int base)
     /* prefix */
     if (base == 16)
     {
-        if (str[0] == '0' && tolower(str[1]) == 'x')
+        if (str[0] == '0' && cgc_tolower(str[1]) == 'x')
             str += 2;
     }
     else if (base == 0)
@@ -71,12 +71,12 @@ long strtol(const char *str, char **endptr, int base)
             str++;
             base = 8;
         }
-        else if (str[0] == '0' && tolower(str[1]) == 'x')
+        else if (str[0] == '0' && cgc_tolower(str[1]) == 'x')
         {
             str += 2;
             base = 16;
         }
-        else if (isdigit(*str))
+        else if (cgc_isdigit(*str))
             base = 10;
         else
             goto error;
@@ -85,11 +85,11 @@ long strtol(const char *str, char **endptr, int base)
     while (*str)
     {
         int x;
-        if (isdigit(*str))
+        if (cgc_isdigit(*str))
             x = *str - '0';
-        else if (islower(*str))
+        else if (cgc_islower(*str))
             x = *str - 'a' + 10;
-        else if (isupper(*str))
+        else if (cgc_isupper(*str))
             x = *str - 'A' + 10;
         else
             goto error;

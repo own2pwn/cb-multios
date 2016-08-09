@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,12 +24,12 @@
 #include "audiotrack.h"
 #include "gain.h"
 
-class FxGain
+class cgc_FxGain
 {
 public:
-    FxGain(Gain gain);
-    void apply(AudioTrack &) const;
+    cgc_FxGain(cgc_Gain gain);
+    void cgc_apply(cgc_AudioTrack &) const;
 private:
-    void apply(AudioStream &) const;
-    Gain gain;
+    void cgc_apply(cgc_AudioStream &) const;
+    cgc_Gain gain;
 };

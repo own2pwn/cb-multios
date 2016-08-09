@@ -3,7 +3,7 @@
  * 
  * Copyright (c) 2014 Kaprica Security, Inc.
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,31 +28,31 @@
 
 #include "malloc_internal.h"
 
-void *realloc(void *ptr, size_t size)
+void *cgc_realloc(void *ptr, cgc_size_t size)
 {
     if (size == 0)
     {
-        free(ptr);
+        cgc_free(ptr);
         return NULL;
     }
     if (ptr == NULL)
     {
-        return malloc(size);
+        return cgc_malloc(size);
     }
-    block_t *block = (block_t *)((intptr_t)ptr - OVERHEAD_BYTES);
+    cgc_block_t *block = (cgc_block_t *)((cgc_intptr_t)ptr - OVERHEAD_BYTES);
     if (size > block->size/2 && size < block->size-OVERHEAD_BYTES)
     {
-        //printf("realloc(%08X, %d) = %08X\n", ptr, size, ptr);
+        //printf("cgc_realloc(%08X, %d) = %08X\n", ptr, size, ptr);
         return ptr;
     }
-    void *newmem = malloc(size);
+    void *newmem = cgc_malloc(size);
     if (newmem == NULL)
         return NULL;
-    size_t tocopy = block->size-OVERHEAD_BYTES;
+    cgc_size_t tocopy = block->size-OVERHEAD_BYTES;
     if (tocopy > size)
         tocopy = size;
-    memcpy(newmem, ptr, tocopy);
-    free(ptr);
-    //printf("realloc(%08X, %d) = %08X\n", ptr, size, newmem);
+    cgc_memcpy(newmem, ptr, tocopy);
+    cgc_free(ptr);
+    //printf("cgc_realloc(%08X, %d) = %08X\n", ptr, size, newmem);
     return newmem;
 }

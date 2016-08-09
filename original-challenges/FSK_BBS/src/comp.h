@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,20 +28,20 @@
 
 #include <stdint.h>
 
-static int16_t comp_decode(uint8_t usample)
+static cgc_int16_t cgc_comp_decode(cgc_uint8_t usample)
 {
     usample = ~usample;
     int sign = usample & 0x80;
     int exp = (usample >> 4) & 7;
     
-    int16_t sample = ((((usample & 0xF) << 1) | 0x21) << exp) - 33;
+    cgc_int16_t sample = ((((usample & 0xF) << 1) | 0x21) << exp) - 33;
     if (sign)
         return -sample;
     else
         return sample;
 }
 
-static uint8_t comp_encode(int16_t sample)
+static cgc_uint8_t cgc_comp_encode(cgc_int16_t sample)
 {
     int exp;
     int sign = sample & 0x8000;

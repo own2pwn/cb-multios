@@ -28,18 +28,18 @@ typedef enum {
 	LED_C6_150BULB = 6,
 	INCANDESCENT_C7_25BULB = 7,
 	INCANDESCENT_C9_25BULB = 9,
-} LIGHT_STRING_MODELS_T;
+} cgc_LIGHT_STRING_MODELS_T;
 
 typedef enum {
 	THREE_WAY = 3,
 	SIX_WAY = 6,
 	EIGHT_WAY = 8,
-} SPLITTER_MODELS_T;
+} cgc_SPLITTER_MODELS_T;
 
 typedef enum {
 	FIFTEEN_AMP = 15,
 	TWENTY_AMP = 20,
-} CIRCUIT_MODELS_T;
+} cgc_CIRCUIT_MODELS_T;
 
 typedef enum {
 	ONE_HUNDRED_AMP_EIGHT_SPACE = 10008,
@@ -56,7 +56,7 @@ typedef enum {
 	FOUR_HUNDRED_AMP_THIRTY_SPACE = 40030,
 	FOUR_HUNDRED_AMP_FOURTY_SPACE = 40040,
 	FOUR_HUNDRED_AMP_FOURTY_TWO_SPACE = 40042,
-} LOAD_CENTER_MODELS_T;
+} cgc_LOAD_CENTER_MODELS_T;
 
 // would prefer NO_LOAD to be 0, but had to change order to
 // to help trigger vuln code path due to array out of bounds reads
@@ -65,56 +65,56 @@ typedef enum {
 	SPLITTER = 0,
 	LIGHT_STRING = 1,
 	NO_LOAD = 2,
-} LOAD_TYPE_T;
+} cgc_LOAD_TYPE_T;
 
-typedef struct receptacle_t {
-	uint32_t id;			// >= 1
-	LOAD_TYPE_T load_type;
-	void *load;				// ptr to a load (n_way_splitter_t or light_string_t)
-	uint8_t amp_rating;
-} receptacle_t;
+typedef struct cgc_receptacle_t {
+	cgc_uint32_t id;			// >= 1
+	cgc_LOAD_TYPE_T load_type;
+	void *load;				// ptr to a load (cgc_n_way_splitter_t or cgc_light_string_t)
+	cgc_uint8_t amp_rating;
+} cgc_receptacle_t;
 
-typedef struct outlet_t {
-	uint32_t id;
-	receptacle_t r1;
-	receptacle_t r2;
-	uint8_t amp_rating;
-} outlet_t;
+typedef struct cgc_outlet_t {
+	cgc_uint32_t id;
+	cgc_receptacle_t r1;
+	cgc_receptacle_t r2;
+	cgc_uint8_t amp_rating;
+} cgc_outlet_t;
 
-typedef struct n_way_splitter_t {
-	uint32_t id;
-	uint8_t total_amp_rating;
-	uint8_t receptacle_amp_rating;
-	uint8_t receptacle_count;
-	receptacle_t receptacles[8];
-} n_way_splitter_t;
+typedef struct cgc_n_way_splitter_t {
+	cgc_uint32_t id;
+	cgc_uint8_t total_amp_rating;
+	cgc_uint8_t receptacle_amp_rating;
+	cgc_uint8_t receptacle_count;
+	cgc_receptacle_t receptacles[8];
+} cgc_n_way_splitter_t;
 
-typedef struct light_string_t {
-	uint32_t id;
-	LIGHT_STRING_MODELS_T model_id; // refer to description of light string
+typedef struct cgc_light_string_t {
+	cgc_uint32_t id;
+	cgc_LIGHT_STRING_MODELS_T model_id; // refer to description of light string
 	float	total_wattage;
-	receptacle_t receptacle;
-} light_string_t;
+	cgc_receptacle_t receptacle;
+} cgc_light_string_t;
 
-typedef struct breaker_t {
-	uint32_t id;			// 0 <= id < breakers_installed_cnt
-	uint8_t amp_rating;
-	list_t *outlets;		// ptr to a list of outlets
-} breaker_t;
+typedef struct cgc_breaker_t {
+	cgc_uint32_t id;			// 0 <= id < breakers_installed_cnt
+	cgc_uint8_t amp_rating;
+	cgc_list_t *outlets;		// ptr to a list of outlets
+} cgc_breaker_t;
 
-typedef struct load_center_t {
-	uint8_t breaker_spaces;
-	uint8_t breakers_installed_cnt;
-	uint32_t amp_rating;
-	breaker_t breakers[0];	// var len array: breakers[breaker_spaces]
-} load_center_t;
+typedef struct cgc_load_center_t {
+	cgc_uint8_t breaker_spaces;
+	cgc_uint8_t breakers_installed_cnt;
+	cgc_uint32_t amp_rating;
+	cgc_breaker_t breakers[0];	// var len array: breakers[breaker_spaces]
+} cgc_load_center_t;
 
-float get_max_amps_of_light_string();
-load_center_t *get_new_load_center_by_model_id(LOAD_CENTER_MODELS_T model_id);
-int8_t get_new_breaker_by_model_id(CIRCUIT_MODELS_T model_id, breaker_t *breaker_space, uint8_t breaker_space_idx);
-outlet_t *get_new_outlet_by_model_id(CIRCUIT_MODELS_T model_id);
-n_way_splitter_t *get_new_n_way_splitter_by_model_id(SPLITTER_MODELS_T model_id);
-light_string_t *get_new_light_string_by_model_id(LIGHT_STRING_MODELS_T model_id);
+float cgc_get_max_amps_of_light_string();
+cgc_load_center_t *cgc_get_new_load_center_by_model_id(cgc_LOAD_CENTER_MODELS_T model_id);
+cgc_int8_t cgc_get_new_breaker_by_model_id(cgc_CIRCUIT_MODELS_T model_id, cgc_breaker_t *breaker_space, cgc_uint8_t breaker_space_idx);
+cgc_outlet_t *cgc_get_new_outlet_by_model_id(cgc_CIRCUIT_MODELS_T model_id);
+cgc_n_way_splitter_t *cgc_get_new_n_way_splitter_by_model_id(cgc_SPLITTER_MODELS_T model_id);
+cgc_light_string_t *cgc_get_new_light_string_by_model_id(cgc_LIGHT_STRING_MODELS_T model_id);
 
 
 #endif /* MODELS_H */

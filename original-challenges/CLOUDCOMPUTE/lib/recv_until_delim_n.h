@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,6 +32,6 @@
  * @param delim Char that delimits end of line
  * @returns Number of bytes received or ERRNO_RECV on error.
  */
-int recv_until_delim_n(int fd, char delim, char *buf, unsigned int size);
+int cgc_recv_until_delim_n(int fd, char delim, char *buf, unsigned int size);
 
 #endif

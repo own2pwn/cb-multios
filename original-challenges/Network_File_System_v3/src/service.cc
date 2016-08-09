@@ -43,27 +43,27 @@ extern "C"
 
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) 
 {
-	CTimeGen *pTimeGen;
+	cgc_CTimeGen *pTimeGen;
 
-	pTimeGen = new CTimeGen( (uint32_t *)secret_page_i, (PAGE_SIZE / sizeof(uint32_t)) );	
+	pTimeGen = new cgc_CTimeGen( (cgc_uint32_t *)secret_page_i, (PAGE_SIZE / sizeof(cgc_uint32_t)) );	
 
-	CNetworkComm oComms( STDIN, STDOUT );
+	cgc_CNetworkComm oComms( STDIN, STDOUT );
 
-	CNetworkFS oNFS( pTimeGen );
+	cgc_CNetworkFS oNFS( pTimeGen );
 
-	if ( !oNFS.Init( &oComms, 10 ) )
+	if ( !oNFS.cgc_Init( &oComms, 10 ) )
 	{
-		printf( "Failed to initialize!\n" );
+		cgc_printf( "Failed to initialize!\n" );
 
 		delete pTimeGen;
 		return (-1);
 	}
 
-	if ( !oNFS.Run( ) )
+	if ( !oNFS.cgc_Run( ) )
 	{
-		if ( oNFS.HasError() )
+		if ( oNFS.cgc_HasError() )
 		{
-			printf( "Network File System error: %s\n", oNFS.GetError().c_str() );
+			cgc_printf( "Network File System error: %s\n", oNFS.cgc_GetError().cgc_c_str() );
 		
 			delete pTimeGen;
 			return (-1);

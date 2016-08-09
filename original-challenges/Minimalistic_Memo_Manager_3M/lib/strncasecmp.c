@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -28,7 +28,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-int strncasecmp(const char *s1, const char *s2, size_t n)
+int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n)
 {
   unsigned char *_s1 = (unsigned char *)s1;
   unsigned char *_s2 = (unsigned char *)s2;
@@ -37,10 +37,10 @@ int strncasecmp(const char *s1, const char *s2, size_t n)
     return 0;
 
   while (n && *_s1 && *_s2)
-    if (!(*_s1 == *_s2 || tolower(*_s1) == tolower(*_s2)))
+    if (!(*_s1 == *_s2 || cgc_tolower(*_s1) == cgc_tolower(*_s2)))
       break;
     else
       _s1++, _s2++;
 
-  return tolower(*_s1) - tolower(*_s2);
+  return cgc_tolower(*_s1) - cgc_tolower(*_s2);
 }

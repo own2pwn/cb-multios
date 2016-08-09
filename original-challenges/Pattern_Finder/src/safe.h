@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,17 +24,17 @@
 #define __SAFE_H__
 
 #ifdef DEBUG
-#define dbg(MSG, ...) fprintf(stderr, "[DBG]: " MSG "\n", ##__VA_ARGS__)
+#define dbg(MSG, ...) cgc_fprintf(stderr, "[DBG]: " MSG "\n", ##__VA_ARGS__)
 #else
 #define dbg(MSG, ...)
 #endif
 
 #include <stdio.h>
 #define die(_msg) ({ \
-  fprintf(stderr, "%s", "FATAL: " _msg "\n"); \
+  cgc_fprintf(stderr, "%s", "FATAL: " _msg "\n"); \
   _terminate(1); \
 })
 
-void* xcalloc(size_t count, size_t size);
+void* cgc_xcalloc(cgc_size_t count, cgc_size_t size);
 
 #endif /* __SAFE_H__ */

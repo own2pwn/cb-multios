@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -23,35 +23,35 @@
 #include <string.h>
 #include "calc.h"
 
-void calc_add(op_t *op)
+void cgc_calc_add(cgc_op_t *op)
 {
   if (op->type != OP_ADD)
     return;
   op->result = op->arg1 + op->arg2;
 }
 
-void calc_sub(op_t *op)
+void cgc_calc_sub(cgc_op_t *op)
 {
   if (op->type != OP_SUB)
     return;
   op->result = op->arg1 - op->arg2;
 }
 
-void calc_mul(op_t *op)
+void cgc_calc_mul(cgc_op_t *op)
 {
   if (op->type != OP_MUL)
     return;
   op->result = op->arg1 * op->arg2;
 }
 
-void calc_div(op_t *op)
+void cgc_calc_div(cgc_op_t *op)
 {
   if (op->type != OP_DIV || op->arg2 == 0)
     return;
   op->result = op->arg1 / op->arg2;
 }
 
-void calc_mod(op_t *op)
+void cgc_calc_mod(cgc_op_t *op)
 {
   if (op->type != OP_MOD || op->arg2 == 0)
     return;
@@ -59,27 +59,27 @@ void calc_mod(op_t *op)
 }
 
 
-void calc_compute(op_t *op)
+void cgc_calc_compute(cgc_op_t *op)
 {
   if (op->type != OP_CMP)
     return;
-  op_t *cop = (op_t *) op->arg1;
+  cgc_op_t *cop = (cgc_op_t *) op->arg1;
   switch (cop->type)
   {
     case OP_ADD:
-      calc_add(cop);
+      cgc_calc_add(cop);
       break;
     case OP_SUB:
-      calc_sub(cop);
+      cgc_calc_sub(cop);
       break;
     case OP_MUL:
-      calc_mul(cop);
+      cgc_calc_mul(cop);
       break;
     case OP_DIV:
-      calc_div(cop);
+      cgc_calc_div(cop);
       break;
     case OP_MOD:
-      calc_mod(cop);
+      cgc_calc_mod(cop);
       break;
     default:
       break;

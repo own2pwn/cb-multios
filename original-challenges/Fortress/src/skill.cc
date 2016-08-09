@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -27,16 +27,16 @@
 
 #include "skill.h"
 
-CSkill::CSkill(const char* name, CRequirement::Type counter, int price) : m_counter(counter), m_price(price)
+cgc_CSkill::cgc_CSkill(const char* name, cgc_CRequirement::Type counter, int price) : m_counter(counter), m_price(price)
 {
-    m_name = strndup(name, k_maxNameLength);
+    m_name = cgc_strndup(name, k_maxNameLength);
 }
 
-CSkill::~CSkill()
+cgc_CSkill::~cgc_CSkill()
 {
 }
 
-bool CSkill::IsCounter(CRequirement::Type type)
+bool cgc_CSkill::cgc_IsCounter(cgc_CRequirement::Type type)
 {
     return (type & m_counter) == m_counter;
 }

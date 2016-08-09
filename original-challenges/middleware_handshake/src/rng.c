@@ -23,15 +23,15 @@
 #include "common.h"
 #include "rng.h"
 
-const rng_def_t system_rng;
-const rng_def_t lcg_rng;
+const cgc_rng_def_t system_rng;
+const cgc_rng_def_t lcg_rng;
 
-static const rng_def_t *rngs[] = {
+static const cgc_rng_def_t *rngs[] = {
     [RNG_SYSTEM] = &system_rng,
     [RNG_LCG] = &lcg_rng
 };
 
-int rng_init(rng_t *rng, unsigned int id)
+int cgc_rng_init(cgc_rng_t *rng, unsigned int id)
 {
     if (id >= RNG_END)
         return FAILURE;

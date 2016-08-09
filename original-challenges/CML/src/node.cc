@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,77 +24,77 @@
 #include "cmlnode.h"
 #include "textnode.h"
 
-const String *CML_TAG = String::intern("cml");
-const String *EMPTY_TAG = String::intern("");
+const cgc_String *CML_TAG = cgc_String::cgc_intern("cml");
+const cgc_String *EMPTY_TAG = cgc_String::cgc_intern("");
 
-Node::Node(const String *ns, const String *tag, NodeClass cls)
-    : d_ns(ns), d_tag(tag), d_next(nullptr), d_prev(nullptr),
-      d_first(nullptr), d_last(nullptr), d_parent(nullptr), d_class(cls)
+cgc_Node::cgc_Node(const cgc_String *cgc_ns, const cgc_String *cgc_tag, NodeClass cgc_cls)
+    : d_ns(cgc_ns), d_tag(cgc_tag), d_next(nullptr), d_prev(nullptr),
+      d_first(nullptr), d_last(nullptr), d_parent(nullptr), d_class(cgc_cls)
 {
 }
 
-Node::Node(const String *ns, const String *tag)
-    : Node(ns, tag, NodeClass::NODE)
+cgc_Node::cgc_Node(const cgc_String *cgc_ns, const cgc_String *cgc_tag)
+    : cgc_Node(cgc_ns, cgc_tag, NodeClass::NODE)
 {
 }
 
-Node::~Node()
+cgc_Node::~cgc_Node()
 {
-    // free all of the attributes
-    Attribute **pattr = nullptr;
-    while ((pattr = d_attr.next(pattr)) != nullptr)
+    // cgc_free all of the attributes
+    cgc_Attribute **pattr = nullptr;
+    while ((pattr = d_attr.cgc_next(pattr)) != nullptr)
     {
         delete (*pattr);
     }
 }
 
-Node *Node::create(const char *ns, const char *tag)
+cgc_Node *cgc_Node::cgc_create(const char *cgc_ns, const char *cgc_tag)
 {
-    const String *s = String::intern(tag);
-    const String *nss = ns == nullptr ? nullptr : String::intern(ns);
+    const cgc_String *s = cgc_String::cgc_intern(cgc_tag);
+    const cgc_String *nss = cgc_ns == nullptr ? nullptr : cgc_String::cgc_intern(cgc_ns);
     if (s == CML_TAG && nss == nullptr)
-        return new CmlNode(nss, s);
+        return new cgc_CmlNode(nss, s);
     else if (s == EMPTY_TAG && nss == nullptr)
-        return new TextNode(nss, s);
+        return new cgc_TextNode(nss, s);
     else
-        return new Node(nss, s);
+        return new cgc_Node(nss, s);
 }
 
-void Node::delete_tree(Node *node)
+void cgc_Node::cgc_delete_tree(cgc_Node *node)
 {
-    Node *child, *next;
-    for (child = node->first(); child != nullptr; child = next)
+    cgc_Node *child, *cgc_next;
+    for (child = node->cgc_first(); child != nullptr; child = cgc_next)
     {
-        next = child->next();
-        delete_tree(child);
+        cgc_next = child->cgc_next();
+        cgc_delete_tree(child);
     }
     delete node;
 }
 
-bool Node::remove_attr(const char *name)
+bool cgc_Node::cgc_remove_attr(const char *cgc_name)
 {
-    return d_attr.remove(String::intern(name));
+    return d_attr.cgc_remove(cgc_String::cgc_intern(cgc_name));
 }
 
-void Node::set_attr(const char *name, String *value)
+void cgc_Node::cgc_set_attr(const char *cgc_name, cgc_String *value)
 {
-    const String *sname = String::intern(name);
-    Attribute **result, *attr;
-    result = d_attr.lookup(sname);
+    const cgc_String *sname = cgc_String::cgc_intern(cgc_name);
+    cgc_Attribute **result, *cgc_attr;
+    result = d_attr.cgc_lookup(sname);
     if (result == nullptr)
     {
-        attr = new Attribute(sname);
-        d_attr.insert(sname, attr);
+        cgc_attr = new cgc_Attribute(sname);
+        d_attr.cgc_insert(sname, cgc_attr);
     }
     else
-        attr = *result;
-    attr->set(value);
+        cgc_attr = *result;
+    cgc_attr->cgc_set(value);
 }
 
-void Node::insert_after(Node *node, Node *new_node)
+void cgc_Node::cgc_insert_after(cgc_Node *node, cgc_Node *new_node)
 {
     if (node == nullptr)
-        node = last();
+        node = cgc_last();
     if (node == nullptr)
     {
         d_first = d_last = new_node;
@@ -117,10 +117,10 @@ void Node::insert_after(Node *node, Node *new_node)
     new_node->d_parent = this;
 }
 
-void Node::insert_before(Node *node, Node *new_node)
+void cgc_Node::cgc_insert_before(cgc_Node *node, cgc_Node *new_node)
 {
     if (node == nullptr)
-        node = first();
+        node = cgc_first();
     if (node == nullptr)
     {
         d_first = d_last = new_node;
@@ -143,7 +143,7 @@ void Node::insert_before(Node *node, Node *new_node)
     new_node->d_parent = this;
 }
 
-void Node::remove()
+void cgc_Node::cgc_remove()
 {
     if (d_parent == nullptr)
         return;

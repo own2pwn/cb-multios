@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -35,7 +35,7 @@ THE SOFTWARE.
 #include "loader.h"
 #include "shell.h"
 
-void ListFilesRecurse(FileNode *file, int level)
+void cgc_ListFilesRecurse(cgc_FileNode *file, int level)
 {
   if (file == NULL)
   {
@@ -43,37 +43,37 @@ void ListFilesRecurse(FileNode *file, int level)
   }
   for (int i=0; i < level; i++)
   {
-    printf("    ");
+    cgc_printf("    ");
   }
-  printf("$s ($d)\n", file->name,  GetFileID(file));
-  ListFilesRecurse(file->child, level+1);
-  ListFilesRecurse(file->next, level);
+  cgc_printf("$s ($d)\n", file->name,  cgc_GetFileID(file));
+  cgc_ListFilesRecurse(file->child, level+1);
+  cgc_ListFilesRecurse(file->next, level);
 }
 
-void ListFilesLong(FileNode *parent)
+void cgc_ListFilesLong(cgc_FileNode *parent)
 {
-  FileNode *flavorFile = FindFileAbsolute("System%Special%Flavor.sl");
-  ExecutableInMemory *flavorSL = LoadSharedLibrary(flavorFile);
-  FileNode *file = parent->child;
-  ExecutableInMemory *resourceSL = flavorSL;
+  cgc_FileNode *flavorFile = cgc_FindFileAbsolute("System%Special%Flavor.sl");
+  cgc_ExecutableInMemory *flavorSL = cgc_LoadSharedLibrary(flavorFile);
+  cgc_FileNode *file = parent->child;
+  cgc_ExecutableInMemory *resourceSL = flavorSL;
 
   while (file != NULL)
   {
     resourceSL = flavorSL;
-    int index = GetFileType(file) - FILE_TEXT;
-    if (GetFileType(file) == FILE_LINK)
+    int index = cgc_GetFileType(file) - FILE_TEXT;
+    if (cgc_GetFileType(file) == FILE_LINK)
     {
-      ExtractLinkTargetAndID((ShortcutFileHeader *)file->contents, parent,  &resourceSL, &index);
+      cgc_ExtractLinkTargetAndID((cgc_ShortcutFileHeader *)file->contents, parent,  &resourceSL, &index);
     }
-    char *resource = LookupResource(resourceSL, index);
-    printf("$s \t$d\t$s\n", GetFileName(file), GetFileSize(file), resource);
+    char *resource = cgc_LookupResource(resourceSL, index);
+    cgc_printf("$s \t$d\t$s\n", cgc_GetFileName(file), cgc_GetFileSize(file), resource);
     file = file->next;
   }
 }
 
-void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, ExecutableInMemory **flavorSL, int *index)
+void cgc_ExtractLinkTargetAndID(cgc_ShortcutFileHeader *sh, cgc_FileNode *parent, cgc_ExecutableInMemory **flavorSL, int *index)
 {
-  ExecutableInMemory *newFlavor = NULL;
+  cgc_ExecutableInMemory *newFlavor = NULL;
   int newIndex = -1;
 
   if (sh->size > MAX_FILE_SIZE)
@@ -85,7 +85,7 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
     return;
   }
   
-  if (strncmp(sh->targetName, "System%Special%", 15) != 0)
+  if (cgc_strncmp(sh->targetName, "System%Special%", 15) != 0)
   {
     newIndex = -1;
   } else {
@@ -93,35 +93,35 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
   }
 
   // Verify separator is not present
-  char *sepPtr = strchr(sh->targetName, '+');
+  char *sepPtr = cgc_strchr(sh->targetName, '+');
   if (sepPtr != NULL)
   {
     return;
   }
   // Add separator and copy
   char fileAndID[77];
-  sprintf(fileAndID, "$s+$d", sh->targetName, newIndex);
+  cgc_sprintf(fileAndID, "$s+$d", sh->targetName, newIndex);
 #ifdef PATCHED_1
-  char *pFileAndID = calloc(MAX_FILENAME + 4);
-  strncpy(pFileAndID, fileAndID, MAX_FILENAME + 3);
+  char *pFileAndID = cgc_calloc(MAX_FILENAME + 4);
+  cgc_strncpy(pFileAndID, fileAndID, MAX_FILENAME + 3);
 #else
-  char *pFileAndID = calloc(MAX_FILENAME + 3);
-  strncpy(pFileAndID, fileAndID, MAX_FILENAME + 2);
+  char *pFileAndID = cgc_calloc(MAX_FILENAME + 3);
+  cgc_strncpy(pFileAndID, fileAndID, MAX_FILENAME + 2);
 #endif
 
   // Check for separator
-  char *indexPtr = strchr(pFileAndID, '+');
+  char *indexPtr = cgc_strchr(pFileAndID, '+');
   if (indexPtr == NULL)
   {
     return;
   }
   
-  newIndex = atoi(indexPtr + 1);
+  newIndex = cgc_atoi(indexPtr + 1);
 
   // Attempt usage of this flavor file
   if (newIndex >= 0)
   {
-    newFlavor = VerifyAndLoadFlavorFile(sh->targetName, parent);
+    newFlavor = cgc_VerifyAndLoadFlavorFile(sh->targetName, parent);
     if (newFlavor == NULL)
     {
       return;
@@ -133,37 +133,37 @@ void ExtractLinkTargetAndID(ShortcutFileHeader *sh, FileNode *parent, Executable
 }
  
 
-ExecutableInMemory *VerifyAndLoadFlavorFile(char *name, FileNode *parent)
+cgc_ExecutableInMemory *cgc_VerifyAndLoadFlavorFile(char *name, cgc_FileNode *parent)
 { 
   // check name fits with .listofiles added
   char listofiles[65];
-  memset(listofiles, 0, 65);
-  strncpy(listofiles, name, 64);
-  char *sepIndex = strchr(listofiles, '_');
+  cgc_memset(listofiles, 0, 65);
+  cgc_strncpy(listofiles, name, 64);
+  char *sepIndex = cgc_strchr(listofiles, '_');
   if (sepIndex)
   {
     *sepIndex = 0;
   } else {
-    sepIndex = listofiles + strlen(listofiles);
+    sepIndex = listofiles + cgc_strlen(listofiles);
   }
-  if (strlen(listofiles) > 64 - strlen(".listofiles"))
+  if (cgc_strlen(listofiles) > 64 - cgc_strlen(".listofiles"))
   {
     return NULL;
   }
-  strcpy(sepIndex, ".listofiles");
-  FileNode *listFile =  FindFile(listofiles, parent);
+  cgc_strcpy(sepIndex, ".listofiles");
+  cgc_FileNode *listFile =  cgc_FindFile(listofiles, parent);
 
   // check file exists
-  FileNode *flavor = FindFile(name, parent);
+  cgc_FileNode *flavor = cgc_FindFile(name, parent);
   if (flavor == NULL)
   {
-    flavor = FindFileAbsolute(name);
+    flavor = cgc_FindFileAbsolute(name);
   }
-  return LoadSharedLibrary(flavor);
+  return cgc_LoadSharedLibrary(flavor);
 }
 
 
-char ReceiveCommand()
+char cgc_ReceiveCommand()
 {
   char cmd, delim;
   if (receive(STDIN, &cmd, 1, NULL) != 0) 
@@ -183,100 +183,100 @@ char ReceiveCommand()
 
 int main()
 {
-  FileNode *cwd = InitializeFileSystem();
+  cgc_FileNode *cwd = cgc_InitializeFileSystem();
   int activeSession = 1;
   
   // Populate shell files and icons
-  InitializeOSFiles();
+  cgc_InitializeOSFiles();
 
   while (activeSession) {
-    printf(">");
+    cgc_printf(">");
     // Receive a command
-    char cmd = ReceiveCommand();
+    char cmd = cgc_ReceiveCommand();
     switch(cmd)
     {
       // Process command
       case UPLOAD_A_FILE:
       {
-        cString *name = ReceiveCString(64);
-        uint8_t type;
-        ReceiveBytes((char *)&type, 1);
-        cString *contents = ReceiveCString(MAX_FILE_SIZE);
-        if (CreateFile(name->string, type, contents->length, contents->string, cwd) != FS_SUCCESS)
+        cgc_cString *name = cgc_ReceiveCString(64);
+        cgc_uint8_t type;
+        cgc_ReceiveBytes((char *)&type, 1);
+        cgc_cString *contents = cgc_ReceiveCString(MAX_FILE_SIZE);
+        if (cgc_CreateFile(name->string, type, contents->length, contents->string, cwd) != FS_SUCCESS)
         {
-          printf("FAILED\n");
+          cgc_printf("FAILED\n");
         } 
-        DestroyCString(name);
-        DestroyCString(contents);
+        cgc_DestroyCString(name);
+        cgc_DestroyCString(contents);
         break;
       }
       case READ_A_FILE:
       {
-        cString *name = ReceiveCString(64);
-        FileNode *file = FindFile(name->string, cwd);
+        cgc_cString *name = cgc_ReceiveCString(64);
+        cgc_FileNode *file = cgc_FindFile(name->string, cwd);
         /*
-        if (GetFileType(file) == FILE_LINK)
+        if (cgc_GetFileType(file) == FILE_LINK)
         {
-          file = FindFile(file->contents + 8);
+          file = cgc_FindFile(file->contents + 8);
         }*/
         if (file)
         {
-          char *contents = ReadFile(file);
-          printf("$s\n", contents);
-          free(contents);
+          char *contents = cgc_ReadFile(file);
+          cgc_printf("$s\n", contents);
+          cgc_free(contents);
         }
-        DestroyCString(name);
+        cgc_DestroyCString(name);
         break;
       }
       case DELETE_A_FILE:
       {
-        cString *name = ReceiveCString(64);
-        if ((DeleteFile(name->string, cwd)) != FS_SUCCESS)
+        cgc_cString *name = cgc_ReceiveCString(64);
+        if ((cgc_DeleteFile(name->string, cwd)) != FS_SUCCESS)
         {
-          printf("FAILED\n");
+          cgc_printf("FAILED\n");
         }
-        DestroyCString(name);
+        cgc_DestroyCString(name);
         break;
       }
       case LIST_FILES:
       {
-        ListFilesRecurse(cwd, 0);
+        cgc_ListFilesRecurse(cwd, 0);
         break;
       }
       case LIST_FILES_LONG:
       {
-        ListFilesLong(cwd);
+        cgc_ListFilesLong(cwd);
         break;
       }
       case CREATE_DIR:
       {
-        cString *name = ReceiveCString(64);
-        if(CreateFile(name->string, FILE_DIRECTORY, 0, 0, cwd) != FS_SUCCESS)
+        cgc_cString *name = cgc_ReceiveCString(64);
+        if(cgc_CreateFile(name->string, FILE_DIRECTORY, 0, 0, cwd) != FS_SUCCESS)
         {
-          printf("FAILED\n");
+          cgc_printf("FAILED\n");
         }
-        DestroyCString(name);
+        cgc_DestroyCString(name);
         break;
       }
       case PWD:
       {
-        printf("$s$s\n", GetFilePath(cwd), GetFileName(cwd));
+        cgc_printf("$s$s\n", cgc_GetFilePath(cwd), cgc_GetFileName(cwd));
         break;
       }
       case CHANGE_DIR:
       {
-        cString *name = ReceiveCString(64);
-        if (strcmp("upone", name->string) == 0)
+        cgc_cString *name = cgc_ReceiveCString(64);
+        if (cgc_strcmp("upone", name->string) == 0)
         {
-          cwd = GetParent(cwd);
+          cwd = cgc_GetParent(cwd);
           break;
         }
-        FileNode *newDir = FindFile(name->string, cwd);
-        if (GetFileType(newDir) == FILE_DIRECTORY)
+        cgc_FileNode *newDir = cgc_FindFile(name->string, cwd);
+        if (cgc_GetFileType(newDir) == FILE_DIRECTORY)
         {
           cwd = newDir;
         } else {
-          printf("File Not Found\n");
+          cgc_printf("File Not Found\n");
         }
         break;
       }
@@ -284,10 +284,10 @@ int main()
         activeSession = 0;
         break;
       default:
-        printf("Invalid Command\n");
+        cgc_printf("Invalid Command\n");
     }
   }
 
-  printf("\n");
+  cgc_printf("\n");
 }
 

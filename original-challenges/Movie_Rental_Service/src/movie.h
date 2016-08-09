@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -50,23 +50,23 @@ typedef struct movie {
   enum genre_t genre;
   enum rating_t rating;
   void (*print_info)(int, struct movie *);
-} movie_t;
+} cgc_movie_t;
 
 typedef struct movie_node {
-  movie_t *movie;
+  cgc_movie_t *movie;
   struct movie_node *next;
-} movie_node_t;
+} cgc_movie_node_t;
 
-typedef movie_node_t * movie_list_t;
+typedef cgc_movie_node_t * cgc_movie_list_t;
 
-const char* movie_g2s(enum genre_t);
-const char* movie_r2s(enum rating_t);
+const char* cgc_movie_g2s(enum genre_t);
+const char* cgc_movie_r2s(enum rating_t);
 
-int movie_add(movie_list_t *, movie_t *);
-int movie_delete(movie_list_t *, int);
-int movie_update(movie_t *);
-movie_node_t* movie_find(movie_list_t, char *);
-movie_node_t* movie_find_by_id(movie_list_t, int);
-void free_movie(movie_t *);
+int cgc_movie_add(cgc_movie_list_t *, cgc_movie_t *);
+int cgc_movie_delete(cgc_movie_list_t *, int);
+int cgc_movie_update(cgc_movie_t *);
+cgc_movie_node_t* cgc_movie_find(cgc_movie_list_t, char *);
+cgc_movie_node_t* cgc_movie_find_by_id(cgc_movie_list_t, int);
+void cgc_free_movie(cgc_movie_t *);
 
 #endif

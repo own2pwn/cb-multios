@@ -4,7 +4,7 @@ Author: Jason Williams
 
 Copyright (c) 2015 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,19 +32,19 @@ extern "C"
 
 #include "geofence.h"
 
-CGeofencePoint::CGeofencePoint( )
+cgc_CGeofencePoint::cgc_CGeofencePoint( )
 	: m_coords( 0, 0, 0, 0, 0, 0 ), m_distance( 0 )
 {
 
 }
 
-CGeofencePoint::CGeofencePoint( CGPSCoordinates &coords, uint32_t distance )
+cgc_CGeofencePoint::cgc_CGeofencePoint( cgc_CGPSCoordinates &coords, cgc_uint32_t distance )
 	: m_coords( coords ), m_distance( distance )
 {
 
 }
 
-CGeofencePoint::~CGeofencePoint( )
+cgc_CGeofencePoint::~cgc_CGeofencePoint( )
 {
 
 }

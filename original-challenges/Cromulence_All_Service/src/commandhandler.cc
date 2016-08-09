@@ -4,7 +4,7 @@ Author: Jason Williams <jdw@cromulence.com>
 
 Copyright (c) 2014 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -25,18 +25,18 @@ THE SOFTWARE.
 */
 #include "common.h"
 
-CCommandHandler::CCommandHandler()
+cgc_CCommandHandler::cgc_CCommandHandler()
     : m_cmdCount( 0 )
 {
-    memset( m_cmdTable, 0, sizeof(tCommandTableEntry) * MAX_COMMAND_ENTRIES );
+    cgc_memset( m_cmdTable, 0, sizeof(cgc_tCommandTableEntry) * MAX_COMMAND_ENTRIES );
 }
 
-CCommandHandler::~CCommandHandler()
+cgc_CCommandHandler::~cgc_CCommandHandler()
 {
 
 }
 
-bool CCommandHandler::RegisterCommand( const char *pszCommand, const char *pszDescription, tCmdFunction pFunc )
+bool cgc_CCommandHandler::cgc_RegisterCommand( const char *pszCommand, const char *pszDescription, cgc_tCmdFunction pFunc )
 {
     if ( m_cmdCount == MAX_COMMAND_ENTRIES )
         return (false);
@@ -47,8 +47,8 @@ bool CCommandHandler::RegisterCommand( const char *pszCommand, const char *pszDe
     if ( !pFunc )
         return (false);
 
-    strncpy( m_cmdTable[m_cmdCount].szCommand, pszCommand, MAX_COMMAND_LENGTH );
-    strncpy( m_cmdTable[m_cmdCount].szDescription, pszDescription, MAX_DESCRIPTION_LENGTH );
+    cgc_strncpy( m_cmdTable[m_cmdCount].szCommand, pszCommand, MAX_COMMAND_LENGTH );
+    cgc_strncpy( m_cmdTable[m_cmdCount].szDescription, pszDescription, MAX_DESCRIPTION_LENGTH );
 
     m_cmdTable[m_cmdCount].pCmdFunc = pFunc;
 
@@ -58,64 +58,64 @@ bool CCommandHandler::RegisterCommand( const char *pszCommand, const char *pszDe
     return (true);
 }
 
-tCmdFunction CCommandHandler::GetCommandFunction( const char *pszCommand )
+cgc_tCmdFunction cgc_CCommandHandler::cgc_GetCommandFunction( const char *pszCommand )
 {
-    for ( uint32_t i = 0; i < m_cmdCount; i++ )
+    for ( cgc_uint32_t i = 0; i < m_cmdCount; i++ )
     {
-        if ( stricmp( m_cmdTable[i].szCommand, pszCommand ) == 0 )
+        if ( cgc_stricmp( m_cmdTable[i].szCommand, pszCommand ) == 0 )
             return (m_cmdTable[i].pCmdFunc);
     }
 
     return (NULL);
 }
 
-void CCommandHandler::Run( void )
+void cgc_CCommandHandler::cgc_Run( void )
 {
     char szLine[1024];
 
     for (;;)
     {
         // Prompt
-        printf( ": " );
+        cgc_printf( ": " );
 
         // Get command line
-        getline( szLine, 1024 );
+        cgc_getline( szLine, 1024 );
 
-        char *szToken = strtok( szLine, " " );
+        char *szToken = cgc_strtok( szLine, " " );
 
         if ( szToken == NULL )
         {
-            printf( "Unknown command.\n" );
+            cgc_printf( "Unknown command.\n" );
             continue;
         }
 
-        if ( stricmp( szToken, "exit" ) == 0 )
+        if ( cgc_stricmp( szToken, "exit" ) == 0 )
             break;
 
-        if ( stricmp( szToken, "?" ) == 0 )
+        if ( cgc_stricmp( szToken, "?" ) == 0 )
         {
-            ListCommands();
+            cgc_ListCommands();
             continue;
         }
 
         // Search for appropriate command
-        tCmdFunction pCmdFunc = GetCommandFunction( szToken );
+        cgc_tCmdFunction pCmdFunc = cgc_GetCommandFunction( szToken );
 
         if ( pCmdFunc == NULL )
         {
-            printf( "Unknown command.\n" );
+            cgc_printf( "Unknown command.\n" );
             continue;
         }
 
-        (*pCmdFunc)( strtok( NULL, "" ) );
+        (*pCmdFunc)( cgc_strtok( NULL, "" ) );
     }
 }
 
-void CCommandHandler::ListCommands( void )
+void cgc_CCommandHandler::cgc_ListCommands( void )
 {
-    printf( "Available commands:\n" );
-    for ( uint32_t i = 0; i < m_cmdCount; i++ )
+    cgc_printf( "Available commands:\n" );
+    for ( cgc_uint32_t i = 0; i < m_cmdCount; i++ )
     {
-        printf( "@s - @s\n", m_cmdTable[i].szCommand, m_cmdTable[i].szDescription );
+        cgc_printf( "@s - @s\n", m_cmdTable[i].szCommand, m_cmdTable[i].szDescription );
     }
 }

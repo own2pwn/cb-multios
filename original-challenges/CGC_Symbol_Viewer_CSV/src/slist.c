@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -24,14 +24,14 @@
 #include <stdlib.h>
 #include "slist.h"
 
-sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp)
+cgc_sl_node* cgc_sl_insert(cgc_sl_node *head, void *elem, cgc_cmp_fn cmp)
 {
-  sl_node *cur, *prev, *new;
+  cgc_sl_node *cur, *prev, *new;
 
   /* Check null */
   if (elem)
   {
-    new = (sl_node *) malloc(sizeof(sl_node));
+    new = (cgc_sl_node *) cgc_malloc(sizeof(cgc_sl_node));
     if (new)
     {
       new->elem = elem;
@@ -80,9 +80,9 @@ sl_node* sl_insert(sl_node *head, void *elem, cmp_fn cmp)
   return head;
 }
 
-void sl_destroy(sl_node *head, free_fn ffn)
+void cgc_sl_destroy(cgc_sl_node *head, cgc_free_fn ffn)
 {
-  sl_node *cur, *tmp;
+  cgc_sl_node *cur, *tmp;
 
   /* Initialize node pointers */
   cur = tmp = head;
@@ -93,7 +93,7 @@ void sl_destroy(sl_node *head, free_fn ffn)
     tmp = cur->next;
     if (cur->elem)
       ffn(cur->elem);
-    free(cur);
+    cgc_free(cur);
     cur = tmp;
   }
 }

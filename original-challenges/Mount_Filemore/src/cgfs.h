@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,39 +30,39 @@
 #include "cluster.h"
 #include "directory_tree.h"
 
-class CgFsImg
+class cgc_CgFsImg
 {
   public:
-    CgFsImg();
-    ~CgFsImg();
+    cgc_CgFsImg();
+    ~cgc_CgFsImg();
 
-    unsigned int cgfst_id();
-    unsigned int end_of_cluster_marker();
+    unsigned int cgc_cgfst_id();
+    unsigned int cgc_end_of_cluster_marker();
 
-    bool IsMounted();
-    bool Mount(FILE *img);
-    bool Unmount();
+    bool cgc_IsMounted();
+    bool cgc_Mount(cgc_FILE *img);
+    bool cgc_Unmount();
 
-    Array<cluster_data> GetFileClusters(const char *path);
-    Array<cluster_data> GetFileClusters(unsigned int start_cluster);
-    void ListFiles(const char *path, bool recursive);
+    cgc_Array<cgc_cluster_data> cgc_GetFileClusters(const char *path);
+    cgc_Array<cgc_cluster_data> cgc_GetFileClusters(unsigned int start_cluster);
+    void cgc_ListFiles(const char *path, bool recursive);
 
-    fs_file *FindFile(const char *filepath);
-    bool AddFile(const char *path, const char *filename, char *data, unsigned int file_size);
-    bool AddDirectory(const char *path, const char *dirname);
-    bool DeleteFile(const char *path);
-    bool DeleteDirectory(const char *path);
+    cgc_fs_file *cgc_FindFile(const char *filepath);
+    bool cgc_AddFile(const char *path, const char *filename, char *data, unsigned int file_size);
+    bool cgc_AddDirectory(const char *path, const char *dirname);
+    bool cgc_DeleteFile(const char *path);
+    bool cgc_DeleteDirectory(const char *path);
 
-    bool PreviewFile(const char *path, char **pdata, unsigned int *num_bytes);
-    bool ReadFromFile(const char *path, unsigned int offset, unsigned int num_bytes_to_read, char **pdata, unsigned int *num_bytes_read);
-    bool WriteToFile(const char *path, unsigned int offset, unsigned int num_bytes_to_write, char *data, unsigned int *num_bytes_written);
-    bool UpdateFileSize(const char *path, unsigned int new_size);
+    bool cgc_PreviewFile(const char *path, char **pdata, unsigned int *num_bytes);
+    bool cgc_ReadFromFile(const char *path, unsigned int offset, unsigned int num_bytes_to_read, char **pdata, unsigned int *num_bytes_read);
+    bool cgc_WriteToFile(const char *path, unsigned int offset, unsigned int num_bytes_to_write, char *data, unsigned int *num_bytes_written);
+    bool cgc_UpdateFileSize(const char *path, unsigned int new_size);
 
-    void DebugMetadata();
+    void cgc_DebugMetadata();
   private:
     bool is_mounted_;
-    bhdr hdr_;
-    fs_info_sector info_sector_;
+    cgc_bhdr hdr_;
+    cgc_fs_info_sector info_sector_;
 
     unsigned int *cluster_map_;
     unsigned int num_clusters_;
@@ -71,22 +71,22 @@ class CgFsImg
     unsigned int cluster_size_;
     unsigned char *raw_data_;
     unsigned int raw_data_size_;
-    DirectoryTree root_directory_;
+    cgc_DirectoryTree root_directory_;
 
-    unsigned int FindUnusedCluster();
-    void ClearCluster(unsigned int cluster_idx);
-    unsigned int AddCluster(unsigned int start_cluster);
-    bool PopCluster(unsigned int start_cluster, unsigned int *popped_cluster);
-    bool ClearAllClusters(unsigned int start_cluster);
+    unsigned int cgc_FindUnusedCluster();
+    void cgc_ClearCluster(unsigned int cluster_idx);
+    unsigned int cgc_AddCluster(unsigned int start_cluster);
+    bool cgc_PopCluster(unsigned int start_cluster, unsigned int *popped_cluster);
+    bool cgc_ClearAllClusters(unsigned int start_cluster);
 
-    bool FileExists(const char *dirpath, const char *filename);
-    void DeleteDirectoryHelper(DirectoryTree *dirnode, bool is_root);
-    bool FileReadWrite(const char *path, unsigned int offset, unsigned int num_bytes_to_rw, char *data, unsigned int *num_bytes, unsigned int operation);
+    bool cgc_FileExists(const char *dirpath, const char *filename);
+    void cgc_DeleteDirectoryHelper(cgc_DirectoryTree *dirnode, bool is_root);
+    bool cgc_FileReadWrite(const char *path, unsigned int offset, unsigned int num_bytes_to_rw, char *data, unsigned int *num_bytes, unsigned int operation);
 
-    void AddMetadataEntry(fs_file *new_entry, unsigned int directory_cluster_idx);
-    void ParseDirectoryTree(DirectoryTree *directory);
-    void ParseDirectoryTree(DirectoryTree *directory, unsigned int directory_cluster_idx);
-    void RebuildTree();
+    void cgc_AddMetadataEntry(cgc_fs_file *new_entry, unsigned int directory_cluster_idx);
+    void cgc_ParseDirectoryTree(cgc_DirectoryTree *directory);
+    void cgc_ParseDirectoryTree(cgc_DirectoryTree *directory, unsigned int directory_cluster_idx);
+    void cgc_RebuildTree();
 };
 
 #endif

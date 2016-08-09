@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2016 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a cgc_copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, cgc_copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -27,7 +27,7 @@
 #include "pair.h"
 
 template <class T>
-struct equal_to
+struct cgc_equal_to
 {
     bool operator() (const T& a, const T& b)
     {
@@ -36,98 +36,98 @@ struct equal_to
 };
 
 template <class T>
-struct hash
+struct cgc_hash
 {
-    size_t operator() (const T& t)
+    cgc_size_t operator() (const T& t)
     {
-        return reinterpret_cast<size_t>(t);
+        return reinterpret_cast<cgc_size_t>(t);
     }
 };
 
-template <class K, class V, class H=hash<K>, class P=equal_to<K>>
-class map
+template <class K, class V, class H=cgc_hash<K>, class P=cgc_equal_to<K>>
+class cgc_map
 {
 private:
-    struct _node
+    struct cgc__node
     {
-        _node(K key)
+        cgc__node(K key)
         {
             value.left = key;
         }
 
-        _node *next, *lnext, *lprev;
-        pair<K, V> value;
+        cgc__node *next, *lnext, *lprev;
+        cgc_pair<K, V> value;
     };
 public:
-    class iterator
+    class cgc_iterator
     {
-        struct _node *p;
+        struct cgc__node *p;
     public:
-        iterator(struct _node *node) : p(node) {}
-        iterator& operator++() //prefix
+        cgc_iterator(struct cgc__node *node) : p(node) {}
+        cgc_iterator& operator++() //prefix
         {
             p = p->lnext;
             return *this;
         }
-        iterator& operator++(int) //postfix
+        cgc_iterator& operator++(int) //postfix
         {
-            iterator old(*this);
+            cgc_iterator old(*this);
             p = p->lnext;
             return old;
         }
-        pair<const K, V>& operator*()
+        cgc_pair<const K, V>& operator*()
         {
             return p->value;
         }
-        bool operator==(const iterator &b)
+        bool operator==(const cgc_iterator &b)
         {
             return p == b.p;
         }
-        bool operator!=(const iterator &b)
+        bool operator!=(const cgc_iterator &b)
         {
             return p != b.p;
         }
     };
 
-    map() : _size(0), _allocated(0), table(nullptr), head(nullptr)
+    cgc_map() : _size(0), _allocated(0), table(nullptr), head(nullptr)
     {
-        _enlarge(8);
+        cgc__enlarge(8);
     }
-    ~map()
+    ~cgc_map()
     {
         if (table)
             delete[] table;
-        struct _node *next;
-        for (struct _node *node = head; node != nullptr; node = next)
+        struct cgc__node *next;
+        for (struct cgc__node *node = head; node != nullptr; node = next)
         {
             next = node->lnext;
             delete node;
         }
     }
 
-    map(const map& other) = delete;
-    map& operator=(const map& other) = delete;
+    cgc_map(const cgc_map& other) = delete;
+    cgc_map& operator=(const cgc_map& other) = delete;
 
     V& operator[](const K& key)
     {
-        _node *node = _find(key);
+        cgc__node *node = cgc__find(key);
         if (node == nullptr)
         {
-            node = _insert(key);
+            node = cgc__insert(key);
         }
         return node->value.right;
     }
-    void remove(const K& key)
+    void cgc_remove(const K& key)
     {
-        H hash;
+        H cgc_hash;
         P pred;
-        size_t h = hash(key) % _allocated;
-        struct _node **pnode = &table[h];
+        cgc_size_t h = cgc_hash(key) % _allocated;
+        struct cgc__node **pnode = &table[h];
         while (*pnode != nullptr)
         {
             if (pred((*pnode)->value.left, key))
             {
-                struct _node *node = *pnode;
+                struct cgc__node *node = *pnode;
                 *pnode = node->next;
                 if (node->lprev) node->lprev->lnext = node->lnext;
                 if (node->lnext) node->lnext->lprev = node->lprev;
@@ -139,79 +139,79 @@ public:
             pnode = &(*pnode)->next;
         }
     }
-    bool has(const K& key) const
+    bool cgc_has(const K& key) const
     {
-        return _find(key) != nullptr;
+        return cgc__find(key) != nullptr;
     }
-    size_t size() const
+    cgc_size_t cgc_size() const
     {
         return _size;
     }
-    iterator& begin()
+    cgc_iterator& cgc_begin()
     {
         return head;
     }
-    iterator& end()
+    cgc_iterator& cgc_end()
     {
         return nullptr;
     }
 private:
-    _node *_find(const K& key) const
+    cgc__node *cgc__find(const K& key) const
     {
-        H hash;
+        H cgc_hash;
         P pred;
-        size_t h = hash(key) % _allocated;
-        for (_node *node = table[h]; node != nullptr; node = node->next)
+        cgc_size_t h = cgc_hash(key) % _allocated;
+        for (cgc__node *node = table[h]; node != nullptr; node = node->next)
             if (pred(key, node->value.left))
                 return node;
         return nullptr;
     }
-    _node *_insert(const K& key)
+    cgc__node *cgc__insert(const K& key)
     {
         if (_size * 3 >= _allocated * 2)
-            _enlarge(_allocated * 2);
+            cgc__enlarge(_allocated * 2);
 
-        _node *node = new _node(key);
+        cgc__node *node = new cgc__node(key);
         node->lprev = nullptr;
         node->lnext = head;
         head = node;
 
-        _insert_hash(node);
+        cgc__insert_hash(node);
         _size++;
         return node;
     }
-    void _insert_hash(_node *node)
+    void cgc__insert_hash(cgc__node *node)
     {
-        H hash;
-        size_t h = hash(node->value.left) % _allocated;
-        _node *old = table[h];
+        H cgc_hash;
+        cgc_size_t h = cgc_hash(node->value.left) % _allocated;
+        cgc__node *old = table[h];
         table[h] = node;
         node->next = old;
     }
-    void _enlarge(size_t new_size)
+    void cgc__enlarge(cgc_size_t new_size)
     {
         if (_allocated == 0)
         {
             _allocated = new_size;
-            table = new _node *[_allocated];
-            memset(table, 0, sizeof(_node *) * _allocated);
+            table = new cgc__node *[_allocated];
+            cgc_memset(table, 0, sizeof(cgc__node *) * _allocated);
         }
         else
         {
             delete[] table;
             _allocated = new_size;
-            table = new _node *[_allocated];
-            memset(table, 0, sizeof(_node *) * _allocated);
+            table = new cgc__node *[_allocated];
+            cgc_memset(table, 0, sizeof(cgc__node *) * _allocated);
 
-            for (_node *node = head; node != nullptr; node = node->lnext)
+            for (cgc__node *node = head; node != nullptr; node = node->lnext)
             {
-                _insert_hash(node);
+                cgc__insert_hash(node);
             }
         }
     }
     
-    size_t _size;
-    size_t _allocated;
-    _node **table;
-    _node *head;
+    cgc_size_t _size;
+    cgc_size_t _allocated;
+    cgc__node **table;
+    cgc__node *head;
 };

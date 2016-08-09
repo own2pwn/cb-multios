@@ -23,9 +23,9 @@
 #include <libcgc.h>
 #include "libc.h"
 
-int recv(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recv(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if (!size)
         return 0;
@@ -46,9 +46,9 @@ int recv(int fd, char *buf, size_t size) {
 }
 
 // mod from NRFIN_00001: lines terminated with 
-int recvline(int fd, char *buf, size_t size) {
-    size_t bytes_read = 0;
-    size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+    cgc_size_t bytes_read = 0;
+    cgc_size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -75,10 +75,10 @@ int recvline(int fd, char *buf, size_t size) {
     return total_read;
 }
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * memcpy(void* dst, const void* src, size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
 
-    uint8_t *dst_ptr = (uint8_t *) dst;
-    uint8_t *src_ptr = (uint8_t *) src;
+    cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
+    cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
     while (cnt--) {
         *dst_ptr = *src_ptr;
         dst_ptr++;
@@ -89,7 +89,7 @@ void * memcpy(void* dst, const void* src, size_t cnt) {
 }
     
 // Modified to not use malloc
-char * itoaB10(int value){
+char * cgc_itoaB10(int value){
     int max_width = MAX_WIDTH;
     int ret;
     char *s;
@@ -105,7 +105,7 @@ char * itoaB10(int value){
     int tmp = value;
     
     if(value == 0){
-        memcpy(s, "0\x00", 2);
+        cgc_memcpy(s, "0\x00", 2);
         return s;
     }
     int neg = 0;
@@ -132,7 +132,7 @@ char * itoaB10(int value){
         _terminate(3);
 
     //char *f = malloc(max_width);
-    int final_len = strnlen(s, MAX_WIDTH);
+    int final_len = cgc_strnlen(s, MAX_WIDTH);
     for(int j =0; j < final_len; ++j){
         f[j] = s[final_len-j-1];
     }
@@ -144,7 +144,7 @@ char * itoaB10(int value){
     return f;
 }
 
-char* strcat(char *dest, const char* src)
+char* cgc_strcat(char *dest, const char* src)
 {
     char* ret = dest;
     int pos1, pos2;
@@ -157,7 +157,7 @@ char* strcat(char *dest, const char* src)
 }
 
 // overwrites the first n chars of str with unsigned char ch.
-void * memset(void* str, int ch, size_t n) {
+void * cgc_memset(void* str, int ch, cgc_size_t n) {
     unsigned char *ch_ptr = str;
     while (n > 0) {
         *ch_ptr = (unsigned char)ch;
@@ -168,9 +168,9 @@ void * memset(void* str, int ch, size_t n) {
     return str;
 }
 
-int transmit_all(int fd, const char *buf, const size_t size) {
-    size_t sent = 0;
-    size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
+    cgc_size_t sent = 0;
+    cgc_size_t sent_now = 0;
     int ret;
 
 
@@ -188,8 +188,8 @@ int transmit_all(int fd, const char *buf, const size_t size) {
     return 0;
 }
 
-size_t strlen(const char *string) {
-    size_t size = 0;
+cgc_size_t cgc_strlen(const char *string) {
+    cgc_size_t size = 0;
     
     while(1) {
         if(string[size] == '\0')
@@ -199,8 +199,8 @@ size_t strlen(const char *string) {
 }
 
 // Modified to stop at a max length
-size_t strnlen(const char *string, size_t max_len) {
-    size_t size = 0;
+cgc_size_t cgc_strnlen(const char *string, cgc_size_t max_len) {
+    cgc_size_t size = 0;
     
     while(size < max_len) {
         if(string[size] == '\0')

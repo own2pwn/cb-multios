@@ -4,7 +4,7 @@ Author: Debbie Nuttall <debbie@cromulence.com>
 
 Copyright (c) 2016 Cromulence LLC
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -38,24 +38,24 @@ THE SOFTWARE.
 
 #pragma pack(push, 1)
 typedef struct ApplicationDeleteMsg_s {
-  uint8_t msg_num;
-} APPLICATION_DELETE_MSG;
+  cgc_uint8_t msg_num;
+} cgc_APPLICATION_DELETE_MSG;
 
 typedef struct ApplicationReadMsg_s {
-  uint8_t msg_num;
-} APPLICATION_READ_MSG;
+  cgc_uint8_t msg_num;
+} cgc_APPLICATION_READ_MSG;
 
 typedef struct ApplicationPostMsg_s {
-  uint8_t message[128];
-} APPLICATION_POST_MSG;
+  cgc_uint8_t message[128];
+} cgc_APPLICATION_POST_MSG;
 
 typedef struct ApplicationResponseMsg_s {
-  uint8_t  message[128];
-} APPLICATION_RESPONSE_MSG;
+  cgc_uint8_t  message[128];
+} cgc_APPLICATION_RESPONSE_MSG;
 #pragma pack(pop)
 
-void msls_handle_application(SERVER_STATE *state, CLIENT_CONTEXT *connection,  SLS_MESSAGE *msg);
-int post_new_message(uint8_t *message);
-int delete_message(uint8_t msg_num);
-void clear_message_board();
+void cgc_msls_handle_application(cgc_SERVER_STATE *state, cgc_CLIENT_CONTEXT *connection,  cgc_SLS_MESSAGE *msg);
+int cgc_post_new_message(cgc_uint8_t *message);
+int cgc_delete_message(cgc_uint8_t msg_num);
+void cgc_clear_message_board();
 #endif

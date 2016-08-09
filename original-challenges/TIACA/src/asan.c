@@ -30,34 +30,34 @@ THE SOFTWARE.
 #include "stdlib.h"
 #include "string.h"
 
-int validatePtr(void *ptr) {
+int cgc_validatePtr(void *ptr) {
 	int validated = 0;
 	if((unsigned int)ptr > STACKBASE && (unsigned int)ptr < STACKBASE + STACKSIZE)
 		validated = 1;
 	if((unsigned int)ptr > PROGRAMBASE && (unsigned int)ptr < PROGRAMBASE+PROGRAMSIZE)
 		validated = 1;
 	if(validated == 0) {
-		puts("Invalid pointer detected!");
+		cgc_puts("Invalid pointer detected!");
 		_terminate(-1);
 	}
 	return validated;
 }
 
-void validateRet() {
+void cgc_validateRet() {
 	int* retAddr = 0;
 
 	retAddr = __builtin_return_address(1);
 
 	if((unsigned int)retAddr < PROGRAMBASE || (unsigned int)retAddr > PROGRAMBASE+PROGRAMSIZE) {
 		//only allowed to ret to an address within the main module.
-		puts("***** STACK SMASHING DETECTED! *****");
+		cgc_puts("***** STACK SMASHING DETECTED! *****");
 		_terminate(-1);
 	}
 
 	retAddr=(int*)((char *)retAddr-5);
 	//check to see if the previous instruction was a call.
 	if((*retAddr & 0xff) != 0xe8) {
-		puts("***** STACK SMASHING DETECTED! *****");
+		cgc_puts("***** STACK SMASHING DETECTED! *****");
 		_terminate(-1);
 	}
 }

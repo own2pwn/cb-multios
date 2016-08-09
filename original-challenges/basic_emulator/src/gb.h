@@ -75,7 +75,7 @@
 #define IO_WX   0xFF4B
 #define IO_IE   0xFFFF
 
-typedef uint8_t input_t;
+typedef cgc_uint8_t cgc_input_t;
 #define INPUT_RIGHT 0x01
 #define INPUT_LEFT  0x02
 #define INPUT_UP    0x04
@@ -93,12 +93,12 @@ typedef uint8_t input_t;
 typedef struct {
 #define LOGO_SIZE 0x30
 #define TITLE_SIZE 0x10
-    uint8_t code[0x4];
-    uint8_t logo[LOGO_SIZE];
+    cgc_uint8_t code[0x4];
+    cgc_uint8_t logo[LOGO_SIZE];
     char title[TITLE_SIZE];
     char new_publisher[0x2];
-    uint8_t sgb_flags;
-    uint8_t cart_type;
+    cgc_uint8_t sgb_flags;
+    cgc_uint8_t cart_type;
 #define ROM_32KB 0x00
 #define ROM_64KB 0x01
 #define ROM_128KB 0x02
@@ -107,71 +107,71 @@ typedef struct {
 #define ROM_1024KB 0x05
 #define ROM_2048KB 0x06
 #define ROM_4096KB 0x07
-    uint8_t rom_size;
+    cgc_uint8_t rom_size;
 #define RAM_NONE 0x00
 #define RAM_2KB 0x01
 #define RAM_8KB 0x02
 #define RAM_32KB 0x03
-    uint8_t ram_size;
-    uint8_t region;
-    uint8_t publisher;
-    uint8_t version;
-    uint8_t hdr_cksum;
-    uint16_t cksum;
-} hdr_t;
+    cgc_uint8_t ram_size;
+    cgc_uint8_t region;
+    cgc_uint8_t publisher;
+    cgc_uint8_t version;
+    cgc_uint8_t hdr_cksum;
+    cgc_uint16_t cksum;
+} cgc_hdr_t;
 
 typedef struct {
     union {
-        uint16_t r16;
-        uint8_t r8[2];
+        cgc_uint16_t r16;
+        cgc_uint8_t r8[2];
     } AF;
     union {
-        uint16_t r16;
-        uint8_t r8[2];
+        cgc_uint16_t r16;
+        cgc_uint8_t r8[2];
     } BC;
     union {
-        uint16_t r16;
-        uint8_t r8[2];
+        cgc_uint16_t r16;
+        cgc_uint8_t r8[2];
     } DE;
     union {
-        uint16_t r16;
-        uint8_t r8[2];
+        cgc_uint16_t r16;
+        cgc_uint8_t r8[2];
     } HL;
-    uint16_t SP;
-    uint16_t PC;
-    uint8_t IME;
+    cgc_uint16_t SP;
+    cgc_uint16_t PC;
+    cgc_uint8_t IME;
 #define IME_WAIT 0x80
 #define IME_DI  0x40
 #define IME_EI  0x20
 #define IME_IE  0x01
-} reg_t;
+} cgc_reg_t;
 
 typedef struct {
-    uint8_t bytes[16];
-} tile_t;
+    cgc_uint8_t bytes[16];
+} cgc_tile_t;
 
 typedef struct {
-    uint8_t colors[4];
-} pal_t;
+    cgc_uint8_t colors[4];
+} cgc_pal_t;
 
 typedef struct {
     /* Memory */
-    uint8_t *mem;
+    cgc_uint8_t *mem;
 
     /* Cartridge */
-    uint8_t *rom;
+    cgc_uint8_t *rom;
     char title[TITLE_SIZE];
 
     /* LCD */
-    uint8_t *bg;
-    uint8_t *screen;
-    pal_t palettes[3];
+    cgc_uint8_t *bg;
+    cgc_uint8_t *screen;
+    cgc_pal_t palettes[3];
 
     /* Joypad */
-    input_t input;
+    cgc_input_t input;
 
     /* CPU state */
-    reg_t reg;
+    cgc_reg_t reg;
 #define R_SP reg.SP
 #define R_PC reg.PC
 #define R_AF reg.AF.r16
@@ -196,17 +196,17 @@ typedef struct {
     unsigned int ticks_ly;
     unsigned int ticks_divider;
     unsigned int ticks_timer;
-} gb_t;
+} cgc_gb_t;
 
 // Hardware functions
-gb_t *gb_new();
-void gb_reset(gb_t *gb);
-int gb_load(gb_t *gb, uint8_t *cartridge);
-int gb_tick(gb_t *gb);
+cgc_gb_t *cgc_gb_new();
+void cgc_gb_reset(cgc_gb_t *gb);
+int cgc_gb_load(cgc_gb_t *gb, cgc_uint8_t *cartridge);
+int cgc_gb_tick(cgc_gb_t *gb);
 
 // CPU functions
-int cpu_tick(gb_t *gb);
-void cpu_interrupt(gb_t *gb, int n);
+int cgc_cpu_tick(cgc_gb_t *gb);
+void cgc_cpu_interrupt(cgc_gb_t *gb, int n);
 
 // LCD functions
-int lcd_tick(gb_t *gb);
+int cgc_lcd_tick(cgc_gb_t *gb);

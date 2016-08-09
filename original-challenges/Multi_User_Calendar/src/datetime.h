@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,39 +32,39 @@ typedef struct {
     short year;
     char month;
     char day;
-} date_t;
+} cgc_date_t;
 
 typedef struct {
     char hour;
     char minute;
-} time_t;
+} cgc_time_t;
 
 typedef struct {
-    date_t date;
-    time_t time;
-} datetime_t;
+    cgc_date_t date;
+    cgc_time_t time;
+} cgc_datetime_t;
 
 typedef struct {
-    datetime_t start;
-    datetime_t end;
-} duration_t;
+    cgc_datetime_t start;
+    cgc_datetime_t end;
+} cgc_duration_t;
 
-bool set_date(date_t *date, char month, char day, short year);
-bool set_time(time_t *time, char hour, char minute);
-bool set_datetime(datetime_t *dt, date_t date, time_t time);
-bool set_duration(duration_t *d, datetime_t dt1, datetime_t dt2);
-int compare_date(void *_date1, void *_date2);
-int compare_time(void *_time1, void *_time2);
-int compare_datetime(void *_dt1, void *_dt2);
-bool durations_overlap(duration_t d1, duration_t d2);
-bool date_within(duration_t d, date_t date);
-bool datetime_within(duration_t d, datetime_t dt);
-bool strtodate(char *datestr, date_t *date);
-bool strtotime(char *timestr, time_t *time);
-void print_date(date_t *date);
-void print_time(time_t *time);
-char *get_month(date_t *date);
-void get_time_str(char *time_str, time_t *time);
-void get_date_str(char *date_str, date_t *date);
+cgc_bool cgc_set_date(cgc_date_t *date, char month, char day, short year);
+cgc_bool cgc_set_time(cgc_time_t *time, char hour, char minute);
+cgc_bool cgc_set_datetime(cgc_datetime_t *dt, cgc_date_t date, cgc_time_t time);
+cgc_bool cgc_set_duration(cgc_duration_t *d, cgc_datetime_t dt1, cgc_datetime_t dt2);
+int cgc_compare_date(void *_date1, void *_date2);
+int cgc_compare_time(void *_time1, void *_time2);
+int cgc_compare_datetime(void *_dt1, void *_dt2);
+cgc_bool cgc_durations_overlap(cgc_duration_t d1, cgc_duration_t d2);
+cgc_bool cgc_date_within(cgc_duration_t d, cgc_date_t date);
+cgc_bool cgc_datetime_within(cgc_duration_t d, cgc_datetime_t dt);
+cgc_bool cgc_strtodate(char *datestr, cgc_date_t *date);
+cgc_bool cgc_strtotime(char *timestr, cgc_time_t *time);
+void cgc_print_date(cgc_date_t *date);
+void cgc_print_time(cgc_time_t *time);
+char *cgc_get_month(cgc_date_t *date);
+void cgc_get_time_str(char *time_str, cgc_time_t *time);
+void cgc_get_date_str(char *date_str, cgc_date_t *date);
 
 #endif

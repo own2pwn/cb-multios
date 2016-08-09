@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -32,7 +32,7 @@
 #define FRAME_SUCCESS 1
 #define FRAME_END 2
 
-int frame_decode(buffer_t *input, buffer_t *output);
-void frame_encode(buffer_t *input, buffer_t *output);
+int cgc_frame_decode(cgc_buffer_t *input, cgc_buffer_t *output);
+void cgc_frame_encode(cgc_buffer_t *input, cgc_buffer_t *output);
 
 #endif

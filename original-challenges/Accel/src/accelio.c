@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Kaprica Security, Inc.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -30,10 +30,10 @@
  * sides = 2, trim back
  * sides = 3, trim both
 */
-int strtrim(char *str, size_t size, int sides)
+int cgc_strtrim(char *str, cgc_size_t size, int sides)
 {
     int i, len;
-    len = strlen(str) + 1;
+    len = cgc_strlen(str) + 1;
     if (len > size)
         return -1;
     else if (len == 1)
@@ -42,8 +42,8 @@ int strtrim(char *str, size_t size, int sides)
     if (sides == TRIM_FRONT || sides == TRIM_ALL) {
         char *tmp = str;
         for (i = 0; i < len; i++, tmp++) {
-            if (strchr(WHITESPACE, *tmp) == NULL) {
-                memcpy(str, tmp, len - i);
+            if (cgc_strchr(WHITESPACE, *tmp) == NULL) {
+                cgc_memcpy(str, tmp, len - i);
                 break;
             }
         }
@@ -51,7 +51,7 @@ int strtrim(char *str, size_t size, int sides)
 
     if ((sides == TRIM_BACK || sides == TRIM_ALL) && (len - 1 != 0)) {
         for (i = len - 2; i >= 0 ; i--) {
-            if (strchr(WHITESPACE, str[i]) == NULL) {
+            if (cgc_strchr(WHITESPACE, str[i]) == NULL) {
                 str[i + 1] = '\0';
                 break;
             } else if (i == 0) {
@@ -65,21 +65,21 @@ int strtrim(char *str, size_t size, int sides)
 }
 
 //row and col must be buffers of at least len 4
-int valid_cell_id(char *input)
+int cgc_valid_cell_id(char *input)
 {
-    if (strlen(input) < 2)
+    if (cgc_strlen(input) < 2)
         return -1;
 
-    size_t i = 0, is_num = 0;
+    cgc_size_t i = 0, is_num = 0;
     char row[3];
     char col[3];
     char delim = '\0';
-    char c = toupper(input[0]);
+    char c = cgc_toupper(input[0]);
     if (c < 'A' || c > 'Z')
         return -1;
     row[0] = c;
 
-    c = toupper(input[1]);
+    c = cgc_toupper(input[1]);
     if (!(c >= 'A' && c <= 'Z') && !(c >= '0' && c <= '9' ))
         return -1;
 
@@ -108,18 +108,18 @@ int valid_cell_id(char *input)
 }
 
 //row and col must be buffers of at least len 4
-int get_rowcol(char *input, char *row, char *col, char delim)
+int cgc_get_rowcol(char *input, char *row, char *col, char delim)
 {
-    if (strlen(input) < 2)
+    if (cgc_strlen(input) < 2)
         return -1;
 
-    size_t i = 0, is_num = 0;
-    char c = toupper(input[0]);
+    cgc_size_t i = 0, is_num = 0;
+    char c = cgc_toupper(input[0]);
     if (c < 'A' || c > 'Z')
         return -1;
     row[0] = c;
 
-    c = toupper(input[1]);
+    c = cgc_toupper(input[1]);
     if (!(c >= 'A' && c <= 'Z') && !(c >= '0' && c <= '9' ))
         return -1;
 
@@ -147,24 +147,24 @@ int get_rowcol(char *input, char *row, char *col, char delim)
     return -1;
 }
 
-int sanitize_formula(char *formula, size_t size)
+int cgc_sanitize_formula(char *formula, cgc_size_t size)
 {
-    size_t i, j, len;
-    len = strlen(formula);
+    cgc_size_t i, j, len;
+    len = cgc_strlen(formula);
     if (len > size)
         return -1;
 
-    char *sanitized = calloc(1, size);
+    char *sanitized = cgc_calloc(1, size);
     if (sanitized == NULL)
         return -1;
 
 
     for (i = 0, j=0; i < len; i++) {
-        if (strchr(WHITESPACE, formula[i]) == NULL)
+        if (cgc_strchr(WHITESPACE, formula[i]) == NULL)
             sanitized[j++] = formula[i];
     }
-    memcpy(formula, sanitized, size);
-    free(sanitized);
+    cgc_memcpy(formula, sanitized, size);
+    cgc_free(sanitized);
     return 0;
 }
 

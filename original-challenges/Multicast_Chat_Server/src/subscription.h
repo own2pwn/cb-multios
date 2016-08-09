@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Narf Industries <info@narfindustries.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, cgc_free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -32,29 +32,29 @@ typedef struct {
 	char* body;
 	char* priority;
 	void* next;
-} Message;
+} cgc_Message;
 
 typedef struct {
 	char* name;
 	char* deliveryType;
 	unsigned int index;
 	void* next;
-} Subscription;
+} cgc_Subscription;
 
 typedef struct {
 	char* name;
 	unsigned int head;
 	unsigned int tail;
-	Message* queue;
-	Subscription* subscriptions;
+	cgc_Message* queue;
+	cgc_Subscription* subscriptions;
 	void* next;
-} Channel;
+} cgc_Channel;
 
-void addSubscriptions(Channel** channelListPtr, Subscription** userSubscriptionsPtr, char* userName, char* channelName);
-int setDeliveryType(Subscription** subscriptionPtr, char* deliveryType);
-Subscription* getSubscription(Subscription* subscriptions, char* subscriptionName);
-Subscription* newSubscription(char* name, unsigned index, char* deliveryType);
-Channel* getChannel(Channel* channelList, char* channelName);
-Message* getLastMessage(Message* queue);
-Message* getMessageById(Message* queue, unsigned int id);
-void cleanupChannel(Channel* channel);
+void cgc_addSubscriptions(cgc_Channel** channelListPtr, cgc_Subscription** userSubscriptionsPtr, char* userName, char* channelName);
+int cgc_setDeliveryType(cgc_Subscription** subscriptionPtr, char* deliveryType);
+cgc_Subscription* cgc_getSubscription(cgc_Subscription* subscriptions, char* subscriptionName);
+cgc_Subscription* cgc_newSubscription(char* name, unsigned index, char* deliveryType);
+cgc_Channel* cgc_getChannel(cgc_Channel* channelList, char* channelName);
+cgc_Message* cgc_getLastMessage(cgc_Message* queue);
+cgc_Message* cgc_getMessageById(cgc_Message* queue, unsigned int id);
+void cgc_cleanupChannel(cgc_Channel* channel);
