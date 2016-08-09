@@ -23,9 +23,9 @@ THE SOFTWARE.
 
 #include "service.h"
 
-cgc_size_t cgc_receiveIt( void *data, cgc_size_t length )
+size_t cgc_receiveIt( void *data, size_t length )
 {
-	cgc_size_t count = 0;
+	size_t count = 0;
 	unsigned char *tdata = (unsigned char *)data;
 	int bread = 0;
 
@@ -53,7 +53,7 @@ cgc_size_t cgc_receiveIt( void *data, cgc_size_t length )
 cgc_pBitStream cgc_readImageData( void )
 {
 	int length = 0;
-	cgc_size_t bytes_read = 0;
+	size_t bytes_read = 0;
 	cgc_pBitStream npbs = NULL;
 	char *newData = NULL;
 

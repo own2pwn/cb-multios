@@ -55,7 +55,7 @@ typedef enum {
 
 struct parkcmd {
     cgc_cmdtype type;
-    cgc_size_t size;
+    size_t size;
     char *cmdbuf; //this is cast to various structs 
 } typedef cgc_parkcmd_t;
 
@@ -109,7 +109,7 @@ cgc_parkstats_t *statsp;
 struct list parkl;
 struct list ticketl;
 struct list couponl;
-cgc_size_t count;
+size_t count;
 
 void cgc_free_parking(void *node) {
     cgc_parkcmd_t *cmd = (cgc_parkcmd_t*)node;
@@ -250,7 +250,7 @@ void cgc_print_cmd(void *d) {
 
 
 cgc_parkinstr_t *cgc_read_instr() {
-    cgc_size_t res;
+    size_t res;
     cgc_parkinstr_t *instr = cgc_calloc(sizeof(cgc_parkinstr_t));
 
     if (!instr)

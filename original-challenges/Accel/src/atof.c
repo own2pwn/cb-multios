@@ -26,7 +26,7 @@
 
 #include "convert.h"
 
-double cgc_atof(char *str, cgc_size_t size, int *bad_conversion)
+double cgc_atof(char *str, size_t size, int *bad_conversion)
 {
     if (str == NULL || cgc_strlen(str) >= size || cgc_strlen(str) == 0)
         goto error;

@@ -45,7 +45,7 @@ typedef struct {
 } cgc_Pool;
 
 typedef struct {
-	cgc_size_t size;
+	size_t size;
 	void* memory;
 	void* next;
 } cgc_LargeChunk;
@@ -57,7 +57,7 @@ typedef struct {
 *
 * @return a pointer the allocated memory
 */
-void* cgc_malloc(cgc_size_t size);
+void* cgc_malloc(size_t size);
 
 /**
 * Deallocate the chunk of memory at address ptr

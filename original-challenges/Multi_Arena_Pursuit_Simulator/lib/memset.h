@@ -30,4 +30,4 @@
 * 
 * @return A pointer to the destination address
 */
-void * memset(void *dst, char c, cgc_size_t n);
+void * memset(void *dst, char c, size_t n);

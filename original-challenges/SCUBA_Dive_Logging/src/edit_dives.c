@@ -87,7 +87,7 @@ int cgc_update_dive(cgc_dive_log_type *dive) {
 
 char buffer[1024];
 char buf2[1024];
-cgc_size_t count;
+size_t count;
 
 	cgc_printf("Dive Site");
 

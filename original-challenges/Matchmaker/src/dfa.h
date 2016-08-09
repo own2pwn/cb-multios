@@ -102,7 +102,7 @@ int cgc_dfa_process_input(struct dfa *dfa, char c);
  * @param len The maximum length of the string
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int cgc_dfa_give_example(struct dfa *dfa, char *str, cgc_size_t len);
+int cgc_dfa_give_example(struct dfa *dfa, char *str, size_t len);
 
 #endif /* DFA_H_ */
 

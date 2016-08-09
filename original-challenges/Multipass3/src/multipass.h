@@ -211,11 +211,11 @@ extern cgc_uint32_t NEXT_TXN_ID;
 extern cgc_uint32_t NEXT_AUTH_CODE;
 // used when we return null for some packet ...
 extern cgc_uint32_t ERRNO;
-extern cgc_size_t HIST_SZ;
+extern size_t HIST_SZ;
 
 typedef struct pack_and_data {
     cgc_packet_head_t *ph;
-    cgc_size_t pay_data_l;
+    size_t pay_data_l;
 
     void * data;
 } cgc_pack_and_data_t;
@@ -230,7 +230,7 @@ cgc_pack_and_data_t * cgc_generate_new_init_and_init_resp(cgc_pack_and_data_t *p
 cgc_packet_head_t * cgc_alloc_new_pkt();
 cgc_pack_and_data_t * cgc_process_client_fin(cgc_pack_and_data_t *fin_pkt);
 cgc_pack_and_data_t * cgc_create_auth_resp(cgc_uint32_t cid, cgc_uint32_t acd, cgc_uint32_t txn_id);
-cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint32_t auth_id, cgc_uint32_t txn_id, cgc_size_t payload_sz);
+cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint32_t auth_id, cgc_uint32_t txn_id, size_t payload_sz);
 cgc_uint32_t cgc_register_card_id();
 cgc_uint32_t cgc_register_transaction();
 cgc_uint32_t cgc_register_auth_code();
@@ -238,7 +238,7 @@ cgc_pack_and_data_t * cgc_generate_error(cgc_packet_head_t *ph);
 cgc_pack_and_data_t * cgc_process_client_purchase_op(cgc_pack_and_data_t * pin);
 cgc_pack_and_data_t * cgc_process_client_recharge_op(cgc_pack_and_data_t *pad);
 cgc_pack_and_data_t * cgc_process_client_balance(cgc_pack_and_data_t *pin);
-cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_size_t *ds);
+cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, size_t *ds);
 cgc_pack_and_data_t * cgc_process_client_refund_op(cgc_pack_and_data_t * pin);
 cgc_pack_and_data_t * cgc_process_client_auth(cgc_pack_and_data_t * pin);
 #endif

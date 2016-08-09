@@ -26,7 +26,7 @@
 // Assumption: each access is 4B (the word size) in length.
 cgc_bool cgc_access_check(cgc_byte_t *loc, cgc_byte_t *bgn, cgc_byte_t *end) {
     if ((loc >= bgn && loc <= end) || // standard
-        (loc+(sizeof(cgc_size_t)-1) >= bgn && loc+(sizeof(cgc_size_t)-1) <= end)) { // offcut up to 3 bytes
+        (loc+(sizeof(size_t)-1) >= bgn && loc+(sizeof(size_t)-1) <= end)) { // offcut up to 3 bytes
         return TRUE;
     }
     return FALSE;
@@ -257,7 +257,7 @@ int cgc_do_static(cgc_packet_t *req, cgc_packet_t *resp) {
         goto bail;
     }
 
-    cgc_size_t idx = req->inst.src;
+    size_t idx = req->inst.src;
     if (STATIC_MAX_SWITCH >= idx) {
         resp->inst.dst = cgc_static_switch(idx);
         resp->status = S_RESP;

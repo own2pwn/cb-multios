@@ -29,7 +29,7 @@ int cgc_recv_until_delim_n(int fd, char delim, char *buf, unsigned int size) {
 		return ERRNO_RECV;
 	}
 
-	cgc_size_t bytes_read_iter = 0;
+	size_t bytes_read_iter = 0;
 	unsigned int bytes_read_total = 0;
 
 	unsigned int i = 0;

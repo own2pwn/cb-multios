@@ -57,7 +57,7 @@ typedef int (*cgc_handler_t)(cgc_priv_t *priv, char *resource);
 
 char *cgc_read_line(cgc_silk_t *silk)
 {
-    cgc_size_t cnt = 0, idx = 0;
+    size_t cnt = 0, idx = 0;
     char *result = NULL;
     
     do {

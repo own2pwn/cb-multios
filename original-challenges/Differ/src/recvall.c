@@ -23,10 +23,10 @@
 
 #include <stdlib.h>
 
-int cgc_recvall(int fd, void *dst, cgc_size_t size)
+int cgc_recvall(int fd, void *dst, size_t size)
 {
     unsigned char *buf = dst;
-    cgc_size_t rx;
+    size_t rx;
 
     while (size)
     {

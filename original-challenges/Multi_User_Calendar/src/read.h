@@ -26,8 +26,8 @@
 
 #define MAX_TRIES 5
 
-int cgc_readline(char *buf, cgc_size_t buf_size);
-int cgc_readnum(char *buf, cgc_size_t buf_size, int *num);
-char *cgc_q_and_a(char *question, int maxlen, char *buf, cgc_size_t buflen, int *recv_status, cgc_bool allow_empty);
+int cgc_readline(char *buf, size_t buf_size);
+int cgc_readnum(char *buf, size_t buf_size, int *num);
+char *cgc_q_and_a(char *question, int maxlen, char *buf, size_t buflen, int *recv_status, cgc_bool allow_empty);
 
 #endif

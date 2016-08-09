@@ -24,7 +24,7 @@
 
 #include "safe.h"
 
-void* cgc_xcalloc(cgc_size_t count, cgc_size_t size)
+void* cgc_xcalloc(size_t count, size_t size)
 {
 
   dbg("Allocating %d", count * size);

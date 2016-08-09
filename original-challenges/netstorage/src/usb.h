@@ -112,8 +112,8 @@ typedef struct {
 } cgc_urb_t;
 
 typedef struct {
-    cgc_size_t (*recv) (void *buf, cgc_size_t len);
-    cgc_size_t (*send) (const void *buf, cgc_size_t len);
+    size_t (*recv) (void *buf, size_t len);
+    size_t (*send) (const void *buf, size_t len);
 
     int attached;
     cgc_msc_t msc;

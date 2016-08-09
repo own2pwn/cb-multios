@@ -32,7 +32,7 @@ THE SOFTWARE.
 // Converts a char string into a cgc_money struct. 
 void cgc_atom(cgc_pmoney amount, char *str)
 {
-	cgc_size_t i = 0;
+	size_t i = 0;
 	int negative = 0;
 	amount->cents = 0;
 	amount->dollars = 0;
@@ -69,8 +69,8 @@ void cgc_atom(cgc_pmoney amount, char *str)
 void cgc_mtoa(char *str, cgc_pmoney amount)
 {
 	char buffer[20];
-	cgc_size_t pos = 0;
-	cgc_size_t outpos;
+	size_t pos = 0;
+	size_t outpos;
 	int value = amount->cents;
 	int negative = 0;
 
@@ -363,10 +363,10 @@ void cgc_nonexempt_overtime(cgc_pmoney pay, cgc_pmoney rate, cgc_ptime timeworke
 // 		**key points to start of null terminated key string
 //		**value points to start of null terminated value string
 // OTHER_INPUT_RECEIVED - Input received that does not match previous options
-int cgc_get_key_value(char *inbuf, cgc_size_t length, char **key, char **value)
+int cgc_get_key_value(char *inbuf, size_t length, char **key, char **value)
 {
 	char buffer[80];
-	cgc_size_t bytes_read;
+	size_t bytes_read;
 	if (cgc_receive_until((char *)&buffer, length, '`', &bytes_read) != 0)
 	{
 		return READ_ERROR;

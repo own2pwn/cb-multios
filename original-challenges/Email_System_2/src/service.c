@@ -48,7 +48,7 @@ int cgc_handle_A_input()
 	// handle create user
 	// handle cgc_login
 	// handle exit
-	cgc_size_t l = 0;
+	size_t l = 0;
 	while (l < 1)
 		l = cgc_receive_until( buf, '\n', 2);
 
@@ -67,7 +67,7 @@ int cgc_handle_A_input()
 		char pswd[MAX_PASS_LEN];
 
 		cgc_printf("Username: \n");
-		cgc_size_t len = cgc_receive_until( name, '\n', MAX_NAME_LEN - 1);
+		size_t len = cgc_receive_until( name, '\n', MAX_NAME_LEN - 1);
 		name[len++] = 0;
 		cgc_printf("Password: \n");
 		len = cgc_receive_until( pswd, '\n', MAX_PASS_LEN - 1);
@@ -120,7 +120,7 @@ void cgc_print_B()
 int cgc_handle_B_input()
 {
 	char buf[3] = {0};
-	cgc_size_t l = 0;
+	size_t l = 0;
 	while (l < 1)
 		l = cgc_receive_until( buf, '\n', 2);
 
@@ -163,7 +163,7 @@ int cgc_handle_B_input()
 		cgc_printf("To:\n");
 
 		char dest[MAX_NAME_LEN];
-		cgc_size_t len = cgc_receive_until( dest, '\n', MAX_NAME_LEN - 1);
+		size_t len = cgc_receive_until( dest, '\n', MAX_NAME_LEN - 1);
 		dest[len++] = 0;
 
 		cgc_printf("cgc_Message:\n");

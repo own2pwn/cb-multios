@@ -35,7 +35,7 @@ char *responses[] = {
     "You can't stop the signal, Mal.",
 };
 
-void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, cgc_size_t len) {
+void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, size_t len) {
     cgc_uint8_t state[256] = {0};
     cgc_uint8_t *key = in; //our data is the key!
     cgc_uint32_t i,j,k,l;

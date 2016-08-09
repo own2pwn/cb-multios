@@ -27,8 +27,8 @@ THE SOFTWARE.
 #ifndef _STRING_H
 #define _STRING_H
 
-void *cgc_memcpy(void *dst, void *src, cgc_size_t n);
-cgc_size_t cgc_strlen( char * );
+void *cgc_memcpy(void *dst, void *src, size_t n);
+size_t cgc_strlen( char * );
 //void cgc_puts(char *str);
 
 #endif

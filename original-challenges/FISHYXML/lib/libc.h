@@ -65,7 +65,7 @@
  * @param member The member to calculate the offset of
  * @return The offset of member in type
  */
-#define OFFSETOF(type, member) ((cgc_size_t)(&((type *)NULL)->member))
+#define OFFSETOF(type, member) ((size_t)(&((type *)NULL)->member))
 
 /**
  * Find the container structure from a pointer to a member.
@@ -87,7 +87,7 @@
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_malloc(cgc_size_t size);
+void *cgc_malloc(size_t size);
 
 /**
  * Free a chunk of memory allocated with cgc_malloc().
@@ -105,7 +105,7 @@ void cgc_free(void *ptr);
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_calloc(cgc_size_t size);
+void *cgc_calloc(size_t size);
 
 /**
  * Resize a chunk of memory allocated with cgc_malloc().
@@ -114,7 +114,7 @@ void *cgc_calloc(cgc_size_t size);
  * @param size The new size of the chunk
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_realloc(void *ptr, cgc_size_t size);
+void *cgc_realloc(void *ptr, size_t size);
 
 
 

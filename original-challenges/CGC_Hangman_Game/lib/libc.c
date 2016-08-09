@@ -9,8 +9,8 @@ typedef __builtin_va_list cgc_va_list;
 struct _FILE {
    int fd;
    int state;
-   cgc_size_t max;
-   cgc_size_t curr;
+   size_t max;
+   size_t curr;
    unsigned char buf[4096];
 };
 
@@ -126,9 +126,9 @@ int cgc_tolower(int c) {
    return c;
 }
 
-int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_transmit_all(int fd, const void *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
     if (!buf) 
@@ -162,8 +162,8 @@ char *cgc_strcpy(char *dst, const char *src) {
    return dst;
 }
 
-cgc_size_t cgc_strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t cgc_strlen(const char *str) {
+   size_t res = 0;
    while (*str++) {res++;}
    return res;
 }
@@ -1196,10 +1196,10 @@ char *cgc_fgets(char *s, int size, cgc_FILE *stream) {
    return s;
 }
 
-int cgc_fread(void *buf, cgc_size_t size, cgc_size_t nmemb, cgc_FILE *f) {
-   cgc_size_t nitems;
-   cgc_size_t n;
-   cgc_size_t i = 0;
+int cgc_fread(void *buf, size_t size, size_t nmemb, cgc_FILE *f) {
+   size_t nitems;
+   size_t n;
+   size_t i = 0;
    for (nitems = 0; nitems < nmemb; nitems++) {
       for (n = 0; n < size; n++) {
          int ch = cgc_fgetc(f);

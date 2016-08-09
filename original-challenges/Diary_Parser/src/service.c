@@ -33,7 +33,7 @@ cgc_uint16_t chapter_count;
 cgc_uint16_t cgc_read_short()
 {
 	cgc_uint16_t val;
-	//cgc_size_t rx;
+	//size_t rx;
 
 	//if ( receive( STDIN, &val, sizeof(val), &rx ) != 0 ) 
 	if (cgc_receive_bytes( (cgc_uint8_t*)&val, sizeof(val) ) != 2 )

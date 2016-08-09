@@ -22,7 +22,7 @@
  */
 #include <string.h>
 
-char *cgc_strncpy(char *dest, const char *src, cgc_size_t len)
+char *cgc_strncpy(char *dest, const char *src, size_t len)
 {
   char *p;
   for (p = dest; *src != '\0' && p - dest < len; src++, p++)

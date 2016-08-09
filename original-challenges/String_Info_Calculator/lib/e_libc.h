@@ -27,7 +27,7 @@
 #ifndef E_LIBC_H
 #define E_LIBC_H
 
-// cgc_size_t cgc_strlen(const char *str);
+// size_t cgc_strlen(const char *str);
 // char *cgc_strcpy(char *dst, const char *src);
 // int cgc_strcmp(const char *s1, const char *s2);
 // int cgc_memcmp(const char *s1, const char *s2, unsigned int len);
@@ -38,8 +38,8 @@
 // int cgc_toupper(int c);
 // int cgc_tolower(int c);
 
-// int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size);
-// int cgc_receive_all(int fd, char *buf, const cgc_size_t size);
+// int cgc_transmit_all(int fd, const void *buf, const size_t size);
+// int cgc_receive_all(int fd, char *buf, const size_t size);
 
 #define EOF                  -1
 
@@ -64,7 +64,7 @@ extern cgc_FILE *stderr;
 // int  cgc_getchar(void);
 
 // char *cgc_fgets(char *, int, cgc_FILE *);
-// int cgc_fread(void *, cgc_size_t, cgc_size_t, cgc_FILE *);
+// int cgc_fread(void *, size_t, size_t, cgc_FILE *);
 
 // int ferror(cgc_FILE *stream);
 // int feof(cgc_FILE *stream);

@@ -26,11 +26,11 @@
 
 #include "sfile.h"
 
-int cgc_recvall(int fd, void *dst, cgc_size_t size);
+int cgc_recvall(int fd, void *dst, size_t size);
 
 cgc_SFILE *cgc_open_sfile()
 {
-    cgc_size_t rx, idx = 0;
+    size_t rx, idx = 0;
     unsigned int filesize = 0;
     cgc_SFILE tmp_sfp;
     cgc_SFILE *sfp = &tmp_sfp, *new_sfp = NULL;

@@ -273,7 +273,7 @@ cgc_uint8_t cgc_fclose(cgc_pFILE stream) {
 
 }
 
-cgc_size_t cgc_fread(void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream) {
+size_t cgc_fread(void *restrict ptr, size_t size, size_t nitems, cgc_FILE *restrict stream) {
 
 	if (!ptr || !stream || size == 0 || nitems == 0) {
 		return(0);
@@ -293,7 +293,7 @@ cgc_size_t cgc_fread(void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc
 
 }	
 
-cgc_size_t cgc_fwrite(const void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream) {
+size_t cgc_fwrite(const void *restrict ptr, size_t size, size_t nitems, cgc_FILE *restrict stream) {
 
 	if (!ptr || !stream) {
 		return(0);

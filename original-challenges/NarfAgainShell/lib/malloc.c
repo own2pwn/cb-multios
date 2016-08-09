@@ -26,30 +26,30 @@
 #include "list.h"
 
 struct chunk {
-    cgc_size_t header;
+    size_t header;
     struct list_node list;
 } __attribute__((packed));
 
-static cgc_size_t size_class_sizes[] = {
+static size_t size_class_sizes[] = {
     16, 32, 64, 128, 256, 512, 1024, 2048
 };
 
-#define NUM_SIZE_CLASSES (sizeof(size_class_sizes) / sizeof(cgc_size_t))
+#define NUM_SIZE_CLASSES (sizeof(size_class_sizes) / sizeof(size_t))
 
 static struct list freelists[NUM_SIZE_CLASSES] = {};
 
 #define ALIGN(x, a) (((x) + (a - 1)) & ~(a - 1))
-#define IS_PAGE_ALIGNED(a) ((((cgc_size_t)a) & (PAGE_SIZE - 1)) == 0)
-#define CHUNK_OVERHEAD (2 * sizeof(cgc_size_t))
+#define IS_PAGE_ALIGNED(a) ((((size_t)a) & (PAGE_SIZE - 1)) == 0)
+#define CHUNK_OVERHEAD (2 * sizeof(size_t))
 #define MIN_SIZE (size_class_sizes[0])
 #define MAX_SIZE (PAGE_SIZE - 1)
 #define SIZE_CLASS_INDEX(size) (cgc_log_base_two(size) - cgc_log_base_two(MIN_SIZE))
 
 #define CHUNK_SIZE(chunk) ((chunk)->header & ~1)
 #define IS_ALLOCATED(chunk) ((chunk)->header & 1)
-#define FOOTER(chunk) ((cgc_size_t *)((char *)chunk + CHUNK_SIZE(chunk) - sizeof(cgc_size_t)))
+#define FOOTER(chunk) ((size_t *)((char *)chunk + CHUNK_SIZE(chunk) - sizeof(size_t)))
 #define NEXT_CHUNK(chunk) ((struct chunk *)((char *)chunk + CHUNK_SIZE(chunk)))
-#define PREV_SIZE(chunk) (CHUNK_SIZE(((struct chunk *)((cgc_size_t *)chunk - 1))))
+#define PREV_SIZE(chunk) (CHUNK_SIZE(((struct chunk *)((size_t *)chunk - 1))))
 #define PREV_CHUNK(chunk) ((struct chunk *)((char *)chunk - PREV_SIZE(chunk)))
 
 static inline unsigned int
@@ -90,7 +90,7 @@ cgc_mark_free(struct chunk *chunk)
 static int
 cgc_find_fit(const struct list_node *chunk_, void *size_)
 {
-    cgc_size_t size = (cgc_size_t)size_;
+    size_t size = (size_t)size_;
     struct chunk *chunk = list_entry(struct chunk, list, chunk_);
 
     return CHUNK_SIZE(chunk) >= size;
@@ -106,7 +106,7 @@ cgc_size_cmp(const struct list_node *a_, const struct list_node *b_)
 }
 
 static void *
-cgc_allocate_large_chunk(cgc_size_t size)
+cgc_allocate_large_chunk(size_t size)
 {
     struct chunk *chunk;
 
@@ -134,10 +134,10 @@ cgc_grow_heap(void)
 }
 
 static struct chunk *
-cgc_split_chunk(struct chunk *chunk, cgc_size_t size)
+cgc_split_chunk(struct chunk *chunk, size_t size)
 {
     struct chunk *new = (struct chunk *)((char *)chunk + size);
-    cgc_size_t orig_size = CHUNK_SIZE(chunk);
+    size_t orig_size = CHUNK_SIZE(chunk);
 
     if (CHUNK_SIZE(chunk) <= size + MIN_SIZE)
         return chunk;
@@ -188,15 +188,15 @@ cgc_coalesce(struct chunk *chunk)
 }
 
 void *
-cgc_malloc(cgc_size_t size)
+cgc_malloc(size_t size)
 {
     struct chunk *chunk = NULL;
     unsigned int size_class;
 
-    if (ALIGN(size, sizeof(cgc_size_t)) + CHUNK_OVERHEAD < size)
+    if (ALIGN(size, sizeof(size_t)) + CHUNK_OVERHEAD < size)
         return NULL;
 
-    size = ALIGN(size, sizeof(cgc_size_t)) + CHUNK_OVERHEAD;
+    size = ALIGN(size, sizeof(size_t)) + CHUNK_OVERHEAD;
 
     if (size < MIN_SIZE)
         size = MIN_SIZE;
@@ -245,7 +245,7 @@ cgc_free(void *ptr)
 }
 
 void *
-cgc_calloc(cgc_size_t size)
+cgc_calloc(size_t size)
 {
     void *ret = cgc_malloc(size);
     if (ret)
@@ -254,9 +254,9 @@ cgc_calloc(cgc_size_t size)
 }
 
 void *
-cgc_realloc(void *ptr, cgc_size_t size)
+cgc_realloc(void *ptr, size_t size)
 {
-    cgc_size_t orig_size;
+    size_t orig_size;
     void *ret;
 
     if (ptr == NULL)

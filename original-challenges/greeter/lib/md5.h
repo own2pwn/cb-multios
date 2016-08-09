@@ -25,9 +25,9 @@
 
 #include <libcgc.h>
 
-void cgc_md5(const unsigned char *msg, cgc_size_t n, unsigned char *digest);
-void cgc_md5_hmac(const unsigned char *key, cgc_size_t key_len, const unsigned char *msg,
-        cgc_size_t msg_len, unsigned char *mac);
+void cgc_md5(const unsigned char *msg, size_t n, unsigned char *digest);
+void cgc_md5_hmac(const unsigned char *key, size_t key_len, const unsigned char *msg,
+        size_t msg_len, unsigned char *mac);
 
 #endif /* MD5_H_ */
 

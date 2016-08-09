@@ -26,13 +26,13 @@
 
 #include "convert.h"
 
-char *cgc_itoa(int value, char *str, cgc_size_t size)
+char *cgc_itoa(int value, char *str, size_t size)
 {
     int base = 10;
     if (size <= 1 )
         return NULL;
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     int is_negative = 0;
 
     if (value < 0)

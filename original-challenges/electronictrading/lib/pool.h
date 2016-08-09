@@ -36,7 +36,7 @@ typedef unsigned long cgc_uintptr_t;
 struct freeblk;
 
 struct pool {
-    cgc_size_t size;
+    size_t size;
     LIST_OF(struct freeblk) freelist;
 };
 
@@ -46,7 +46,7 @@ struct pool {
  * @param pool The memory pool
  * @param size The size of each chunk allocated from the pool
  */
-void cgc_pool_init(struct pool *pool, cgc_size_t size);
+void cgc_pool_init(struct pool *pool, size_t size);
 
 /**
  * Destroy a memory pool, reclaiming memory where possible.

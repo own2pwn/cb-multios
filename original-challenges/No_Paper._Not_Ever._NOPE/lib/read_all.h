@@ -31,6 +31,6 @@
  * @param size Number of bytes to receive.
  * @returns Number of bytes received.
  */
-cgc_size_t cgc_read_all(int fd, char *buf, cgc_size_t size);
+size_t cgc_read_all(int fd, char *buf, size_t size);
 
 #endif

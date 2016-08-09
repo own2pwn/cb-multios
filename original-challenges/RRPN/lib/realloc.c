@@ -28,7 +28,7 @@
 
 #include "malloc_internal.h"
 
-void *cgc_realloc(void *ptr, cgc_size_t size)
+void *cgc_realloc(void *ptr, size_t size)
 {
     if (size == 0)
     {
@@ -48,7 +48,7 @@ void *cgc_realloc(void *ptr, cgc_size_t size)
     void *newmem = cgc_malloc(size);
     if (newmem == NULL)
         return NULL;
-    cgc_size_t tocopy = block->size-OVERHEAD_BYTES;
+    size_t tocopy = block->size-OVERHEAD_BYTES;
     if (tocopy > size)
         tocopy = size;
     cgc_memcpy(newmem, ptr, tocopy);

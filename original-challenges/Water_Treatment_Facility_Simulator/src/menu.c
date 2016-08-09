@@ -46,10 +46,10 @@ extern cgc_PlantSystem Effluent;
 
 extern cgc_uint8_t SimStepCount;
 
-cgc_int32_t cgc_read_until(char *buf, char delimiter, cgc_size_t max) {
-	cgc_size_t total_len = 0;
+cgc_int32_t cgc_read_until(char *buf, char delimiter, size_t max) {
+	size_t total_len = 0;
 	char c;
-	cgc_size_t num_bytes;
+	size_t num_bytes;
 
 	if (buf == NULL) {
 		return(-1);

@@ -24,7 +24,7 @@
 #include "memcpy.h"
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, size_t cnt) {
 
     cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
     cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;

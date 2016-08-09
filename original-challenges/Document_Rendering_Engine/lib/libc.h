@@ -60,7 +60,7 @@
  * @param member The member to calculate the offset of
  * @return The offset of member in type
  */
-#define OFFSETOF(type, member) ((cgc_size_t)(&((type *)NULL)->member))
+#define OFFSETOF(type, member) ((size_t)(&((type *)NULL)->member))
 
 /**
  * Find the container structure from a pointer to a member.
@@ -83,7 +83,7 @@
  * @param n The number of bytes to read
  * @return The number of bytes read, or negative on failure
  */
-cgc_ssize_t cgc_read_all(int fd, void *buf, cgc_size_t n);
+cgc_ssize_t cgc_read_all(int fd, void *buf, size_t n);
 
 /**
  * Read a line from fd to a buffer, caller responsible for freeing.
@@ -102,7 +102,7 @@ cgc_ssize_t cgc_read_line(int fd, char **buf);
  * @param n The number of bytes to write
  * @return The number of bytes written, or negative on failure
  */
-cgc_ssize_t cgc_write_all(int fd, void *buf, cgc_size_t n);
+cgc_ssize_t cgc_write_all(int fd, void *buf, size_t n);
 
 /**
  * Allocate a chunk of memory on the heap.
@@ -110,7 +110,7 @@ cgc_ssize_t cgc_write_all(int fd, void *buf, cgc_size_t n);
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_malloc(cgc_size_t size);
+void *cgc_malloc(size_t size);
 
 /**
  * Free a chunk of memory allocated with cgc_malloc().
@@ -128,7 +128,7 @@ void cgc_free(void *ptr);
  * @param size The size of the chunk to allocate
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_calloc(cgc_size_t size);
+void *cgc_calloc(size_t size);
 
 /**
  * Resize a chunk of memory allocated with cgc_malloc().
@@ -137,7 +137,7 @@ void *cgc_calloc(cgc_size_t size);
  * @param size The new size of the chunk
  * @return A pointer to the new chunk, or NULL if allocation failed
  */
-void *cgc_realloc(void *ptr, cgc_size_t size);
+void *cgc_realloc(void *ptr, size_t size);
 
 /**
  * Set the first n bytes of a block of memory to a value.
@@ -147,7 +147,7 @@ void *cgc_realloc(void *ptr, cgc_size_t size);
  * @param n The number of bytes to set
  * @return ptr
  */
-void *cgc_memset(void *ptr_, int val, cgc_size_t n);
+void *cgc_memset(void *ptr_, int val, size_t n);
 
 /**
  * Copy n bytes from src to dst.
@@ -157,7 +157,7 @@ void *cgc_memset(void *ptr_, int val, cgc_size_t n);
  * @param n The number of bytes to copy
  * @return dst
  */
-void *cgc_memcpy(void *dst_, const void *src_, cgc_size_t n);
+void *cgc_memcpy(void *dst_, const void *src_, size_t n);
 
 /**
  * Move n bytes from src to dst.
@@ -167,7 +167,7 @@ void *cgc_memcpy(void *dst_, const void *src_, cgc_size_t n);
  * @param n The number of bytes to copy
  * @return dst
  */
-void *cgc_memmove(void *dst_, const void *src_, cgc_size_t n);
+void *cgc_memmove(void *dst_, const void *src_, size_t n);
 
 /**
  * Compare n bytes from two buffers.
@@ -177,7 +177,7 @@ void *cgc_memmove(void *dst_, const void *src_, cgc_size_t n);
  * @param n The number of bytes to compare
  * @return negative if a_ < b_, 0 if a_ == b_, positive if a_ > b_
  */
-int cgc_memcmp(const void *a_, const void *b_, cgc_size_t n);
+int cgc_memcmp(const void *a_, const void *b_, size_t n);
 
 /**
  * Copy a null-terminated string from src to dst.
@@ -197,7 +197,7 @@ char *cgc_strcpy(char *dst, const char *src);
  * @param n The maximum number of bytes to copy
  * @return dst
  */
-char *cgc_strncpy(char *dst, const char *src, cgc_size_t n);
+char *cgc_strncpy(char *dst, const char *src, size_t n);
 
 /**
  * Return the length of a null-terminated string.
@@ -205,7 +205,7 @@ char *cgc_strncpy(char *dst, const char *src, cgc_size_t n);
  * @param s The string
  * @return The length of s
  */
-cgc_size_t cgc_strlen(const char *s);
+size_t cgc_strlen(const char *s);
 
 /**
  * Return the length of a null-terminated string, checking at most n bytes.
@@ -214,7 +214,7 @@ cgc_size_t cgc_strlen(const char *s);
  * @param n Maximum number of bytes to check
  * @return The lesser of the length of s or n
  */
-cgc_size_t cgc_strnlen(const char *s, cgc_size_t n);
+size_t cgc_strnlen(const char *s, size_t n);
 
 /**
  * Compare two null-terminated strings
@@ -233,7 +233,7 @@ int cgc_strcmp(const char *a, const char *b);
  * @param n The number of bytes to compare
  * @return negative if a < b, 0 if a == b, positive if a > b
  */
-int cgc_strncmp(const char *a, const char *b, cgc_size_t n);
+int cgc_strncmp(const char *a, const char *b, size_t n);
 
 /**
  * Append the bytes of a null-terminated string to another.
@@ -252,7 +252,7 @@ char *cgc_strcat(char *dst, const char *src);
  * @param n The maximum number of bytes to copy
  * @return dst
  */
-char *cgc_strncat(char *dst, const char *src, cgc_size_t n);
+char *cgc_strncat(char *dst, const char *src, size_t n);
 
 /**
  * Find the first instance of character c in s.
@@ -308,7 +308,7 @@ unsigned char cgc_to_bin(char c);
  * @param n The number of bytes to convert
  * @return A pointer to the end of the converted hex string
  */
-char *cgc_bin_to_hex(char *dst, const void *src_, cgc_size_t n);
+char *cgc_bin_to_hex(char *dst, const void *src_, size_t n);
 
 /**
  * Convert a 8-byte hex string to a unsigned int
@@ -386,7 +386,7 @@ int cgc_printf(const char *format, ...);
 #ifndef LIBC_H
 #define LIBC_H
 
-int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size);
+int cgc_transmit_all(int fd, const void *buf, const size_t size);
 
 #define EOF                  -1
 
@@ -411,7 +411,7 @@ int  cgc_getc(cgc_FILE *);
 int  cgc_getchar(void);
 
 char *cgc_fgets(char *, int, cgc_FILE *);
-int cgc_fread(void *, cgc_size_t, cgc_size_t, cgc_FILE *);
+int cgc_fread(void *, size_t, size_t, cgc_FILE *);
 
 int cgc_ferror(cgc_FILE *stream);
 int cgc_feof(cgc_FILE *stream);

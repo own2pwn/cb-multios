@@ -55,7 +55,7 @@ int cgc_enqueue(cgc_queue_t **queue, char *data)
     return 0;
 }
 
-int cgc_enqueue_copy(cgc_queue_t **queue, char *data, cgc_size_t size)
+int cgc_enqueue_copy(cgc_queue_t **queue, char *data, size_t size)
 {
     if (data == NULL)
         return -1;

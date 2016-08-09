@@ -39,7 +39,7 @@ unsigned char cgc_parcour_byte()
     return g_state.S[(g_state.S[i] + g_state.S[j]) % 256];
 }
 
-void cgc_parcour_init(const char *key, cgc_size_t size)
+void cgc_parcour_init(const char *key, size_t size)
 {
     int i, j;
     for (i = 0; i < 256; i++)

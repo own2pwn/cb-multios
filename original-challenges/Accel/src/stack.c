@@ -52,7 +52,7 @@ int cgc_push(cgc_stack_t **stack, char *data)
     return 0;
 }
 
-int cgc_push_copy(cgc_stack_t **stack, char *data, cgc_size_t size)
+int cgc_push_copy(cgc_stack_t **stack, char *data, size_t size)
 {
     if (data == NULL)
         return -1;

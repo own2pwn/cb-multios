@@ -97,7 +97,7 @@ cgc_byte_t *rx_buf_cursor;
 
 /**
  * Verify whether requested operation falls within acceptable boundaries.  
- * Assume R/Ws are 4B (sizeof(cgc_size_t)) long and prevent offcut accesses as well.
+ * Assume R/Ws are 4B (sizeof(size_t)) long and prevent offcut accesses as well.
  *
  * @param loc Where we've been requested to R/W.
  * @param bgn Beginning of the allowed access region.

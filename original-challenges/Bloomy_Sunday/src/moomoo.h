@@ -27,8 +27,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-unsigned int cgc_moomoo(const char *, cgc_size_t);
-unsigned int cgc_yooyoo(const char *, cgc_size_t);
-unsigned int cgc_geegee(const char *, cgc_size_t);
+unsigned int cgc_moomoo(const char *, size_t);
+unsigned int cgc_yooyoo(const char *, size_t);
+unsigned int cgc_geegee(const char *, size_t);
 
 #endif

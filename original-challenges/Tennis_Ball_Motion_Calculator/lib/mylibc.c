@@ -13,14 +13,14 @@
 //Question is whether the compiler will rearrange certain variables
 // It looks okay when I inlined it in my test - but that does not
 // necessarily mean that it is indeed good.
-cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
+cgc_ssize_t cgc_readLine(int fd, char* buf, size_t len)
 {
   char c = '\0';
   int ret = 0;
-  cgc_size_t i = 0;
-  cgc_size_t numRead;
+  size_t i = 0;
+  size_t numRead;
   cgc_fd_set fdsToWait;
-  cgc_size_t temp = len;
+  size_t temp = len;
   struct cgc_timeval timeToWait;
 
   if (buf == NULL)
@@ -88,9 +88,9 @@ cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
   return (i);
 }
 
-cgc_size_t cgc_myStrLen(const char* str)
+size_t cgc_myStrLen(const char* str)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
 
   if (str != NULL)
   {
@@ -103,9 +103,9 @@ cgc_size_t cgc_myStrLen(const char* str)
   return (i);
 }
 
-void cgc_write(int fd, const void* buf, cgc_size_t len) {
+void cgc_write(int fd, const void* buf, size_t len) {
    const void *end = buf + len;
-   cgc_size_t n;
+   size_t n;
    while (buf < end) {
       int r = transmit(fd, buf, end - buf, &n);
       if (r != 0 || n == 0) {

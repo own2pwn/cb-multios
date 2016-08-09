@@ -25,6 +25,6 @@
 
 cgc_uint32_t cgc_randint();
 
-cgc_uint32_t cgc_rand(void *buf, cgc_size_t s, cgc_size_t *out);
+cgc_uint32_t cgc_rand(void *buf, size_t s, size_t *out);
 #endif
 

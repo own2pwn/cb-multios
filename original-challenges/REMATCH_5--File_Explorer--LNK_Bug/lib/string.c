@@ -26,23 +26,23 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-cgc_size_t cgc_strlen( const char *str )
+size_t cgc_strlen( const char *str )
 {
-	cgc_size_t len = 0;
+	size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
 	return len;
 }
 
-void cgc_bzero(void *s, cgc_size_t n) {
+void cgc_bzero(void *s, size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *cgc_memset( void *ptr, int value, cgc_size_t num )
+void *cgc_memset( void *ptr, int value, size_t num )
 {
 	void *ptr_temp = ptr;
 	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
@@ -80,10 +80,10 @@ char *cgc_strchr(char *s, int c) {
 
 }
 
-char *cgc_strstr( char *str, char *sub, cgc_size_t len ) 
+char *cgc_strstr( char *str, char *sub, size_t len ) 
 {
-	cgc_size_t index = 0;
-	cgc_size_t stlen = 0;
+	size_t index = 0;
+	size_t stlen = 0;
 
 	if ( str == NULL || sub == NULL || len == 0 ) {
 		return NULL;
@@ -191,7 +191,7 @@ int cgc_strcmp(const char *s1, const char *s2) {
 
 }
 
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n) {
+int cgc_strncmp(const char *s1, const char *s2, size_t n) {
 
 	if (s1 && !s2) {
 		return(1);
@@ -243,7 +243,7 @@ char *cgc_strcat(char *restrict s1, const char *restrict s2) {
 }
 
 
-char *cgc_strncat(char *s1, char *s2, cgc_size_t n)
+char *cgc_strncat(char *s1, char *s2, size_t n)
 {
 	cgc_uint32_t i,j;
 
@@ -263,9 +263,9 @@ char *cgc_strncat(char *s1, char *s2, cgc_size_t n)
 	return(s1);
 }
 
-int cgc_memcmp( const void *s1, const void *s2, cgc_size_t n )
+int cgc_memcmp( const void *s1, const void *s2, size_t n )
 {
-	for ( cgc_size_t pos = 0; pos < n; pos++ )
+	for ( size_t pos = 0; pos < n; pos++ )
 	{
 		cgc_uint8_t val1 = ((cgc_uint8_t*)s1)[pos];
 		cgc_uint8_t val2 = ((cgc_uint8_t*)s2)[pos];

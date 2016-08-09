@@ -25,11 +25,11 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // MOD from TAINTEDLOVE: changed loop counter, moved FD_ZERO, FD_SET out of loop.
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t rx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t rx_bytes_local = 0;
 
   cgc_fd_set fdsToWait;
   int fdsReady = 0;
@@ -87,11 +87,11 @@ int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // MOD from TAINTEDLOVE: loop counter reset to GREYMATTER, some bogus ops added.
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count+1;
-  cgc_size_t tx_bytes_local = 0;
+  size_t bytes_left = count+1;
+  size_t tx_bytes_local = 0;
 
   while (bytes_left-1) {
 
@@ -115,11 +115,11 @@ int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_b
 
 // MODIFIED FROM: FASTLANE (some bogus ops involving len added)
 // RETURN: the first argument
-unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, size_t len) {
 
    len++;
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     while (len-1) {
         b[len-2] = c;
         len--;
@@ -131,7 +131,7 @@ unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
 // NOTE: not POSIX
 // MOD: returns +/- i (the iterator)
 // RETURN: +/- i
-int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
+int cgc_memcmp(const char *s1, const char *s2, size_t n) {
 
    n++;
 
@@ -152,7 +152,7 @@ int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: void
-void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n) {
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, size_t n) {
 
    n++;
 
@@ -238,8 +238,8 @@ int toupper(int c) {
    return c;
 }
 
-cgc_size_t strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t strlen(const char *str) {
+   size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

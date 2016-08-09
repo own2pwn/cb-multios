@@ -39,7 +39,7 @@ THE SOFTWARE.
 void cgc_init_prng( void )
 {
 	cgc_uint32_t randomData[8];
-	cgc_size_t random_bytes_populated;
+	size_t random_bytes_populated;
 
 	if ( cgc_random( (void*)randomData, sizeof(cgc_uint32_t)*8, &random_bytes_populated ) != 0 )
 	{
@@ -76,7 +76,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 	for ( cgc_uint32_t byteCount = 0; byteCount < BYTE_RECEIVE_MAX; )
 	{
 		cgc_uint8_t rx_sample[256];
-		cgc_size_t rx_count;
+		size_t rx_count;
 
         	if ( receive( STDIN, rx_sample, 256, &rx_count) != 0) 
 		{

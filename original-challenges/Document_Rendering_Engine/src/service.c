@@ -22,7 +22,7 @@
 #include <libc.h>
 #include "service.h"
 
-cgc_size_t columnWidth;
+size_t columnWidth;
 
 /**
 * Generate a new cgc_document ID and return
@@ -53,7 +53,7 @@ unsigned int cgc_getDocumentID() {
 char* cgc_romanNumeral (unsigned int val) {
 	unsigned int ones, fives, tens, fifties, hundreds;
 	unsigned int current_val;
-	cgc_size_t max_string_length;
+	size_t max_string_length;
 	char* romanNumeralString;
 	unsigned int index=0;
 
@@ -234,7 +234,7 @@ cgc_Object* cgc_executeMacro(cgc_Object* customMacro, cgc_Object* object) {
 
 	for(cgc_Object* nextObject=object; nextObject!=NULL; nextObject=nextObject->next) {
 		cgc_Object* mergedObject;
-		cgc_size_t nameSize;
+		size_t nameSize;
 		unsigned int found=0;
 
 		if(!(mergedObject = cgc_malloc(sizeof(cgc_Object))))
@@ -274,7 +274,7 @@ cgc_Object* cgc_executeMacro(cgc_Object* customMacro, cgc_Object* object) {
 
 		if(!found) {
 			cgc_Object* mergedObject;
-			cgc_size_t nameSize;
+			size_t nameSize;
 
 			if(!(mergedObject = cgc_malloc(sizeof(cgc_Object))))
 				return NULL;
@@ -334,9 +334,9 @@ char* cgc_getNextInputLine(char** input) {
 cgc_Object* cgc_getObject(cgc_Object** customMacrosPtr, char* closingTag, char** input) {
 	cgc_ssize_t bytesRead;
 	char* buffer;
-	cgc_size_t nameSize;
+	size_t nameSize;
 	cgc_Object* object;
-	cgc_size_t closingTagSize=0;
+	size_t closingTagSize=0;
 	cgc_Object* customMacros=*customMacrosPtr;
 
 	if(!(buffer = cgc_malloc(1024)))
@@ -470,14 +470,14 @@ cgc_Macro* cgc_getMacro(cgc_Macro* macros, char* name) {
 char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 	char *tableString=NULL;
 	cgc_Macro *textMacro, *paragraphMacro, *macros;
-	cgc_size_t tableStringSize=0;
+	size_t tableStringSize=0;
 	cgc_Object* rows=NULL, *nextChild, *row;
 	unsigned int rowNum=0, fieldNum=0;
-	cgc_size_t fieldWidth;
+	size_t fieldWidth;
 	char** lineBuffer, **oldLineBuffer;
-	cgc_size_t tableLength = 0;
+	size_t tableLength = 0;
 	unsigned int rowIndex=0;
-	cgc_size_t tableWidth;
+	size_t tableWidth;
 	unsigned int borderType=LINE_BORDER_TYPE;
 
 	macros = (cgc_Macro*) macro_ptr;
@@ -540,7 +540,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 	row = rows;
 	for(int r=0; r<rowNum; r++) {
 		cgc_Object* field;
-		cgc_size_t fieldHeight = 1;
+		size_t fieldHeight = 1;
 
 		if(row == NULL)
 			field = NULL;
@@ -562,10 +562,10 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 		for(int fieldIndex=0; fieldIndex<fieldNum; fieldIndex++) {
 			char* fieldString=NULL;
 			char* elementString=NULL;
-			cgc_size_t fieldStringSize;
-			cgc_size_t elementStringSize;
+			size_t fieldStringSize;
+			size_t elementStringSize;
 			unsigned int lines=0;
-			cgc_size_t fieldRowIndex=rowIndex;
+			size_t fieldRowIndex=rowIndex;
 			unsigned int newLines=0;
 
 			if(field == NULL) {
@@ -607,7 +607,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 						}
 						if(i >= rowIndex + fieldHeight - newLines && i < rowIndex + fieldHeight) {
 							for(int fieldIndex2=0; fieldIndex2<fieldIndex; fieldIndex2++) {
-								cgc_size_t existing=0;
+								size_t existing=0;
 								
 								if(borderType == LINE_BORDER_TYPE)
 									cgc_strcat(lineBuffer[i], VERTICAL_LINE_BORDER);
@@ -626,7 +626,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 				}
 
 				for(int l=fieldRowIndex; l<rowIndex + lines;l++) {
-					cgc_size_t remaining=0;
+					size_t remaining=0;
 				
 					remaining = cgc_strlen(elementString);
 
@@ -640,7 +640,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 						cgc_strncat(lineBuffer[l], elementString, fieldWidth);
 						elementString += fieldWidth;
 					} else if(remaining < fieldWidth) {
-						cgc_size_t existing=0;
+						size_t existing=0;
 
 						cgc_strcat(lineBuffer[l], elementString);
 						existing = cgc_strlen(lineBuffer[l]);
@@ -664,7 +664,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 			}
 
 			for(int l=fieldRowIndex; l<rowIndex + fieldHeight; l++) {
-				cgc_size_t existing;
+				size_t existing;
 
 				if(borderType == LINE_BORDER_TYPE)
 					cgc_strcat(lineBuffer[l], VERTICAL_LINE_BORDER);
@@ -727,7 +727,7 @@ char* cgc_table(void* macro_ptr, cgc_Object* cgc_table) {
 char* cgc_element(void* macro_ptr, cgc_Object* cgc_element) {
 	cgc_Macro *textMacro, *listMacro, *macros;
 	char* newElementString=NULL, *oldElementString=NULL, *textString=NULL, *listString=NULL;
-	cgc_size_t elementStringSize=0;
+	size_t elementStringSize=0;
 
 	macros = (cgc_Macro*) macro_ptr;
 	textMacro = cgc_getMacro(macros, TEXT_TAG);
@@ -755,7 +755,7 @@ char* cgc_element(void* macro_ptr, cgc_Object* cgc_element) {
 
 		if(listString) {
 			char* subElementString;
-			cgc_size_t subElementStringSize=0;
+			size_t subElementStringSize=0;
 
 			cgc_strcat(newElementString, "\n");
 			subElementString = cgc_strtok(listString, '\n');
@@ -797,7 +797,7 @@ char* cgc_list(void* macro_ptr, cgc_Object* cgc_list) {
 	cgc_Macro *macros;
 	char customNumString[4];
 	cgc_Macro *elementMacro;
-	cgc_size_t listStringSize=0;
+	size_t listStringSize=0;
 	cgc_Object* elements=NULL, *nextChild;
 	unsigned int totalElementNum=0;
 	unsigned int listType = '*';
@@ -841,9 +841,9 @@ char* cgc_list(void* macro_ptr, cgc_Object* cgc_list) {
 
 	for(cgc_Object* cgc_element=elements; cgc_element!=NULL; cgc_element=cgc_element->next) {
 		char* elementString=NULL;
-		cgc_size_t elementStringSize=0;
+		size_t elementStringSize=0;
 		char* elementNumString;
-		cgc_size_t elementNumStringSize=0;
+		size_t elementNumStringSize=0;
 
 		if(!cgc_strcmp(cgc_element->name, ELEMENT_TAG)) {
 			elementString = elementMacro->body(macros, cgc_element);
@@ -928,7 +928,7 @@ char* cgc_text(void* macro_ptr, cgc_Object* cgc_text) {
 char* cgc_paragraph(void* macro_ptr, cgc_Object* cgc_paragraph) {
 	char *paragraphString=NULL, *childString=NULL;
 	cgc_Macro *textMacro, *listMacro, *tableMacro, *macros;
-	cgc_size_t paragraphSize=0;
+	size_t paragraphSize=0;
 	cgc_Object* child=NULL;
 
 	macros = (cgc_Macro*) macro_ptr;
@@ -991,7 +991,7 @@ char* cgc_paragraph(void* macro_ptr, cgc_Object* cgc_paragraph) {
 char* cgc_page(void* macro_ptr, cgc_Object* cgc_page) {
 	char *newPage=NULL, *oldPage=NULL;
 	cgc_Macro *paragraphMacro, *macros;
-	cgc_size_t pageSize=0;
+	size_t pageSize=0;
 	cgc_Object *children=NULL, *nextChild;
 
 	macros = (cgc_Macro*) macro_ptr;
@@ -1007,7 +1007,7 @@ char* cgc_page(void* macro_ptr, cgc_Object* cgc_page) {
 
 	for(cgc_Object* child=children; child!=NULL; child=child->next) {
 		char* childString;
-		cgc_size_t childStringSize;
+		size_t childStringSize;
 
 		if(!cgc_strcmp(child->name, PARAGRAPH_TAG)) {
 			childString = paragraphMacro->body(macros, child);
@@ -1045,12 +1045,12 @@ char* cgc_page(void* macro_ptr, cgc_Object* cgc_page) {
 char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 	char *newDocument=NULL, *oldDocument=NULL;
 	cgc_Macro *pageMacro, *columnMacro, *macros;
-	cgc_size_t documentSize=0;
+	size_t documentSize=0;
 	cgc_Object* pages=NULL;
 	cgc_Object* nextChild;
 	unsigned int totalPageNum=0;
 	char** lineBuffer;
-	cgc_size_t docLength=11, docWidth=20;
+	size_t docLength=11, docWidth=20;
 	unsigned int columnNum=1;
 
 	macros = (cgc_Macro*) macro_ptr;
@@ -1096,10 +1096,10 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 
 	for(cgc_Object* cgc_page=pages; cgc_page!=NULL; cgc_page=cgc_page->next) {
 		char *pageString, *columnString;
-		cgc_size_t pageSize, numLines;
+		size_t pageSize, numLines;
 		char* lineString;
 		char* pageNumString;
-		cgc_size_t lineStringLength;
+		size_t lineStringLength;
 		unsigned int columnIndex;
 
 		if(!cgc_strcmp(cgc_page->name, COLUMN_TAG)) {
@@ -1129,7 +1129,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 
 		cgc_memset(newDocument, 0, documentSize+1);
 		if(oldDocument != NULL) {
-			cgc_size_t existing;
+			size_t existing;
 			
 			existing = cgc_strlen(oldDocument);
 			cgc_memcpy(newDocument, oldDocument, existing);
@@ -1145,7 +1145,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 
 				// Last column in cgc_page
 				if(columnIndex == columnNum) {
-					cgc_size_t existing;
+					size_t existing;
 
 					// Add cgc_page number
 					if(!(pageNumString = cgc_malloc(docWidth)))
@@ -1182,7 +1182,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 
 						cgc_memset(newDocument, 0, documentSize+1);
 						if(oldDocument != NULL) {
-							cgc_size_t existing;
+							size_t existing;
 							
 							existing = cgc_strlen(oldDocument);
 							cgc_memcpy(newDocument, oldDocument, existing);
@@ -1203,7 +1203,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 
 			// No more lines
 			if(lineString == NULL) {
-				cgc_size_t remaining;
+				size_t remaining;
 
 				remaining = cgc_strlen(lineBuffer[lineIndex]);
 				cgc_memset(&lineBuffer[lineIndex][remaining], ' ', columnWidth);
@@ -1218,7 +1218,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
 					cgc_strcat(lineBuffer[lineIndex], TAB);
 				lineString += columnWidth;
 			} else {
-				cgc_size_t lineBufferLength;
+				size_t lineBufferLength;
 
 				cgc_strcat(lineBuffer[lineIndex], lineString);
 				for(int i=0; i<columnWidth - lineStringLength; i++)
@@ -1251,7 +1251,7 @@ char* cgc_document(void* macro_ptr, cgc_Object* cgc_document) {
  */
 cgc_Macro* cgc_newMacro(char* name, char* (*body)(void *macros, cgc_Object* object)) {
 	cgc_Macro* macro;
-	cgc_size_t nameSize;
+	size_t nameSize;
 
 	if(!(macro = cgc_malloc(sizeof(cgc_Macro))))
 		return NULL;

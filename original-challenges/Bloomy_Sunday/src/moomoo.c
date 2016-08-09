@@ -23,7 +23,7 @@
 
 #include "moomoo.h"
 
-unsigned int cgc_geegee(const char *buf, cgc_size_t size)
+unsigned int cgc_geegee(const char *buf, size_t size)
 {
   int i;
   unsigned int hash = 0;
@@ -33,7 +33,7 @@ unsigned int cgc_geegee(const char *buf, cgc_size_t size)
   return hash;
 }
 
-unsigned int cgc_yooyoo(const char *buf, cgc_size_t size)
+unsigned int cgc_yooyoo(const char *buf, size_t size)
 {
   int i;
   unsigned int hash = 1835;
@@ -43,7 +43,7 @@ unsigned int cgc_yooyoo(const char *buf, cgc_size_t size)
   return hash;
 }
 
-unsigned int cgc_moomoo(const char *buf, cgc_size_t size)
+unsigned int cgc_moomoo(const char *buf, size_t size)
 {
   unsigned int hash = 0x41414141, k;
   const unsigned int *_buf = (const unsigned int *) buf;

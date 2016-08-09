@@ -48,20 +48,20 @@ typedef struct transaction {
 static cgc_packet_head_t pkthdr; // last received packet header
 static cgc_transaction_t *transaction;
 static cgc_transaction_t *transactions_array = NULL;
-static cgc_size_t transactions_length = 0;
-static cgc_size_t transactions_idx = 0;
+static size_t transactions_length = 0;
+static size_t transactions_idx = 0;
 static cgc_card_info_t *card_info_list;
 
-static int cgc_send(void *data, cgc_size_t length)
+static int cgc_send(void *data, size_t length)
 {
     if (cgc_writeall(STDOUT, data, length) != length)
         return 1;
     return 0;
 }
 
-static int cgc_read_fully(void *dest, cgc_size_t length)
+static int cgc_read_fully(void *dest, size_t length)
 {
-    cgc_size_t read = 0, bytes;
+    size_t read = 0, bytes;
     while (read < length)
     {
         if (receive(STDIN, (cgc_uint8_t *)dest + read, length - read, &bytes) != 0)
@@ -93,7 +93,7 @@ static void cgc_send_error(cgc_STATUS status, char *msg)
     cgc_exit(0);
 }
 
-static int cgc_enlarge_transactions_array(cgc_size_t new_length)
+static int cgc_enlarge_transactions_array(size_t new_length)
 {
     if (new_length <= transactions_length)
         return 0;
@@ -182,7 +182,7 @@ static int cgc_handle_issue()
 
 static int cgc_read_data(cgc_transaction_t *t)
 {
-    cgc_size_t datalen;
+    size_t datalen;
     switch (pkthdr.op_code)
     {
     case ISSUE:
@@ -218,7 +218,7 @@ static int cgc_read_data(cgc_transaction_t *t)
         t->data = NULL;
     }
 
-    cgc_size_t extralen = 0;
+    size_t extralen = 0;
     if (pkthdr.op_code == PURCHASE)
     {
         cgc_packet_data_purchase_t *data = t->data;
@@ -360,7 +360,7 @@ static int cgc_handle_balance()
 static int cgc_handle_history()
 {
     cgc_packet_data_history_t *data = transaction->data;
-    cgc_size_t count, i;
+    size_t count, i;
 
     // figure out how many things we will actually cgc_send back
     for (count = 0, i = 0; i < transactions_idx; i++)

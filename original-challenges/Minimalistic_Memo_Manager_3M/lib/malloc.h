@@ -39,10 +39,10 @@
 #endif
 
 extern struct blk_t *free_lists[NUM_FREE_LISTS];
-extern cgc_size_t size_class_limits[NUM_FREE_LISTS];
+extern size_t size_class_limits[NUM_FREE_LISTS];
 
 struct blk_t {
-  cgc_size_t size;
+  size_t size;
   unsigned int cgc_free;
   struct blk_t *fsucc;
   struct blk_t *fpred;
@@ -51,7 +51,7 @@ struct blk_t {
 };
 
 void cgc_coalesce(struct blk_t *);
-int cgc_get_size_class(cgc_size_t size);
+int cgc_get_size_class(size_t size);
 void cgc_insert_into_flist(struct blk_t *blk);
 void cgc_remove_from_flist(struct blk_t *blk);
 

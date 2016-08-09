@@ -29,9 +29,9 @@ static inline int cgc_isValidAddr(const void* addr)
   return (cgc_fdwait(-1,NULL,NULL,addr,NULL) != EFAULT);
 }
 
-int cgc_xorHash(const cgc_uint8_t* target, cgc_size_t size, cgc_uint8_t* hashOutput)
+int cgc_xorHash(const cgc_uint8_t* target, size_t size, cgc_uint8_t* hashOutput)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
 
   for (i = 0; i < HASH_SIZE; i++)
   {
@@ -45,10 +45,10 @@ int cgc_xorHash(const cgc_uint8_t* target, cgc_size_t size, cgc_uint8_t* hashOut
   return (0);
 }
 
-int cgc_HASH(const cgc_uint8_t* buf, cgc_size_t size, cgc_uint8_t* hashOutput)
+int cgc_HASH(const cgc_uint8_t* buf, size_t size, cgc_uint8_t* hashOutput)
 {
   const cgc_uint8_t* temp = NULL;
-  cgc_size_t i = 0;
+  size_t i = 0;
   int ret = 0;
 
   if ( (buf == NULL) || (hashOutput == NULL) )
@@ -91,10 +91,10 @@ int cgc_HASH(const cgc_uint8_t* buf, cgc_size_t size, cgc_uint8_t* hashOutput)
 
 cgc_uint8_t gPCRs[MAX_PCRS][HASH_SIZE];
 
-int cgc_EXTEND(cgc_size_t pcr, const void* startAddr, const void* endAddr)
+int cgc_EXTEND(size_t pcr, const void* startAddr, const void* endAddr)
 {
   cgc_uint8_t temp[HASH_SIZE];
-  cgc_size_t size = 0;
+  size_t size = 0;
   
   if (endAddr <= startAddr)
   {
@@ -115,14 +115,14 @@ int cgc_INIT(cgc_uint8_t* hash, char c)
     return (-1);
   }
 
-  for (cgc_size_t i = 0; i < HASH_SIZE; i++)
+  for (size_t i = 0; i < HASH_SIZE; i++)
   {
     hash[i] = c;
   }  
   return (0);
 }
 
-int cgc_ZERO(cgc_size_t pcr)
+int cgc_ZERO(size_t pcr)
 {
   if (pcr >= MAX_PCRS)
   {
@@ -135,7 +135,7 @@ int cgc_ZERO(cgc_size_t pcr)
 int cgc_RESET()
 {
   int ret = 0;
-  for (cgc_size_t i = 0; i < MAX_PCRS; i++)
+  for (size_t i = 0; i < MAX_PCRS; i++)
   {
     ret = cgc_INIT(gPCRs[i], i);
     if (ret != 0)
@@ -191,9 +191,9 @@ void cgc_hashToHexStr(const cgc_uint8_t* hash, char* str)
   }
 }
 
-cgc_size_t cgc_findChar(const char* str, char c)
+size_t cgc_findChar(const char* str, char c)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
   for (i = 0; (str[i] != c) && (str[i] != '\0'); i++);
   if (str[i] == '\0')
   {
@@ -208,13 +208,13 @@ int main(void)
   cgc_uint8_t hash[HASH_SIZE];
   cgc_uint8_t buf[HASH_SIZE];
   char hashStr[(HASH_SIZE * 2) + 1]; //add a character for \n
-  cgc_size_t pcr = 0;
-  cgc_size_t off = 0;
-  cgc_size_t off2 = 0;
+  size_t pcr = 0;
+  size_t off = 0;
+  size_t off2 = 0;
   cgc_uint32_t startAddr;
   cgc_uint32_t endAddr;
-  cgc_size_t sret = 0;
-  cgc_size_t totalRead = 0;
+  size_t sret = 0;
+  size_t totalRead = 0;
 
   while (1)
   {

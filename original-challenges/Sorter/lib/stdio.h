@@ -40,9 +40,9 @@ int cgc_vprintf(const char *fmt, cgc_va_list ap);
 int cgc_vfprintf(cgc_FILE *stream, const char *fmt, cgc_va_list ap);
 int cgc_vsprintf(char *str, const char *fmt, cgc_va_list ap);
 
-cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
-cgc_ssize_t cgc_freaduntil(char *str, cgc_size_t size, char term, cgc_FILE *stream);
-cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_fread(void *ptr, size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_freaduntil(char *str, size_t size, char term, cgc_FILE *stream);
+cgc_ssize_t cgc_fwrite(const void *ptr, size_t size, cgc_FILE *stream);
 int cgc_fflush(cgc_FILE *stream);
 void cgc_fbuffered(cgc_FILE *stream, int enable);
 void cgc_fxlat(cgc_FILE *stream, const char *seed);

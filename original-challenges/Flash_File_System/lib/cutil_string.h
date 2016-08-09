@@ -49,7 +49,7 @@ namespace CUtil
 	{
 	public:
 		// End position marker
-		const static cgc_size_t npos = 0xffffffff;
+		const static size_t npos = 0xffffffff;
 
 	public:
 		cgc_String( );
@@ -73,20 +73,20 @@ namespace CUtil
 		cgc_String cgc_Lower( void ) const;
 
 		// cgc_Trim to a specific length
-		cgc_String cgc_Trim( cgc_size_t length ) const;
+		cgc_String cgc_Trim( size_t length ) const;
 
 		// Accessor method
-		char operator[]( const cgc_size_t &loc ) const;
+		char operator[]( const size_t &loc ) const;
 
 		// Get string within string from start to end positions
-		cgc_String cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) const;
+		cgc_String cgc_SubString( size_t startPos, size_t endPos ) const;
 		
 		// cgc_Trim leading spaces (cgc_TrimSpaces)	
 		cgc_String cgc_TrimSpaces( void ) const;
 
 		bool cgc_ToInt( cgc_uint32_t &value );
 
-		cgc_size_t cgc_GetLength( void ) const;
+		size_t cgc_GetLength( void ) const;
 		bool cgc_IsEmpty( void ) const;
 
 	protected:
@@ -95,7 +95,7 @@ namespace CUtil
 	
 	protected:
 		char 	*m_pData;
-		cgc_size_t	m_length;	
+		size_t	m_length;	
 	};
 }
 

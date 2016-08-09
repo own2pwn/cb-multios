@@ -30,21 +30,21 @@ typedef struct {
     cgc_uint64_t read_idx;
     cgc_uint64_t write_idx;
     cgc_uint8_t *buffer;
-    cgc_size_t length;
+    size_t length;
 } cgc_buffer_t;
 
 // read functions
 int cgc_buffer_read_bit(cgc_buffer_t *);
 unsigned int cgc_buffer_read_bits(cgc_buffer_t *, unsigned int count);
-void cgc_buffer_read_bytes(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
+void cgc_buffer_read_bytes(cgc_buffer_t *, cgc_uint8_t *, size_t);
 
 // write functions
 void cgc_buffer_write_bit(cgc_buffer_t *, int value);
 void cgc_buffer_write_bits(cgc_buffer_t *, unsigned int value, unsigned int count);
-void cgc_buffer_write_bytes(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
+void cgc_buffer_write_bytes(cgc_buffer_t *, cgc_uint8_t *, size_t);
 
 // misc functions
-void cgc_buffer_init(cgc_buffer_t *, cgc_uint8_t *, cgc_size_t);
+void cgc_buffer_init(cgc_buffer_t *, cgc_uint8_t *, size_t);
 cgc_uint64_t cgc_buffer_read_remaining(cgc_buffer_t *);
 cgc_uint64_t cgc_buffer_read_tell(cgc_buffer_t *);
 void cgc_buffer_read_seek(cgc_buffer_t *, cgc_uint64_t);

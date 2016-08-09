@@ -102,21 +102,21 @@ struct daterange {
 	cgc_uint16_t end_date;
 };
 
-typedef void (*cgc_copy_yr_fn)(cgc_Response *, char *, cgc_size_t);
+typedef void (*cgc_copy_yr_fn)(cgc_Response *, char *, size_t);
 
 void cgc_taxpayer_new(cgc_Session *s, cgc_Response *r, cgc_TaxPayer **tp_list);
 cgc_TaxPayer *cgc_taxpayer_get_by_username(cgc_TaxPayer *tp_list, cgc_Session *s);
 int cgc_taxpayer_compare_creds(cgc_TaxPayer *tp, cgc_Session *s);
-int cgc_taxpayer_add_tenfourdee(cgc_TaxPayer *tp, cgc_Session *s, cgc_size_t data_sz);
+int cgc_taxpayer_add_tenfourdee(cgc_TaxPayer *tp, cgc_Session *s, size_t data_sz);
 cgc_int32_t cgc_taxpayer_sum_taxes_due(cgc_TaxPayer *tp, cgc_Session *s, cgc_int32_t *sum);
-cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written);
-cgc_int32_t cgc_taxpayer_pay_taxes(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written);
-cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written);
+cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written);
+cgc_int32_t cgc_taxpayer_pay_taxes(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written);
+cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written);
 cgc_uint32_t cgc_taxpayer_count_submitted_tax_years(cgc_TaxPayer *tp);
 
 void cgc_tenfourd_append(cgc_TenFourD **t4d_list, cgc_TenFourD *t4d);
 void cgc_tenfourd_get_last_three_from_list(cgc_TenFourD *t4d_list, cgc_uint32_t list_length, cgc_uint16_t tax_years[3]);
 int cgc_tenfourd_validate(cgc_TenFourD *t4d, cgc_TaxPayer *tp);
-cgc_TenFourD *cgc_tenfourd_ingest(cgc_Session *s, cgc_size_t data_sz);
+cgc_TenFourD *cgc_tenfourd_ingest(cgc_Session *s, size_t data_sz);
 
 #endif

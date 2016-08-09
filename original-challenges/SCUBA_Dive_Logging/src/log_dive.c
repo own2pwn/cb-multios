@@ -35,7 +35,7 @@ int cgc_log_dives(cgc_logbook_type *Info)  {
 	cgc_dive_log_type *next_dive;
 	char buffer[1024];
 	char buffer2[1024];
-	cgc_size_t count;
+	size_t count;
 
 	// if this is the first entry, assign it to the head of the list
 	if (Info->dives == 0)  {

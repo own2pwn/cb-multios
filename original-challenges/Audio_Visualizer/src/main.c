@@ -45,7 +45,7 @@ static char cgc_readopt(int fd) {
     char d = 0;
     char delim = '\n';
 
-    cgc_size_t rx;
+    size_t rx;
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
         return -1;
 

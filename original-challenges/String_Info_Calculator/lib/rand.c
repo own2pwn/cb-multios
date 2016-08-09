@@ -24,8 +24,8 @@
 #include "rand.h"
 
 void cgc_rand(void *buf, unsigned int n) {
-	cgc_size_t count = 0;
-	cgc_size_t rand_bytes = 0;
+	size_t count = 0;
+	size_t rand_bytes = 0;
 	while (n > count) {
 		if (0 != cgc_random(buf + count, n - count, &rand_bytes)) {
 			_terminate(ERRNO_RAND);

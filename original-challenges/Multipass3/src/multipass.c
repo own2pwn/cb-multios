@@ -28,7 +28,7 @@ cgc_uint32_t NEXT_CARD_ID = FIRST_CARD_ID;
 cgc_uint32_t NEXT_TXN_ID = FIRST_TRANSACTION_ID;
 cgc_uint32_t NEXT_AUTH_CODE = FIRST_CARD_AUTH_CODE;
 cgc_uint32_t ERRNO;
-cgc_size_t HIST_SZ;
+size_t HIST_SZ;
 
 cgc_packet_head_t * RESP_PACKET;
 cgc_pack_and_data_t * RESP_PAD;
@@ -57,7 +57,7 @@ int cgc_verify_init(cgc_packet_head_t *p){
 	return OK;
 }
 
-cgc_packet_head_t * cgc_alloc_new_pkt(cgc_size_t payload_sz){
+cgc_packet_head_t * cgc_alloc_new_pkt(size_t payload_sz){
 	cgc_packet_head_t *p =  cgc_calloc(1, sizeof(cgc_packet_head_t)+ payload_sz);
 	return p;
 }
@@ -87,7 +87,7 @@ void cgc_init_resp_structs(){
 	assert(RESP_PAD != NULL);
 }
 
-cgc_packet_head_t * cgc_clear_gen_pkt(cgc_size_t payload_len){
+cgc_packet_head_t * cgc_clear_gen_pkt(size_t payload_len){
 	char * pdata = (char *) RESP_PACKET;
 	for(int i =0; i < sizeof(cgc_packet_head_t) + payload_len; ++i){
 		pdata[i] = 0;
@@ -103,7 +103,7 @@ cgc_pack_and_data_t * cgc_clear_pad(){
 	return RESP_PAD;
 }
 
-cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint32_t auth_code, cgc_uint32_t txn_id, cgc_size_t payload_len){
+cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint32_t auth_code, cgc_uint32_t txn_id, size_t payload_len){
 	cgc_packet_head_t *h = cgc_clear_gen_pkt(payload_len);
 	if(h == NULL){
 		ERRNO = ERRNO_MP_ALLOC;
@@ -117,7 +117,7 @@ cgc_packet_head_t * cgc_create_basic_packet_head(cgc_uint32_t card_id, cgc_uint3
 
 }
 
-cgc_pack_and_data_t * cgc_create_basic_response(cgc_uint32_t card_id, cgc_uint32_t auth_code, cgc_uint32_t txn_id, cgc_PKT_TYPE t, cgc_OP_CODE o, cgc_STATUS s, cgc_size_t payload_len){
+cgc_pack_and_data_t * cgc_create_basic_response(cgc_uint32_t card_id, cgc_uint32_t auth_code, cgc_uint32_t txn_id, cgc_PKT_TYPE t, cgc_OP_CODE o, cgc_STATUS s, size_t payload_len){
 	cgc_packet_head_t * resp = cgc_create_basic_packet_head(card_id, auth_code, txn_id, payload_len);
 	if( resp == NULL)
 		return NULL;
@@ -231,7 +231,7 @@ cgc_acct_txn_entry_t * cgc_get_acct_txn_reg(cgc_uint32_t cid, cgc_uint32_t acd, 
 
 };
 
-cgc_size_t cgc_calc_payload_sz(cgc_packet_head_t *ph){
+size_t cgc_calc_payload_sz(cgc_packet_head_t *ph){
 	if(ph->pkt_type == OPS){
 
 		if(ph->op_code == BALANCE)
@@ -248,7 +248,7 @@ void * cgc_get_payload(cgc_packet_head_t *ph){
 }
 
 
-cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_size_t *ds){
+cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, size_t *ds){
 	cgc_packet_head_t *cb_hist = padi->ph;
 	cgc_packet_data_history_t *hist = (cgc_packet_data_history_t *) padi->data;
 	cgc_uint32_t cid = cb_hist->card_id;
@@ -267,8 +267,8 @@ cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_
 
 
 	
-	cgc_size_t n_transactions = aet->ae->txn_log->n_nodes;
-	cgc_size_t data_sz =0;
+	size_t n_transactions = aet->ae->txn_log->n_nodes;
+	size_t data_sz =0;
 	int i =0;
 	if(cb_hist->transaction_id == 0x0002ee11)
 		i = 0;
@@ -294,7 +294,7 @@ cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_
 
 	// complex size calculation takes into account void * space for each txn t
 
-	cgc_size_t resp_size =  sizeof(cgc_packet_data_history_t) + data_sz + sizeof(cgc_transaction_t)*i - sizeof(void *)*i;
+	size_t resp_size =  sizeof(cgc_packet_data_history_t) + data_sz + sizeof(cgc_transaction_t)*i - sizeof(void *)*i;
 	cgc_pack_and_data_t *resp = cgc_create_basic_response(cid, acd, txn_id, OPS, HISTORY, OK, resp_size);
 	if(resp == NULL){
 
@@ -305,9 +305,9 @@ cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_
 	resp_ph->op_code = HISTORY;
 	cgc_transaction_t * txn_ptr = (cgc_transaction_t *) (phptr+1);
 
-	cgc_size_t hist_ct = 0;
+	size_t hist_ct = 0;
 	te->state = OPS;
-	cgc_size_t final_data_sz =  0;
+	size_t final_data_sz =  0;
 	for(cgc_txn_entry_t *txn = cgc_transaction_iterator(aet->ae); txn != NULL; 
 		txn = cgc_transaction_iterator(NULL)){
 
@@ -328,7 +328,7 @@ cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_
 		txn_ptr->transaction_id = txn->p->transaction_id;
 
 
-		cgc_size_t dss = txn->data_sz;
+		size_t dss = txn->data_sz;
 
 #if PATCHED
 		if(txn->data == NULL)
@@ -339,7 +339,7 @@ cgc_pack_and_data_t * cgc_process_client_history(cgc_pack_and_data_t *padi, cgc_
 		
 
 		// sizeof txn_t already has void ptr which is where we're copying data...
-		cgc_size_t cp_sz = sizeof(cgc_transaction_t) + dss - sizeof(void *);
+		size_t cp_sz = sizeof(cgc_transaction_t) + dss - sizeof(void *);
 		final_data_sz += cp_sz;
 
 		txn_ptr =  ((void *) txn_ptr) +cp_sz;	
@@ -512,9 +512,9 @@ cgc_pack_and_data_t * cgc_generate_error(cgc_packet_head_t *ph){
 	}
 
 
-	cgc_size_t m_sz = cgc_strlen(ERROR_MSGS[ERRNO]);
+	size_t m_sz = cgc_strlen(ERROR_MSGS[ERRNO]);
 	
-	cgc_size_t pay_sz  = sizeof(cgc_packet_data_error_t) + m_sz - sizeof(char *) ;
+	size_t pay_sz  = sizeof(cgc_packet_data_error_t) + m_sz - sizeof(char *) ;
 	cgc_pack_and_data_t *pad = cgc_create_basic_response(cid, acd, txn_id, ph->pkt_type, ph->op_code, ERRNO, pay_sz);
 	cgc_packet_head_t * resp = pad->ph;
 	

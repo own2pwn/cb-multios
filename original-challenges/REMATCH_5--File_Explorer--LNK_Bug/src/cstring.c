@@ -33,7 +33,7 @@ int cgc_ReceiveBytes(char *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue;
-  cgc_size_t bytesReceived;
+  size_t bytesReceived;
 
   if (buffer == NULL) 
   {
@@ -61,7 +61,7 @@ int cgc_TransmitBytes(char *buffer, int length)
 {
   int totalBytes = 0;
   int returnValue = 0;
-  cgc_size_t bytesSent;
+  size_t bytesSent;
 
   while (totalBytes < length)
   {

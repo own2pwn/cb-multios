@@ -49,8 +49,8 @@ char *cgc_strchr(const char* s, int c) {
 *
 * @return The index in s2 after s1
 */
-cgc_size_t cgc_strspn(const char *s1, const char *s2) {
-	cgc_size_t result=0;
+size_t cgc_strspn(const char *s1, const char *s2) {
+	size_t result=0;
 
 	for(int i=0; s1[i] != '\0' && cgc_strchr(s2, s1[i]); i++, result++);
 
@@ -66,8 +66,8 @@ cgc_size_t cgc_strspn(const char *s1, const char *s2) {
 *
 * @return The index in s2 which starts s1
 */
-cgc_size_t cgc_strcspn(const char *s1, const char *s2) {
-	cgc_size_t result=0;
+size_t cgc_strcspn(const char *s1, const char *s2) {
+	size_t result=0;
 
 	for(int i=0; s1[i] != '\0'; i++, result++) {
 		if(cgc_strchr(s2, s1[i]))

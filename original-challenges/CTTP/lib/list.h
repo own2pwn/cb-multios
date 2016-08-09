@@ -47,7 +47,7 @@ struct list {
  * @param member The member to calculate the offset of
  * @return The offset of member in type
  */
-#define OFFSETOF(type, member) ((cgc_size_t)(&((type *)NULL)->member))
+#define OFFSETOF(type, member) ((size_t)(&((type *)NULL)->member))
 
 /**
  * Find the container structure from a pointer to a member.

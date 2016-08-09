@@ -33,7 +33,7 @@
 #define OPERATOR "|*+?()"
 #define TOKEN "|*+?()[]\\"
 
-static int cgc_normalize_infix(unsigned char **pinfix, cgc_size_t size)
+static int cgc_normalize_infix(unsigned char **pinfix, size_t size)
 {
     unsigned char *new_str = *pinfix;
     unsigned char unions[200], i = 0;
@@ -122,7 +122,7 @@ void cgc_debug_print_re(unsigned char* re)
     cgc_free(temp);
 }
 
-int cgc_retorpn(unsigned char *infix, cgc_size_t size, unsigned char **rpn)
+int cgc_retorpn(unsigned char *infix, size_t size, unsigned char **rpn)
 {
     *rpn = NULL;
     if(cgc_strlen(infix) == 0)

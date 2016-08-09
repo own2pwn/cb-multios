@@ -25,7 +25,7 @@
 
 #include "flgmgr.h"
 
-cgc_error_t cgc_flg_init(cgc_flgmgr_t *flg, cgc_chal_t **chals, cgc_size_t *num_chals)
+cgc_error_t cgc_flg_init(cgc_flgmgr_t *flg, cgc_chal_t **chals, size_t *num_chals)
 {
     flg->num_submit = 0;
     flg->num_valid = 0;
@@ -73,10 +73,10 @@ cgc_error_t cgc_flg_add_submit(cgc_flgmgr_t *flg, cgc_team_t *team, const char* 
     return err;
 }
 
-cgc_error_t cgc_flg_get_solves(cgc_flgmgr_t *flg, cgc_flag_t ***flags, cgc_chal_t *chal, cgc_size_t *n)
+cgc_error_t cgc_flg_get_solves(cgc_flgmgr_t *flg, cgc_flag_t ***flags, cgc_chal_t *chal, size_t *n)
 {
     int i;
-    cgc_size_t cnt = 0;
+    size_t cnt = 0;
     if (!flg | !flags | !n)
         return ERR_INTERNAL;
     if (!chal)

@@ -31,10 +31,10 @@
 #define MAX_SIZE (sizeof(cgc_uint8_t) * 1024 * 32)
 int cgc_fdprintf(int fd, const char *fmt, ...);
 
-static int cgc_read_exactly(int fd, cgc_uint8_t *buf, cgc_size_t n)
+static int cgc_read_exactly(int fd, cgc_uint8_t *buf, size_t n)
 {
 
-  cgc_size_t rx;
+  size_t rx;
   while (n > 0) {
     if (receive(fd, buf, n, &rx) != 0)
       return -1;
@@ -48,7 +48,7 @@ static int cgc_read_exactly(int fd, cgc_uint8_t *buf, cgc_size_t n)
 int main(void)
 {
   unsigned size = 0;
-  cgc_size_t read = 0;
+  size_t read = 0;
   cgc_uint8_t buf[MAX_SIZE];
   cgc_memset(buf, 0, sizeof(buf));
 

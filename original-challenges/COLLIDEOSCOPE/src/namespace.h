@@ -41,7 +41,7 @@ struct variable {
 };
 
 struct namespace {
-    cgc_size_t size;
+    size_t size;
     struct variable *variables;
 };
 
@@ -52,7 +52,7 @@ struct namespace {
  * @param size The size of the namespace
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int cgc_namespace_init(struct namespace *ns, cgc_size_t size);
+int cgc_namespace_init(struct namespace *ns, size_t size);
 
 /**
  * Destroy a namespace.

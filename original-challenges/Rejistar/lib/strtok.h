@@ -39,7 +39,7 @@ char *cgc_strchr(const char* s, int c);
 *
 * @return The index in s2 after s1
 */
-cgc_size_t cgc_strspn(const char *s1, const char *s2) ;
+size_t cgc_strspn(const char *s1, const char *s2) ;
 
 /**
 * Spans the initial part of a null-terminated string as long as s1 does not 
@@ -50,7 +50,7 @@ cgc_size_t cgc_strspn(const char *s1, const char *s2) ;
 *
 * @return The index in s2 which starts s1
 */
-cgc_size_t cgc_strcspn(const char *s1, const char *s2);
+size_t cgc_strcspn(const char *s1, const char *s2);
 
 /**
 * Remove sequential tokens from a null-terminated string

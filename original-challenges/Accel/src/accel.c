@@ -52,7 +52,7 @@ static cgc_operator_t *cgc_get_op(char *name);
 static cgc_cell_type_e cgc_parsearg(char *arg);
 static int cgc_is_arg_arithmetic(char *arg);
 static cgc_cell_t *cgc_get_cell(char *cell_id);
-static cgc_queue_t *cgc_infixtorpn(char *infix, cgc_size_t size);
+static cgc_queue_t *cgc_infixtorpn(char *infix, size_t size);
 static double cgc_eval_formula(char *formula, int *is_bad_formula, cgc_stack_t **cir_ref, int id);
 
 static cgc_cell_t *_g_sheet = NULL;
@@ -83,7 +83,7 @@ static cgc_operator_t operators[] =
 
 int cgc_init_sheet()
 {
-    cgc_size_t i, j;
+    size_t i, j;
     unsigned int id = 0;
     // LARGEST SHEET SIZE: ZZ99 (676 rows by 100 columns)
 
@@ -105,7 +105,7 @@ int cgc_init_sheet()
     return 0;
 }
 
-char *cgc_show_cell(char *cell_id, int is_repr, char* val_str, cgc_size_t size)
+char *cgc_show_cell(char *cell_id, int is_repr, char* val_str, size_t size)
 {
     int is_bad_formula;
     double val = 0.0;
@@ -137,7 +137,7 @@ char *cgc_show_cell(char *cell_id, int is_repr, char* val_str, cgc_size_t size)
 }
 
 
-int cgc_set_cell(char *cell_id, char *cell_str, cgc_size_t size)
+int cgc_set_cell(char *cell_id, char *cell_str, size_t size)
 {
     if (cell_str == NULL || cgc_strlen(cell_str) == 0 || cgc_strlen(cell_str) >= size)
         return -1;
@@ -193,7 +193,7 @@ void cgc_print_assigned_cells()
 {
     char row_id[3];
     char col_id[4];
-    cgc_size_t i, j;
+    size_t i, j;
     unsigned int id;
     cgc_cell_t *cell;
     for (i = 0; i < MAX_ROWS; i++) {
@@ -218,7 +218,7 @@ static cgc_operator_t *cgc_get_op(char *name)
 
     char *upper_name = (char *) cgc_malloc(cgc_strlen(name) + 1);
     cgc_strcpy(upper_name, name);
-    cgc_size_t i, len = cgc_strlen(upper_name);
+    size_t i, len = cgc_strlen(upper_name);
     for (i = 0; i < len; i++)
         upper_name[i] = cgc_toupper(upper_name[i]);
 
@@ -322,7 +322,7 @@ static cgc_cell_t *cgc_get_cell(char *cell_id)
 
 }
 
-static int cgc_eval_function(cgc_operator_t *op, cgc_stack_t **values, char *val_str, cgc_size_t size)
+static int cgc_eval_function(cgc_operator_t *op, cgc_stack_t **values, char *val_str, size_t size)
 {
     if (op == NULL || val_str == NULL || size <= 2)
         return -1;
@@ -330,7 +330,7 @@ static int cgc_eval_function(cgc_operator_t *op, cgc_stack_t **values, char *val
     double val = 0.0;
     char *arg;
     char *op_name = (char *) op->name;
-    cgc_size_t i, num_args = 0;
+    size_t i, num_args = 0;
     int is_bad_formula = 0;
     cgc_operator_t *nested_op;
 
@@ -380,7 +380,7 @@ static double cgc_eval_formula(char *formula, int *is_bad_formula, cgc_stack_t *
 {
     char val_str[TMP_STR_SIZE];
     char tmp_id_str[TMP_STR_SIZE];
-    cgc_size_t size = TMP_STR_SIZE;
+    size_t size = TMP_STR_SIZE;
     double val = 0.0;
     double result = 0.0;
     *is_bad_formula = 0;
@@ -472,7 +472,7 @@ cleanup:
     return result;
 }
 
-static cgc_queue_t *cgc_infixtorpn(char *infix, cgc_size_t size)
+static cgc_queue_t *cgc_infixtorpn(char *infix, size_t size)
 {
     /* Use RPN */
     int is_mismatched = 0;
@@ -495,7 +495,7 @@ static cgc_queue_t *cgc_infixtorpn(char *infix, cgc_size_t size)
         goto cleanup;
 
     arg = iter = formula;
-    cgc_size_t i = 0;
+    size_t i = 0;
     char prev_char = 0;
     while ( i++ < size) {
         if (cgc_strchr(delims, *iter) == NULL && *iter != '\0') {

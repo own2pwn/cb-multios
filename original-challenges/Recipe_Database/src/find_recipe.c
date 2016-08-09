@@ -35,7 +35,7 @@ char **temp;
 cgc_Ingredient_Type *ingredient;
 char buffer[1024];
 char answer[5];
-cgc_size_t size;
+size_t size;
 
 
 	cgc_printf("Enter search term: ");

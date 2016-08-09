@@ -34,7 +34,7 @@ typedef struct zoom_filter {
 	unsigned int num_elements;
 	unsigned int num_bits;
 	unsigned int hashes;
-	cgc_size_t data_len;
+	size_t data_len;
 	unsigned int inserted_elements;
 
 
@@ -51,13 +51,13 @@ typedef struct hash_pair {
 
 // return null pointer on failure
 cgc_zoom_filter_t *cgc_new_zoom_filter(int num_entries);
-cgc_hash_pair_t * cgc_hash_pair_buf(char *input, cgc_size_t buf_sz);
+cgc_hash_pair_t * cgc_hash_pair_buf(char *input, size_t buf_sz);
 void cgc_zoom_add(cgc_hash_pair_t * hp, cgc_zoom_filter_t *zf);
 int cgc_zoom_check(cgc_hash_pair_t *hp, cgc_zoom_filter_t *zf);
 void cgc_zoom_free(cgc_zoom_filter_t *zf);
-unsigned int cgc_get_sample_n_bits(cgc_size_t sz);
-cgc_size_t cgc_n_elements_from_sampsz(cgc_size_t sz);
-unsigned int cgc_crazy_hash(const char * key, cgc_size_t sz, unsigned int seed);
+unsigned int cgc_get_sample_n_bits(size_t sz);
+size_t cgc_n_elements_from_sampsz(size_t sz);
+unsigned int cgc_crazy_hash(const char * key, size_t sz, unsigned int seed);
 cgc_zoom_filter_t * cgc_load_zoom_filter(char *fromwire, unsigned int num_bits);
 
 #endif

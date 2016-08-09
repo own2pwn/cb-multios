@@ -25,11 +25,11 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // VERBATIM to JUSTINTIME
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
    int ret = SUCCESS;
-   cgc_size_t bytes_left = count;
-   cgc_size_t rx_bytes_local = 0;
+   size_t bytes_left = count;
+   size_t rx_bytes_local = 0;
 
    while (bytes_left) {
 
@@ -61,11 +61,11 @@ bail:
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // VERBATIM to JUSTINTIME
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
    int ret = SUCCESS;
-   cgc_size_t bytes_left = count;
-   cgc_size_t tx_bytes_local = 0;
+   size_t bytes_left = count;
+   size_t tx_bytes_local = 0;
 
    while (bytes_left) {
 
@@ -170,8 +170,8 @@ int toupper(int c) {
    return c;
 }
 
-cgc_size_t strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t strlen(const char *str) {
+   size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

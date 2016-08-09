@@ -41,7 +41,7 @@ void cgc_handle_compress()
     int i;
     unsigned char buf[95], *out = NULL;
     unsigned char data[MAX_DATA_SIZE];
-    cgc_size_t outlen = 0;
+    size_t outlen = 0;
     cgc_sc_obj_t *sc = NULL;
 
     cgc_printf("Key?\n");
@@ -91,7 +91,7 @@ void cgc_handle_decompress()
     int i;
     unsigned char buf[95], *out = NULL;
     unsigned char data[MAX_DATA_SIZE];
-    cgc_size_t outlen = 0, len = 0;
+    size_t outlen = 0, len = 0;
     cgc_sc_obj_t *sc = NULL;
 
     cgc_printf("Key?\n");

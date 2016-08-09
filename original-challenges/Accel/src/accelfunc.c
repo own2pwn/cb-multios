@@ -29,7 +29,7 @@
 
 double cgc_handle_op_avg(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     if (*args == NULL)
         goto error;
 
@@ -62,7 +62,7 @@ done:
 
 double cgc_handle_op_count(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     if (*args == NULL)
         goto error;
 
@@ -95,7 +95,7 @@ done:
 
 double cgc_handle_op_max(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     double max = 0.0;
     if (*args == NULL)
         goto error;
@@ -140,7 +140,7 @@ done:
 
 double cgc_handle_op_median(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     cgc_stack_t *sorted, *tmp, *prev;
 #ifdef PATCHED
     sorted = NULL;
@@ -240,7 +240,7 @@ done:
 
 double cgc_handle_op_min(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     double min = 0.0;
     if (*args == NULL)
         goto error;
@@ -285,7 +285,7 @@ done:
 
 double cgc_handle_op_stddev(cgc_stack_t **args, int *is_bad_formula)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     if (*args == NULL)
         goto error;
 

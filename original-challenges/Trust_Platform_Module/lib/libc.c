@@ -1,9 +1,9 @@
 #include "libc.h"
 
-void cgc_transmit_all(int fd, const void* buf, cgc_size_t len)
+void cgc_transmit_all(int fd, const void* buf, size_t len)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
   
   if (buf == NULL)
@@ -28,16 +28,16 @@ void cgc_transmit_all(int fd, const void* buf, cgc_size_t len)
 typedef struct _RecvBuffer
 {
   char buf[RECV_BUF_SIZE];
-  cgc_size_t off;
-  cgc_size_t numAvail;
+  size_t off;
+  size_t numAvail;
 } cgc_RecvBuffer;
 
 cgc_RecvBuffer gRecvBuffers[MAX_FDS] = {};
 
-void cgc_receive_all(int fd, void* buf, cgc_size_t len)
+void cgc_receive_all(int fd, void* buf, size_t len)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
 
   if ( (fd < 0) || (fd >= MAX_FDS) )
@@ -78,14 +78,14 @@ void cgc_receive_all(int fd, void* buf, cgc_size_t len)
   }
 }
 
-cgc_size_t cgc_receive_until(int fd, char* buf, cgc_size_t len, char delim)
+size_t cgc_receive_until(int fd, char* buf, size_t len, char delim)
 {
 
   int ret = 0;
-  cgc_size_t rx_bytes = 0;
+  size_t rx_bytes = 0;
 
   char c = 0;
-  cgc_size_t count = 0;
+  size_t count = 0;
   if (buf == NULL)
   {
     return (0);
@@ -124,7 +124,7 @@ cgc_size_t cgc_receive_until(int fd, char* buf, cgc_size_t len, char delim)
 
 int cgc_strcmp(const char* s1, const char* s2)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
 
   if (s1 == NULL)
   {
@@ -179,9 +179,9 @@ int cgc_strcmp(const char* s1, const char* s2)
   return (-2);
 }
 
-cgc_size_t cgc_strcpyUntil(char* dst, const char* src, char delim)
+size_t cgc_strcpyUntil(char* dst, const char* src, char delim)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
   if ( (dst == NULL) || (src == NULL) )
   {
     return (0);

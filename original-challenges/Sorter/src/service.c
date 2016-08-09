@@ -25,42 +25,42 @@
 #include <string.h>
 #include "packed.h"
 
-#define MALLOC(_FPTRS, _SZ) ((*((void *(*)(cgc_size_t))(_FPTRS)[0]))(((_SZ))))
+#define MALLOC(_FPTRS, _SZ) ((*((void *(*)(size_t))(_FPTRS)[0]))(((_SZ))))
 #define FREE(_FPTRS, _PTR)  ((*((void *(*)(void *))(_FPTRS)[1]))(((_PTR))))
-#define MEMCPY(_FPTRS, _DST, _SRC, _SZ) ((*(void *(*)(void *, void *, cgc_size_t))(_FPTRS)[2])((_DST), (_SRC), (_SZ)))
-#define MEMMOVE(_FPTRS, _DST, _SRC, _SZ) ((*(void *(*)(void *, void *, cgc_size_t))(_FPTRS)[3])((_DST), (_SRC), (_SZ)))
-#define PRINT_ARRAY(_FPTRS, _ARR, _SZ) ((*(void (*)(int *, cgc_size_t))(_FPTRS)[4])((_ARR), (_SZ)))
+#define MEMCPY(_FPTRS, _DST, _SRC, _SZ) ((*(void *(*)(void *, void *, size_t))(_FPTRS)[2])((_DST), (_SRC), (_SZ)))
+#define MEMMOVE(_FPTRS, _DST, _SRC, _SZ) ((*(void *(*)(void *, void *, size_t))(_FPTRS)[3])((_DST), (_SRC), (_SZ)))
+#define PRINT_ARRAY(_FPTRS, _ARR, _SZ) ((*(void (*)(int *, size_t))(_FPTRS)[4])((_ARR), (_SZ)))
 #define SWAP(_FPTRS, _FIRST, _SECOND) ((*(void (*)(int *, int *))(_FPTRS)[5])((_FIRST), (_SECOND)))
-#define HEAPIFY(_FPTRS, _ARR, _SZ) ((*(int (*)(int *, cgc_size_t, int *))(_FPTRS)[6])((_ARR), (_SZ), (_FPTRS)))
+#define HEAPIFY(_FPTRS, _ARR, _SZ) ((*(int (*)(int *, size_t, int *))(_FPTRS)[6])((_ARR), (_SZ), (_FPTRS)))
 #define HEAP_PROPAGATE(_FPTRS, _ARR, _SZ, _SWAP_IDX) \
-                            ((*(int (*)(int *, cgc_size_t, cgc_size_t, int *))(_FPTRS)[7])((_ARR), (_SZ), (_SWAP_IDX), (_FPTRS)))
+                            ((*(int (*)(int *, size_t, size_t, int *))(_FPTRS)[7])((_ARR), (_SZ), (_SWAP_IDX), (_FPTRS)))
 #define MERGE_HELPER(_FPTRS, _ARR1, _ARR2, _IDX1, _IDX2) \
                             ((*(int (*)(int *, int *, int, int, int *))(_FPTRS)[8])((_ARR1), (_ARR2), (_IDX1), (_IDX2), (_FPTRS)))
-#define ALLOCATE(_FPTRS, _LEN, _IS_X, _PADDR) ((*(int (*)(cgc_size_t, int, void **))(_FPTRS)[9])((_LEN), (_IS_X), (_PADDR)))
-#define DEALLOCATE(_FPTRS, _ADDR, _LEN) ((*(int (*)(void *, cgc_size_t))(_FPTRS)[10])((_ADDR), (_LEN)))
+#define ALLOCATE(_FPTRS, _LEN, _IS_X, _PADDR) ((*(int (*)(size_t, int, void **))(_FPTRS)[9])((_LEN), (_IS_X), (_PADDR)))
+#define DEALLOCATE(_FPTRS, _ADDR, _LEN) ((*(int (*)(void *, size_t))(_FPTRS)[10])((_ADDR), (_LEN)))
 
-int (*insertion_sort_unpacked)(int *, cgc_size_t, int *);
+int (*insertion_sort_unpacked)(int *, size_t, int *);
 unsigned char *insertion_sort_memory;
 
-int (*selection_sort_unpacked)(int *, cgc_size_t, int *);
+int (*selection_sort_unpacked)(int *, size_t, int *);
 unsigned char *selection_sort_memory;
 
-int (*heap_propagate_unpacked)(int *, cgc_size_t, cgc_size_t, int *);
+int (*heap_propagate_unpacked)(int *, size_t, size_t, int *);
 unsigned char *heap_propagate_memory;
 
-int (*heapify_unpacked)(int *, cgc_size_t, int *);
+int (*heapify_unpacked)(int *, size_t, int *);
 unsigned char * heapify_memory;
 
-int (*heap_sort_unpacked)(int *, cgc_size_t, int *);
+int (*heap_sort_unpacked)(int *, size_t, int *);
 unsigned char *heap_sort_memory;
 
 int (*merge_helper_unpacked)(int *, int *, int, int, int *);
 unsigned char *merge_helper_memory;
 
-int (*merge_sort_unpacked)(int *, cgc_size_t, int *);
+int (*merge_sort_unpacked)(int *, size_t, int *);
 unsigned char *merge_sort_memory;
 
-void cgc_unpack(unsigned char *fn_bytes, cgc_size_t num_bytes)
+void cgc_unpack(unsigned char *fn_bytes, size_t num_bytes)
 {
     char unpack_key[] = "CS10FUN!";
     int i = 0;
@@ -75,22 +75,22 @@ void cgc_init()
     allocate(sizeof(selection_sort_bytes), 1, (void **)&selection_sort_memory);
     cgc_memcpy(selection_sort_memory, selection_sort_bytes, sizeof(selection_sort_bytes));
     cgc_unpack(selection_sort_memory, sizeof(selection_sort_bytes));
-    selection_sort_unpacked = (int (*)(int *, cgc_size_t, int *))selection_sort_memory;
+    selection_sort_unpacked = (int (*)(int *, size_t, int *))selection_sort_memory;
 
     allocate(sizeof(heap_propagate_bytes), 1, (void **)&heap_propagate_memory);
     cgc_memcpy(heap_propagate_memory, heap_propagate_bytes, sizeof(heap_propagate_bytes));
     cgc_unpack(heap_propagate_memory, sizeof(heap_propagate_bytes));
-    heap_propagate_unpacked = (int (*)(int *, cgc_size_t, cgc_size_t, int *))heap_propagate_memory;
+    heap_propagate_unpacked = (int (*)(int *, size_t, size_t, int *))heap_propagate_memory;
 
     allocate(sizeof(heapify_bytes), 1, (void **)&heapify_memory);
     cgc_memcpy(heapify_memory, heapify_bytes, sizeof(heapify_bytes));
     cgc_unpack(heapify_memory, sizeof(heapify_bytes));
-    heapify_unpacked = (int (*)(int *, cgc_size_t, int *))heapify_memory;
+    heapify_unpacked = (int (*)(int *, size_t, int *))heapify_memory;
 
     allocate(sizeof(heap_sort_bytes), 1, (void **)&heap_sort_memory);
     cgc_memcpy(heap_sort_memory, heap_sort_bytes, sizeof(heap_sort_bytes));
     cgc_unpack(heap_sort_memory, sizeof(heap_sort_bytes));
-    heap_sort_unpacked = (int (*)(int *, cgc_size_t, int *))heap_sort_memory;
+    heap_sort_unpacked = (int (*)(int *, size_t, int *))heap_sort_memory;
 
     allocate(sizeof(merge_helper_bytes), 1, (void **)&merge_helper_memory);
     cgc_memcpy(merge_helper_memory, merge_helper_bytes, sizeof(merge_helper_bytes));
@@ -100,12 +100,12 @@ void cgc_init()
     allocate(sizeof(merge_sort_bytes), 1, (void **)&merge_sort_memory);
     cgc_memcpy(merge_sort_memory, merge_sort_bytes, sizeof(merge_sort_bytes));
     cgc_unpack(merge_sort_memory, sizeof(merge_sort_bytes));
-    merge_sort_unpacked = (int (*)(int *, cgc_size_t, int *))merge_sort_memory;
+    merge_sort_unpacked = (int (*)(int *, size_t, int *))merge_sort_memory;
 
     allocate(sizeof(insertion_sort_bytes), 1, (void **)&insertion_sort_memory);
     cgc_memcpy(insertion_sort_memory, insertion_sort_bytes, sizeof(insertion_sort_bytes));
     cgc_unpack(insertion_sort_memory, sizeof(insertion_sort_bytes));
-    insertion_sort_unpacked = (int (*)(int *, cgc_size_t, int *))insertion_sort_memory;
+    insertion_sort_unpacked = (int (*)(int *, size_t, int *))insertion_sort_memory;
 }
 
 void cgc_swap(int *first, int *second)
@@ -117,7 +117,7 @@ void cgc_swap(int *first, int *second)
     return;
 }
 
-void cgc_print_array(int *array, cgc_size_t array_size) {
+void cgc_print_array(int *array, size_t array_size) {
     if (!array || !array_size) {
         cgc_printf("Empty Array\n");
         return;
@@ -134,7 +134,7 @@ void cgc_print_array(int *array, cgc_size_t array_size) {
     }
 }
 
-int *cgc_create_number_array(cgc_size_t *array_size) {
+int *cgc_create_number_array(size_t *array_size) {
     char buf[64];
     int i = 0;
     int *array = cgc_malloc(2 * sizeof(int));
@@ -169,7 +169,7 @@ int *cgc_create_number_array(cgc_size_t *array_size) {
     return array;
 }
 
-void cgc_multiply_array(int **parray, cgc_size_t *array_size) {
+void cgc_multiply_array(int **parray, size_t *array_size) {
     char buf[64];
     int multiplier = 0;
     int *old_array = *parray;
@@ -235,7 +235,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
     cgc_printf("Welcome to CS10Fun!\n");
     cgc_printf("Today's lesson is on sorting! We're going to cover 4 types of sorts.\n");
     cgc_printf("Before we begin, create an array of ints\n");
-    cgc_size_t array_size = 0;
+    size_t array_size = 0;
     int *array = NULL;
     int done = 0;
     int choice = 0;

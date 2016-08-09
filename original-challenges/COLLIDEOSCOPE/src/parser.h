@@ -85,7 +85,7 @@ struct ast {
  * @param out Pointer to the AST to cgc_parse into
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int cgc_parse(struct token *tokens, cgc_size_t n, struct ast *out);
+int cgc_parse(struct token *tokens, size_t n, struct ast *out);
 
 /**
  * Destroy an AST and all nodes.

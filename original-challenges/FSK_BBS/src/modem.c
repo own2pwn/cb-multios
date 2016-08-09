@@ -48,9 +48,9 @@ static cgc_buffer_t g_frames;
 static cgc_uint8_t g_frames_data[8192];
 
 // history buffer must support `SAMPLES_PER_ITER + ncoeffs` samples
-static void cgc_filter(cgc_int16_t *samples, cgc_int16_t *coeffs, cgc_size_t ncoeffs, cgc_int16_t *history)
+static void cgc_filter(cgc_int16_t *samples, cgc_int16_t *coeffs, size_t ncoeffs, cgc_int16_t *history)
 {
-    cgc_size_t i, j;
+    size_t i, j;
     cgc_memcpy(&history[ncoeffs - 1], samples, SAMPLES_PER_ITER * sizeof(cgc_int16_t));
     for (i = 0; i < SAMPLES_PER_ITER; i++)
     {
@@ -77,7 +77,7 @@ static void cgc_lowpass_filter(cgc_int16_t *samples)
 static void cgc_convolution(cgc_int16_t *samples)
 {
     static cgc_int16_t buf[CONVOLUTION_DELAY + SAMPLES_PER_ITER];
-    cgc_size_t i;
+    size_t i;
 
     cgc_memcpy(&buf[CONVOLUTION_DELAY], samples, SAMPLES_PER_ITER * sizeof(cgc_int16_t));
     for (i = 0; i < SAMPLES_PER_ITER; i++)
@@ -90,7 +90,7 @@ void cgc_modem_decode(cgc_buffer_t *input, cgc_buffer_t *output)
 {
     static int phase = -1;
     int max_idx;
-    cgc_size_t i;
+    size_t i;
     cgc_int16_t max_mag;
     cgc_int16_t samples[SAMPLES_PER_ITER];
 
@@ -170,7 +170,7 @@ void cgc_modem_encode(cgc_buffer_t *input, cgc_buffer_t *output)
     }
 }
 
-void cgc_modem_output(cgc_uint8_t *data, cgc_size_t count)
+void cgc_modem_output(cgc_uint8_t *data, size_t count)
 {
     cgc_buffer_t pktbuf;
     cgc_buffer_init(&pktbuf, data, count+1);
@@ -184,7 +184,7 @@ void cgc_modem_output(cgc_uint8_t *data, cgc_size_t count)
 
 void cgc_modem_encode_frame(cgc_buffer_t *output)
 {
-    cgc_size_t i;
+    size_t i;
     cgc_uint8_t data[FRAME_SIZE / 8 + 1];
     cgc_buffer_t buf;
 
@@ -212,8 +212,8 @@ void cgc_modem_init()
    
 #define BUF_SIZE 1024
 static cgc_uint8_t buf[BUF_SIZE+1];
-static cgc_size_t buf_read = 0;
-static cgc_size_t buf_offset = 0;
+static size_t buf_read = 0;
+static size_t buf_offset = 0;
 
 int cgc_get_byte(cgc_uint8_t *byte) {
     if (buf_read == buf_offset) {
@@ -254,12 +254,12 @@ int cgc_ready_to_read(void) {
     return 0;
 }
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, unsigned char *buf)
+int cgc_send_n_bytes(int fd, size_t n, unsigned char *buf)
 {
     if (!n || !buf)
         return -1;
 
-    cgc_size_t tx = 0, total_sent = 0;
+    size_t tx = 0, total_sent = 0;
 
     while (total_sent < n) {
         if (transmit(fd, buf + total_sent, n - total_sent, &tx) != 0) {
@@ -275,7 +275,7 @@ int cgc_send_n_bytes(int fd, cgc_size_t n, unsigned char *buf)
 }
 
 static cgc_uint8_t out_buf[BUF_SIZE+1];
-static cgc_size_t out_buf_len = 0;
+static size_t out_buf_len = 0;
 
 void cgc_flush_output() {
     if (out_buf_len > 0) {
@@ -313,7 +313,7 @@ void cgc_modem_loop(cgc_modem_rx_cb_t cb)
     while (1)
     {
         cgc_uint8_t u_sample;
-        cgc_size_t bytes = 1;
+        size_t bytes = 1;
 
         if (cgc_ready_to_read() == 0) {
             // transmit(STDERR, "flush!\n", 7, NULL);

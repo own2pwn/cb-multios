@@ -659,7 +659,7 @@ cgc_push(struct rpncalc_state *state)
     double d;
 
     unsigned int i, width, height;
-    cgc_size_t size;
+    size_t size;
     struct matrix *m = NULL;
 
     if ((op = cgc_malloc(sizeof(struct operand))) == NULL)
@@ -736,7 +736,7 @@ cgc_pop(struct rpncalc_state *state)
     double d;
 
     unsigned int width, height;
-    cgc_size_t size;
+    size_t size;
     struct matrix *m = NULL;
 
     op = list_pop_entry_front(struct operand, list, &state->stack);

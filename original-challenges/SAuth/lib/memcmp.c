@@ -22,9 +22,9 @@
  */
 #include <string.h>
 
-int cgc_memcmp(const void *s1, const void *s2, cgc_size_t n)
+int cgc_memcmp(const void *s1, const void *s2, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     const unsigned char *buf1 = s1, *buf2 = s2;
     for (i = 0; i < n; i++)
         if (buf1[i] != buf2[i])

@@ -53,8 +53,8 @@ void cgc_ListFiles(void);
 cgc_pFILE cgc_fopen(char *Filename, char *Mode, cgc_uint8_t Suid);
 char *cgc_fgets(char *str, cgc_uint32_t size, cgc_pFILE stream);
 cgc_uint8_t cgc_fclose(cgc_pFILE stream);
-cgc_size_t cgc_fread(void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream);
-cgc_size_t cgc_fwrite(const void *restrict ptr, cgc_size_t size, cgc_size_t nitems, cgc_FILE *restrict stream);
+size_t cgc_fread(void *restrict ptr, size_t size, size_t nitems, cgc_FILE *restrict stream);
+size_t cgc_fwrite(const void *restrict ptr, size_t size, size_t nitems, cgc_FILE *restrict stream);
 cgc_uint8_t cgc_Dump(char *filename);
 
 #endif

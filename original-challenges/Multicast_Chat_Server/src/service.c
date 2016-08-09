@@ -113,7 +113,7 @@ cgc_Request* cgc_newRequest(char* type, char* channelArg) {
  */
 cgc_Request* cgc_parseCommand(char* command) {
 	cgc_Request *request=NULL;
-	cgc_size_t commandSize;
+	size_t commandSize;
 
 	if(!cgc_strncmp(SUBSCRIBE_CMD, command, cgc_strlen(SUBSCRIBE_CMD))) {
 		commandSize = cgc_strlen(SUBSCRIBE_CMD);
@@ -141,7 +141,7 @@ cgc_Request* cgc_parseCommand(char* command) {
  */
 char* cgc_getCommand() {
 	char* buffer;
-	cgc_size_t bufferSize;
+	size_t bufferSize;
 
 	if(!(buffer = cgc_malloc(1024)))
 		return NULL;
@@ -351,7 +351,7 @@ void cgc_sendMessage(cgc_Channel* channelList, cgc_Request* request, cgc_User* u
 	cgc_Message *lastMessage;
 	cgc_Subscription *userSubscription;
 	cgc_Subscription *channelSubscription;
-	cgc_size_t messageSize, sendNameSize, prioritySize;
+	size_t messageSize, sendNameSize, prioritySize;
 	char* arguments, *argument;
 
 	if(!request->arguments)
@@ -450,7 +450,7 @@ void cgc_getMessages(cgc_Channel* channelList, char* channelName, cgc_User* user
  */
 void cgc_sendAuthRequest(cgc_Request* request) {
 	char* authRequestString;
-	cgc_size_t authRequestStringSize=0;
+	size_t authRequestStringSize=0;
 
 	authRequestStringSize += cgc_strlen(AUTH_CMD);
 	authRequestStringSize += cgc_strlen("/");
@@ -507,9 +507,9 @@ void cgc_updateSubscription(cgc_User** userPtr, cgc_Request* request) {
 cgc_AuthResponse* cgc_parseAuthResponse(char* responseStr) {
 	cgc_AuthResponse* response;
 	char* name;
-	cgc_size_t nameSize=0;
+	size_t nameSize=0;
 	char* signature;
-	cgc_size_t signatureSize=0;
+	size_t signatureSize=0;
 	cgc_User* user;
 	char* responseString;
 
@@ -555,8 +555,8 @@ cgc_AuthResponse* cgc_parseAuthResponse(char* responseStr) {
 	for(char* channel=cgc_strtok(NULL, ','); channel!=NULL; channel=cgc_strtok(NULL, ',')) {
 
 		cgc_Subscription* subscription;
-		cgc_size_t channelNameSize;
-		cgc_size_t deliveryTypeNameSize;
+		size_t channelNameSize;
+		size_t deliveryTypeNameSize;
 
 		if(!(subscription = cgc_malloc(sizeof(cgc_Subscription)))) {
 			cgc_free(response->signature);
@@ -607,7 +607,7 @@ cgc_AuthResponse* cgc_parseAuthResponse(char* responseStr) {
 void cgc_sendAuthResponse(cgc_User* user, char* channel) {
 	char* authResponseString;
 	char* signatureString;
-	cgc_size_t authResponseStringSize=0;
+	size_t authResponseStringSize=0;
 
 	authResponseStringSize += cgc_strlen(TOKEN_CMD);
 	authResponseStringSize += cgc_strlen("/") + cgc_strlen(channel) + cgc_strlen("\n");
@@ -660,7 +660,7 @@ void cgc_sendAuthResponse(cgc_User* user, char* channel) {
  */
 void cgc_sendTokenResponse(cgc_User* user, cgc_Subscription* subscription) {
 	char* tokenResponseString;
-	cgc_size_t tokenResponseSize=0;
+	size_t tokenResponseSize=0;
 
 	tokenResponseSize += cgc_strlen(SUBSCRIBE_CMD);
 	tokenResponseSize += cgc_strlen("/") + cgc_strlen(subscription->name) + cgc_strlen("\n");
@@ -712,7 +712,7 @@ void cgc_processTokenRequest(cgc_User** usersPtr, cgc_Request* request) {
 	cgc_AuthResponse* response;
 	cgc_User* user;
 	cgc_Subscription* subscription=NULL;
-	cgc_size_t signingKeySize;
+	size_t signingKeySize;
 
 	response = cgc_parseAuthResponse(request->arguments);
 	if(!(user = cgc_getUserByName(*usersPtr, response->name)))
@@ -750,7 +750,7 @@ void cgc_sendWrongPasswordMessage() {
 #else
 	char* message;
 #endif
-	cgc_size_t messageSize;
+	size_t messageSize;
 
 	if(!message) {
 		messageSize = cgc_strlen(WRONG_PASSWORD_MESSAGE);
@@ -816,7 +816,7 @@ void cgc_initFlagChannel(cgc_Channel** channelListPtr, cgc_User** usersPtr) {
 	cgc_User* user=NULL;
 	char* password;
 	char* username;
-	cgc_size_t usernameSize;
+	size_t usernameSize;
 
 	password = cgc_getRandomString(900);
 	usernameSize = cgc_strlen("admin");
@@ -844,7 +844,7 @@ void cgc_sendMessageToFlagChannel(cgc_Channel* channelList, cgc_User* userList) 
 	cgc_Request* request;
 	char* flag_buf=NULL;
 	const char *flag = (const char*) FLAG_PAGE;
-	cgc_size_t channelNameSize, argumentSize;
+	size_t channelNameSize, argumentSize;
 
 	if(!(user = cgc_getUserByName(userList, "admin")))
 		return;

@@ -25,8 +25,8 @@
 typedef struct cgc_queue cgc_queue;
 struct cgc_queue
 {
-  cgc_size_t Capacity;
-  cgc_size_t Size;
+  size_t Capacity;
+  size_t Size;
   cgc_ssize_t KnownHead;
   void** Elements;
 };

@@ -53,7 +53,7 @@ extern char CWD[];
  */
 int cgc_readUntil(char *buf, int max, char delim) {
 	unsigned char c[1];
-	cgc_size_t size;
+	size_t size;
 	cgc_uint32_t i = 0;
 
 	while (i < max) {

@@ -5,22 +5,22 @@ extern "C"
 #include <malloc.h>
 }
 
-void *operator new( unsigned int alloc_size )
+void *operator new( size_t alloc_size )
 {
-    return (void *)malloc( alloc_size );
+    return (void *)cgc_malloc( alloc_size );
 }
 
-void *operator new[]( unsigned int alloc_size )
+void *operator new[]( size_t alloc_size )
 {
-    return (void *)malloc( alloc_size );
+    return (void *)cgc_malloc( alloc_size );
 }
 
 void operator delete( void *ptr )
 {
-    free( ptr );
+    cgc_free( ptr );
 }
 
 void operator delete[]( void *ptr )
 {
-    free( ptr );
+    cgc_free( ptr );
 }

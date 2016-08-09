@@ -31,7 +31,7 @@
 /*
  * Signature
  */
-int cgc_InitializeSignature(cgc_signature* Signature, int Severity, cgc_trie_unit* Data, cgc_size_t DataSize, char* Path, cgc_size_t PathSize)
+int cgc_InitializeSignature(cgc_signature* Signature, int Severity, cgc_trie_unit* Data, size_t DataSize, char* Path, size_t PathSize)
 {
   if (!Signature || !Data || !Path)
     return -1;
@@ -76,11 +76,11 @@ void cgc_FreeSignature(cgc_signature* Signature)
   }
 }
 
-unsigned long cgc_BytesToUnsigned(unsigned char *Data, cgc_size_t DataSize)
+unsigned long cgc_BytesToUnsigned(unsigned char *Data, size_t DataSize)
 {
   unsigned long hash = 5381;
 
-  for (cgc_size_t Index = 0; Index < DataSize; ++Index)
+  for (size_t Index = 0; Index < DataSize; ++Index)
   {
     hash = ((hash << 5) + hash) + Data[Index];
   }
@@ -137,7 +137,7 @@ void cgc_FreeSignatureDatabase(cgc_signature_db* SignatureDatabase)
 {
   if (SignatureDatabase)
   {
-    for (cgc_size_t SignatureIndex = 0; SignatureIndex < SignatureDatabase->SignatureCount; ++SignatureIndex)
+    for (size_t SignatureIndex = 0; SignatureIndex < SignatureDatabase->SignatureCount; ++SignatureIndex)
     {
       if (SignatureDatabase->Signatures[SignatureIndex])
       {
@@ -178,7 +178,7 @@ int cgc_BuildSignatureDatabaseTrie(cgc_signature_db* SignatureDatabase)
 
   cgc_AllocateAndInitializeTrieRoot(&SignatureDatabase->Trie);
 
-  for (cgc_size_t SignatureIndex = 0; SignatureIndex < SignatureDatabase->SignatureCount; ++SignatureIndex)
+  for (size_t SignatureIndex = 0; SignatureIndex < SignatureDatabase->SignatureCount; ++SignatureIndex)
   {
     cgc_InsertIntoTrie(SignatureDatabase->Trie,
         SignatureDatabase->Signatures[SignatureIndex]->Data,
@@ -204,7 +204,7 @@ int cgc_BuildSignatureDatabaseSearchMachine(cgc_signature_db* SignatureDatabase)
   cgc_queue* Queue = cgc_xcalloc(1, sizeof(cgc_queue));
   cgc_InitializeQueue(Queue);
 
-  for (cgc_size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
+  for (size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
   {
     cgc_trie* Node = SM->Goto[ROOT_IDENTIFIER][AlphabetIndex];
     //if (Node && Node->Identifier != ROOT_IDENTIFIER)
@@ -219,7 +219,7 @@ int cgc_BuildSignatureDatabaseSearchMachine(cgc_signature_db* SignatureDatabase)
   {
     cgc_trie* R = cgc_Dequeue(Queue);
 
-    for (cgc_size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
+    for (size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
     {
       cgc_trie* S = SM->Goto[R->Identifier][AlphabetIndex];
 
@@ -248,9 +248,9 @@ int cgc_BuildSignatureDatabaseSearchMachine(cgc_signature_db* SignatureDatabase)
   return 0;
 }
 
-cgc_list* cgc_SearchSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_trie_unit* Data, cgc_size_t DataSize)
+cgc_list* cgc_SearchSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_trie_unit* Data, size_t DataSize)
 {
-  cgc_size_t NumMatches;
+  size_t NumMatches;
   if (!SignatureDatabase || !Data || !DataSize)
    return NULL;
 
@@ -261,12 +261,12 @@ cgc_list* cgc_SearchSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_t
 
   // Translate cgc_signature identifiers to signatures
   cgc_list* MatchingSignatures = NULL;
-  for (cgc_size_t MatchIndex = 0; MatchIndex < NumMatches; ++MatchIndex)
+  for (size_t MatchIndex = 0; MatchIndex < NumMatches; ++MatchIndex)
   {
     cgc_list* MatchList = Matches[MatchIndex].List;
     for (; MatchList; MatchList = MatchList->Next)
     {
-      for (cgc_size_t SignatureDatabaseIndex = 0; SignatureDatabaseIndex < SignatureDatabase->SignatureCount; ++SignatureDatabaseIndex)
+      for (size_t SignatureDatabaseIndex = 0; SignatureDatabaseIndex < SignatureDatabase->SignatureCount; ++SignatureDatabaseIndex)
       {
         if (cgc_memcmp(SignatureDatabase->Signatures[SignatureDatabaseIndex]->Data,
               MatchList->Value,

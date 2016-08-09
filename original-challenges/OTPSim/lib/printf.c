@@ -74,13 +74,13 @@ static void cgc__convert_signed(char *buf, int x, int base, int upper)
     cgc__convert_unsigned(buf, x, base, upper);
 }
 
-static int cgc__vsfprintf(const char *fmt, cgc_va_list ap, cgc_FILE *stream, char *buf, cgc_size_t buf_size)
+static int cgc__vsfprintf(const char *fmt, cgc_va_list ap, cgc_FILE *stream, char *buf, size_t buf_size)
 {
     char ch;
     unsigned int num_size, field_size;
-    cgc_size_t count = 0;
+    size_t count = 0;
     char numbuf[64];
-    cgc_size_t numbuflen;
+    size_t numbuflen;
 
 #define OUTPUT_CHAR(_ch) \
     do { \
@@ -96,16 +96,16 @@ static int cgc__vsfprintf(const char *fmt, cgc_va_list ap, cgc_FILE *stream, cha
 
 #define OUTPUT_STRING(str, _sz) \
     do { \
-        cgc_size_t sz = _sz; \
+        size_t sz = _sz; \
         if (count >= buf_size) { \
-            if ((cgc_size_t)(count + sz) < (count)) _terminate(1); \
+            if ((size_t)(count + sz) < (count)) _terminate(1); \
             count += sz; break; \
         } \
-        cgc_size_t cnt = buf_size - count; \
+        size_t cnt = buf_size - count; \
         if (cnt > sz) cnt = sz; \
         if (stream) cgc_fwrite(str, cnt, stream); \
         if (buf) cgc_memcpy(buf + count, str, cnt); \
-        if ((cgc_size_t)(count + sz) < (count)) _terminate(1); \
+        if ((size_t)(count + sz) < (count)) _terminate(1); \
         count += sz; \
     } while (0)
 

@@ -23,12 +23,12 @@
 #include <stdlib.h>
 #include "read.h"
 
-int cgc_readline(char *buf, cgc_size_t buf_size)
+int cgc_readline(char *buf, size_t buf_size)
 {
     if (!buf || buf_size < 2)
         return -1;
 
-    cgc_size_t rx, i = 0;
+    size_t rx, i = 0;
 #ifdef PATCHED
     while (i < buf_size && receive(STDIN, &buf[i], 1, &rx) == 0 && rx == 1) {
 #else
@@ -49,7 +49,7 @@ int cgc_readline(char *buf, cgc_size_t buf_size)
     return 0;
 }
 
-int cgc_readnum(char *buf, cgc_size_t buf_size)
+int cgc_readnum(char *buf, size_t buf_size)
 {
     if (cgc_readline(buf, buf_size))
         return -1;

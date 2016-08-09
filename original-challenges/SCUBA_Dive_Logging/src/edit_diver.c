@@ -30,7 +30,7 @@ THE SOFTWARE.
 int cgc_edit_diver(cgc_logbook_type *Info)  {
 
 	char buffer[1024];
-	cgc_size_t count;
+	size_t count;
 
 	cgc_printf("First Name");
 

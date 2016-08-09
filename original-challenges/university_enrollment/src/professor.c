@@ -78,7 +78,7 @@ cgc_professor_t *cgc_get_professor(char *name)
     return NULL;
 }
 
-cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, cgc_size_t idx)
+cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, size_t idx)
 {
     if (!prof)
         return NULL;

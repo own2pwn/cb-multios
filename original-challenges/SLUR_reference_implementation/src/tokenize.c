@@ -39,8 +39,8 @@ static int cgc_ok_for_sym(char c)
 
 cgc_tok_list *cgc_tokenize(char *expr)
 {
-  cgc_size_t len = cgc_strlen(expr);
-  cgc_size_t i = 0;
+  size_t len = cgc_strlen(expr);
+  size_t i = 0;
 
   cgc_tok_list *l = cgc_malloc(sizeof(cgc_tok_list));
   if (l == NULL)
@@ -64,7 +64,7 @@ cgc_tok_list *cgc_tokenize(char *expr)
     }
 
     if (cgc_isalnum(expr[i])) {
-      cgc_size_t start = i;
+      size_t start = i;
 
       while (cgc_isalnum(expr[i]) && i < len)
         i++;

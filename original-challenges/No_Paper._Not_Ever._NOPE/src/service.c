@@ -197,7 +197,7 @@ int cgc_we_have_a_winner(cgc_Session *s, cgc_Response *r) {
  * @param expected_bytes    Number of bytes to read and store in data buffer
  * @return SUCCESS on success, else -1
  */
-int cgc_recv_cmd_data(cgc_Session *s, cgc_size_t expected_bytes) {
+int cgc_recv_cmd_data(cgc_Session *s, size_t expected_bytes) {
     if (expected_bytes == s->request.bytes) {
         if (0 < expected_bytes) {
             s->request.data = cgc_calloc(expected_bytes);
@@ -255,7 +255,7 @@ int cgc_get_refund(cgc_Session *s, cgc_Response *r) {
     cgc_TaxPayer *tp;
     int ret = SUCCESS;
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
-    cgc_size_t bytes_written = sizeof(year_buf) - sizeof(GET_REFUND_OK) - 1;
+    size_t bytes_written = sizeof(year_buf) - sizeof(GET_REFUND_OK) - 1;
 
     tp = cgc_taxpayer_get_by_username(tp_list, s);
     if (NULL != tp) {
@@ -283,7 +283,7 @@ int cgc_pay_taxes(cgc_Session *s, cgc_Response *r) {
     cgc_TaxPayer *tp;
     int ret = SUCCESS;
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
-    cgc_size_t bytes_written = sizeof(year_buf) - sizeof(PAY_TAXES_OK) - 1;
+    size_t bytes_written = sizeof(year_buf) - sizeof(PAY_TAXES_OK) - 1;
 
     ret = cgc_recv_cmd_data(s, sizeof(cgc_uint32_t));
     if (SUCCESS == ret) {
@@ -313,7 +313,7 @@ int cgc_pay_taxes(cgc_Session *s, cgc_Response *r) {
  * @param year_buf      Pointer to buffer of tax years
  * @param bytes_written Number of bytes to copy from year_buf into r.answer
  */
-void cgc_copy_yr_list_into_answer(cgc_Response *r, char *year_buf, cgc_size_t bytes_written) {
+void cgc_copy_yr_list_into_answer(cgc_Response *r, char *year_buf, size_t bytes_written) {
     cgc_memcpy(r->answer, TAXES_SUBMITTED_OK, sizeof(TAXES_SUBMITTED_OK)-1);
     // VULN: year_buf is 128 and so is r->answer
     // cgc_memcpy will go OOB if bytes_written > 128-sizeof(TAXES_SUBMITTED_OK)-1
@@ -335,9 +335,9 @@ int cgc_taxes_submitted(cgc_Session *s, cgc_Response *r) {
     char year_buf[128] = {0}; // 128bytes == 64 tax_years
 
 #ifdef PATCHED_2
-    cgc_size_t bytes_written = 128-sizeof(TAXES_SUBMITTED_OK)-1;
+    size_t bytes_written = 128-sizeof(TAXES_SUBMITTED_OK)-1;
 #else
-    cgc_size_t bytes_written = 0;
+    size_t bytes_written = 0;
 #endif
 
     ret = cgc_recv_cmd_data(s, sizeof(cgc_DateRange));
@@ -401,7 +401,7 @@ int cgc_taxes_due(cgc_Session *s, cgc_Response *r) {
 int cgc_upload_form(cgc_Session *s, cgc_Response *r) {
     cgc_TaxPayer *tp;
     int ret = SUCCESS;
-    cgc_size_t data_sz = sizeof(cgc_TenFourD) - sizeof(cgc_uint32_t) - sizeof(char *);
+    size_t data_sz = sizeof(cgc_TenFourD) - sizeof(cgc_uint32_t) - sizeof(char *);
 
     ret = cgc_recv_cmd_data(s, data_sz);
     if (SUCCESS == ret) {
@@ -524,7 +524,7 @@ int cgc_create_account(cgc_Session *s, cgc_Response *r) {
 int main(void) {
 
     int ret = 0;
-    cgc_size_t bytes = 0;
+    size_t bytes = 0;
 
     while (TRUE) {
         cgc_Session s = {0};

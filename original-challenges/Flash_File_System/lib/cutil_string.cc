@@ -96,7 +96,7 @@ const cgc_String& cgc_String::operator+( const cgc_String &rhs ) const
 cgc_String& cgc_String::operator+=( const cgc_String &rhs )
 {
 	// Make a new string of this string + rhs
-	cgc_size_t new_stringlen = m_length + rhs.m_length;
+	size_t new_stringlen = m_length + rhs.m_length;
 
 	char *pNewData = new char[new_stringlen+1];
 
@@ -125,7 +125,7 @@ cgc_String cgc_String::cgc_Upper( void ) const
 {
 	cgc_String sUpper = *this;
 
-	for ( cgc_size_t i = 0; i < m_length; i++ )
+	for ( size_t i = 0; i < m_length; i++ )
 	{
 		if ( cgc_islower( sUpper.m_pData[i] ) )
 			sUpper.m_pData[i] = cgc_toupper( sUpper.m_pData[i] );
@@ -138,7 +138,7 @@ cgc_String cgc_String::cgc_Lower( void ) const
 {
 	cgc_String sLower = *this;
 
-	for ( cgc_size_t i = 0; i < m_length; i++ )
+	for ( size_t i = 0; i < m_length; i++ )
 	{
 		if ( cgc_isupper( sLower.m_pData[i] ) )
 			sLower.m_pData[i] = cgc_tolower( sLower.m_pData[i] );
@@ -147,7 +147,7 @@ cgc_String cgc_String::cgc_Lower( void ) const
 	return (sLower);
 }
 
-char cgc_String::operator[]( const cgc_size_t &loc ) const
+char cgc_String::operator[]( const size_t &loc ) const
 {
 	if ( cgc_IsEmpty() )
 		return '\0';
@@ -158,12 +158,12 @@ char cgc_String::operator[]( const cgc_size_t &loc ) const
 	return m_pData[loc];
 }
 
-cgc_String cgc_String::cgc_Trim( cgc_size_t length ) const
+cgc_String cgc_String::cgc_Trim( size_t length ) const
 {
 	return (cgc_SubString( 0, length ));
 }
 
-cgc_String cgc_String::cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) const
+cgc_String cgc_String::cgc_SubString( size_t startPos, size_t endPos ) const
 {
 	if ( endPos > m_length )
 		endPos = m_length;
@@ -171,11 +171,11 @@ cgc_String cgc_String::cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) c
 	if ( startPos >= m_length || startPos >= endPos )
 	       return cgc_String("");
 
-	cgc_size_t new_length = endPos - startPos;
+	size_t new_length = endPos - startPos;
 	char *pszNewStr = new char[new_length+1];
 
-	cgc_size_t destPos = 0;
-	for ( cgc_size_t srcPos = startPos; srcPos < endPos; srcPos++ )
+	size_t destPos = 0;
+	for ( size_t srcPos = startPos; srcPos < endPos; srcPos++ )
 		pszNewStr[destPos++] = m_pData[srcPos];
 
 	pszNewStr[destPos] = '\0';
@@ -185,7 +185,7 @@ cgc_String cgc_String::cgc_SubString( cgc_size_t startPos, cgc_size_t endPos ) c
 
 cgc_String cgc_String::cgc_TrimSpaces( void ) const
 {
-	cgc_size_t pos = 0;
+	size_t pos = 0;
 	for ( ; pos < m_length; pos++ )
 	{
 		if ( m_pData[pos] != ' ' )
@@ -206,7 +206,7 @@ bool cgc_String::cgc_ToInt( cgc_uint32_t &value )
 		return (false);
 }
 
-cgc_size_t cgc_String::cgc_GetLength( void ) const
+size_t cgc_String::cgc_GetLength( void ) const
 {
 	return (m_length);
 }

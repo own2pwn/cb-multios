@@ -62,7 +62,7 @@ typedef enum {
 typedef struct {
     cgc_obj_type type;
     cgc_uint64_t data;
-    cgc_size_t len;
+    size_t len;
 } cgc_object_t;
 
 cgc_object_t obj_none = { TYPE_NONE, 0, 0 };
@@ -219,7 +219,7 @@ cgc_xpk_err cgc_unpack_object(cgc_xpk_ctx_t *ctx, cgc_object_t** obj)
                 }
             case XPK_BYTES:
                 {
-                    cgc_size_t _len;
+                    size_t _len;
                     if ((err = cgc_xpk_unpack_bytes(ctx, &_len)) != XPK_ERR_NONE)
                         goto fail;
                     o->type = TYPE_BYTES;
@@ -232,7 +232,7 @@ cgc_xpk_err cgc_unpack_object(cgc_xpk_ctx_t *ctx, cgc_object_t** obj)
             case XPK_ARRAY:
                 {
                     int _i;
-                    cgc_size_t _len;
+                    size_t _len;
                     if ((err = cgc_xpk_unpack_array(ctx, &_len)) != XPK_ERR_NONE)
                         goto fail;
                     o->type = TYPE_ARRAY;
@@ -251,7 +251,7 @@ cgc_xpk_err cgc_unpack_object(cgc_xpk_ctx_t *ctx, cgc_object_t** obj)
             case XPK_MAP:
                 {
                     int _i;
-                    cgc_size_t _len;
+                    size_t _len;
                     cgc_tr_t _map = NULL;
                     if ((err = cgc_xpk_unpack_map(ctx, &_len)) != XPK_ERR_NONE)
                         goto fail;
@@ -289,7 +289,7 @@ cgc_xpk_err cgc_unpack_object(cgc_xpk_ctx_t *ctx, cgc_object_t** obj)
             case XPK_STRING:
             case XPK_FIXSTRING:
                 {
-                    cgc_size_t _len;
+                    size_t _len;
                     if ((err = cgc_xpk_unpack_str(ctx, &_len)) != XPK_ERR_NONE)
                         goto fail;
                     o->type = TYPE_STRING;
@@ -322,7 +322,7 @@ void cgc_create_store_out(cgc_tr_t root, void *arg)
     cgc_xpk_pack_str(ctx, root->key);
 }
 
-void cgc_handle_store(cgc_size_t size)
+void cgc_handle_store(size_t size)
 {
     cgc_xpk_reset(g_ctx, size);
     cgc_xpk_err err;
@@ -361,7 +361,7 @@ fail:
     return;
 }
 
-void cgc_handle_lookup(cgc_size_t size)
+void cgc_handle_lookup(size_t size)
 {
     cgc_xpk_reset(g_ctx, size);
     cgc_xpk_err err;
@@ -412,7 +412,7 @@ fail:
     return;
 }
 
-void cgc_handle_delete(cgc_size_t size)
+void cgc_handle_delete(size_t size)
 {
     cgc_xpk_reset(g_ctx, size);
     cgc_xpk_err err;
@@ -480,7 +480,7 @@ fail:
     return;
 }
 
-void cgc_handle_debug(cgc_size_t size, cgc_uint8_t *debug)
+void cgc_handle_debug(size_t size, cgc_uint8_t *debug)
 {
     cgc_xpk_reset(g_ctx, size);
     cgc_xpk_err err;
@@ -529,7 +529,7 @@ fail:
 #define MAX_PRINT_DEPTH 32
 void cgc_print_map(int depth, cgc_tr_t root, cgc_uint64_t *i, cgc_uint64_t n);
 void cgc_print_array(int depth, cgc_object_t **arr, unsigned int size, cgc_uint64_t *i, cgc_uint64_t n);
-void cgc_print_bytes(const char *bytes, cgc_size_t len);
+void cgc_print_bytes(const char *bytes, size_t len);
 
 void cgc_print_item(int depth, cgc_object_t *o, cgc_uint64_t *i, cgc_uint64_t n)
 {
@@ -610,10 +610,10 @@ void cgc_print_map(int depth, cgc_tr_t root, cgc_uint64_t *i, cgc_uint64_t n)
     }
 }
 
-void cgc_print_bytes(const char *bytes, cgc_size_t len)
+void cgc_print_bytes(const char *bytes, size_t len)
 {
     char escaped[65536];
-    cgc_size_t i, j = 0;
+    size_t i, j = 0;
     for (i = 0; i < len; i++)
     {
         if (cgc_isalnum(bytes[i]))
@@ -638,7 +638,7 @@ void cgc_print_bytes(const char *bytes, cgc_size_t len)
     cgc_printf("<&s>" NL, escaped);
 }
 
-void cgc_handle_print(cgc_size_t size, cgc_uint8_t debug)
+void cgc_handle_print(size_t size, cgc_uint8_t debug)
 {
     cgc_xpk_reset(g_ctx, size);
     cgc_xpk_err err;
@@ -691,7 +691,7 @@ void cgc_check_seed()
 int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
     void *secret_page = (void *)secret_page_i;
     cgc_uint64_t command;
-    cgc_size_t size;
+    size_t size;
     cgc_uint8_t debug = 0;
 
     g_ctx = cgc_xpk_init(1024);
@@ -704,7 +704,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
         cgc_fflush(stdout);
         if (cgc_fread(&command, sizeof(cgc_uint64_t), stdin) != sizeof(cgc_uint64_t))
             break;
-        if (cgc_fread(&size, sizeof(cgc_size_t), stdin) != sizeof(cgc_size_t))
+        if (cgc_fread(&size, sizeof(size_t), stdin) != sizeof(size_t))
             break;
         if (size > MAX_DATA_LEN)
         {

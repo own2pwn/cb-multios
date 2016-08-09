@@ -27,7 +27,7 @@
 cgc_tt_game * game;
 
 
-void cgc_do_menu(cgc_size_t replay) {
+void cgc_do_menu(size_t replay) {
     if(replay) {
         cgc_send(REPLAYCHOICES, cgc_strlen(REPLAYCHOICES));
     } else {
@@ -179,7 +179,7 @@ void cgc_do_play() {
 int main(void) {
     char choice[14];
     int choice_buf_size = 14;
-    cgc_size_t replay = 0;
+    size_t replay = 0;
     void * memory_base = NULL;
     void * memory_idx = NULL;
 

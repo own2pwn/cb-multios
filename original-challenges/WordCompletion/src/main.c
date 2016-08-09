@@ -18,9 +18,9 @@ char gValidChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345
 #define NEXT_WORD_MSG "Next Word: "
 #define FINAL_RND_MSG "Final Round. Chose another 2 digit number\n"
 
-cgc_size_t cgc_strlen(char* str)
+size_t cgc_strlen(char* str)
 {
-  cgc_size_t ret = 0; 
+  size_t ret = 0; 
   if (str == NULL)
   {
     return (0);
@@ -31,10 +31,10 @@ cgc_size_t cgc_strlen(char* str)
   return (ret);
 }
 
-cgc_size_t cgc_transmit_all(char* buf, cgc_size_t size)
+size_t cgc_transmit_all(char* buf, size_t size)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -55,16 +55,16 @@ cgc_size_t cgc_transmit_all(char* buf, cgc_size_t size)
   return (size);
 }
 
-cgc_size_t cgc_transmit_str(char* buf)
+size_t cgc_transmit_str(char* buf)
 {
-  cgc_size_t len = cgc_strlen(buf);
+  size_t len = cgc_strlen(buf);
   return (cgc_transmit_all(buf, len));
 }
 
-cgc_size_t cgc_receive_all(char* buf, cgc_size_t size)
+size_t cgc_receive_all(char* buf, size_t size)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -85,17 +85,17 @@ cgc_size_t cgc_receive_all(char* buf, cgc_size_t size)
   return (size);
 }
 
-cgc_size_t cgc_readline(char* buf, cgc_size_t len)
+size_t cgc_readline(char* buf, size_t len)
 {
   if (buf == NULL)
   {
     return (0);
   }
 
-  cgc_size_t count = 0;
+  size_t count = 0;
   int ret = 0;
   char c = 0;
-  cgc_size_t rx_bytes = 0;
+  size_t rx_bytes = 0;
   do
   {
     ret = receive(STDIN, &c, 1, &rx_bytes);
@@ -137,14 +137,14 @@ char cgc_rotN(char c, int n)
   return (gValidChars[temp]);
 }
 
-cgc_size_t cgc_strrotcpy(char* dst, char* src, int rot)
+size_t cgc_strrotcpy(char* dst, char* src, int rot)
 {
   if ( (src == NULL) || (dst == NULL) )
   {
     return (0);
   }
 
-  cgc_size_t ret = 0;
+  size_t ret = 0;
   for (ret = 0; src[ret] != '\0'; ret++)
   {
     dst[ret] = cgc_rotN(src[ret], rot);
@@ -160,7 +160,7 @@ char* gWordData = NULL;
 int cgc_init(int rot)
 {
   int ret = 0;
-  cgc_size_t numWords = NUM_WORDS;
+  size_t numWords = NUM_WORDS;
 
   //first allocate enough space for the wordlist
   ret = allocate( sizeof(gSeedWords), 0, (void**)(&gWords));
@@ -170,7 +170,7 @@ int cgc_init(int rot)
   }
 
   //now calculate how many bytes we need to store the words themselves
-  cgc_size_t total = 0;
+  size_t total = 0;
   int i = 0;
   for (i = 0; i < numWords; i++)
   {
@@ -185,7 +185,7 @@ int cgc_init(int rot)
   } 
 
   //now that we have both we can fill in the data  
-  cgc_size_t temp = 0;
+  size_t temp = 0;
   char* pTemp = gWordData;
   for (i = 0; i < numWords; i++)
   {
@@ -303,7 +303,7 @@ void cgc_srand(cgc_uint32_t seed)
   gRandRegister = seed;
 }
 
-void cgc_scramble(char* dst, char* src, cgc_size_t len)
+void cgc_scramble(char* dst, char* src, size_t len)
 {
 #if PATCHED
   if ( (dst == NULL) || (src == NULL) )
@@ -346,7 +346,7 @@ int main(void)
   int i = 0;
   int ret = 0;
   int temp = 0;
-  cgc_size_t sret = 0;
+  size_t sret = 0;
   char c = '\n';
 
   cgc_transmit_str(ENTER_NUM_MSG);

@@ -171,8 +171,8 @@ void cgc_execute(cgc_pruCPU *cpu) {
 
 int cgc_recvInt() {
 	char tmp[4];
-	cgc_size_t recvd = 0;
-	cgc_size_t totRecvd = 0;
+	size_t recvd = 0;
+	size_t totRecvd = 0;
 	int ret;
 	while(totRecvd<=3) {
 		receive(0, tmp+totRecvd, 4-totRecvd, &recvd);

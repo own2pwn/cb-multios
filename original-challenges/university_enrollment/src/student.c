@@ -87,7 +87,7 @@ int cgc__set_major(cgc_student_t *student, char *dept_name)
     return TRUE;
 }
 
-int cgc__remove_course(cgc_student_t *student, cgc_size_t idx)
+int cgc__remove_course(cgc_student_t *student, size_t idx)
 {
     if (!student || idx >= student->num_courses)
         return FALSE;

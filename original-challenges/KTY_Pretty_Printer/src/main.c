@@ -34,13 +34,13 @@
 cgc_kty_parser_t *parser;
 cgc_kty_item_t *my_kty;
 
-int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim)
+int cgc_read_until(int fd, char *buf, size_t len, char delim)
 {
-  cgc_size_t i;
+  size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
-    cgc_size_t rx;
+    size_t rx;
     if (receive(fd, c, 1, &rx) != 0 || rx == 0)
       return -1;
     if (*(c++) == delim)

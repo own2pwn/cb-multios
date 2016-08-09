@@ -16,7 +16,7 @@ cgc_professor_t *cgc_create_professor(char *name);
 void cgc_add_course_to_professor(cgc_professor_t *prof, cgc_course_t *course);
 
 cgc_professor_t *cgc_get_professor(char *name);
-cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, cgc_size_t idx);
+cgc_course_t *cgc_get_professor_class(cgc_professor_t *prof, size_t idx);
 
 void cgc_list_professors();
 void cgc_list_classes_taught(cgc_professor_t *prof);

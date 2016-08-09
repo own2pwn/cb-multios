@@ -35,6 +35,6 @@
   _terminate(1); \
 })
 
-void* cgc_xcalloc(cgc_size_t count, cgc_size_t size);
+void* cgc_xcalloc(size_t count, size_t size);
 
 #endif /* __SAFE_H__ */

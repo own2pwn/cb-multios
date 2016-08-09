@@ -42,7 +42,7 @@
  "Edgar: What doth the raven say?\n\n"\
  "Our authors provide various services, please give them a try...\n"
 
-int cgc_prompt(char *pmpt, char *buf, cgc_size_t size) {
+int cgc_prompt(char *pmpt, char *buf, size_t size) {
     int ret;
 
     SEND(pmpt, cgc_strlen(pmpt), ret);

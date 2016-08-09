@@ -23,9 +23,9 @@
 #include <string.h>
 #include "malloc_private.h"
 
-void *cgc_calloc(cgc_size_t count, cgc_size_t size)
+void *cgc_calloc(size_t count, size_t size)
 {
-    cgc_size_t n = count * size;
+    size_t n = count * size;
     void *ptr;
 
     if ((cgc_uintmax_t)count * size > (cgc_uintmax_t)SIZE_MAX)

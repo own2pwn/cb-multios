@@ -28,10 +28,10 @@ THE SOFTWARE.
 #include "stdlib.h"
 
 
-int cgc_receive_bytes (char *buffer, cgc_size_t count) 
+int cgc_receive_bytes (char *buffer, size_t count) 
 {
-cgc_size_t total;
-cgc_size_t rxbytes;
+size_t total;
+size_t rxbytes;
 
 
     if (buffer == 0 ) {
@@ -65,15 +65,15 @@ cgc_size_t rxbytes;
 
 // Buffered cgc_receive_until function.  Will return up to "limit" characters in "buffer", but
 // note that buffer[limit] will have a null written so ensure the incoming buffer is limit+1 in size
-cgc_size_t cgc_receive_until( char *buffer, char delim, cgc_size_t limit )
+size_t cgc_receive_until( char *buffer, char delim, size_t limit )
 {
     const int maxLen = 512;
     static char circ_buffer[maxLen];
     static int head = 0;
     static int end = 0;
     int maxRead;
-    cgc_size_t len = 0;
-    cgc_size_t rx = 0;
+    size_t len = 0;
+    size_t rx = 0;
 
     while (1) {
 

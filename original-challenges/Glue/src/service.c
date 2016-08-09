@@ -35,10 +35,10 @@ static unsigned char txbuf[CHUNK_SIZE];
 static int txcnt;
 
 void cgc_send_flush() {
-  cgc_size_t sent = 0;
+  size_t sent = 0;
   while (txcnt != sent)
   {
-      cgc_size_t tx;
+      size_t tx;
       if (transmit(STDOUT, txbuf + sent, txcnt - sent, &tx) != 0)
           break;
       sent += tx;
@@ -48,7 +48,7 @@ void cgc_send_flush() {
 
 void cgc_poop_page_perfectly(void)
 {
-  for (cgc_size_t i = 0; i < 0x1000; i += 4)
+  for (size_t i = 0; i < 0x1000; i += 4)
   {
     if (txcnt == CHUNK_SIZE)
       cgc_send_flush();
@@ -57,7 +57,7 @@ void cgc_poop_page_perfectly(void)
   cgc_send_flush();
 }
 
-void *cgc_xcalloc(cgc_size_t nmemb, cgc_size_t size)
+void *cgc_xcalloc(size_t nmemb, size_t size)
 {
   void* mem = cgc_calloc(nmemb, size);
   if (!mem)
@@ -102,10 +102,10 @@ struct cgc_glue_t
   char f_prefix[100 + 1];
 };
 
-cgc_size_t cgc_read_n(int fd, char* buf, cgc_size_t n, int* err)
+size_t cgc_read_n(int fd, char* buf, size_t n, int* err)
 {
-  cgc_size_t n_read = 0;
-  cgc_size_t rx_amt = 0;
+  size_t n_read = 0;
+  size_t rx_amt = 0;
   if (err)
     *err = 0;
 
@@ -139,15 +139,15 @@ void cgc_reverse(char* s)
   cgc_strcpy(s, tmp);
 }
 
-cgc_size_t cgc_read_ascii_octal(char* buf, int size, int* err)
+size_t cgc_read_ascii_octal(char* buf, int size, int* err)
 {
-  cgc_size_t val = 0;
+  size_t val = 0;
   char* tmp = cgc_xcalloc(size, 1);
-  for (cgc_size_t i = 0; i < size - 1; i++)
+  for (size_t i = 0; i < size - 1; i++)
     tmp[i] = buf[i];
   cgc_reverse(tmp);
 
-  for (cgc_size_t i = 0; i < size - 1; i++)
+  for (size_t i = 0; i < size - 1; i++)
   {
     if (!tmp[i])
       break;
@@ -159,8 +159,8 @@ cgc_size_t cgc_read_ascii_octal(char* buf, int size, int* err)
       break;
     }
 
-    cgc_size_t x = 1;
-    for (cgc_size_t j = 0; j < i; j++)
+    size_t x = 1;
+    for (size_t j = 0; j < i; j++)
       x *= 8;
 
     val += x * (tmp[i] - 0x30);
@@ -205,10 +205,10 @@ const char* cgc_get_user_code(int uid, int gid)
   return (char *)&user_codes[uid * gid];
 }
 
-cgc_size_t cgc_sent_n(int fd, char* buf, cgc_size_t cnt, int* err)
+size_t cgc_sent_n(int fd, char* buf, size_t cnt, int* err)
 {
-  cgc_size_t sent = 0;
-  cgc_size_t tx_amt = 0;
+  size_t sent = 0;
+  size_t tx_amt = 0;
   if (err)
     *err = 1;
 
@@ -280,7 +280,7 @@ cgc_glue_t* cgc_initialize(char* buf)
 
 int cgc_empty_block(char* buf)
 {
-  for (cgc_size_t i = 0; i < BLOCK_SIZE; i++)
+  for (size_t i = 0; i < BLOCK_SIZE; i++)
     if (buf[i] != 0)
       return 0;
   return 1;

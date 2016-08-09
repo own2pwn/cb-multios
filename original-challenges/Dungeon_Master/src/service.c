@@ -72,7 +72,7 @@ char* cgc_getRandomName() {
 */
 char cgc_getMove() {
 	char tmp[4];
-	cgc_size_t bytes;
+	size_t bytes;
 	cgc_bzero(tmp, 4);
 
 	if(cgc_read_n_bytes(STDIN, tmp, 2, &bytes))
@@ -97,7 +97,7 @@ char cgc_getMove() {
 */
 void cgc_sendGameDescription(cgc_Dungeon dungeon) {
 	char buffer[1024];
-	cgc_size_t len=0;
+	size_t len=0;
 	int ret=0;
 
 	cgc_bzero(buffer, 1024);
@@ -122,7 +122,7 @@ void cgc_sendGameDescription(cgc_Dungeon dungeon) {
 */
 void cgc_sendMenuInstruction(cgc_Dungeon dungeon) {
 	char buffer[1024];
-	cgc_size_t len=0;
+	size_t len=0;
 	int ret=0;
 
 	cgc_bzero(buffer, 1024);

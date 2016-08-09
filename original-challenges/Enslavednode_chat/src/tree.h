@@ -37,6 +37,6 @@ struct cgc_tree {
 cgc_tree *cgc_init_tree(HASH h, const DATA d);
 int cgc_ins_tree(cgc_tree *t, HASH h, const DATA d);
 cgc_list *cgc_tree_to_list(cgc_tree *t);
-cgc_size_t cgc_num_nodes(cgc_tree *t);
+size_t cgc_num_nodes(cgc_tree *t);
 cgc_list *cgc_get_tree(cgc_tree *t, HASH h);
 #endif /* __TREE__H */

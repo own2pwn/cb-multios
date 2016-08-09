@@ -50,15 +50,15 @@ typedef struct {
     /* tiny-specific metadata */
     struct tiny_page *tiny_pages[NUM_TINY_BINS];
     void *tiny_run;
-    cgc_size_t tiny_offset;
+    size_t tiny_offset;
 } cgc_malloc_t;
 
 typedef struct {
     union {
-        cgc_size_t prev_size; /* small allocations */
+        size_t prev_size; /* small allocations */
         cgc_malloc_t *heap; /* large allocations */
     };
-    cgc_size_t size_flags;
+    size_t size_flags;
     char data[0];
 } cgc_malloc_hdr_t;
 
@@ -90,12 +90,12 @@ typedef struct cgc_malloc_free {
 
 cgc_malloc_t g_heap;
 
-void *cgc_malloc_alloc(cgc_malloc_t *heap, cgc_size_t n);
+void *cgc_malloc_alloc(cgc_malloc_t *heap, size_t n);
 void cgc_malloc_free(cgc_malloc_t *heap, void *ptr);
-void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, cgc_size_t n);
-cgc_size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr);
+void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, size_t n);
+size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr);
 
-static inline int cgc_size_to_bin(cgc_size_t n)
+static inline int cgc_size_to_bin(size_t n)
 {
     if (n < SMALL_SIZE)
         return (n / 4) - 1;

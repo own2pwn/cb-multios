@@ -2,13 +2,13 @@
 #include "mylibc.h"
 
 
-cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
+cgc_ssize_t cgc_readLine(int fd, char* buf, size_t len)
 {
   char c = '\0';
   int ret = 0;
-  cgc_size_t i = 0;
-  cgc_size_t numRead;
-  cgc_size_t temp = len;
+  size_t i = 0;
+  size_t numRead;
+  size_t temp = len;
 
   if (buf == NULL)
   {
@@ -37,9 +37,9 @@ cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len)
   return (i);
 }
 
-cgc_size_t cgc_myStrLen(const char* str)
+size_t cgc_myStrLen(const char* str)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
 
   if (str == NULL)
   {
@@ -53,11 +53,11 @@ cgc_size_t cgc_myStrLen(const char* str)
   return (i);
 }
 
-cgc_size_t cgc_my_printf(const char* str)
+size_t cgc_my_printf(const char* str)
 {
-  cgc_size_t rx_bytes;
-  cgc_size_t total = 0; 
-  cgc_size_t len = 0;
+  size_t rx_bytes;
+  size_t total = 0; 
+  size_t len = 0;
   int ret = 0;
   if (str == NULL)
   {
@@ -79,7 +79,7 @@ cgc_size_t cgc_my_printf(const char* str)
 }
 
 //minlen is used for leading 0's in the fractional part
-int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num)
+int cgc_snprintdecimal(char* str, size_t len, cgc_uint32_t num)
 {
   int i = 0;
   int j = 0;

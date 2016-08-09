@@ -132,9 +132,9 @@ void cgc_ParseCode(char *buf, char *output) {
 /*
  * receive all requested bytes
  */
-int cgc_recv(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
-	cgc_size_t total_bytes = 0;
-	cgc_size_t rx;
+int cgc_recv(int fd, void *buf, size_t count, size_t *rx_bytes) {
+	size_t total_bytes = 0;
+	size_t rx;
 	int rval;	
 
 	while (total_bytes < count) {
@@ -156,7 +156,7 @@ int cgc_recv(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 Read the pcm file from stdin
 */
 unsigned char *cgc_ReadWav(unsigned char *pcm) {
-  cgc_size_t size;
+  size_t size;
   unsigned int total_size;
   struct pcm_header *p;
 

@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "churn.h"
 
 cgc_churn_item gyre[CHURN_GYRE_SIZE];
-cgc_size_t gyre_pos = 0;
+size_t gyre_pos = 0;
 
 cgc_uint64  cgc_init_one(cgc_uint64,  cgc_uint64);
 cgc_float64 cgc_init_two(cgc_float64, cgc_float64);

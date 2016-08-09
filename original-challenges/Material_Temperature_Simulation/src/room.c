@@ -304,7 +304,7 @@ void cgc_InitCustom(void) {
 
 // allocate an array large enough to hold a temperature grid for the particular material size
 cgc_int32_t cgc_AllocateGrid(double **grid, cgc_uint32_t x, cgc_uint32_t y, cgc_uint32_t z) {
-	cgc_size_t malloc_size = x*y*z*sizeof(double);
+	size_t malloc_size = x*y*z*sizeof(double);
 
 	if ((*grid = cgc_calloc(malloc_size, 1)) == NULL) {
 		return(-1);
@@ -320,7 +320,7 @@ int cgc_InitMaterial(void) {
 	cgc_int8_t isothermic;
 	cgc_int8_t heat;
 	double temperature;
-	cgc_size_t malloc_size;
+	size_t malloc_size;
 	cgc_int8_t material;
 
 	material = 0;
@@ -379,10 +379,10 @@ int cgc_InitMaterial(void) {
 	cgc_flush_stdin();
 
 #ifdef PATCHED
-	// one last check to make sure we didn't overflow cgc_size_t
-	if ( (pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * X * Y)) <= Z) ||
-		(pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * Y * Z)) <= X) ||
-		(pow(2, 8*sizeof(cgc_size_t)) / ((sizeof(double) * X * Z)) <= Y) ) {
+	// one last check to make sure we didn't overflow size_t
+	if ( (pow(2, 8*sizeof(size_t)) / ((sizeof(double) * X * Y)) <= Z) ||
+		(pow(2, 8*sizeof(size_t)) / ((sizeof(double) * Y * Z)) <= X) ||
+		(pow(2, 8*sizeof(size_t)) / ((sizeof(double) * X * Z)) <= Y) ) {
 		cgc_puts("Invalid room dimensions");
 		return(-1);
 	}

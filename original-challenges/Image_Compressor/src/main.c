@@ -75,9 +75,9 @@ static cgc_int8_t tmp_y[64];
 static cgc_int8_t tmp_u[64];
 static cgc_int8_t tmp_v[64];
 
-static int cgc_recvall(int fd, cgc_uint8_t *buf, cgc_size_t cnt, cgc_size_t *cntout)
+static int cgc_recvall(int fd, cgc_uint8_t *buf, size_t cnt, size_t *cntout)
 {
-    cgc_size_t tmp;
+    size_t tmp;
     *cntout = 0;
     do {
         if (receive(STDIN, buf, cnt - *cntout, &tmp) != 0 || tmp == 0)
@@ -206,7 +206,7 @@ int main()
 {
     cgc_bmp_file_t bmp_file;
     cgc_bmp_info_t bmp_info;
-    cgc_size_t rx;
+    size_t rx;
 
     if (cgc_recvall(STDIN, (cgc_uint8_t*)&bmp_file, sizeof(bmp_file), &rx) != 0 || rx != sizeof(bmp_file))
         goto error;
@@ -229,7 +229,7 @@ int main()
         goto error;
     if (bmp_info.planes != 1 || (bmp_info.bpp != 24 && bmp_info.bpp != 32))
         goto error;
-    cgc_size_t data_size = bmp_file.size - bmp_file.offset;
+    size_t data_size = bmp_file.size - bmp_file.offset;
     if (data_size != bmp_info.data_size)
         goto error;
     if (bmp_info.width * bmp_info.height * (bmp_info.bpp / 8) != data_size)
@@ -351,7 +351,7 @@ int main()
 
     cgc_output_word(M_EOI);
 
-    cgc_size_t tx;
+    size_t tx;
     if (cgc_writeall(STDOUT, encoder.output_buffer, encoder.output_idx) == encoder.output_idx)
         return 0;
 error:

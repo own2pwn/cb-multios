@@ -120,7 +120,7 @@ void cgc_add(char *buf){
     char recvbuf[11] = {0};
     char keyascii[3] = {0};
     cur = vhead;
-    cgc_size_t total, rndbytes;
+    size_t total, rndbytes;
 
     if(cgc_strlen(buf) > MAX_NAME_SIZE || cgc_strlen(buf) == 0) {
         SSENDL(sizeof(MAGICWORD)-1,MAGICWORD);

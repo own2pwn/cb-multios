@@ -31,12 +31,12 @@ THE SOFTWARE.
 // chars written to 'dest', including 'end' char.  
 // Returns 0 on success, otherwise error code. 
 // Number of bytes read is returned in 'bytes_read'.
-int cgc_receive_until(char *dest, cgc_size_t length, char end, cgc_size_t *bytes_read)
+int cgc_receive_until(char *dest, size_t length, char end, size_t *bytes_read)
 {
-	cgc_size_t count = 0;
+	size_t count = 0;
 	char c;
 	int receive_status;
-	cgc_size_t receive_bytes;
+	size_t receive_bytes;
 
 	do 
 	{
@@ -52,18 +52,18 @@ int cgc_receive_until(char *dest, cgc_size_t length, char end, cgc_size_t *bytes
 	return 0;
 }
 
-cgc_size_t cgc_strlen(char *buf)
+size_t cgc_strlen(char *buf)
 {
-	cgc_size_t length = 0;
+	size_t length = 0;
 	while(buf[length]!='\0') length++;
 	return length;
 }
 
 void cgc_print(char *buf)
 {
-   cgc_size_t len = cgc_strlen(buf);
-   cgc_size_t tx = 0;
-   cgc_size_t nbytes;
+   size_t len = cgc_strlen(buf);
+   size_t tx = 0;
+   size_t nbytes;
    while (tx < len) {
    	int res = transmit(STDOUT, (void *)buf + tx, len - tx, &nbytes);
    	if (res != 0 || nbytes == 0) {
@@ -83,9 +83,9 @@ int cgc_equals(char *one, char *two)
 
 // Copy a string from src to dst. Copy ends when null byte reached
 // in src string OR when length bytes have been copied to dst.
-void cgc_strncpy(char *dst, char *src, cgc_size_t length)
+void cgc_strncpy(char *dst, char *src, size_t length)
 {
-	cgc_size_t pos;
+	size_t pos;
 	for(pos = 0; pos<length && src[pos]!='\0'; pos++)
 	{
 		dst[pos] = src[pos];
@@ -101,7 +101,7 @@ int cgc_isdigit(char c)
 
 int cgc_atoi(char *str)
 {
-	cgc_size_t i = 0;
+	size_t i = 0;
 	int negative = 0;
 	int result = 0;
 
@@ -167,7 +167,7 @@ void cgc_itoa(char *str, int i)
 	str[outpos] = '\0';
 }
 
-void cgc_memcpy(char *dst, char *src, cgc_size_t size)
+void cgc_memcpy(char *dst, char *src, size_t size)
 {
 	char *end = dst + size;
 	while(dst != end)
@@ -176,7 +176,7 @@ void cgc_memcpy(char *dst, char *src, cgc_size_t size)
 	}
 }
 
-void cgc_memset(char *dst, char c, cgc_size_t size)
+void cgc_memset(char *dst, char c, size_t size)
 {
 	char *end = dst + size;
 	while(dst < end)

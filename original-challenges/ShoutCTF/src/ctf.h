@@ -33,12 +33,12 @@
 
 typedef struct {
     int status;
-    cgc_size_t num_chals;
-    cgc_size_t num_teams;
-    cgc_size_t num_users;
-    cgc_size_t sz_chals;
-    cgc_size_t sz_teams;
-    cgc_size_t sz_users;
+    size_t num_chals;
+    size_t num_teams;
+    size_t num_users;
+    size_t sz_chals;
+    size_t sz_teams;
+    size_t sz_users;
     cgc_chal_t **chals;
     cgc_team_t **teams;
     cgc_user_t **users;
@@ -54,12 +54,12 @@ cgc_error_t cgc_ctf_add_user(cgc_ctf_t *ctf, cgc_user_t *user);
 cgc_error_t cgc_ctf_auth_user(cgc_ctf_t *ctf, cgc_user_t **user, const char *nick, const char *pass);
 cgc_error_t cgc_ctf_add_team(cgc_ctf_t *ctf, cgc_team_t *team);
 cgc_error_t cgc_ctf_add_chal(cgc_ctf_t *ctf, cgc_chal_t *chal);
-cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, cgc_size_t cid);
+cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, size_t cid);
 
 /* Ticker & Info */
-cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, cgc_size_t *n);
-cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, cgc_size_t *page);
-cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, cgc_size_t tid);
-cgc_error_t cgc_ctf_get_chal(cgc_ctf_t *ctf, cgc_chal_t **chal, cgc_size_t cid);
+cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, size_t *n);
+cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, size_t *page);
+cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, size_t tid);
+cgc_error_t cgc_ctf_get_chal(cgc_ctf_t *ctf, cgc_chal_t **chal, size_t cid);
 
 #endif

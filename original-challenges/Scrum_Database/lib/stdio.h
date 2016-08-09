@@ -37,6 +37,6 @@ int cgc_sprintf( char *buf, const char *format, ... );
 int cgc_vsprintf( char *buf, const char *format, cgc_va_list args );
 int cgc_puts( const char *s );
 void cgc_send(unsigned char *buf, int count);
-int cgc_write( int fd, void *buffer, cgc_size_t count );
+int cgc_write( int fd, void *buffer, size_t count );
 
 #endif // __STDIO_H__

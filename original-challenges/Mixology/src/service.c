@@ -30,7 +30,7 @@
 
 int main(void) {
     int ret;
-    cgc_size_t size;
+    size_t size;
 
     cgc_malloc_init();
     
@@ -49,7 +49,7 @@ int main(void) {
 
         char * cmd_buf = cgc_calloc(1, MAX_LINE_SZ);
         if(cmd_buf != NULL){
-            cgc_size_t line_sz = cgc_read_ascii_line(STDIN, cmd_buf, MAX_LINE_SZ);
+            size_t line_sz = cgc_read_ascii_line(STDIN, cmd_buf, MAX_LINE_SZ);
             if(line_sz < 3){
                 cgc_free(cmd_buf);
                 continue;

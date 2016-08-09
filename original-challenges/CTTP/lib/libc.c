@@ -27,7 +27,7 @@
 
 
 void (*freep)(void *);
-void *(*mallocp)(cgc_size_t);
+void *(*mallocp)(size_t);
 
 cgc_bool heapinit_done = false;
 
@@ -53,9 +53,9 @@ void cgc_promptc(char *buf, cgc_uint16_t  size, char *prompt) {
     SRECV((cgc_uint32_t)size, buf);
 }
 
-int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t total = 0;
+int cgc_sendall(int fd, const char *buf, size_t size) {
+    size_t sent = 0;
+    size_t total = 0;
 
     if (!buf)
         return -1;
@@ -76,7 +76,7 @@ int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
     return total;
 }
 
-int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
+int cgc_sendline(int fd, const char *buf, size_t size) {
     int ret;
     ret = cgc_sendall(fd, buf, size);
     if (ret < 0) {
@@ -89,9 +89,9 @@ int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
     }
 }
 
-int cgc_recv(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recv(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -112,9 +112,9 @@ int cgc_recv(int fd, char *buf, cgc_size_t size) {
 
 }
 
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if (!size)
         return 0;
@@ -142,7 +142,7 @@ int cgc_recvline(int fd, char *buf, cgc_size_t size) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-cgc_size_t cgc_strcpy(char *s1, const char *s2) {
+size_t cgc_strcpy(char *s1, const char *s2) {
     char *tmp = s1;
     while (*s2) {
         *tmp = *s2;
@@ -154,7 +154,7 @@ cgc_size_t cgc_strcpy(char *s1, const char *s2) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
+size_t cgc_strncpy(char *s1, char *s2, size_t n) {
     char *tmp = s1;
     while ((tmp-s1 < n) && *s2) {
         *tmp = *s2;
@@ -172,10 +172,10 @@ char * cgc_strcat(char *s1, char *s2) {
     return s1;
 }
 
-cgc_size_t cgc_strlen(char *s) {
+size_t cgc_strlen(char *s) {
     char *tmp = s;
     while (*tmp) tmp++;
-    return (cgc_size_t)(tmp-s);
+    return (size_t)(tmp-s);
 }
 
 int cgc_streq(char *s1, char *s2) {
@@ -188,7 +188,7 @@ int cgc_streq(char *s1, char *s2) {
     return (*s1 == '\0') && (*s2 == '\0');
 }
 
-int cgc_strncmp(char *s1, char *s2, cgc_size_t n) {
+int cgc_strncmp(char *s1, char *s2, size_t n) {
     while (*s1 && *s2 && n--){
         if (*s1 != *s2)
             return 1;
@@ -310,16 +310,16 @@ cgc_uint32_t cgc_str2uint(const char* str_buf) {
     return result;
 }
 
-void * cgc_memset(void *dst, char c, cgc_size_t n) {
-    cgc_size_t i;
+void * cgc_memset(void *dst, char c, size_t n) {
+    size_t i;
     for (i=0; i<n; i++) {
         *((cgc_uint8_t*)dst+i) = c;
     }
     return dst;
 }
 
-void * cgc_memcpy(void *dst, void *src, cgc_size_t n) {
-    cgc_size_t i;
+void * cgc_memcpy(void *dst, void *src, size_t n) {
+    size_t i;
     for (i=0; i<n; i++) {
         *((cgc_uint8_t*)dst+i) = *((cgc_uint8_t*)src+i);
     }
@@ -357,8 +357,8 @@ void cgc_sleep(int s) {
     cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }
 
-int cgc_memcmp(void *a, void *b, cgc_size_t n) {
-    cgc_size_t i;
+int cgc_memcmp(void *a, void *b, size_t n) {
+    size_t i;
     for (i=0; i < n; i++)
         if ( *(cgc_uint8_t*)(a+i) != *(cgc_uint8_t*)(b+i))
             return -1;
@@ -397,7 +397,7 @@ static void cgc_remove(cgc_heap_chunk_t *node) {
     node->prev = NULL;
 }
 
-static void *cgc___malloc(cgc_size_t size, cgc_heaptype type) {
+static void *cgc___malloc(size_t size, cgc_heaptype type) {
     /*
      * A very stupid cgc_malloc implementation, meant to be simple.
      * Keeps a list of allocated and freed chunks
@@ -524,19 +524,19 @@ void cgc___free(void *p, cgc_heaptype type) {
     return;
 }
 
-void *cgc_nmalloc(cgc_size_t size) {
+void *cgc_nmalloc(size_t size) {
     return cgc___malloc(size, YOLO);
 }
 
-void *cgc_smalloc(cgc_size_t size) {
+void *cgc_smalloc(size_t size) {
     return cgc___malloc(size, SHEAP);
 }
 
-void *cgc_ssmalloc(cgc_size_t size) {
+void *cgc_ssmalloc(size_t size) {
     return cgc___malloc(size, SSHEAP);
 }
 
-void *cgc_malloc(cgc_size_t size) {
+void *cgc_malloc(size_t size) {
     if (!mallocp)
         cgc_setheap(0);
     return mallocp(size);
@@ -560,7 +560,7 @@ void cgc_free(void *p) {
     freep(p);
 }
 
-void *cgc_calloc(cgc_size_t size) {
+void *cgc_calloc(size_t size) {
     void *ptr;
 
     if (!(ptr = cgc_malloc(size)))

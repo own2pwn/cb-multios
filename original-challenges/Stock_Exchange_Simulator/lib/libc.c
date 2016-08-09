@@ -24,7 +24,7 @@
 #define OK 0
 #define NOTOK 1
 
-void cgc_memcpy(void *src, void *dst, cgc_size_t l){
+void cgc_memcpy(void *src, void *dst, size_t l){
 	char * s = (char *) src;
 	char * d = (char *) dst;
 
@@ -37,7 +37,7 @@ void cgc_memcpy(void *src, void *dst, cgc_size_t l){
 
 }
 
-cgc_size_t cgc_strlen(char * s){
+size_t cgc_strlen(char * s){
 	for(int i = 0; i < 65535; i++){
 		if( s[i] == 0x0){
 			return i;
@@ -47,7 +47,7 @@ cgc_size_t cgc_strlen(char * s){
 
 }
 
-int cgc_memcmp(void *l, void *r, cgc_size_t s){
+int cgc_memcmp(void *l, void *r, size_t s){
 	char *  ll = (char *) l;
 	char * rr = (char *)  r;
 	for(int i = 0; i < s; i++){
@@ -57,16 +57,16 @@ int cgc_memcmp(void *l, void *r, cgc_size_t s){
 	return OK;
 }
 
-void cgc_memclr(void *l, cgc_size_t s){
+void cgc_memclr(void *l, size_t s){
 	char * m = (char *) l;
 	for(int i = 0; i < s; i++)
 		m[i] = 0x0;
 
 }
 
-int cgc_recv_all(const cgc_size_t size, void *buf){
-	cgc_size_t call_recvd = 0;
-	cgc_size_t total_recv = 0;
+int cgc_recv_all(const size_t size, void *buf){
+	size_t call_recvd = 0;
+	size_t total_recv = 0;
 	int errno = 1;
 	while(total_recv < size){
 
@@ -85,9 +85,9 @@ int cgc_recv_all(const cgc_size_t size, void *buf){
 	return OK;
 }
 
-int cgc_transmit_all(void *buf, cgc_size_t s){
-	cgc_size_t r = 0;
-	cgc_size_t total_xmit = 0;
+int cgc_transmit_all(void *buf, size_t s){
+	size_t r = 0;
+	size_t total_xmit = 0;
 	int tx_code = 0;
 	while(total_xmit < s){
 		tx_code = transmit(STDOUT, buf+total_xmit, s-total_xmit, &r);

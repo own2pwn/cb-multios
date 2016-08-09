@@ -46,9 +46,9 @@ void cgc_FreeList(cgc_list* List)
   }
 }
 
-cgc_size_t cgc_LenList(cgc_list* List)
+size_t cgc_LenList(cgc_list* List)
 {
-  cgc_size_t Len = 0;
+  size_t Len = 0;
   for (; List; Len++)
     List = List->Next;
 

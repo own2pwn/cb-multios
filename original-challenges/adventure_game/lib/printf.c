@@ -27,17 +27,17 @@
 #include <string.h>
 
 #define OUTPUT_BYTE(x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     transmit(fd, &_c, sizeof(_c), &bytes); \
 } while (0);
 
-int send_n_bytes(int fd, cgc_size_t n, char *buf)
+int send_n_bytes(int fd, size_t n, char *buf)
 {
     if (!n || !buf)
         return -1;
 
-    cgc_size_t tx = 0, total_sent = 0;
+    size_t tx = 0, total_sent = 0;
 
     while (total_sent < n) {
         if (transmit(fd, buf + total_sent, n - total_sent, &tx) != 0) {
@@ -173,7 +173,7 @@ int fdprintf(int fd, const char *fmt, ...)
 #undef OUTPUT_BYTE
 
 #define OUTPUT_BYTE(n, s, x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     *(*(s)) = _c; \
     (*(s))++; \

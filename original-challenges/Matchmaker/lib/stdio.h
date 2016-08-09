@@ -46,7 +46,7 @@ enum mode {
  * @param size The size to read
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_read_all(int fd, void *ptr, cgc_size_t size);
+cgc_ssize_t cgc_read_all(int fd, void *ptr, size_t size);
 
 /**
  * Read at most size bytes from fd into ptr, stopping on delim.
@@ -57,7 +57,7 @@ cgc_ssize_t cgc_read_all(int fd, void *ptr, cgc_size_t size);
  * @param size The size to read
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_read_until(int fd, void *ptr, unsigned char delim, cgc_size_t size);
+cgc_ssize_t cgc_read_until(int fd, void *ptr, unsigned char delim, size_t size);
 
 /**
  * Write exactly size bytes from ptr to fd.
@@ -67,7 +67,7 @@ cgc_ssize_t cgc_read_until(int fd, void *ptr, unsigned char delim, cgc_size_t si
  * @param size The size to write
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_write_all(int fd, const void *ptr, cgc_size_t size);
+cgc_ssize_t cgc_write_all(int fd, const void *ptr, size_t size);
 
 /**
  * Open a cgc_FILE given a file descriptor and a mode.
@@ -101,7 +101,7 @@ int cgc_fflush(cgc_FILE *stream);
  * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_fread(void *ptr, size_t size, cgc_FILE *stream);
 
 /**
  * Read at most size bytes from cgc_FILE pointer into ptr, stopping on delim, buffered.
@@ -112,7 +112,7 @@ cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream);
  * @param stream The cgc_FILE pointer to read from
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_fread_until(void *ptr, unsigned char delim, cgc_size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_fread_until(void *ptr, unsigned char delim, size_t size, cgc_FILE *stream);
 
 /**
  * Write size bytes from ptr into cgc_FILE pointer, buffered.
@@ -122,7 +122,7 @@ cgc_ssize_t cgc_fread_until(void *ptr, unsigned char delim, cgc_size_t size, cgc
  * @param stream The cgc_FILE pointer to write to
  * @return size on success, else EXIT_FAILURE
  */
-cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream);
+cgc_ssize_t cgc_fwrite(const void *ptr, size_t size, cgc_FILE *stream);
 
 /**
  * Get a character from cgc_FILE pointer, buffered.
@@ -195,7 +195,7 @@ int cgc_vsprintf(char *s, const char *format, cgc_va_list arg);
  * @param arg The cgc_va_list to retrieve values from
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int cgc_vsnprintf(char *s, cgc_size_t num, const char *format, cgc_va_list arg);
+int cgc_vsnprintf(char *s, size_t num, const char *format, cgc_va_list arg);
 
 /**
  * Read formatted input from stdin, taking parameters from a cgc_va_list,
@@ -268,7 +268,7 @@ int cgc_sprintf(char *s, const char *format, ...);
  * @param format The format string to use
  * @return The number of bytes written on success, else EXIT_FAILURE
  */
-int cgc_snprintf(char *s, cgc_size_t num, const char *format, ...);
+int cgc_snprintf(char *s, size_t num, const char *format, ...);
 
 /**
  * Read formatted input from stdin, buffered.

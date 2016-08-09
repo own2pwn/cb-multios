@@ -26,7 +26,7 @@
 #include <libcgc.h>
 
 struct bitset {
-    cgc_size_t size;
+    size_t size;
     unsigned char data[0];
 };
 
@@ -36,7 +36,7 @@ struct bitset {
  * @param bitset The bitset to initialize
  * @param size The size of the bitset
  */
-void cgc_bitset_init(struct bitset *bitset, cgc_size_t size);
+void cgc_bitset_init(struct bitset *bitset, size_t size);
 
 /**
  * Clear a bitset.

@@ -31,11 +31,11 @@
 struct chunk {
    struct chunk *prev;
    struct chunk *next;
-   cgc_size_t size;
+   size_t size;
 } typedef cgc_chunk_t;
 
 char *page;
-cgc_size_t page_remaining;
+size_t page_remaining;
 cgc_chunk_t freel;
 cgc_chunk_t heapl;
 
@@ -51,10 +51,10 @@ static void cgc__rmchunk(cgc_chunk_t *c) {
     c->next->prev = c->prev;
 }
 
-void *cgc_malloc(cgc_size_t s) {
+void *cgc_malloc(size_t s) {
     void *p;
     cgc_chunk_t *c = &freel;
-    cgc_size_t total = s;
+    size_t total = s;
     debug("alloc of size: @h\n",s);
     //cgc_printf("Alloc @h\n",s);
 
@@ -122,7 +122,7 @@ void *cgc_malloc(cgc_size_t s) {
     page = (char *)p + total;
     page = (char *)((cgc_uint32_t)page & ~(PAGE_SIZE-1));
     //cgc_printf("@h\n",page);
-    page_remaining = PAGE_SIZE - ((cgc_size_t)((char *)p+total) - (cgc_size_t)page);
+    page_remaining = PAGE_SIZE - ((size_t)((char *)p+total) - (size_t)page);
     page += PAGE_SIZE-page_remaining;
 
     if (page_remaining <= sizeof(cgc_chunk_t))
@@ -142,7 +142,7 @@ void cgc_free(void *p) {
     ADDFREE((cgc_chunk_t*)((char*)p - sizeof(cgc_chunk_t)));
 }
 
-void *cgc_calloc(cgc_size_t s) {
+void *cgc_calloc(size_t s) {
     void *p = cgc_malloc(s);
     if (!p)
         return NULL;

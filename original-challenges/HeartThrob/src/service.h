@@ -43,7 +43,7 @@
 #define ALLOC(s,x,a,o) o=allocate(s,x,a); if(o!=0) _terminate(3);
 
 typedef struct cgc_htreq {
-    cgc_size_t resplen;
+    size_t resplen;
     char recv[1044];
     char resp[1024];
     void (*match)(struct cgc_htreq*);
@@ -51,7 +51,7 @@ typedef struct cgc_htreq {
         
 } cgc_htreq;
 
-int cgc_prompt(char *pmpt, char *buf, cgc_size_t size);
+int cgc_prompt(char *pmpt, char *buf, size_t size);
 int main(void);
 
 #endif

@@ -49,7 +49,7 @@ void cgc_shuffle(cgc_standard_deck *deck);
 char cgc_draw(cgc_standard_deck *deck);
 int cgc_is_empty(cgc_standard_deck *deck);
 void cgc_print_deck(cgc_standard_deck *deck);
-void cgc_print_hand(char *hand, cgc_size_t size);
+void cgc_print_hand(char *hand, size_t size);
 int cgc_get_suit(char card);
 
 static const char *card_names[SIZE_OF_DECK + 1] = {

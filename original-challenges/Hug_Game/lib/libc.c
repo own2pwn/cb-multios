@@ -100,9 +100,9 @@ void cgc_bzero(char *what, int howmany) {
 
 int cgc_put(char *string) {
     int i;
-    cgc_size_t len = cgc_strlen(string);
-    cgc_size_t tx_bytes;
-    cgc_size_t total_sent = 0;
+    size_t len = cgc_strlen(string);
+    size_t tx_bytes;
+    size_t total_sent = 0;
     int ret;
 
     while (total_sent < len) {

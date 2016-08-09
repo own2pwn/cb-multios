@@ -58,7 +58,7 @@ int cgc_add_item(cgc_ptrlist_t *ptrlist, void *pdata)
     return 0;
 }
 
-void *cgc_get_pdata(cgc_ptrlist_t *ptrlist, cgc_size_t idx)
+void *cgc_get_pdata(cgc_ptrlist_t *ptrlist, size_t idx)
 {
     if (!ptrlist || idx > ptrlist->length)
         return NULL;

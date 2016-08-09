@@ -193,7 +193,7 @@ int cgc_lookup(char byte)
 // Decodes a string of ascii characters into binary data.
 // Invalid input will terminate the program. 
 // Can cgc_write up to size bytes to *decoded.
-void cgc_decode(char *encoded, char *decoded, cgc_size_t size)
+void cgc_decode(char *encoded, char *decoded, size_t size)
 {
     char *inp = encoded;
     char *outp = decoded;
@@ -218,7 +218,7 @@ void cgc_decode(char *encoded, char *decoded, cgc_size_t size)
 void cgc_programming_interface()
 {
     int ret;
-    cgc_size_t bytes_read;
+    size_t bytes_read;
     int config_size;
     char *config_data;
 
@@ -280,7 +280,7 @@ int main(void) {
 
     // Get player name
     int ret;
-    cgc_size_t bytes_read;
+    size_t bytes_read;
     cgc_printf("Enter your name:");
     ret = receive(STDIN, name, 83, &bytes_read);
     if ((ret != 0) || (bytes_read == 0))

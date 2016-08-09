@@ -36,7 +36,7 @@
 
 
 static int cgc_readopt(int fd) {
-    cgc_size_t rx, i = 0;
+    size_t rx, i = 0;
     char opt[MAX_INPUT];
 
     while (receive(fd, &opt[i], 1, &rx) == 0 && rx == 1 && i < MAX_INPUT) {

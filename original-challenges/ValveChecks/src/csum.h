@@ -28,7 +28,7 @@ uint64_t cgc_additive(uint8_t* data, uint32_t s);
 uint64_t cgc_addxoradd(uint8_t *data, uint32_t s); 
 uint32_t cgc_crc32(uint8_t *data, uint32_t s);
 double cgc_fpadditive(uint8_t *data, uint32_t s);
-void cgc_md5(uint8_t *data, cgc_size_t s, uint32_t* out);
+void cgc_md5(uint8_t *data, size_t s, uint32_t* out);
 #endif
 
 

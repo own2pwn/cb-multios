@@ -81,7 +81,7 @@ int cgc_compare_event_dates(void *_event1, void *_event2)
     return cgc_compare_date(&event1->duration.start.date, &event2->duration.start.date);
 }
 
-cgc_event_t *cgc_find_event_from_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_event_list_t *list)
+cgc_event_t *cgc_find_event_from_list(char *buf, size_t buflen, int *recv_status, cgc_event_list_t *list)
 {
     if (!buf || buflen < 2)
         return NULL;

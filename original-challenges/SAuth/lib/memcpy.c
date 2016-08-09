@@ -22,11 +22,11 @@
  */
 #include <string.h>
 
-void *cgc_memcpy(void *dst, const void *src, cgc_size_t n)
+void *cgc_memcpy(void *dst, const void *src, size_t n)
 {
     unsigned char *udst = dst;
     const unsigned char *usrc = src;
-    cgc_size_t i;
+    size_t i;
 
     for (i = 0; i < n; i++)
         udst[i] = usrc[i];

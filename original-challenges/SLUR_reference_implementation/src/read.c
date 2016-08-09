@@ -25,10 +25,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-int cgc_read_balanced_expression(int fd, char *buf, cgc_size_t max)
+int cgc_read_balanced_expression(int fd, char *buf, size_t max)
 {
-  cgc_size_t rx = 0;
-  cgc_size_t depth = 0;
+  size_t rx = 0;
+  size_t depth = 0;
   char nl;
 
   while (receive(fd, buf, 1, &rx) == 0) {

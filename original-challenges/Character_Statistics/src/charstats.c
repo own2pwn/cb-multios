@@ -546,7 +546,7 @@ void cgc_INIT_MACHINE()
 void cgc_printChar(cgc_reg_t r)
 {
   char c = cgc_REG8(r);
-  cgc_size_t n;
+  size_t n;
   if (transmit(STDOUT, &c, 1, &n) != 0 || n != 1) {
      _terminate(1);
   }
@@ -555,7 +555,7 @@ void cgc_printChar(cgc_reg_t r)
 int cgc_getChar(cgc_reg_t r)
 {
   char c;
-  cgc_size_t rx_bytes;
+  size_t rx_bytes;
   int ret = 0;
   cgc_fd_set fdsToWait;
   struct cgc_timeval timeToWait;

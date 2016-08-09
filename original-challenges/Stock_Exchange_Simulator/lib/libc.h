@@ -33,7 +33,7 @@ typedef unsigned int cgc_uint32_t;
  * @param len Length of buffer
  * @return OK on error, errno on failure
  */
-int cgc_send_all(char * buf, cgc_size_t len);
+int cgc_send_all(char * buf, size_t len);
 
 /**
  * Copy between buffers
@@ -42,7 +42,7 @@ int cgc_send_all(char * buf, cgc_size_t len);
  * @param dst Destination buffer
  * @param l Number of bytes to copy
  */
-void cgc_memcpy(void *src, void *dst, cgc_size_t l);
+void cgc_memcpy(void *src, void *dst, size_t l);
 
 /**
  * Transmit all bytes in buffer
@@ -51,7 +51,7 @@ void cgc_memcpy(void *src, void *dst, cgc_size_t l);
  * @param s Bytes to send
  * @return OK on success, errno on failure
  */
-int cgc_transmit_all(void *buf, cgc_size_t s);
+int cgc_transmit_all(void *buf, size_t s);
 
 /**
  * Compare two buffers
@@ -61,7 +61,7 @@ int cgc_transmit_all(void *buf, cgc_size_t s);
  * @param s Number of bytes to compare
  * @param OK on match, errno on failure
  */
-int cgc_memcmp(void *l, void *r, cgc_size_t s);
+int cgc_memcmp(void *l, void *r, size_t s);
 
 /**
  * Receive set number of bytes
@@ -70,7 +70,7 @@ int cgc_memcmp(void *l, void *r, cgc_size_t s);
  * @param buf Buffer to receive into
  * @return OK on success, errno on failure
  */
-int cgc_recv_all(const cgc_size_t size, void *buf);
+int cgc_recv_all(const size_t size, void *buf);
 
 /**
  * Find length of C-String
@@ -78,7 +78,7 @@ int cgc_recv_all(const cgc_size_t size, void *buf);
  * @param s String
  * @return Length of string, maximum 65535
  */
-cgc_size_t cgc_strlen(char * s);
+size_t cgc_strlen(char * s);
 
 /**
  * Clear buffer
@@ -86,5 +86,5 @@ cgc_size_t cgc_strlen(char * s);
  * @param l Buffer
  * @param s Size of buffer
  */
-void cgc_memclr(void *l, cgc_size_t s);
+void cgc_memclr(void *l, size_t s);
 #endif

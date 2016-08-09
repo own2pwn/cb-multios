@@ -27,7 +27,7 @@
 #include <libcgc.h>
 #include <stdlib.h>
 
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n)
+int cgc_strncmp(const char *s1, const char *s2, size_t n)
 {
     if (n-- == 0)
       return 0;

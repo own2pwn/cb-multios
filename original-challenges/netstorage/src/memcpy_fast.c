@@ -28,7 +28,7 @@
 typedef unsigned int cgc_intptr_t;
 typedef unsigned int cgc_uint128_t __attribute__((__vector_size__(16)));
 
-void *cgc_memcpy_fast(void *dst, void *src, cgc_size_t length)
+void *cgc_memcpy_fast(void *dst, void *src, size_t length)
 {
     if ((length % 16) || ((cgc_intptr_t)dst % 16) || ((cgc_intptr_t)src % 16))
         return cgc_memcpy(dst, src, length);
@@ -38,7 +38,7 @@ void *cgc_memcpy_fast(void *dst, void *src, cgc_size_t length)
         return dst;
 #endif
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     do
     {
         ((cgc_uint128_t*)dst)[i] = ((cgc_uint128_t*)src)[i];

@@ -42,13 +42,13 @@ THE SOFTWARE.
 #define DEFAULT_FLOAT_PRECISION		6
 
 // Wrapper functions for cgc_vprintf and cgc_vsprintf
-typedef int (*cgc_tPrintfWrapperFP)( void *ctx, int c, cgc_size_t pos );
+typedef int (*cgc_tPrintfWrapperFP)( void *ctx, int c, size_t pos );
 
-int cgc_wrapper_output( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_size_t pos, const char *format, cgc_va_list args );
+int cgc_wrapper_output( void *ctx, cgc_tPrintfWrapperFP fpOut, size_t pos, const char *format, cgc_va_list args );
 
-int cgc_WRAPPER_PUTC( void *ctx, int c, cgc_size_t pos )
+int cgc_WRAPPER_PUTC( void *ctx, int c, size_t pos )
 {
-        cgc_size_t tx_bytes;
+        size_t tx_bytes;
 
         if ( transmit( STDOUT, (const void *)&c, 1, &tx_bytes ) != 0 )
                 return (-1);
@@ -56,7 +56,7 @@ int cgc_WRAPPER_PUTC( void *ctx, int c, cgc_size_t pos )
         return (pos+1);
 }
 
-int cgc_WRAPPER_OUTC( void *ctx, int c, cgc_size_t pos )
+int cgc_WRAPPER_OUTC( void *ctx, int c, size_t pos )
 {
 	*(((char *)ctx)+pos) = (char)c;
 
@@ -65,7 +65,7 @@ int cgc_WRAPPER_OUTC( void *ctx, int c, cgc_size_t pos )
 
 int cgc_putchar( int c )
 {
-        cgc_size_t tx_bytes;
+        size_t tx_bytes;
 
         if ( transmit( STDOUT, (const void *)&c, 1, &tx_bytes ) != 0 )
                 return (-1);
@@ -75,9 +75,9 @@ int cgc_putchar( int c )
 
 int cgc_puts( const char *s )
 {
-	cgc_size_t tx_bytes;
-	cgc_size_t s_len;
-	cgc_size_t total_sent = 0;
+	size_t tx_bytes;
+	size_t s_len;
+	size_t total_sent = 0;
 
 	s_len = cgc_strlen(s);
 
@@ -112,7 +112,7 @@ int cgc_vprintf( const char *format, cgc_va_list args )
 {
 	cgc_tPrintfWrapperFP wrapper_putc = &cgc_WRAPPER_PUTC;
 	void *ctx = NULL;
-	cgc_size_t pos = 0;
+	size_t pos = 0;
 
 	return cgc_wrapper_output( ctx, wrapper_putc, pos, format, args );	
 }
@@ -133,7 +133,7 @@ int cgc_vsprintf( char *buf, const char *format, cgc_va_list args )
 {
 	cgc_tPrintfWrapperFP wrapper_outc = &cgc_WRAPPER_OUTC;
 	void *ctx = buf;
-	cgc_size_t pos = 0;
+	size_t pos = 0;
 
 	int iReturnValue = cgc_wrapper_output( ctx, wrapper_outc, pos, format, args );
 
@@ -143,9 +143,9 @@ int cgc_vsprintf( char *buf, const char *format, cgc_va_list args )
 }
 
 // NOTE This is reversed -- it will be printed in reverse by the cgc_printf helper!
-cgc_size_t cgc_printf_int_to_string( cgc_uint32_t val, cgc_uint32_t base, char *str, cgc_int32_t flags )
+size_t cgc_printf_int_to_string( cgc_uint32_t val, cgc_uint32_t base, char *str, cgc_int32_t flags )
 {
-	cgc_size_t pos = 0;
+	size_t pos = 0;
 	cgc_int32_t n;
 
 	if ( val == 0 )
@@ -178,12 +178,12 @@ cgc_size_t cgc_printf_int_to_string( cgc_uint32_t val, cgc_uint32_t base, char *
 	return (pos);
 }
 					
-cgc_size_t cgc_printf_helper_int( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_size_t pos, cgc_int32_t val, cgc_uint32_t base, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
+size_t cgc_printf_helper_int( void *ctx, cgc_tPrintfWrapperFP fpOut, size_t pos, cgc_int32_t val, cgc_uint32_t base, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
 {
-	cgc_size_t max_printlen = 0;
-	cgc_size_t pad_length = 0;
+	size_t max_printlen = 0;
+	size_t pad_length = 0;
 	cgc_int8_t is_negative = 0;
-	cgc_size_t character_count = 0;
+	size_t character_count = 0;
 	char temp_str[32];
 
 	if ( base == 10 && val < 0 )
@@ -234,7 +234,7 @@ cgc_size_t cgc_printf_helper_int( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_siz
 		is_negative = 0;
 	}
 
-	cgc_size_t i = character_count;
+	size_t i = character_count;
 	while ( i > 0 )
 	{
 		pos = (*fpOut)( ctx, temp_str[i-1], pos );
@@ -250,9 +250,9 @@ cgc_size_t cgc_printf_helper_int( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_siz
 	return pos;	
 }
 
-cgc_size_t cgc_printf_float_to_string( double val, cgc_uint8_t fraction_precision_digit_count, char *str, cgc_int32_t flags )
+size_t cgc_printf_float_to_string( double val, cgc_uint8_t fraction_precision_digit_count, char *str, cgc_int32_t flags )
 {
-	cgc_size_t pos = 0;
+	size_t pos = 0;
 	cgc_int32_t n;
 	
 	double display_precision = pow( 10.0, -fraction_precision_digit_count );
@@ -463,12 +463,12 @@ cgc_size_t cgc_printf_float_to_string( double val, cgc_uint8_t fraction_precisio
 	return (pos);	
 }
 
-cgc_size_t cgc_printf_helper_float( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_size_t pos, double val, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
+size_t cgc_printf_helper_float( void *ctx, cgc_tPrintfWrapperFP fpOut, size_t pos, double val, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
 {
-	cgc_size_t max_printlen = 0;
-	cgc_size_t pad_length = 0;
+	size_t max_printlen = 0;
+	size_t pad_length = 0;
 	cgc_int8_t is_negative = 0;
-	cgc_size_t character_count = 0;
+	size_t character_count = 0;
 	char temp_str[32];
 
 	if ( val < 0.0 )
@@ -515,7 +515,7 @@ cgc_size_t cgc_printf_helper_float( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_s
 		is_negative = 0;
 	}
 
-	for ( cgc_size_t i = 0; i < character_count; i++ )	
+	for ( size_t i = 0; i < character_count; i++ )	
 		pos = (*fpOut)( ctx, temp_str[i], pos );
 
 	if ( (flags & FLAG_LEFT_JUSTIFY) )
@@ -527,7 +527,7 @@ cgc_size_t cgc_printf_helper_float( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_s
 	return (pos);
 }
 				
-cgc_size_t cgc_printf_helper_string( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_size_t pos, const char *outStr, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
+size_t cgc_printf_helper_string( void *ctx, cgc_tPrintfWrapperFP fpOut, size_t pos, const char *outStr, cgc_int32_t width, cgc_int32_t precision, cgc_int32_t flags )
 {
 	if ( precision == 0 && width == 0 )
 	{
@@ -541,8 +541,8 @@ cgc_size_t cgc_printf_helper_string( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_
 		return (pos);
 	}
 
-	cgc_size_t max_printlen = cgc_strlen( outStr );
-	cgc_size_t pad_length = 0;
+	size_t max_printlen = cgc_strlen( outStr );
+	size_t pad_length = 0;
 
 	if ( precision > 0 )
 	{
@@ -580,7 +580,7 @@ cgc_size_t cgc_printf_helper_string( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_
 	return pos;	
 }
 
-int cgc_wrapper_output( void *ctx, cgc_tPrintfWrapperFP fpOut, cgc_size_t pos, const char *format, cgc_va_list args )
+int cgc_wrapper_output( void *ctx, cgc_tPrintfWrapperFP fpOut, size_t pos, const char *format, cgc_va_list args )
 {
 
 	cgc_int32_t flags = 0;

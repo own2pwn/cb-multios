@@ -94,7 +94,7 @@ int cgc_io_getc(cgc_io_t *io)
     {
         if (IS_MUTABLE(io))
         {
-            cgc_size_t bytes;
+            size_t bytes;
             if (io->length == BUFFER_SIZE)
                 return -1;
             if (receive(io->fd, &io->buf[io->length], 1, &bytes) != 0 || bytes != 1)

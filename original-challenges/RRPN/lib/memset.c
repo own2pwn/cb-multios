@@ -24,9 +24,9 @@
  */
 #include <libcgc.h>
 
-void *cgc_memset(void *dest, int src, cgc_size_t n)
+void *cgc_memset(void *dest, int src, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n; i++)
         ((unsigned char *)dest)[i] = src;
     return dest;

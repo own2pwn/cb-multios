@@ -24,7 +24,7 @@ void cgc_draw_bars(cgc_data_package data,
   if (column_count > (MAX_STACK_SIZE / 4)) {
     _terminate(-1);
   }
-  cgc_size_t row_size = (column_count * 4) + 16;
+  size_t row_size = (column_count * 4) + 16;
   row_size = row_size - (row_size % 16);
   char chart_row[row_size];
 

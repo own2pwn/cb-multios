@@ -42,11 +42,11 @@ static const char *new_board =
 int
 cgc_do_hugman(void)
 {
-    cgc_size_t round = game_state.games.hugman.round % 4;
+    size_t round = game_state.games.hugman.round % 4;
 #ifdef PATCHED_1
-    cgc_size_t index = round * 256 + cgc_get_flag_byte(game_state.games.hugman.round);
+    size_t index = round * 256 + cgc_get_flag_byte(game_state.games.hugman.round);
 #else
-    cgc_size_t index = round * 256 + cgc_get_flag_byte_unsafe(game_state.games.hugman.round);
+    size_t index = round * 256 + cgc_get_flag_byte_unsafe(game_state.games.hugman.round);
 #endif
     const char *word = dict[index];
     int i, j, c_, success, win;
@@ -62,7 +62,7 @@ cgc_do_hugman(void)
     };
 
     struct {
-        cgc_size_t x, y;
+        size_t x, y;
     } limb_coordinates[] = {
         { 2, 21 },
         { 3, 21 },

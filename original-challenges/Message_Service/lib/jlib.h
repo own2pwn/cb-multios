@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 void cgc_zero(char *, unsigned int);
 void cgc_print(char *);
-cgc_size_t cgc_strlen(char *);
-int cgc_read_until(char *, char, cgc_size_t);
+size_t cgc_strlen(char *);
+int cgc_read_until(char *, char, size_t);
 int cgc_strmatch(char *, char *);
 void cgc_strcopy(char *, char *);
 void cgc_memcopy(char *, char *, unsigned int);

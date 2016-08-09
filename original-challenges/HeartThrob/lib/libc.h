@@ -23,13 +23,13 @@
 #ifndef LIBC_H
 #define LIBC_H
 
-int cgc_sendall(int fd, const char *buf, cgc_size_t size);
-int cgc_sendline(int fd, const char *buf, cgc_size_t size);
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
-cgc_size_t cgc_strcpy(char *s1, char *s2);
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
+int cgc_sendall(int fd, const char *buf, size_t size);
+int cgc_sendline(int fd, const char *buf, size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
+size_t cgc_strcpy(char *s1, char *s2);
+size_t cgc_strncpy(char *s1, char *s2, size_t n);
 char * cgc_strcat(char *s1, char *s2);
-cgc_size_t cgc_strlen(char *s);
+size_t cgc_strlen(char *s);
 int cgc_streq(char *s1, char *s2);
 int cgc_startswith(char *s1, char *s2);
 

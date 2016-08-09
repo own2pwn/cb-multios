@@ -36,7 +36,7 @@ cgc_Recipe_Type *recipe;
 cgc_Recipe_Type *previous;
 
 char buffer[BUFF_SIZE];
-cgc_size_t size;
+size_t size;
 
 	previous = 0;
 

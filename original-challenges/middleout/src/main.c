@@ -45,10 +45,10 @@ typedef cgc_uint64_t cgc_u64;
   cgc_exit(1); \
 })
 
-static cgc_size_t end_marker = 0xDEEDACED;
+static size_t end_marker = 0xDEEDACED;
 
 // cgc_calloc or crash
-void *cgc_mcalloc(cgc_size_t size)
+void *cgc_mcalloc(size_t size)
 {
   void *x = cgc_calloc(1, size);
   if (!x)
@@ -93,9 +93,9 @@ int cgc_any_list_empty(cgc_any_list_t* head)
   return head->next == head;
 }
 
-cgc_size_t cgc_any_list_length(cgc_any_list_t* head)
+size_t cgc_any_list_length(cgc_any_list_t* head)
 {
-  cgc_size_t n = 0;
+  size_t n = 0;
   cgc_any_list_t* cur = head->next;
   while (cur->next != head)
     n++;
@@ -121,12 +121,12 @@ cgc_any_list_t* cgc_any_list_shallow_copy(cgc_any_list_t* list)
   return copy;
 }
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, char *buf)
+int cgc_send_n_bytes(int fd, size_t n, char *buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t tx = 0, total_sent = 0;
+  size_t tx = 0, total_sent = 0;
 
   while (total_sent < n) {
     if (transmit(fd, buf + total_sent, n - total_sent, &tx) != 0) {
@@ -141,12 +141,12 @@ int cgc_send_n_bytes(int fd, cgc_size_t n, char *buf)
   return total_sent;
 }
 
-int cgc_read_n_bytes(int fd, cgc_size_t n, char *buf)
+int cgc_read_n_bytes(int fd, size_t n, char *buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t rx = 0, total_read = 0;
+  size_t rx = 0, total_read = 0;
 
   while (total_read < n) {
     if (receive(fd, buf + total_read, n - total_read, &rx) != 0) {
@@ -161,13 +161,13 @@ int cgc_read_n_bytes(int fd, cgc_size_t n, char *buf)
   return total_read;
 }
 
-char* cgc_read_until_sequence(int fd, char* sequence, cgc_size_t sequence_len)
+char* cgc_read_until_sequence(int fd, char* sequence, size_t sequence_len)
 {
 #define STEP 128
   char* out = cgc_mcalloc(sizeof(char) * STEP);
   char* seq_loc = NULL;
-  cgc_size_t sz = STEP;
-  cgc_size_t rx = 0;
+  size_t sz = STEP;
+  size_t rx = 0;
 
   while (1) {
     if (rx == sz) {
@@ -177,11 +177,11 @@ char* cgc_read_until_sequence(int fd, char* sequence, cgc_size_t sequence_len)
         err("Bad alloc");
     }
 
-    cgc_size_t lrx = cgc_read_n_bytes(fd, 1, out + rx);
+    size_t lrx = cgc_read_n_bytes(fd, 1, out + rx);
     if (lrx <= 0)
       goto error;
 
-    for (cgc_size_t k = 0; k < sequence_len; k++)
+    for (size_t k = 0; k < sequence_len; k++)
       if (cgc_memcmp(out + rx - k, sequence, sequence_len) == 0)
         goto done;
 
@@ -200,8 +200,8 @@ char* cgc_readline(int fd)
 {
   char* out = cgc_mcalloc(sizeof(char) * STEP);
   char* newline_loc = NULL;
-  cgc_size_t sz = STEP;
-  cgc_size_t rx = 0;
+  size_t sz = STEP;
+  size_t rx = 0;
 
   while (1) {
     if (rx == sz) {
@@ -211,7 +211,7 @@ char* cgc_readline(int fd)
         err("Bad alloc");
     }
 
-    cgc_size_t lrx = cgc_read_n_bytes(fd, 1, out + rx);
+    size_t lrx = cgc_read_n_bytes(fd, 1, out + rx);
     if (lrx <= 0)
       goto error;
 
@@ -236,12 +236,12 @@ error:
 typedef struct cgc_writer_t cgc_writer_t;
 struct cgc_writer_t
 {
-  cgc_size_t offset;
-  cgc_size_t cap;
+  size_t offset;
+  size_t cap;
   char* buf;
 };
 
-cgc_writer_t* cgc_writer_new(char* buf, cgc_size_t cap)
+cgc_writer_t* cgc_writer_new(char* buf, size_t cap)
 {
   cgc_writer_t* new = cgc_mcalloc(sizeof(cgc_writer_t));
   new->offset = 0;
@@ -250,9 +250,9 @@ cgc_writer_t* cgc_writer_new(char* buf, cgc_size_t cap)
   return new;
 }
 
-int cgc_writer_write(cgc_writer_t* writer, void* data, cgc_size_t len)
+int cgc_writer_write(cgc_writer_t* writer, void* data, size_t len)
 {
-  for (cgc_size_t i = 0; i < len; i++)
+  for (size_t i = 0; i < len; i++)
     *(cgc_u8*)(writer->buf + writer->offset + i) = *(cgc_u8*)(data + i);
   writer->offset += len;
   return 0;
@@ -264,9 +264,9 @@ struct cgc_lz_elem_t {
     BACKPOINTER = 1,
     LITERAL
   } type;
-  cgc_size_t back;
+  size_t back;
   char c;
-  cgc_size_t len;
+  size_t len;
 };
 
 
@@ -310,7 +310,7 @@ cgc_lz_elem_t* cgc_unpack_lzelem_bp(cgc_u32 in)
 }
 
 
-cgc_lz_elem_t* cgc_lz_backpointer_new(cgc_size_t back, cgc_size_t len)
+cgc_lz_elem_t* cgc_lz_backpointer_new(size_t back, size_t len)
 {
   cgc_lz_elem_t* new = cgc_mcalloc(sizeof(cgc_lz_elem_t));
   new->type = BACKPOINTER;
@@ -334,15 +334,15 @@ char* cgc_alnumspc_filter(char* input)
   if (!input)
     return NULL;
 
-  cgc_size_t input_len = cgc_strlen(input);
+  size_t input_len = cgc_strlen(input);
 
   if (!input_len)
     return NULL;
 
-  cgc_size_t k = 0;
+  size_t k = 0;
   char* output = cgc_mcalloc(input_len + 1);
 
-  for (cgc_size_t i = 0; i < input_len; i++)
+  for (size_t i = 0; i < input_len; i++)
     if (cgc_isalnum(input[i]) || input[i] == ' ')
         output[k++] = input[i];
 
@@ -351,11 +351,11 @@ char* cgc_alnumspc_filter(char* input)
 
 typedef struct suffix_t cgc_suffix;
 struct suffix_t {
-  cgc_size_t index;
+  size_t index;
   char* input;
 };
 
-cgc_suffix* cgc_make_suffix(cgc_size_t index, char* input)
+cgc_suffix* cgc_make_suffix(size_t index, char* input)
 {
   cgc_suffix* new = cgc_mcalloc(sizeof(cgc_suffix));
   new->index = index;
@@ -365,12 +365,12 @@ cgc_suffix* cgc_make_suffix(cgc_size_t index, char* input)
 
 typedef struct suffix_list_t cgc_suffix_list;
 struct suffix_list_t {
-  cgc_size_t cap;
-  cgc_size_t size;
+  size_t cap;
+  size_t size;
   cgc_suffix** suffixes;
 };
 
-cgc_suffix_list* cgc_make_suffix_list(cgc_size_t cap)
+cgc_suffix_list* cgc_make_suffix_list(size_t cap)
 {
   cgc_suffix_list* new = cgc_mcalloc(sizeof(cgc_suffix_list));
   new->cap = cap;
@@ -388,7 +388,7 @@ int cgc_append_suffix_list(cgc_suffix_list* list, cgc_suffix* cgc_suffix)
   return 0;
 }
 
-cgc_suffix* cgc_get_suffix(cgc_suffix_list* list, cgc_size_t index)
+cgc_suffix* cgc_get_suffix(cgc_suffix_list* list, size_t index)
 {
   if (index >= list->size)
     err("Bad cgc_suffix list access");
@@ -402,9 +402,9 @@ int cgc_cmp_suffix(cgc_suffix* l, cgc_suffix* r)
 
 cgc_suffix_list* cgc_merge(cgc_suffix_list* l, cgc_suffix_list* r)
 {
-  cgc_size_t l_len = l->size;
-  cgc_size_t r_len = r->size;
-  cgc_size_t l_idx, r_idx, idx;
+  size_t l_len = l->size;
+  size_t r_len = r->size;
+  size_t l_idx, r_idx, idx;
   cgc_suffix_list* result = cgc_make_suffix_list(l_len + r_len);
 
   l_idx = r_idx = idx = 0;
@@ -438,7 +438,7 @@ cgc_suffix_list* cgc_merge(cgc_suffix_list* l, cgc_suffix_list* r)
 
 cgc_suffix_list* cgc_merge_sort(cgc_suffix_list* input)
 {
-  cgc_size_t length = input->size;
+  size_t length = input->size;
 
   if (length <= 1)
     return input;
@@ -446,12 +446,12 @@ cgc_suffix_list* cgc_merge_sort(cgc_suffix_list* input)
   cgc_suffix_list* l = cgc_make_suffix_list(length);
   cgc_suffix_list* r = cgc_make_suffix_list(length);
 
-  cgc_size_t middle = length / 2;
+  size_t middle = length / 2;
 
-  for (cgc_size_t i = 0; i < middle; i++)
+  for (size_t i = 0; i < middle; i++)
     cgc_append_suffix_list(l, cgc_get_suffix(input, i));
 
-  for (cgc_size_t i = middle; i < length; i++)
+  for (size_t i = middle; i < length; i++)
     cgc_append_suffix_list(r, cgc_get_suffix(input, i));
 
   cgc_suffix_list* ls = cgc_merge_sort(l);
@@ -465,18 +465,18 @@ cgc_suffix_list* cgc_merge_sort(cgc_suffix_list* input)
   return cgc_merge(ls, rs);
 }
 
-cgc_size_t* cgc_build_suffix_array(char* input)
+size_t* cgc_build_suffix_array(char* input)
 {
-  cgc_size_t length = cgc_strlen(input);
-  cgc_size_t* sa = cgc_mcalloc(sizeof(cgc_size_t) * length);
+  size_t length = cgc_strlen(input);
+  size_t* sa = cgc_mcalloc(sizeof(size_t) * length);
 
   cgc_suffix_list* list = cgc_make_suffix_list(length);
-  for (cgc_size_t i = 0; i < length; i++)
+  for (size_t i = 0; i < length; i++)
     cgc_append_suffix_list(list, cgc_make_suffix(i, input + i));
 
   list = cgc_merge_sort(list);
 
-  for (cgc_size_t i = 0; i < length; i++) {
+  for (size_t i = 0; i < length; i++) {
     sa[i] = cgc_get_suffix(list, i)->index;
   }
   return sa;
@@ -487,12 +487,12 @@ cgc_size_t* cgc_build_suffix_array(char* input)
  * input = string in which we want to find match
  * sa = cgc_suffix array
  */
-cgc_ssize_t cgc_search(char* match, cgc_size_t match_len, cgc_size_t* sa, char* input, cgc_size_t input_len, cgc_ssize_t max_index)
+cgc_ssize_t cgc_search(char* match, size_t match_len, size_t* sa, char* input, size_t input_len, cgc_ssize_t max_index)
 {
   if (!match || !match_len || !sa || !input || !input_len)
     return -1;
 
-  cgc_size_t l = 0, r = input_len - 1, mid;
+  size_t l = 0, r = input_len - 1, mid;
 
   while (l <= r) {
     mid = l + ((r - l) / 2);
@@ -512,7 +512,7 @@ cgc_ssize_t cgc_search(char* match, cgc_size_t match_len, cgc_size_t* sa, char* 
   return -1;
 }
 
-static inline cgc_size_t cgc_clamp_sub(cgc_size_t x, cgc_size_t y, cgc_size_t cgc_min)
+static inline size_t cgc_clamp_sub(size_t x, size_t y, size_t cgc_min)
 {
   if (x - y > x)
     return cgc_min;
@@ -520,13 +520,13 @@ static inline cgc_size_t cgc_clamp_sub(cgc_size_t x, cgc_size_t y, cgc_size_t cg
     return x - y;
 }
 
-static inline cgc_size_t cgc_min(a, b) {
+static inline size_t cgc_min(a, b) {
   return a > b ? b : a;
 }
 
-cgc_size_t cgc_prefix_len(const char* s1, const char* s2, const char* end)
+size_t cgc_prefix_len(const char* s1, const char* s2, const char* end)
 {
-  cgc_size_t max = 0, n = 0;
+  size_t max = 0, n = 0;
   if (s1 < s2) {
     max = s2 - s1;
     if (end - s2 < max)
@@ -539,7 +539,7 @@ cgc_size_t cgc_prefix_len(const char* s1, const char* s2, const char* end)
 
 #define BLOCK_SIZE (8)
 
-  cgc_size_t rounded = max & ~(BLOCK_SIZE - 1);
+  size_t rounded = max & ~(BLOCK_SIZE - 1);
 
   while (n < rounded &&
       *s1++ == *s2++ &&
@@ -560,7 +560,7 @@ cgc_size_t cgc_prefix_len(const char* s1, const char* s2, const char* end)
 }
 
 #define WINDOW_SIZE (32 * 1024)
-cgc_size_t cgc_compress(char *input, cgc_size_t input_len, char *output, cgc_size_t output_len, cgc_size_t* sa)
+size_t cgc_compress(char *input, size_t input_len, char *output, size_t output_len, size_t* sa)
 {
   cgc_lz_elem_t* lzelem;
   cgc_any_list_t* lzelem_list = cgc_any_list_alloc(NULL);
@@ -571,16 +571,16 @@ cgc_size_t cgc_compress(char *input, cgc_size_t input_len, char *output, cgc_siz
   cgc_any_list_t* new_elem = cgc_any_list_alloc(lzelem);
   any_list_add_tail(new_elem, lzelem_list);
 
-  for (cgc_size_t i = 1; i < input_len;) {
-    cgc_size_t max_match = 1;
-    cgc_size_t best_len = 0;
+  for (size_t i = 1; i < input_len;) {
+    size_t max_match = 1;
+    size_t best_len = 0;
     cgc_ssize_t best_ret = -1;
     while (max_match <= i) {
       cgc_ssize_t ret = cgc_search(input + i, max_match, sa, input, input_len, i);
       if (ret <= 0)
         break;
 
-      cgc_size_t match_len = cgc_prefix_len(input + ret, input + i, input + input_len);
+      size_t match_len = cgc_prefix_len(input + ret, input + i, input + input_len);
 
       if (match_len > best_len) {
         best_len = match_len;
@@ -618,7 +618,7 @@ cgc_size_t cgc_compress(char *input, cgc_size_t input_len, char *output, cgc_siz
 
   cgc_writer_write(writer, (cgc_u8*)&end_marker, sizeof(end_marker));
 
-  cgc_size_t ret =  writer->offset;
+  size_t ret =  writer->offset;
   cgc_free(writer);
   for (cur = any_list_first(lzelem_list); cur != lzelem_list;) {
     cgc_any_list_t* tmp = cur->next;;
@@ -631,9 +631,9 @@ cgc_size_t cgc_compress(char *input, cgc_size_t input_len, char *output, cgc_siz
   return ret;
 }
 
-cgc_size_t cgc_decompress(char* input, char *output, cgc_size_t output_size)
+size_t cgc_decompress(char* input, char *output, size_t output_size)
 {
-  cgc_size_t in_idx = 0;
+  size_t in_idx = 0;
   cgc_writer_t *writer = cgc_writer_new(output, output_size);
 
   while (1) {
@@ -662,7 +662,7 @@ cgc_size_t cgc_decompress(char* input, char *output, cgc_size_t output_size)
     }
   }
 
-  cgc_size_t ret =  writer->offset;
+  size_t ret =  writer->offset;
   cgc_free(writer);
   return ret;
 }
@@ -692,11 +692,11 @@ int main(void)
       if (cgc_strlen(filtered_input) > DECOMPRESSED_SZ)
         return -1;
 
-      cgc_size_t* sa = cgc_build_suffix_array(filtered_input);
+      size_t* sa = cgc_build_suffix_array(filtered_input);
       if (!sa)
         return -1;
 
-      cgc_size_t compressed_sz = cgc_compress(filtered_input, cgc_strlen(filtered_input), compressed, COMPRESSED_SZ, sa);
+      size_t compressed_sz = cgc_compress(filtered_input, cgc_strlen(filtered_input), compressed, COMPRESSED_SZ, sa);
       cgc_send_n_bytes(STDOUT, compressed_sz, compressed);
 
       cgc_free(filtered_input);
@@ -707,7 +707,7 @@ int main(void)
       if (!input)
         return -1;
       cgc_memset(decompressed, 0, DECOMPRESSED_SZ);
-      cgc_size_t decompressed_sz = cgc_decompress(input, decompressed, DECOMPRESSED_SZ);
+      size_t decompressed_sz = cgc_decompress(input, decompressed, DECOMPRESSED_SZ);
       cgc_send_n_bytes(STDOUT, decompressed_sz, decompressed);
 
       cgc_free(action);

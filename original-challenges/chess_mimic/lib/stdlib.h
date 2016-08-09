@@ -35,13 +35,13 @@ int cgc_atoi(const char *str);
 
 char *cgc_strcpy( char *dest, char *src );
 int cgc_printf( const char *fmt, ... );
-void cgc_bzero( void *, cgc_size_t );
+void cgc_bzero( void *, size_t );
 int cgc_strcmp( const char *, const char * );
-char *cgc_strncat( char *dest, const char *src, cgc_size_t n );
-cgc_size_t cgc_receive_until( char *, char, cgc_size_t );
-cgc_size_t cgc_strcat( char *, char* );
-cgc_size_t cgc_strlen( char * );
-cgc_size_t cgc_itoa( char *, cgc_size_t, cgc_size_t );
+char *cgc_strncat( char *dest, const char *src, size_t n );
+size_t cgc_receive_until( char *, char, size_t );
+size_t cgc_strcat( char *, char* );
+size_t cgc_strlen( char * );
+size_t cgc_itoa( char *, size_t, size_t );
 void cgc_puts( char *t );
 
 #endif // __STDLIB_H__

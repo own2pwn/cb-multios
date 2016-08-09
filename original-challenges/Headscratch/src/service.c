@@ -42,10 +42,10 @@ static int rxcnt;
 static int rxidx;
 
 void cgc_send_flush() {
-  cgc_size_t sent = 0;
+  size_t sent = 0;
   while (txcnt != sent)
   {
-      cgc_size_t tx;
+      size_t tx;
       if (transmit(STDOUT, txbuf + sent, txcnt - sent, &tx) != 0)
           break;
       sent += tx;
@@ -56,7 +56,7 @@ void cgc_send_flush() {
 int cgc_get_byte() {
   if (rxcnt == rxidx)
   {
-      cgc_size_t rxd;
+      size_t rxd;
       if (receive(STDIN, rxbuf, CHUNK_SIZE, &rxd) != 0 || rxd == 0)
           return -1;
       rxcnt = rxd;
@@ -65,9 +65,9 @@ int cgc_get_byte() {
   return (int)rxbuf[rxidx++];
 }
 
-int cgc_send_n_bytes(int fd, char* buf, cgc_size_t n) {
-  cgc_size_t nsent = 0;
-  cgc_size_t tx_amt = 0;
+int cgc_send_n_bytes(int fd, char* buf, size_t n) {
+  size_t nsent = 0;
+  size_t tx_amt = 0;
   while (n > 0)
   {
     if (transmit(fd, buf + nsent, n - nsent < CHUNK_SIZE ? n - nsent : CHUNK_SIZE, &tx_amt) != 0)
@@ -79,9 +79,9 @@ int cgc_send_n_bytes(int fd, char* buf, cgc_size_t n) {
   return 0;
 }
 
-cgc_size_t cgc_read_until_or_timeout(int fd, char* buf, cgc_size_t max, char term, struct cgc_timeval t, int* err) {
-  cgc_size_t nread = 0;
-  cgc_size_t rx_amt = 0;
+size_t cgc_read_until_or_timeout(int fd, char* buf, size_t max, char term, struct cgc_timeval t, int* err) {
+  size_t nread = 0;
+  size_t rx_amt = 0;
   *err = 0;
 
   int rdy;
@@ -110,7 +110,7 @@ cgc_size_t cgc_read_until_or_timeout(int fd, char* buf, cgc_size_t max, char ter
 
         if (cgc_strchr(buf + nread, term) != NULL)
         {
-          cgc_size_t until_term = cgc_strchr(buf + nread, term) - (buf + nread);
+          size_t until_term = cgc_strchr(buf + nread, term) - (buf + nread);
           nread += until_term;
           cgc_send_n_bytes(STDOUT, buf + nread + 1, rx_amt - until_term - 1);
           return nread;
@@ -126,14 +126,14 @@ cgc_size_t cgc_read_until_or_timeout(int fd, char* buf, cgc_size_t max, char ter
   return nread;
 }
 
-cgc_size_t cgc_strip_program(char* buf, cgc_size_t max)
+size_t cgc_strip_program(char* buf, size_t max)
 {
   char* cpy = cgc_calloc(sizeof(char), max);
   cgc_memcpy(cpy, buf, max);
   cgc_memset(buf, '\0', max);
 
   char* p = buf;
-  cgc_size_t i;
+  size_t i;
 
   for (i = 0; i < max; i++)
     if (
@@ -151,7 +151,7 @@ cgc_size_t cgc_strip_program(char* buf, cgc_size_t max)
   return p - buf;
 }
 
-int cgc_execute_program(char* program, cgc_size_t max) {
+int cgc_execute_program(char* program, size_t max) {
   char data[MAX_DATA_SIZE];
   char *ip = program;
   char *dp = data;
@@ -292,7 +292,7 @@ int main(void) {
   if (err)
     return -1;
 
-  cgc_size_t actual_size = cgc_strip_program(buf, MAX_PROGRAM_SIZE);
+  size_t actual_size = cgc_strip_program(buf, MAX_PROGRAM_SIZE);
   if (actual_size < 1)
     return -1;
 

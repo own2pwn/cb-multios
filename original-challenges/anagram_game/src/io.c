@@ -25,16 +25,16 @@
 #include <string.h>
 #include "io.h"
 
-void cgc_write_bytes(const void *buf, cgc_size_t count)
+void cgc_write_bytes(const void *buf, size_t count)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if (transmit(STDOUT, buf, count, &bytes) != 0 || bytes != count)
         cgc_exit(1);
 }
 
-void cgc_read_bytes(void *buf, cgc_size_t count)
+void cgc_read_bytes(void *buf, size_t count)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if (receive(STDIN, buf, count, &bytes) != 0 || bytes != count)
         cgc_exit(1);
 }
@@ -103,7 +103,7 @@ void cgc_write_string(const char *str)
 
 char *cgc_read_string()
 {
-    cgc_size_t size = (cgc_size_t) cgc_read_int();
+    size_t size = (size_t) cgc_read_int();
     char *result;
 
     if (size == SIZE_MAX)

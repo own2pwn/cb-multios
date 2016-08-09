@@ -123,7 +123,7 @@ static int cgc_m_set_rows_cols(cgc_matrix_t *m, unsigned int num_rows, unsigned 
 
 static void cgc_transmitall(char *buf, unsigned int len)
 {
-    cgc_size_t tx, sent = 0;
+    size_t tx, sent = 0;
     while (sent < len)
     {
         if (transmit(STDOUT, buf + sent, len - sent, &tx) != 0 || tx == 0)

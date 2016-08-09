@@ -35,8 +35,8 @@ void cgc_FailAndTerminate(char *error_msg) {
   _terminate(-1);
 }
 
-void cgc_ReceiveBytes(void *buffer, cgc_size_t size) {
-  cgc_size_t bytes_received;
+void cgc_ReceiveBytes(void *buffer, size_t size) {
+  size_t bytes_received;
   int return_value;
 
   while( size > 0) {
@@ -82,7 +82,7 @@ char cgc_itoh(cgc_uint8_t byte, int high) {
 }
 
 // Transmit a hex dump of some data
-void cgc_HexDump(cgc_uint8_t *data, cgc_size_t size) {
+void cgc_HexDump(cgc_uint8_t *data, size_t size) {
   char one_line[50];
   int count = 0;
   int byte;
@@ -105,8 +105,8 @@ void cgc_HexDump(cgc_uint8_t *data, cgc_size_t size) {
 }
        
 
-void cgc_TransmitBytes(void *buffer, cgc_size_t size) {
-  cgc_size_t bytes_transmitted;
+void cgc_TransmitBytes(void *buffer, size_t size) {
+  size_t bytes_transmitted;
   int return_value;
 
   while (size > 0) {

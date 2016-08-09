@@ -81,7 +81,7 @@ cgc_node_t * cgc_node_create(void * data) {
 
 // I/O functions
 
-int cgc_send(const char *buf, const cgc_size_t size) {
+int cgc_send(const char *buf, const size_t size) {
     if(cgc_sendall(STDOUT, buf, size)) {
         _terminate(1);
     }
@@ -89,9 +89,9 @@ int cgc_send(const char *buf, const cgc_size_t size) {
     return 0;
 }
 
-int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_sendall(int fd, const char *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
     if (!buf) 
@@ -112,7 +112,7 @@ int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
 }
 
 // returns number of bytes received
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size) {
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size) {
     return cgc_read_all(STDIN, res_buf, res_buf_size);
 }
 
@@ -120,7 +120,7 @@ unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size) {
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
    char ch;
    unsigned int total = 0;
-   cgc_size_t nbytes;
+   size_t nbytes;
    while (size) {
       if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
          break;
@@ -132,9 +132,9 @@ unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
 }
 
 // mod from FASTLANE: lines terminated with \x07, diff return values, 
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -187,7 +187,7 @@ void * cgc_memset(void* str, int ch, unsigned int n) {
 }
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, size_t cnt) {
 
     cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
     cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
@@ -201,8 +201,8 @@ void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
 }
 
 // returns 0 on success, non-zero on failure.
-int cgc_rand(char *res, cgc_size_t len) {
-    cgc_size_t bytes = 0;
+int cgc_rand(char *res, size_t len) {
+    size_t bytes = 0;
     return cgc_random(res, len, &bytes);
 }
 
@@ -221,9 +221,9 @@ int cgc_rand(char *res, cgc_size_t len) {
 // args - ptr to list of arguments to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
 // note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, caller does so.
-int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args) {
+int cgc_vsnprintf(char* buf, size_t buf_size, const char* fmt, cgc_va_list args) {
 
-    cgc_size_t buf_len = 0;
+    size_t buf_len = 0;
     const char *fmt_ptr = fmt;
 
     // if fmt is NULL, set fmt_ptr to "" so it will skip the while loop
@@ -245,7 +245,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 
         } else {
             char fmt_spec = '\0';
-            cgc_size_t arg_len = 0;
+            size_t arg_len = 0;
             unsigned char next_ch = 0;
             const char *next_arg = NULL;  // ptr to the next arg in args (to use this iteration)
             char tmp[32]; // tmp buffer for cgc_int2str conversion
@@ -337,7 +337,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 // fmt - null-terminated format string
 // ... - optional arguments for strings to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
-int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...) {
+int cgc_snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
     int buf_len;
     cgc_va_list args;
 

@@ -107,7 +107,7 @@ typedef struct htbl_node {
 } cgc_htbl_node_t;
 
 typedef struct {
-    cgc_size_t i;
+    size_t i;
     cgc_htbl_node_t *cur;
 } cgc_htbl_iter_t;
 
@@ -119,27 +119,27 @@ typedef struct {
 
 static void cgc_my_to_lower(char *s)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; s[i] != 0; i++)
         s[i] |= 0x20;
 }
 
 static void cgc_my_strcpy(char *dst, const char *src)
 {
-    cgc_size_t length = CALL(STRLEN, src);
+    size_t length = CALL(STRLEN, src);
     CALL(MEMCPY, dst, src, length + 1);
 }
 
-static void cgc_my_memcpy(char *dst, char *src, cgc_size_t length)
+static void cgc_my_memcpy(char *dst, char *src, size_t length)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i != length; i++)
         dst[i] = src[i];
 }
 
 static cgc_uintptr_t cgc_my_hash_string(const char *s, cgc_uintptr_t tbl_size)
 {
-    cgc_size_t i;
+    size_t i;
     cgc_uintptr_t result = 0xDEADBEEF;
     for (i = 0; s[i] != 0; i++)
         result = (result * 13) ^ s[i];
@@ -161,7 +161,7 @@ static cgc_intptr_t cgc_my_htbl_init(cgc_htbl_t *tbl, cgc_uintptr_t initial_size
 
 static void cgc_my_htbl_enlarge(cgc_htbl_t *tbl)
 {
-    cgc_size_t i, new_size = (tbl->size + 1) * 2;
+    size_t i, new_size = (tbl->size + 1) * 2;
     cgc_htbl_node_t **new_tbl;
 
     new_tbl = CALL(CALLOC, new_size, sizeof(cgc_htbl_node_t *));
@@ -191,7 +191,7 @@ static void cgc_my_htbl_enlarge(cgc_htbl_t *tbl)
 
 static void cgc_my_htbl_first(cgc_htbl_t *tbl, cgc_htbl_iter_t *iter)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < tbl->size; i++)
         if (tbl->nodes[i] != NULL)
             break;
@@ -211,7 +211,7 @@ static void cgc_my_htbl_next(cgc_htbl_t *tbl, cgc_htbl_iter_t *iter)
     }
     else
     {
-        cgc_size_t i;
+        size_t i;
         for (i = iter->i + 1; i < tbl->size; i++)
             if (tbl->nodes[i] != NULL)
                 break;
@@ -289,7 +289,7 @@ static cgc_uintptr_t cgc_my_htbl_set(cgc_htbl_t *tbl, const char *key, cgc_uintp
 
 static void cgc_my_htbl_free(cgc_htbl_t *tbl, cgc_uintptr_t free_value)
 {
-    cgc_size_t i;
+    size_t i;
 
     for (i = 0; i < tbl->size; i++)
     {
@@ -310,7 +310,7 @@ static void cgc_my_htbl_free(cgc_htbl_t *tbl, cgc_uintptr_t free_value)
 
 static char *cgc_my_strdup(const char *s)
 {
-    cgc_size_t length = CALL(STRLEN, s);
+    size_t length = CALL(STRLEN, s);
     char *str = CALL(CALLOC, length + 1, 1);
     if (str == NULL)
         return NULL;
@@ -320,14 +320,14 @@ static char *cgc_my_strdup(const char *s)
 
 static cgc_intptr_t cgc_my_strlen(const char *s)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; s[i] != 0; i++) ;
     return i;
 }
 
 static void cgc_my_strncpy(char * dest, const char * src, cgc_intptr_t len)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < len; i++)
     {
         dest[i] = src[i];
@@ -338,7 +338,7 @@ static void cgc_my_strncpy(char * dest, const char * src, cgc_intptr_t len)
 
 static cgc_intptr_t cgc_my_strncmp(char * a, char * b, cgc_intptr_t len)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < len && a[i] != 0 && b[i] != 0; i++)
     {
         int result = CALL(BYTECMP, a[i], b[i]);
@@ -354,7 +354,7 @@ static cgc_intptr_t cgc_my_strncmp(char * a, char * b, cgc_intptr_t len)
 
 static cgc_intptr_t cgc_my_strcmp(char * a, char * b)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; a[i] != 0 && b[i] != 0; i++)
     {
         int result = CALL(BYTECMP, a[i], b[i]);
@@ -373,7 +373,7 @@ static cgc_intptr_t cgc_my_bytecmp(cgc_intptr_t a, cgc_intptr_t b)
 static cgc_intptr_t cgc_my_search_words(const char *needle, int partial)
 {
     int len = CALL(STRLEN, needle);
-    cgc_size_t i;
+    size_t i;
     cgc_uintptr_t f = partial ? STRNCMP : STRCMP;
     for (i = 0; words[i] != NULL; i++)
         if (CALL(f, needle, words[i], len) == 0)
@@ -385,7 +385,7 @@ static cgc_intptr_t cgc_my_search_words(const char *needle, int partial)
 static void cgc_my_sort_words(cgc_uintptr_t comparator, cgc_intptr_t reverse)
 {
     int done;
-    cgc_size_t i;
+    size_t i;
 
     do {
         done = 1;
@@ -429,7 +429,7 @@ static cgc_intptr_t cgc_my_verify_word(const char *word)
 
 static cgc_intptr_t cgc_my_add_word(const char *word)
 {
-    cgc_size_t i;
+    size_t i;
     if (CALL(VERIFY_WORD, word) == 0)
         return 0;
 
@@ -447,7 +447,7 @@ static cgc_intptr_t cgc_my_add_word(const char *word)
 
 static const char *cgc_my_random_dict_word()
 {
-    cgc_size_t i, r;
+    size_t i, r;
     for (i = 0; words[i] != NULL; i++) ;
     r = CALL(RANDINT, 0, i);
     return words[r];
@@ -456,7 +456,7 @@ static const char *cgc_my_random_dict_word()
 cgc_uint32_t cgc_tornado();
 static cgc_uintptr_t cgc_my_randint(cgc_uintptr_t min, cgc_uintptr_t max)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_uintptr_t rand, range = max - min;
 
     int fd;
@@ -476,7 +476,7 @@ try_again:
 
 static const char *cgc_my_random_word(cgc_htbl_t *tbl, cgc_uintptr_t cur_length)
 {
-    cgc_size_t count = 0;
+    size_t count = 0;
     cgc_uintptr_t rand;
     cgc_htbl_iter_t iter;
 
@@ -522,7 +522,7 @@ static char *cgc_my_generate_text(cgc_htbl_t *tbl, int training)
 {
     const char *prev = "", *word, *outword;
     char tmp[128];
-    cgc_size_t i = 0;
+    size_t i = 0;
     cgc_uintptr_t len;
 
     do {
@@ -654,7 +654,7 @@ static void cgc_my_write_uint(cgc_uintptr_t value)
 {
     cgc_uint8_t tmp[sizeof(value) + 1];
     int to_send;
-    cgc_size_t bytes;
+    size_t bytes;
 
     if (value < 0x80)
     {
@@ -680,14 +680,14 @@ static void cgc_my_write_uint(cgc_uintptr_t value)
 static void cgc_my_write_string(const char *s)
 {
     cgc_uintptr_t len = CALL(STRLEN, s);
-    cgc_size_t bytes;
+    size_t bytes;
     CALL(WRITE_UINT, len);
     transmit(STDOUT, s, len, &bytes);
 }
 
 static cgc_uintptr_t cgc_my_read_all(char *buf, cgc_uintptr_t len)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     while (len > 0)
     {
         if (receive(STDIN, buf, len, &bytes) != 0 || bytes == 0)
@@ -756,7 +756,7 @@ static cgc_intptr_t cgc_my_read_string(char *buf, cgc_intptr_t max)
 
 static void cgc_my_protect(cgc_uintptr_t new_key)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < FUNCS_END; i++)
         *(cgc_uintptr_t *)(&funcs[i]) += new_key - secret_key;
     secret_key = new_key;

@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-cgc_ssize_t cgc_read_until(char *, char *, cgc_size_t);
+cgc_ssize_t cgc_read_until(char *, char *, size_t);
 cgc_int32_t cgc_StoreTemp(double *, cgc_uint32_t, cgc_uint32_t, cgc_uint32_t, char *);
 cgc_int8_t cgc_read_temps(double *grid);
 int cgc_flush_stdin(void);

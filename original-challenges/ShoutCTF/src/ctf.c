@@ -131,7 +131,7 @@ cgc_error_t cgc_ctf_add_chal(cgc_ctf_t *ctf, cgc_chal_t *chal)
     return ERR_OK;
 }
 
-cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, cgc_size_t cid)
+cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, size_t cid)
 {
     if (!ctf)
         return ERR_INTERNAL;
@@ -144,7 +144,7 @@ cgc_error_t cgc_ctf_open_chal(cgc_ctf_t *ctf, cgc_size_t cid)
     return ERR_OK;
 }
 
-cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, cgc_size_t *n)
+cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, size_t *n)
 {
     if (!ctf || !solves || !n)
         return ERR_INTERNAL;
@@ -154,7 +154,7 @@ cgc_error_t cgc_ctf_get_solves(cgc_ctf_t *ctf, cgc_flag_t ***solves, cgc_size_t 
     return ERR_OK;
 }
 
-cgc_team_t* cgc_ctf_select_nth(cgc_team_t **arr, cgc_size_t len, int n)
+cgc_team_t* cgc_ctf_select_nth(cgc_team_t **arr, size_t len, int n)
 {
     int i, j;
     cgc_team_t *tmp;
@@ -176,7 +176,7 @@ cgc_team_t* cgc_ctf_select_nth(cgc_team_t **arr, cgc_size_t len, int n)
     return cgc_ctf_select_nth(&arr[j], len - j, n - j);
 }
 
-cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, cgc_size_t *page)
+cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, size_t *page)
 {
     if (!ctf || !ranks || !page)
         return ERR_INTERNAL;
@@ -197,8 +197,8 @@ cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, cgc_size_t *p
             }
         }
     }
-    cgc_size_t n = (5 < ctf->num_teams) ? 5 : ctf->num_teams;
-    cgc_size_t p = *page;
+    size_t n = (5 < ctf->num_teams) ? 5 : ctf->num_teams;
+    size_t p = *page;
     *ranks = NULL;
     *page = 0;
     if (n == 0)
@@ -217,7 +217,7 @@ cgc_error_t cgc_ctf_get_ranks(cgc_ctf_t *ctf, cgc_team_t ***ranks, cgc_size_t *p
     return ERR_OK;
 }
 
-cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, cgc_size_t tid)
+cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, size_t tid)
 {
     if (!ctf || !team)
         return ERR_INTERNAL;
@@ -227,7 +227,7 @@ cgc_error_t cgc_ctf_get_team(cgc_ctf_t *ctf, cgc_team_t **team, cgc_size_t tid)
     return ERR_OK;
 }
 
-cgc_error_t cgc_ctf_get_chal(cgc_ctf_t *ctf, cgc_chal_t **chal, cgc_size_t cid)
+cgc_error_t cgc_ctf_get_chal(cgc_ctf_t *ctf, cgc_chal_t **chal, size_t cid)
 {
     if (!ctf || !chal)
         return ERR_INTERNAL;

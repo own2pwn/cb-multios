@@ -349,8 +349,8 @@ bail:
 int main(void) {
 
     int ret = SUCCESS;
-    cgc_size_t rx_bytes = 0;
-    cgc_size_t tx_bytes = 0;
+    size_t rx_bytes = 0;
+    size_t tx_bytes = 0;
 
     // Allocate scratch + bytecode space.
     // Per man, allocate()d memory is zero-filled.

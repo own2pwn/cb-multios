@@ -29,20 +29,20 @@
 
 static cgc_usb_t usb;
 
-static cgc_size_t cgc__send(const void *buf, cgc_size_t length)
+static size_t cgc__send(const void *buf, size_t length)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_ssize_t ret = transmit(STDOUT, buf, length, &bytes);
     if (ret != 0 || bytes != length) return 0;
     return ret;
 }
 
-static cgc_size_t cgc__recv(void *buf, cgc_size_t length)
+static size_t cgc__recv(void *buf, size_t length)
 {
-    cgc_size_t bytes, count;
+    size_t bytes, count;
     for (count = 0; count != length;)
     {
-        cgc_size_t to_read = length - count;
+        size_t to_read = length - count;
         cgc_ssize_t ret = receive(STDIN, buf, to_read, &bytes);
         if (ret != 0 || bytes == 0) break;
         count += bytes;

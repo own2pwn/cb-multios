@@ -132,7 +132,7 @@ int cgc_taxpayer_compare_creds(cgc_TaxPayer *tp, cgc_Session *s) {
  * @param data_sz 	Amount of data that should be ingested as the cgc_TenFourD
  * @return SUCCESS on success, else -1
  */
-int cgc_taxpayer_add_tenfourdee(cgc_TaxPayer *tp, cgc_Session *s, cgc_size_t data_sz) {
+int cgc_taxpayer_add_tenfourdee(cgc_TaxPayer *tp, cgc_Session *s, size_t data_sz) {
 
 	// parse data to create cgc_TenFourD
 	cgc_TenFourD *t4d = cgc_tenfourd_ingest(s, data_sz);
@@ -231,7 +231,7 @@ cgc_int32_t cgc_taxpayer_sum_taxes_due(cgc_TaxPayer *tp, cgc_Session *s, cgc_int
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
+cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written) {
 	cgc_DateRange *tdo = (cgc_DateRange *)s->request.data;
 
 	if (tdo->end_date < tdo->start_date) {
@@ -246,10 +246,10 @@ cgc_int32_t cgc_taxpayer_list_submitted_tax_years(cgc_TaxPayer *tp, cgc_Session 
 
 	cgc_TenFourD *t4d = tp->tax_forms;
 	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
-	cgc_size_t byte_count = 0;
+	size_t byte_count = 0;
 
 #ifdef PATCHED_2
-	cgc_size_t max_bytes = *bytes_written;
+	size_t max_bytes = *bytes_written;
 	while ((NULL != t4d) && (byte_count < max_bytes-2)) {
 #else
 	while (NULL != t4d) {
@@ -326,12 +326,12 @@ cgc_uint32_t cgc_taxpayer_count_submitted_tax_years(cgc_TaxPayer *tp) {
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
+cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written) {
 
 	cgc_TenFourD *t4d = tp->tax_forms;
 	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
-	cgc_size_t max_bytes = *bytes_written - 4;
-	cgc_size_t byte_count = 0;
+	size_t max_bytes = *bytes_written - 4;
+	size_t byte_count = 0;
 	cgc_uint32_t refund = 0;
 	cgc_uint32_t total_refund = 0;
 
@@ -372,15 +372,15 @@ cgc_int32_t cgc_taxpayer_get_refund(cgc_TaxPayer *tp, cgc_Session *s, char *year
  * @param bytes_written Pointer to store number of bytes written to year_buf
  * @return SUCCESS on success, else -1
  */
-cgc_int32_t cgc_taxpayer_pay_taxes(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, cgc_size_t *bytes_written) {
+cgc_int32_t cgc_taxpayer_pay_taxes(cgc_TaxPayer *tp, cgc_Session *s, char *year_buf, size_t *bytes_written) {
 	cgc_uint32_t dollaz = *(cgc_uint32_t *)s->request.data;
 
 	if (0 == dollaz) return -1;
 
 	cgc_TenFourD *t4d = tp->tax_forms;
 	cgc_uint16_t *yb_idx = (cgc_uint16_t *)year_buf;
-	cgc_size_t max_bytes = *bytes_written;
-	cgc_size_t byte_count = 0;
+	size_t max_bytes = *bytes_written;
+	size_t byte_count = 0;
 	cgc_uint32_t dollaz_spent = 0;
 
 	while ((NULL != t4d) && (byte_count < max_bytes) & (0 < dollaz)) {
@@ -456,7 +456,7 @@ void cgc_tenfourd_get_last_three_from_list(cgc_TenFourD *t4d_list, cgc_uint32_t 
  * @param s 	Pointer to cgc_Session
  * @return Pointer to a cgc_TenFourD on success, NULL on error.
  */
-cgc_TenFourD *cgc_tenfourd_ingest(cgc_Session *s, cgc_size_t data_sz) {
+cgc_TenFourD *cgc_tenfourd_ingest(cgc_Session *s, size_t data_sz) {
 	cgc_TenFourD *t4d = cgc_calloc(sizeof(cgc_TenFourD));
 	MALLOC_OK(t4d);
 

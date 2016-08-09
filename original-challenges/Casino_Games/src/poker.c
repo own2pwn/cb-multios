@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "poker.h"
 
 // Sorts the hand in increasing numerical order including suit
-void cgc_sort_by_suit(char *hand, cgc_size_t size)
+void cgc_sort_by_suit(char *hand, size_t size)
 {
 	for (int i=1; i<size; i++)
 	{	
@@ -46,7 +46,7 @@ void cgc_sort_by_suit(char *hand, cgc_size_t size)
 }
 
 // Sorts the hand in increasing value ignoring suit
-void cgc_sort_by_value(char *hand, cgc_size_t size)
+void cgc_sort_by_value(char *hand, size_t size)
 {
 	for (int i=1; i<size; i++)
 	{	
@@ -63,7 +63,7 @@ void cgc_sort_by_value(char *hand, cgc_size_t size)
 }
 
 // Counts instances of a card in the hand assuming only face value (ignoring suit)
-int cgc_count_cards(char *hand, cgc_size_t size, char card)
+int cgc_count_cards(char *hand, size_t size, char card)
 {
 	int count = 0;
 	for (int i=0; i<size; i++)

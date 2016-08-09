@@ -233,7 +233,7 @@ DefineFunction(Map, unsigned int, get_level, int x, int y)
 DefineFunction(Map, void, serialize, Buffer *buf)
 {
     int count = 0, last = -1;
-    cgc_size_t i;
+    size_t i;
     $(buf, write_number, this->m_width);
     $(buf, write_number, this->m_height);
     $(buf, write_number, this->m_start_x);
@@ -278,7 +278,7 @@ DefineFunction(Map, void, deserialize, Buffer *buf)
     uint8_t max_id = 0;
 #endif
 
-    cgc_size_t i;
+    size_t i;
     this->m_width = $(buf, read_number);
     this->m_height = $(buf, read_number);
     this->m_start_x = $(buf, read_number);

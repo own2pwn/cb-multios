@@ -278,7 +278,7 @@ void cgc_initYolodex() {
 int cgc_recvUntil(char *dst, int n, char delim)
 {
 	char *tmp;
-	cgc_size_t gotBytes;
+	size_t gotBytes;
 	tmp = dst;
 	while(n--)
 	{
@@ -529,7 +529,7 @@ void cgc_promptShow() {
 }
 
 void cgc_initCookies() {
-	cgc_size_t bytes;
+	size_t bytes;
 	int got = 0;
 	int shift = 0;
 

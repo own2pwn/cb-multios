@@ -191,9 +191,9 @@ cgc_clear_operator_stack(struct ast_node **output_stack, struct ast_node **opera
 
 /* See https://en.wikipedia.org/wiki/Shunting-yard_algorithm */
 int
-cgc_parse(struct token *tokens, cgc_size_t n, struct ast *out)
+cgc_parse(struct token *tokens, size_t n, struct ast *out)
 {
-    cgc_size_t i;
+    size_t i;
     struct ast_node *cur_node, *output_stack = NULL, *operator_stack = NULL;
 
     if (cgc_pool_init(&out->pool, sizeof(struct ast_node)) < 0)

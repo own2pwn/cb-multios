@@ -31,7 +31,7 @@
 # 24 "src/main.c"
 # 1 "lib/libcgc.h" 1
 # 10 "lib/libcgc.h"
-typedef long unsigned int cgc_size_t;
+typedef long unsigned int size_t;
 typedef long signed int cgc_ssize_t;
 
 
@@ -52,13 +52,13 @@ struct cgc_timeval {
 };
 # 50 "lib/libcgc.h"
 void _terminate(unsigned int status) __attribute__((__noreturn__));
-int transmit(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
-int receive(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
+int transmit(int fd, const void *buf, size_t count, size_t *tx_bytes);
+int receive(int fd, void *buf, size_t count, size_t *rx_bytes);
 int cgc_fdwait(int nfds, cgc_fd_set *readfds, cgc_fd_set *writefds,
     const struct cgc_timeval *timeout, int *readyfds);
-int allocate(cgc_size_t length, int is_X, void **addr);
-int deallocate(void *addr, cgc_size_t length);
-int cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes);
+int allocate(size_t length, int is_X, void **addr);
+int deallocate(void *addr, size_t length);
+int cgc_random(void *buf, size_t count, size_t *rnd_bytes);
 
 typedef struct { long _b[8]; } cgc_jmp_buf[1];
 int setjmp(cgc_jmp_buf) __attribute__((__returns_twice__));
@@ -144,11 +144,11 @@ extern int cgc_sprintf(char *s, const char *fmt, ...);
 long cgc_strtol(const char *str, char **endptr, int base);
 unsigned long cgc_strtoul(const char *str, char **endptr, int base);
 
-extern void *cgc_malloc(cgc_size_t size);
-extern void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size);
-extern void *cgc_realloc(void *ptr, cgc_size_t size);
+extern void *cgc_malloc(size_t size);
+extern void *cgc_calloc(size_t nmemb, size_t size);
+extern void *cgc_realloc(void *ptr, size_t size);
 extern void cgc_free(void *ptr);
-extern cgc_size_t cgc_malloc_size(void *ptr);
+extern size_t cgc_malloc_size(void *ptr);
 
 static void cgc_exit(int ret)
 {
@@ -161,30 +161,30 @@ static void cgc_exit(int ret)
 
 
 
-extern void *cgc_memcpy(void *dest, const void *src, cgc_size_t n);
-extern void *cgc_memmove(void *dest, const void *src, cgc_size_t n);
-extern void *cgc_memset(void *dest, int c, cgc_size_t n);
-extern int cgc_memcmp(void *s1, const void *s2, cgc_size_t n);
-extern void *cgc_memchr(const void *s, int c, cgc_size_t n);
+extern void *cgc_memcpy(void *dest, const void *src, size_t n);
+extern void *cgc_memmove(void *dest, const void *src, size_t n);
+extern void *cgc_memset(void *dest, int c, size_t n);
+extern int cgc_memcmp(void *s1, const void *s2, size_t n);
+extern void *cgc_memchr(const void *s, int c, size_t n);
 
-extern cgc_size_t cgc_strlen(const char *s);
+extern size_t cgc_strlen(const char *s);
 extern char *cgc_strcpy(char *dest, const char *src);
-extern char *cgc_strncpy(char *dest, const char *src, cgc_size_t n);
+extern char *cgc_strncpy(char *dest, const char *src, size_t n);
 extern char *cgc_strchr(const char *s, int c);
 extern char *cgc_strsep(char **stringp, const char *delim);
 extern int cgc_strcmp(const char *s1, const char *s2);
-extern int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n);
+extern int cgc_strncmp(const char *s1, const char *s2, size_t n);
 extern int cgc_strcasecmp(const char *s1, const char *s2);
-extern int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n);
+extern int cgc_strncasecmp(const char *s1, const char *s2, size_t n);
 extern char *cgc_strcat(char *dest, const char *src);
 extern char *cgc_strdup(const char *src);
 # 28 "src/main.c" 2
 
 # 1 "src/io.h" 1
 # 35 "src/io.h"
-int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf);
-int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf);
-int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf);
+int cgc_send_n_bytes(int fd, size_t n, char* buf);
+int cgc_read_n_bytes(int fd, size_t n, char* buf);
+int cgc_read_until(int fd, size_t n, char terminator, char* buf);
 int cgc_transmit_string(int fd, char* buf);
 # 30 "src/main.c" 2
 typedef struct cgc_thunk_t cgc_thunk_t;
@@ -206,8 +206,8 @@ void cgc_remove_head_list(cgc_list_t** list);
 typedef struct cgc_note_t cgc_note_t;
 struct cgc_note_t
 {
-  cgc_size_t size;
-  cgc_size_t cap;
+  size_t size;
+  size_t cap;
   char* buf;
   char* title;
 };
@@ -217,7 +217,7 @@ cgc_note_t* note_store[(512)] = {0};
 
 cgc_note_t* cgc_get_note(char* title)
 {
-  for(cgc_size_t i = 0; i < (512); i++)
+  for(size_t i = 0; i < (512); i++)
     if (note_store[i] && cgc_strcmp(title, note_store[i]->title) == 0)
       return note_store[i];
   return ((void *)0);
@@ -234,7 +234,7 @@ cgc_note_t* cgc_new_note(char* title, char* data)
   cgc_note_t* note = cgc_calloc(sizeof(cgc_note_t), 1);
   ({ if (note == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 75); cgc_exit(1); }); });
 
-  cgc_size_t data_size = cgc_strlen(data);
+  size_t data_size = cgc_strlen(data);
 
   if (data_size + 1 > (1024))
   {
@@ -256,7 +256,7 @@ cgc_note_t* cgc_new_note(char* title, char* data)
   ({ if (note->title == ((void *)0)) ({ cgc_fdprintf(2, "ERROR %s:%d:\t" "bad alloc" "\n", "src/main.c", 96); cgc_exit(1); }); });
   cgc_strcpy(note->title, title);
 
-  cgc_size_t i;
+  size_t i;
   for (i = 0; i < (512); i++)
   {
     if (note_store[i] == ((void *)0))
@@ -298,7 +298,7 @@ int cgc_delete_note(cgc_note_t* note)
   if (!note)
     return -1;
 
-  for (cgc_size_t i = 0; i < (512); i++)
+  for (size_t i = 0; i < (512); i++)
     if (note_store[i] == note)
       note_store[i] = ((void *)0);
 
@@ -391,9 +391,9 @@ int cgc_append_thunk(char **argv, cgc_list_t** list)
 
   cgc_strncpy(tmp, content, (8192));
   tmp[(8192)] = '\0';
-  cgc_size_t rep_len = cgc_strlen("cloud");
+  size_t rep_len = cgc_strlen("cloud");
 
-  cgc_size_t idx = 0;
+  size_t idx = 0;
   while (idx < (8192) - rep_len)
   {
     if (cgc_strncmp(tmp + idx, "cloud", rep_len) == 0)
@@ -483,9 +483,9 @@ void cgc_remove_head_list(cgc_list_t** list)
   *list = (*list)->next;
 }
 
-cgc_size_t cgc_len_list(cgc_list_t* list)
+size_t cgc_len_list(cgc_list_t* list)
 {
-  cgc_size_t len = 0;
+  size_t len = 0;
   while (list && ++len)
     list = list->next;
   return len;
@@ -521,12 +521,12 @@ void cgc_yell(int fd)
 char* cgc_nth_word(unsigned n, char* input, int to_end)
 {
 
-  cgc_size_t len = cgc_strlen(input);
+  size_t len = cgc_strlen(input);
   char* word_start[128];
   char* p = input;
   cgc_memset(word_start, '\0', 128 * sizeof(char *));
 
-  for (cgc_size_t i = 0; i < 128; i++)
+  for (size_t i = 0; i < 128; i++)
   {
     if (*p && cgc_isspace(*p))
       p++;
@@ -557,11 +557,11 @@ char* cgc_nth_word(unsigned n, char* input, int to_end)
   return cgc_strncpy(res, p, end - p);
 }
 
-char** cgc_make_argv(char* input, cgc_size_t n)
+char** cgc_make_argv(char* input, size_t n)
 {
   char** argv = cgc_calloc(sizeof(char *), n);
 
-  cgc_size_t i;
+  size_t i;
   for(i = 0; i < n - 1; i++)
   {
     argv[i] = cgc_nth_word(i + 1, input, 0);
@@ -575,26 +575,26 @@ char** cgc_make_argv(char* input, cgc_size_t n)
   return argv;
 
 error:
-  for(cgc_size_t i = 1; i < n - 1; i++)
+  for(size_t i = 1; i < n - 1; i++)
     if (argv[i])
       cgc_free(argv[i]);
   cgc_free(argv);
   return ((void *)0);
 }
 
-void cgc_print_argv(char** argv, cgc_size_t n)
+void cgc_print_argv(char** argv, size_t n)
 {
-  for(cgc_size_t i = 0; i < n; i ++)
+  for(size_t i = 0; i < n; i ++)
     if (argv[i])
                         ;
 }
 
-void cgc_free_argv(char** argv, cgc_size_t n)
+void cgc_free_argv(char** argv, size_t n)
 {
   if (!argv || !n)
     return;
 
-  for(cgc_size_t i = 0; i < n; i ++)
+  for(size_t i = 0; i < n; i ++)
     if (argv[i])
       cgc_free(argv[i]);
   cgc_free(argv);

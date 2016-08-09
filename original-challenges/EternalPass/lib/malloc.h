@@ -33,7 +33,7 @@
  * @return VA of allocated space, 
  *   or NULL if size is 0 or there is an error allocating more space.
  */
-void *cgc_malloc(cgc_size_t size);
+void *cgc_malloc(size_t size);
 
 /**
  * A relatively simple cgc_calloc implementation.
@@ -42,7 +42,7 @@ void *cgc_malloc(cgc_size_t size);
  * @return VA of allocated space, 
  *   or NULL if size is 0 or there is an error allocating more space.
  */
-void *cgc_calloc(cgc_size_t size);
+void *cgc_calloc(size_t size);
 
 
 /**

@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 typedef struct MALLOC_ALLOC_HDR
 {
-    cgc_size_t  alloc_size;
+    size_t  alloc_size;
 } cgc_tMallocAllocHdr;
 
 // Only cgc_free blocks have these headers (minimum allocation size is therefore 8-bytes)
@@ -50,8 +50,8 @@ typedef struct MALLOC_MANAGER
     void *pFreeList;
 } cgc_tMallocManager;
 
-void* cgc_calloc( cgc_size_t count, cgc_size_t obj_size );
-void* cgc_malloc( cgc_size_t alloc_size );
+void* cgc_calloc( size_t count, size_t obj_size );
+void* cgc_malloc( size_t alloc_size );
 void cgc_free( void *pMem );
 
 #endif // __MALLOC_H__

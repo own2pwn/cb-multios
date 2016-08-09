@@ -60,7 +60,7 @@ void cgc_clearAttributes() {
 void cgc_initializeAttributes(char* body) {
 	char *key, *value;
 	cgc_Attribute *new_attr;
-	cgc_size_t size;
+	size_t size;
 
 	cgc_clearAttributes();
 
@@ -94,7 +94,7 @@ void cgc_initializeAttributes(char* body) {
 */
 void cgc_sendErrorResponse(const char* response) {
 	char* buffer;
-	cgc_size_t bytes;
+	size_t bytes;
 	int ret;
 
 	if(!(buffer = cgc_malloc(sizeof(RESPONSE_HDR)+cgc_strlen(response)+1)))
@@ -118,7 +118,7 @@ void cgc_sendErrorResponse(const char* response) {
 */
 void cgc_getStringAttribute(char** buffer_ptr, const char* name) {
 	cgc_Attribute* attr_ptr;
-	cgc_size_t size, size1, size2;
+	size_t size, size1, size2;
 
 	for(attr_ptr=attributes; attr_ptr != NULL; attr_ptr = attr_ptr->next) {
 		size1 = cgc_strlen(attr_ptr->key);

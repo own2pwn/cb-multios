@@ -25,7 +25,7 @@
 #include "user.h"
 #include "read.h"
 
-cgc_size_t g_user_id = 0;
+size_t g_user_id = 0;
 
 cgc_user_t *cgc_create_user(char *username, char *about)
 {
@@ -87,7 +87,7 @@ void cgc_clear_list(cgc_user_list_t **users)
     }
 }
 
-cgc_user_t *cgc_find_user_from_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_user_list_t *list, int list_size)
+cgc_user_t *cgc_find_user_from_list(char *buf, size_t buflen, int *recv_status, cgc_user_list_t *list, int list_size)
 {
     if (!buf || buflen < 2)
         return NULL;
@@ -130,7 +130,7 @@ cgc_user_t *cgc_find_user_from_list(char *buf, cgc_size_t buflen, int *recv_stat
     }
 }
 
-cgc_bool cgc_add_user_to_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_user_list_t *all_users, cgc_user_list_t **list)
+cgc_bool cgc_add_user_to_list(char *buf, size_t buflen, int *recv_status, cgc_user_list_t *all_users, cgc_user_list_t **list)
 {
     *recv_status = FAIL;
     int num_tries = 0;

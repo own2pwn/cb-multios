@@ -25,7 +25,7 @@
 
 static int cgc__refill(cgc_FILE *stream)
 {
-    cgc_size_t rx;
+    size_t rx;
 
     if (stream->idx == stream->length)
         stream->idx = stream->length = 0;
@@ -42,10 +42,10 @@ static int cgc__refill(cgc_FILE *stream)
     return rx;
 }
 
-cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream)
+cgc_ssize_t cgc_fread(void *ptr, size_t size, cgc_FILE *stream)
 {
     char *buf = ptr;
-    cgc_size_t idx = 0, rx;
+    size_t idx = 0, rx;
 
     if (stream->idx == stream->length)
         cgc__refill(stream);
@@ -79,7 +79,7 @@ cgc_ssize_t cgc_fread(void *ptr, cgc_size_t size, cgc_FILE *stream)
 static int cgc__getc(cgc_FILE *stream)
 {
     char ch;
-    cgc_size_t rx;
+    size_t rx;
 
     if (stream->idx == INVALID_IDX)
     {
@@ -102,9 +102,9 @@ static int cgc__getc(cgc_FILE *stream)
     }
 }
 
-cgc_ssize_t cgc_freaduntil(char *str, cgc_size_t size, char term, cgc_FILE *stream)
+cgc_ssize_t cgc_freaduntil(char *str, size_t size, char term, cgc_FILE *stream)
 {
-    cgc_size_t idx;
+    size_t idx;
 
     for (idx = 0; idx < size - 1; idx++)
     {

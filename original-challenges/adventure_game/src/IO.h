@@ -10,7 +10,7 @@ EndDeclareClass(IO, Object)
 
 DeclareClassFunctions(IO, Object)
     DeclareFunction(IO, void, format, const char * fmt, ...)
-    DeclareFunction(IO, cgc_size_t, receive, void *buf, cgc_size_t count)
+    DeclareFunction(IO, size_t, receive, void *buf, size_t count)
     DeclareFunction(IO, void, wait_for_input)
     DeclareFunction(IO, void, wait_for, char c)
 EndDeclareClassFunctions(IO)

@@ -198,9 +198,9 @@ typedef int (*cgc_bomber)(cgc_coord_t point);
 
 struct qtree
 {
-    cgc_size_t max_levels;
-    cgc_size_t max_pixels;
-    cgc_size_t num_pixels;
+    size_t max_levels;
+    size_t max_pixels;
+    size_t num_pixels;
     cgc_pixel_list_t *pixels;
 
     cgc_region_t valid_region;

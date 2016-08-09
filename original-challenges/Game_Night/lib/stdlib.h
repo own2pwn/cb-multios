@@ -89,7 +89,7 @@ unsigned int cgc_rand(void);
  * @param index The byte to get
  * @return A byte from the flag page
  */
-unsigned char cgc_get_flag_byte(cgc_size_t index);
+unsigned char cgc_get_flag_byte(size_t index);
 
 /**
  * Get a byte from the flag page.
@@ -97,6 +97,6 @@ unsigned char cgc_get_flag_byte(cgc_size_t index);
  * @param index The byte to get
  * @return A byte from the flag page
  */
-unsigned char cgc_get_flag_byte_unsafe(cgc_size_t index);
+unsigned char cgc_get_flag_byte_unsafe(size_t index);
 #endif /* STDLIB_H_ */
 

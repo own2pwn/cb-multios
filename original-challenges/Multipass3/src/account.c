@@ -69,10 +69,10 @@ cgc_alloc_node_t * cgc_alloc_txn_head(){
 	return (cgc_alloc_node_t *) cgc_malloc(sizeof(cgc_alloc_node_t));
 }
 
-cgc_size_t cgc_vendor_calc(cgc_vendor_t *v){
+size_t cgc_vendor_calc(cgc_vendor_t *v){
 	return v->vendor_location_sz - sizeof(char *);
 }
-cgc_size_t cgc_packet_sz_by_op_code(cgc_uint32_t op_code, cgc_uint32_t is_client){
+size_t cgc_packet_sz_by_op_code(cgc_uint32_t op_code, cgc_uint32_t is_client){
 		switch(op_code){
 
 		case PURCHASE:
@@ -115,7 +115,7 @@ cgc_size_t cgc_packet_sz_by_op_code(cgc_uint32_t op_code, cgc_uint32_t is_client
 	return 0;
 }
 
-cgc_size_t cgc_get_log_data_sz(cgc_uint32_t op_code, void *txn_data){
+size_t cgc_get_log_data_sz(cgc_uint32_t op_code, void *txn_data){
 	cgc_packet_data_recharge_t *d = NULL;
 	cgc_packet_data_purchase_t * pp = NULL;
 	switch(op_code){
@@ -145,13 +145,13 @@ cgc_size_t cgc_get_log_data_sz(cgc_uint32_t op_code, void *txn_data){
 	return 0;
 }
 
-cgc_size_t cgc_get_ops_data_sz(cgc_packet_head_t * ph, void *txn_data, cgc_uint32_t is_client){
+size_t cgc_get_ops_data_sz(cgc_packet_head_t * ph, void *txn_data, cgc_uint32_t is_client){
 	return cgc_packet_sz_by_op_code(ph->op_code, is_client);
 }
 
 
 
-cgc_size_t cgc_get_size_of_data_for_pkt(cgc_packet_head_t * ph, void *txn_data, cgc_uint32_t is_client){
+size_t cgc_get_size_of_data_for_pkt(cgc_packet_head_t * ph, void *txn_data, cgc_uint32_t is_client){
 	if(ph->status != OK){
 		cgc_packet_data_error_t *pde = txn_data;
 		return pde->length+sizeof(cgc_packet_data_error_t)-4;
@@ -178,7 +178,7 @@ cgc_size_t cgc_get_size_of_data_for_pkt(cgc_packet_head_t * ph, void *txn_data, 
 	return 0;
 }
 
-cgc_size_t cgc_get_size_of_data_for_pkt_head_only(cgc_packet_head_t *ph, cgc_uint32_t is_client){
+size_t cgc_get_size_of_data_for_pkt_head_only(cgc_packet_head_t *ph, cgc_uint32_t is_client){
 	return cgc_get_size_of_data_for_pkt(ph, ph+1, is_client);
 	
 }
@@ -298,7 +298,7 @@ cgc_txn_entry_t * cgc_add_transaction_log_entry(cgc_account_entry_t * ae,  cgc_p
 	// copy in original packet header and packet data ...
 	cgc_memcpy(le->p, (void *) ph, sizeof(cgc_packet_head_t));
 
-	cgc_size_t data_sz = pad->pay_data_l;
+	size_t data_sz = pad->pay_data_l;
 	le->data_sz = data_sz;
 
 

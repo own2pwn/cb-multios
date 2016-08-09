@@ -29,7 +29,7 @@ THE SOFTWARE.
 int cgc_territoryMenu( cgc_pTerritory ty )
 {
 	int choice = 0;
-	cgc_size_t length = 0;
+	size_t length = 0;
 	char selection[30];
 	char *temp = NULL;
 	cgc_pBorder pb = NULL;

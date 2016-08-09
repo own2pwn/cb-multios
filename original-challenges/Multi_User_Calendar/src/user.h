@@ -53,8 +53,8 @@ void cgc_print_simple(void *_user);
 void cgc_clear_list(cgc_user_list_t **users);
 
 /* List Functions */
-cgc_user_t *cgc_find_user_from_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_user_list_t *list, int num_users);
-cgc_bool cgc_add_user_to_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_user_list_t *all_users, cgc_user_list_t **list);
+cgc_user_t *cgc_find_user_from_list(char *buf, size_t buflen, int *recv_status, cgc_user_list_t *list, int num_users);
+cgc_bool cgc_add_user_to_list(char *buf, size_t buflen, int *recv_status, cgc_user_list_t *all_users, cgc_user_list_t **list);
 void cgc_print_user_list(char *msg, cgc_user_list_t *list);
 
 #endif

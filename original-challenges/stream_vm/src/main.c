@@ -41,12 +41,12 @@ static cgc_vmstate_t state;
 #define R_VALUE(x) ((x) == R_ZERO ? 0 : state.registers[(x)])
 #define M_VALUE(x) (state.memory[(x) % MEM_SIZE])
 
-static int cgc_read_fully(void *_dst, cgc_size_t len)
+static int cgc_read_fully(void *_dst, size_t len)
 {
     cgc_uint8_t *dst = (cgc_uint8_t *)_dst;
     while (len > 0)
     {
-        cgc_size_t bytes;
+        size_t bytes;
         if (receive(STDIN, dst, len, &bytes) != 0)
             return 1;
         len -= bytes;
@@ -57,7 +57,7 @@ static int cgc_read_fully(void *_dst, cgc_size_t len)
 
 static int cgc_process_syscall()
 {
-    cgc_size_t bytes;
+    size_t bytes;
     switch (state.registers[1])
     {
     case 0:
@@ -165,7 +165,7 @@ do_slte:
 
 int main()
 {
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_memset(&state, 0, sizeof(state));
 
     cgc_uint32_t magic;

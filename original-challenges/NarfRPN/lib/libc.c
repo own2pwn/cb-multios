@@ -24,10 +24,10 @@
 #include "libc.h"
 
 cgc_ssize_t
-cgc_read_all(int fd, void *buf, cgc_size_t n)
+cgc_read_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t read;
+    size_t read;
 
     while (n) {
         if (receive(fd, (char *)(buf + ret), n, &read) != 0)
@@ -41,10 +41,10 @@ cgc_read_all(int fd, void *buf, cgc_size_t n)
 }
 
 cgc_ssize_t
-cgc_write_all(int fd, void *buf, cgc_size_t n)
+cgc_write_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t written;
+    size_t written;
 
     while (n) {
         if (transmit(fd, (char *)(buf + ret), n, &written) != 0)
@@ -58,7 +58,7 @@ cgc_write_all(int fd, void *buf, cgc_size_t n)
 }
 
 void *
-cgc_memset(void *ptr_, int val, cgc_size_t n)
+cgc_memset(void *ptr_, int val, size_t n)
 {
     unsigned char *ptr = ptr_;
     while (n--)
@@ -67,7 +67,7 @@ cgc_memset(void *ptr_, int val, cgc_size_t n)
 }
 
 void *
-cgc_memcpy(void *dst_, const void *src_, cgc_size_t n)
+cgc_memcpy(void *dst_, const void *src_, size_t n)
 {
     unsigned char *dst = dst_;
     const unsigned char *src = src_;
@@ -76,9 +76,9 @@ cgc_memcpy(void *dst_, const void *src_, cgc_size_t n)
     return dst_;
 }
 
-cgc_size_t
+size_t
 cgc_strlen(const char *s) {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (*s++)
         ret++;
     return ret;

@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 #include "protocol.h"
 
-void cgc_tx(char* bytes, cgc_size_t count);
-void cgc_rx(char* byte_buf, cgc_size_t count);
+void cgc_tx(char* bytes, size_t count);
+void cgc_rx(char* byte_buf, size_t count);
 
 void cgc_protocol_send(cgc_protocol_frame* frame) {
   cgc_tx((char*)&(frame->id), sizeof(frame->id));
@@ -60,11 +60,11 @@ void cgc_protocol_with_recv_frame(cgc_uint8 (^block)(cgc_protocol_frame* frame))
   block(&frame);
 }
 
-void cgc_tx(char* bytes, cgc_size_t count) {
-  cgc_size_t total_sent = 0;
+void cgc_tx(char* bytes, size_t count) {
+  size_t total_sent = 0;
 
   while(total_sent < count) {
-    cgc_size_t sent_this_time = 0;
+    size_t sent_this_time = 0;
 
     int status = transmit(STDOUT,
                           bytes + total_sent,
@@ -78,11 +78,11 @@ void cgc_tx(char* bytes, cgc_size_t count) {
   }
 }
 
-void cgc_rx(char* byte_buf, cgc_size_t count) {
-  cgc_size_t total_rcvd = 0;
+void cgc_rx(char* byte_buf, size_t count) {
+  size_t total_rcvd = 0;
 
   while(total_rcvd < count) {
-    cgc_size_t rcvd_this_time = 0;
+    size_t rcvd_this_time = 0;
 
     int status = receive(STDIN,
                          byte_buf + total_rcvd,

@@ -1176,7 +1176,7 @@ static int cgc_quiesce(int depth, int alpha, int beta)
 static int cgc_randint(unsigned int max)
 {
     cgc_uint32_t x;
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_random(&x, sizeof(x), &bytes);
     return x % max;
 }

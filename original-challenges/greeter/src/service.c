@@ -32,7 +32,7 @@ const char secret[] = "s00pEr5eCretsAUc3";
 static char *
 cgc_make_token(char *name)
 {
-    cgc_size_t size = 1;
+    size_t size = 1;
     unsigned int *counter;
     char *token;
 
@@ -55,11 +55,11 @@ cgc_make_token(char *name)
     return token;
 }
 
-static cgc_size_t
-cgc_xor_sig(const char *token, cgc_size_t token_size, char *sig)
+static size_t
+cgc_xor_sig(const char *token, size_t token_size, char *sig)
 {
-    cgc_size_t sig_size = MIN(token_size, sizeof(secret) - 1);
-    cgc_size_t i;
+    size_t sig_size = MIN(token_size, sizeof(secret) - 1);
+    size_t i;
 
     for (i = 0; i < sig_size; i++)
         sig[i] = token[i] ^ secret[i];
@@ -70,8 +70,8 @@ cgc_xor_sig(const char *token, cgc_size_t token_size, char *sig)
 static int
 cgc_xor_login(char *name)
 {
-    cgc_size_t secret_size = sizeof(secret) - 1;
-    cgc_size_t token_size, sig_size, signed_token_size;
+    size_t secret_size = sizeof(secret) - 1;
+    size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     char sig[secret_size];
 
@@ -105,10 +105,10 @@ cgc_xor_login(char *name)
     return 0;
 }
 
-static cgc_size_t
-cgc_adler32_sig(const char *token, cgc_size_t token_size, char *sig)
+static size_t
+cgc_adler32_sig(const char *token, size_t token_size, char *sig)
 {
-    cgc_size_t secret_token_size = sizeof(secret) + token_size;
+    size_t secret_token_size = sizeof(secret) + token_size;
     char *secret_token;
 
     if ((secret_token = cgc_calloc(secret_token_size)) == NULL)
@@ -127,7 +127,7 @@ cgc_adler32_sig(const char *token, cgc_size_t token_size, char *sig)
 static int
 cgc_adler32_login(char *name)
 {
-    cgc_size_t token_size, sig_size, signed_token_size;
+    size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned int sig;
 
@@ -161,10 +161,10 @@ cgc_adler32_login(char *name)
     return 0;
 }
 
-static cgc_size_t
-cgc_md5_sig(const char *token, cgc_size_t token_size, char *sig)
+static size_t
+cgc_md5_sig(const char *token, size_t token_size, char *sig)
 {
-    cgc_size_t secret_token_size = sizeof(secret) + token_size;
+    size_t secret_token_size = sizeof(secret) + token_size;
     char *secret_token;
 
     if ((secret_token = cgc_calloc(secret_token_size)) == NULL)
@@ -183,7 +183,7 @@ cgc_md5_sig(const char *token, cgc_size_t token_size, char *sig)
 static int
 cgc_md5_login(char *name)
 {
-    cgc_size_t token_size, sig_size, signed_token_size;
+    size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned char sig[16];
 
@@ -217,8 +217,8 @@ cgc_md5_login(char *name)
     return 0;
 }
 
-static cgc_size_t
-cgc_md5_hmac_sig(const char *token, cgc_size_t token_size, char *sig)
+static size_t
+cgc_md5_hmac_sig(const char *token, size_t token_size, char *sig)
 {
     cgc_md5_hmac((const unsigned char *)secret, sizeof(secret) - 1,
             (const unsigned char *)token, token_size,
@@ -230,7 +230,7 @@ cgc_md5_hmac_sig(const char *token, cgc_size_t token_size, char *sig)
 static int
 cgc_md5_hmac_login(char *name)
 {
-    cgc_size_t token_size, sig_size, signed_token_size;
+    size_t token_size, sig_size, signed_token_size;
     char *token, *signed_token;
     unsigned char sig[16];
 
@@ -288,7 +288,7 @@ cgc_login(char *args)
         return -1;
 #endif
 
-    cgc_size_t num_methods = sizeof(methods) / sizeof(methods[0]);
+    size_t num_methods = sizeof(methods) / sizeof(methods[0]);
 
     ret = methods[cur](args);
 
@@ -305,10 +305,10 @@ cgc_greet(char *token)
     char calc_sig[32], hex_sig[64], message[200];
     char name[MAX_NAME_LENGTH + 1];
     unsigned int *counter = NULL;
-    cgc_size_t sig_size, i;
+    size_t sig_size, i;
     int matched = 0;
 
-    cgc_size_t (*sig_methods[])(const char *, cgc_size_t, char *) = {
+    size_t (*sig_methods[])(const char *, size_t, char *) = {
 #ifndef PATCHED
         cgc_xor_sig,
         cgc_adler32_sig,
@@ -380,7 +380,7 @@ main(void) {
     cgc_ssize_t read;
     int ret;
     char ret_buffer[9];
-    cgc_size_t i;
+    size_t i;
 
     struct command {
         const char *name;

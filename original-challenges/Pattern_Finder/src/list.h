@@ -37,7 +37,7 @@ void cgc_AppendToList(cgc_list* List, void* Value);
 void cgc_UniqAppendToList(cgc_list* List, void* Value);
 void cgc_FreeList(cgc_list* List);
 cgc_list* cgc_UniqExtendList(cgc_list* L1, cgc_list* L2);
-cgc_size_t cgc_LenList(cgc_list* List);
+size_t cgc_LenList(cgc_list* List);
 int cgc_CheckForCycle(cgc_list *List);
 
 #endif /* __LIST_H__ */

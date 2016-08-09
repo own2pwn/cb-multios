@@ -9,7 +9,7 @@ struct stack {
 
 char *cgc_peek_top(cgc_stack_t *stack);
 int cgc_push(cgc_stack_t **stack, char *data);
-int cgc_push_copy(cgc_stack_t **stack, char *data, cgc_size_t size);
+int cgc_push_copy(cgc_stack_t **stack, char *data, size_t size);
 char *cgc_pop_copy(cgc_stack_t **stack);
 void cgc_clear_stack();
 

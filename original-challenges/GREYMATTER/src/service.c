@@ -32,10 +32,10 @@ char buf_recv_tmp[SZ_BUF_RECV] = { STRING_TERMINATOR };
 ////
 
 // Populate a buf with len random lowercase alpha characters.
-void cgc_random_alpha_lower(char *buf, cgc_size_t len) {
+void cgc_random_alpha_lower(char *buf, size_t len) {
 
     int ret = SUCCESS;
-    cgc_size_t rnd_bytes = 0;
+    size_t rnd_bytes = 0;
     unsigned char rnd[len];
 
     while ((0 != cgc_random(rnd, len, &rnd_bytes)) && (len != rnd_bytes)) {}
@@ -62,16 +62,16 @@ void cgc_random_alpha_lower(char *buf, cgc_size_t len) {
     // Section 0 is bound by rp and the first token.
     // Section 1 is bound by the first token and the second token.
     // Section 2 is bound by the last token and the end of rp (rp + rp_len).
-int cgc_canonicalize_path(char * cp, char * rp, cgc_size_t rp_len) {
+int cgc_canonicalize_path(char * cp, char * rp, size_t rp_len) {
 
     int ret = SUCCESS;
     char * sec_start = NULL;
     char * sec_end = NULL;
-    cgc_size_t sz_copy = 0;
+    size_t sz_copy = 0;
     char *pos = rp; // A parsing index into the rp.
 
 #ifdef PATCHED
-    cgc_size_t sz_consumed = 0;
+    size_t sz_consumed = 0;
 #endif
 
     // The first section is a special case.
@@ -174,10 +174,10 @@ _bail_canon:
 
 
 // This is recursive, depth-first.
-int cgc_request_document(char * path, cgc_size_t recusion_depth) {
+int cgc_request_document(char * path, size_t recusion_depth) {
 
     int ret = SUCCESS;
-    cgc_size_t sz_recv = 0;
+    size_t sz_recv = 0;
 
     // Place some arbitrary upper limit on recursion so that SEGFAULTs cannot 
     // be caused via recursion.
@@ -264,7 +264,7 @@ int cgc_request_document(char * path, cgc_size_t recusion_depth) {
 
 #ifdef DEBUG
         fprintf(stderr, "[D] receive ()d %d bytes into allocate()d buffer @ %p; contents:\n", sz_recv, doc_contents);
-        cgc_size_t i = 0;
+        size_t i = 0;
         for (i=0; i<sz_recv; i++) {
             fprintf(stderr, "%02x ", doc_contents[i]);
             if (!((i+1)% 32)) { fprintf(stderr, "\n"); }
@@ -292,7 +292,7 @@ int cgc_request_document(char * path, cgc_size_t recusion_depth) {
 
             // Now that we have a SRC open & close tag combination, we copy the 
             // rp between them into a temporary buffer and allocate our cp.
-            cgc_size_t rp_len = clse - open + 1;
+            size_t rp_len = clse - open + 1;
             char rp[rp_len];
             cgc_strncpy(rp, open, rp_len-1);
             rp[rp_len-1] = STRING_TERMINATOR;

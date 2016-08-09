@@ -38,8 +38,8 @@
 
 int g_rslr = 0;
 cgc_op_t *g_calcs = NULL;
-cgc_size_t g_sz_calcs = 0;
-cgc_size_t g_num_calcs = 0;
+size_t g_sz_calcs = 0;
+size_t g_num_calcs = 0;
 
 void cgc_handle_calc(unsigned int cmd)
 {
@@ -88,7 +88,7 @@ void cgc_handle_imp(cgc_op_t **calcs)
 {
   cgc_op_t op;
   unsigned int i;
-  if (cgc_fread(&g_sz_calcs, sizeof(cgc_size_t), stdin) != sizeof(cgc_size_t))
+  if (cgc_fread(&g_sz_calcs, sizeof(size_t), stdin) != sizeof(size_t))
     cgc_exit(0);
   if (g_sz_calcs > 30 || g_sz_calcs < 3)
     return;
@@ -164,7 +164,7 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[]) {
       g_rslr = -g_rslr;
     cgc_fwrite(&g_rslr, 2, stdout);
 
-    if (cgc_fread(&g_sz_calcs, sizeof(cgc_size_t), stdin) != sizeof(cgc_size_t))
+    if (cgc_fread(&g_sz_calcs, sizeof(size_t), stdin) != sizeof(size_t))
       return 0;
 #ifdef PATCHED_1
     if (g_sz_calcs > 30 || g_sz_calcs < 3)

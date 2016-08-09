@@ -103,10 +103,10 @@ cgc_fromdigit(char digit, unsigned int base)
 }
 
 int
-cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, cgc_size_t num)
+cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t num)
 {
     unsigned int i, tmp;
-    cgc_size_t len = 1;
+    size_t len = 1;
 
     if (base < 2 || base > 16 || num < 1)
         return EXIT_FAILURE;
@@ -131,7 +131,7 @@ cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, cgc_
 }
 
 int
-cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_t num)
+cgc_itostr(int value, unsigned int base, int uppercase, char *str, size_t num)
 {
     if (num < (value < 0 ? 2 : 1))
         return EXIT_FAILURE;
@@ -145,7 +145,7 @@ cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_t nu
 }
 
 int
-cgc_dtostr(double value, char *str, cgc_size_t num)
+cgc_dtostr(double value, char *str, size_t num)
 {
     unsigned int i, fractional_len;
     char fractional_buf[DTOSTR_PRECISION + 1];

@@ -31,7 +31,7 @@ THE SOFTWARE.
 int cgc_countryMenu( cgc_pCountry co )
 {
 	int choice = 0;
-	cgc_size_t length = 0;
+	size_t length = 0;
 	char selection[BSIZE];
 	char *t = NULL;
 	cgc_pBorder pb = NULL;

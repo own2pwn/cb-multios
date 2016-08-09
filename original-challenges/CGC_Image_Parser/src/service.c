@@ -33,7 +33,7 @@ THE SOFTWARE.
 int cgc_readData( char **data )
 {
 	int readLength = 0;
-	cgc_size_t bytesRead = 0;
+	size_t bytesRead = 0;
 
 	char *nd = NULL;
 
@@ -147,7 +147,7 @@ int cgc_menu( void )
 {
 	int selection = 0;
 	int image_length = 0;
-	cgc_size_t bytes_read;
+	size_t bytes_read;
 	cgc_image_meta root;
 	char name[16];
 

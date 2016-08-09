@@ -31,7 +31,7 @@ static const int divisor = 5;
 
 
 
-char * cgc_encode(char * input, cgc_size_t size);
-char * cgc_decode(char * input, cgc_size_t size);
+char * cgc_encode(char * input, size_t size);
+char * cgc_decode(char * input, size_t size);
 
 #endif

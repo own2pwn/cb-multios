@@ -27,8 +27,8 @@ THE SOFTWARE.
 #include <libcgc.h>
 #include "protocol.h"
 
-void cgc_receive_eventually(int fd, void* destination, cgc_size_t expected);
-void cgc_send_eventually(int fd, void* payload, cgc_size_t expected);
+void cgc_receive_eventually(int fd, void* destination, size_t expected);
+void cgc_send_eventually(int fd, void* payload, size_t expected);
 
 cgc_protocol_frame* cgc_allocate_frame(cgc_protocol_frame template) {
   cgc_protocol_frame* candidate;
@@ -61,8 +61,8 @@ cgc_protocol_frame* cgc_receive_frame() {
   cgc_protocol_frame candidate;
   candidate.type = candidate.length = 0;
 
-  cgc_size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
-  cgc_size_t actual_received = 0;
+  size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
+  size_t actual_received = 0;
 
   cgc_receive_eventually(STDIN,
                      &candidate,
@@ -81,7 +81,7 @@ cgc_protocol_frame* cgc_receive_frame() {
 }
 
 void cgc_send_frame(cgc_protocol_frame* payload) {
-  cgc_size_t sent_bytes;
+  size_t sent_bytes;
   cgc_send_eventually(STDOUT,
                       (void*)(payload),
                       sizeof(payload->type) + sizeof(payload->length));
@@ -118,13 +118,13 @@ void cgc_free_frame(cgc_protocol_frame* fr) {
   }
 }
 
-void cgc_send_eventually(int fd, void* payload, cgc_size_t expected) {
-  cgc_size_t actual = 0;
+void cgc_send_eventually(int fd, void* payload, size_t expected) {
+  size_t actual = 0;
   void* buf = payload;
 
   while (actual < expected){
     int errcode = 0;
-    cgc_size_t count = 0;
+    size_t count = 0;
     errcode = transmit(fd, buf, expected - actual, &count);
     
     if (errcode) _terminate(-1);
@@ -134,13 +134,13 @@ void cgc_send_eventually(int fd, void* payload, cgc_size_t expected) {
   }
 }
 
-void cgc_receive_eventually(int fd, void* destination, cgc_size_t expected) {
-  cgc_size_t actual = 0;
+void cgc_receive_eventually(int fd, void* destination, size_t expected) {
+  size_t actual = 0;
   void* buf = destination;
 
   while (actual < expected) {
     int errcode = 0;
-    cgc_size_t count = 0;
+    size_t count = 0;
     errcode = receive(fd, buf, expected - actual, &count);
 
     if (errcode) _terminate(-1);

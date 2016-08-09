@@ -69,7 +69,7 @@ typedef union {
     cgc_uint16_t u16;
     cgc_uint32_t u32;
     cgc_uint64_t u64;
-    cgc_size_t len;
+    size_t len;
 } cgc_xpk_data_t;
 
 typedef struct {
@@ -79,16 +79,16 @@ typedef struct {
 
 typedef struct {
     char *buf;
-    cgc_size_t idx;
-    cgc_size_t len;
+    size_t idx;
+    size_t len;
 } cgc_xpk_ctx_t;
 
 /* Utility */
-cgc_xpk_ctx_t* cgc_xpk_init(cgc_size_t size);
-void cgc_xpk_reset(cgc_xpk_ctx_t *ctx, cgc_size_t size);
-cgc_xpk_err cgc_xpk_write(cgc_xpk_ctx_t *ctx, const char *in, cgc_size_t len);
-cgc_xpk_err cgc_xpk_read(cgc_xpk_ctx_t *ctx, char *out, cgc_size_t len);
-cgc_xpk_err cgc_xpk_peek(cgc_xpk_ctx_t *ctx, char *out, cgc_size_t len);
+cgc_xpk_ctx_t* cgc_xpk_init(size_t size);
+void cgc_xpk_reset(cgc_xpk_ctx_t *ctx, size_t size);
+cgc_xpk_err cgc_xpk_write(cgc_xpk_ctx_t *ctx, const char *in, size_t len);
+cgc_xpk_err cgc_xpk_read(cgc_xpk_ctx_t *ctx, char *out, size_t len);
+cgc_xpk_err cgc_xpk_peek(cgc_xpk_ctx_t *ctx, char *out, size_t len);
 cgc_xpk_err cgc_xpk_read_obj(cgc_xpk_ctx_t *ctx, cgc_xpk_obj_t *o);
 cgc_xpk_err cgc_xpk_next_type(cgc_xpk_ctx_t *ctx, cgc_xpk_type *t);
 
@@ -99,17 +99,17 @@ cgc_xpk_err cgc_xpk_pack_none(cgc_xpk_ctx_t *ctx);
 cgc_xpk_err cgc_xpk_pack_nil(cgc_xpk_ctx_t *ctx);
 cgc_xpk_err cgc_xpk_pack_bool(cgc_xpk_ctx_t *ctx, cgc_uint8_t b);
 cgc_xpk_err cgc_xpk_pack_str(cgc_xpk_ctx_t *ctx, const char *str);
-cgc_xpk_err cgc_xpk_pack_bytes(cgc_xpk_ctx_t *ctx, const char *bytes, cgc_size_t len);
-cgc_xpk_err cgc_xpk_pack_array(cgc_xpk_ctx_t *ctx, cgc_size_t len);
-cgc_xpk_err cgc_xpk_pack_map(cgc_xpk_ctx_t *ctx, cgc_size_t len);
+cgc_xpk_err cgc_xpk_pack_bytes(cgc_xpk_ctx_t *ctx, const char *bytes, size_t len);
+cgc_xpk_err cgc_xpk_pack_array(cgc_xpk_ctx_t *ctx, size_t len);
+cgc_xpk_err cgc_xpk_pack_map(cgc_xpk_ctx_t *ctx, size_t len);
 
 /* Unpack */
 cgc_xpk_err cgc_xpk_unpack_int(cgc_xpk_ctx_t *ctx, cgc_uint64_t *i, cgc_uint8_t *sign);
 cgc_xpk_err cgc_xpk_unpack_nil(cgc_xpk_ctx_t *ctx);
 cgc_xpk_err cgc_xpk_unpack_bool(cgc_xpk_ctx_t *ctx, cgc_uint8_t *b);
-cgc_xpk_err cgc_xpk_unpack_str(cgc_xpk_ctx_t *ctx, cgc_size_t *len);
-cgc_xpk_err cgc_xpk_unpack_bytes(cgc_xpk_ctx_t *ctx, cgc_size_t *len);
-cgc_xpk_err cgc_xpk_unpack_array(cgc_xpk_ctx_t *ctx, cgc_size_t *len);
-cgc_xpk_err cgc_xpk_unpack_map(cgc_xpk_ctx_t *ctx, cgc_size_t *len);
+cgc_xpk_err cgc_xpk_unpack_str(cgc_xpk_ctx_t *ctx, size_t *len);
+cgc_xpk_err cgc_xpk_unpack_bytes(cgc_xpk_ctx_t *ctx, size_t *len);
+cgc_xpk_err cgc_xpk_unpack_array(cgc_xpk_ctx_t *ctx, size_t *len);
+cgc_xpk_err cgc_xpk_unpack_map(cgc_xpk_ctx_t *ctx, size_t *len);
 
 #endif

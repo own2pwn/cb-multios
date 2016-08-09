@@ -3,7 +3,7 @@
 int cgc_recv( char *dest, int length )
 {
 	int total = 0;
-	cgc_size_t read = 0;
+	size_t read = 0;
 	int left = length;
 
 	if ( dest == NULL ) {

@@ -100,7 +100,7 @@ fail:
 
 char* cgc_sadface_var2str(cgc_sad_var_t *var)
 {
-  cgc_size_t n;
+  size_t n;
   int i;
   int f1, f2;
   float fp;
@@ -140,7 +140,7 @@ char* cgc_sadface_var2str(cgc_sad_var_t *var)
   return ret;
 }
 
-int cgc__find_sadface(cgc_sadface_ctx_t *ctx, cgc_size_t *sf_start, cgc_size_t *sf_end)
+int cgc__find_sadface(cgc_sadface_ctx_t *ctx, size_t *sf_start, size_t *sf_end)
 {
   const char *start, *end;
 
@@ -158,7 +158,7 @@ int cgc__find_sadface(cgc_sadface_ctx_t *ctx, cgc_size_t *sf_start, cgc_size_t *
 
 cgc_sad_node_t* cgc_parse_sadface(cgc_sadface_ctx_t *ctx)
 {
-  cgc_size_t start = 0, end = 0;
+  size_t start = 0, end = 0;
   cgc_sad_node_t *root, *tmp;
   cgc_stack_t *stack;
 
@@ -209,7 +209,7 @@ cgc_sad_node_t* cgc_parse_sadface(cgc_sadface_ctx_t *ctx)
       ctx->idx = start;
     }
 
-    cgc_size_t var_len = (end - start) - cgc_strlen(ctx->faces.open_face) - cgc_strlen(ctx->faces.close_face);
+    size_t var_len = (end - start) - cgc_strlen(ctx->faces.open_face) - cgc_strlen(ctx->faces.close_face);
     char *var_name = &ctx->content[start + cgc_strlen(ctx->faces.open_face)];
 
     switch (var_name[0])
@@ -263,7 +263,7 @@ cgc_sad_node_t* cgc_parse_sadface(cgc_sadface_ctx_t *ctx)
       default:
         /* variable */
         {
-          cgc_size_t idx;
+          size_t idx;
           char *tmp_name;
           cgc_sad_node_t *variable, *tmp;
 
@@ -307,12 +307,12 @@ fail:
 }
 
 
-int cgc_sadface_render(cgc_sadface_ctx_t *ctx, char *out, cgc_size_t *out_len)
+int cgc_sadface_render(cgc_sadface_ctx_t *ctx, char *out, size_t *out_len)
 {
   cgc_stack_t *stack;
   cgc_sad_node_t *root = NULL, *cur = NULL;
-  cgc_size_t total_len = 0, sadness = 0;
-  cgc_size_t start = 0, end = 0, size;
+  size_t total_len = 0, sadness = 0;
+  size_t start = 0, end = 0, size;
 
   root = cgc_parse_sadface(ctx);
   if (root == NULL)

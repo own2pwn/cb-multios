@@ -57,7 +57,7 @@ THE SOFTWARE.
 
 cgc_int32_t cgc_ReceivePacket(unsigned char *pkt) {
 	cgc_uint32_t total_bytes;
-	cgc_size_t rx_bytes;
+	size_t rx_bytes;
 	cgc_uint8_t pkt_len;
 	int retval;
 

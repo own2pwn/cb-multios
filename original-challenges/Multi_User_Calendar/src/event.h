@@ -55,7 +55,7 @@ cgc_event_t *cgc_create_event(struct user *owner, char *name, char *desc, cgc_du
 cgc_bool cgc_delete_event(cgc_event_t **event);
 int cgc_compare_events(void *_event1, void *_event2);
 int cgc_compare_event_dates(void *_event1, void *_event2);
-cgc_event_t *cgc_find_event_from_list(char *buf, cgc_size_t buflen, int *recv_status, cgc_event_list_t *list);
+cgc_event_t *cgc_find_event_from_list(char *buf, size_t buflen, int *recv_status, cgc_event_list_t *list);
 void cgc_print_event(cgc_event_t *event);
 
 #endif

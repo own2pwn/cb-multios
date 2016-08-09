@@ -28,13 +28,13 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-cgc_size_t cgc_strlen( const char *str );
-void cgc_bzero(void *s, cgc_size_t n);
-void *cgc_memset( void *ptr, int value, cgc_size_t num );
+size_t cgc_strlen( const char *str );
+void cgc_bzero(void *s, size_t n);
+void *cgc_memset( void *ptr, int value, size_t num );
 char *cgc_strchr(char *s, int c);
 char *cgc_strtok(char *str, char *sep);
 int cgc_strcmp(const char *s1, const char *s2);
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n);
+int cgc_strncmp(const char *s1, const char *s2, size_t n);
 char *cgc_strcat(char *restrict s1, const char *restrict s2);
 char *cgc_strstr(char *s1, char *s2);
 char *cgc_rindex(char *source, char match);

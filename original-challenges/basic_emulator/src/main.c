@@ -45,11 +45,11 @@ static void cgc_usage(char *progname)
     cgc_printf("Usage: %s rom-file\n", progname);
 }
 
-static int cgc_recvall(int fd, cgc_uint8_t *buf, cgc_size_t cnt)
+static int cgc_recvall(int fd, cgc_uint8_t *buf, size_t cnt)
 {
     while (cnt > 0)
     {
-        cgc_size_t n;
+        size_t n;
         if (receive(fd, buf, cnt, &n) != 0 || n == 0)
             break;
         cnt -= n;
@@ -112,7 +112,7 @@ static char *cgc_block_6px_char(cgc_uint8_t *bitmap, unsigned int span)
 
 static void cgc_draw_screen(cgc_gb_t *gb)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if ((gb->mem[IO_LCDC] & 0x80) == 0)
     {
         /* LCD disabled */
@@ -166,7 +166,7 @@ static void cgc_draw_screen(cgc_gb_t *gb)
 int cgc_process_input(cgc_gb_t *gb)
 {
     char ch;
-    cgc_size_t bytes;
+    size_t bytes;
 
     if (receive(STDIN, &ch, 1, &bytes) != 0 || bytes != 1)
         return 0;

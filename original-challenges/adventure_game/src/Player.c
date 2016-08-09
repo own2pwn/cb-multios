@@ -47,7 +47,7 @@ DefineFunction(Player, void, move, unsigned int x, unsigned int y)
 
 DefineFunction(Player, int, is_alive)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < this->m_team->m_count; i++)
     {
         Monster *m = $(this->m_team, get, i);
@@ -59,7 +59,7 @@ DefineFunction(Player, int, is_alive)
 
 DefineFunction(Player, void, heal)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < this->m_team->m_count; i++)
     {
         Monster *m = $(this->m_team, get, i);

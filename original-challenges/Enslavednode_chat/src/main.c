@@ -49,12 +49,12 @@ int cgc_hello_cmd(const char *s)
 
 int cgc_int_cmd(const char *s)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
 
   for (cgc_list *it = cgc_tree_to_list(ct); it; it = it ->n)
     i += cgc_len_list(it->d);
 
-  cgc_size_t n = cgc_num_nodes(ct);
+  size_t n = cgc_num_nodes(ct);
   printf("case > I have an intelligence rating of: %u / %u\n", i, (n * 8));
   return 0;
 }
@@ -199,7 +199,7 @@ cgc_cmd *cgc_get_command(const char *s, cgc_list *cmds)
 int cgc_will_chat(unsigned n)
 {
   unsigned p;
-  cgc_size_t wrote;
+  size_t wrote;
   if (cgc_random(&p, sizeof(unsigned), &wrote) < 0)
     return 0;
 
@@ -210,7 +210,7 @@ int cgc_will_chat(unsigned n)
 }
 
 
-cgc_list *cgc_follow_chain(cgc_list *word_list, cgc_size_t times)
+cgc_list *cgc_follow_chain(cgc_list *word_list, size_t times)
 {
 #define MAX_WORDS 15
   if (!word_list || !times)
@@ -227,10 +227,10 @@ cgc_list *cgc_follow_chain(cgc_list *word_list, cgc_size_t times)
   if (!k)
     return NULL;
 
-  for (cgc_size_t i = 0; i < times; i++) {
+  for (size_t i = 0; i < times; i++) {
     cgc_list *t = cgc_copy_list(l, 0, 0);
     msg = NULL;
-    for (cgc_size_t nw = 0; nw < MAX_WORDS; nw++) {
+    for (size_t nw = 0; nw < MAX_WORDS; nw++) {
       const void *first_word = cgc_lindex(t, 0);
       cgc_append_list(&msg, first_word, 1);
 
@@ -378,7 +378,7 @@ int main(void)
 {
 #define BUF_SIZE 8126
   char *buf = NULL;
-  cgc_size_t rx;
+  size_t rx;
 
   cgc_init();
 
@@ -390,7 +390,7 @@ int main(void)
     cgc_print_prompt();
 
     cgc_memset(buf, '\0', BUF_SIZE + 1);
-    if ((cgc_readline(1, buf, BUF_SIZE, &rx) < 0) || rx == (cgc_size_t)NULL) {
+    if ((cgc_readline(1, buf, BUF_SIZE, &rx) < 0) || rx == (size_t)NULL) {
       cgc_free(buf);
       continue;
     }

@@ -86,12 +86,12 @@ cgc_list *cgc_concat_list(cgc_list *l1, cgc_list *l2)
 }
 
 
-cgc_size_t cgc_len_list(const cgc_list *l)
+size_t cgc_len_list(const cgc_list *l)
 {
   if (!l)
     return 0;
 
-  cgc_size_t s = 0;
+  size_t s = 0;
 
   while (l)
     s++, l = l->n;
@@ -105,7 +105,7 @@ const DATA cgc_lindex(const cgc_list *l, cgc_ssize_t i)
     return NULL;
 
   if (i < 0) {
-    cgc_size_t t = cgc_len_list(l);
+    size_t t = cgc_len_list(l);
     while (i < 0)
       t--, i++;
     i = t;
@@ -114,7 +114,7 @@ const DATA cgc_lindex(const cgc_list *l, cgc_ssize_t i)
   if (i >= cgc_len_list(l))
     return NULL;
 
-  for (cgc_size_t k = 0; k < i; k++)
+  for (size_t k = 0; k < i; k++)
     l = l->n;
 
   return l->d;
@@ -122,12 +122,12 @@ const DATA cgc_lindex(const cgc_list *l, cgc_ssize_t i)
 
 
 
-cgc_list *cgc_copy_list(const cgc_list *l, cgc_size_t start, cgc_size_t stop)
+cgc_list *cgc_copy_list(const cgc_list *l, size_t start, size_t stop)
 {
   if (!l)
     return NULL;
 
-  cgc_size_t len = cgc_len_list(l);
+  size_t len = cgc_len_list(l);
 
   if (stop == 0 || stop > len)
     stop = len;
@@ -139,11 +139,11 @@ cgc_list *cgc_copy_list(const cgc_list *l, cgc_size_t start, cgc_size_t stop)
   cgc_list *copy = NULL;
 
   // Get to start
-  for (cgc_size_t i = 0; i < start; i++)
+  for (size_t i = 0; i < start; i++)
     p = p->n;
 
   // Copy from start to stop
-  for (cgc_size_t i = start; i < stop; i++, p = p->n)
+  for (size_t i = start; i < stop; i++, p = p->n)
     cgc_append_list(&copy, p->d, 1);
 
   return copy;
@@ -174,11 +174,11 @@ void cgc_free_list_of_lists(const cgc_list *l, int leave_data)
 
 const void *cgc_random_element(cgc_list *l)
 {
-  cgc_size_t i, x, len = cgc_len_list(l);
-  if (cgc_random(&i, sizeof(cgc_size_t), &x) < 0)
+  size_t i, x, len = cgc_len_list(l);
+  if (cgc_random(&i, sizeof(size_t), &x) < 0)
     error(ERAND);
 
-  if (x != sizeof(cgc_size_t))
+  if (x != sizeof(size_t))
     return NULL;
   i %= len;
   return cgc_lindex(l, i);

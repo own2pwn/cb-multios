@@ -25,8 +25,8 @@
 
 static char *last_strtok_str;
 
-cgc_size_t cgc_readline(int fd, char *buf, cgc_size_t s) {
-    cgc_size_t i,read_;
+size_t cgc_readline(int fd, char *buf, size_t s) {
+    size_t i,read_;
 
     for (i=0; i < s; i+=read_) {
         read_ = 0;
@@ -47,8 +47,8 @@ cgc_size_t cgc_readline(int fd, char *buf, cgc_size_t s) {
     return i;
 }
 
-cgc_size_t cgc_readall(int fd, char *buf, cgc_size_t s) {
-    cgc_size_t i,recvd = 0;
+size_t cgc_readall(int fd, char *buf, size_t s) {
+    size_t i,recvd = 0;
 
     for (i=0; i < s; i+=recvd) {
         if (receive(fd, buf+i, s-i, &recvd))
@@ -60,8 +60,8 @@ cgc_size_t cgc_readall(int fd, char *buf, cgc_size_t s) {
     return i;
 }
 
-cgc_size_t cgc_sendall(int fd, char *buf, cgc_size_t s) {
-    cgc_size_t i,sent;
+size_t cgc_sendall(int fd, char *buf, size_t s) {
+    size_t i,sent;
 
     for (i=0; i < s; i+=sent) 
         if (transmit(fd, buf+i, s-i, &sent))
@@ -70,8 +70,8 @@ cgc_size_t cgc_sendall(int fd, char *buf, cgc_size_t s) {
     return s;
 }
 
-void *cgc_memset(void *s, int c, cgc_size_t n) {
-    cgc_size_t i;
+void *cgc_memset(void *s, int c, size_t n) {
+    size_t i;
 
     for (i=0; i < n; i++)
         *((char *)s+i) = (char)c;
@@ -97,7 +97,7 @@ void cgc_strcpy(char *s1, const char *s2) {
     while ((*s1++ = *s2++));
 }
 
-void cgc_memcpy(void *dest, void *src, cgc_size_t len) {
+void cgc_memcpy(void *dest, void *src, size_t len) {
     int i = 0;
 
     for (i = 0; i < len; i++)
@@ -247,7 +247,7 @@ char *cgc_strtok(char *s, char sep) {
 }
 
 
-int cgc_memeq(void *b1, void *b2, cgc_size_t len) {
+int cgc_memeq(void *b1, void *b2, size_t len) {
     int i;
 
     for (i=0; i < len; i++) {

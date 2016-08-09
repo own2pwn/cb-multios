@@ -27,7 +27,7 @@
 #include <string.h>
 
 #define OUTPUT_BYTE(x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     transmit(fd, &_c, sizeof(_c), &bytes); \
 } while (0);
@@ -141,7 +141,7 @@ int cgc_fdprintf(int fd, const char *fmt, ...)
 #undef OUTPUT_BYTE
 
 #define OUTPUT_BYTE(n, s, x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     *(*(s)) = _c; \
     (*(s))++; \

@@ -160,7 +160,7 @@ typedef __builtin_va_list cgc_va_list;
  * @param s Maximum number of bytes to read
  * @return Number of bytes read
  */
-cgc_size_t cgc_readline(int fd, char *buf, cgc_size_t s);
+size_t cgc_readline(int fd, char *buf, size_t s);
 
 /**
  * Attempt to read a fixed number of bytes
@@ -170,7 +170,7 @@ cgc_size_t cgc_readline(int fd, char *buf, cgc_size_t s);
  * @param s Maximum number of bytes to read
  * @return Number of bytes read 
  */
-cgc_size_t cgc_readall(int fd, char *buf, cgc_size_t s);
+size_t cgc_readall(int fd, char *buf, size_t s);
 
 /**
  * Attempt to send a fixed number of bytes
@@ -180,7 +180,7 @@ cgc_size_t cgc_readall(int fd, char *buf, cgc_size_t s);
  * @param s Number of bytes to send
  * @return Number of bytes sent.
  */
-cgc_size_t cgc_sendall(int fd, char *buf, cgc_size_t s);
+size_t cgc_sendall(int fd, char *buf, size_t s);
 
 /**
  * Set memory to value.
@@ -190,7 +190,7 @@ cgc_size_t cgc_sendall(int fd, char *buf, cgc_size_t s);
  * @param n Number of bytes to set
  * @return Pointer to buffer
  */
-void *cgc_memset(void *s, int c, cgc_size_t n);
+void *cgc_memset(void *s, int c, size_t n);
 
 /**
  * Compare two strings for equality.
@@ -300,7 +300,7 @@ char * cgc_strcat(char *dest, const char *src);
  * @param len length
  * @return None.
  */
-void cgc_memcpy(void *dest, void *src, cgc_size_t len); 
+void cgc_memcpy(void *dest, void *src, size_t len); 
 
 /**
  * Check if two buffers are equal
@@ -310,5 +310,5 @@ void cgc_memcpy(void *dest, void *src, cgc_size_t len);
  * @param len length
  * @return 0 if not equal, 1 if equal
  */
-int cgc_memeq(void *b1, void *b2, cgc_size_t len);
+int cgc_memeq(void *b1, void *b2, size_t len);
 #endif

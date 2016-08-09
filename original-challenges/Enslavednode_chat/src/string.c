@@ -41,7 +41,7 @@ cgc_string *cgc_new_string(char *d)
 
   if (d) {
 #ifdef PATCHED
-    cgc_size_t nz = (cgc_strlen(d) + 1) * 2;
+    size_t nz = (cgc_strlen(d) + 1) * 2;
     s->d = cgc_realloc(s->d, nz);
     if (!s->d)
       error(EALLOC);
@@ -95,8 +95,8 @@ int cgc_contains_string(cgc_string *s, const char *sub)
 
   const char *s1 = s->d;
   const char *s2 = sub;
-  cgc_size_t sub_len = cgc_strlen(sub);
-  cgc_size_t dom_len = cgc_strlen(s->d);
+  size_t sub_len = cgc_strlen(sub);
+  size_t dom_len = cgc_strlen(s->d);
 
   if (dom_len < sub_len)
     return 0;
@@ -111,7 +111,7 @@ int cgc_contains_string(cgc_string *s, const char *sub)
     s2 = sub;
     dom_len = cgc_strlen(s1);
     const char *s3 = s1;
-    cgc_size_t matched = 0;
+    size_t matched = 0;
 
     while (matched < sub_len && matched < dom_len && *s2++ == *s3++)
       matched++;

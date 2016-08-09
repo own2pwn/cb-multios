@@ -38,7 +38,7 @@ int cgc_frame_decode(cgc_buffer_t *input, cgc_buffer_t *output)
 {
     cgc_uint8_t bits[ECC_SIZE];
     cgc_uint8_t data[FRAME_DATA_SIZE / 8];
-    cgc_size_t i;
+    size_t i;
     cgc_uint64_t mark;
     cgc_uint8_t checksum1, checksum2, hdr, count;
     cgc_uint8_t tmp[FRAME_SIZE / 8];
@@ -81,7 +81,7 @@ void cgc_frame_encode(cgc_buffer_t *input, cgc_buffer_t *output)
     cgc_uint8_t bits[ECC_SIZE];
     cgc_uint8_t data[FRAME_DATA_SIZE / 8 + 1];
     cgc_uint64_t mark;
-    cgc_size_t i, j, hdr, count;
+    size_t i, j, hdr, count;
     cgc_uint8_t checksum;
     cgc_uint8_t tmp[FRAME_SIZE / 8];
     cgc_buffer_t tmpbuf;

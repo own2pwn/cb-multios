@@ -26,23 +26,23 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-cgc_size_t cgc_strlen( const char *str )
+size_t cgc_strlen( const char *str )
 {
-	cgc_size_t len = 0;
+	size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
 	return len;
 }
 
-void cgc_bzero(void *s, cgc_size_t n) {
+void cgc_bzero(void *s, size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *cgc_memset( void *ptr, int value, cgc_size_t num )
+void *cgc_memset( void *ptr, int value, size_t num )
 {
 	void *ptr_temp = ptr;
 	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
@@ -182,9 +182,9 @@ char *cgc_strcat(char *restrict s1, const char *restrict s2) {
 	return(s1);
 }
 
-int cgc_memcmp( const void *s1, const void *s2, cgc_size_t n )
+int cgc_memcmp( const void *s1, const void *s2, size_t n )
 {
-	for ( cgc_size_t pos = 0; pos < n; pos++ )
+	for ( size_t pos = 0; pos < n; pos++ )
 	{
 		cgc_uint8_t val1 = ((cgc_uint8_t*)s1)[pos];
 		cgc_uint8_t val2 = ((cgc_uint8_t*)s2)[pos];

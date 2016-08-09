@@ -26,7 +26,7 @@
 
 #include "buffer.h"
 
-static void cgc_increment_read(cgc_buffer_t *buf, cgc_size_t n)
+static void cgc_increment_read(cgc_buffer_t *buf, size_t n)
 {
     buf->read_idx += n;
     if (buf->read_idx == buf->length * 8)
@@ -35,7 +35,7 @@ static void cgc_increment_read(cgc_buffer_t *buf, cgc_size_t n)
         cgc_exit(1);
 }
 
-static void cgc_increment_write(cgc_buffer_t *buf, cgc_size_t n)
+static void cgc_increment_write(cgc_buffer_t *buf, size_t n)
 {
     buf->write_idx += n;
     if (buf->write_idx >= buf->length * 8)
@@ -57,15 +57,15 @@ int cgc_buffer_read_bit(cgc_buffer_t *buf)
 unsigned int cgc_buffer_read_bits(cgc_buffer_t *buf, unsigned int count)
 {
     unsigned int value = 0;
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < count && buf->read_idx != buf->write_idx; i++)
         value = (value << 1) | cgc_buffer_read_bit(buf);
     return value;
 }
 
-void cgc_buffer_read_bytes(cgc_buffer_t *buf, cgc_uint8_t *output, cgc_size_t n)
+void cgc_buffer_read_bytes(cgc_buffer_t *buf, cgc_uint8_t *output, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     if ((buf->read_idx % 8) == 0 && cgc_buffer_read_remaining(buf)/8 >= n)
     {
         // fast path
@@ -101,9 +101,9 @@ void cgc_buffer_write_bits(cgc_buffer_t *buf, unsigned int value, unsigned int c
         cgc_buffer_write_bit(buf, (value >> i) & 1);
 }
 
-void cgc_buffer_write_bytes(cgc_buffer_t *buf, cgc_uint8_t *input, cgc_size_t n)
+void cgc_buffer_write_bytes(cgc_buffer_t *buf, cgc_uint8_t *input, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     if ((buf->write_idx % 8) == 0)
     {
         // fast path
@@ -150,7 +150,7 @@ void cgc_buffer_write_seek(cgc_buffer_t *buf, cgc_uint64_t pos)
     buf->write_idx = pos;
 }
 
-void cgc_buffer_init(cgc_buffer_t *buf, cgc_uint8_t *data, cgc_size_t data_size)
+void cgc_buffer_init(cgc_buffer_t *buf, cgc_uint8_t *data, size_t data_size)
 {
     cgc_memset(buf, 0, sizeof(cgc_buffer_t));
     buf->buffer = data;

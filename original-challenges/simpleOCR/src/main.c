@@ -43,13 +43,13 @@
 })
 
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
+int cgc_send_n_bytes(int fd, size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t tx = 0;
-  cgc_size_t to_send = n;
+  size_t tx = 0;
+  size_t to_send = n;
 
   while (to_send > 0) {
     if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0)
@@ -68,13 +68,13 @@ int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
   return n - to_send;
 }
 
-int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
+int cgc_read_n_bytes(int fd, size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t rx = 0;
-  cgc_size_t to_read = n;
+  size_t rx = 0;
+  size_t to_read = n;
 
   while (to_read > 0) {
     if (receive(fd, buf + (n - to_read), to_read, &rx) != 0)
@@ -94,9 +94,9 @@ int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
   return n - to_read;
 }
 
-int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf)
+int cgc_read_until(int fd, size_t n, char terminator, char* buf)
 {
-  cgc_size_t read = 0;
+  size_t read = 0;
   while (read < n)
   {
     cgc_ssize_t tmp_read = cgc_read_n_bytes(fd, 1, buf + read);
@@ -123,7 +123,7 @@ int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf)
   return -1;
 }
 
-cgc_size_t cgc_read_image(int fd, cgc_size_t width, cgc_size_t height, cgc_u8** input)
+size_t cgc_read_image(int fd, size_t width, size_t height, cgc_u8** input)
 {
   if (!input)
     return 0;
@@ -133,7 +133,7 @@ cgc_size_t cgc_read_image(int fd, cgc_size_t width, cgc_size_t height, cgc_u8** 
   if (!tmp_input)
     err("cgc_calloc() failed");
 
-  cgc_size_t idx = 0;
+  size_t idx = 0;
   int mid_line = 0;
 
   while (idx < width * height)
@@ -365,10 +365,10 @@ char* cgc_perform_ocr(cgc_u8* image, cgc_u32 width, cgc_u32 height, float match_
 int cgc_check_junk(void)
 {
   cgc_u32 chk = 0;
-  cgc_size_t max = cgc_strlen(junk);
-  for (cgc_size_t k = 0; k < 0x10; k++)
+  size_t max = cgc_strlen(junk);
+  for (size_t k = 0; k < 0x10; k++)
   {
-    for(cgc_size_t i = 0; i < max; i++)
+    for(size_t i = 0; i < max; i++)
     {
       if (i + k > 256)
         chk ^= ((junk[i + k - 256]) << (i + k % 64));

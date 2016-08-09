@@ -30,7 +30,7 @@ static int cgc_handle_result()
 {
     char tmp[16];
     int result;
-    cgc_size_t n;
+    size_t n;
 
     cgc_memset(tmp, 0, sizeof(tmp));
     for (n = 0; n < sizeof(tmp) - 1; n++)
@@ -74,7 +74,7 @@ static int cgc_handle_result()
 static int cgc_handle_sd()
 {
     char tmp[16];
-    cgc_size_t n;
+    size_t n;
 
     cgc_memset(tmp, 0, sizeof(tmp));
     for (n = 0; n < sizeof(tmp) - 1; n++)

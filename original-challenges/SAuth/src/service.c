@@ -44,7 +44,7 @@ enum {
     MSG_USERAUTH_PASSWD_CHANGEREQ = 120,
 };
 
-static cgc_size_t cgc_mystrndup(const char *str, cgc_size_t n, char **out)
+static size_t cgc_mystrndup(const char *str, size_t n, char **out)
 {
     char *result;
 
@@ -63,7 +63,7 @@ static cgc_size_t cgc_mystrndup(const char *str, cgc_size_t n, char **out)
 
 static void cgc_init_creds(cgc_server_t *server, const char *secrets)
 {
-    cgc_size_t i, n, count = 0;
+    size_t i, n, count = 0;
 
     for (i = 0; i < NUM_CREDS; i++)
     {
@@ -262,7 +262,7 @@ static int cgc_safe_strdup(cgc_server_t *server, char **out, unsigned short n)
     return 1;
 }
 
-static int cgc_get_string(cgc_server_t *server, char *out, cgc_size_t n)
+static int cgc_get_string(cgc_server_t *server, char *out, size_t n)
 {
     cgc_uint32 length;
 
@@ -336,7 +336,7 @@ static cgc_uint32 cgc_recv_packet(cgc_server_t *server)
 
 static int cgc_send_packet(cgc_server_t *server)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_byte padding_len;
 
     if (server->packet_len > 32768)

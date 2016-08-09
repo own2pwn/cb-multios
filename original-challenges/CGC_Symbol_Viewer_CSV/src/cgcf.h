@@ -114,7 +114,7 @@ char* cgc_cgcf_section_type2str(unsigned int type);
 char* cgc_cgcf_symbol_bind2str(unsigned char bind);
 char* cgc_cgcf_symbol_type2str(unsigned char type);
 int cgc_cgcf_is_valid(cgc_cgcf_Ehdr *hdr);
-int cgc_cgcf_parse_file_header(const char *buf, cgc_size_t buf_len, cgc_cgcf_Ehdr *hdr);
-int cgc_cgcf_parse_section_header(const char *buf, cgc_size_t buf_len, short idx, cgc_cgcf_Shdr *shdr);
+int cgc_cgcf_parse_file_header(const char *buf, size_t buf_len, cgc_cgcf_Ehdr *hdr);
+int cgc_cgcf_parse_section_header(const char *buf, size_t buf_len, short idx, cgc_cgcf_Shdr *shdr);
 
 #endif

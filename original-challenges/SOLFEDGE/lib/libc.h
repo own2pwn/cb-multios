@@ -35,9 +35,9 @@ typedef unsigned char cgc_uint8_t;
 
 // libc libs borrowed from EAGLE_00004
 
-int cgc_send(const char *buf, const cgc_size_t size);
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+int cgc_send(const char *buf, const size_t size);
+int cgc_transmit_all(int fd, const char *buf, const size_t size);
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size);
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
 void *cgc_memset(void *dst, int c, unsigned int n);

@@ -90,7 +90,7 @@ int cgc_cgcf_is_valid(cgc_cgcf_Ehdr *hdr)
   return (cgc_memcmp(hdr->e_ident, "\x7f""CGC", 4) == 0);
 }
 
-int cgc_cgcf_parse_file_header(const char *buf, cgc_size_t buf_len, cgc_cgcf_Ehdr *hdr)
+int cgc_cgcf_parse_file_header(const char *buf, size_t buf_len, cgc_cgcf_Ehdr *hdr)
 {
   /* Check if the pointers are NULL */
   if (buf == NULL || hdr == NULL)
@@ -106,14 +106,14 @@ int cgc_cgcf_parse_file_header(const char *buf, cgc_size_t buf_len, cgc_cgcf_Ehd
   return 0;
 }
 
-int cgc_cgcf_parse_section_header(const char *buf, cgc_size_t buf_len, short idx, cgc_cgcf_Shdr *shdr)
+int cgc_cgcf_parse_section_header(const char *buf, size_t buf_len, short idx, cgc_cgcf_Shdr *shdr)
 {
   /* Check if the pointers are NULL */
   if (buf == NULL || shdr == NULL)
     return -1;
 
   short shnum = 0;
-  cgc_size_t sz = sizeof(cgc_cgcf_Shdr) - sizeof(char *);
+  size_t sz = sizeof(cgc_cgcf_Shdr) - sizeof(char *);
   cgc_cgcf_Ehdr ehdr;
   cgc_cgcf_parse_file_header(buf, buf_len, &ehdr);
   if (ehdr.e_shoff + ehdr.e_shentsize * idx + sz > buf_len)

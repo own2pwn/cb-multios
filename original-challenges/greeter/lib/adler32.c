@@ -23,10 +23,10 @@
 #include "adler32.h"
 
 unsigned int
-cgc_adler32ish(unsigned char *buf, cgc_size_t n)
+cgc_adler32ish(unsigned char *buf, size_t n)
 {
     unsigned short a = 1, b = 0;
-    cgc_size_t i;
+    size_t i;
 
     for (i = 0; i < n; i++) {
         a = a + buf[i];

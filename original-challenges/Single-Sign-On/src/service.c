@@ -23,7 +23,7 @@
 #include "libc.h"
 #include "service.h"
 
-void cgc_reportMessage(char* message, cgc_size_t message_size) {
+void cgc_reportMessage(char* message, size_t message_size) {
 	int ret;
 	ret = cgc_transmit_all(STDOUT, message, message_size);
 	if(ret != 0)
@@ -33,7 +33,7 @@ void cgc_reportMessage(char* message, cgc_size_t message_size) {
 unsigned long cgc_getAuthVal() {
 
 	unsigned long auth_val;
-	cgc_size_t rnd_bytes;
+	size_t rnd_bytes;
 	int ret;
 
 	int b;
@@ -73,7 +73,7 @@ void cgc_auth_failure(char* resource) {
 	char temp_buf[201];
 	char* message_buf=NULL;
 	int ret;
-	cgc_size_t message_size; 
+	size_t message_size; 
 
 	message_size = cgc_strlen(resource)+sizeof(FAILED_AUTH_STR)+sizeof(EOL);
 

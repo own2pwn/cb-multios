@@ -40,10 +40,10 @@ const char* depressing_words[] = {
 
 cgc_bloomy_t *bloomy = NULL;
 
-cgc_uint8_t cgc_submit_lyrics(char *lyrics, cgc_size_t len)
+cgc_uint8_t cgc_submit_lyrics(char *lyrics, size_t len)
 {
   int i, nl = 0, n = 0;
-  cgc_size_t olen = len;
+  size_t olen = len;
   char line[128], *s = lyrics;
   cgc_memset(lyrics, 0, len);
   while (1)

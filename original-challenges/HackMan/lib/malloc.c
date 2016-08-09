@@ -32,7 +32,7 @@ static int cgc_allocate_new_blk(void)
 {
   void *ret;
   struct blk_t *new_blk;
-  cgc_size_t size = NEW_CHUNK_SIZE;
+  size_t size = NEW_CHUNK_SIZE;
 
   if (allocate(size, 0, &ret) != 0) {
     return 1;
@@ -54,7 +54,7 @@ static int cgc_allocate_new_blk(void)
 }
 
 /* Find first fit block for a size */
-static int cgc_find_fit(cgc_size_t size, struct blk_t **blk)
+static int cgc_find_fit(size_t size, struct blk_t **blk)
 {
   int sc_i = cgc_get_size_class(size);
 
@@ -69,7 +69,7 @@ static int cgc_find_fit(cgc_size_t size, struct blk_t **blk)
   return -1;
 }
 
-static void *cgc_malloc_huge(cgc_size_t size)
+static void *cgc_malloc_huge(size_t size)
 {
     void *mem;
     size += HEADER_PADDING;
@@ -85,7 +85,7 @@ static void *cgc_malloc_huge(cgc_size_t size)
     return (void *)((cgc_intptr_t)blk + HEADER_PADDING);
 }
 
-void *cgc_malloc(cgc_size_t size)
+void *cgc_malloc(size_t size)
 {
   if (size == 0)
     return NULL;
@@ -115,7 +115,7 @@ void *cgc_malloc(cgc_size_t size)
   cgc_remove_from_flist(blk);
 
   /* Split the block into two pieces if possible */
-  cgc_size_t sdiff = blk->size - size;
+  size_t sdiff = blk->size - size;
   if (sdiff > 2*HEADER_PADDING) {
     struct blk_t *nb = (struct blk_t *)((cgc_intptr_t)blk + size);
 

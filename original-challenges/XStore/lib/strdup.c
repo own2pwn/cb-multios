@@ -25,7 +25,7 @@
 
 char *cgc_strdup(const char *s1)
 {
-  cgc_size_t len = cgc_strlen(s1);
+  size_t len = cgc_strlen(s1);
   char *cpy = cgc_malloc(len + 1);
 
   if (!cpy)

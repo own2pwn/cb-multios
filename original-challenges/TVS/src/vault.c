@@ -45,7 +45,7 @@ typedef struct {
 
 cgc_vault_t *the_vault;
 
-static void cgc_write_msg(cgc_uint8_t cmd, void *data, cgc_size_t n)
+static void cgc_write_msg(cgc_uint8_t cmd, void *data, size_t n)
 {
     cgc_uint8_t hdr[7];
     

@@ -73,7 +73,7 @@ static void cgc_list_movies()
 
 static void cgc_user_rent_movie()
 {
-    cgc_size_t id = 0, num_movies = cgc_get_num_owned_movies();
+    size_t id = 0, num_movies = cgc_get_num_owned_movies();
     char line[LINE_SIZE];
     cgc_list_owned_movies();
 
@@ -95,7 +95,7 @@ static void cgc_user_rent_movie()
 
 static void cgc_user_return_movie()
 {
-    cgc_size_t id = 0, num_rented = cgc_get_num_rented_movies();
+    size_t id = 0, num_rented = cgc_get_num_rented_movies();
     char line[LINE_SIZE];
     cgc_list_rented_movies();
 

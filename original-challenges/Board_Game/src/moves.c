@@ -234,7 +234,7 @@ int cgc_AcceptMove(char b[X_MAX][Y_MAX], char *srcx, char *srcy, char *dstx, cha
 	} s = {"", "01234567"};
 	char *coord1, *coord2;
 	int i;
-	cgc_size_t rxcount;
+	size_t rxcount;
 
 	while (1) {
 		cgc_printf("@s: ", CURR_PLAYER);

@@ -40,7 +40,7 @@ typedef struct alloc_node {
 } cgc_alloc_node_t;
 
 typedef struct alloc_head {
-    cgc_size_t n_nodes;
+    size_t n_nodes;
     cgc_alloc_node_t *n;
 
 } cgc_alloc_head_t;

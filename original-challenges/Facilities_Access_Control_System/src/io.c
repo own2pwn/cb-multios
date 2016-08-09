@@ -31,9 +31,9 @@ THE SOFTWARE.
 #include "io.h"
 #include "user.h"
 
-cgc_size_t cgc_ReadBytes(unsigned char *Buf, cgc_size_t Max) {
-	cgc_size_t Total = 0;
-	cgc_size_t Rx;
+size_t cgc_ReadBytes(unsigned char *Buf, size_t Max) {
+	size_t Total = 0;
+	size_t Rx;
 
 	while ((Total < Max) && (receive(0, Buf+Total, Max-Total, &Rx) == 0)) {
 		if (Rx == 0) {
@@ -47,9 +47,9 @@ cgc_size_t cgc_ReadBytes(unsigned char *Buf, cgc_size_t Max) {
 	return(Total);
 }
 
-cgc_size_t cgc_SendBytes(unsigned char *Buf, cgc_size_t Max) {
-	cgc_size_t Total = 0;
-	cgc_size_t Tx;
+size_t cgc_SendBytes(unsigned char *Buf, size_t Max) {
+	size_t Total = 0;
+	size_t Tx;
 
 	while ((Total < Max) && (transmit(1, Buf+Total, Max-Total, &Tx) == 0)) {
 		if (Tx == 0) {

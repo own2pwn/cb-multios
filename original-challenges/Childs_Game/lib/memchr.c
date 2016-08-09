@@ -22,10 +22,10 @@
  */
 #include <string.h>
 
-void *cgc_memchr(const void *s, int c, cgc_size_t n)
+void *cgc_memchr(const void *s, int c, size_t n)
 {
     const unsigned char *buf = s;
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n; i++)
         if (buf[i] == c)
             return (void *)&buf[i];

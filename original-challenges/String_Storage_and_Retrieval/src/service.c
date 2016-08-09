@@ -37,7 +37,7 @@ int main(void) {
     cgc_bst_stats_type stats;
     long value;
     char buffer[2048];  
-    cgc_size_t size;
+    size_t size;
     char **args;
     int arg_count;
     int i;

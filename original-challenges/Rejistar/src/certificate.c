@@ -74,7 +74,7 @@ void cgc_initIssuer() {
 */
 void cgc_signCert(cgc_Certificate** cert) {
 	cgc_Certificate *signedCert;
-	cgc_size_t size=0;
+	size_t size=0;
 	unsigned int signature=0;
 	int i;
 
@@ -114,8 +114,8 @@ void cgc_signCert(cgc_Certificate** cert) {
 *
 * @return The number of bytes to store the cgc_Certificate as a string
 */
-cgc_size_t cgc_calculateCertSize(cgc_Certificate *cert) {
-	cgc_size_t size;
+size_t cgc_calculateCertSize(cgc_Certificate *cert) {
+	size_t size;
 
 	size = cgc_strlen(CERT_ISSUER_HDR) +1;
 	size += cgc_strlen(cert->issuer) + 1;
@@ -149,7 +149,7 @@ cgc_size_t cgc_calculateCertSize(cgc_Certificate *cert) {
 void cgc_sendCerts(unsigned int id, cgc_Certificate *cert) {
 	cgc_Certificate *cert_ptr;
 	int first=1;
-	cgc_size_t certSize, bytes;
+	size_t certSize, bytes;
 	char* buffer;
 	int ret;
 
@@ -233,7 +233,7 @@ cgc_Certificate *cgc_parseCertificate(char* body) {
 */
 int cgc_checkCRLs(cgc_Certificate *cert) {
 	cgc_Certificate *revoked_cert;
-	cgc_size_t size, size1, size2;
+	size_t size, size1, size2;
 
 	for(revoked_cert=CRL; revoked_cert != NULL; revoked_cert=revoked_cert->next) {
 		size1 = cgc_strlen(revoked_cert->subject);
@@ -341,7 +341,7 @@ void cgc_freeCert(cgc_Certificate* cert) {
 void cgc_revokeCert(int id, char* body, unsigned int* expiration_date) {
 	cgc_Certificate *cert;
 	int ret;
-	cgc_size_t size;
+	size_t size;
 
 	if(!(cert = cgc_parseCertificate(body)))
 		return;
@@ -401,7 +401,7 @@ void cgc_reenroll(int id, char* body, unsigned int* expiration_date) {
 */
 int cgc_checkCertUse(char* command, char* useList) {
 	char* use;
-	cgc_size_t size, size1, size2;
+	size_t size, size1, size2;
 
 	if(!useList)
 		return 0;
@@ -433,7 +433,7 @@ int cgc_checkCertUse(char* command, char* useList) {
 */
 void cgc_enroll(int id, char* body, unsigned int* expiration_date) {
 	cgc_Certificate *cert;
-	cgc_size_t size;
+	size_t size;
 	unsigned int expire_window=100;
 
 	if(!issuer) {

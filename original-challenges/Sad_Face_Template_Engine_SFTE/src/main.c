@@ -144,7 +144,7 @@ void cgc_view_vars(cgc_dict_t **vars)
     printf("-- None\n");
 }
 
-void cgc_submit_text(char *inbuf, cgc_size_t len)
+void cgc_submit_text(char *inbuf, size_t len)
 {
   cgc_memset(inbuf, 0, len);
   printf("-- Submit a null-terminated string\n");
@@ -155,7 +155,7 @@ void cgc_submit_text(char *inbuf, cgc_size_t len)
 void cgc_render_text(char *input, cgc_dict_t **vars)
 {
   char *output;
-  cgc_size_t output_len;
+  size_t output_len;
   cgc_sadface_ctx_t *ctx = NULL;
 
   if (cgc_sadface_init(&ctx, NULL, input, vars) < 0)
@@ -178,7 +178,7 @@ void cgc_render_text(char *input, cgc_dict_t **vars)
 
 int main()
 {
-  cgc_size_t input_len;
+  size_t input_len;
   char buf[MAX_BUF_SIZE], input[MAX_BUF_SIZE];
   cgc_dict_t **vars = cgc_dict_new();
 

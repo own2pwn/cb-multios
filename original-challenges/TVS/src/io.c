@@ -29,9 +29,9 @@
 static cgc_uint8_t ikey = 0xAA;
 static cgc_uint8_t okey = 0x55;
 
-int cgc_read_bytes(void *_buf, cgc_size_t n)
+int cgc_read_bytes(void *_buf, size_t n)
 {
-    cgc_size_t bytes, i;
+    size_t bytes, i;
     char *buf = _buf;
 
     while (n != 0)
@@ -49,9 +49,9 @@ int cgc_read_bytes(void *_buf, cgc_size_t n)
     return 1;
 }
 
-int cgc_read_until(char *buf, cgc_size_t n, char el)
+int cgc_read_until(char *buf, size_t n, char el)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n; i++)
     {
         if (cgc_read_bytes(&buf[i], 1) == 0)
@@ -68,9 +68,9 @@ int cgc_read_until(char *buf, cgc_size_t n, char el)
     return 1;
 }
 
-void cgc_write_bytes(void *_buf, cgc_size_t n)
+void cgc_write_bytes(void *_buf, size_t n)
 {
-    cgc_size_t bytes, i;
+    size_t bytes, i;
     char *buf = _buf;
 
     for (i = 0; i < n; i++)

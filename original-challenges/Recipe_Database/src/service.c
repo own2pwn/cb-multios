@@ -33,7 +33,7 @@ cgc_Recipe_Type *recipe_book=0;
 
 int main(void) {
     
-cgc_size_t size;
+size_t size;
 char buffer[10];
 int command;
 char buffer1[100];

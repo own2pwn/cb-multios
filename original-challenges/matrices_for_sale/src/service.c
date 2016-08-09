@@ -95,8 +95,8 @@ void cgc_processMessage(cgc_Worker* worker)
 
 
 void cgc_receiveMessage(cgc_Message* message) {
-	cgc_size_t bytes_read = 0;
-	cgc_size_t message_size;
+	size_t bytes_read = 0;
+	size_t message_size;
 	char *message_ptr;
 
 	message_ptr = (char *) message;

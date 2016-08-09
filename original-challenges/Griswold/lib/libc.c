@@ -120,8 +120,8 @@ cgc_node_t * cgc_get_last_node(cgc_list_t * lst) {
 
 // write sz random bytes into buf
 // returns 0 on success, non-zero on failure.
-int cgc_rand(char *buf, cgc_size_t sz) {
-    cgc_size_t bytes = 0;
+int cgc_rand(char *buf, size_t sz) {
+    size_t bytes = 0;
     return cgc_random(buf, sz, &bytes);
 }
 
@@ -131,7 +131,7 @@ int cgc_rand(char *buf, cgc_size_t sz) {
 
 
 // I/O functions
-int cgc_send(const char *buf, const cgc_size_t size) {
+int cgc_send(const char *buf, const size_t size) {
     if(cgc_transmit_all(STDOUT, buf, size)) {
         _terminate(111);
     }
@@ -139,9 +139,9 @@ int cgc_send(const char *buf, const cgc_size_t size) {
     return 0;
 }
 
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
     if (!buf)
@@ -162,14 +162,14 @@ int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
 }
 
 // returns number of bytes received
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size) {
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size) {
     return cgc_read_all(STDIN, res_buf, res_buf_size);
 }
 
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
    char ch;
    unsigned int total = 0;
-   cgc_size_t nbytes;
+   size_t nbytes;
    while (size) {
       if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
          break;

@@ -28,7 +28,7 @@ int cgc_copy_uri(char *buf_verb) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
-    cgc_size_t pos_uri = -1;
+    size_t pos_uri = -1;
 
     // Find our delimeter
     pos_uri = cgc_findchar(buf_recv, DELIM_URI);
@@ -68,7 +68,7 @@ char * cgc_get_file_contents(char *name) {
 
     int ret = SUCCESS;
     int bytes_sent = -1;
-    cgc_size_t i = 0;
+    size_t i = 0;
 
     for (i=0; i<num_files; i++) {
         if (!cgc_memcmp(name, files[i].name, FILE_BUF_SZ)) {
@@ -115,7 +115,7 @@ int cgc_head_file(char *name) {
 int cgc_list_files(void) {
 
     int ret = SUCCESS;
-    cgc_size_t i = 0;
+    size_t i = 0;
     int bytes_sent = -1;
 
     for (i=0; i<num_files; i++) {
@@ -197,9 +197,9 @@ int cgc_init_content() {
 
     int ret = SUCCESS;
     cgc_UINT8 rnd[RND_BUF_SZ];
-    cgc_size_t rnd_bytes = 0;
-    cgc_size_t i = 0;
-    cgc_size_t j = 0;
+    size_t rnd_bytes = 0;
+    size_t i = 0;
+    size_t j = 0;
 
     // determine number of files in the directory; range: [1, 255]
     while ((0 != cgc_random(rnd, 1, &rnd_bytes)) && (1 != rnd_bytes)) {}

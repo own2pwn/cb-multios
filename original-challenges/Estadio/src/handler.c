@@ -38,14 +38,14 @@ HANDLER(seed){
 }
 
 HANDLER(rand){
-  cgc_size_t byte_count = *(cgc_size_t*)(cgc_extract_rand_req(frame));
+  size_t byte_count = *(size_t*)(cgc_extract_rand_req(frame));
   cgc_uint8* buf;
 
   if (allocate(byte_count, 0, (void**)(&buf))) {
     _terminate(-1);
   }
 
-  for (cgc_size_t i = 0; i < byte_count; i++) {
+  for (size_t i = 0; i < byte_count; i++) {
     buf[i] = cgc_churn_rand_uint8();
   }
 
@@ -86,7 +86,7 @@ HANDLER(echo){
   }
 #endif
 
-  cgc_size_t i = 0;
+  size_t i = 0;
   while(1) {
     buf[i] = data[i];
     if (0 == data[i]) break;

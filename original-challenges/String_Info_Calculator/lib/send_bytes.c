@@ -29,7 +29,7 @@ int cgc_send_bytes(int fd, const char *buf, unsigned int size) {
 		return ERRNO_SEND;
 	}
 
-	cgc_size_t bytes_sent_iter = 0;
+	size_t bytes_sent_iter = 0;
 	unsigned int bytes_sent_total = 0;
 	const char *p_buf = buf;
 

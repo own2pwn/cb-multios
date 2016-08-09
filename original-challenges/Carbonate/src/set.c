@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 void cgc_with_set(void (^block)(cgc_set_t set)) {
   cgc_set_cell blob[SET_CELLS];
-  for (cgc_size_t i = 0; i < SET_CELLS; i++) {
+  for (size_t i = 0; i < SET_CELLS; i++) {
     blob[i] = 0;
   }
   cgc_set_t set = blob;
@@ -37,21 +37,21 @@ void cgc_with_set(void (^block)(cgc_set_t set)) {
 
 void cgc_add_set(cgc_set_t set, cgc_uint16 value) {
   cgc_uint8 mask = 1 << (value & 0x7);
-  cgc_size_t offset = value >> 3;
+  size_t offset = value >> 3;
 
   set[offset] |= mask;
 }
 
 void cgc_subtract_set(cgc_set_t set, cgc_uint16 value) {
   cgc_uint8 mask = ~(1 << (value & 0x7));
-  cgc_size_t offset = value >> 3;
+  size_t offset = value >> 3;
 
   set[offset] &= mask;
 }
 
 cgc_uint8 cgc_check_set(cgc_set_t set, cgc_uint16 value) {
   cgc_uint8 mask = 1 << (value & 0x7);
-  cgc_size_t offset = value >> 3;
+  size_t offset = value >> 3;
 
   return set[offset] & mask;
 }

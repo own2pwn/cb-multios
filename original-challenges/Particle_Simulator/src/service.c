@@ -46,12 +46,12 @@ THE SOFTWARE.
 
 int g_lasterror = 0;
 
-int cgc_readLine( int fd, char *buffer, cgc_size_t maxlen )
+int cgc_readLine( int fd, char *buffer, size_t maxlen )
 {
-    cgc_size_t pos;
+    size_t pos;
     char temp_buffer[2];
     int retvalue;
-    cgc_size_t rx_count;
+    size_t rx_count;
 
     for ( pos = 1; pos < maxlen; pos++ )
     {

@@ -356,7 +356,7 @@ int cgc_usb_init(cgc_usb_t *self)
 {
     /* randomly generate a busid for the device */
     cgc_uint8_t id;
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_random(&id, 1, &bytes);
     id = id % 100;
 

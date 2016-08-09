@@ -384,7 +384,7 @@ int cgc_do_eval() {
  int cgc_do_nonce() {
  	long long nonce[1];
  	long long nonce_reply[1];
- 	cgc_size_t bytes = 0;
+ 	size_t bytes = 0;
  	int ret = 0;
  	if((ret = cgc_rand((char *)nonce, 8)) != 0) {return -45;}
 

@@ -31,8 +31,8 @@
  * @param s Destination
  * @param np Number of times to copy it
  */
-void cgc_initialize(char *s, cgc_size_t np) {
-    cgc_size_t i;
+void cgc_initialize(char *s, size_t np) {
+    size_t i;
 
     if (np > 16)
         return;
@@ -48,7 +48,7 @@ int main() {
     cgc_fd_set readfds;
     int numready = 0;
     struct cgc_timeval timeout = {2, 0};
-    cgc_size_t i, res, recvd = 0;
+    size_t i, res, recvd = 0;
 
     //lets be nice and make some backup copies of the flag page :)
     cgc_initialize(stack, 16);

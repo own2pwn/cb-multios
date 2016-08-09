@@ -40,7 +40,7 @@ static cgc_player_t g_player;
 
 static char cgc_readchar(int fd)
 {
-    cgc_size_t rx;
+    size_t rx;
     char c, delim;
 
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
@@ -54,10 +54,10 @@ static char cgc_readchar(int fd)
     return c;
 }
 
-static int cgc_readline(int fd, char *buf, cgc_size_t size)
+static int cgc_readline(int fd, char *buf, size_t size)
 {
-    cgc_size_t i;
-    cgc_size_t rx;
+    size_t i;
+    size_t rx;
 
     for (i = 0; i < size; i++) {
         if (receive(fd, buf, 1, &rx) != 0 || rx == 0)

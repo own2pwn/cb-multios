@@ -13,27 +13,27 @@
 #define MAX_CAPTURE		5
 
 typedef struct cgc_queue {
-	cgc_size_t x;
-	cgc_size_t y;
+	size_t x;
+	size_t y;
 	struct cgc_queue *next;
 } cgc_queue, *cgc_pqueue;
 
 typedef struct cgc_map {
-	cgc_size_t width;
-	cgc_size_t height;
-	cgc_size_t start_x;
-	cgc_size_t start_y;
-	cgc_size_t end_x;
-	cgc_size_t end_y;
+	size_t width;
+	size_t height;
+	size_t start_x;
+	size_t start_y;
+	size_t end_x;
+	size_t end_y;
 
-	cgc_size_t current_x;
-	cgc_size_t current_y;
+	size_t current_x;
+	size_t current_y;
 
 	/// Last x where a marker was placed. Used to reverse on failure
-	cgc_size_t last_x;
+	size_t last_x;
 
 	/// Last y where a marker was placed
-	cgc_size_t last_y;
+	size_t last_y;
 
 	/// Map data
 	char *data;
@@ -42,21 +42,21 @@ typedef struct cgc_map {
 typedef struct cgc_monster {
 	char *type;
 	int health;
-	cgc_size_t hitpoints;
-	cgc_size_t power;
-	cgc_size_t experience;
-	cgc_size_t level;
+	size_t hitpoints;
+	size_t power;
+	size_t experience;
+	size_t level;
 } cgc_monster, *cgc_pmonster;
 
 typedef struct cgc_player {
 	char name[16];
-	cgc_size_t level;
-	cgc_size_t mcnt;
+	size_t level;
+	size_t mcnt;
 	cgc_pmonster mons[MAX_CAPTURE];
 } cgc_player, *cgc_pplayer;
 
 /// Index to use for the secret page
-cgc_size_t page_index = 0;
+size_t page_index = 0;
 unsigned char *secret_page;
 
 /// cgc_queue list
@@ -66,7 +66,7 @@ char *queue_matrix;
 
 /// Variables for the easter egg
 char easteregg[] = "easta egg";
-cgc_size_t eggindex;
+size_t eggindex;
 
 cgc_pmonster cgc_generate_monster( void );
 char *cgc_select_name( void );
@@ -90,11 +90,11 @@ void cgc_check_egg( cgc_pplayer pp, char c ) {
 	return;
 }
 
-cgc_size_t cgc_read_line( char *outbuf, cgc_size_t length )
+size_t cgc_read_line( char *outbuf, size_t length )
 {
 	char c = '\0';
-	cgc_size_t index = 0;
-	cgc_size_t rx_bytes = 0;
+	size_t index = 0;
+	size_t rx_bytes = 0;
 
 	if ( outbuf == NULL ) {
 		cgc_printf("[ERROR] invalid arg\n");
@@ -124,11 +124,11 @@ cgc_size_t cgc_read_line( char *outbuf, cgc_size_t length )
 	return index;
 }
 
-cgc_size_t cgc_read_line_u( char *outbuf )
+size_t cgc_read_line_u( char *outbuf )
 {
 	char c = '\0';
-	cgc_size_t index = 0;
-	cgc_size_t rx_bytes = 0;
+	size_t index = 0;
+	size_t rx_bytes = 0;
 
 	if ( outbuf == NULL ) {
 		return 0;
@@ -156,11 +156,11 @@ cgc_size_t cgc_read_line_u( char *outbuf )
 	return index;
 }
 
-void cgc_add_queue( cgc_size_t x, cgc_size_t y, cgc_size_t max_x, cgc_size_t max_y )
+void cgc_add_queue( size_t x, size_t y, size_t max_x, size_t max_y )
 {
 	cgc_pqueue pq = NULL;
 	cgc_pqueue walker = NULL;
-	cgc_size_t index = ( (max_x+1) * y ) + x;
+	size_t index = ( (max_x+1) * y ) + x;
 
 	/// If it has already been queued then don't requeue it
 	if ( queue_matrix[index] == 1 ) {
@@ -226,9 +226,9 @@ int cgc_check_adjacent( sx, sy, dx, dy )
 
 void cgc_print_map( cgc_pmap pm )
 {
-	cgc_size_t index;
-	cgc_size_t max;
-	cgc_size_t map_index = 0;
+	size_t index;
+	size_t max;
+	size_t map_index = 0;
 
 	char *data = NULL;
 
@@ -271,10 +271,10 @@ void cgc_print_map( cgc_pmap pm )
 /// Algorithm
 /// Given source(x,y) and dest(x,y) does there exist a path between the two
 /// Returns 0 if a path does not exist and 1 if it does
-cgc_size_t cgc_find_path( cgc_size_t sx, cgc_size_t sy, cgc_pmap pm)
+size_t cgc_find_path( size_t sx, size_t sy, cgc_pmap pm)
 {
 	cgc_pqueue pq = NULL;
-	cgc_size_t retval = 0;
+	size_t retval = 0;
 
 	if ( pm == NULL ) {
 		return 0;
@@ -334,9 +334,9 @@ void cgc_update_page_index( )
 
 void cgc_place_marker( cgc_pmap pm )
 {
-	cgc_size_t index = 0;
-	cgc_size_t count = 0;
-	cgc_size_t max = 0;
+	size_t index = 0;
+	size_t count = 0;
+	size_t max = 0;
 
 	pm->last_x = secret_page[ page_index ] % pm->width;
 	cgc_update_page_index();
@@ -383,9 +383,9 @@ void cgc_place_marker( cgc_pmap pm )
 	return;
 }
 
-void cgc_set_marker( cgc_size_t x, cgc_size_t y, cgc_pmap pm, char c )
+void cgc_set_marker( size_t x, size_t y, cgc_pmap pm, char c )
 {
-	cgc_size_t index = ( (pm->width) * y ) + x;
+	size_t index = ( (pm->width) * y ) + x;
 
 	pm->data[index] = c;
 }
@@ -442,7 +442,7 @@ void cgc_initialize_map( cgc_pmap pm )
 /// Initialize the cgc_queue matrix
 void cgc_initialize_queue_matrix( cgc_pmap pm )
 {
-	cgc_size_t index;
+	size_t index;
 
 	if (queue_matrix != NULL ) {
 		cgc_free( queue_matrix);
@@ -467,16 +467,16 @@ void cgc_initialize_queue_matrix( cgc_pmap pm )
 	return;
 }
 
-cgc_pmap cgc_generate_map( cgc_size_t width, cgc_size_t height )
+cgc_pmap cgc_generate_map( size_t width, size_t height )
 {
 	cgc_pmap pm = NULL;
 	cgc_pqueue t = NULL;
-	cgc_size_t start_x = 0;
-	cgc_size_t start_y = 0;
+	size_t start_x = 0;
+	size_t start_y = 0;
 
-	cgc_size_t end_x = 0;
-	cgc_size_t end_y = 0;
-	cgc_size_t success = 1;
+	size_t end_x = 0;
+	size_t end_y = 0;
+	size_t success = 1;
 
 	pm = cgc_malloc( sizeof(cgc_map) );
 
@@ -532,9 +532,9 @@ cgc_pmap cgc_generate_map( cgc_size_t width, cgc_size_t height )
 
 cgc_pmonster cgc_select_monster( cgc_pplayer pp )
 {
-	cgc_size_t index;
-	cgc_size_t choice = 0;
-	cgc_size_t success = 0;
+	size_t index;
+	size_t choice = 0;
+	size_t success = 0;
 
 	int ac = 0;
 
@@ -587,7 +587,7 @@ cgc_pmonster cgc_select_monster( cgc_pplayer pp )
 
 void cgc_reset_monsters( cgc_pplayer pp )
 {
-	cgc_size_t index = 0;
+	size_t index = 0;
 
 	if ( pp == NULL ) {
 		return;
@@ -670,7 +670,7 @@ cgc_pmonster cgc_generate_boss( )
 int cgc_change_monster_name( cgc_pmonster pm )
 {
 	char new_name[32];
-	cgc_size_t index = 0;
+	size_t index = 0;
 	char *final = NULL;
 
 	cgc_bzero( new_name, 32);
@@ -700,7 +700,7 @@ int cgc_change_monster_name( cgc_pmonster pm )
 int cgc_capture_boss( cgc_pmonster pm, cgc_pplayer pp )
 {
 	char sel[3];
-	cgc_size_t choice = 0;
+	size_t choice = 0;
 
 	if ( pm == NULL || pp == NULL ) {
 		return 0;
@@ -773,8 +773,8 @@ int cgc_daboss( cgc_pplayer pp )
 {
 	cgc_pmonster boss = NULL;
 	cgc_pmonster player_current = NULL;
-	cgc_size_t player_hit;
-	cgc_size_t target_hit;
+	size_t player_hit;
+	size_t target_hit;
 
 	if ( pp == NULL ) {
 		return 0;
@@ -828,7 +828,7 @@ int cgc_daboss( cgc_pplayer pp )
 int cgc_capture_monster( cgc_pmonster pm, cgc_pplayer pp )
 {
 	char sel[3];
-	cgc_size_t choice = 0;
+	size_t choice = 0;
 
 	if ( pm == NULL || pp == NULL ) {
 		return 0;
@@ -892,8 +892,8 @@ int cgc_fight ( cgc_pplayer pp )
 {
 	cgc_pmonster pm = NULL;
 	cgc_pmonster player_current = NULL;
-	cgc_size_t target_hit = 0;
-	cgc_size_t player_hit = 0;
+	size_t target_hit = 0;
+	size_t player_hit = 0;
 
 	if ( pp == NULL ) {
 		return 0;
@@ -948,9 +948,9 @@ int cgc_fight ( cgc_pplayer pp )
 
 int cgc_movement_loop( cgc_pmap pm, cgc_pplayer pp ) 
 {
-	cgc_size_t success = 0;
+	size_t success = 0;
 	char movement[2];
-	cgc_size_t rx_bytes;
+	size_t rx_bytes;
 
 	if ( pm == NULL ) {
 		return 0;
@@ -1057,8 +1057,8 @@ int cgc_movement_loop( cgc_pmap pm, cgc_pplayer pp )
 
 char *cgc_select_name( )
 {
-	cgc_size_t index = 0;
-	cgc_size_t value = secret_page[ page_index ];
+	size_t index = 0;
+	size_t value = secret_page[ page_index ];
 	cgc_update_page_index();
 
 	while ( value ) {
@@ -1107,7 +1107,7 @@ cgc_pplayer cgc_generate_player( )
 {
 	cgc_pplayer np = NULL;
 	char player_one[16];
-	cgc_size_t result = 0;
+	size_t result = 0;
 
 	cgc_printf("Enter your name|| ");
 
@@ -1143,7 +1143,7 @@ cgc_pplayer cgc_generate_player( )
 
 void cgc_print_player( cgc_pplayer pp )
 {
-	cgc_size_t index = 0;
+	size_t index = 0;
 
 	if ( pp == NULL ) {
 		return;
@@ -1178,11 +1178,11 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 	cgc_print_player(pp);
 
 	/// Random value between 5 and 30
-	cgc_size_t w = (secret_page[page_index] % 31) + 5;
+	size_t w = (secret_page[page_index] % 31) + 5;
 	cgc_update_page_index();
 
 	/// Random height between 5 and 30
-	cgc_size_t h = (secret_page[page_index] % 31) + 5;
+	size_t h = (secret_page[page_index] % 31) + 5;
 	cgc_update_page_index();
 
 	pm = cgc_generate_map( w, h);

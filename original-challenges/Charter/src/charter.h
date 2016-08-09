@@ -10,7 +10,7 @@ typedef struct {
   cgc_uint32* contents;
 } cgc_data_package;
 
-cgc_size_t cgc_read(void* buf, cgc_size_t expected_size);
+size_t cgc_read(void* buf, size_t expected_size);
 
 /* took the limit from `ulimit -a` and chopped it in half */
 //#define MAX_STACK_SIZE (8388608 / 2)

@@ -35,7 +35,7 @@
  * @param size Number of bytes to cgc_send.
  * @returns SUCCESS
  */
-int cgc_send(const char *buf, const cgc_size_t size);
+int cgc_send(const char *buf, const size_t size);
 
 
 #endif

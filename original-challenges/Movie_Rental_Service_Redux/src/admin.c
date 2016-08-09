@@ -40,7 +40,7 @@ static void cgc_add_new_movie()
     char desc[LINE_SIZE];
     char line[LINE_SIZE];
     char *genre = NULL, *rating = NULL;
-    cgc_size_t id = 0;
+    size_t id = 0;
     int year = 0, score = 1000;
 
     printf("Add a movie\n");
@@ -95,7 +95,7 @@ static void cgc_add_new_movie()
 static void cgc_remove_movie()
 {
     char line[LINE_SIZE];
-    cgc_size_t id = 0, num_movies = cgc_get_list_length();
+    size_t id = 0, num_movies = cgc_get_list_length();
     cgc_list_owned_movies();
 
     if (num_movies == 0) {
@@ -121,7 +121,7 @@ static void cgc_update_movie()
     char line[LINE_SIZE];
     char *genre = NULL, *rating = NULL;
     cgc_cmdb_entry_t *movie = NULL;
-    cgc_size_t id = 0, num_movies = cgc_get_list_length();
+    size_t id = 0, num_movies = cgc_get_list_length();
     int year = 0, score = 1000;
     cgc_list_owned_movies();
 

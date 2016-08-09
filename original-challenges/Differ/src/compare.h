@@ -20,7 +20,7 @@ struct linecmp_list {
     cgc_lcll_t *next;
 };
 
-cgc_lcll_t *cgc_pre_process(cgc_SFILE *sfp, cgc_size_t *wordc, cgc_size_t *linec);
+cgc_lcll_t *cgc_pre_process(cgc_SFILE *sfp, size_t *wordc, size_t *linec);
 cgc_lc_t *cgc_new_linecmp(char *line);
 void cgc_free_linecmp_list(cgc_lcll_t **head);
 

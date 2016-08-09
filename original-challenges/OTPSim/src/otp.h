@@ -30,7 +30,7 @@
 #define MAX_OTP_LEN 128
 
 typedef struct otp {
-    cgc_size_t data_len;
+    size_t data_len;
     unsigned char data[MAX_OTP_LEN];
     unsigned int seed_value;
     unsigned int seed_idx;

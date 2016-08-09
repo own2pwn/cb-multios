@@ -115,7 +115,7 @@ int cgc_fromdigit(char digit, unsigned int base);
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, cgc_size_t num);
+int cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, size_t num);
 
 /**
  * Convert int value to its string representation in base.
@@ -128,7 +128,7 @@ int cgc_utostr(unsigned int value, unsigned int base, int uppercase, char *str, 
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_t num);
+int cgc_itostr(int value, unsigned int base, int uppercase, char *str, size_t num);
 
 /**
  * Convert double value to its string representation in base.
@@ -144,7 +144,7 @@ int cgc_itostr(int value, unsigned int base, int uppercase, char *str, cgc_size_
  *      terminator
  * @return EXIT_SUCCESS on success, else EXIT_FAILURE
  */
-int cgc_dtostr(double value, char *str, cgc_size_t num);
+int cgc_dtostr(double value, char *str, size_t num);
 
 /**
  * Convert string representation of a number in base to an unsigned int value.

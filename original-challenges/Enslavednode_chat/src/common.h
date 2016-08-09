@@ -29,6 +29,6 @@
 
 #define error(e) cgc__error(e, __FILE__, __LINE__)
 
-int cgc_readline(int fd, char *buf, cgc_size_t max, cgc_size_t *nrx);
+int cgc_readline(int fd, char *buf, size_t max, size_t *nrx);
 char *cgc_str_to_hex(char *s);
 #endif /* __COMMON__H */

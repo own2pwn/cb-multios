@@ -30,9 +30,9 @@ void cgc_promptc(char *buf, uint16_t  size, char *prompt) {
     SRECV((uint32_t)size, buf);
  }
 
-int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t total = 0;
+int cgc_sendall(int fd, const char *buf, size_t size) {
+    size_t sent = 0;
+    size_t total = 0;
 
     if (!buf)
         return -1;
@@ -54,7 +54,7 @@ int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
 }
 
 
-int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
+int cgc_sendline(int fd, const char *buf, size_t size) {
     int ret;
     ret = cgc_sendall(fd, buf, size);
     if(ret < 0){
@@ -67,9 +67,9 @@ int cgc_sendline(int fd, const char *buf, cgc_size_t size) {
     }
 }
 
-int cgc_recv(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recv(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -88,9 +88,9 @@ int cgc_recv(int fd, char *buf, cgc_size_t size) {
     return total_read;
 
 }
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -118,7 +118,7 @@ int cgc_recvline(int fd, char *buf, cgc_size_t size) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-cgc_size_t cgc_strcpy(char *s1, char *s2) {
+size_t cgc_strcpy(char *s1, char *s2) {
     char *tmp = s1;
     while(*s2){
         *tmp = *s2;
@@ -130,7 +130,7 @@ cgc_size_t cgc_strcpy(char *s1, char *s2) {
 }
 
 //non-standard convention, returns num bytes copied instead of s1
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
+size_t cgc_strncpy(char *s1, char *s2, size_t n) {
     char *tmp = s1;
     while((tmp-s1 < n) && *s2){
         *tmp = *s2;
@@ -148,10 +148,10 @@ char * cgc_strcat(char *s1, char *s2) {
     return s1;
 }
 
-cgc_size_t cgc_strlen(char *s){
+size_t cgc_strlen(char *s){
     char *tmp = s;
     while(*tmp) tmp++;
-    return (cgc_size_t)(tmp-s);
+    return (size_t)(tmp-s);
 }
 
 int cgc_streq(char *s1, char *s2){
@@ -308,16 +308,16 @@ uint32_t cgc_str2uint(const char* str_buf) {
     return result;
 }
 
-void * cgc_memset(void *dst, char c, cgc_size_t n) {
-    cgc_size_t i;
+void * cgc_memset(void *dst, char c, size_t n) {
+    size_t i;
     for(i=0; i<n; i++){
         *((uint8_t*)dst+i) = c;
     }
     return dst;
 }
 
-void * cgc_memcpy(void *dst, void *src, cgc_size_t n) {
-    cgc_size_t i;
+void * cgc_memcpy(void *dst, void *src, size_t n) {
+    size_t i;
     for(i=0; i<n; i++){
         *((uint8_t*)dst+i) = *((uint8_t*)src+i);
     }
@@ -360,8 +360,8 @@ void cgc_sleep(int s) {
     cgc_fdwait(0, NULL, NULL, &tv, NULL);
 }
 
-int cgc_memcmp(void *a, void *b, cgc_size_t n) {
-    cgc_size_t i;
+int cgc_memcmp(void *a, void *b, size_t n) {
+    size_t i;
     for (i=0; i < n; i++)
         if( *(uint8_t*)(a+i) != *(uint8_t*)(b+i))
             return -1;

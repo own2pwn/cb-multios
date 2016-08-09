@@ -36,10 +36,10 @@ void cgc_ReadLine( cgc_String &sLine )
     sLine.cgc_SetString( lineBuffer );
 }
 
-cgc_size_t cgc_recv_bytes( cgc_uint8_t *pDest, cgc_size_t count )
+size_t cgc_recv_bytes( cgc_uint8_t *pDest, size_t count )
 {
-    cgc_size_t pos = 0;
-    cgc_size_t rx_count = 0;
+    size_t pos = 0;
+    size_t rx_count = 0;
 
     while ( pos < count )
     {
@@ -59,7 +59,7 @@ end:
 void cgc_ReadUint32( cgc_uint32_t &value )
 {
     int retvalue;
-    cgc_size_t rx_count = 1;
+    size_t rx_count = 1;
 
     if ( cgc_recv_bytes( (cgc_uint8_t*)&value, sizeof(value) ) != sizeof(value) )
         _terminate( -1 );

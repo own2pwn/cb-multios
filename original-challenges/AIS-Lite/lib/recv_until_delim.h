@@ -33,6 +33,6 @@
  * @param delim Char that delimits end of line
  * @returns Number of bytes received.
  */
-int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size, char delim);
+int cgc_recv_until_delim(int fd, char *buf, size_t size, char delim);
 
 #endif

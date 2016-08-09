@@ -53,8 +53,8 @@ THE SOFTWARE.
 #define RESP_ALARM_OFF                  (11)
 #define RESP_LIST_ALARM_CODES           (12)
 
-cgc_size_t cgc_ReadBytes(unsigned char *Buf, cgc_size_t Max);
-cgc_size_t cgc_SendBytes(unsigned char *Buf, cgc_size_t Max);
+size_t cgc_ReadBytes(unsigned char *Buf, size_t Max);
+size_t cgc_SendBytes(unsigned char *Buf, size_t Max);
 cgc_uint8_t cgc_SendResp(cgc_uint8_t Code, unsigned char *Data);
 cgc_uint8_t cgc_RecvCommand();
 

@@ -32,9 +32,9 @@
 #define EOT 0x04
 #define ETB 0x17
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf);
-int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf);
-int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf);
+int cgc_send_n_bytes(int fd, size_t n, char* buf);
+int cgc_read_n_bytes(int fd, size_t n, char* buf);
+int cgc_read_until(int fd, size_t n, char terminator, char* buf);
 int cgc_transmit_string(int fd, char* buf);
 
 #ifdef DEBUG

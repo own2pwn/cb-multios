@@ -38,7 +38,7 @@
  * @param id 	ID of cgc_Person
  */
 void  __attribute__((regparm(2))) cgc_shift_relation(cgc_Person *p, cgc_uint32_t id) {
-	cgc_size_t count = 0;
+	size_t count = 0;
 	int prev_idx = 0;
 	int idx = 0;
 	// algorithm for left shift to fill empty spaces:
@@ -153,7 +153,7 @@ void  __attribute__((regparm(2))) cgc_shift_relation(cgc_Person *p, cgc_uint32_t
 cgc_Person *cgc_new_person(char *input) {
 	cgc_Person *p = NULL;
 	char *idx = input;
-	cgc_size_t shift = 0;
+	size_t shift = 0;
 
 	if (NULL == input) return p;
 

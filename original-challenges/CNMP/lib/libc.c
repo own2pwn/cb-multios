@@ -49,9 +49,9 @@ cgc_CODES priorities_array[] =
 
 #endif
 
-int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_sendall(int fd, const char *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
     if (!buf) 
@@ -72,9 +72,9 @@ int cgc_sendall(int fd, const char *buf, const cgc_size_t size) {
 }
 
 // mod from FASTLANE: lines terminated with \x07, diff return values, 
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -154,7 +154,7 @@ unsigned int cgc_strlen(const char *str) {
 // size bytes of src are copied into dest.
 // if cgc_strlen(src) < size, dest is padded with '\0' bytes.
 // NOTE: if size <= cgc_strlen(src), the dest will not be null terminated.
-char * cgc_strncpy(char* dest, const char* src, cgc_size_t size) {
+char * cgc_strncpy(char* dest, const char* src, size_t size) {
 
     int idx = 0;
     for (; idx < size && src[idx] != '\0'; idx++) {
@@ -169,7 +169,7 @@ char * cgc_strncpy(char* dest, const char* src, cgc_size_t size) {
 }
 
 // overwrites the first n chars of str with unsigned char ch.
-void * cgc_memset(void* str, int ch, cgc_size_t n) {
+void * cgc_memset(void* str, int ch, size_t n) {
     unsigned char *ch_ptr = str;
     while (n > 0) {
         *ch_ptr = (unsigned char)ch;
@@ -181,7 +181,7 @@ void * cgc_memset(void* str, int ch, cgc_size_t n) {
 }
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, size_t cnt) {
 
     cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
     cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
@@ -213,7 +213,7 @@ char * cgc_strchr(char *str, char ch) {
 // write a random number between 0 and (2^32) in res
 // returns 0 on success, non-zero on failure.
 int cgc_rand(cgc_uint32_t * res) {
-    cgc_size_t bytes = 0;
+    size_t bytes = 0;
     return cgc_random((char *)res, 4, &bytes);
 }
 
@@ -231,9 +231,9 @@ int cgc_rand(cgc_uint32_t * res) {
 // args - ptr to list of arguments to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
 // note: cgc_vsnprintf does not call va_end, because it takes a cgc_va_list, caller does so.
-int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args) {
+int cgc_vsnprintf(char* buf, size_t buf_size, const char* fmt, cgc_va_list args) {
 
-    cgc_size_t buf_len = 0;
+    size_t buf_len = 0;
     const char *fmt_ptr = fmt;
 
     // if fmt is NULL, set fmt_ptr to "" so it will skip the while loop
@@ -255,7 +255,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 
         } else {
             char fmt_spec = '\0';
-            cgc_size_t arg_len = 0;
+            size_t arg_len = 0;
             const char *next_arg;  // ptr to the next arg in args (to use this iteration)
             char tmp[32]; // tmp buffer for cgc_int2str conversion
             int int_arg = 0;
@@ -330,7 +330,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 // fmt - null-terminated format string
 // ... - optional arguments for strings to insert into fmt
 // returns number of bytes written to buf, not counting '\0'
-int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...) {
+int cgc_snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
     int buf_len;
     cgc_va_list args;
 

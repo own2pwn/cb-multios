@@ -33,7 +33,7 @@
 static unsigned int cgc__hash(unsigned int size, const char *k)
 {
     unsigned int result = 0x3505;
-    cgc_size_t i;
+    size_t i;
     for (i = 0; k[i]; i++)
         result = result * 37 + cgc_tolower(k[i]);
     return result % size;

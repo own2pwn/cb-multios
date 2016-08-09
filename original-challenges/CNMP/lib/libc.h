@@ -50,17 +50,17 @@ typedef __builtin_va_list cgc_va_list;
 #define LOGLEVEL LOG_INFO
 
 
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
 int cgc_syslog(int priority, const char *format, ...);
-int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args);
-int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...);
-int cgc_sendall(int fd, const char *buf, const cgc_size_t size);
+int cgc_vsnprintf(char* buf, size_t buf_size, const char* fmt, cgc_va_list args);
+int cgc_snprintf(char* buf, size_t buf_size, const char* fmt, ...);
+int cgc_sendall(int fd, const char *buf, const size_t size);
 int cgc_streq(const char* str1, const char* str2);
 unsigned int cgc_strlen(const char *str);
-char * cgc_strncpy(char* dest, const char* src, cgc_size_t size);
+char * cgc_strncpy(char* dest, const char* src, size_t size);
 char * cgc_strchr(char *str, char ch);
-void * cgc_memset(void* str, int ch, cgc_size_t n);
-void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt);
+void * cgc_memset(void* str, int ch, size_t n);
+void * cgc_memcpy(void* dst, const void* src, size_t cnt);
 cgc_uint32_t cgc_str2uint32(const char* str_buf);
 int cgc_str2int(const char* str_buf);
 int cgc_int2str(char* str_buf, int buf_size, int i);

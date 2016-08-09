@@ -84,8 +84,8 @@ void cgc_echo() {
   cgc_draw_echo(count);
 }
 
-cgc_size_t cgc_read(void* buf, cgc_size_t expected_size) {
-  cgc_size_t actual_size;
+size_t cgc_read(void* buf, size_t expected_size) {
+  size_t actual_size;
   int status;
 
   status = receive(STDIN, buf, expected_size, &actual_size);

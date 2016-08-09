@@ -26,7 +26,7 @@
 #include "wrapper.h"
 #include "libcgc.h"
 
-void *cgc_memset(void *s, int c, cgc_size_t n)
+void *cgc_memset(void *s, int c, size_t n)
 {
   if (s == NULL)
     return NULL;
@@ -35,7 +35,7 @@ void *cgc_memset(void *s, int c, cgc_size_t n)
     return s;
 
   unsigned char *p = s;
-  cgc_size_t i;
+  size_t i;
   for(i = 0; i < n; i++)
     *p++ = (unsigned char) c;
 

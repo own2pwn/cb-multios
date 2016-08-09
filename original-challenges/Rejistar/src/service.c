@@ -44,7 +44,7 @@
 * @return None
 */
 void cgc_addService(cgc_Service** services, char* name, void (* callback)(int, char*, unsigned int*)) {
-	cgc_size_t size;
+	size_t size;
 	cgc_Service* newService;
 	if(!(newService = cgc_malloc(sizeof(cgc_Service))))
 		_terminate(ALLOCATE_ERROR);
@@ -97,7 +97,7 @@ void cgc_freeMessage(cgc_Message *message) {
 * @return The address of the message received
 */
 cgc_Message* cgc_getMessage() {
-	cgc_size_t bytes, size;
+	size_t bytes, size;
 	cgc_Message *message;
 	char *cmd_str, *auth_str, *id_str, *cred_str, *body_str;
 	char buffer[1024];
@@ -258,8 +258,8 @@ void cgc_runService(cgc_Service* serviceList, cgc_Message *message) {
 }
 
 int main(void) {
-	cgc_size_t bytes;
-	cgc_size_t size=0;
+	size_t bytes;
+	size_t size=0;
 	char* vuln_buf;
 	char* out;
 	char* filler_buf[510];

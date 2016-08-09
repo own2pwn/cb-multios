@@ -35,7 +35,7 @@ int cgc_planetMenu( cgc_pPlanet pl )
 {
 	int choice = 0;
 	char selection[30];
-	cgc_size_t length = 0;
+	size_t length = 0;
 	cgc_pCountry pc = NULL;
 
 	if ( pl == NULL ) {

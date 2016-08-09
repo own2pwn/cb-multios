@@ -13,6 +13,11 @@
 typedef unsigned long cgc_size_t;
 typedef long cgc_ssize_t;
 
+#ifndef size_t
+typedef unsigned long size_t;
+typedef long ssize_t;
+#endif
+
 // This is for challenges that define C++ operators and need to know std::size_t
 #if defined(APPLE) || defined(__LP64__) || defined(_LP64)
 # define STD_SIZE_T unsigned long

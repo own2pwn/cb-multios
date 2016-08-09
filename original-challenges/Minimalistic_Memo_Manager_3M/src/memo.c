@@ -69,7 +69,7 @@ enum mresult_t cgc_default_view_memo(cgc_memo_t *memo)
         break;
     }
     printf("------------------------------\n");
-    cgc_size_t len = cgc_strlen(memo->body);
+    size_t len = cgc_strlen(memo->body);
     for (i = 0; i < len; ++i)
     {
       if (i % 29 == 0)
@@ -216,7 +216,7 @@ enum mresult_t cgc_validate_memo(cgc_memo_t *memo)
     if (memo->priority != PRI_LOW && memo->priority != PRI_NORMAL &&
         memo->priority != PRI_HIGH)
       return MRES_ERROR_PRIORITY;
-    cgc_size_t len = cgc_strlen(memo->body); // cache length
+    size_t len = cgc_strlen(memo->body); // cache length
     for (i = 0; i < len; ++i)
     {
       char c = memo->body[i];

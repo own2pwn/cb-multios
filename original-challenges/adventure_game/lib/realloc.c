@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void *realloc(void *ptr, cgc_size_t size)
+void *realloc(void *ptr, size_t size)
 {
   if (ptr == NULL)
     return malloc(size);

@@ -33,14 +33,14 @@ int cgc_strlen(char *s) {
   return (e - s);
 }
 
-void cgc_bzero(char *s, cgc_size_t length) {
+void cgc_bzero(char *s, size_t length) {
   while (length > 0) {
     *s++ = '\0';
     length--;
   }
 }
 
-void cgc_memcpy(char *d, char *s, cgc_size_t num) {
+void cgc_memcpy(char *d, char *s, size_t num) {
   while(num > 0) {
     *d++ = *s++;
     num--;

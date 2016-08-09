@@ -51,10 +51,10 @@ static void cgc_print_table() {
    cgc_print_assigned_cells();
 }
 
-static int cgc_readline(int fd, char *line, cgc_size_t line_size)
+static int cgc_readline(int fd, char *line, size_t line_size)
 {
-    cgc_size_t i;
-    cgc_size_t rx;
+    size_t i;
+    size_t rx;
 
     for (i = 0; i < line_size; i++) {
         if (receive(fd, line, 1, &rx) != 0 || rx == 0)
@@ -77,7 +77,7 @@ static int cgc_readline(int fd, char *line, cgc_size_t line_size)
 static int cgc_parse_line(char *line)
 {
     int is_repr = 0;
-    cgc_size_t i;
+    size_t i;
     char tmp[32];
     char *tok;
     char val_str[LINE_SIZE];

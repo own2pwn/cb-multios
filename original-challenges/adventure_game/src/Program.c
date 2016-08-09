@@ -47,7 +47,7 @@ DefineFunction(Program, void, run)
     while (1)
     {
         char cmd;
-        cgc_size_t bytes;
+        size_t bytes;
 
         // display the map
         $(this->m_map, display);
@@ -88,7 +88,7 @@ try_again:
 
 DefineFunction(Program, void, load_game)
 {
-    cgc_size_t i;
+    size_t i;
     Buffer *buffer = new(Buffer);
     char *start, *strbuf = malloc(8192);
     ASSERT_ALLOC(strbuf);

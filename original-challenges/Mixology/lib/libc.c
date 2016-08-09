@@ -28,7 +28,7 @@
 typedef struct MALLOC_AR_E {
 
     void *allocation;
-    cgc_size_t size;
+    size_t size;
 
 } cgc_MALLOC_E;
 
@@ -82,11 +82,11 @@ int cgc_atoi(char *buf){
 }
 
 
-cgc_size_t cgc_read_ascii_line(int fd, char *data, cgc_size_t len){
-    cgc_size_t tot_rx = 0;
+size_t cgc_read_ascii_line(int fd, char *data, size_t len){
+    size_t tot_rx = 0;
 
     for(int i = 0; i < len && i < MAX_LINE_SZ-1; ++i){
-        cgc_size_t this_recv = 0;
+        size_t this_recv = 0;
         int recv_ret = receive(fd, &(data[i]), 1, &this_recv);
         if(recv_ret == 0 && this_recv == 1){
             tot_rx += 1;
@@ -136,8 +136,8 @@ char *cgc_strtok(char *str, const char delim){
 }
 
 
-void * cgc_calloc(cgc_size_t nmemb, cgc_size_t s){
-    cgc_size_t sz = nmemb * s;
+void * cgc_calloc(size_t nmemb, size_t s){
+    size_t sz = nmemb * s;
 
 
 
@@ -153,8 +153,8 @@ void * cgc_calloc(cgc_size_t nmemb, cgc_size_t s){
 
     return  x;
 }
-int cgc_recv_until(int fd, char *buf, const cgc_size_t buf_sz, const char delim){
-    cgc_size_t size_recvd =0;
+int cgc_recv_until(int fd, char *buf, const size_t buf_sz, const char delim){
+    size_t size_recvd =0;
     int ret = receive(fd, (void *) buf, buf_sz, &size_recvd);
     if(ret != 0)
         return -1;
@@ -169,9 +169,9 @@ int cgc_recv_until(int fd, char *buf, const cgc_size_t buf_sz, const char delim)
 
 }
 
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
 
@@ -189,7 +189,7 @@ int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
     return 0;
 }
 
-cgc_size_t cgc_strlen(const char *s){
+size_t cgc_strlen(const char *s){
     int i = 0;
     const char *p;
     for(p = s; *p; ++p){
@@ -208,13 +208,13 @@ void err(char *m){
 #endif
 
 char *cgc_strcat(char * s1, char *s2){
-    cgc_size_t n = cgc_strlen(s1);
+    size_t n = cgc_strlen(s1);
     cgc_memcpy(&(s1[n]), s2, cgc_strlen(s2));
 
     return s1;
 }
 
-void * cgc_malloc(cgc_size_t s){
+void * cgc_malloc(size_t s){
     // todo check size incoming and limit it.
 
     for(int i = 0; i < MAX_ALLOCATIONS; i++){
@@ -274,7 +274,7 @@ void cgc_free(void *p){
 #endif
 }
 
-void cgc_memcpy(void *d, const void *s, cgc_size_t size){
+void cgc_memcpy(void *d, const void *s, size_t size){
     char *dc = (char *)d;
     char *sc = (char *)s;
 
@@ -284,7 +284,7 @@ void cgc_memcpy(void *d, const void *s, cgc_size_t size){
 }
 
 // todo not true cgc_memcmp in positive results
-int cgc_memcmp(void *d, const void *s, cgc_size_t size){
+int cgc_memcmp(void *d, const void *s, size_t size){
     char *dc = (char *)d;
     char *sc = (char *)s;
 

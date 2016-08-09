@@ -26,14 +26,14 @@
 
 #include "convert.h"
 
-char *cgc_ftoa(double value, char *str, cgc_size_t size) {
+char *cgc_ftoa(double value, char *str, size_t size) {
     if (size <= 1)
         return NULL;
 
     if (isinf(value) || isnan(value))
         return NULL;
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     int negative = 0;
 
     if (value < 0) {

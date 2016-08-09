@@ -161,9 +161,9 @@ char *cgc_strcpy( char *pDest, const char *pSrc )
 	return (pDestReturn);
 }
 
-char *cgc_strncpy( char *pDest, const char *pSrc, cgc_size_t maxlen )
+char *cgc_strncpy( char *pDest, const char *pSrc, size_t maxlen )
 {
-	cgc_size_t n;
+	size_t n;
 
 	for ( n = 0; n < maxlen; n++ )
 	{
@@ -179,7 +179,7 @@ char *cgc_strncpy( char *pDest, const char *pSrc, cgc_size_t maxlen )
 	return (pDest);
 }
 
-void *cgc_memcpy( void *pDest, const void *pSource, cgc_size_t nbytes )
+void *cgc_memcpy( void *pDest, const void *pSource, size_t nbytes )
 {
 	void *pDestReturn = pDest;
 

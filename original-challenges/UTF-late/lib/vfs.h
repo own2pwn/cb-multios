@@ -45,7 +45,7 @@ struct directory {
 struct file {
     cgc_utf8char name[MAX_FILE_NAME_LENGTH];
     struct directory *parent;
-    cgc_size_t size;
+    size_t size;
     unsigned char *contents;
     struct list_node list;
 };

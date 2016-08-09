@@ -65,7 +65,7 @@
 
 
 
-int cgc_prompt_user(char* prompt_str, char* res_buf, cgc_size_t res_buf_size);
+int cgc_prompt_user(char* prompt_str, char* res_buf, size_t res_buf_size);
 int cgc_send_random_joke(cgc_jokedb_struct *jokedb);
 int cgc_send_joke(cgc_joke_struct *joke);
 int cgc_send_all_jokes(cgc_jokedb_struct *jokedb);

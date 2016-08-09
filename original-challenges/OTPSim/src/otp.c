@@ -32,7 +32,7 @@ const char *secret = (const char*) 0x4347C000;
 
 void cgc__otp_populate(cgc_otp_t *o)
 {
-    cgc_size_t i, idx;
+    size_t i, idx;
     char tmp[4096];
 
     idx = o->seed_idx % 4096;
@@ -50,9 +50,9 @@ void cgc__otp_populate(cgc_otp_t *o)
     o->data_len = MAX_OTP_LEN;
 }
 
-void cgc__otp_consume(cgc_otp_t *o, cgc_size_t sz)
+void cgc__otp_consume(cgc_otp_t *o, size_t sz)
 {
-    cgc_size_t i;
+    size_t i;
     if (o->data_len < sz)
         return;
     cgc_memcpy(o->data, &o->data[sz], o->data_len - sz);
@@ -108,8 +108,8 @@ fail:
 
 void cgc_otp_generate_otp(cgc_otp_t *o)
 {
-    cgc_size_t sz = 0;
-    if (cgc_read_n(STDIN, (char *)&sz, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    size_t sz = 0;
+    if (cgc_read_n(STDIN, (char *)&sz, sizeof(size_t)) != sizeof(size_t))
         goto fail;
 
     if (!o)
@@ -139,7 +139,7 @@ fail:
 
 void cgc_otp_extend_session(cgc_otp_t *o)
 {
-    cgc_size_t nread = 0;
+    size_t nread = 0;
     unsigned short sz = 0;
     char buf[8192];
     char *resp = NULL;
@@ -174,10 +174,10 @@ fail:
 
 void cgc_otp_set_seeds(cgc_otp_t *o)
 {
-    cgc_size_t sv = 0, idx = 0;
-    if (cgc_read_n(STDIN, (char *)&sv, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    size_t sv = 0, idx = 0;
+    if (cgc_read_n(STDIN, (char *)&sv, sizeof(size_t)) != sizeof(size_t))
         goto fail;
-    if (cgc_read_n(STDIN, (char *)&idx, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    if (cgc_read_n(STDIN, (char *)&idx, sizeof(size_t)) != sizeof(size_t))
         goto fail;
 
     if (!o)
@@ -199,12 +199,12 @@ fail:
 void cgc_otp_verify_otp(cgc_otp_t *o)
 {
     char token[MAX_OTP_LEN];
-    cgc_size_t sv = 0, idx = 0, sz = 0;
-    if (cgc_read_n(STDIN, (char *)&idx, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    size_t sv = 0, idx = 0, sz = 0;
+    if (cgc_read_n(STDIN, (char *)&idx, sizeof(size_t)) != sizeof(size_t))
         goto fail;
-    if (cgc_read_n(STDIN, (char *)&sv, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    if (cgc_read_n(STDIN, (char *)&sv, sizeof(size_t)) != sizeof(size_t))
         goto fail;
-    if (cgc_read_n(STDIN, (char *)&sz, sizeof(cgc_size_t)) != sizeof(cgc_size_t))
+    if (cgc_read_n(STDIN, (char *)&sz, sizeof(size_t)) != sizeof(size_t))
         goto fail;
     if (cgc_read_n(STDIN, token, sz) != sz)
         goto fail;

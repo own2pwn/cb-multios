@@ -27,7 +27,7 @@
 
 char *strcpy(char *dest, const char *src)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     while (*src)
       dest[i++] = *src++;
 

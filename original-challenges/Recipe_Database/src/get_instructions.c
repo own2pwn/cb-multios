@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 void cgc_get_instructions(cgc_Recipe_Type *recipe) {
 
-cgc_size_t size;
+size_t size;
 char buffer[1024];
 char *temp_step;
 char **step_list;

@@ -510,7 +510,7 @@ int cgc_verifyFormat(char *buf, int len)
 // return DISPLAY_BOARD for request to display board
 int cgc_parseUserInput(cgc_Move *movers)
 {
-	cgc_size_t size = 0; // number of bytes user input
+	size_t size = 0; // number of bytes user input
 	char buf[15]; // will hold user input
 	int num = 0;
 

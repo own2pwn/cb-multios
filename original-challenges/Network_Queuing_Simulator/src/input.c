@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 int cgc_readUntil(char *buf, int max, char delim) {
 	unsigned char c;
-	cgc_size_t size;
+	size_t size;
 	unsigned int i;
 
 	i = 0;

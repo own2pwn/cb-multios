@@ -37,7 +37,7 @@ int cgc_is_an_ace(char card)
 // Returns the total value of the hand.
 // Aces are given point value of 11 unless that cgc_puts the hand over 21, in which
 // case they are given point value of 1. 
-int cgc_hand_total(char *hand, cgc_size_t size, int running_total)
+int cgc_hand_total(char *hand, size_t size, int running_total)
 {
     for (int i=0; i<size; i++)
     {

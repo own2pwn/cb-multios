@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 int cgc_get_ingredients(cgc_Recipe_Type *recipe) {
 int ingredients_count;
-cgc_size_t size;
+size_t size;
 char buffer[1024];
 char item[1024];
 char measurement[1024];

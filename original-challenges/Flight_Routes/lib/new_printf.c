@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 int cgc_putc( int c )
 {
-    cgc_size_t tx_count;
+    size_t tx_count;
 
     if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
         _terminate(2);
@@ -886,7 +886,7 @@ int cgc_printf( const char *fmt, ... )
     cgc_va_list arg;
     int done;
     char large_buff[4096];
-    cgc_size_t tx_count;
+    size_t tx_count;
 
     va_start( arg, fmt );
 

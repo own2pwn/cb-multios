@@ -59,15 +59,15 @@ const static int CMDNEGNUMERIC = 4;
 const static int PAGE_SZ = 25;
 
 
-const static cgc_size_t PREPSAMPLESZ = 1000;
-const static cgc_size_t SAMPLESZ = 25;
+const static size_t PREPSAMPLESZ = 1000;
+const static size_t SAMPLESZ = 25;
 
 static char last_compound[MAX_NEW_CMPND_SZ];
 unsigned int cgc_get_npages(); 
 
 int cgc_transmit_compound_list(unsigned int from, unsigned int to);
 char * cgc_zoom_buf(cgc_compounds_sample_t *s);
-cgc_compounds_sample_t *cgc_sample_compounds(const char *seed, const cgc_size_t sample_size);
+cgc_compounds_sample_t *cgc_sample_compounds(const char *seed, const size_t sample_size);
 void cgc_free_sample_st(cgc_compounds_sample_t *p);
 int cgc_transmit_compound_sample_zoom(cgc_compounds_sample_t *s);
 cgc_zoom_filter_t * cgc_make_compound_sample_zoom(cgc_compounds_sample_t *s);

@@ -189,7 +189,7 @@ main(void)
 
     struct shape *shape = NULL;
     struct image *img;
-    cgc_size_t img_size;
+    size_t img_size;
 
     struct vector camera_origin, camera_direction;
     double camera_fov;

@@ -66,7 +66,7 @@ typedef enum {NUMTYPE, ARRTYPE, VIEWTYPE} cgc_varenum;
 
 typedef struct viewtype {
     char *name;
-    cgc_size_t size;
+    size_t size;
     int sign;
 } cgc_viewtype_t;
 
@@ -93,7 +93,7 @@ typedef struct numvar {
 
 typedef struct arrvar {
     cgc_var_t v;
-    cgc_size_t size;
+    size_t size;
     uint8_t arr[0];
 } cgc_arrvar_t;
 

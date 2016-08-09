@@ -38,7 +38,7 @@ extern cgc_uint32_t NumEdges;
 const unsigned char *rand_page = (const unsigned char *)0x4347C000;
 
 cgc_uint32_t cgc_ReadBytes(unsigned char *Buf, cgc_uint32_t TargetLen) {
-	cgc_size_t rxbytes;
+	size_t rxbytes;
 	cgc_uint32_t TotalLen = 0;
 
 	while ((TotalLen < TargetLen) && (receive(STDIN, Buf+TotalLen, TargetLen-TotalLen, &rxbytes) == 0)) {
@@ -55,7 +55,7 @@ cgc_uint32_t cgc_ReadBytes(unsigned char *Buf, cgc_uint32_t TargetLen) {
 }
 
 cgc_uint32_t cgc_ReadNull(cgc_uint32_t TargetLen) {
-	cgc_size_t rxbytes;
+	size_t rxbytes;
 	cgc_uint32_t TotalLen = 0;
 	unsigned char *Buf;
 
@@ -84,7 +84,7 @@ cgc_uint32_t cgc_ReadNull(cgc_uint32_t TargetLen) {
 }
 
 cgc_uint32_t cgc_SendBytes(unsigned char *Buf, cgc_uint32_t Len) {
-	cgc_size_t txbytes;
+	size_t txbytes;
 	cgc_uint32_t TotalLen = 0;
 
 	while (((transmit(STDOUT, Buf+TotalLen, Len-TotalLen, &txbytes)) == 0) && TotalLen < Len) {

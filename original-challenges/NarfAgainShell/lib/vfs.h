@@ -51,7 +51,7 @@ struct file {
     cgc_uid_t owner;
     int is_symlink;
     struct directory *parent;
-    cgc_size_t size;
+    size_t size;
     unsigned char *contents;
     struct list_node list;
 };
@@ -146,7 +146,7 @@ int cgc_read_file(const struct vfs *vfs, cgc_uid_t user, const char *path, unsig
  * @param size The new size of the file
  * @return 0 on success, -1 on failure
  */
-int cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, cgc_size_t size);
+int cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, size_t size);
 
 /**
  * Create a new directory at the given path.

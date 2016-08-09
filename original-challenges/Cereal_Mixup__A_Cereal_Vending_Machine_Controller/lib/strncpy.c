@@ -21,9 +21,9 @@
 */
 #include "strncpy.h"
  
-char *cgc_strncpy(char *dest, const char *src, cgc_size_t size) {
+char *cgc_strncpy(char *dest, const char *src, size_t size) {
 
-    cgc_size_t idx = 0;
+    size_t idx = 0;
     for (; idx < size && src[idx] != '\0'; idx++) {
         dest[idx] = src[idx];
     }

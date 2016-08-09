@@ -40,10 +40,10 @@ struct cgc_FILE {
     char buffer[1024];
 };
 
-static inline void cgc_xlat(const unsigned char *map, void *buf, cgc_size_t count)
+static inline void cgc_xlat(const unsigned char *map, void *buf, size_t count)
 {
     unsigned char *cbuf = (unsigned char *)buf;
-    cgc_size_t i;
+    size_t i;
 
     if (map == NULL)
         return;
@@ -52,14 +52,14 @@ static inline void cgc_xlat(const unsigned char *map, void *buf, cgc_size_t coun
         cbuf[i] = map[cbuf[i]];
 }
 
-static inline int cgc_transmit_all(int fd, const void *buf, cgc_size_t count)
+static inline int cgc_transmit_all(int fd, const void *buf, size_t count)
 {
     const char *cbuf = (const char *)buf;
-    cgc_size_t i;
+    size_t i;
 
     for (i = 0; i < count; )
     {
-        cgc_size_t bytes;
+        size_t bytes;
         if (transmit(fd, cbuf + i, count - i, &bytes) != 0)
             return -1;
         i += bytes;
@@ -68,15 +68,15 @@ static inline int cgc_transmit_all(int fd, const void *buf, cgc_size_t count)
     return 0;
 }
 
-static inline int cgc_transmit_xlat(int fd,  const unsigned char *map, const void *buf, cgc_size_t count)
+static inline int cgc_transmit_xlat(int fd,  const unsigned char *map, const void *buf, size_t count)
 {
     const char *cbuf = (const char *)buf;
     char tmp[1024];
-    cgc_size_t i;
+    size_t i;
 
     for (i = 0; i < count; )
     {
-        cgc_size_t cnt = count - i;
+        size_t cnt = count - i;
         if (cnt > sizeof(tmp)) cnt = sizeof(tmp);
 
         cgc_memcpy(tmp, cbuf + i, cnt);

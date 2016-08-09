@@ -56,8 +56,8 @@ cgc_uint32_t cgc_randint() {
  *
  * @return 0, always succeeds 
  */
-cgc_uint32_t cgc_rand(void *buf, cgc_size_t s, cgc_size_t *out) {
-    cgc_size_t i;
+cgc_uint32_t cgc_rand(void *buf, size_t s, size_t *out) {
+    size_t i;
     cgc_uint8_t *b = (cgc_uint8_t *) buf;
 
 

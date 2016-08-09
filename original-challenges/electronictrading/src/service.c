@@ -44,7 +44,7 @@ static struct stock_state state = {};
 int
 main(void) {
     int cmd_ret = 0;
-    cgc_size_t size = 0;
+    size_t size = 0;
     struct command cmd = {};
 
     cgc_stock_init(&state);

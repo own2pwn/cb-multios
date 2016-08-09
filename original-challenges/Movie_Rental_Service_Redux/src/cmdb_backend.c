@@ -33,7 +33,7 @@ static char g_genre_comedy[] = "Comedy";
 static char g_genre_horror[]  = "Horror";
 static char g_genre_other[] = "Other";
 
-static cgc_size_t g_num_genres = 5;
+static size_t g_num_genres = 5;
 static char *g_all_genres[10] = {
     g_genre_action, g_genre_romance, g_genre_comedy,
     g_genre_horror, g_genre_other
@@ -46,20 +46,20 @@ static char g_mpaa_pg13[] = "PG13";
 static char g_mpaa_r[] = "R";
 static char g_mpaa_unknown[] = "Unknown";
 
-static cgc_size_t g_num_mpaa_ratings = 5;
+static size_t g_num_mpaa_ratings = 5;
 static char *g_all_mpaa_ratings[10] = {
     g_mpaa_g, g_mpaa_pg, g_mpaa_pg13, g_mpaa_r, g_mpaa_unknown
 };
 
-static cgc_size_t g_list_size = 0;
-static cgc_size_t g_list_length = 0;
-static cgc_size_t g_num_rented = 0;
+static size_t g_list_size = 0;
+static size_t g_list_length = 0;
+static size_t g_num_rented = 0;
 
 static cgc_cmdb_entry_t *g_cmdb = NULL;
 
 static char *cgc_check_genre(char *genre)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (i = 0; i < g_num_genres; i++) {
         if(cgc_strcmp(genre, g_all_genres[i]) == 0)
             return g_all_genres[i];
@@ -70,7 +70,7 @@ static char *cgc_check_genre(char *genre)
 
 static char *cgc_check_rating(char *rating)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (i = 0; i < g_num_mpaa_ratings; i++) {
         if(cgc_strcmp(rating, g_all_mpaa_ratings[i]) == 0)
             return g_all_mpaa_ratings[i];
@@ -95,12 +95,12 @@ char *cgc_get_rating(int id)
     return g_all_mpaa_ratings[id-1];
 }
 
-cgc_size_t cgc_get_list_length()
+size_t cgc_get_list_length()
 {
     return g_list_length;
 }
 
-cgc_size_t cgc_get_num_rented()
+size_t cgc_get_num_rented()
 {
     return g_num_rented;
 }
@@ -143,7 +143,7 @@ int cgc_add_entry(cgc_cmdb_entry_t *entry)
         }
         g_list_size = 16;
     } else if(g_list_size == g_list_length) {
-        cgc_size_t i;
+        size_t i;
         cgc_cmdb_entry_t *temp_db = g_cmdb;
         g_cmdb = cgc_malloc(sizeof(cgc_cmdb_entry_t) * g_list_size<<1);
         if (!g_cmdb) {

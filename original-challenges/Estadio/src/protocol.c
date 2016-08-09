@@ -63,8 +63,8 @@ cgc_protocol_frame* cgc_receive_frame() {
   cgc_protocol_frame candidate;
   candidate.type = candidate.length = 0;
 
-  cgc_size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
-  cgc_size_t actual_received = 0;
+  size_t need_received = sizeof(candidate.type) + sizeof(candidate.length);
+  size_t actual_received = 0;
 
   if (receive(STDIN,
               &candidate,
@@ -92,7 +92,7 @@ cgc_protocol_frame* cgc_receive_frame() {
 }
 
 void cgc_send_frame(cgc_protocol_frame* payload) {
-  cgc_size_t sent_bytes;
+  size_t sent_bytes;
 
   if ((payload->length != 0) && (payload->value == NULL)) {
     _terminate(-1);

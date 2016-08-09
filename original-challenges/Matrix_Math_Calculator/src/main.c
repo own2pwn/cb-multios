@@ -63,7 +63,7 @@ static int cgc_get_byte()
     static int rxcnt;
     if (rxidx == rxcnt)
     {
-        cgc_size_t rx;
+        size_t rx;
         if (receive(STDIN, rxbuf, 64, &rx) != 0 || rx == 0)
             return -1;
         rxcnt = rx;
@@ -72,12 +72,12 @@ static int cgc_get_byte()
     return rxbuf[rxidx++];
 }
 
-int cgc_readline(char *buf, cgc_size_t buf_size)
+int cgc_readline(char *buf, size_t buf_size)
 {
     if (!buf || buf_size < 2)
         return -1;
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (i = 0; i < buf_size; i++)
     {
         int ch = cgc_get_byte();
@@ -101,7 +101,7 @@ int cgc_readline(char *buf, cgc_size_t buf_size)
     return SUCCESS;
 }
 
-int cgc_readnum(char *buf, cgc_size_t buf_size, int *num)
+int cgc_readnum(char *buf, size_t buf_size, int *num)
 {
     int retval = cgc_readline(buf, buf_size);
     if (retval != SUCCESS)

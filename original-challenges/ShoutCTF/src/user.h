@@ -38,8 +38,8 @@ typedef struct cgc_team_t {
     char name[32];
     struct cgc_user_t** members;
     struct cgc_user_t *leader;
-    cgc_size_t num_members;
-    cgc_size_t sz_members;
+    size_t num_members;
+    size_t sz_members;
     char *shout;
     unsigned int score;
 } cgc_team_t;

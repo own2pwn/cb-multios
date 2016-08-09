@@ -26,7 +26,7 @@
 #include "hashtime.h"
 #define OK 0
 
-cgc_size_t cgc_get_data_len(cgc_packet_t *p){
+size_t cgc_get_data_len(cgc_packet_t *p){
 	switch(p->ot){
 		case BUY:
 			return sizeof(cgc_option_order_t) - sizeof(void *);
@@ -42,13 +42,13 @@ cgc_size_t cgc_get_data_len(cgc_packet_t *p){
 }
 
 int cgc_recv_rest(cgc_packet_t *p){
-	cgc_size_t rest_data_sz = cgc_get_data_len(p);
+	size_t rest_data_sz = cgc_get_data_len(p);
 	
 	return cgc_recv_all(rest_data_sz, ((void * ) p ) + sizeof(cgc_packet_t));
 
 }
 
-cgc_size_t cgc_err_resp(cgc_OP_ERR e, cgc_packet_t *req, cgc_packet_t *p){
+size_t cgc_err_resp(cgc_OP_ERR e, cgc_packet_t *req, cgc_packet_t *p){
 	if(e == QTY_OVERFLOW){
 		cgc_option_order_t *o = (cgc_option_order_t *) &(req->op_data);
         //NOTE: this can also overflow, leading to TYPE1 pov.
@@ -95,7 +95,7 @@ void cgc_run_sell(cgc_packet_t *p, cgc_packet_t *resp){
 	int i = 0;
 
 	if(can_sell != OK){
-		cgc_size_t esz = cgc_err_resp(can_sell, p, resp);
+		size_t esz = cgc_err_resp(can_sell, p, resp);
 		int tr = cgc_transmit_all(resp, esz);
 		if(tr != OK)
 			_terminate(44);
@@ -105,7 +105,7 @@ void cgc_run_sell(cgc_packet_t *p, cgc_packet_t *resp){
 	}
 
 	// now we send back an order fill message
-	cgc_size_t resp_size = cgc_gen_order_fill_msg(resp, SELL, order->symbol, order->qty, p->acct_id);
+	size_t resp_size = cgc_gen_order_fill_msg(resp, SELL, order->symbol, order->qty, p->acct_id);
 	if(cgc_transmit_all((void *) resp, sizeof(cgc_packet_t) + resp_size) != OK)
 		_terminate(16);
 	return;
@@ -126,7 +126,7 @@ void cgc_run_buy(cgc_packet_t *p, cgc_packet_t *resp){
 
 	cgc_OP_ERR can_buy = cgc_run_option_transaction(p->acct_id, order, p->ot);
 	if(can_buy != OK){
-		cgc_size_t esz = cgc_err_resp(can_buy, p, resp);
+		size_t esz = cgc_err_resp(can_buy, p, resp);
 		int tr = cgc_transmit_all(resp, esz);
 		if(tr != OK)
 			_terminate(7);
@@ -136,7 +136,7 @@ void cgc_run_buy(cgc_packet_t *p, cgc_packet_t *resp){
 	}
 
 	// now we send back an order fill message
-	cgc_size_t resp_size = cgc_gen_order_fill_msg(resp, BUY, order->symbol, order->qty, p->acct_id);
+	size_t resp_size = cgc_gen_order_fill_msg(resp, BUY, order->symbol, order->qty, p->acct_id);
 	if(cgc_transmit_all((void *) resp, sizeof(cgc_packet_t) + resp_size) != OK)
 		_terminate(15);
 	return;
@@ -148,7 +148,7 @@ void cgc_run_quote(cgc_packet_t *p, cgc_packet_t *resp){
 		float ask = cgc_get_current_ask(qr->symbol);
 		qr->ask = ask;
 
-		cgc_size_t data_sz = cgc_get_data_len(p);
+		size_t data_sz = cgc_get_data_len(p);
 		cgc_memcpy(p, resp, data_sz+sizeof(cgc_packet_t));
 		resp->rt = RESPONSE;
 

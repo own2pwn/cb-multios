@@ -37,8 +37,8 @@ CUtil::cgc_String cgc_ReadLine( void )
 {
 	char pszLine[512];
 	char c;
-	cgc_size_t num_bytes;
-	cgc_size_t pos;
+	size_t num_bytes;
+	size_t pos;
 
 	for ( pos = 0; pos < 511; pos++ )
 	{
@@ -98,7 +98,7 @@ CUtil::cgc_String cgc_ReadLine( void )
 
                 lastScanPos = pos;
 
-                cgc_size_t num_bytes;
+                size_t num_bytes;
                 cgc_uint32_t readRemaining = (maxLen - pos);
 
                 if ( receive( STDIN, g_szLineBuffer+pos, readRemaining, &num_bytes ) != 0 )

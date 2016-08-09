@@ -37,9 +37,9 @@
 // aligned for SSE copies
 static cgc_uint8_t memory[NUM_BLOCKS * BLOCK_SIZE] __attribute__((__aligned__(16)));
 
-void *cgc_memcpy_fast(void *dst, void *src, cgc_size_t length);
-static int cgc_rbc_handle_packet(cgc_msc_t *msc, cgc_uint8_t *data, cgc_size_t length);
-static int cgc_rbc_handle_data(cgc_msc_t *msc, cgc_uint8_t *data, cgc_size_t length);
+void *cgc_memcpy_fast(void *dst, void *src, size_t length);
+static int cgc_rbc_handle_packet(cgc_msc_t *msc, cgc_uint8_t *data, size_t length);
+static int cgc_rbc_handle_data(cgc_msc_t *msc, cgc_uint8_t *data, size_t length);
 
 int cgc_msc_init(cgc_msc_t *msc)
 {
@@ -161,7 +161,7 @@ int cgc_msc_handle_urb(cgc_usb_t *usb, cgc_urb_t *urb)
     return 1;
 }
 
-static void cgc_msc_send(cgc_msc_t *msc, const cgc_uint8_t *buffer, cgc_size_t length, unsigned int flags)
+static void cgc_msc_send(cgc_msc_t *msc, const cgc_uint8_t *buffer, size_t length, unsigned int flags)
 {
     msc->out_flags = flags;
     msc->out_length = length;
@@ -201,7 +201,7 @@ static const cgc_uint8_t inquiry_data[] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
-static int cgc_rbc_handle_packet(cgc_msc_t *msc, cgc_uint8_t *data, cgc_size_t length)
+static int cgc_rbc_handle_packet(cgc_msc_t *msc, cgc_uint8_t *data, size_t length)
 {
     cgc_uint8_t *buffer = msc->out_static;
 
@@ -282,7 +282,7 @@ static int cgc_rbc_handle_packet(cgc_msc_t *msc, cgc_uint8_t *data, cgc_size_t l
     return 1;
 }
 
-static int cgc_rbc_handle_data(cgc_msc_t *msc, cgc_uint8_t *data, cgc_size_t length)
+static int cgc_rbc_handle_data(cgc_msc_t *msc, cgc_uint8_t *data, size_t length)
 {
     switch (msc->cbw.cb[0])
     {

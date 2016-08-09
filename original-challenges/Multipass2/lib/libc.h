@@ -60,13 +60,13 @@ cgc_node_t * cgc_node_create(void * data);
 int cgc_node_destroy(cgc_node_t *nd);
 
 // I/O
-int cgc_send(const char *buf, const cgc_size_t size);
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+int cgc_send(const char *buf, const size_t size);
+int cgc_transmit_all(int fd, const char *buf, const size_t size);
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size);
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
 // stdlib
-cgc_size_t cgc_strlen(const char *str);
+size_t cgc_strlen(const char *str);
 void *cgc_memset(void *dst, int c, unsigned int n);
 
 

@@ -333,7 +333,7 @@ char **cgc_atree_query(cgc_atree_t *tree, const char *word)
     return result;
 }
 
-static void cgc__atree_gather_subset(cgc_atree_t *tree, cgc_freqtab_t *ftab, cgc_atree_node_t *node, char ***results, cgc_size_t *count)
+static void cgc__atree_gather_subset(cgc_atree_t *tree, cgc_freqtab_t *ftab, cgc_atree_node_t *node, char ***results, size_t *count)
 {
     char c;
     unsigned int i, idx, freq;
@@ -344,7 +344,7 @@ static void cgc__atree_gather_subset(cgc_atree_t *tree, cgc_freqtab_t *ftab, cgc
     if (node->level == ALPHABET_SIZE)
     {
         char **r;
-        cgc_size_t c = *count + node->degree + 1;
+        size_t c = *count + node->degree + 1;
         // leaf node
         r = cgc_realloc(*results, c * sizeof(char *));
         if (r == NULL)
@@ -379,7 +379,7 @@ static void cgc__atree_gather_subset(cgc_atree_t *tree, cgc_freqtab_t *ftab, cgc
 char **cgc_atree_query_subset(cgc_atree_t *tree, const char *word)
 {
     char **results = cgc_malloc(sizeof(char *));
-    cgc_size_t count = 0;
+    size_t count = 0;
     cgc_freqtab_t ftab;
 
     cgc_ftab_init(&ftab, word);

@@ -134,11 +134,11 @@ static inline unsigned int getesp() {
 #endif
 // ^ DEBUG
 
-int cgc_defrag(cgc_size_t fragments) {
+int cgc_defrag(size_t fragments) {
 
 	int ret = SUCCESS;
 	unsigned char byte;
-	cgc_size_t i = 0;
+	size_t i = 0;
 
 	depth++;
 
@@ -240,9 +240,9 @@ void cgc_exercise_stack(void){
 int main(void) {
 
     int ret = SUCCESS;
-    cgc_size_t state = STATE_CONNTERM;
-    cgc_size_t expected_rx_bytes = CONNTERM_SZ; 
-    cgc_size_t i = 0;
+    size_t state = STATE_CONNTERM;
+    size_t expected_rx_bytes = CONNTERM_SZ; 
+    size_t i = 0;
 
 #ifdef DEBUG
 	fprintf(stderr, "[D] main | --------------- new run ---------------\n");

@@ -119,8 +119,8 @@ void cgc_calc_me_md5() {
         md5table[i] = (uint32_t)(fabs(sin(i+1))*pow(2,32));
 }
 
-void cgc_md5(uint8_t *data, cgc_size_t s, uint32_t* out) {
-    cgc_size_t len;
+void cgc_md5(uint8_t *data, size_t s, uint32_t* out) {
+    size_t len;
     uint32_t i,j,n,b;
     uint16_t k,l,m;
     //uint32_t d[16] = {0};

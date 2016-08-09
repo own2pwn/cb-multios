@@ -40,8 +40,8 @@ void cgc_zero(char *buf, unsigned int len) {
 	return;
 }
 
-cgc_size_t cgc_strlen(char *buf) {
-	cgc_size_t i = 0;
+size_t cgc_strlen(char *buf) {
+	size_t i = 0;
 
 	if (!buf) {
 		return(0);
@@ -55,9 +55,9 @@ cgc_size_t cgc_strlen(char *buf) {
 }
 
 void cgc_print(char *buf) {
-	cgc_size_t len;
-	cgc_size_t total_sent = 0;
-	cgc_size_t tx_bytes;
+	size_t len;
+	size_t total_sent = 0;
+	size_t tx_bytes;
 
 	if (!buf) {
 		return;
@@ -72,10 +72,10 @@ void cgc_print(char *buf) {
 	}
 }
 
-int cgc_read_until(char *buf, char delim, cgc_size_t max_len) {
-	cgc_size_t total_received = 0;
+int cgc_read_until(char *buf, char delim, size_t max_len) {
+	size_t total_received = 0;
 	char c;
-	cgc_size_t rx_bytes;
+	size_t rx_bytes;
 
 	if (!buf) {
 		return(-1);
@@ -99,7 +99,7 @@ int cgc_read_until(char *buf, char delim, cgc_size_t max_len) {
 }
 
 int cgc_strmatch(char *buf1, char *buf2) {
-	cgc_size_t len1;	
+	size_t len1;	
 	int i;
 
 	if (!buf1 || !buf2) {

@@ -55,7 +55,7 @@ static char cgc_readopt(int fd) {
     char d = 0;
     char delim = '\n';
 
-    cgc_size_t rx;
+    size_t rx;
     if (receive(fd, &c, 1, &rx) != 0 || rx == 0)
         return -1;
 
@@ -73,10 +73,10 @@ static char cgc_readopt(int fd) {
     return c;
 }
 
-static int cgc_readline(int fd, char *line, cgc_size_t line_size)
+static int cgc_readline(int fd, char *line, size_t line_size)
 {
-    cgc_size_t i;
-    cgc_size_t rx;
+    size_t i;
+    size_t rx;
 
     for (i = 0; i < line_size; i++) {
         if (receive(fd, line, 1, &rx) != 0 || rx == 0)
@@ -96,7 +96,7 @@ static int cgc_readline(int fd, char *line, cgc_size_t line_size)
     return 0;
 }
 
-static int cgc_parse_num_steps(char *line, cgc_size_t line_size)
+static int cgc_parse_num_steps(char *line, size_t line_size)
 {
     char *temp = line;
     while(*temp) {
@@ -112,7 +112,7 @@ static int cgc_parse_num_steps(char *line, cgc_size_t line_size)
     return num_steps;
 }
 
-static cgc_coord_t cgc_parse_coordinate(char *line, cgc_size_t line_size)
+static cgc_coord_t cgc_parse_coordinate(char *line, size_t line_size)
 {
     cgc_coord_t coord;
     UNSET_COORD(coord);

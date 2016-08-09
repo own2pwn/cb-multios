@@ -26,7 +26,7 @@
 
 #include <libcgc.h>
 
-int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim);
-int cgc_read_n(int fd, char *buf, cgc_size_t len);
+int cgc_read_until(int fd, char *buf, size_t len, char delim);
+int cgc_read_n(int fd, char *buf, size_t len);
 
 #endif

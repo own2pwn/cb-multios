@@ -47,7 +47,7 @@ char json[BUF_RX_SZ];
 
 cgc_object_t * cgc_object_find(uint8_t id) {
 
-    cgc_size_t i = 0;
+    size_t i = 0;
 
     for (i=0; i<NUM_OBJS; i++) {
         if (NULL != ns.obj[i] && id == ns.obj[i]->id) {
@@ -282,7 +282,7 @@ int cgc_op_del(char **cursor, uint16_t *line_remaining) {
 
     int ret = SUCCESS;
     uint8_t id = 0;
-    cgc_size_t i = 0;
+    size_t i = 0;
 
     // Get ID to DEL.
     if (SUCCESS != (ret = cgc_parse_id(cursor, line_remaining, &id))) {
@@ -688,7 +688,7 @@ bail:
 int cgc_deserialize(void) {
 
     int ret = SUCCESS;
-    cgc_size_t rx_bytes = 0;
+    size_t rx_bytes = 0;
 
     uint16_t json_sz = 0;
 
@@ -740,7 +740,7 @@ int cgc_serialize(void) {
     int ret = SUCCESS;
     uint32_t consumed = 0;
     cgc_object_t *object = NULL;
-    cgc_size_t i = 0;
+    size_t i = 0;
 
 #ifdef DEBUG
     fprintf(stderr, "[D] cgc_serialize | INIT\n");
@@ -829,8 +829,8 @@ bail:
 int main(void) {
 
     int ret = SUCCESS;
-    cgc_size_t rx_bytes = 0;
-    cgc_size_t tx_bytes = 0;
+    size_t rx_bytes = 0;
+    size_t tx_bytes = 0;
 
     cgc_memset((void *)&ns, 0, sizeof(ns));
 

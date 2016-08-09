@@ -29,9 +29,9 @@
 #include "prettyprinter.h"
 
 void
-cgc_pretty_print_tokens(struct token *tokens, cgc_size_t n)
+cgc_pretty_print_tokens(struct token *tokens, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     char name[5] = {};
 
     for (i = 0; i < n; i++) {

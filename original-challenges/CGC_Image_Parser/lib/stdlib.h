@@ -38,19 +38,19 @@ int cgc_isalnum( int c );
 double cgc_atof(const char *str);
 int cgc_atoi(const char *str);
 
-int cgc_memcpy( void *dest, void *src, cgc_size_t n);
-int cgc_memcmp( void *dest, void *src, cgc_size_t n);
-void cgc_memset( void *dest, char c, cgc_size_t n);
+int cgc_memcpy( void *dest, void *src, size_t n);
+int cgc_memcmp( void *dest, void *src, size_t n);
+void cgc_memset( void *dest, char c, size_t n);
 char *cgc_strcpy( char *dest, char *src );
-char *cgc_strncpy( char *dest, char *src, cgc_size_t n );
+char *cgc_strncpy( char *dest, char *src, size_t n );
 int cgc_printf( const char *fmt, ... );
-void cgc_bzero( void *, cgc_size_t );
+void cgc_bzero( void *, size_t );
 int cgc_strcmp( const char *, const char * );
-char *cgc_strncat( char *dest, const char *src, cgc_size_t n );
-cgc_size_t cgc_receive_until( char *, char, cgc_size_t );
-cgc_size_t cgc_strcat( char *, char* );
-cgc_size_t cgc_strlen( char * );
-cgc_size_t cgc_itoa( char *, cgc_size_t, cgc_size_t );
+char *cgc_strncat( char *dest, const char *src, size_t n );
+size_t cgc_receive_until( char *, char, size_t );
+size_t cgc_strcat( char *, char* );
+size_t cgc_strlen( char * );
+size_t cgc_itoa( char *, size_t, size_t );
 void cgc_puts( char *t );
 
 #endif // __STDLIB_H__

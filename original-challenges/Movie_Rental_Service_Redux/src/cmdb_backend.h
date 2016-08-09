@@ -15,8 +15,8 @@ typedef enum {ALL, OWNED, RENTED} cgc_filter_e;
 
 char *cgc_get_genre(int id);
 char *cgc_get_rating(int id);
-cgc_size_t cgc_get_list_length();
-cgc_size_t cgc_get_num_rented();
+size_t cgc_get_list_length();
+size_t cgc_get_num_rented();
 int cgc_add_movie(char *name, char *desc, short year, char score, char *type, char *mpaa);
 int cgc_add_entry(cgc_cmdb_entry_t *entry);
 int cgc_delete_entry(int id);

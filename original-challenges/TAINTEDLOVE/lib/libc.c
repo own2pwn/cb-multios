@@ -25,11 +25,11 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // MOD from GREYMATTER: added cgc_fdwait() functionality.
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t rx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t rx_bytes_local = 0;
 
   cgc_fd_set fdsToWait;
   int fdsReady = 0;
@@ -87,11 +87,11 @@ int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // MOD from GREYMATTER: changed loop condition.
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t tx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t tx_bytes_local = 0;
 
   while ((count - bytes_left) != count) {
 
@@ -115,9 +115,9 @@ int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_b
 
 // COPIED FROM: FASTLANE
 // RETURN: the first argument
-unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, size_t len) {
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     while (len) {
         b[len-1] = c;
         len--;
@@ -201,8 +201,8 @@ int toupper(int c) {
    return c;
 }
 
-cgc_size_t strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t strlen(const char *str) {
+   size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

@@ -42,9 +42,9 @@ typedef unsigned char cgc_utf8char;
 typedef unsigned int cgc_ucscodepoint;
 
 enum utf8_decode_state cgc_utf8_decode(enum utf8_decode_state state, cgc_utf8char c, cgc_ucscodepoint *out);
-cgc_ssize_t cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, cgc_size_t size);
+cgc_ssize_t cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, size_t size);
 
-cgc_size_t cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, cgc_size_t n);
+size_t cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, size_t n);
 
 #endif /* UTF8_H_ */
 

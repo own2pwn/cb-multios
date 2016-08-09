@@ -30,11 +30,11 @@ struct list allocated_list;
 struct list free_list;
 
 char init_heap_done = FALSE;
-cgc_size_t remaining = 0;
+size_t remaining = 0;
 cgc_block_meta_t *last = NULL;
 
 
-static void cgc_set_block_size(cgc_block_meta_t *block, cgc_size_t size) {
+static void cgc_set_block_size(cgc_block_meta_t *block, size_t size) {
 	block->data = (void *)size;
 }
 
@@ -54,7 +54,7 @@ static unsigned char cgc_is_enough_room(const void *free_sz, void *new_sz) {
 	return FALSE;
 }
 
-void *cgc_malloc(cgc_size_t size) {
+void *cgc_malloc(size_t size) {
 
 	if (0 == size) {
 		return NULL;

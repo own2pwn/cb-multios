@@ -23,9 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *cgc_strndup(const char *s1, cgc_size_t n)
+char *cgc_strndup(const char *s1, size_t n)
 {
-  cgc_size_t len = cgc_strlen(s1);
+  size_t len = cgc_strlen(s1);
   if (len > n)
     len = n;
 

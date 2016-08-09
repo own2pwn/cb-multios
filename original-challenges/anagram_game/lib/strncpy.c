@@ -1,8 +1,8 @@
 #include <string.h>
 
-char *cgc_strncpy(char *dest, const char *src, cgc_size_t n)
+char *cgc_strncpy(char *dest, const char *src, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n; i++)
     {
         dest[i] = src[i];

@@ -38,17 +38,17 @@ typedef struct {
 } cgc_flag_t;
 
 typedef struct {
-    cgc_size_t num_submit;
-    cgc_size_t num_valid;
-    cgc_size_t sz_submit;
+    size_t num_submit;
+    size_t num_valid;
+    size_t sz_submit;
     cgc_flag_t **submits;
     cgc_chal_t **chals;
-    cgc_size_t *num_chals;
+    size_t *num_chals;
 } cgc_flgmgr_t;
 
-cgc_error_t cgc_flg_init(cgc_flgmgr_t *flg, cgc_chal_t **chals, cgc_size_t *num_chals);
+cgc_error_t cgc_flg_init(cgc_flgmgr_t *flg, cgc_chal_t **chals, size_t *num_chals);
 cgc_error_t cgc_flg_add_submit(cgc_flgmgr_t *flg, cgc_team_t *team, const char* flag);
-cgc_error_t cgc_flg_get_solves(cgc_flgmgr_t *flg, cgc_flag_t ***flags, cgc_chal_t *chal, cgc_size_t *n);
+cgc_error_t cgc_flg_get_solves(cgc_flgmgr_t *flg, cgc_flag_t ***flags, cgc_chal_t *chal, size_t *n);
 cgc_error_t cgc_flg_find_chal(cgc_flgmgr_t *flg, cgc_chal_t **chal, const char* flag);
 int cgc_flg_team_did_solve(cgc_flgmgr_t *flg, cgc_team_t *team, cgc_chal_t *chal);
 

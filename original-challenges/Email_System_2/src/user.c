@@ -74,7 +74,7 @@ void cgc_create_user(int tries)
 	char buf[MAX_NAME_LEN];
 	char buf2[MAX_PASS_LEN];
 	cgc_printf("Username: \n");
-	cgc_size_t len = cgc_receive_until( buf, '\n', MAX_NAME_LEN - 1);
+	size_t len = cgc_receive_until( buf, '\n', MAX_NAME_LEN - 1);
 	buf[len++] = 0;
 
 	int found = -1;

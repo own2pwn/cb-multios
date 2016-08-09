@@ -46,12 +46,12 @@ cgc_ac_t word_list[MAX_AC_LIST] = {
 
 #define MAX_QUEUE 1024
 static struct {
-  cgc_size_t start;
-  cgc_size_t end;
+  size_t start;
+  size_t end;
 } ac_queue[MAX_QUEUE];
-static cgc_size_t ac_queue_head, ac_queue_tail, ac_queue_count;
+static size_t ac_queue_head, ac_queue_tail, ac_queue_count;
 static char *ac_buffer;
-static cgc_size_t ac_idx;
+static size_t ac_idx;
 static cgc_mutex_t ac_mutex;
 
 void cgc_ac_init()
@@ -93,7 +93,7 @@ void cgc_ac_process(void *ud)
   int dummy;
   while (1)
   {
-    cgc_size_t i;
+    size_t i;
     int j;
 
     while (ac_buffer != NULL && ac_queue_count > 0)
@@ -107,7 +107,7 @@ void cgc_ac_process(void *ud)
       }
 #endif
       i = ac_queue_head;
-      cgc_size_t start = ac_queue[i].start, end = ac_queue[i].end;
+      size_t start = ac_queue[i].start, end = ac_queue[i].end;
 
       if (end-start < sizeof(word))
       {
@@ -166,14 +166,14 @@ void cgc_ac_process(void *ud)
 
 char *cgc_ac_read(int fd, char term)
 {
-  cgc_size_t rx;
+  size_t rx;
   ac_queue_count = ac_queue_head = ac_queue_tail = ac_idx = 0;
   ac_buffer = NULL;
 
   while (1)
   {
     // read next word
-    cgc_size_t count = 0;
+    size_t count = 0;
     char word[MAX_AC_LEN];
     for (count = 0; count < MAX_AC_LEN; count++)
     {
@@ -209,7 +209,7 @@ char *cgc_ac_read(int fd, char term)
         // wait until queue is no longer full
         cgc_filaments_yield();
 
-      cgc_size_t i = ac_queue_tail;
+      size_t i = ac_queue_tail;
       ac_queue_tail = (ac_queue_tail + 1) % MAX_QUEUE;
       ac_queue_count++;
 

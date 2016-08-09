@@ -23,6 +23,6 @@
 #include "read_all.h"
 
 // returns number of bytes received
-cgc_size_t cgc_recv_all(char *buf, cgc_size_t size) {
+size_t cgc_recv_all(char *buf, size_t size) {
     return cgc_read_all(STDIN, buf, size);
 }

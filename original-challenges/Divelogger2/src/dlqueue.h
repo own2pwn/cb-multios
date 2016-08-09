@@ -66,12 +66,12 @@ public:
     cgc_DLItem *cgc_GetFirst( void ) { return m_pFirst; };
     cgc_DLItem *cgc_GetLast( void ) { return m_pLast; };
 
-    cgc_size_t cgc_GetCount( void ) { return m_count; };
+    size_t cgc_GetCount( void ) { return m_count; };
 
 private:
     cgc_DLItem *m_pFirst;
     cgc_DLItem *m_pLast;
-    cgc_size_t m_count;
+    size_t m_count;
 };
 
 #endif // __DLQUEUE_H___

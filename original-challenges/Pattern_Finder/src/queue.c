@@ -55,9 +55,9 @@ void cgc_FreeQueue(cgc_queue* Queue)
 // This maintains relative ordering
 void cgc_ShiftQueueElementsToFront(cgc_queue* Queue)
 {
-  cgc_size_t QueueIndex;
-  cgc_size_t SwapSrcIndex;
-  cgc_size_t SwapDstIndex;
+  size_t QueueIndex;
+  size_t SwapSrcIndex;
+  size_t SwapDstIndex;
 
   if (!Queue)
     return;
@@ -95,7 +95,7 @@ void cgc_Enqueue(cgc_queue* Queue, void* Element)
   // Double cgc_queue capacity
   if (Queue->Size == Queue->Capacity)
   {
-    cgc_size_t NewCapacity = Queue->Capacity * 2;
+    size_t NewCapacity = Queue->Capacity * 2;
     Assert(NewCapacity > Queue->Capacity, "E2");
 
     void** NewElements = cgc_xcalloc(sizeof(void *), NewCapacity);
@@ -111,7 +111,7 @@ void cgc_Enqueue(cgc_queue* Queue, void* Element)
 void* cgc_Dequeue(cgc_queue* Queue)
 {
   void* Result = NULL;
-  cgc_size_t QueueIndex;
+  size_t QueueIndex;
 
   Queue->KnownHead = -1;
 
@@ -136,7 +136,7 @@ void* cgc_Dequeue(cgc_queue* Queue)
 
 void* cgc_Peek(cgc_queue* Queue)
 {
-  cgc_size_t QueueIndex;
+  size_t QueueIndex;
   if (!Queue)
     return NULL;
 

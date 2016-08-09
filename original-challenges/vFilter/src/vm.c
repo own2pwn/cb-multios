@@ -284,7 +284,7 @@ int cgc_syscall_transmit(cgc_vm_t *vm)
 
 int cgc_syscall_cgc_random(cgc_vm_t *vm)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     unsigned int length = vm->registers[1].number;
     if (!cgc_valid_mem(&vm->registers[0], 0, length))
         return 0;

@@ -27,7 +27,7 @@
 #include "zoom.h"
 #include "asciiencode.h"
 
-cgc_compounds_sample_t *cgc_alloc_sample_st(const cgc_size_t sample_size){
+cgc_compounds_sample_t *cgc_alloc_sample_st(const size_t sample_size){
 
 
 	cgc_compounds_sample_t * p = (cgc_compounds_sample_t *) cgc_malloc(sizeof(cgc_compounds_sample_t));
@@ -159,7 +159,7 @@ char * cgc_gen_chem_name(cgc_mixed_compound_t *mc, cgc_compounds_sample_t *rcs){
 		cgc_chem_formula_t *cf = cgc_get_compound_by_idx(cgc_get_chem_ref_at_idx(rcs, i));
 		if(cf == NULL)
 			return NULL;
-		cgc_size_t cpsz = cgc_strlen(cf->compound_name);
+		size_t cpsz = cgc_strlen(cf->compound_name);
 		if(cpsz > block_sz)
 			cpsz = block_sz;
 		
@@ -210,7 +210,7 @@ int cgc_mix_cmd(char *args){
 
 	if(rcs == NULL)
 		return CMDFAIL;
-	// int allocate(cgc_size_t length, int is_X, void **addr)/
+	// int allocate(size_t length, int is_X, void **addr)/
 
 
 	cgc_mixed_compound_t *mc = cgc_calloc(1, sizeof(cgc_mixed_compound_t));
@@ -245,12 +245,12 @@ int cgc_mix_cmd(char *args){
 
 	
 #ifndef PATCHED
-	cgc_size_t cpsz = cgc_strlen(mc->compound_name);
+	size_t cpsz = cgc_strlen(mc->compound_name);
 	cgc_memcpy(last_compound, mc->compound_name, cpsz);
 #endif
 
 #ifdef PATCHED
-	cgc_size_t cpsz = cgc_strlen(mc->compound_name);
+	size_t cpsz = cgc_strlen(mc->compound_name);
 	if(cpsz > MAX_NEW_CMPND_SZ)
 		cpsz = MAX_NEW_CMPND_SZ;
 
@@ -275,7 +275,7 @@ int cgc_mix_cmd(char *args){
 
 int cgc_list_cmd(char *args){
 	// todo get page number from cgc_strtok
-	cgc_size_t cmd_len = cgc_strlen(args);
+	size_t cmd_len = cgc_strlen(args);
 	char * pg_num_txt = args;//\\\cgc_strtok(NULL, cmd_len);
 	if(pg_num_txt == NULL){
 		return CMDBADARG;
@@ -435,7 +435,7 @@ void cgc_free_sample_st(cgc_compounds_sample_t *p){
 	cgc_free(p);
 }
 
-cgc_compounds_sample_t *cgc_sample_compounds(const char *seed, const cgc_size_t sample_size){
+cgc_compounds_sample_t *cgc_sample_compounds(const char *seed, const size_t sample_size){
 	if(sample_size > N_FORMULAS-1)
 		return NULL;
 	unsigned int h = cgc_crazy_hash(seed, cgc_strlen(seed), 0xcafeb4b4);

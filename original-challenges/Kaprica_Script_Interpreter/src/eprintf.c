@@ -25,7 +25,7 @@
 #include "interp.h"
 
 #define OUTPUT_BYTE(x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     transmit(fd, &_c, sizeof(_c), &bytes); \
 } while (0);

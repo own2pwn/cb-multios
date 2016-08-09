@@ -328,7 +328,7 @@ cgc_Object* cgc_getObjectById(cgc_Room* start, unsigned int id) {
 void cgc_playerDied(cgc_Dungeon dungeon) {
 	char buffer[1024];
 	cgc_Object* player;
-	cgc_size_t len;
+	size_t len;
 
 	cgc_bzero(buffer, 1024);
 	if(!(player = cgc_getObjectById(dungeon.start, PLAYER_NUM)))
@@ -353,7 +353,7 @@ void cgc_playerDied(cgc_Dungeon dungeon) {
 char* cgc_getName() {
 	char buffer[MAX_NAME_SIZE+1];
 	char *name;
-	cgc_size_t len, bytes;
+	size_t len, bytes;
 
 	cgc_bzero(buffer, MAX_NAME_SIZE+1);
 	if(cgc_transmit_all(STDOUT, HIGHSCORE_MSG, cgc_strlen(HIGHSCORE_MSG)))
@@ -435,7 +435,7 @@ void cgc_playerWon(cgc_Dungeon* dungeon) {
 	char buffer[1024];
 	char* ml_buffer;
 	cgc_Object* player;
-	cgc_size_t len;
+	size_t len;
 
 	cgc_bzero(buffer, 1024);
 	if(!(player = cgc_getObjectById(dungeon->start, PLAYER_NUM)))
@@ -1081,7 +1081,7 @@ void cgc_sendCurrentDungeonView(cgc_Room* start) {
 	int center_x, center_y;
 	int height_diff, width_diff;
 	int room_idx;
-	cgc_size_t bytes;
+	size_t bytes;
 
 	if(!(player = cgc_getObjectById(start, PLAYER_NUM)))
 		_terminate(OBJECT_NOT_FOUND_ERROR);
@@ -1277,7 +1277,7 @@ void cgc_buildDungeon(cgc_Dungeon* dungeon) {
 * @return None
 */
 void cgc_destroyDungeon(cgc_Dungeon* dungeon) {
-	cgc_size_t len;
+	size_t len;
 
 	cgc_bzero((char *)&dungeon->moveTypes, sizeof(cgc_Moves));
 	if(dungeon->moveList) {

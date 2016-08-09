@@ -22,7 +22,7 @@
  */
 #include "ctype.h"
 #include "string.h"
-int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n)
+int cgc_strncasecmp(const char *s1, const char *s2, size_t n)
 {
   const char *end = s1 + n;
   while (*s1 && *s2 && cgc_tolower(*s1) == cgc_tolower(*s2) && s1 < end)

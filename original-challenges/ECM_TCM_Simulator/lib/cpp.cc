@@ -33,28 +33,27 @@ extern "C"
 #include <stdio.h>
 }
 
-void *operator new( uint32_t size )
+void *operator new( size_t size )
 {
-	return (void *)malloc( size );
+	return (void *)cgc_malloc( size );
 }	
 
-void *operator new[]( uint32_t size )
+void *operator new[]( size_t size )
 {
-	return (void *)malloc( size );
+	return (void *)cgc_malloc( size );
 }
 
 void operator delete( void *ptr )
 {
-	free( ptr );
+	cgc_free( ptr );
 }
 
 void operator delete[]( void *ptr )
 {
-	free( ptr );
+	cgc_free( ptr );
 }
 
 extern "C" void __cxa_pure_virtual( void )
 {
-	printf( "Program abort@cxa_pure_virtual\n" );
 	_terminate(-1);
 }

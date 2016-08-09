@@ -183,7 +183,7 @@ int cgc_isClear(unsigned int* bitmap) {
 *
 * @return a pointer the allocated memory
 */
-void* cgc_malloc(cgc_size_t size) {
+void* cgc_malloc(size_t size) {
 
 	void* allocated=NULL;
 	unsigned int msb=0;

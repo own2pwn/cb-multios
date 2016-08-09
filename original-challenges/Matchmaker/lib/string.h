@@ -33,7 +33,7 @@
  * @param num The number of bytes to copy
  * @return The destination pointer
  */
-void *cgc_memcpy(void *destination, const void *source, cgc_size_t num);
+void *cgc_memcpy(void *destination, const void *source, size_t num);
 
 /**
  * Moves num bytes from source to destination, allowing buffers to overlap.
@@ -43,7 +43,7 @@ void *cgc_memcpy(void *destination, const void *source, cgc_size_t num);
  * @param num The number of bytes to move
  * @return The destination pointer
  */
-void *cgc_memmove(void *destination, const void *source, cgc_size_t num);
+void *cgc_memmove(void *destination, const void *source, size_t num);
 
 /**
  * Sets num bytes in ptr to value.
@@ -53,7 +53,7 @@ void *cgc_memmove(void *destination, const void *source, cgc_size_t num);
  * @param num The number of bytes to set
  * @return The destination pointer
  */
-void *cgc_memset(void *ptr, int value, cgc_size_t num);
+void *cgc_memset(void *ptr, int value, size_t num);
 
 /**
  * Returns the length of str.
@@ -61,7 +61,7 @@ void *cgc_memset(void *ptr, int value, cgc_size_t num);
  * @param str The string to measure
  * @return The length of str
  */
-cgc_size_t cgc_strlen(const char *str);
+size_t cgc_strlen(const char *str);
 
 /**
  * Returns the length of str, examining at most num bytes.
@@ -70,7 +70,7 @@ cgc_size_t cgc_strlen(const char *str);
  * @param num The number of bytes to examine
  * @return The length of str, or num if longer than num
  */
-cgc_size_t cgc_strnlen(const char *str, cgc_size_t num);
+size_t cgc_strnlen(const char *str, size_t num);
 
 /**
  * Copies a string from source to destination.
@@ -92,7 +92,7 @@ char *cgc_strcpy(char *destination, const char *source);
  * @param num The maximum number of bytes to copy
  * @return destination
  */
-char *cgc_strncpy(char *destination, const char *source, cgc_size_t num);
+char *cgc_strncpy(char *destination, const char *source, size_t num);
 
 /**
  * Appends a string from source to destination.
@@ -111,7 +111,7 @@ char *cgc_strcat(char *destination, const char *source);
  * @param num The maximum number of bytes to append
  * @return destination
  */
-char *cgc_strncat(char *destination, const char *source, cgc_size_t num);
+char *cgc_strncat(char *destination, const char *source, size_t num);
 
 /**
  * Compares num bytes between ptr1 and ptr2.
@@ -121,7 +121,7 @@ char *cgc_strncat(char *destination, const char *source, cgc_size_t num);
  * @param num The maximum number of bytes to compare
  * @return 0 if ptr1 == ptr2, <0 if ptr1 < ptr2, >0 if ptr1 > ptr2
  */
-int cgc_memcmp(const void *ptr1, const void *ptr2, cgc_size_t num);
+int cgc_memcmp(const void *ptr1, const void *ptr2, size_t num);
 
 /**
  * Compares str1 to str2.
@@ -140,7 +140,7 @@ int cgc_strcmp(const char *str1, const char *str2);
  * @param num The number of bytes to compare
  * @return 0 if str1 == str2, <0 if str1 < str2, >0 if str1 > str2
  */
-int cgc_strncmp(const char *str1, const char *str2, cgc_size_t num);
+int cgc_strncmp(const char *str1, const char *str2, size_t num);
 
 /**
  * Find the first instance of value in the first num bytes of ptr.
@@ -150,7 +150,7 @@ int cgc_strncmp(const char *str1, const char *str2, cgc_size_t num);
  * @param num The number of bytes to search
  * @return A pointer to the first instance of value in ptr, or NULL if not found
  */
-void *cgc_memchr(void *ptr, int value, cgc_size_t num);
+void *cgc_memchr(void *ptr, int value, size_t num);
 
 /**
  * Find the first instance of character in str.
@@ -199,7 +199,7 @@ char *cgc_strstr(char *str1, const char *str2);
  * @return The number of characters in str1 before any of the characters in str2
  *      occur, or cgc_strlen(str1) if none found
  */
-cgc_size_t cgc_strcspn(const char *str1, const char *str2);
+size_t cgc_strcspn(const char *str1, const char *str2);
 
 /**
  * Return the number of characters at the start of str1 that consist of only
@@ -210,7 +210,7 @@ cgc_size_t cgc_strcspn(const char *str1, const char *str2);
  * @return The number of characters at the start of str1 that consist of only
  *      characters found in str2
  */
-cgc_size_t cgc_strspn(const char *str1, const char *str2);
+size_t cgc_strspn(const char *str1, const char *str2);
 
 /**
  * Split a string into tokens separated by the characters in delimiter.

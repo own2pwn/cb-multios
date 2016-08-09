@@ -111,7 +111,7 @@ typedef struct orderbook_order{
 cgc_orderbook_order_t ORDERBOOK[NUM_ORDERS];
 
 cgc_OP_ERR cgc_run_option_transaction(cgc_uint32_t acct_id, cgc_option_order_t *order, cgc_OP_TYPE ot);
-cgc_size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id);
+size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id);
 float cgc_get_current_ask(char * sym);
 
 

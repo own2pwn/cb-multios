@@ -30,7 +30,7 @@ static struct vfs vfs;
 static struct directory *pubroot = NULL;
 static struct directory *admin = NULL;
 
-#define MAX_FILE_SIZE (PAGE_SIZE - 2 * sizeof(cgc_size_t))
+#define MAX_FILE_SIZE (PAGE_SIZE - 2 * sizeof(size_t))
 #define MAX_PATH_LENGTH (sizeof(cgc_ucscodepoint) * (sizeof(pubroot_path) + MAX_FILE_NAME_LENGTH))
 
 enum fileserver_ops {
@@ -86,7 +86,7 @@ static int
 cgc_write_file(void)
 {
     struct file *file;
-    cgc_size_t size;
+    size_t size;
     cgc_utf8char filename[MAX_FILE_NAME_LENGTH + 1];
     cgc_utf8char path[MAX_PATH_LENGTH];
 

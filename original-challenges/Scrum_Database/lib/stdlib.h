@@ -43,8 +43,8 @@ int cgc_isdigit( int c );
 int cgc_isinf( double val );
 
 char *cgc_strcpy( char *pDest, const char *pSource );
-char *cgc_strncpy( char *pDest, const char *pSource, cgc_size_t maxlen );
-void *cgc_memcpy( void *pDest, const void *pSrc, cgc_size_t nbytes );
+char *cgc_strncpy( char *pDest, const char *pSource, size_t maxlen );
+void *cgc_memcpy( void *pDest, const void *pSrc, size_t nbytes );
 
 
 #endif // STDLIB_H__

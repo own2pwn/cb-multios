@@ -72,15 +72,15 @@ typedef struct jit {
 
 #define MAX_OUTPUT (64*1024)
 static char *g_output_buf = NULL;
-static cgc_size_t g_output_len = 0;
+static size_t g_output_len = 0;
 
-int cgc_readuntil(int fd, char *buf, cgc_size_t len, char delim)
+int cgc_readuntil(int fd, char *buf, size_t len, char delim)
 {
-    cgc_size_t i;
+    size_t i;
     char *c = buf;
     for (i = 0; i < len; ++i)
     {
-        cgc_size_t rx;
+        size_t rx;
         if (receive(fd, c, 1, &rx) != 0 || rx == 0)
             break;
         if (*(c++) == delim)

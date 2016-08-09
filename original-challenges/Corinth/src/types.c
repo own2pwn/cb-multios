@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #define c(NAME, SIZE) cgc_chk(SIZE, sizeof(NAME))
 
-void cgc_chk(cgc_size_t expected, cgc_size_t got);
+void cgc_chk(size_t expected, size_t got);
 
 // check assumptions about type sizes
 void cgc_types_check() {
@@ -45,7 +45,7 @@ void cgc_types_check() {
   c(cgc_float64, 8);
 }
 
-void cgc_chk(cgc_size_t expected, cgc_size_t got) {
+void cgc_chk(size_t expected, size_t got) {
   if (expected == got) return;
 
   _terminate(-1);

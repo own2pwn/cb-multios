@@ -622,7 +622,7 @@ cgc_int32_t cgc_reset_simulation(void) {
  */
 cgc_int32_t cgc_lift_stats(void) {
 	cgc_uint32_t *stats;
-	cgc_size_t stats_sz;
+	size_t stats_sz;
 	cgc_Lift *l;
 
 	if (0 == resort.lift_count) return -1;
@@ -652,7 +652,7 @@ cgc_int32_t cgc_lift_stats(void) {
  */
 cgc_int32_t cgc_trail_stats(void) {
 	cgc_uint32_t *stats;
-	cgc_size_t stats_sz;
+	size_t stats_sz;
 	cgc_Trail *t;
 
 	if (0 == resort.trail_count) return -1;
@@ -687,7 +687,7 @@ cgc_int32_t cgc_rider_stats(void) {
 	cgc_Chair *c;
 	cgc_Rider *r;
 	cgc_uint32_t *stats;
-	cgc_size_t stats_sz;
+	size_t stats_sz;
 	cgc_uint32_t s_idx = 0;
 	cgc_uint32_t counter = 0;
 

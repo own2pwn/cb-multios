@@ -48,7 +48,7 @@ cgc_get_bit( cgc_char_set set, unsigned char bit)
 static void
 cgc_invert_char_set(cgc_char_set set)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
 
     for (i = 0; i < CHAR_SET_SIZE; i++)
         set[i] = ~set[i];
@@ -182,7 +182,7 @@ cgc_regex_match(char *regex, char *line, char **begin, char **end)
 {
     int ret = EXIT_FAILURE;
     int i;
-    cgc_size_t count = 0;
+    size_t count = 0;
     char *c = regex;
     struct regex_element element, **elements = NULL;
 

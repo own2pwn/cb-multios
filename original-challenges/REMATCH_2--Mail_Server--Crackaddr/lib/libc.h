@@ -39,7 +39,7 @@ int cgc_equals(char *s, char *d);
 int cgc_replace(char *s, char find, char cgc_replace, int num);
 int cgc_force_newline(char *s, int size, int bytes);
 int cgc_getopt(int argc, char **argv, char *optstring, int *opt_index);
-void cgc_bcopy(char *s, char *d, cgc_size_t size);
+void cgc_bcopy(char *s, char *d, size_t size);
 void cgc_exit(int e);
 
 #endif

@@ -520,7 +520,7 @@ void cgc_CSimulation::cgc_SendBinaryMessage( cgc_uint32_t cmd_time_ms, cgc_uint8
 	cgc_memset( pMessageData, 0, messageLength );
 
 	cgc_uint32_t binaryPos = 0;
-	for ( cgc_size_t pos = 0; pos < sLine.cgc_GetLength(); )
+	for ( size_t pos = 0; pos < sLine.cgc_GetLength(); )
 	{
 		cgc_uint8_t temp;
 

@@ -50,7 +50,7 @@ char* cgc_generateRandomToken(unsigned int tokenSize) {
 	char* token;
 	unsigned int idx=0;
 	char randomBuffer[1024];
-	cgc_size_t rnd_bytes;
+	size_t rnd_bytes;
 
 	if(tokenSize > 1024) {
 		return NULL;
@@ -183,10 +183,10 @@ cgc_User* cgc_newToken(cgc_User* user) {
  * @param  keySize The size of the requested signing key
  * @return         The address of the signing key string
  */
-unsigned char* cgc_generateSigningKey(cgc_size_t keySize) {
+unsigned char* cgc_generateSigningKey(size_t keySize) {
 	unsigned char* signingKey;
 	char* randomBuffer;
-	cgc_size_t rnd_bytes;
+	size_t rnd_bytes;
 
 	if(!(signingKey = cgc_malloc(keySize+1)))
 		return NULL;
@@ -232,7 +232,7 @@ unsigned int cgc_verifySignature(cgc_AuthResponse* response, unsigned char* sign
 	cgc_reverseSubscriptionList(&response->subscriptions);
 
 	for(cgc_Subscription* subscription=response->subscriptions; subscription!=NULL; subscription=subscription->next) {
-		cgc_size_t stringSize;
+		size_t stringSize;
 
 		stringSize = cgc_strlen(subscription->name);
 		for(int c=0; c<stringSize; c++) {
@@ -255,7 +255,7 @@ unsigned int cgc_verifySignature(cgc_AuthResponse* response, unsigned char* sign
  */
 char* cgc_computeSignature(cgc_User* user) {
 	char *signature, *signatureString;
-	cgc_size_t signatureSize=0, signatureStringSize=0;
+	size_t signatureSize=0, signatureStringSize=0;
 
 	for(cgc_Subscription* subscription=user->subscriptions; subscription!=NULL; subscription=subscription->next) {
 		signatureSize += cgc_strlen(subscription->name);

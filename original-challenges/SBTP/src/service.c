@@ -79,7 +79,7 @@ struct config {
     cgc_uint32_t min_ver;
     cgc_uint32_t encrypt;
     cgc_uint32_t allow_reconnect;
-    cgc_size_t buf_size;
+    size_t buf_size;
 } typedef cgc_config_t;
 
 static cgc_config_t conf;
@@ -93,11 +93,11 @@ static char *last;
  * @param s Maximum number of bytes to read
  * @return Number of bytes read 
  */
-static cgc_size_t cgc_readall_timeout(int fd, char *buf, cgc_size_t s) {
+static size_t cgc_readall_timeout(int fd, char *buf, size_t s) {
     cgc_fd_set readfds;
     int numready = 0;
     struct cgc_timeval timeout = {ROAMTIMEOUT, 0};
-    cgc_size_t i, res, recvd = 0;
+    size_t i, res, recvd = 0;
 
     FD_ZERO(&readfds);
     FD_SET(fd, &readfds);
@@ -123,8 +123,8 @@ static cgc_size_t cgc_readall_timeout(int fd, char *buf, cgc_size_t s) {
  * @param s Maximum number of bytes to read
  * @return Number of bytes read 
  */
-static cgc_size_t cgc_ereadall(int fd, char *buf, cgc_size_t s) {
-    cgc_size_t i = 0;
+static size_t cgc_ereadall(int fd, char *buf, size_t s) {
+    size_t i = 0;
     cgc_uint32_t *buf32 = (cgc_uint32_t*)buf;
 
     if ((s % 4) != 0) {
@@ -153,10 +153,10 @@ static cgc_size_t cgc_ereadall(int fd, char *buf, cgc_size_t s) {
  * @param s Number of bytes to send
  * @return Number of bytes sent.
  */
-static cgc_size_t cgc_esendall(int fd, char *buf, cgc_size_t s) {
+static size_t cgc_esendall(int fd, char *buf, size_t s) {
     int i;
     cgc_uint32_t *buf32 = (cgc_uint32_t*)buf;
-    cgc_size_t res;
+    size_t res;
 
     if ((s % sizeof(cgc_uint32_t)) != 0) {
         debug("Encrypted sends must be 4 byte aligned!\n");
@@ -245,7 +245,7 @@ cgc_resp_t *cgc_do_list(cgc_msg_t *msg) {
 cgc_resp_t *cgc_do_put(cgc_msg_t *msg) {
     char *fn;
     char *data;
-    cgc_size_t fnlen, datalen;
+    size_t fnlen, datalen;
 
     debug("Attempting put...\n");
 
@@ -444,8 +444,8 @@ int cgc_go(void) {
     cgc_uint32_t tmp = 0;  
     cgc_uint32_t *seed;
     char *resend;
-    cgc_size_t tosend;
-    cgc_size_t offset;
+    size_t tosend;
+    size_t offset;
     cgc_uint32_t *f;
 
     cgc_init_fs();

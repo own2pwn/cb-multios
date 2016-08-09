@@ -7,7 +7,7 @@ static int rxidx;
 
 static int cgc_next_byte()
 {
-  cgc_size_t rxd;
+  size_t rxd;
   if (rxidx < rxcnt)
     return rxbuf[rxidx++];
   if (receive(STDIN, rxbuf, BUFSZ, &rxd) != 0 || rxd == 0)
@@ -17,9 +17,9 @@ static int cgc_next_byte()
   return rxbuf[rxidx++];
 }
 
-int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim)
+int cgc_read_until(int fd, char *buf, size_t len, char delim)
 {
-  cgc_size_t i;
+  size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {
@@ -38,9 +38,9 @@ int cgc_read_until(int fd, char *buf, cgc_size_t len, char delim)
   return c - buf;
 }
 
-int cgc_read_n(int fd, char *buf, cgc_size_t len)
+int cgc_read_n(int fd, char *buf, size_t len)
 {
-  cgc_size_t i;
+  size_t i;
   char *c = buf;
   for (i = 0; i < len; ++i)
   {

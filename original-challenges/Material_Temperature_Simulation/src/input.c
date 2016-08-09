@@ -34,9 +34,9 @@ extern cgc_uint32_t X;
 extern cgc_uint32_t Y;
 extern cgc_uint32_t Z;
 
-cgc_ssize_t cgc_read_until(char *buf, char *delim, cgc_size_t max) {
-	cgc_size_t index = 0;
-	cgc_size_t len;
+cgc_ssize_t cgc_read_until(char *buf, char *delim, size_t max) {
+	size_t index = 0;
+	size_t len;
 	char c;
 
 	while (index < max-1) {
@@ -77,7 +77,7 @@ cgc_int32_t cgc_StoreTemp(double *grid, cgc_uint32_t x, cgc_uint32_t y, cgc_uint
 }
 
 cgc_int8_t cgc_read_temps(double *grid) {
-	cgc_size_t len;
+	size_t len;
 	cgc_uint32_t x, y, z;
 	double temp;
 	char buf[100];
@@ -106,7 +106,7 @@ int cgc_flush_stdin(void) {
 	cgc_fd_set readfds;
 	struct cgc_timeval timeout;
 	char c;
-	cgc_size_t len;
+	size_t len;
 
 	while (1) {
 		FD_ZERO(&readfds);
@@ -134,7 +134,7 @@ cgc_int32_t cgc_kbhit(void) {
 	cgc_fd_set readfds;
 	struct cgc_timeval timeout;
 	char c;
-	cgc_size_t len;
+	size_t len;
 
 	while (1) {
 		FD_ZERO(&readfds);

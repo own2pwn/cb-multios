@@ -50,7 +50,7 @@ static char ERR[4] = {0};
 typedef struct request cgc_Request;
 struct request {
     char cmd[4];
-    cgc_size_t bytes;
+    size_t bytes;
 };
 
 
@@ -226,7 +226,7 @@ int cgc_degrees_of_separation(cgc_Person *p1, cgc_Person *p2) {
  * @return TRUE if can have more, else FALSE if they cannot
  */
 int cgc_can_have_more_biological_children(cgc_Person *parent) {
-    cgc_size_t count = sizeof(parent->children.biological) / sizeof(parent->children.biological[0]);
+    size_t count = sizeof(parent->children.biological) / sizeof(parent->children.biological[0]);
 
     for (int idx = 0; idx < count; idx++) {
         if (PERSON_UNKNOWN == parent->children.biological[idx].person_id) {
@@ -245,7 +245,7 @@ int cgc_can_have_more_biological_children(cgc_Person *parent) {
  * @return SUCCESS on success, else -1
  */
 int cgc_set_biological_child(cgc_Person *child, cgc_Person *parent) {
-    cgc_size_t count = sizeof(parent->children.biological) / sizeof(parent->children.biological[0]);
+    size_t count = sizeof(parent->children.biological) / sizeof(parent->children.biological[0]);
 
     for (int idx = 0; idx < count; idx++) {
         if (PERSON_UNKNOWN == parent->children.biological[idx].person_id) {
@@ -289,7 +289,7 @@ void cgc_set_biological_father(cgc_Person *child, cgc_Person *father) {
  * @return SUCCESS on success, else -1
  */
 int cgc_unset_adopted_child(cgc_Person *child, cgc_Person *parent) {
-    cgc_size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
+    size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
 
     for (int i = 0; i < count; i++) {
         if (child->id == parent->children.adopted[i].person_id) {
@@ -310,7 +310,7 @@ int cgc_unset_adopted_child(cgc_Person *child, cgc_Person *parent) {
  * @return TRUE if can have more, else FALSE if they cannot
  */
 int cgc_can_have_more_adopted_children(cgc_Person *parent) {
-    cgc_size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
+    size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
 
     for (int i = 0; i < count; i++) {
         if (PERSON_UNKNOWN == parent->children.adopted[i].person_id) {
@@ -330,7 +330,7 @@ int cgc_can_have_more_adopted_children(cgc_Person *parent) {
  * @return SUCCESS on success, else -1
  */
 int cgc_set_adopted_child(cgc_Person *child, cgc_Person *parent) {
-    cgc_size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
+    size_t count = sizeof(parent->children.adopted) / sizeof(parent->children.adopted[0]);
 
     for (int i = 0; i < count; i++) {
         if (PERSON_UNKNOWN == parent->children.adopted[i].person_id) {
@@ -481,7 +481,7 @@ far_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_add_person(cgc_size_t bytes) {
+int cgc_cmd_add_person(size_t bytes) {
     int ret = SUCCESS;
     cgc_Person *p;
 
@@ -515,9 +515,9 @@ cap_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_set_biological_child(cgc_size_t bytes) {
+int cgc_cmd_set_biological_child(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 3*sizeof(cgc_uint32_t);  // IDs for child, mother, and father
+    size_t bytes_needed = 3*sizeof(cgc_uint32_t);  // IDs for child, mother, and father
 
     if (bytes != bytes_needed) {
         return -1;
@@ -566,9 +566,9 @@ sbc_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_set_adopted_child(cgc_size_t bytes) {
+int cgc_cmd_set_adopted_child(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 3*sizeof(cgc_uint32_t);  // IDs for child, parent1, and parent2
+    size_t bytes_needed = 3*sizeof(cgc_uint32_t);  // IDs for child, parent1, and parent2
 
     if (bytes != bytes_needed) {
         return -1;
@@ -636,9 +636,9 @@ sac_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_set_union(cgc_size_t bytes) {
+int cgc_cmd_set_union(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
+    size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
 
     if (bytes != bytes_needed) {
         return -1;
@@ -670,9 +670,9 @@ su_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_set_deceased(cgc_size_t bytes) {
+int cgc_cmd_set_deceased(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = sizeof(cgc_uint32_t) + sizeof(cgc_uint16_t);  // ID, death_year for person1
+    size_t bytes_needed = sizeof(cgc_uint32_t) + sizeof(cgc_uint16_t);  // ID, death_year for person1
 
     if (bytes != bytes_needed) {
         return -1;
@@ -703,9 +703,9 @@ die_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1
  */
-int cgc_cmd_set_separated(cgc_size_t bytes) {
+int cgc_cmd_set_separated(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
+    size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
 
     if (bytes != bytes_needed) {
         return -1;
@@ -737,9 +737,9 @@ ss_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1 on error
  */
-int cgc_cmd_are_related(cgc_size_t bytes) {
+int cgc_cmd_are_related(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
+    size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
 
     if (bytes != bytes_needed) {
         return -1;
@@ -776,9 +776,9 @@ ar_end:
  * @param bytes     Number of bytes available to receive
  * @return SUCCESS on success, else -1 on error
  */
-int cgc_cmd_degrees_of_separation(cgc_size_t bytes) {
+int cgc_cmd_degrees_of_separation(size_t bytes) {
     int ret = SUCCESS;
-    cgc_size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
+    size_t bytes_needed = 2*sizeof(cgc_uint32_t);  // IDs for person1 and person2
 
     if (bytes != bytes_needed) {
         return -1;
@@ -829,7 +829,7 @@ void cgc_gen_result_bufs(void) {
 int main(void) {
 
     int ret = 0;
-    cgc_size_t bytes = 0;
+    size_t bytes = 0;
 
     cgc_gen_result_bufs();
 

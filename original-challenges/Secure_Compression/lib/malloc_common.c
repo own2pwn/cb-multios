@@ -33,7 +33,7 @@
 #if 0
 /* XXX replace with cgc allocate */
 #include <sys/mman.h>
-int allocate(cgc_size_t length, int is_X, void **addr)
+int allocate(size_t length, int is_X, void **addr)
 {
     void *result;
     result = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -46,7 +46,7 @@ int allocate(cgc_size_t length, int is_X, void **addr)
 }
 
 /* XXX replace with cgc deallocate */
-int deallocate(void *addr, cgc_size_t length)
+int deallocate(void *addr, size_t length)
 {
     return munmap(addr, length);
 }
@@ -96,7 +96,7 @@ static void *cgc_run_alloc(cgc_malloc_t *heap, int type)
     return (void *)alignedi;
 }
 
-static void *cgc_tiny_alloc(cgc_malloc_t *heap, cgc_size_t n)
+static void *cgc_tiny_alloc(cgc_malloc_t *heap, size_t n)
 {
     int bin;
     cgc_malloc_tiny_free_t *hdr;
@@ -193,9 +193,9 @@ static void cgc_small_unlink_free(cgc_malloc_t *heap, int bin, cgc_malloc_small_
 #endif
 }
 
-static void cgc_small_split(cgc_malloc_t *heap, cgc_malloc_small_free_t *hdr, cgc_size_t len)
+static void cgc_small_split(cgc_malloc_t *heap, cgc_malloc_small_free_t *hdr, size_t len)
 {
-    cgc_size_t new_len = hdr->hdr.size_flags - len;
+    size_t new_len = hdr->hdr.size_flags - len;
     cgc_malloc_small_free_t *new_hdr = (cgc_malloc_small_free_t *)((cgc_uintptr_t)hdr + len), *next;
 
     next = (cgc_malloc_small_free_t *)((cgc_uintptr_t)hdr + hdr->hdr.size_flags);
@@ -232,10 +232,10 @@ static int cgc_small_alloc_run(cgc_malloc_t *heap)
     return 0;
 }
 
-static void *cgc_small_alloc(cgc_malloc_t *heap, cgc_size_t n)
+static void *cgc_small_alloc(cgc_malloc_t *heap, size_t n)
 {
     int i;
-    cgc_size_t len;
+    size_t len;
     cgc_malloc_small_free_t *hdr;
 
     len = ALIGNED(n + sizeof(cgc_malloc_hdr_t), SMALL_SIZE);
@@ -327,9 +327,9 @@ static void cgc_small_free(cgc_malloc_t *heap, void *ptr)
     cgc_small_insert_free(heap, cgc_size_to_bin(hdr->hdr.size_flags), hdr);
 }
 
-static void *cgc_large_alloc(cgc_malloc_t *heap, cgc_size_t n)
+static void *cgc_large_alloc(cgc_malloc_t *heap, size_t n)
 {
-    cgc_size_t len;
+    size_t len;
     void *addr;
     cgc_malloc_hdr_t *hdr;
 
@@ -371,7 +371,7 @@ static void cgc_large_free(cgc_malloc_t *heap, void *ptr)
     deallocate(hdr, hdr->size_flags);
 }
 
-void *cgc_malloc_alloc(cgc_malloc_t *heap, cgc_size_t n)
+void *cgc_malloc_alloc(cgc_malloc_t *heap, size_t n)
 {
     void *ptr;
 
@@ -419,7 +419,7 @@ void cgc_malloc_free(cgc_malloc_t *heap, void *ptr)
 }
 
 /* returns size available to user */
-cgc_size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr)
+size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr)
 {
     int type = heap->mem_map[(cgc_uintptr_t)ptr / RUN_SIZE];
 
@@ -440,7 +440,7 @@ cgc_size_t cgc_malloc_size(cgc_malloc_t *heap, void *ptr)
     }
 }
 
-void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, cgc_size_t n)
+void *cgc_malloc_realloc(cgc_malloc_t *heap, void *ptr, size_t n)
 {
     void *new_ptr;
 

@@ -29,12 +29,12 @@
 
 #include "vm.h"
 
-int cgc_read_n_bytes(int fd, cgc_size_t n, cgc_uint8_t *buf)
+int cgc_read_n_bytes(int fd, size_t n, cgc_uint8_t *buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t rx = 0, total_read = 0;
+  size_t rx = 0, total_read = 0;
 
   while (total_read < n) {
     if (receive(fd, buf + total_read, n - total_read, &rx) != 0) {
@@ -73,7 +73,7 @@ cgc_uint32_t cgc_read_flags(int fd, int *err)
 cgc_state *cgc_init_state(int fd, cgc_uint32_t flags)
 {
   int read_regs = flags & REG_FLAG;
-  cgc_size_t read_mem_sz = flags & MEM_FLAG;
+  size_t read_mem_sz = flags & MEM_FLAG;
 
   cgc_state *new = cgc_calloc(1, sizeof(cgc_state));
   if (!new)
@@ -117,9 +117,9 @@ int cgc_process_str(cgc_state *machine, cgc_uint8_t dst, cgc_uint8_t src, cgc_ui
   return 0;
 }
 
-int cgc_frob(int fd, void *mem_start, cgc_size_t len, cgc_size_t *un2)
+int cgc_frob(int fd, void *mem_start, size_t len, size_t *un2)
 {
-  for (cgc_size_t i = 0; i < len; i++)
+  for (size_t i = 0; i < len; i++)
     ((cgc_uint8_t *)mem_start)[i] ^= 0x42;
   return 0;
 }
@@ -128,19 +128,19 @@ int cgc_process_sys(cgc_state *machine)
 {
   struct {
     int fd;
-    int (*fp)(int, void *, cgc_size_t, cgc_size_t *);
+    int (*fp)(int, void *, size_t, size_t *);
     char pad[0x100];
   } sv;
 
   if (machine->registers[1] == 0) {
     sv.fd = STDOUT;
-    sv.fp = (int (*)(int, void *, cgc_size_t, cgc_size_t *))transmit;
+    sv.fp = (int (*)(int, void *, size_t, size_t *))transmit;
   } else if (machine->registers[1] == 1) {
     sv.fd = STDIN;
     sv.fp = receive;
   }
 
-  cgc_size_t start, len;
+  size_t start, len;
   if ((sv.fp == transmit && machine->registers[1] == 0) ||
       (sv.fp == receive && machine->registers[1] == 1)) {
     start = machine->registers[2] & 0xFFFF;

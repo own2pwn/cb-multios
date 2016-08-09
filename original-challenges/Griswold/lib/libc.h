@@ -69,14 +69,14 @@ cgc_node_t * cgc_get_list_tail(cgc_list_t * lst);
 cgc_node_t * cgc_get_first_node(cgc_list_t * lst);
 cgc_node_t * cgc_get_last_node(cgc_list_t * lst);
 
-int cgc_rand(char *buf, cgc_size_t sz);
+int cgc_rand(char *buf, size_t sz);
 
 // libc libs borrowed from EAGLE_00004
 
 // I/O
-int cgc_send(const char *buf, const cgc_size_t size);
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+int cgc_send(const char *buf, const size_t size);
+int cgc_transmit_all(int fd, const char *buf, const size_t size);
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size);
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
 
 // stdlib

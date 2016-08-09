@@ -25,7 +25,7 @@
 
 struct chunk {
     struct chunk *next;
-    cgc_size_t size;
+    size_t size;
     unsigned int num_free;
     unsigned char *data;
     struct bitset allocated;
@@ -34,7 +34,7 @@ struct chunk {
 static int cgc_pool_grow(struct pool *);
 
 int
-cgc_pool_init(struct pool *pool, cgc_size_t size)
+cgc_pool_init(struct pool *pool, size_t size)
 {
     if (size >= PAGE_SIZE - sizeof(struct chunk))
         return EXIT_FAILURE;

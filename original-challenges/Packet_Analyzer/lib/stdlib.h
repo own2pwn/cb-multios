@@ -31,8 +31,8 @@ typedef unsigned short int cgc_uint16_t;
 typedef unsigned int cgc_uint32_t;
 
 int cgc_strlen(char *s);
-void cgc_bzero(char *s, cgc_size_t length);
-void cgc_memcpy(char *d, char *s, cgc_size_t num);
+void cgc_bzero(char *s, size_t length);
+void cgc_memcpy(char *d, char *s, size_t num);
 int cgc_count_strings(char *s);
 char *cgc_next_string(char *s);
 int cgc_atoi(char *s);

@@ -27,9 +27,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-cgc_size_t cgc_root64_encode(char *output, const char *input);
-cgc_size_t cgc_root64_decode(char *output, const char *input);
-void cgc_parcour_init(const char *key, cgc_size_t size);
+size_t cgc_root64_encode(char *output, const char *input);
+size_t cgc_root64_decode(char *output, const char *input);
+void cgc_parcour_init(const char *key, size_t size);
 unsigned char cgc_parcour_byte();
 
 #define TOKEN_HELLO "HELLO"
@@ -88,16 +88,16 @@ static unsigned int g_token = INVALID_TOKEN;
 static int g_auth = 0;
 #define MAX_OUTPUT (64*1024)
 static char *g_output_buf = NULL;
-static cgc_size_t g_output_len = 0;
+static size_t g_output_len = 0;
 
 static void cgc_output_clear()
 {
     g_output_len = 0;
 }
 
-static void cgc_output_write(char *s, cgc_size_t n)
+static void cgc_output_write(char *s, size_t n)
 {
-    cgc_size_t bytes_remaining = MAX_OUTPUT - g_output_len - 1;
+    size_t bytes_remaining = MAX_OUTPUT - g_output_len - 1;
     if (bytes_remaining < n)
         n = bytes_remaining;
     if (n > 0)
@@ -110,7 +110,7 @@ static void cgc_output_write(char *s, cgc_size_t n)
 static void cgc_output_append(const char *fmt, ...)
 {
     cgc_va_list ap;
-    cgc_size_t bytes_remaining = MAX_OUTPUT - g_output_len - 1;
+    size_t bytes_remaining = MAX_OUTPUT - g_output_len - 1;
 
     va_start(ap, fmt);
     int n = cgc_vsnprintf(g_output_buf + g_output_len, bytes_remaining, fmt, ap);
@@ -125,7 +125,7 @@ static int cgc_output_transmit()
     if (cgc_fdprintf(STDOUT, "OK %u\n", g_output_len) < 4)
         return 1;
 
-    cgc_size_t tx;
+    size_t tx;
     if (cgc_writeall(STDOUT, g_output_buf, g_output_len) == g_output_len)
         return 0;
     else
@@ -284,7 +284,7 @@ static int cgc_page_root64(char *input)
         if (cgc_strlen(data) / 3 * 4 <= sizeof(buf))
 #endif
         {
-            cgc_size_t n = cgc_root64_encode(buf, data);
+            size_t n = cgc_root64_encode(buf, data);
             cgc_output_write(buf, n);
         }
         else
@@ -297,7 +297,7 @@ static int cgc_page_root64(char *input)
     {
         if (cgc_strlen(data) <= sizeof(buf))
         {
-            cgc_size_t n = cgc_root64_decode(buf, data);
+            size_t n = cgc_root64_decode(buf, data);
             cgc_output_write(buf, n);
         }
         else
@@ -328,7 +328,7 @@ static int cgc_page_parcour(char *input)
     if (keylen > 2)
         keylen = 2;
     cgc_parcour_init(key, keylen);
-    cgc_size_t i, n = cgc_strlen(data);
+    size_t i, n = cgc_strlen(data);
     for (i = 0; i < n; i++)
         data[i] ^= cgc_parcour_byte();
     cgc_output_write(data, n);

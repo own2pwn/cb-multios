@@ -27,12 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size)
+void *cgc_calloc(size_t nmemb, size_t size)
 {
   if (nmemb == 0 || size == 0)
     return NULL;
 
-  cgc_size_t tot = nmemb * size;
+  size_t tot = nmemb * size;
 
   // Overflow
   if (tot / size != nmemb)

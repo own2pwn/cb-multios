@@ -24,10 +24,10 @@
 #include "libc.h"
 
 cgc_ssize_t
-cgc_read_all(int fd, void *buf, cgc_size_t n)
+cgc_read_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t read;
+    size_t read;
 
     while (n) {
         if (receive(fd, (char *)(buf + ret), n, &read) != 0)
@@ -41,10 +41,10 @@ cgc_read_all(int fd, void *buf, cgc_size_t n)
 }
 
 cgc_ssize_t
-cgc_write_all(int fd, void *buf, cgc_size_t n)
+cgc_write_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t written;
+    size_t written;
 
     while (n) {
         if (transmit(fd, (char *)(buf + ret), n, &written) != 0)
@@ -65,7 +65,7 @@ cgc_read_line(int fd, char **buf)
 
     char c = '\0';
     cgc_ssize_t ret = 0;
-    cgc_size_t read;
+    size_t read;
 
     if (!buf)
         return -1;
@@ -87,7 +87,7 @@ cgc_read_line(int fd, char **buf)
 }
 
 void *
-cgc_memset(void *ptr_, int val, cgc_size_t n)
+cgc_memset(void *ptr_, int val, size_t n)
 {
     unsigned char *ptr = ptr_;
     while (n--)
@@ -96,7 +96,7 @@ cgc_memset(void *ptr_, int val, cgc_size_t n)
 }
 
 void *
-cgc_memcpy(void *dst_, const void *src_, cgc_size_t n)
+cgc_memcpy(void *dst_, const void *src_, size_t n)
 {
     unsigned char *dst = dst_;
     const unsigned char *src = src_;
@@ -106,7 +106,7 @@ cgc_memcpy(void *dst_, const void *src_, cgc_size_t n)
 }
 
 void *
-cgc_memmove(void *dst_, const void *src_, cgc_size_t n)
+cgc_memmove(void *dst_, const void *src_, size_t n)
 {
     unsigned char *dst = dst_;
     const unsigned char *src = src_;
@@ -124,7 +124,7 @@ cgc_memmove(void *dst_, const void *src_, cgc_size_t n)
 }
 
 int
-cgc_memcmp(const void *a_, const void *b_, cgc_size_t n)
+cgc_memcmp(const void *a_, const void *b_, size_t n)
 {
     const unsigned char *a = a_;
     const unsigned char *b = b_;
@@ -136,18 +136,18 @@ cgc_memcmp(const void *a_, const void *b_, cgc_size_t n)
     return 0;
 }
 
-cgc_size_t
+size_t
 cgc_strlen(const char *s) {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (*s++)
         ret++;
     return ret;
 }
 
-cgc_size_t
-cgc_strnlen(const char *s, cgc_size_t n)
+size_t
+cgc_strnlen(const char *s, size_t n)
 {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (n-- && *s++)
         ret++;
     return ret;
@@ -162,7 +162,7 @@ cgc_strcmp(const char *a, const char *b)
 }
 
 int
-cgc_strncmp(const char *a, const char *b, cgc_size_t n)
+cgc_strncmp(const char *a, const char *b, size_t n)
 {
     for (; --n && *a && *a == *b; a++, b++)
         ;
@@ -172,7 +172,7 @@ cgc_strncmp(const char *a, const char *b, cgc_size_t n)
 char *
 cgc_strcpy(char *dst, const char *src)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; src[i]; i++)
         dst[i] = src[i];
     dst[i] = '\0';
@@ -180,9 +180,9 @@ cgc_strcpy(char *dst, const char *src)
 }
 
 char *
-cgc_strncpy(char *dst, const char *src, cgc_size_t n)
+cgc_strncpy(char *dst, const char *src, size_t n)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; i < n && src[i]; i++)
         dst[i] = src[i];
     for (; i < n; i++)
@@ -201,7 +201,7 @@ cgc_strcat(char *dst, const char *src)
 }
 
 char *
-cgc_strncat(char *dst, const char *src, cgc_size_t n)
+cgc_strncat(char *dst, const char *src, size_t n)
 {
     char *ret = dst;
     dst += cgc_strlen(dst);
@@ -285,9 +285,9 @@ cgc_to_bin(char c)
 }
 
 char *
-cgc_bin_to_hex(char *dst, const void *src_, cgc_size_t n)
+cgc_bin_to_hex(char *dst, const void *src_, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     const unsigned char *src = src_;
 
     for (i = 0; i < n; i++) {
@@ -302,7 +302,7 @@ unsigned int
 cgc_hex_to_uint(char *s)
 {
     unsigned int ret = 0;
-    cgc_size_t i;
+    size_t i;
 
     for (i = 4; i > 0; i--) {
         ret = (ret << 8) | (cgc_to_bin(s[2 * (i - 1)]) << 4);
@@ -1407,8 +1407,8 @@ typedef __builtin_va_list cgc_va_list;
 struct _FILE {
    int fd;
    int state;
-   cgc_size_t max;
-   cgc_size_t curr;
+   size_t max;
+   size_t curr;
    unsigned char buf[4096];
 };
 
@@ -1524,9 +1524,9 @@ int cgc_tolower(int c) {
    return c;
 }
 
-int cgc_transmit_all(int fd, const void *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_transmit_all(int fd, const void *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
     int ret;
 
     if (!buf) 
@@ -2569,10 +2569,10 @@ char *cgc_fgets(char *s, int size, cgc_FILE *stream) {
    return s;
 }
 
-int cgc_fread(void *buf, cgc_size_t size, cgc_size_t nmemb, cgc_FILE *f) {
-   cgc_size_t nitems;
-   cgc_size_t n;
-   cgc_size_t i = 0;
+int cgc_fread(void *buf, size_t size, size_t nmemb, cgc_FILE *f) {
+   size_t nitems;
+   size_t n;
+   size_t i = 0;
    for (nitems = 0; nitems < nmemb; nitems++) {
       for (n = 0; n < size; n++) {
          int ch = cgc_fgetc(f);

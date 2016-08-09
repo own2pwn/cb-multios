@@ -337,7 +337,7 @@ void cgc_handle_menu(const char *str)
     }
 }
 
-void cgc_bbs_rx(const cgc_uint8_t *data, cgc_size_t count)
+void cgc_bbs_rx(const cgc_uint8_t *data, size_t count)
 {
     char str[101];
 

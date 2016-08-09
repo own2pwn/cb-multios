@@ -47,7 +47,7 @@ typedef struct txn_entry {
 	char is_open;
 	// duplicate, but easier to reference
 	cgc_uint32_t transaction_id;
-	cgc_size_t data_sz;
+	size_t data_sz;
 	cgc_packet_head_t *p;
 	cgc_PKT_TYPE state;
 	void * data;
@@ -64,7 +64,7 @@ cgc_account_entry_t * cgc_get_account(cgc_uint32_t card_id, cgc_uint32_t auth_co
 int cgc_create_account(cgc_uint32_t card_id,	cgc_uint32_t auth_code, cgc_packet_data_balance_t *b);
 void cgc_init_account_register();
 cgc_txn_entry_t * cgc_open_txn(cgc_account_entry_t *ae, cgc_packet_head_t * ph);
-cgc_size_t cgc_get_size_of_data_for_pkt_head_only(cgc_packet_head_t *ph, cgc_uint32_t is_client);
+size_t cgc_get_size_of_data_for_pkt_head_only(cgc_packet_head_t *ph, cgc_uint32_t is_client);
 cgc_txn_entry_t * cgc_add_transaction_log_entry(cgc_account_entry_t * ae,  cgc_pack_and_data_t *pad);
 cgc_txn_entry_t * cgc_transaction_iterator(cgc_account_entry_t *ae);
 int cgc_finalize_transaction(cgc_txn_entry_t * te);

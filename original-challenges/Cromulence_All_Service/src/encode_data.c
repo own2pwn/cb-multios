@@ -39,17 +39,17 @@ unsigned char encoder_values[] = { 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
 						};
 
 
-unsigned char *cgc_My64Encode(cgc_size_t data_size, unsigned char *data, cgc_size_t *out_data_size) {
+unsigned char *cgc_My64Encode(size_t data_size, unsigned char *data, size_t *out_data_size) {
 
 unsigned char *output_data;
 unsigned char *padded_input_data;
 
-cgc_size_t output_size;
-cgc_size_t padded_input_size;
+size_t output_size;
+size_t padded_input_size;
 
 unsigned char byteA, byteB, byteC, byteD;
 
-cgc_size_t i, j;
+size_t i, j;
 
 
 		switch (data_size%3) {
@@ -123,8 +123,8 @@ void cgc_encode_command(char *cmd) {
 
 char buffer[1024];
 unsigned char *encoded;
-cgc_size_t encoded_size;
-cgc_size_t i;
+size_t encoded_size;
+size_t i;
 int count;
 unsigned char *input_data;
 

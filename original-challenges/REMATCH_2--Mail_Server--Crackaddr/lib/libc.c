@@ -39,7 +39,7 @@ int cgc_receive_all_fd(int fd, char *buf, int length) {
 
   int total_received = 0;
   int ret;
-  cgc_size_t bytes_received;
+  size_t bytes_received;
   while (total_received < length) {
     ret = receive(fd, buf + total_received, length - total_received, &bytes_received);
     if (ret !=0 ) {
@@ -63,7 +63,7 @@ int cgc_receive_all_fd(int fd, char *buf, int length) {
 int cgc_receive_str_until_fd(int fd, char *buf, int length, char delim) {
   int total_received = 0;
   int ret;
-  cgc_size_t bytes_received;
+  size_t bytes_received;
   char c;
   buf[0] = '\0';
   while (1) {
@@ -94,7 +94,7 @@ DONE:
 int cgc_receive_until_fd(int fd, char *buf, int length, char delim) {
   int total_received = 0;
   int ret;
-  cgc_size_t bytes_received;
+  size_t bytes_received;
   char c;
   buf[0] = '\0';
   while (1) {
@@ -176,7 +176,7 @@ int cgc_buffered_receive_until(char *buf, int length, char delim)
       }
     } else {
       int ret;
-      cgc_size_t bytes_received = 0;
+      size_t bytes_received = 0;
       ret = receive(STDIN, receive_buf , 1024 , &bytes_received);
       if (ret != 0) {
         return -1;
@@ -210,7 +210,7 @@ int cgc_send_all(char *buf, int length) {
 int cgc_send_all_fd(int fd, char *buf, int length) {
   int total_sent = 0;
   int ret;
-  cgc_size_t bytes_sent;
+  size_t bytes_sent;
   while(total_sent < length) {
     ret = transmit(fd, buf + total_sent, length - total_sent, &bytes_sent);
     if (ret != 0) {
@@ -300,7 +300,7 @@ DONE:
 
 
 
-void cgc_bcopy(char *s, char *d, cgc_size_t size) {
+void cgc_bcopy(char *s, char *d, size_t size) {
   while (size > 0) {
     *d = *s;
     d++;s++;size--;

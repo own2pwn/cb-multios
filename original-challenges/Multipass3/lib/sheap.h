@@ -26,7 +26,7 @@
 #ifndef SHEAP_H
 #define SHEAP_H
 
-void * cgc_malloc(cgc_size_t s);
+void * cgc_malloc(size_t s);
 void cgc_free(void *p);
 void cgc_malloc_init();
 #endif

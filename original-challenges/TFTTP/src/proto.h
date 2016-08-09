@@ -31,7 +31,7 @@ enum pkttype {
 };
 
 typedef struct cgc_tfttp_hdr {
-    cgc_size_t size; //size of trailing data
+    size_t size; //size of trailing data
     enum pkttype code;
 } cgc_tfttp_hdr;
 
@@ -50,9 +50,9 @@ typedef struct cgc_tfttp_frag {
 
 cgc_tfttp_pkt *curpkt;
 
-int cgc_sendmsg(int fd, uint8_t *data, cgc_size_t size); 
-int cgc_recvmsg(int fd, uint8_t *data, cgc_size_t maxsize, cgc_size_t minsize);
+int cgc_sendmsg(int fd, uint8_t *data, size_t size); 
+int cgc_recvmsg(int fd, uint8_t *data, size_t maxsize, size_t minsize);
 int cgc_recvdgram(int fd);
-int cgc_senddgram(int fd, cgc_tfttp_pkt *msg, cgc_size_t size);
+int cgc_senddgram(int fd, cgc_tfttp_pkt *msg, size_t size);
 void cgc_create_resp_pkt(cgc_tfttp_pkt* pkt, char *resp);
 #endif

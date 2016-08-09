@@ -30,7 +30,7 @@ THE SOFTWARE.
 void cgc_PrintBoard(char b[X_MAX][Y_MAX]) {
 	char x, y;
 	char buf[Y_MAX+1];
-	cgc_size_t txcount;
+	size_t txcount;
 
 	for (y = Y_MAX-1; y >= 0; y--) {
 		for (x = 0; x < X_MAX; x++) {

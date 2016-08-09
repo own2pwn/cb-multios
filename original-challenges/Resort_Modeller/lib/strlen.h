@@ -29,6 +29,6 @@
  * @param str Buffer
  * @returns Number of bytes preceeding the NULL char.
  */
-cgc_size_t cgc_strlen(const char *str);
+size_t cgc_strlen(const char *str);
 
 #endif

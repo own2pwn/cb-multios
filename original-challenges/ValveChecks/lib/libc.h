@@ -41,22 +41,22 @@ void cgc_promptc(char *buf, uint16_t  size, char *prompt);
 int cgc_uint2str(char* str_buf, int buf_size, uint32_t i);
 int cgc_int2str(char* str_buf, int buf_size, int i);
 uint32_t cgc_str2uint(const char* str_buf);
-int cgc_sendall(int fd, const char *buf, cgc_size_t size);
-int cgc_sendline(int fd, const char *buf, cgc_size_t size);
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
-int cgc_recv(int fd, char *buf, cgc_size_t size); 
-cgc_size_t cgc_strcpy(char *s1, char *s2);
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
+int cgc_sendall(int fd, const char *buf, size_t size);
+int cgc_sendline(int fd, const char *buf, size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
+int cgc_recv(int fd, char *buf, size_t size); 
+size_t cgc_strcpy(char *s1, char *s2);
+size_t cgc_strncpy(char *s1, char *s2, size_t n);
 char * cgc_strcat(char *s1, char *s2);
-cgc_size_t cgc_strlen(char *s);
+size_t cgc_strlen(char *s);
 int cgc_streq(char *s1, char *s2);
 int cgc_startswith(char *s1, char *s2);
-void * cgc_memset(void *dst, char c, cgc_size_t n); 
-void * cgc_memcpy(void *dst, void *src, cgc_size_t n); 
+void * cgc_memset(void *dst, char c, size_t n); 
+void * cgc_memcpy(void *dst, void *src, size_t n); 
 char * cgc_b2hex(uint8_t b, char *h);
 char * cgc_strchr(char *str, char c); 
 void cgc_sleep(int s);
-int cgc_memcmp(void *a, void *b, cgc_size_t n); 
+int cgc_memcmp(void *a, void *b, size_t n); 
 
 #endif
 

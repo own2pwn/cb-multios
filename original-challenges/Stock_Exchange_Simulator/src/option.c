@@ -209,7 +209,7 @@ void cgc_generic_resp(cgc_packet_t *resp, cgc_OP_TYPE ot, cgc_uint32_t acct_id){
 
 }
 
-cgc_size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id){
+size_t cgc_gen_order_fill_msg(cgc_packet_t *resp, cgc_OP_TYPE ot, char * sym, cgc_uint32_t qty, cgc_uint32_t acct_id){
 	cgc_generic_resp(resp, ot, acct_id);
 	if(ot != BUY && ot != SELL)
 		_terminate(99);

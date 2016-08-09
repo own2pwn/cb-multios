@@ -26,14 +26,14 @@
 
 #include <stdint.h>
 
-typedef cgc_uint32_t (*cgc_hash_t) (const char *, cgc_size_t);
+typedef cgc_uint32_t (*cgc_hash_t) (const char *, size_t);
 typedef struct bloomy {
   cgc_uint8_t *bits;
-  cgc_size_t size;
+  size_t size;
   cgc_hash_t hashes[3];
 } cgc_bloomy_t;
 
-cgc_bloomy_t* cgc_bloomy_new(cgc_size_t size, cgc_hash_t hash1, cgc_hash_t hash2, cgc_hash_t hash3);
+cgc_bloomy_t* cgc_bloomy_new(size_t size, cgc_hash_t hash1, cgc_hash_t hash2, cgc_hash_t hash3);
 void cgc_bloomy_free(cgc_bloomy_t *bloomy);
 int cgc_bloomy_check(cgc_bloomy_t *bloomy, const char *buf);
 void cgc_bloomy_add(cgc_bloomy_t *bloomy, const char *buf);

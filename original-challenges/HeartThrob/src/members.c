@@ -79,14 +79,14 @@ static void cgc_will_match(cgc_htreq *req) {
 #ifndef PATCHED
             dst += cgc_strcpy(dst,"thy");
 #else
-            dst += cgc_strncpy(dst,"thy",(cgc_size_t)(end-dst));
+            dst += cgc_strncpy(dst,"thy",(size_t)(end-dst));
 #endif
             src += sizeof("your")-1;
         } else if (cgc_startswith(src, "has")) {
 #ifndef PATCHED
             dst += cgc_strcpy(dst,"hath");
 #else
-            dst += cgc_strncpy(dst,"hath",(cgc_size_t)(end-dst));
+            dst += cgc_strncpy(dst,"hath",(size_t)(end-dst));
 #endif
             src += sizeof("has")-1;
         } else {
@@ -143,7 +143,7 @@ static void cgc_john_match(cgc_htreq *req) {
 
 static void cgc_john_nomatch(cgc_htreq *req) {
     int res;
-    cgc_size_t bytes;
+    size_t bytes;
     char rand = 0;
     cgc_random(&rand,1,&bytes);
     SENDL(johnarr[rand%SIZEOFARR(johnarr)],

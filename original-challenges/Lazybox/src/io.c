@@ -33,10 +33,10 @@ THE SOFTWARE.
 
 cgc_environment ENV;
 
-cgc_uint32_t cgc_ReadShellPrompt(int fd, char *buf, cgc_size_t len) {
-	cgc_size_t total_len = 0;
-	cgc_size_t rx_bytes;
-	cgc_size_t i;
+cgc_uint32_t cgc_ReadShellPrompt(int fd, char *buf, size_t len) {
+	size_t total_len = 0;
+	size_t rx_bytes;
+	size_t i;
 	char c;
 	char t[2];
 	t[1] = '\0';
@@ -286,10 +286,10 @@ cgc_uint32_t cgc_ReadShellPrompt(int fd, char *buf, cgc_size_t len) {
 	return(total_len);
 }
 
-cgc_uint32_t cgc_ReadUntilNewline(int fd, char *buf, cgc_size_t len) {
-	cgc_size_t total_len = 0;
-	cgc_size_t rx_bytes;
-	cgc_size_t i;
+cgc_uint32_t cgc_ReadUntilNewline(int fd, char *buf, size_t len) {
+	size_t total_len = 0;
+	size_t rx_bytes;
+	size_t i;
 	char c;
 	cgc_uint32_t CursorPos = 0;
 

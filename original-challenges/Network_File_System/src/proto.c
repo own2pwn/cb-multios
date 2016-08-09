@@ -33,7 +33,7 @@ THE SOFTWARE.
 
 cgc_uint32_t cgc_ReadBytes(char *buf, cgc_uint32_t len) {
 	cgc_uint32_t TotalBytes = 0;
-	cgc_size_t rx_bytes;
+	size_t rx_bytes;
 
 	while (TotalBytes < len) {
 		if (receive(STDIN, buf+TotalBytes, len-TotalBytes, &rx_bytes) != 0) {
@@ -50,7 +50,7 @@ cgc_uint32_t cgc_ReadBytes(char *buf, cgc_uint32_t len) {
 
 cgc_uint32_t cgc_SendBytes(char *buf, cgc_uint32_t len) {
 	cgc_uint32_t TotalBytes = 0;
-	cgc_size_t tx_bytes;
+	size_t tx_bytes;
 
 	while (TotalBytes < len) {
 		if (transmit(STDOUT, buf+TotalBytes, len-TotalBytes, &tx_bytes) != 0) {

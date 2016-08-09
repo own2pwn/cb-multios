@@ -35,9 +35,9 @@ unsigned char cgc_get_num_for_char(unsigned char u){
 	return 128;
 }
 
-char * cgc_encode(char * input, cgc_size_t size){
+char * cgc_encode(char * input, size_t size){
 	
-	cgc_size_t sz = size*BLOCK_SZ;
+	size_t sz = size*BLOCK_SZ;
 	char *outbuf = (char *) cgc_calloc(1, sz+1);
 	if(outbuf == NULL)
 		return NULL;
@@ -62,7 +62,7 @@ char * cgc_encode(char * input, cgc_size_t size){
 
 }
 
-char * cgc_decode(char * input, cgc_size_t size){
+char * cgc_decode(char * input, size_t size){
 	unsigned char * outbuf = cgc_calloc(1, size/BLOCK_SZ);
 	int outct = 0;
 	for(int i =0; i < size; i+=BLOCK_SZ){

@@ -90,8 +90,8 @@ int cgc_isTokenCommand(char* command) {
 *
 * @return The number of bytes to store the cgc_Token as a string
 */
-cgc_size_t cgc_calculateTokenSize(cgc_Token *token) {
-	cgc_size_t size, token_val_sz, token_exp_sz;
+size_t cgc_calculateTokenSize(cgc_Token *token) {
+	size_t size, token_val_sz, token_exp_sz;
 	char buffer[20];
 
 	cgc_bzero(buffer, 20);
@@ -123,7 +123,7 @@ cgc_size_t cgc_calculateTokenSize(cgc_Token *token) {
 void cgc_sendToken(unsigned int id, cgc_Token *token) {
 	const char *flag = (const char*) FLAG_PAGE;
 	char* flag_buf=0;
-	cgc_size_t bytes, tokenSize;
+	size_t bytes, tokenSize;
 	char* buffer;
 	int ret;
 
@@ -241,7 +241,7 @@ int cgc_validateToken(cgc_Token* token, unsigned int* expiration_date) {
 cgc_Token* cgc_parseToken(char* body) {
 	cgc_Token* token;
 	char *command, *val_str;
-	cgc_size_t size;
+	size_t size;
 
 	if(!(token = cgc_malloc(sizeof(cgc_Token))))
 		_terminate(1);
@@ -297,7 +297,7 @@ void cgc_refreshToken(int id, char* body, unsigned int* expiration_date) {
 */
 void cgc_requestToken(int id, char* body, unsigned int* expiration_date) {
 	cgc_Token* token;
-	cgc_size_t bytes;
+	size_t bytes;
 	int ret;
 
 	if(!(token = cgc_parseToken(body)))
@@ -332,7 +332,7 @@ void cgc_requestToken(int id, char* body, unsigned int* expiration_date) {
 */
 int cgc_checkTokenUse(char* command, char* useList) {
 	char* use;
-	cgc_size_t size, size1, size2;
+	size_t size, size1, size2;
 
 	if(!useList)
 		return 0;
@@ -365,7 +365,7 @@ int cgc_checkTokenUse(char* command, char* useList) {
 void cgc_revokeToken(int id, char* body, unsigned int* expiration_date) {
 	cgc_Token *token, *found;
 	int ret;
-	cgc_size_t size;
+	size_t size;
 
 	if(!(token = cgc_parseToken(body)))
 		return;

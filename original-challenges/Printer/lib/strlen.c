@@ -22,9 +22,9 @@
  */
 #include <string.h>
 
-cgc_size_t cgc_strlen(const char *s)
+size_t cgc_strlen(const char *s)
 {
-    cgc_size_t n = 0;
+    size_t n = 0;
     while (*s++)
         n++;
     return n;

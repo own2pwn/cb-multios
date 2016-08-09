@@ -28,9 +28,9 @@
 #define FILE_BUF_SZ 			1024
 
 typedef struct {
-	cgc_size_t 	fd;
-	cgc_size_t 	idx;					// current idx in buf
-	cgc_size_t 	count;					// number of usable bytes in buf
+	size_t 	fd;
+	size_t 	idx;					// current idx in buf
+	size_t 	count;					// number of usable bytes in buf
 	unsigned char buf[FILE_BUF_SZ]; // buffer of received bytes
 } cgc_FILE;
 
@@ -91,11 +91,11 @@ cgc_ssize_t cgc_recv_until_delim_n(int fd, char delim, char *buf, unsigned int s
 		return ERRNO_RECV;
 	}
 
-	cgc_size_t bytes_read_total = 0;
+	size_t bytes_read_total = 0;
 	char ch = 0;
 	int error = 0;
 
-	for (cgc_size_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		ch = cgc_recv_char(fd, &error);
 
 		if (EOF == ch) {

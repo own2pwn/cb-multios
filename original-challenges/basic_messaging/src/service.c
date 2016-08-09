@@ -128,9 +128,9 @@ end:
  * @param username Pointer to an ascii username.
  * @return Returns the newly created cgc_user id or 0 on failure.
  **/
-cgc_size_t cgc_create_user( cgc_puser_manager pum, char *username )
+size_t cgc_create_user( cgc_puser_manager pum, char *username )
 {
-	cgc_size_t id = 0;
+	size_t id = 0;
 	cgc_puser walker = NULL;
 	cgc_puser newuser = NULL;
 
@@ -214,9 +214,9 @@ end:
  * @param pm Pointer to the cgc_message to add
  * @return Id of the new cgc_message or 0 on failure.
  **/
-cgc_size_t cgc_add_message( cgc_pmessage_manager pman, cgc_pmessage pm )
+size_t cgc_add_message( cgc_pmessage_manager pman, cgc_pmessage pm )
 {
-	cgc_size_t id = 0;
+	size_t id = 0;
 	cgc_pmessage walker = NULL;
 
 	if ( pm == NULL ) {
@@ -296,7 +296,7 @@ end:
  * @param message_id Id of the cgc_message to be deleted.
  * @return Only returns void. Any errors are displayed to the cgc_user.
  **/
-void cgc_delete_message( cgc_pmessage_manager pmm, cgc_size_t message_id )
+void cgc_delete_message( cgc_pmessage_manager pmm, size_t message_id )
 {
 	cgc_pmessage walker = NULL;
 	cgc_pmessage prev = NULL;
@@ -342,9 +342,9 @@ end:
  * @param pmm Pointer to the cgc_message manager structure of a cgc_user.
  * @param message_id Id of the cgc_message to be displayed.
  **/
-void cgc_read_message( cgc_pmessage_manager pmm, cgc_size_t message_id )
+void cgc_read_message( cgc_pmessage_manager pmm, size_t message_id )
 {
-	cgc_size_t retval = 0;
+	size_t retval = 0;
 	cgc_pmessage walker = NULL;
 	char buffer[0x100];
 
@@ -397,7 +397,7 @@ end:
 void cgc_list_unread_messages( cgc_pmessage_manager pmm )
 {
 	cgc_pmessage walker = NULL;
-	cgc_size_t size = 0;
+	size_t size = 0;
 #ifdef PATCHED
 	unsigned int count = 0;
 #else
@@ -512,9 +512,9 @@ end:
  * @param msg Pointer to the cgc_message to send to the cgc_user.
  * @return Returns the id of the sent cgc_message or 0 on failure.
  **/
-cgc_size_t cgc_send_user_message( cgc_puser_manager pum, char *username, char *msg )
+size_t cgc_send_user_message( cgc_puser_manager pum, char *username, char *msg )
 {
-	cgc_size_t id = 0;
+	size_t id = 0;
 	cgc_puser pu = NULL;
 	cgc_pmessage pmsg = NULL;
 
@@ -551,7 +551,7 @@ end:
  **/
 void cgc_handle_loggedin( cgc_puser_manager pum, cgc_puser pu )
 {
-	cgc_size_t choice = 0;
+	size_t choice = 0;
 	char cgc_message[MESSAGE_LENGTH];
 	char username[USERNAME_LENGTH];
 	
@@ -627,8 +627,8 @@ void cgc_handle_menu ( )
 {
 	cgc_puser_manager pum = NULL;
 	cgc_puser current_user = NULL;
-	cgc_size_t choice = 0;
-	cgc_size_t received = 0;
+	size_t choice = 0;
+	size_t received = 0;
 	char username[USERNAME_LENGTH];
 
 	pum = cgc_init_users( );

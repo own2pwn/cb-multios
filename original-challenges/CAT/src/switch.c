@@ -22,7 +22,7 @@
 
 #include "static.h"
 
-cgc_size_t cgc_static_switch(cgc_size_t idx) {
+size_t cgc_static_switch(size_t idx) {
 	switch (idx) {
 		case 0x00000000:
 			return 0x2e4c7aa3;

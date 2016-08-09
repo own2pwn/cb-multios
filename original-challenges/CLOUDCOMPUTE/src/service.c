@@ -215,7 +215,7 @@ int cgc_do_init(cgc_session_t **session) {
     }
 
     // Generate a session ID.
-    cgc_size_t rnd_bytes = 0;
+    size_t rnd_bytes = 0;
     while(1) {
         rnd_bytes = 0;
         if (SUCCESS != cgc_random(&(*session)->id, 4, &rnd_bytes) || 4 != rnd_bytes) {

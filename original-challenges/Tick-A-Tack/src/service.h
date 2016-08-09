@@ -47,7 +47,7 @@
 // Prompts
 #define ROOTPROMPT "$ "
 
-void cgc_do_menu(cgc_size_t replay);
+void cgc_do_menu(size_t replay);
 void cgc_do_quit();
 void cgc_do_select_char();
 void cgc_send_current_board();

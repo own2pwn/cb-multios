@@ -52,7 +52,7 @@
 #define LOW_PASS 1
 #define HIGH_PASS 2
 
-static const cgc_size_t UWFC_HEADER_SIZE = sizeof(cgc_uwfc_t) - sizeof(char *);
+static const size_t UWFC_HEADER_SIZE = sizeof(cgc_uwfc_t) - sizeof(char *);
 static int vis_multiplier = 0;
 
 void cgc_set_vis_multiplier(char c) {
@@ -129,7 +129,7 @@ int cgc_validate_header(cgc_uwfc_t *header) {
 cgc_uwfc_t *cgc_init_track() {
     cgc_uwfc_t *track;
     int track_size = 0;
-    cgc_size_t rx = 0, rx_count = 0;
+    size_t rx = 0, rx_count = 0;
 
     track = cgc_malloc(sizeof(cgc_uwfc_t));
     if (track == NULL)
@@ -245,7 +245,7 @@ static void cgc_plot_stereo_wave(cgc_uwfc_t *track, unsigned char *data) {
 
 void cgc_wave_vis(cgc_uwfc_t *track) {
     unsigned char *data = (unsigned char*)track->data;
-    cgc_size_t i = 0;
+    size_t i = 0;
 
     while (i < (track->sub_chunk2_size / track->block_align)) {
         if (i % track->sample_rate == 0)

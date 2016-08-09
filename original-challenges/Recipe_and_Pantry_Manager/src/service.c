@@ -15,7 +15,7 @@ typedef struct cgc_instruction {
 	char text[128];
 
 	/// 4 byte cookie from magic page
-	cgc_size_t cookie;
+	size_t cookie;
 
 	struct cgc_instruction *next;
 } cgc_instruction, *cgc_pinstruction;
@@ -30,14 +30,14 @@ typedef struct cgc_ingredient {
 	char name[16];
 
 	/// 4 byte cookie from magic page
-	cgc_size_t cookie;
+	size_t cookie;
 
 	struct cgc_ingredient *next;
 } cgc_ingredient, *cgc_pingredient;
 
 typedef struct cgc_pantry {
 	char name[16];
-	cgc_size_t cookie;
+	size_t cookie;
 
 	cgc_pingredient grocery_list;
 } cgc_pantry, *cgc_ppantry;
@@ -46,7 +46,7 @@ typedef struct cgc_recipe {
 	char name[16];
 
 	/// 4 byte cookie from magic page
-	cgc_size_t cookie;
+	size_t cookie;
 
 	cgc_pingredient ing_list;
 	cgc_pinstruction ins_list;
@@ -61,15 +61,15 @@ typedef struct cgc_global {
 cgc_global g;
 
 
-cgc_size_t magic_index_g;
+size_t magic_index_g;
 char *magic_page_g;
 
 int cgc_read_selection( void )
 {
 	int value = 2;
 	char data[2];
-	cgc_size_t bytes = 0;
-	cgc_size_t index = 0;
+	size_t bytes = 0;
+	size_t index = 0;
 
 	while ( value ) {
 		if ( receive( STDIN, data + index, value, &bytes) != 0 ) {
@@ -101,10 +101,10 @@ int cgc_read_selection( void )
 	return value;
 }
 
-int cgc_read_string( char *dest, cgc_size_t maxlen ) 
+int cgc_read_string( char *dest, size_t maxlen ) 
 {
-	cgc_size_t index = 0;
-	cgc_size_t bytes_read = 0;
+	size_t index = 0;
+	size_t bytes_read = 0;
 	char c = 0;
 
 	if ( dest == NULL ) {
@@ -133,9 +133,9 @@ int cgc_read_string( char *dest, cgc_size_t maxlen )
 	return index;
 }
 
-cgc_size_t cgc_read_cookie( )
+size_t cgc_read_cookie( )
 {
-	cgc_size_t cookie;
+	size_t cookie;
 
 	cookie = ((int *)magic_page_g)[magic_index_g/4];
 
@@ -146,12 +146,12 @@ cgc_size_t cgc_read_cookie( )
 
 void cgc_display_banner( void )
 {
-	cgc_size_t month = 0;
-	cgc_size_t year = 0;
-	cgc_size_t day = 0;
-	cgc_size_t hour = 0;
-	cgc_size_t minute = 0;
-	cgc_size_t second = 0;
+	size_t month = 0;
+	size_t year = 0;
+	size_t day = 0;
+	size_t hour = 0;
+	size_t minute = 0;
+	size_t second = 0;
 
 	month = ((unsigned char*)magic_page_g)[0] % 12;
 	year = 2016;
@@ -423,7 +423,7 @@ void cgc_add_recipe( void )
 	cgc_precipe pr = NULL;
 	cgc_pingredient ping = NULL;
 	cgc_pinstruction pins = NULL;
-	cgc_size_t t;
+	size_t t;
 
 	while ( g.recipe_list_g[index].cookie != 0 && index < RECIPE_COUNT) {
 		index++;
@@ -491,7 +491,7 @@ void cgc_print_recipe( int index )
 {
 	cgc_pingredient ing_walker = NULL;
 	cgc_pinstruction ins_walker = NULL;
-	cgc_size_t item = 1;
+	size_t item = 1;
 
 	if ( RECIPE_COUNT <= index ) {
 		cgc_printf("[ERROR] Invalid index: $d\n", index);
@@ -610,7 +610,7 @@ void cgc_remove_recipe( )
 void cgc_print_recipe_costs( void )
 {
 	double total = 0.0;
-	cgc_size_t index = 0;
+	size_t index = 0;
 	cgc_pingredient walker = NULL;
 
 	cgc_printf("Recipe Costs:\n");
@@ -742,10 +742,10 @@ void cgc_link_pantry_ingredient( cgc_ppantry pp, cgc_pingredient ping )
 	return;
 }
 
-void cgc_print_single_pantry( cgc_size_t index )
+void cgc_print_single_pantry( size_t index )
 {
 	cgc_pingredient pw = NULL;
-	cgc_size_t item = 1;
+	size_t item = 1;
 
 	if ( PANTRY_COUNT <= index ) {
 		cgc_printf("[ERROR] Invalid index: $d\n", index);
@@ -1036,9 +1036,9 @@ void cgc_handle_pantry( void )
 
 void cgc_query_recipes( void )
 {
-	cgc_size_t index;
+	size_t index;
 	char data[16];
-	cgc_size_t selection;
+	size_t selection;
 	int found;
 
 	/// Recipe cgc_ingredient walker
@@ -1119,7 +1119,7 @@ void cgc_query_by_price( void )
 {
 	char data[10];
 	double max = 0.0;
-	cgc_size_t index = 0;
+	size_t index = 0;
 	cgc_pingredient walker = NULL;
 	double total = 0.0;
 
@@ -1155,8 +1155,8 @@ void cgc_query_by_price( void )
 void cgc_print_cheapest( void )
 {
 	double cheapest_value = 0.0;
-	cgc_size_t cheapest_index = 0;
-	cgc_size_t index = 0;
+	size_t cheapest_index = 0;
+	size_t index = 0;
 	cgc_pingredient walker = NULL;
 	double total = 0.0;
 
@@ -1194,8 +1194,8 @@ void cgc_print_cheapest( void )
 void cgc_print_expensivest( void )
 {
 	double expensivest_value = 0.0;
-	cgc_size_t expensivest_index = 0;
-	cgc_size_t index = 0;
+	size_t expensivest_index = 0;
+	size_t index = 0;
 	cgc_pingredient walker = NULL;
 	double total = 0.0;
 
@@ -1275,8 +1275,8 @@ int __attribute__((fastcall)) main(int secret_page_i, char *unused[])
 {
 
 	int value = 0;
-	cgc_size_t eax;
-	cgc_size_t eip;
+	size_t eax;
+	size_t eip;
 
 	cgc_init_globals( (char*)secret_page_i);
 

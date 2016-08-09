@@ -26,7 +26,7 @@
 #include "bitset.h"
 
 struct pool {
-    cgc_size_t size;
+    size_t size;
     struct chunk *head;
 };
 
@@ -37,7 +37,7 @@ struct pool {
  * @param size The size of the pool
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
  */
-int cgc_pool_init(struct pool *pool, cgc_size_t size);
+int cgc_pool_init(struct pool *pool, size_t size);
 
 /**
  * Destroy a fixed-size pool allocator and free all chunks

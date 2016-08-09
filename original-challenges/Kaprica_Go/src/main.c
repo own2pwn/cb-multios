@@ -466,12 +466,12 @@ void cgc_sleep(int s, int us)
   cgc_fdwait(0, NULL, NULL, &t, NULL);
 }
 
-int cgc_read_n_bytes(int fd, cgc_size_t n, char *buf, int has_terminator, char terminator)
+int cgc_read_n_bytes(int fd, size_t n, char *buf, int has_terminator, char terminator)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t rx = 0, total_read = 0;
+  size_t rx = 0, total_read = 0;
 
   while (total_read < n) {
     if (receive(fd, buf + total_read, 1, &rx) != 0) {

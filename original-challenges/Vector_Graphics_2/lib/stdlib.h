@@ -40,11 +40,11 @@ int cgc_abs( int );
 
 int cgc_strcmp( char *str1, char *str2 );
 char *cgc_strcpy( char *dest, char *src );
-char *cgc_strncpy( char *dest, const char *src, cgc_size_t num );
-cgc_size_t cgc_strlen( const char *str );
+char *cgc_strncpy( char *dest, const char *src, size_t num );
+size_t cgc_strlen( const char *str );
 int cgc_printf( const char *fmt, ... );
 
-void* cgc_memcpy( void *dest, void *src, cgc_size_t numbytes );
-void* cgc_memset( void *dest, int value, cgc_size_t num );
+void* cgc_memcpy( void *dest, void *src, size_t numbytes );
+void* cgc_memset( void *dest, int value, size_t num );
 
 #endif // __STDLIB_H__

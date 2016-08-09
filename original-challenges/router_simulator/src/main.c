@@ -65,7 +65,7 @@ typedef struct {
 } cgc_route_mem_t;
 
 char g_buffer[1024];
-cgc_size_t g_buffer_bytes;
+size_t g_buffer_bytes;
 unsigned int g_num_routers;
 cgc_router_t g_routers[MAX_ROUTERS];
 cgc_route_t g_default_route;
@@ -75,13 +75,13 @@ cgc_route_mem_t **g_route_memory;
 
 static void cgc_print(const char *s)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     transmit(STDOUT, s, cgc_strlen(s), &bytes);
 }
 
 static char *cgc_readline(const char *prompt)
 {
-    cgc_size_t idx = 0, bytes;
+    size_t idx = 0, bytes;
     cgc_print(prompt);
     while (1)
     {

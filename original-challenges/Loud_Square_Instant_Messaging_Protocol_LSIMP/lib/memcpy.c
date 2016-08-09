@@ -25,10 +25,10 @@
 
 #include <string.h>
 
-void *cgc_memcpy(void *dest, const void *src, cgc_size_t n)
+void *cgc_memcpy(void *dest, const void *src, size_t n)
 {
     unsigned char *d = (unsigned char *)dest, *s = (unsigned char *)src;
-    cgc_size_t i = 0;
+    size_t i = 0;
     while (i < n) {
         d[i] = s[i];
         i++;

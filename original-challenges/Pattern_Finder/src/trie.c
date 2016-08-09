@@ -26,7 +26,7 @@
 #include "safe.h"
 #include "trie.h"
 
-static cgc_size_t TrieCount = ROOT_IDENTIFIER;
+static size_t TrieCount = ROOT_IDENTIFIER;
 
 void cgc_AllocateAndInitializeTrieRoot(cgc_trie** Trie)
 {
@@ -58,7 +58,7 @@ void cgc_FreeTrie(cgc_trie* Trie)
 {
   if (Trie)
   {
-    for (cgc_size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex)
+    for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ++ChildIndex)
     {
       if (Trie->Children[ChildIndex])
       {
@@ -71,12 +71,12 @@ void cgc_FreeTrie(cgc_trie* Trie)
   }
 }
 
-void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize)
+void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, size_t DataSize)
 {
   if (!Trie)
     return;
 
-  for (cgc_size_t DataIndex = 0; DataIndex < DataSize / sizeof(cgc_trie_unit); ++DataIndex)
+  for (size_t DataIndex = 0; DataIndex < DataSize / sizeof(cgc_trie_unit); ++DataIndex)
   {
     cgc_trie* Child;
 
@@ -97,9 +97,9 @@ void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize
   Trie->Terminal = 1;
 }
 
-cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize)
+cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, size_t DataSize)
 {
-  for (cgc_size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
+  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
   {
     if (Trie->Children[Data[DataIndex]])
       Trie = Trie->Children[Data[DataIndex]];
@@ -110,7 +110,7 @@ cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSiz
   return Trie->Terminal ? Trie : NULL;
 }
 
-cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, cgc_size_t Identifier)
+cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, size_t Identifier)
 {
   cgc_trie* Found = NULL;
 
@@ -120,7 +120,7 @@ cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, cgc_size_t Identifier)
   if (!Trie)
     return NULL;
 
-  for (cgc_size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex)
+  for (size_t UnitIndex = 0; UnitIndex < UNIT_CARDINALITY; ++UnitIndex)
   {
     if (Trie->Children[UnitIndex])
     {
@@ -133,12 +133,12 @@ cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, cgc_size_t Identifier)
   return NULL;
 }
 
-cgc_size_t cgc_GetTrieCount(void)
+size_t cgc_GetTrieCount(void)
 {
   return TrieCount;
 }
 
-static int cgc__GatherTerminals(cgc_trie* Trie, cgc_trie*** Terminals, cgc_size_t* TerminalCount, cgc_size_t* TerminalMax)
+static int cgc__GatherTerminals(cgc_trie* Trie, cgc_trie*** Terminals, size_t* TerminalCount, size_t* TerminalMax)
 {
   if (Trie->Terminal)
   {
@@ -155,7 +155,7 @@ static int cgc__GatherTerminals(cgc_trie* Trie, cgc_trie*** Terminals, cgc_size_
     }
   }
 
-  for (cgc_size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++)
+  for (size_t ChildIndex = 0; ChildIndex < UNIT_CARDINALITY; ChildIndex++)
   {
     if (Trie->Children[ChildIndex])
     {
@@ -166,11 +166,11 @@ static int cgc__GatherTerminals(cgc_trie* Trie, cgc_trie*** Terminals, cgc_size_
   return 0;
 }
 
-cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, cgc_size_t* TerminalCount)
+cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, size_t* TerminalCount)
 {
 #define TERMINAL_START_MAX 4
   cgc_trie** Terminals = cgc_xcalloc(sizeof(cgc_trie*), TERMINAL_START_MAX);
-  cgc_size_t TerminalMax = TERMINAL_START_MAX;
+  size_t TerminalMax = TERMINAL_START_MAX;
 
   *TerminalCount = 0;
 
@@ -179,13 +179,13 @@ cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, cgc_size_t* TerminalCount)
   return Terminals;
 }
 
-int cgc_ReverseArray(cgc_trie_unit* String, cgc_size_t ArraySize)
+int cgc_ReverseArray(cgc_trie_unit* String, size_t ArraySize)
 {
   if (!String || !ArraySize)
     return -1;
 
   cgc_trie_unit Temp;
-  cgc_size_t Index = 0;
+  size_t Index = 0;
 
   while (Index < ArraySize / 2)
   {
@@ -198,13 +198,13 @@ int cgc_ReverseArray(cgc_trie_unit* String, cgc_size_t ArraySize)
   return 0;
 }
 
-cgc_trie_unit* cgc_GetDataString(cgc_trie* Trie, cgc_size_t* DataLength)
+cgc_trie_unit* cgc_GetDataString(cgc_trie* Trie, size_t* DataLength)
 {
   if (!Trie)
     return NULL;
 
-  cgc_size_t StringLength = 64;
-  cgc_size_t StringIndex = 0;
+  size_t StringLength = 64;
+  size_t StringIndex = 0;
   cgc_trie_unit* String = cgc_xcalloc(sizeof(cgc_trie_unit), 64);
 
   while (Trie)

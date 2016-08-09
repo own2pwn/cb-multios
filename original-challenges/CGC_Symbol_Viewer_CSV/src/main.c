@@ -164,7 +164,7 @@ void cgc_free_symbol(void *e)
 int main()
 {
   int i;
-  cgc_size_t size;
+  size_t size;
   char *file;
   cgc_cgcf_Ehdr ehdr;
   cgc_cgcf_Shdr *shdr = NULL;
@@ -250,7 +250,7 @@ int main()
       if (cgc_cgcf_parse_section_header(file, size, s->sh_link, &strtab_sec) != 0)
         goto error;
       char *strtab = (file + strtab_sec.sh_offset);
-      cgc_size_t sz = sizeof(cgc_cgcf_Sym) - sizeof(char *);
+      size_t sz = sizeof(cgc_cgcf_Sym) - sizeof(char *);
       num_syms = s->sh_size / sz;
       if (s->sh_offset > 0xFFFFFFFF - num_syms * sz)
         goto error;

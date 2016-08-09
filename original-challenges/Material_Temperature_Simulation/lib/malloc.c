@@ -37,9 +37,9 @@ THE SOFTWARE.
 
 cgc_tMallocManager g_memManager;
 
-void *cgc_calloc( cgc_size_t count, cgc_size_t obj_size )
+void *cgc_calloc( size_t count, size_t obj_size )
 {
-    cgc_size_t allocation_size = (count * obj_size);
+    size_t allocation_size = (count * obj_size);
     void *pMemBuffer;
 
     pMemBuffer = cgc_malloc( allocation_size );
@@ -49,10 +49,10 @@ void *cgc_calloc( cgc_size_t count, cgc_size_t obj_size )
     return (pMemBuffer);
 }
 
-void *cgc_add_free_list( cgc_size_t request_size )
+void *cgc_add_free_list( size_t request_size )
 {
     // Include header
-    cgc_size_t grow_size = (request_size + 4);
+    size_t grow_size = (request_size + 4);
 
     // Increases the size of the cgc_free list
     if ( grow_size % ALLOC_PAGE_SIZE != 0 )
@@ -83,7 +83,7 @@ void *cgc_add_free_list( cgc_size_t request_size )
     return (void*)pNewAllocHdr;
 }
 
-void *cgc_malloc( cgc_size_t alloc_size )
+void *cgc_malloc( size_t alloc_size )
 {
     // Allocate
     if ( alloc_size < 8 )
@@ -117,7 +117,7 @@ void *cgc_malloc( cgc_size_t alloc_size )
             void *pClaimAllocation = (pFreeCur + sizeof(cgc_tMallocAllocHdr));
 
             // Split chunk
-            cgc_size_t size_remaining = pFreeCurHeader->alloc_size - alloc_size;
+            size_t size_remaining = pFreeCurHeader->alloc_size - alloc_size;
 
             // Allocate this chunk and set size...
             pFreeCurHeader->alloc_size = alloc_size;
@@ -219,7 +219,7 @@ void cgc_free( void *pItem )
         if ( !IS_BIT_SET(pNeighbor->alloc_size, MALLOC_INUSE_FLAG_BIT) )
         {
             // Coalesce!
-            cgc_size_t coalesceSize = (pItemHdr->alloc_size & ~0x3) + (pNeighbor->alloc_size & ~0x3) + sizeof(cgc_tMallocAllocHdr);
+            size_t coalesceSize = (pItemHdr->alloc_size & ~0x3) + (pNeighbor->alloc_size & ~0x3) + sizeof(cgc_tMallocAllocHdr);
 
             // Set size
             // The inuse bit is cleared here

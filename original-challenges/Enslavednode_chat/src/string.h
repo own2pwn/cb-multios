@@ -28,7 +28,7 @@
 
 typedef struct cgc_string cgc_string;
 struct cgc_string {
-  cgc_size_t cap;
+  size_t cap;
   char *d;
 };
 

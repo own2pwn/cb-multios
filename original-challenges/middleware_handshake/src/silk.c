@@ -49,7 +49,7 @@ typedef struct {
 
 int cgc__recv_bytes(void *data, unsigned int n)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if (receive(STDIN, data, n, &bytes) != 0 || bytes != n)
         return FAILURE;
     return SUCCESS;
@@ -75,7 +75,7 @@ int cgc__recv(cgc_uint8_t pktid, void *data, unsigned int n)
 
 int cgc__send_bytes(void *data, unsigned int n)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if (transmit(STDOUT, data, n, &bytes) != 0 || bytes != n)
         return FAILURE;
     return SUCCESS;

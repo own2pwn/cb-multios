@@ -34,7 +34,7 @@ struct ast;
  * @param tokens The tokens to print
  * @param n The number of tokens in the buffer
  */
-void cgc_pretty_print_tokens(struct token *tokens, cgc_size_t n);
+void cgc_pretty_print_tokens(struct token *tokens, size_t n);
 
 /**
  * Print the nodes in an AST.

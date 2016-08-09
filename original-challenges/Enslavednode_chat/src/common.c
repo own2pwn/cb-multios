@@ -26,11 +26,11 @@
 #include <string.h>
 #include "error.h"
 
-int cgc_readline(int fd, char *buf, cgc_size_t max, cgc_size_t *nrx)
+int cgc_readline(int fd, char *buf, size_t max, size_t *nrx)
 {
 #define READ_SIZE 1024
   char tmp[READ_SIZE + 1];
-  cgc_size_t n;
+  size_t n;
 
   *nrx = 0;
   while (*nrx < max) {
@@ -38,9 +38,9 @@ int cgc_readline(int fd, char *buf, cgc_size_t max, cgc_size_t *nrx)
 
     if (ret < 0) {
       return -1;
-    } else if (ret == 0 && n == (cgc_size_t)NULL) {
+    } else if (ret == 0 && n == (size_t)NULL) {
       break;
-    } else if (ret == 0 && n != (cgc_size_t)NULL) {
+    } else if (ret == 0 && n != (size_t)NULL) {
       char *nl = cgc_strchr(tmp, '\n');
 
       // just newline, i.e. input = "\n"

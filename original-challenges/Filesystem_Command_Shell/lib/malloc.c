@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <string.h>
 
 typedef struct cgc_meta {
-	cgc_size_t length;
+	size_t length;
 	struct cgc_meta *next;
 	struct cgc_meta *prev;
 } cgc_meta, *cgc_pmeta;
@@ -77,7 +77,7 @@ void cgc_link( cgc_pmeta linkme )
 	return;
 }
 
-void cgc_add_freelist_block( cgc_size_t length )
+void cgc_add_freelist_block( size_t length )
 {
 	cgc_pmeta block = NULL;
 	cgc_pmeta walker = NULL;
@@ -167,7 +167,7 @@ void cgc_unlink( cgc_pmeta block )
 	return;
 }
 
-void *cgc_freelist_alloc( cgc_size_t length )
+void *cgc_freelist_alloc( size_t length )
 {
 	cgc_pmeta walker = NULL;
 	cgc_pmeta newone = NULL;
@@ -224,7 +224,7 @@ void *cgc_freelist_alloc( cgc_size_t length )
 }
 
 
-void *cgc_calloc( cgc_size_t length )
+void *cgc_calloc( size_t length )
 {
 	void *out = cgc_malloc( length );
 
@@ -239,7 +239,7 @@ void *cgc_calloc( cgc_size_t length )
 	return out;
 }
 
-void *cgc_malloc( cgc_size_t length )
+void *cgc_malloc( size_t length )
 {
 	int bucket = 0;
 	cgc_pmeta outb = NULL;

@@ -26,9 +26,9 @@
 #include "int2str.h"
 #include "xxprintf.h"
 
-int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list args) {
+int cgc_vsnprintf(char* buf, size_t buf_size, const char* fmt, cgc_va_list args) {
 
-    cgc_size_t buf_len = 0;
+    size_t buf_len = 0;
     const char *fmt_ptr = fmt;
 
     // if fmt is NULL, set fmt_ptr to "" so it will skip the while loop
@@ -50,7 +50,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 
         } else {
             char fmt_spec = '\0';
-            cgc_size_t arg_len = 0;
+            size_t arg_len = 0;
             unsigned char next_ch = 0;
             const char *next_arg = NULL;  // ptr to the next arg in args (to use this iteration)
             char tmp[32]; // tmp buffer for cgc_int2str conversion
@@ -137,7 +137,7 @@ int cgc_vsnprintf(char* buf, cgc_size_t buf_size, const char* fmt, cgc_va_list a
 
 }
 
-int cgc_snprintf(char* buf, cgc_size_t buf_size, const char* fmt, ...) {
+int cgc_snprintf(char* buf, size_t buf_size, const char* fmt, ...) {
     int buf_len;
     cgc_va_list args;
 

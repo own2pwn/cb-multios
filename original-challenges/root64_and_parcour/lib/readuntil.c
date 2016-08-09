@@ -24,13 +24,13 @@
  */
 #include <stdlib.h>
 
-int cgc_readuntil(int fd, char *buf, cgc_size_t n, char delim)
+int cgc_readuntil(int fd, char *buf, size_t n, char delim)
 {
     char *bufend = buf + n - 1;
     int ret;
     while (buf != bufend)
     {
-        cgc_size_t rx;
+        size_t rx;
         if (receive(fd, buf, 1, &rx) != 0 || rx == 0)
             break;
         if (*buf == delim)
@@ -43,13 +43,13 @@ int cgc_readuntil(int fd, char *buf, cgc_size_t n, char delim)
     return 0;
 }
 
-int cgc_writeall(int fd, const char *buf, cgc_size_t n)
+int cgc_writeall(int fd, const char *buf, size_t n)
 {
     const char *wptr = buf;
     const char *bufend = buf + n;
     while (wptr != bufend)
     {
-        cgc_size_t tx;
+        size_t tx;
         if (transmit(fd, buf, bufend - wptr, &tx) != 0 || tx == 0)
             break;
         wptr += tx;

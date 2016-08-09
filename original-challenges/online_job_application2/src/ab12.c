@@ -102,7 +102,7 @@ int cgc_within(int min, int max, int x)
 
 int cgc_all_digits(char *input)
 {
-  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+  for (size_t i = 0; i < cgc_strlen(input); i++)
     if (!cgc_isdigit(input[i])) {
       return 0;
     }
@@ -148,7 +148,7 @@ int cgc_validate_weight(char *input)
 
 int cgc_validate_name(char *input)
 {
-  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+  for (size_t i = 0; i < cgc_strlen(input); i++)
     if (!cgc_isprint(input[i]) && input[i] != '\'')
       return 0;
 
@@ -163,7 +163,7 @@ int cgc_validate_email(char *input)
   if (cgc_strlen(input) < 3 || cgc_strlen(input) > 64)
     return 0;
 
-  for (cgc_size_t i = 0; i < cgc_strlen(input); i++) {
+  for (size_t i = 0; i < cgc_strlen(input); i++) {
     c = input[i];
 
     if (c == '@') {
@@ -187,7 +187,7 @@ int cgc_validate_street(char *input)
   if (cgc_strlen(input) > 32 || cgc_strlen(input) < 3)
     return 0;
 
-  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+  for (size_t i = 0; i < cgc_strlen(input); i++)
     if (!(cgc_isalnum(input[i]) || cgc_isspace(input[i]) || cgc_ispunct(input[i])))
       return 0;
 
@@ -199,7 +199,7 @@ int cgc_validate_city(char *input)
   if (cgc_strlen(input) > 32 || cgc_strlen(input) < 4)
     return 0;
 
-  for (cgc_size_t i = 0; i < cgc_strlen(input); i++)
+  for (size_t i = 0; i < cgc_strlen(input); i++)
     if (!(cgc_isalnum(input[i]) || cgc_isspace(input[i]) || cgc_ispunct(input[i])))
       return 0;
 

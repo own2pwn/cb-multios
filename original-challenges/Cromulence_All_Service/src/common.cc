@@ -27,10 +27,10 @@ THE SOFTWARE.
 
 #define LINE_BUF_MAX        (512)
 
-cgc_size_t cgc_recv_bytes( cgc_uint8_t *pDest, cgc_size_t count )
+size_t cgc_recv_bytes( cgc_uint8_t *pDest, size_t count )
 {
-    cgc_size_t pos = 0;
-    cgc_size_t rx_count = 0;
+    size_t pos = 0;
+    size_t rx_count = 0;
 
     while ( pos < count )
     {

@@ -32,7 +32,7 @@ static int cgc_system_init(cgc_rng_t *rng)
 
 static int cgc_system_get_bytes(cgc_rng_t *rng, unsigned char *out, unsigned int cnt)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     if (cgc_random(out, cnt, &bytes) != 0 || bytes != cnt)
         return FAILURE;
     return SUCCESS;

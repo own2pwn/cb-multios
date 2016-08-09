@@ -22,9 +22,9 @@
  */
 #include <string.h>
 
-void *cgc_memset(void *s, int c, cgc_size_t n)
+void *cgc_memset(void *s, int c, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     unsigned char *buf = s;
 
     for (i = 0; i < n; i++)

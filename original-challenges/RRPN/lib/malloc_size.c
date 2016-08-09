@@ -27,7 +27,7 @@
 
 #include "malloc_internal.h"
 
-cgc_size_t cgc_malloc_size(void *mem)
+size_t cgc_malloc_size(void *mem)
 {
     cgc_block_t *block = (cgc_block_t *)((cgc_intptr_t)mem - OVERHEAD_BYTES);
     return block->size - OVERHEAD_BYTES;

@@ -42,31 +42,31 @@ struct cgc_signature
   } Severity;
 
   char* Path;
-  cgc_size_t PathSize;
+  size_t PathSize;
 
   cgc_trie_unit* Data;
-  cgc_size_t DataSize;
+  size_t DataSize;
 };
 
 #define MAX_SIGNATURES 0x1000
 typedef struct cgc_signature_db cgc_signature_db;
 struct cgc_signature_db
 {
-  cgc_size_t SignatureCount;
+  size_t SignatureCount;
   cgc_signature* Signatures[MAX_SIGNATURES];
   cgc_trie* Trie;
   cgc_search_machine* SearchMachine;
 };
 
 int cgc_InitializeSignatureDatabase(cgc_signature_db* SignatureDatabase);
-int cgc_InitializeSignature(cgc_signature* Signature, int Severity, cgc_trie_unit* Data, cgc_size_t DataSize, char* Path, cgc_size_t PathSize);
+int cgc_InitializeSignature(cgc_signature* Signature, int Severity, cgc_trie_unit* Data, size_t DataSize, char* Path, size_t PathSize);
 void cgc_FreeSignature(cgc_signature* Signature);
 char* cgc_SeverityString(unsigned Severity);
 void cgc_PrintSignature(cgc_FILE* Stream, cgc_signature* Signature);
-unsigned long cgc_BytesToUnsigned(unsigned char *Data, cgc_size_t DataSize);
+unsigned long cgc_BytesToUnsigned(unsigned char *Data, size_t DataSize);
 void cgc_FreeSignatureDatabase(cgc_signature_db* SignatureDatabase);
 int cgc_AddSignatureToSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_signature* Signature);
 int cgc_BuildSignatureDatabaseSearchMachine(cgc_signature_db* SignatureDatabase);
-cgc_list* cgc_SearchSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_trie_unit* Data, cgc_size_t DataSize);
+cgc_list* cgc_SearchSignatureDatabase(cgc_signature_db* SignatureDatabase, cgc_trie_unit* Data, size_t DataSize);
 
 #endif /* __SIGDB_H__ */

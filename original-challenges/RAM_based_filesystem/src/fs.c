@@ -1001,7 +1001,7 @@ cgc_FILE *cgc_fopen(char *path, const char *mode) {
 /*
    read from the file specified by stream (previously opened with cgc_fopen)
 */
-cgc_size_t cgc_fread(void *ptr, cgc_size_t size, cgc_size_t nmemb, cgc_FILE *stream) {
+size_t cgc_fread(void *ptr, size_t size, size_t nmemb, cgc_FILE *stream) {
 	cgc_uint32_t i;
 	int index;
 	int b_index;
@@ -1062,7 +1062,7 @@ cgc_size_t cgc_fread(void *ptr, cgc_size_t size, cgc_size_t nmemb, cgc_FILE *str
 /*
    cgc_write to the file specified by stream (previously opened with cgc_fopen)
 */
-cgc_size_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_size_t nmemb, cgc_FILE *stream) {
+size_t cgc_fwrite(const void *ptr, size_t size, size_t nmemb, cgc_FILE *stream) {
 	int i;
 	unsigned char *p = (unsigned char *)ptr;
 	cgc_inode *in;

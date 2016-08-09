@@ -33,13 +33,13 @@
 #define ERRNO_EXHAUSTED_RX -15 // This isn't technically an "error".
 #define ERRNO_EXCEEDED_MAX_DEPTH -16
 
-unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len);
-int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n);
-void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n);
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, size_t len);
+int cgc_memcmp(const char *s1, const char *s2, size_t n);
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, size_t n);
 
 // Fragmentation related
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
 
 
 ////

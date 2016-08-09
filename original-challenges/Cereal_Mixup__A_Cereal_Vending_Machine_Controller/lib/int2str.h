@@ -34,7 +34,7 @@
  * @param i An integer
  * @return 0, -1 on error
  */
-int cgc_int2str(char *str_buf, cgc_size_t buf_size, cgc_int32_t i);
+int cgc_int2str(char *str_buf, size_t buf_size, cgc_int32_t i);
 
 
 #endif

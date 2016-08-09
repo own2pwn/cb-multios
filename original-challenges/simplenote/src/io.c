@@ -25,13 +25,13 @@
 #include <string.h>
 #include "io.h"
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
+int cgc_send_n_bytes(int fd, size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t tx = 0;
-  cgc_size_t to_send = n;
+  size_t tx = 0;
+  size_t to_send = n;
 
   while (to_send > 0) {
     if (transmit(fd, buf + (n - to_send), to_send, &tx) != 0)
@@ -50,13 +50,13 @@ int cgc_send_n_bytes(int fd, cgc_size_t n, char* buf)
   return n - to_send;
 }
 
-int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
+int cgc_read_n_bytes(int fd, size_t n, char* buf)
 {
   if (!n || !buf)
     return -1;
 
-  cgc_size_t rx = 0;
-  cgc_size_t to_read = n;
+  size_t rx = 0;
+  size_t to_read = n;
 
   while (to_read > 0) {
     if (receive(fd, buf + (n - to_read), to_read, &rx) != 0)
@@ -78,7 +78,7 @@ int cgc_read_n_bytes(int fd, cgc_size_t n, char* buf)
 
 int cgc_transmit_string(int fd, char* s)
 {
-  cgc_size_t len = cgc_strlen(s);
+  size_t len = cgc_strlen(s);
   if (len == 0)
     return 0;
   else if (cgc_send_n_bytes(fd, len, s) != len)
@@ -87,12 +87,12 @@ int cgc_transmit_string(int fd, char* s)
     return 0;
 }
 
-int cgc_read_until(int fd, cgc_size_t n, char terminator, char* buf)
+int cgc_read_until(int fd, size_t n, char terminator, char* buf)
 {
-  cgc_size_t read = 0;
+  size_t read = 0;
   while (read < n)
   {
-    cgc_size_t tmp_read;
+    size_t tmp_read;
     if (receive(fd, buf + read, 1, &tmp_read) != 0 || tmp_read == 0)
       return -1;
     if (cgc_memchr(buf + read, terminator, tmp_read) != NULL)

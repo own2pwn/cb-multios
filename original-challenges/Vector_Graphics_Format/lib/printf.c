@@ -32,7 +32,7 @@ THE SOFTWARE.
 
 int cgc_putc( int c )
 {
-    cgc_size_t tx_count;
+    size_t tx_count;
 
     if ( transmit( STDOUT, &c, 1, &tx_count ) != 0 )
         _terminate(2);

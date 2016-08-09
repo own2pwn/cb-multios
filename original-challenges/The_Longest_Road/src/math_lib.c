@@ -33,7 +33,7 @@ int cgc_seed_prng()
 	char buf[256];
 	cgc_bzero(buf, sizeof(buf));
  	int status;
- 	cgc_size_t bytes_received;
+ 	size_t bytes_received;
  	cgc_printf("Enter crypto seed\n");
 
  	status = cgc_receive_until(buf, '\n', 255);

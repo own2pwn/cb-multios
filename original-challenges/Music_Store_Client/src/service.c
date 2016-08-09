@@ -219,7 +219,7 @@ char * cgc_createSearchString(cgc_Request request)
 
 unsigned int cgc_getRandomNumber(unsigned int max)
 {
-    cgc_size_t bytes_written =0;
+    size_t bytes_written =0;
     unsigned int index =0;
     int ret =0;
 
@@ -273,7 +273,7 @@ void cgc_createRandomRequest(cgc_Request *request) {
 
 }
 
-cgc_size_t cgc_getRandomGiftCard(char** gift_card) {
+size_t cgc_getRandomGiftCard(char** gift_card) {
 
     unsigned int charset_size =0;
     int index =0;
@@ -347,7 +347,7 @@ int cgc_sendSearchString(int socket, cgc_Request request) {
 }
 
 int cgc_getBalance(cgc_SongList* mySongList) {
-    cgc_size_t size =0;
+    size_t size =0;
     char* gift_card =NULL;
     char *buffer =NULL;
     int ret =0;

@@ -27,7 +27,7 @@
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size) {
    char ch;
    unsigned int total = 0;
-   cgc_size_t nbytes;
+   size_t nbytes;
    while (size) {
       if (receive(fd, &ch, 1, &nbytes) != 0 || nbytes == 0) {
          break;

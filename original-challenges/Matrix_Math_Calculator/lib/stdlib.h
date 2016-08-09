@@ -26,9 +26,9 @@
 #include <libcgc.h>
 
 /* memory allocation functions */
-void *cgc_malloc(cgc_size_t size);
-void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size);
-void *cgc_realloc(void *ptr, cgc_size_t size);
+void *cgc_malloc(size_t size);
+void *cgc_calloc(size_t nmemb, size_t size);
+void *cgc_realloc(void *ptr, size_t size);
 void cgc_free(void *ptr);
 
 /* miscellaneous functions */

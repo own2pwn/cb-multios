@@ -76,7 +76,7 @@ int cgc_init_database( cgc_productDefType **database );
 int cgc_destroy_database ( cgc_productDefType **database );
 unsigned int cgc_calc_version();
 int cgc_receive_commands( cgc_productDefType **database );
-int cgc_receive_bytes (unsigned char *buffer, cgc_size_t count);
+int cgc_receive_bytes (unsigned char *buffer, size_t count);
 
 #endif
 

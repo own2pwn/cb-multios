@@ -34,11 +34,11 @@
 #define MAX_MEM 512000000
 
 typedef struct HEAP_MEM {
-	cgc_size_t chunk_size;
-	cgc_size_t n_backing;
-	cgc_size_t n_chunks;
-	cgc_size_t ll_md_sz;
-	cgc_size_t backing_sz;
+	size_t chunk_size;
+	size_t n_backing;
+	size_t n_chunks;
+	size_t ll_md_sz;
+	size_t backing_sz;
 	cgc_alloc_head_t * backing;
 	cgc_alloc_head_t * inuse;
 	cgc_alloc_head_t * freelist;
@@ -53,12 +53,12 @@ typedef struct HEAP {
 
 static cgc_HEAP_T sheap_heap;
 
-cgc_size_t MEM_ALLOC = 0;
+size_t MEM_ALLOC = 0;
 
 cgc_alloc_node_t *cgc_alloc_backing(cgc_HEAP_MEM_T *hm){
 	cgc_alloc_node_t * n;
 	hm->ll_md_sz = (sizeof(cgc_alloc_node_t) + hm->chunk_size);
-	cgc_size_t backing_sz =  hm->ll_md_sz * hm->n_chunks ;
+	size_t backing_sz =  hm->ll_md_sz * hm->n_chunks ;
 	hm->backing_sz = backing_sz;
 	int backing_head_r =  allocate(backing_sz, 0, (void **) &n);
 	if(backing_head_r != 0)
@@ -87,7 +87,7 @@ void cgc_add_backing_chunks_to_freelist(cgc_HEAP_MEM_T *hm, cgc_alloc_node_t *ba
 	
 	for(int i =0; i < hm->n_chunks; i++){
 
-		cgc_size_t offset = hm->ll_md_sz *i;
+		size_t offset = hm->ll_md_sz *i;
 		// hacky cast to get right offset
 		cgc_alloc_node_t *a =  (cgc_alloc_node_t *)((void *) backing_head + offset);
 
@@ -111,11 +111,11 @@ int cgc_init_backing(cgc_HEAP_MEM_T *hm){
 }
 
 
-cgc_HEAP_MEM_T * cgc_get_chunk_head_for_sz(cgc_size_t s){
+cgc_HEAP_MEM_T * cgc_get_chunk_head_for_sz(size_t s){
 	for(int i = 0; i < MAX_HEADS; i++){
 		// select our chunk
 		cgc_HEAP_MEM_T * current_heap_head = &(sheap_heap.heads[i]);
-		cgc_size_t current_chunk_sz = current_heap_head->chunk_size;
+		size_t current_chunk_sz = current_heap_head->chunk_size;
 
 		if(s < current_chunk_sz ){
 			// lazy init of chunk head size
@@ -236,7 +236,7 @@ void cgc_malloc_init(){
 
 
 
-void * cgc_malloc(cgc_size_t s){
+void * cgc_malloc(size_t s){
 
 	cgc_HEAP_MEM_T * heap_head = cgc_get_chunk_head_for_sz(s);
 	if(heap_head == NULL)

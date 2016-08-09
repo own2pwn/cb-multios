@@ -28,7 +28,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-int cgc_strncasecmp(const char *s1, const char *s2, cgc_size_t n)
+int cgc_strncasecmp(const char *s1, const char *s2, size_t n)
 {
   unsigned char *_s1 = (unsigned char *)s1;
   unsigned char *_s2 = (unsigned char *)s2;

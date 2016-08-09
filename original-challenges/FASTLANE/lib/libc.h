@@ -41,16 +41,16 @@ typedef unsigned char cgc_UINT8;
 #define ERRNO_RECV BASE_ID+2
 #define ERRNO_ALLOC BASE_ID+3
 
-void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n);
-int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n);
-unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len);
-cgc_size_t cgc_findchar(char *haystack, char needle);
-void cgc_pause(cgc_size_t usec);
-int cgc_sendallnulltrunc(int fd, const char *buf, cgc_size_t size);
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, size_t n);
+int cgc_memcmp(const char *s1, const char *s2, size_t n);
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, size_t len);
+size_t cgc_findchar(char *haystack, char needle);
+void cgc_pause(size_t usec);
+int cgc_sendallnulltrunc(int fd, const char *buf, size_t size);
 cgc_UINT32 cgc_my_pow(cgc_UINT32 x, cgc_UINT32 y);
 cgc_UINT32 cgc_hex2UINT32(char *hex);
-int cgc_sendall(int fd, const char *buf, cgc_size_t size);
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
+int cgc_sendall(int fd, const char *buf, size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
 
 #define SEND(b,s,o) o=cgc_sendall(STDOUT,b,s); if (o<=0) _terminate(ERRNO_SEND);
 #define SENDNULLTRUNC(b,s,o) o=cgc_sendallnulltrunc(STDOUT,b,s); if (o<=0) _terminate(ERRNO_SEND);

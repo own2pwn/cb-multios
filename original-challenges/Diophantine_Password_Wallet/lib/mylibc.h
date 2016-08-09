@@ -26,10 +26,10 @@ static double POWERS_OF_TEN[10] = {
 // The errno from fdwait or receive
 // it can also be -EINVAL if buf is NULL.
 // it can also be -EPIPE if EOF -- Notice that EPIPE is not used by either fdwait or receive
-cgc_ssize_t cgc_readLine(int fd, char* buf, cgc_size_t len);
-cgc_size_t cgc_myStrLen(const char* str);
-cgc_size_t cgc_my_printf(const char* str);
-int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num);
+cgc_ssize_t cgc_readLine(int fd, char* buf, size_t len);
+size_t cgc_myStrLen(const char* str);
+size_t cgc_my_printf(const char* str);
+int cgc_snprintdecimal(char* str, size_t len, cgc_uint32_t num);
 cgc_uint32_t cgc_strToUint32(const char* str);
 
 #endif//MY_LIB_C_H

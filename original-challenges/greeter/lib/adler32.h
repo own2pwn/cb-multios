@@ -32,7 +32,7 @@
  * @param n The number of bytes in buf
  * @return The checksum
  */
-unsigned int cgc_adler32ish(unsigned char *buf, cgc_size_t n);
+unsigned int cgc_adler32ish(unsigned char *buf, size_t n);
 
 #endif /* ADLER32_H_ */
 

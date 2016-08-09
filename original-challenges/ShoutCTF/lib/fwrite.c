@@ -23,10 +23,10 @@
 #include <string.h>
 #include "stdio_private.h"
 
-cgc_ssize_t cgc_fwrite(const void *ptr, cgc_size_t size, cgc_FILE *stream)
+cgc_ssize_t cgc_fwrite(const void *ptr, size_t size, cgc_FILE *stream)
 {
     const char *buf = ptr;
-    cgc_size_t idx = 0, tx;
+    size_t idx = 0, tx;
 
     if (stream->idx == INVALID_IDX)
     {

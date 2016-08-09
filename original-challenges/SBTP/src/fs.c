@@ -43,8 +43,8 @@ static cgc_bool cgc_get_file(void *fdata, void *data);
 static struct node *cgc_get_dir(struct node *cur, void *data);
 
 char *cgc_ls_dir(char *path) {
-    cgc_size_t len = 0;
-    cgc_size_t idx;
+    size_t len = 0;
+    size_t idx;
     int i;
     char *dirlist;
     cgc_file_t *file;
@@ -52,7 +52,7 @@ char *cgc_ls_dir(char *path) {
     struct node *dirnode;
     cgc_dirtree_t *dir;
     struct node *head, *cur;
-    cgc_size_t plen = cgc_strlen(path);
+    size_t plen = cgc_strlen(path);
 
     debug("listing fs path @b\n", path);
     CHECKINIT();
@@ -187,7 +187,7 @@ int cgc_rm_dir(char *path) {
     char *fn = NULL;
     char *tmp = NULL;
     char *parent;
-    cgc_size_t len;
+    size_t len;
     int i;
     struct list *dir;
     struct node *parentnode;
@@ -271,7 +271,7 @@ int cgc_add_file(char *path, char *data) {
     char *fn = NULL;
     char *tmp;
     int i = 0, count = 0;
-    cgc_size_t len;
+    size_t len;
 
     debug("add file @b\n", path);
     CHECKINIT();
@@ -343,7 +343,7 @@ int cgc_rm_file(char *path) {
     char *fn = NULL;
     char *tmp = NULL;
     char *parent;
-    cgc_size_t len;
+    size_t len;
     int i;
     struct list *files;
     struct node *parentnode;
@@ -427,7 +427,7 @@ char *cgc_readfile(char *path) {
     char *fn = NULL;
     char *tmp;
     char *parent;
-    cgc_size_t plen;
+    size_t plen;
     debug("read file @b\n", path);
 
     CHECKINIT();

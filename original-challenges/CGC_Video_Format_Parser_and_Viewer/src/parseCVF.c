@@ -25,10 +25,10 @@ THE SOFTWARE.
 
 #define LOOPIE 0xfffffff
 
-cgc_size_t cgc_receiveWrapper( void *outdata, cgc_size_t length )
+size_t cgc_receiveWrapper( void *outdata, size_t length )
 {
-	cgc_size_t count = 0;
-	cgc_size_t bytesRead = 0;
+	size_t count = 0;
+	size_t bytesRead = 0;
 	unsigned char *tbuff = (unsigned char *)outdata;
 
 	if ( outdata == NULL ) {
@@ -95,7 +95,7 @@ int cgc_playVideo( cgc_pcvf cgc_cvf )
 	cgc_pframe rf = NULL;
 	int sleepi = 1;
 	int tb = 0;
-	cgc_size_t count = 0;
+	size_t count = 0;
 
 	if ( cgc_cvf == NULL ) {
 		return 0;

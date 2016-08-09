@@ -4,7 +4,7 @@
 #include "mylibc.h"
 
 //minlen is used for leading 0's in the fractional part
-int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num, int minlen)
+int cgc_snprintdecimal(char* str, size_t len, cgc_uint32_t num, int minlen)
 {
   int i = 0;
   int j = 0;
@@ -59,7 +59,7 @@ int cgc_snprintdecimal(char* str, cgc_size_t len, cgc_uint32_t num, int minlen)
   return (-1); 
 }
 
-int cgc_snprintfloat(char* str, cgc_size_t len, float num)
+int cgc_snprintfloat(char* str, size_t len, float num)
 {
   char tempStr[24];
   cgc_uint32_t iNum = 0;
@@ -151,8 +151,8 @@ cgc_uint32_t cgc_strToUint32(const char* str)
 **/
 double cgc_strToDouble(const char* str)
 {
-  cgc_size_t i = 0;
-  cgc_size_t fracStart = 0; 
+  size_t i = 0;
+  size_t fracStart = 0; 
 
   int bWhole = 1; //yes whole part
 

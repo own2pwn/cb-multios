@@ -35,9 +35,9 @@ typedef __builtin_va_list cgc_va_list;
 #define va_arg(v,l)     __builtin_va_arg(v,l)
 
 void cgc_FailAndTerminate(char *error_msg);
-void cgc_ReceiveBytes(void *buffer, cgc_size_t size);
-void cgc_HexDump(cgc_uint8_t *data, cgc_size_t size);
-void cgc_TransmitBytes(void *buffer, cgc_size_t size);
+void cgc_ReceiveBytes(void *buffer, size_t size);
+void cgc_HexDump(cgc_uint8_t *data, size_t size);
+void cgc_TransmitBytes(void *buffer, size_t size);
 void cgc_TransmitFormattedBytes(char *format, ...);
 void cgc_vTransmitFormattedBytes(char *format, cgc_va_list arg_list);
 

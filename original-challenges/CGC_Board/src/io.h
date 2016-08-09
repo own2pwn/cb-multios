@@ -30,8 +30,8 @@ enum {
 #undef DEFINE_STATE
 
 void cgc_init_states();
-int cgc_read_all(char *buf, cgc_size_t n);
-int cgc_read_keyword(char *input, cgc_size_t n);
+int cgc_read_all(char *buf, size_t n);
+int cgc_read_keyword(char *input, size_t n);
 void cgc_write_string(const char *str);
 void cgc_send_move(cgc_move_t move);
 void cgc_send_result(int result);

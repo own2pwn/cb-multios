@@ -44,8 +44,8 @@
 #define MAX_UINT32 0xffffffff
 
 // Fragmentation related
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
 
 /**
  * Set a buffer to provided character
@@ -55,7 +55,7 @@ int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_b
  * @param n Number of times to copy character
  * @return dst
  */
-void * cgc_memset(void *dst, char c, cgc_size_t n); 
+void * cgc_memset(void *dst, char c, size_t n); 
 
 /**
  * Convert unsigned integer to string
@@ -75,7 +75,7 @@ int cgc_uint2str32(char* str_buf, int buf_size, uint32_t i);
  * @param n Number of bytes to compare
  * @return -1 if not equal, 0 if equal
  */
-int cgc_memcmp(void *a, void *b, cgc_size_t n);
+int cgc_memcmp(void *a, void *b, size_t n);
 
 /**
  * Convert string to signed integer
@@ -93,7 +93,7 @@ int cgc_str2unt32n(const char* str_buf, uint32_t max_chars, uint64_t max_val, ui
  * @param n Size of destination buffer
  * @return Number of bytes copied
  */
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
+size_t cgc_strncpy(char *s1, char *s2, size_t n);
 
 /**
  * Locate character in string

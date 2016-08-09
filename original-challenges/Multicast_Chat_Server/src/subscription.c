@@ -32,7 +32,7 @@
  */
 cgc_Subscription* cgc_newSubscription(char* name, unsigned index, char* deliveryType) {
 	cgc_Subscription* subscription;
-	cgc_size_t channelNameLength;
+	size_t channelNameLength;
 
 	if(!(subscription = cgc_malloc(sizeof(cgc_Subscription))))
 		return NULL;
@@ -191,7 +191,7 @@ void cgc_cleanupChannel(cgc_Channel* channel) {
  */
 cgc_Channel* cgc_newChannel(char* name) {
 	cgc_Channel* channel;
-	cgc_size_t nameSize;
+	size_t nameSize;
 
 	if(!(channel = cgc_malloc(sizeof(cgc_Channel))))
 		return NULL;

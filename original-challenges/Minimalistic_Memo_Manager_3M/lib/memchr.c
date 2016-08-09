@@ -27,9 +27,9 @@
 #include <libcgc.h>
 #include <stdint.h>
 
-extern void *cgc_memchr(const void *s, int c, cgc_size_t n)
+extern void *cgc_memchr(const void *s, int c, size_t n)
 {
-  cgc_size_t i = 0;
+  size_t i = 0;
   while (i < n) {
     if (*((cgc_uint8_t *)s + i) == c)
       return (void *)((cgc_intptr_t)s + i);

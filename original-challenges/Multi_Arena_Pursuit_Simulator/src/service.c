@@ -472,7 +472,7 @@ void cgc_moveRightInCar(cgc_Position* criminal) {
  */
 void cgc_getMoveInBoat(cgc_Position* criminal) {
 	char buffer[2];
-	cgc_size_t bytes;
+	size_t bytes;
 
 	if(cgc_read_until_delim_or_n(STDIN, buffer, '#', sizeof(buffer), &bytes))
 		_terminate(READ_ERROR);
@@ -492,7 +492,7 @@ void cgc_getMoveInBoat(cgc_Position* criminal) {
  */
 void cgc_getMoveInCar(cgc_Position* criminal) {
 	char buffer[2];
-	cgc_size_t bytes;
+	size_t bytes;
 
 	if(cgc_read_until_delim_or_n(STDIN, buffer, '#', sizeof(buffer), &bytes))
 		_terminate(READ_ERROR);
@@ -909,7 +909,7 @@ int main(void) {
 	char flag_buf[40];
 	char send_buffer[SEND_SZ];
 	char x;
-	cgc_size_t index=0;
+	size_t index=0;
 	unsigned int moves=0;
 	unsigned int caught=0;
 	unsigned int gotAway=0;

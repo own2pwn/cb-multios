@@ -86,7 +86,7 @@ void cgc_calculate_standardpay(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timewo
 void cgc_calculate_totalpay(cgc_ppayroll paycheck);
 void cgc_exempt_overtime(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timeworked);
 void cgc_nonexempt_overtime(cgc_pmoney pay, cgc_pmoney wage, cgc_ptime timeworked);
-int cgc_get_key_value(char *inbuf, cgc_size_t length, char **key, char **value);
+int cgc_get_key_value(char *inbuf, size_t length, char **key, char **value);
 void cgc_process_key_value(cgc_pemployee empl, char *key, char *value, int *week);
 void cgc_merge_employee_records(cgc_pemployee empl, cgc_pemployee temp);
 void cgc_process_query(int query, cgc_employee employee_list[], cgc_pemployee temp, int week);

@@ -65,7 +65,7 @@ int cgc_ReceiveCommand(cgc_CommandStruct *command, int *more_commands) {
     cgc_DestroyCommand(command);
   }
   char buffer[64];
-  cgc_size_t bytes_received;
+  size_t bytes_received;
   bytes_received = cgc_receive_fixed(buffer, 7);
   if (bytes_received != 7) {
     return -1;

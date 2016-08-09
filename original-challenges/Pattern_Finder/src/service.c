@@ -33,19 +33,19 @@
 #include "safe.h"
 #include "trie.h"
 
-static void cgc_ReportMatches(cgc_FILE* Stream, cgc_list** MatchArray, cgc_size_t MatchArraySize)
+static void cgc_ReportMatches(cgc_FILE* Stream, cgc_list** MatchArray, size_t MatchArraySize)
 {
 #define MAX_REPORT_SIZE 512
   char ReportContents[MAX_REPORT_SIZE];
-  cgc_size_t ReportContentsIndex = 0;
+  size_t ReportContentsIndex = 0;
   cgc_memset(ReportContents, 0, MAX_REPORT_SIZE);
   cgc_list** Array = MatchArray;
 
-  for (cgc_size_t MatchArrayIndex = 0; MatchArrayIndex < MatchArraySize; ++MatchArrayIndex)
+  for (size_t MatchArrayIndex = 0; MatchArrayIndex < MatchArraySize; ++MatchArrayIndex)
   {
     cgc_signature* Signature = Array[MatchArrayIndex]->Value;
 #ifdef PATCHED_1
-    cgc_size_t Len = Signature->PathSize + 3 + cgc_strlen(cgc_SeverityString(Signature->Severity)) + 11;
+    size_t Len = Signature->PathSize + 3 + cgc_strlen(cgc_SeverityString(Signature->Severity)) + 11;
     if (ReportContentsIndex + Len < ReportContentsIndex || ReportContentsIndex + Len > MAX_REPORT_SIZE)
       break;
 #endif
@@ -60,7 +60,7 @@ static void cgc_ReportMatches(cgc_FILE* Stream, cgc_list** MatchArray, cgc_size_
   cgc_fprintf(Stream, "%s", ReportContents);
 }
 
-static int cgc_ReadLine(cgc_FILE* Stream, char* Buf, cgc_size_t Max)
+static int cgc_ReadLine(cgc_FILE* Stream, char* Buf, size_t Max)
 {
   cgc_memset(Buf, 0, Max);
 
@@ -75,9 +75,9 @@ static int cgc_ReadLine(cgc_FILE* Stream, char* Buf, cgc_size_t Max)
   return Read;
 }
 
-static int cgc_ReadExactlyNBytes(cgc_FILE* Stream, void* Buf, cgc_size_t RequestedBytes)
+static int cgc_ReadExactlyNBytes(cgc_FILE* Stream, void* Buf, size_t RequestedBytes)
 {
-  cgc_size_t TotalReadBytes = 0;
+  size_t TotalReadBytes = 0;
   cgc_ssize_t ReadBytes;
 
   cgc_fflush(stdout);
@@ -96,7 +96,7 @@ static int cgc_ReadExactlyNBytes(cgc_FILE* Stream, void* Buf, cgc_size_t Request
   return 0;
 }
 
-static int cgc_ReadNByteLine(cgc_FILE* Stream, void* Buf, cgc_size_t RequestedBytes)
+static int cgc_ReadNByteLine(cgc_FILE* Stream, void* Buf, size_t RequestedBytes)
 {
   if (cgc_ReadExactlyNBytes(Stream, Buf, RequestedBytes) != 0)
     return -1;
@@ -107,7 +107,7 @@ static int cgc_ReadNByteLine(cgc_FILE* Stream, void* Buf, cgc_size_t RequestedBy
 }
 
 
-static unsigned long cgc_ReadUnsigned(cgc_FILE* Stream, void* Buf, cgc_size_t Max)
+static unsigned long cgc_ReadUnsigned(cgc_FILE* Stream, void* Buf, size_t Max)
 {
   if (cgc_ReadLine(Stream, Buf, Max) < 0)
     return -1;
@@ -122,16 +122,16 @@ static int cgc_CompareSignatureEnclosedInList(void* A, void* B)
   return cgc_strcmp(PathA, PathB);
 }
 
-static int cgc_SortArray(char* Array, cgc_size_t ElementSize, cgc_size_t NumElements, int (*cmp)(void*, void*))
+static int cgc_SortArray(char* Array, size_t ElementSize, size_t NumElements, int (*cmp)(void*, void*))
 {
   long long Scratch;
-  cgc_size_t SwapIndex = 0;
+  size_t SwapIndex = 0;
 
   while (NumElements != 0)
   {
     SwapIndex = 0;
 
-    for (cgc_size_t ArrayIndex = 1; ArrayIndex < NumElements; ArrayIndex++)
+    for (size_t ArrayIndex = 1; ArrayIndex < NumElements; ArrayIndex++)
     {
       if (cmp(Array + ((ArrayIndex - 1) * ElementSize), Array + (ArrayIndex * ElementSize)) > 0)
       {
@@ -169,9 +169,9 @@ int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
   cgc_trie_unit* Data = NULL;
   cgc_trie_unit* DataBuf = NULL;
 
-  cgc_size_t NumSigs;
-  cgc_size_t DataSize;
-  cgc_size_t SigCount;
+  size_t NumSigs;
+  size_t DataSize;
+  size_t SigCount;
 
   unsigned Severity;
 
@@ -220,7 +220,7 @@ int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
     if (Severity < LOW || Severity > SEVERE)
       goto done;
 
-    cgc_size_t PathSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    size_t PathSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (PathSize < 1 || PathSize > MAX_PATH_SIZE)
       goto done;
 
@@ -260,7 +260,7 @@ int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
 
   for (;;)
   {
-    cgc_size_t DataSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
+    size_t DataSize = cgc_ReadUnsigned(stdin, LineBuf, MAX_LINE_SIZE);
     if (DataSize < 1 || DataSize > MAX_SEARCH_DATA_SIZE)
       goto done;
     DataBuf = cgc_xcalloc(DataSize + 1, 1);
@@ -273,9 +273,9 @@ int __attribute__((fastcall)) main(int SecretPageI, char *Unused[]) {
     if (!Matches)
       continue;
 
-    cgc_size_t NumMatches = cgc_LenList(Matches);
+    size_t NumMatches = cgc_LenList(Matches);
     cgc_list** ListArr = cgc_xcalloc(sizeof(cgc_list *), NumMatches);
-    for (cgc_size_t ListArrIndex = 0; Matches; ListArrIndex++, Matches = Matches->Next)
+    for (size_t ListArrIndex = 0; Matches; ListArrIndex++, Matches = Matches->Next)
     {
       ListArr[ListArrIndex] = Matches;
     }

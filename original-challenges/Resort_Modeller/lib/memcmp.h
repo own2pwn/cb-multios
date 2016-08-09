@@ -32,6 +32,6 @@
  * @param n 	Number of bytes to compare.
  * @return 0 if equal, 1 if buf1 > buf2, -1 if buf1 < buf2.
  */
-int cgc_memcmp(const char *buf1, const char *buf2, cgc_size_t n);
+int cgc_memcmp(const char *buf1, const char *buf2, size_t n);
 
 #endif

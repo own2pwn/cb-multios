@@ -273,7 +273,7 @@ int cgc_seed_prng()
 	char buf[256];
 	cgc_bzero(buf, sizeof(buf));
  	int status;
- 	cgc_size_t bytes_received;
+ 	size_t bytes_received;
  	cgc_printf("Enter some data\n");
 
 	status = receive(STDIN, buf, sizeof(buf) - 1, &bytes_received);

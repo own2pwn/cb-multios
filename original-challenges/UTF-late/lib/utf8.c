@@ -85,7 +85,7 @@ cgc_utf8_decode(enum utf8_decode_state state, cgc_utf8char c, cgc_ucscodepoint *
 }
 
 cgc_ssize_t
-cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, cgc_size_t size)
+cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, size_t size)
 {
     if (in < 0x80) {
         if (size < 1)
@@ -125,10 +125,10 @@ cgc_utf8_encode(cgc_ucscodepoint in, cgc_utf8char *out, cgc_size_t size)
     return -1;
 }
 
-cgc_size_t
-cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, cgc_size_t n)
+size_t
+cgc_utf8_canonicalize(cgc_utf8char *dst, const cgc_utf8char *src, size_t n)
 {
-    cgc_size_t i, ret = 0;
+    size_t i, ret = 0;
     cgc_ucscodepoint cp;
     cgc_ssize_t encoded;
     enum utf8_decode_state state = ACCEPT;

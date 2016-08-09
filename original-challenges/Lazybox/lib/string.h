@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-cgc_size_t cgc_strlen( const char *str );
-void cgc_bzero(void *s, cgc_size_t n);
-void *cgc_memset( void *ptr, int value, cgc_size_t num );
+size_t cgc_strlen( const char *str );
+void cgc_bzero(void *s, size_t n);
+void *cgc_memset( void *ptr, int value, size_t num );
 char *cgc_strchr(char *s, int c);
 char *cgc_strtok(char *str, char *sep);
 int cgc_strcmp(const char *s1, const char *s2);

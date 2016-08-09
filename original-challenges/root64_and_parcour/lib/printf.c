@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef int (*cgc_consumer_t) (void *arg, const char *buf, cgc_size_t n);
+typedef int (*cgc_consumer_t) (void *arg, const char *buf, size_t n);
 
 static char *cgc__print_base(char *outend, int *n, unsigned int val, unsigned int base, int uppercase)
 {
@@ -83,7 +83,7 @@ static int cgc__printf(cgc_consumer_t consumer, void *arg, const char *fmt, cgc_
 
 #define CONSUME(b, c) \
     do { \
-        cgc_size_t tmp = (cgc_size_t)(c); \
+        size_t tmp = (size_t)(c); \
         if (tmp == 0) break; \
         total += (n = consumer(arg, (b), tmp)); \
         if (n < 0) goto error; \
@@ -213,12 +213,12 @@ error:
     return -1;
 }
 
-static int cgc__consumer_fd(void *arg, const char *buf, cgc_size_t n)
+static int cgc__consumer_fd(void *arg, const char *buf, size_t n)
 {
     return cgc_writeall((int)arg, buf, n);
 }
 
-static int cgc__consumer_string(void *arg, const char *buf, cgc_size_t n)
+static int cgc__consumer_string(void *arg, const char *buf, size_t n)
 {
     char **s = (char **)arg;
     cgc_memcpy(*s, buf, n);
@@ -229,10 +229,10 @@ static int cgc__consumer_string(void *arg, const char *buf, cgc_size_t n)
 
 typedef struct {
     char *buf;
-    cgc_size_t bytes_remaining;
+    size_t bytes_remaining;
 } cgc_string_info_t;
 
-static int cgc__consumer_string_checked(void *arg, const char *buf, cgc_size_t n)
+static int cgc__consumer_string_checked(void *arg, const char *buf, size_t n)
 {
     cgc_string_info_t *sinfo = arg;
     if (n > sinfo->bytes_remaining)
@@ -264,7 +264,7 @@ int cgc_sprintf(char *s, const char *fmt, ...)
     return ret;
 }
 
-int cgc_vsnprintf(char *s, cgc_size_t size, const char *fmt, cgc_va_list ap)
+int cgc_vsnprintf(char *s, size_t size, const char *fmt, cgc_va_list ap)
 {
     if (size == 0)
         return 0;
@@ -275,7 +275,7 @@ int cgc_vsnprintf(char *s, cgc_size_t size, const char *fmt, cgc_va_list ap)
     return cgc__printf(cgc__consumer_string_checked, (void *)&sinfo, fmt, ap);
 }
 
-int cgc_snprintf(char *s, cgc_size_t size, const char *fmt, ...)
+int cgc_snprintf(char *s, size_t size, const char *fmt, ...)
 {
     cgc_va_list ap;
     va_start(ap, fmt);

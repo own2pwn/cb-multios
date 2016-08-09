@@ -95,7 +95,7 @@ static int txfd;
 
 void cgc_writeflush()
 {
-    cgc_size_t i = 0, n;
+    size_t i = 0, n;
 
     while (i < txcnt)
     {
@@ -107,7 +107,7 @@ void cgc_writeflush()
     txcnt = 0;
 }
 
-void cgc_write(int fd, void *data, cgc_size_t len)
+void cgc_write(int fd, void *data, size_t len)
 {
     if (len + txcnt > sizeof(txbuf) || txfd != fd)
         cgc_writeflush();

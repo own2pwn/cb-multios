@@ -202,7 +202,7 @@ static void cgc_copy_title(char *dst, const cgc_hdr_t *hdr)
 {
     // should be strictly UPPERCASE ASCII
     // some new cartridges put flags in title
-    cgc_size_t i;
+    size_t i;
     for (i = 0; cgc_isupper(hdr->title[i]); i++)
         if (i < TITLE_SIZE)
             dst[i] = hdr->title[i];

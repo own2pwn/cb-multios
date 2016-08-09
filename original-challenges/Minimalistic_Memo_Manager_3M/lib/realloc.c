@@ -30,7 +30,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void *cgc_realloc(void *ptr, cgc_size_t size)
+void *cgc_realloc(void *ptr, size_t size)
 {
   if (ptr == NULL)
     return cgc_malloc(size);

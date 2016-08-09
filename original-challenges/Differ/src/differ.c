@@ -29,9 +29,9 @@
 #define EE_VAL 32
 
 typedef struct match {
-    cgc_size_t r_idx;
-    cgc_size_t l_idx;
-    cgc_size_t length;
+    size_t r_idx;
+    size_t l_idx;
+    size_t length;
 } cgc_match_t;
 
 typedef struct match_ll cgc_match_ll_t;
@@ -47,7 +47,7 @@ static cgc_lcll_t *g_lfile_cmp = NULL, *g_rfile_cmp = NULL;
 
 static void cgc_compare_binary_files(cgc_SFILE *lfile, cgc_SFILE *rfile) {
     if (lfile->size == rfile->size) {
-        cgc_size_t i = 0;
+        size_t i = 0;
         for(i = 0; i < lfile->size; i++) {
             if (lfile->data[i] != rfile->data[i]) {
                 goto not_identical;
@@ -95,7 +95,7 @@ static cgc_match_ll_t *cgc_generate_matches(cgc_lcll_t *lfile_cmp, cgc_lcll_t *r
 {
     cgc_lcll_t *ll_iter = lfile_cmp, *rl_iter = rfile_cmp;
     cgc_lcll_t *temp_ll = ll_iter;
-    cgc_size_t l_idx = 0, r_idx = 0;
+    size_t l_idx = 0, r_idx = 0;
     cgc_match_t temp_match, *new_match;
     cgc_match_ll_t *match_list = NULL, *new_ml_item, *ml_iter, *prev_ml_iter;
     int found_match = 0;
@@ -274,7 +274,7 @@ static cgc_match_ll_t *cgc_compare_lines(cgc_lcll_t *lfile_cmp, cgc_lcll_t *rfil
 static void cgc_print_diff()
 {
     int i = 0, ee = 1;
-    cgc_size_t l_idx = 0, r_idx = 0, found_match = 0;
+    size_t l_idx = 0, r_idx = 0, found_match = 0;
     cgc_lcll_t *ll_iter = g_lfile_cmp, *rl_iter = g_rfile_cmp;
     cgc_match_ll_t *m_iter = g_best_match;
 
@@ -372,8 +372,8 @@ static void cgc_print_diff()
 
 void cgc_compare_files(cgc_SFILE *lfile, cgc_SFILE *rfile, int ignore_ws, int treat_as_ascii)
 {
-    cgc_size_t lwordc, llinec;
-    cgc_size_t rwordc, rlinec;
+    size_t lwordc, llinec;
+    size_t rwordc, rlinec;
 
     if (!lfile || !rfile) {
         printf("Both files must be loaded before comparing\n");

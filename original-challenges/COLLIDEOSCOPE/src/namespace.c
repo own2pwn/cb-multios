@@ -26,7 +26,7 @@
 #include "namespace.h"
 
 int
-cgc_namespace_init(struct namespace *ns, cgc_size_t size)
+cgc_namespace_init(struct namespace *ns, size_t size)
 {
     ns->size = size;
     if ((size * sizeof(struct variable)) / sizeof(struct variable) != size)
@@ -55,7 +55,7 @@ cgc_hash(const char *str)
 struct variable *
 cgc_lookup_variable(struct namespace *ns, const char *name)
 {
-    cgc_size_t i, b;
+    size_t i, b;
     unsigned int h;
     struct variable *var;
 
@@ -78,7 +78,7 @@ cgc_lookup_variable(struct namespace *ns, const char *name)
 struct variable *
 cgc_insert_variable(struct namespace *ns, const char *name, enum variable_type type)
 {
-    cgc_size_t i, b;
+    size_t i, b;
     unsigned int h;
     struct variable *var, *last_var = NULL;
 

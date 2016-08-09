@@ -70,7 +70,7 @@ int cgc_do_list() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
-    cgc_size_t i;
+    size_t i;
 
     SENDNULLTRUNC(BANNER_LIST, sizeof(BANNER_LIST), bytes_sent);
     if (sizeof(BANNER_LIST) != bytes_sent) { return ERRNO_SEND; }
@@ -132,7 +132,7 @@ int cgc_do_sup() {
 
     int ret = SUCCESS;
     int bytes_sent = 0;
-    cgc_size_t i;
+    size_t i;
 
     SENDNULLTRUNC(BANNER_SUP, sizeof(BANNER_SUP), bytes_sent);
     if (sizeof(BANNER_SUP) != bytes_sent) { return ERRNO_SEND; }

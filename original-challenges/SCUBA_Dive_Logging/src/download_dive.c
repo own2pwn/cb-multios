@@ -35,7 +35,7 @@ int cgc_download_dive(cgc_logbook_type *Info)  {
 	cgc_dive_log_type *next_dive;
 	char buffer[1024];
 	char buffer2[1024];
-	cgc_size_t count;
+	size_t count;
 	int ret_code;
 	cgc_time_t sample_time;
 	cgc_time_t first_sample;

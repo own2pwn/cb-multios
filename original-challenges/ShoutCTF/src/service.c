@@ -37,7 +37,7 @@ unsigned int cgc_prng()
     return r;
 }
 
-void cgc_random_string(char *buf, cgc_size_t len)
+void cgc_random_string(char *buf, size_t len)
 {
     int i;
     int r;
@@ -197,7 +197,7 @@ fail:
 void cgc_print_ctf_ticker(cgc_ctf_t *ctf)
 {
     cgc_team_t *t = ctf->logged_in->team;
-    cgc_size_t n = 1;
+    size_t n = 1;
     cgc_team_t **tmp = NULL;
     cgc_ctf_get_ranks(ctf, &tmp, &n);
     cgc_free(tmp);
@@ -248,7 +248,7 @@ void cgc_print_challenge(cgc_ctf_t *ctf, cgc_chal_t *chal, int detail)
             cgc_printf(";s\n", chal->desc);
         //cgc_printf("flag: ;s\n", chal->flag);
         cgc_flag_t **f = NULL;
-        cgc_size_t n = 3;
+        size_t n = 3;
         cgc_flg_get_solves(&ctf->flg, &f, chal, &n);
         if (n > 0)
         {
@@ -300,10 +300,10 @@ fail:
     cgc_printf("[ERROR] ;s\n", cgc_error_to_string(err));
 }
 
-void cgc_view_ranking_page(cgc_ctf_t *ctf, cgc_size_t page)
+void cgc_view_ranking_page(cgc_ctf_t *ctf, size_t page)
 {
     int i;
-    cgc_size_t n = (5 < ctf->num_teams - (page - 1) * 5) ? 5 : (ctf->num_teams - (page - 1) * 5);
+    size_t n = (5 < ctf->num_teams - (page - 1) * 5) ? 5 : (ctf->num_teams - (page - 1) * 5);
     cgc_team_t **ranks = NULL;
     cgc_ctf_get_ranks(ctf, &ranks, &page);
     for (i = 0; i < n; ++i)
@@ -319,8 +319,8 @@ void cgc_handle_view_ranking(cgc_ctf_t *ctf)
     char buf[32];
     cgc_error_t err = ERR_INVALID_VALUE;
     cgc_printf("\n=== Ranking ===================\n");
-    cgc_size_t page = 1;
-    cgc_size_t num_pages = (ctf->num_teams / 5) + ((ctf->num_teams % 5) == 0 ? 0 : 1);
+    size_t page = 1;
+    size_t num_pages = (ctf->num_teams / 5) + ((ctf->num_teams % 5) == 0 ? 0 : 1);
     cgc_view_ranking_page(ctf, 1);
     cgc_printf("\n=== 1 / ;d ===================\n", num_pages);
     while (1)

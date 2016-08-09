@@ -41,11 +41,11 @@ void cgc_init_recv_structs(){
     PAD->pay_data_l = 0;
 }
 
-int cgc_recv_all(void * buf, cgc_size_t count, cgc_size_t *rx_bytes){
+int cgc_recv_all(void * buf, size_t count, size_t *rx_bytes){
     int r = EPIPE;
     assert(rx_bytes != NULL);
-    cgc_size_t total_bytes = 0;
-    cgc_size_t call_recvd = 0;
+    size_t total_bytes = 0;
+    size_t call_recvd = 0;
     for(; total_bytes < count; total_bytes += call_recvd){
        r = receive(STDIN, buf+total_bytes, count-total_bytes, &call_recvd);
        if(call_recvd == 0){
@@ -64,9 +64,9 @@ int cgc_recv_all(void * buf, cgc_size_t count, cgc_size_t *rx_bytes){
 cgc_pack_and_data_t * cgc_recv_pack_and_data(){
     cgc_packet_head_t *ph = PAD->ph;
 
-    cgc_size_t ph_sz = sizeof(cgc_packet_head_t);
-    cgc_size_t rx_b = 0;
-    cgc_size_t rx_pay = 0;
+    size_t ph_sz = sizeof(cgc_packet_head_t);
+    size_t rx_b = 0;
+    size_t rx_pay = 0;
 
     int r = cgc_recv_all(ph, ph_sz, &rx_b);
     if(r != OK || ph_sz != rx_b)
@@ -75,8 +75,8 @@ cgc_pack_and_data_t * cgc_recv_pack_and_data(){
     PAD->pay_data_l = 0;
     PAD->data = NULL;
 
-    cgc_size_t data_sz = cgc_get_size_of_data_for_pkt_head_only(ph, 1);
-    cgc_size_t data_rc = 0;
+    size_t data_sz = cgc_get_size_of_data_for_pkt_head_only(ph, 1);
+    size_t data_rc = 0;
 
 
     if(data_sz > 0){
@@ -89,7 +89,7 @@ cgc_pack_and_data_t * cgc_recv_pack_and_data(){
         assert(data_rc == data_sz);
         
 
-        cgc_size_t ds = 0;
+        size_t ds = 0;
         if(ph->pkt_type == OPS && ( ph->op_code == PURCHASE || ph->op_code == RECHARGE)){
             // then we also must receive vendor data...
             
@@ -130,7 +130,7 @@ cgc_pack_and_data_t * cgc_recv_pack_and_data(){
 
 
 
-cgc_pack_and_data_t * cgc_ops_delegate(cgc_pack_and_data_t *pad, cgc_size_t *data_sz){
+cgc_pack_and_data_t * cgc_ops_delegate(cgc_pack_and_data_t *pad, size_t *data_sz){
     cgc_packet_head_t *ph = pad->ph;
 
     switch(ph->op_code){
@@ -172,7 +172,7 @@ void cgc_free_pad(cgc_pack_and_data_t *pad){
 
 int main(void) {
     int ret;
-    cgc_size_t size;
+    size_t size;
 
     cgc_malloc_init();
     cgc_init_recv_structs();
@@ -186,7 +186,7 @@ int main(void) {
 
         cgc_packet_head_t *ph = pad->ph;
         cgc_pack_and_data_t * resp = NULL;
-        cgc_size_t data_sz = 0;
+        size_t data_sz = 0;
         if( pad == NULL || ph == NULL){
             _terminate(1);
         }

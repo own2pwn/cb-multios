@@ -80,11 +80,11 @@ void cgc_init_states()
 #undef ADD_STATE
 }
 
-int cgc_read_all(char *buf, cgc_size_t n)
+int cgc_read_all(char *buf, size_t n)
 {
     while (n > 0)
     {
-        cgc_size_t bytes;
+        size_t bytes;
         if (receive(STDIN, buf, n, &bytes) != 0 || bytes == 0)
 //        bytes = read(0, buf, n);
         if (bytes == 0)
@@ -96,7 +96,7 @@ int cgc_read_all(char *buf, cgc_size_t n)
 
 void cgc_write_string(const char *str)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     transmit(STDOUT, str, cgc_strlen(str), &bytes);
 //    write(1, str, cgc_strlen(str));
 }
@@ -161,7 +161,7 @@ void cgc_send_error(const char *error, const char *command)
 int cgc_sink_error(const char *buf)
 {
     char tmp[2];
-    cgc_size_t n = cgc_strlen(buf);
+    size_t n = cgc_strlen(buf);
 
     cgc_write_string("Error (invalid command): ");
     cgc_write_string(buf);
@@ -179,7 +179,7 @@ int cgc_sink_error(const char *buf)
 }
 
 /* implements state machine to parse input */
-int cgc_read_keyword(char *input, cgc_size_t n)
+int cgc_read_keyword(char *input, size_t n)
 {
     int i, state;
     cgc_memset(input, 0, n);

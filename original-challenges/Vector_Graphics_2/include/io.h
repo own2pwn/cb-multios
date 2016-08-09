@@ -26,8 +26,8 @@ THE SOFTWARE.
 #ifndef IO_H
 #define IO_H
 
-int cgc_SendAll(const void *buffer, cgc_size_t length);
-int cgc_ReceiveAll(void *buffer, cgc_size_t length);
-int cgc_SendNull(cgc_size_t length);
+int cgc_SendAll(const void *buffer, size_t length);
+int cgc_ReceiveAll(void *buffer, size_t length);
+int cgc_SendNull(size_t length);
 
 #endif

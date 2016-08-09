@@ -46,7 +46,7 @@ cgc_uint32_t cgc_RecvData( cgc_int32_t fd, cgc_uint8_t *pDest, cgc_uint32_t recv
 
 	while ( curRecvLen < recvLen )
 	{
-		cgc_size_t num_bytes;
+		size_t num_bytes;
 		cgc_uint32_t recvRemaining = (recvLen - curRecvLen);
 
 		if ( receive( fd, (pDest+curRecvLen), recvRemaining, &num_bytes ) != 0 )
@@ -73,7 +73,7 @@ cgc_uint32_t cgc_SendData( cgc_int32_t fd, cgc_uint8_t *pSource, cgc_uint32_t se
 
 	while ( curSendLen < sendLen )
 	{
-		cgc_size_t num_bytes;
+		size_t num_bytes;
 		cgc_uint32_t sendRemaining = (sendLen - curSendLen);
 
 		if ( transmit( fd, (pSource+curSendLen), sendRemaining, &num_bytes ) != 0 )

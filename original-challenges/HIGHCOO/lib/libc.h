@@ -74,19 +74,19 @@ int cgc_list_push(cgc_list_t *lst, cgc_node_t *nd);
 cgc_node_t * cgc_node_create(void * data);
 
 // I/O
-int cgc_send(const char * buf, const cgc_size_t size);
-int cgc_sendall(int fd, const char * buf, const cgc_size_t size);
-unsigned int cgc_recv_all(char *res_buf, cgc_size_t res_buf_size);
+int cgc_send(const char * buf, const size_t size);
+int cgc_sendall(int fd, const char * buf, const size_t size);
+unsigned int cgc_recv_all(char *res_buf, size_t res_buf_size);
 unsigned int cgc_read_all(int fd, char *buf, unsigned int size);
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
 
 // stdlib
 unsigned int cgc_strlen(const char * str);
 void * cgc_memset(void * str, int ch, unsigned int n);
-void * cgc_memcpy(void * dst, const void * src, cgc_size_t cnt);
-int cgc_rand(char *res, cgc_size_t len);
-int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char * fmt, cgc_va_list args);
-int cgc_snprintf(char * buf, cgc_size_t buf_size, const char * fmt, ...);
+void * cgc_memcpy(void * dst, const void * src, size_t cnt);
+int cgc_rand(char *res, size_t len);
+int cgc_vsnprintf(char * buf, size_t buf_size, const char * fmt, cgc_va_list args);
+int cgc_snprintf(char * buf, size_t buf_size, const char * fmt, ...);
 int cgc_int2str(char * str_buf, int buf_size, int i);
 
 #endif

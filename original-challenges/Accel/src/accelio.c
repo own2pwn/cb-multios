@@ -30,7 +30,7 @@
  * sides = 2, trim back
  * sides = 3, trim both
 */
-int cgc_strtrim(char *str, cgc_size_t size, int sides)
+int cgc_strtrim(char *str, size_t size, int sides)
 {
     int i, len;
     len = cgc_strlen(str) + 1;
@@ -70,7 +70,7 @@ int cgc_valid_cell_id(char *input)
     if (cgc_strlen(input) < 2)
         return -1;
 
-    cgc_size_t i = 0, is_num = 0;
+    size_t i = 0, is_num = 0;
     char row[3];
     char col[3];
     char delim = '\0';
@@ -113,7 +113,7 @@ int cgc_get_rowcol(char *input, char *row, char *col, char delim)
     if (cgc_strlen(input) < 2)
         return -1;
 
-    cgc_size_t i = 0, is_num = 0;
+    size_t i = 0, is_num = 0;
     char c = cgc_toupper(input[0]);
     if (c < 'A' || c > 'Z')
         return -1;
@@ -147,9 +147,9 @@ int cgc_get_rowcol(char *input, char *row, char *col, char delim)
     return -1;
 }
 
-int cgc_sanitize_formula(char *formula, cgc_size_t size)
+int cgc_sanitize_formula(char *formula, size_t size)
 {
-    cgc_size_t i, j, len;
+    size_t i, j, len;
     len = cgc_strlen(formula);
     if (len > size)
         return -1;

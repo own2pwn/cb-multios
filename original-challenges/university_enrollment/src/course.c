@@ -145,7 +145,7 @@ cgc_ptrlist_t *cgc_get_courses(int course_id)
     return courses;
 }
 
-cgc_course_t *cgc_select_course_id(int course_id, cgc_size_t idx)
+cgc_course_t *cgc_select_course_id(int course_id, size_t idx)
 {
     cgc_course_t *course = NULL;
     cgc_ptrlist_t *courses = cgc_find_courses_by_id(course_id);
@@ -159,7 +159,7 @@ cgc_course_t *cgc_select_course_id(int course_id, cgc_size_t idx)
     return course;
 }
 
-cgc_course_t *cgc_select_course_num(char *name, int course_num, cgc_size_t idx)
+cgc_course_t *cgc_select_course_num(char *name, int course_num, size_t idx)
 {
     cgc_course_t *course = NULL;
     cgc_ptrlist_t *courses = cgc_find_courses_by_num(name, course_num);

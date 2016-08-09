@@ -29,9 +29,9 @@
 #include "buffer.h"
 #include "checksum.h"
 
-cgc_uint8_t cgc_checksum8(cgc_buffer_t *input, cgc_size_t n, cgc_uint8_t seed)
+cgc_uint8_t cgc_checksum8(cgc_buffer_t *input, size_t n, cgc_uint8_t seed)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n; i++)
     {
         unsigned int feedback = seed & 0x80;

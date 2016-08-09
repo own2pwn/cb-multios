@@ -35,20 +35,20 @@
 #define ERRNO_CANON BASE_ID+4
 #define ERRNO_RECUSION BASE_ID+5
 
-unsigned char * cgc_memset(void *b, char c, cgc_size_t len);
-int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size);
+unsigned char * cgc_memset(void *b, char c, size_t len);
+int cgc_recv_until_delim(int fd, char *buf, size_t size);
 int cgc_strcmp(const char *s1, const char *s2);
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t len);
-cgc_size_t cgc_strlen(const char *str);
+int cgc_strncmp(const char *s1, const char *s2, size_t len);
+size_t cgc_strlen(const char *str);
 char * cgc_strpos(char * haystack, char * needle);
-char * cgc_strncat(char *s1, const char *s2, cgc_size_t n);
-char * cgc_strncpy(char *dest, const char *src, cgc_size_t n);
-int cgc_transmit_with_term(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
-int cgc_receive_with_term(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
+char * cgc_strncat(char *s1, const char *s2, size_t n);
+char * cgc_strncpy(char *dest, const char *src, size_t n);
+int cgc_transmit_with_term(int fd, const void *buf, size_t count, size_t *tx_bytes);
+int cgc_receive_with_term(int fd, void *buf, size_t count, size_t *rx_bytes);
 
 // Fragmentation related
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes);
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes);
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes);
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes);
 
 
 #ifdef DEBUG

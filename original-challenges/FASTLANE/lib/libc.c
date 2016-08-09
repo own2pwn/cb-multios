@@ -25,7 +25,7 @@
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: void
-void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n) {
+void cgc_memcpy(unsigned char *dst, const unsigned char *src, size_t n) {
 
     while (n) {
         dst[n-1] = src[n-1];
@@ -36,7 +36,7 @@ void cgc_memcpy(unsigned char *dst, const unsigned char *src, cgc_size_t n) {
 // NOTE: not POSIX
 // MOD: returns +/- i (the iterator)
 // RETURN: +/- i
-int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
+int cgc_memcmp(const char *s1, const char *s2, size_t n) {
 
     int i = 1;
     while (i < n) {
@@ -54,9 +54,9 @@ int cgc_memcmp(const char *s1, const char *s2, cgc_size_t n) {
 // NOTE: not POSIX
 // MOD: it works in reverse
 // RETURN: the first argument
-unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
+unsigned char * cgc_memset(unsigned char *b, unsigned char c, size_t len) {
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     while (len) {
         b[len-1] = c;
         len--;
@@ -66,9 +66,9 @@ unsigned char * cgc_memset(unsigned char *b, unsigned char c, cgc_size_t len) {
 
 // Like strtok, except it's dumb and only finds the first instance.
 // RETURN: location of the needle, -1 on error
-cgc_size_t cgc_findchar(char *haystack, char needle) {
+size_t cgc_findchar(char *haystack, char needle) {
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     while ('\0' != haystack[i]) {
         if (haystack[i] == needle) { return i; }
         i++;
@@ -77,7 +77,7 @@ cgc_size_t cgc_findchar(char *haystack, char needle) {
 }
 
 // Emulate sleep() via a timeout given to cgc_fdwait().
-void cgc_pause(cgc_size_t usec) {
+void cgc_pause(size_t usec) {
 
     struct cgc_timeval tv;
 
@@ -89,7 +89,7 @@ void cgc_pause(cgc_size_t usec) {
 
 // hack because sizeof(MY_STRING) returns the length with NULL and that's messy
 // also it makes this libc a little different
-int cgc_sendallnulltrunc(int fd, const char *buf, cgc_size_t size) {
+int cgc_sendallnulltrunc(int fd, const char *buf, size_t size) {
 
     int ret = SUCCESS;
 
@@ -100,9 +100,9 @@ int cgc_sendallnulltrunc(int fd, const char *buf, cgc_size_t size) {
     return cgc_sendall(fd, buf, size);
 }
 
-int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
+int cgc_sendall(int fd, const char *buf, size_t size) {
 
-    cgc_size_t sent = 0;
+    size_t sent = 0;
     char *curbuf = (char *)buf;
 
     while ((curbuf-(char*)buf) < size) {
@@ -113,7 +113,7 @@ int cgc_sendall(int fd, const char *buf, cgc_size_t size) {
         curbuf += sent;
     }
 
-    return (cgc_size_t)(curbuf-(char*)buf);
+    return (size_t)(curbuf-(char*)buf);
 }
 
 // raise x to the power of y, modulo cgc_UINT32
@@ -139,7 +139,7 @@ cgc_UINT32 cgc_hex2UINT32(char *hex) {
 
     int ret = SUCCESS;
     cgc_UINT32 result = 0;
-    cgc_size_t i = 0;
+    size_t i = 0;
     cgc_UINT8 len = 0;
     char curr;
 
@@ -167,10 +167,10 @@ cgc_UINT32 cgc_hex2UINT32(char *hex) {
 // Read until size or we see a '\n'.
 // If we receive 0 bytes, keep reading.  
 // Reuse should not be concern; rewrote much from original function.
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
+int cgc_recvline(int fd, char *buf, size_t size) {
 
-    cgc_size_t bytes_read = 0;
-    cgc_size_t cursize = size;
+    size_t bytes_read = 0;
+    size_t cursize = size;
 
     if(!size)
         return 0;

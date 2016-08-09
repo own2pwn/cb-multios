@@ -113,7 +113,7 @@ int cgc_normalize_path(char *path) {
     if (path == NULL)
         return -1;
 
-    const cgc_size_t len = cgc_strlen(path);
+    const size_t len = cgc_strlen(path);
     char *end_of_path = path + len;
     q = p = path;
 
@@ -226,9 +226,9 @@ int cgc_cmd_cur_sec(cgc_program_state *s, char *args) {
     return 1;
 }
 
-int cgc_skip_search(cgc_size_t *skip_dict, char *needle, cgc_size_t needle_len, char *haystack, cgc_size_t haystack_len) {
-    cgc_size_t scan;
-    cgc_size_t last = needle_len - 1;
+int cgc_skip_search(size_t *skip_dict, char *needle, size_t needle_len, char *haystack, size_t haystack_len) {
+    size_t scan;
+    size_t last = needle_len - 1;
 
     while (haystack_len >= needle_len) {
         for (scan = last; needle[scan] == TOLOWER(haystack[scan]); scan--) {
@@ -246,10 +246,10 @@ int cgc_skip_search(cgc_size_t *skip_dict, char *needle, cgc_size_t needle_len, 
 
 int cgc_cmd_search(cgc_program_state *s, char *args) {
     cgc_book_t *cur_book = &(s->book_list);
-    cgc_size_t scan;
-    cgc_size_t last;
-    cgc_size_t skip_dict[MAX_CHAR + 1];
-    cgc_size_t scan_len;
+    size_t scan;
+    size_t last;
+    size_t skip_dict[MAX_CHAR + 1];
+    size_t scan_len;
     (void) args;
 
     scan_len = cgc_strlen(args);
@@ -273,7 +273,7 @@ int cgc_cmd_search(cgc_program_state *s, char *args) {
     }
 
     while (cur_book != NULL) {
-        if (cgc_skip_search((cgc_size_t *)&skip_dict, args, scan_len, cur_book->data, cgc_strlen(cur_book->data)) == 1) {
+        if (cgc_skip_search((size_t *)&skip_dict, args, scan_len, cur_book->data, cgc_strlen(cur_book->data)) == 1) {
             cgc_printf("%s : %s\n", cur_book->section, cur_book->name);
         }
 
@@ -285,7 +285,7 @@ int cgc_cmd_search(cgc_program_state *s, char *args) {
 
 int cgc_cmd_ch_sec(cgc_program_state *s, char *args) {
     int changed = 0;
-    cgc_size_t sub_section_len;
+    size_t sub_section_len;
     cgc_book_t *cur_book = &(s->book_list);
 
     sub_section_len = cgc_strlen(args);
@@ -320,7 +320,7 @@ int cgc_cmd_ch_sec(cgc_program_state *s, char *args) {
         return 0;
    
     while (cur_book != NULL) {
-        cgc_size_t section_len = cgc_strlen(cur_book->section);
+        size_t section_len = cgc_strlen(cur_book->section);
 
         if (section_len >= sub_section_len) {
             if (0 == cgc_strcmp(cur_book->section, args)) {
@@ -336,7 +336,7 @@ int cgc_cmd_ch_sec(cgc_program_state *s, char *args) {
     if (changed == 0) {
         cur_book = &(s->book_list);
         while (cur_book != NULL) {
-            cgc_size_t section_len = cgc_strlen(cur_book->section);
+            size_t section_len = cgc_strlen(cur_book->section);
 
             if (section_len >= sub_section_len) {
                 if (0 == cgc_strncmp(cur_book->section, args, sub_section_len)) {
@@ -356,7 +356,7 @@ int cgc_cmd_ch_sec(cgc_program_state *s, char *args) {
 
 char *cgc_compress(char *string) {
     char curr;
-    cgc_size_t length;
+    size_t length;
     char *encoded;
     char count = 0x30;
     int i = 0;
@@ -461,8 +461,8 @@ int cgc_cmd_get(cgc_program_state *s, char *args) {
 }
 
 int cgc_cmd_make_sec(cgc_program_state *s, char *args) {
-    cgc_size_t out = 0;
-    cgc_size_t len = 3;
+    size_t out = 0;
+    size_t len = 3;
     char *name;
 
     if (cgc_strlen(args) == 0) {
@@ -548,15 +548,15 @@ int cgc_cmd_list(cgc_program_state *s, char *args) {
 }
 
 void cgc_remove_newline(char *line) {
-    cgc_size_t new_line = cgc_strlen(line) - 1;
+    size_t new_line = cgc_strlen(line) - 1;
 
     if (line[new_line] == '\n')
         line[new_line] = '\0';
 }
 
-int cgc_receive_delim(int fd, char *buf, const cgc_size_t size, char delim) {
-    cgc_size_t rx = 0;
-    cgc_size_t rx_now = 0;
+int cgc_receive_delim(int fd, char *buf, const size_t size, char delim) {
+    size_t rx = 0;
+    size_t rx_now = 0;
     int ret;
 
     if (!buf)
@@ -586,7 +586,7 @@ int cgc_receive_delim(int fd, char *buf, const cgc_size_t size, char delim) {
 
 int cgc_process(cgc_program_state *s) {
     int ret;
-    // cgc_size_t size;
+    // size_t size;
     char *name;
     char *args;
     cgc_process_t method;

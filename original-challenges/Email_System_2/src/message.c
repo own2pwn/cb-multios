@@ -248,7 +248,7 @@ void cgc_print_draft_for_send(char *name)
 	}
 
 	char buf[4] = {0};
-	cgc_size_t l = 0;
+	size_t l = 0;
 	while (l < 1)
 		l = cgc_receive_until( buf, '\n', 3);
 
@@ -316,7 +316,7 @@ void cgc_print_draft_for_del(char *name)
 	}
 
 	char buf[3] = {0};
-	cgc_size_t l = 0;
+	size_t l = 0;
 	while (l < 1)
 		l = cgc_receive_until( buf, '\n', 2);
 

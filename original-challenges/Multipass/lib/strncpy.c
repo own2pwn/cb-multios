@@ -22,9 +22,9 @@
  */
 #include <stdlib.h>
 
-char *cgc_strncpy(char *dst, const char *src, cgc_size_t n)
+char *cgc_strncpy(char *dst, const char *src, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     for (i = 0; i < n && src[i] != 0; i++)
         dst[i] = src[i];
     for (; i < n; i++)

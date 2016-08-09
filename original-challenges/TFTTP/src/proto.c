@@ -3,14 +3,14 @@
 
 //Describes a simple size-length packet format
 
-int cgc_recvmsg(int fd, uint8_t *data, cgc_size_t maxsize, cgc_size_t minsize) {
+int cgc_recvmsg(int fd, uint8_t *data, size_t maxsize, size_t minsize) {
     int res = 0;
-    cgc_size_t size = 0;
+    size_t size = 0;
     if (maxsize < sizeof(cgc_tfttp_hdr))
         return -3;
     if ((res = cgc_recv(fd, (char *)data, sizeof(cgc_tfttp_hdr))) != sizeof(cgc_tfttp_hdr))
         return res;
-    size = *(cgc_size_t*)data;
+    size = *(size_t*)data;
     if (size > maxsize || size < minsize)
         return -1;
     if ((res = cgc_recv(fd, (char *)data+sizeof(cgc_tfttp_hdr), size)) != size)
@@ -19,7 +19,7 @@ int cgc_recvmsg(int fd, uint8_t *data, cgc_size_t maxsize, cgc_size_t minsize) {
     return size;
 }
 
-int cgc_senddgram(int fd, cgc_tfttp_pkt *msg, cgc_size_t size) {
+int cgc_senddgram(int fd, cgc_tfttp_pkt *msg, size_t size) {
     int res;
     if ((res=cgc_sendall(fd, (char *)msg, sizeof(cgc_tfttp_hdr))) != sizeof(cgc_tfttp_hdr)){
         return res;

@@ -64,9 +64,9 @@ static cgc_free_block_t *cgc_pop_block(int i)
     return blk;
 }
 
-void *cgc_malloc(cgc_size_t size)
+void *cgc_malloc(size_t size)
 {
-    cgc_size_t min_size = size + OVERHEAD_BYTES;
+    size_t min_size = size + OVERHEAD_BYTES;
 
     if (min_size >= MAX_ALLOC)
     {

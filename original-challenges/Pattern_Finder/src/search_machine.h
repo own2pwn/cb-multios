@@ -46,7 +46,7 @@ typedef struct cgc_match cgc_match;
 struct cgc_match
 {
   // Location in search input where pattern matches
-  cgc_size_t Point;
+  size_t Point;
 
   // List of matching strings
   cgc_list* List;
@@ -54,6 +54,6 @@ struct cgc_match
 
 int cgc_InitializeSearchMachine(cgc_search_machine* SearchMachine, cgc_trie* Trie);
 void cgc_FreeSearchMachine(cgc_search_machine* SearchMachine);
-cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Data, cgc_size_t DataSize, cgc_size_t* NumMatches);
+cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Data, size_t DataSize, size_t* NumMatches);
 
 #endif /* __SEARCH_MACHINE_H */

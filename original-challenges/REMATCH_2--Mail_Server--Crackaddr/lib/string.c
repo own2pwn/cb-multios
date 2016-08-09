@@ -26,23 +26,23 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-cgc_size_t cgc_strlen( const char *str )
+size_t cgc_strlen( const char *str )
 {
-	cgc_size_t len = 0;
+	size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
 	return len;
 }
 
-void cgc_bzero(void *s, cgc_size_t n) {
+void cgc_bzero(void *s, size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *cgc_memset( void *ptr, int value, cgc_size_t num )
+void *cgc_memset( void *ptr, int value, size_t num )
 {
 	void *ptr_temp = ptr;
 	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
@@ -142,7 +142,7 @@ int cgc_strcmp(const char *s1, const char *s2) {
 	return *s1 - *s2;
 }
 
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n) {
+int cgc_strncmp(const char *s1, const char *s2, size_t n) {
 	while (*s1 != '\0' && *s1 == *s2 && n > 0) {
 		s1++; s2++; n--;
 	}

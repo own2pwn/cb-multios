@@ -28,8 +28,8 @@
 int cgc_send_bytes(int fd, const char *buf, unsigned int size) {
 
    int ret = SUCCESS;
-   cgc_size_t bytes_left = size;
-   cgc_size_t tx_bytes_local = 0;
+   size_t bytes_left = size;
+   size_t tx_bytes_local = 0;
 
    while (bytes_left) {
 

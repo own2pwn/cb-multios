@@ -258,7 +258,7 @@ void cgc_CalcTimeStep(void) {
 
 cgc_int32_t cgc_SimStep(void) {
 	cgc_uint32_t x, y, z;
-	cgc_size_t malloc_size;
+	size_t malloc_size;
 	double *TGridNew;
 
 	// allocate a new TGrid to hold updated temperatures

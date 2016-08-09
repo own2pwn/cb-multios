@@ -27,19 +27,19 @@
 int cgc_entanglement_razzmatazz(void) {
 
     int ret = SUCCESS;
-    cgc_size_t MIN_RX_BYTES = 1337;
+    size_t MIN_RX_BYTES = 1337;
 
-    cgc_size_t SZ_IRRELEVANT_BYTES = 100;
+    size_t SZ_IRRELEVANT_BYTES = 100;
 
-    cgc_size_t GATE_OFF = 200;
-    cgc_size_t ALLOC_OFF = 300;
-    cgc_size_t OOB_OFF = 400;
+    size_t GATE_OFF = 200;
+    size_t ALLOC_OFF = 300;
+    size_t OOB_OFF = 400;
 
-    cgc_size_t SZ_PAGE = 0x1000;
-    cgc_size_t MAX_ALLOC = 0x4000;
-    cgc_size_t MIN_ALLOC = 2;
+    size_t SZ_PAGE = 0x1000;
+    size_t MAX_ALLOC = 0x4000;
+    size_t MIN_ALLOC = 2;
 
-    cgc_size_t GATE_MAGIC = 0xCAFEBABE;
+    size_t GATE_MAGIC = 0xCAFEBABE;
 
 #ifdef DEBUG
     fprintf(stderr, "[D] cgc_entanglement_razzmatazz() | init\n");
@@ -47,19 +47,19 @@ int cgc_entanglement_razzmatazz(void) {
 
     // Do complex & irrelevant operations with the majority of the input.  
     // Throw result out.
-    cgc_size_t garbage = 1;
-    for (cgc_size_t i = 1; i < SZ_IRRELEVANT_BYTES; i++) {
+    size_t garbage = 1;
+    for (size_t i = 1; i < SZ_IRRELEVANT_BYTES; i++) {
         garbage = (rx_buf[i] ^ (rx_buf[i+1] + rx_buf[i+2])) / 
             (garbage | 1); // avoids div by 0
     }
 
     // Limit maximum allocation to MAX_ALLOC
-    cgc_size_t sz_alloc =  (rx_buf[ALLOC_OFF+0] << 0 | 
+    size_t sz_alloc =  (rx_buf[ALLOC_OFF+0] << 0 | 
                         rx_buf[ALLOC_OFF+1] << 8);
     if (MAX_ALLOC < sz_alloc || MIN_ALLOC > sz_alloc ) { sz_alloc = MAX_ALLOC; }
 
     // Calculate how much space will actually be alloc'ed (round up).
-    cgc_size_t sz_alloc_align = (sz_alloc + SZ_PAGE-1) & 0xFFFFF000;
+    size_t sz_alloc_align = (sz_alloc + SZ_PAGE-1) & 0xFFFFF000;
 
     // Do the allocation.
     unsigned char *map = NULL;
@@ -85,18 +85,18 @@ int cgc_entanglement_razzmatazz(void) {
     // Relative to the new map location, the following is now alloc'ed: 
     // [map, map + sz_alloc)
 
-    cgc_size_t len = 0;
+    size_t len = 0;
 #ifdef PATCHED
     len = sz_alloc;
 #else
     len = sz_alloc_align;
 #endif
-    cgc_size_t gate =   rx_buf[GATE_OFF+0] <<  0 | 
+    size_t gate =   rx_buf[GATE_OFF+0] <<  0 | 
                     rx_buf[GATE_OFF+1] <<  8 | 
                     rx_buf[GATE_OFF+2] << 16 | 
                     rx_buf[GATE_OFF+3] << 24;
 
-    cgc_size_t i = 0;
+    size_t i = 0;
     unsigned char response = 0;
     if (GATE_MAGIC == gate) {
 #ifdef DEBUG
@@ -132,10 +132,10 @@ _bail_razzmatazz:
 int cgc_causality_poppycock(void) {
 
     int ret = SUCCESS;
-    cgc_size_t MIN_RX_BYTES = 1337;
+    size_t MIN_RX_BYTES = 1337;
 
-    cgc_size_t SKIP_PRIME = 13;
-    cgc_size_t GATE_PRIME = 37;
+    size_t SKIP_PRIME = 13;
+    size_t GATE_PRIME = 37;
 
     #define SZ_VULN_BUF 20
     unsigned char vuln_buf[SZ_VULN_BUF] = {0};
@@ -154,7 +154,7 @@ int cgc_causality_poppycock(void) {
 
     // Take in a lot of binary input, but "sanitize" much of it 
     // (e.g. modulo the input some limit to prevent later OOB access).
-    for (cgc_size_t i = 1; i < rx_bytes; i++) {   
+    for (size_t i = 1; i < rx_bytes; i++) {   
 
         // Fail to sanitize some small subset of the binary input...
 #ifdef PATCHED
@@ -186,7 +186,7 @@ int cgc_causality_poppycock(void) {
     // Construct gate answer with default-unsanitized input.
     // Yes, even if patch is applied, sanitized input can sum to the gate.
     unsigned char gate = 0;
-    for (cgc_size_t i = 0; i < rx_bytes; i+=GATE_PRIME) {
+    for (size_t i = 0; i < rx_bytes; i+=GATE_PRIME) {
         gate += rx_buf[i];
     }
 
@@ -217,8 +217,8 @@ int cgc_causality_poppycock(void) {
 
     // We construct output from vuln_buf, so they can't just throw out / ignore 
     // all these operations.
-    cgc_size_t output = 0;
-    cgc_size_t i = 0;
+    size_t output = 0;
+    size_t i = 0;
     for (i = 0; i < SZ_VULN_BUF-3; i+=4) {
 
         output +=   vuln_buf[i+0] <<  0 |
@@ -253,22 +253,22 @@ _bail_poppycock:
 int cgc_heisenberg_hooey(void) {
 
     int ret = SUCCESS;
-    cgc_size_t MIN_RX_BYTES = 1337;
+    size_t MIN_RX_BYTES = 1337;
 
-    cgc_size_t XOR_CONST_OFF = 1+100;
-    cgc_size_t XOR_CONST_OFF_PTR = 1+350;
+    size_t XOR_CONST_OFF = 1+100;
+    size_t XOR_CONST_OFF_PTR = 1+350;
 
-    cgc_size_t SYSCALL_CONST_OFF = 1+500;
-    cgc_size_t SYSCALL_PROP_OFF = 1+600;
+    size_t SYSCALL_CONST_OFF = 1+500;
+    size_t SYSCALL_PROP_OFF = 1+600;
 
-    cgc_size_t FLOAT_CONST_OFF = 1+300;
-    cgc_size_t FLOAT_PROP_OFF = 1+400;
+    size_t FLOAT_CONST_OFF = 1+300;
+    size_t FLOAT_PROP_OFF = 1+400;
 
-    cgc_size_t BE_OFF = 1+800;
-    cgc_size_t EF_OFF = 1+900;
-    cgc_size_t VULN_OFF = 1+1000;
+    size_t BE_OFF = 1+800;
+    size_t EF_OFF = 1+900;
+    size_t VULN_OFF = 1+1000;
 
-    cgc_size_t GATE_MAGIC = 0xDEADBEEF;
+    size_t GATE_MAGIC = 0xDEADBEEF;
 
 #ifdef DEBUG
         fprintf(stderr, "[D] cgc_heisenberg_hooey() | init\n");
@@ -321,7 +321,7 @@ int cgc_heisenberg_hooey(void) {
     // If the cgc_random() syscall is successful, count number of random bytes will 
     // be written into a garbage buffer and ignored, but rnd_bytes will take on 
     // the same value as count.
-    cgc_size_t rnd_bytes = 0;
+    size_t rnd_bytes = 0;
     if (SUCCESS != (ret = cgc_random(&garbage, rx_buf[SYSCALL_PROP_OFF], &rnd_bytes))) {
 #ifdef DEBUG
         fprintf(stderr, "[E] hooey | error during cgc_random() call\n");
@@ -402,12 +402,12 @@ int cgc_heisenberg_hooey(void) {
     // There is potential these have been undertainted.
     // We use these and other bytes as a gate to guard vulnerability, forcing 
     // symexec reasoning on these potential undertaints.
-    cgc_size_t gate =   rx_buf[EF_OFF]            <<  0 | // EF
+    size_t gate =   rx_buf[EF_OFF]            <<  0 | // EF
                     rx_buf[BE_OFF]            <<  8 | // BE (even)
                     rx_buf[SYSCALL_PROP_OFF]  << 16 | // AD (odd)
                     rx_buf[FLOAT_PROP_OFF]    << 24;  // DE (even)
                    
-    cgc_size_t output = 0;
+    size_t output = 0;
     // The 2 bytes are the easily-reasoned-about ones.
     if ((GATE_MAGIC & 0x0000FFFF) == (gate & 0x0000FFFF)) {
 
@@ -427,9 +427,9 @@ int cgc_heisenberg_hooey(void) {
         // Vuln: if the GATE_MAGIC is satisfied, mult is 0, otherwise 1.
         // We attempt a write to rx_buf[VULN_OFF] * mult, which will cause an 
         // attempt to write to the NULL page if the gate is satisfied.
-        cgc_size_t mult = !!(GATE_MAGIC ^ gate);
+        size_t mult = !!(GATE_MAGIC ^ gate);
 
-        unsigned char *ptr = (unsigned char *)((cgc_size_t)&(rx_buf[VULN_OFF]) * mult);
+        unsigned char *ptr = (unsigned char *)((size_t)&(rx_buf[VULN_OFF]) * mult);
 #ifdef PATCHED
         if (0 != mult) { *ptr = 0x42; }
 #else
@@ -462,20 +462,20 @@ _bail_hooey:
 int cgc_relativistic_jabberwock(void) {
 
     int ret = SUCCESS;
-    cgc_size_t MIN_RX_BYTES = 1337;
+    size_t MIN_RX_BYTES = 1337;
 
-    cgc_size_t SYM_PROP_PTR_1 = 1+100;
-    cgc_size_t SYM_PROP_PTR_2 = 1+200;
-    cgc_size_t SYM_PROP_VAL = 1+70;
+    size_t SYM_PROP_PTR_1 = 1+100;
+    size_t SYM_PROP_PTR_2 = 1+200;
+    size_t SYM_PROP_VAL = 1+70;
 
-    cgc_size_t SYM_CONST_PTR_1 = 1+50;
-    cgc_size_t SYM_CONST_PTR_2 = 1+60;
+    size_t SYM_CONST_PTR_1 = 1+50;
+    size_t SYM_CONST_PTR_2 = 1+60;
 
-    cgc_size_t VULN_OFF = 1+400;
+    size_t VULN_OFF = 1+400;
     
-    cgc_size_t GATE_MAGIC = 0xd00000d5;
+    size_t GATE_MAGIC = 0xd00000d5;
 
-    cgc_size_t output;
+    size_t output;
 
 #ifdef DEBUG
     fprintf(stderr, "[D] cgc_relativistic_jabberwock() | init\n");
@@ -499,7 +499,7 @@ int cgc_relativistic_jabberwock(void) {
     // rx_buf[SYM_PROP_PTR_1], PROPAGATING rx_buf[SYM_PROP_PTR_VAL].
 
     // rx_buf[SYM_PROP_PTR_1] will ultimately be referenced one final time to 
-    // point to a cgc_size_t that will be gate key.
+    // point to a size_t that will be gate key.
 
 
     ///////////////// CONSTIFY via aliasing.
@@ -520,7 +520,7 @@ int cgc_relativistic_jabberwock(void) {
     // forcing constification in another.
 
     // This forces reasoning about the propagation piece.
-    cgc_size_t gate =   rx_buf[rx_buf[SYM_PROP_PTR_1]+0] <<  0 |
+    size_t gate =   rx_buf[rx_buf[SYM_PROP_PTR_1]+0] <<  0 |
                     rx_buf[rx_buf[SYM_PROP_PTR_1]+1] <<  8 |
                     rx_buf[rx_buf[SYM_PROP_PTR_1]+2] << 16 |
                     rx_buf[rx_buf[SYM_PROP_PTR_1]+3] << 24;
@@ -550,7 +550,7 @@ int cgc_relativistic_jabberwock(void) {
 
         // VULN: this can cause write outside of rx_buf, but can also affect 
         // something that goes into output.
-        cgc_size_t offset = 0;
+        size_t offset = 0;
 #ifdef PATCHED
         offset = (rx_buf[VULN_OFF] * 1000) % 1001;
 #else
@@ -597,7 +597,7 @@ _bail_jabberwock:
 void cgc_exit(void) {
 
     int ret = SUCCESS;
-    cgc_size_t MIN_RX_BYTES = 1;
+    size_t MIN_RX_BYTES = 1;
 
 #ifdef DEBUG
     fprintf(stderr, "[D] cgc_exit() | got %d bytes\n", rx_bytes);

@@ -25,11 +25,11 @@
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // MOD from REDPILL: bails substituted for immediate returns.
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t rx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -65,11 +65,11 @@ int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // MOD from REDPILL: bails substituted for immediate returns.
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t tx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t tx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -93,7 +93,7 @@ int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_b
 
 // Wrapper for cgc_transmit_all() that terminates packets with our custom string 
 // terminator.
-int cgc_transmit_with_term(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_with_term(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
    int ret = SUCCESS;
 
@@ -116,7 +116,7 @@ int cgc_transmit_with_term(int fd, const void *buf, cgc_size_t count, cgc_size_t
 
 // Wrapper for cgc_receive_all() that terminates buffers with our STRING_TERMINATOR.
 // Destination buffer MUST be 1 byte larger than count (count+1).
-int cgc_receive_with_term(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_with_term(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
    int ret = SUCCESS;
 
@@ -134,9 +134,9 @@ int cgc_receive_with_term(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_by
 
 // MOD FROM: KPRCA_00001
 // Changed definition of string (no longer terminated by NULL) + added n arg.
-char *cgc_strncpy(char *dest, const char *src, cgc_size_t n)
+char *cgc_strncpy(char *dest, const char *src, size_t n)
 {
-   cgc_size_t i;
+   size_t i;
    for (i = 0; (src[i] != STRING_TERMINATOR) && (0 < n--); i++) {
       dest[i] = src[i];
    }
@@ -151,7 +151,7 @@ char *cgc_strncpy(char *dest, const char *src, cgc_size_t n)
 // The cgc_strncat() function appends not more than n characters from s2, and then 
 // adds a terminating `\0'.
 // NOTE: not POSIX
-char * cgc_strncat(char *s1, const char *s2, cgc_size_t n) {
+char * cgc_strncat(char *s1, const char *s2, size_t n) {
 
    // Find the end of s1.
    char *cat_begin = s1 + cgc_strlen(s1);
@@ -167,7 +167,7 @@ char * cgc_strncat(char *s1, const char *s2, cgc_size_t n) {
 }
 
 // IDENTICAL TO: REDPILL
-unsigned char * cgc_memset(void *b, char c, cgc_size_t len) {
+unsigned char * cgc_memset(void *b, char c, size_t len) {
 
   char *ptr = (char *)b; 
   while (len) {
@@ -185,8 +185,8 @@ unsigned char * cgc_memset(void *b, char c, cgc_size_t len) {
 char * cgc_strpos(char * haystack, char * needle) {
 
    char * pos = NULL;
-   cgc_size_t sz_haystack = cgc_strlen(haystack);
-   cgc_size_t sz_needle = cgc_strlen(needle);
+   size_t sz_haystack = cgc_strlen(haystack);
+   size_t sz_needle = cgc_strlen(needle);
 
    // If the substring is longer than the string, then we're not finding it.
    if (sz_haystack < sz_needle) { return NULL; }
@@ -205,10 +205,10 @@ char * cgc_strpos(char * haystack, char * needle) {
 // Read until size or we see a '\n'.
 // If we receive 0 bytes, keep reading. 
 // MOD from FASTLANE: STRING_TERMINATOR substituted for '\n' 
-int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size) {
+int cgc_recv_until_delim(int fd, char *buf, size_t size) {
 
-    cgc_size_t bytes_read = 0;
-    cgc_size_t cursize = size;
+    size_t bytes_read = 0;
+    size_t cursize = size;
 
     if(!size)
         return 0;
@@ -248,7 +248,7 @@ int cgc_recv_until_delim(int fd, char *buf, cgc_size_t size) {
 
 // BASED ON: EAGLE_00004
 // MOD: changed delimeter, added length parameter
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t len) {
+int cgc_strncmp(const char *s1, const char *s2, size_t len) {
 
    while (*s1 != STRING_TERMINATOR && *s2 != STRING_TERMINATOR && *s1 == *s2) {
       if (--len == 0) { break; }
@@ -271,8 +271,8 @@ int cgc_strcmp(const char *s1, const char *s2) {
 
 // BASED ON: EAGLE_00004
 // MOD: changed delimeter
-cgc_size_t cgc_strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t cgc_strlen(const char *str) {
+   size_t res = 0;
    while (STRING_TERMINATOR != *str++) {res++;}
    return res;
 }

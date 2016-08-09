@@ -33,6 +33,6 @@
  * @param size Number of bytes to cgc_send.
  * @returns SUCCESS, ERRNO_SEND on error.
  */
-int cgc_sendall(int fd, const char * buf, const cgc_size_t size);
+int cgc_sendall(int fd, const char * buf, const size_t size);
 
 #endif

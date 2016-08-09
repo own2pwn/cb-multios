@@ -41,14 +41,14 @@ cgc_rand(void)
 }
 
 unsigned char
-cgc_get_flag_byte(cgc_size_t index)
+cgc_get_flag_byte(size_t index)
 {
     unsigned char *flag_page = FLAG_PAGE;
     return flag_page[(index % (PAGE_SIZE / 4)) * 4];
 }
 
 unsigned char
-cgc_get_flag_byte_unsafe(cgc_size_t index)
+cgc_get_flag_byte_unsafe(size_t index)
 {
     unsigned char *flag_page = FLAG_PAGE;
     return flag_page[index % PAGE_SIZE];

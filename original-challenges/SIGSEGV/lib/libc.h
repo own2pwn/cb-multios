@@ -184,7 +184,7 @@ cgc_uint32_t cgc_str2uint(const char* str_buf);
  * @param size Number of bytes to send
  * @return Number of bytes sent, -1 on error
  */
-int cgc_sendall(int fd, const char *buf, cgc_size_t size);
+int cgc_sendall(int fd, const char *buf, size_t size);
 
 /**
  * Send bytes from buffer to file descriptor with newline
@@ -194,7 +194,7 @@ int cgc_sendall(int fd, const char *buf, cgc_size_t size);
  * @param size Number of bytes to send
  * @return Number of bytes sent, -1 on error
  */
-int cgc_sendline(int fd, const char *buf, cgc_size_t size);
+int cgc_sendline(int fd, const char *buf, size_t size);
 
 /**
  * Receive line from file descriptor
@@ -204,7 +204,7 @@ int cgc_sendline(int fd, const char *buf, cgc_size_t size);
  * @param size Size of destination buffer
  * @return Number of bytes received, -1 on error
  */
-int cgc_recvline(int fd, char *buf, cgc_size_t size);
+int cgc_recvline(int fd, char *buf, size_t size);
 
 /**
  * Receive bytes from file descriptor
@@ -214,7 +214,7 @@ int cgc_recvline(int fd, char *buf, cgc_size_t size);
  * @param size Number of bytes to receive
  * @return Number of bytes received, -1 on error
  */
-int cgc_recv(int fd, char *buf, cgc_size_t size); 
+int cgc_recv(int fd, char *buf, size_t size); 
 
 /**
  * Copy a string
@@ -223,7 +223,7 @@ int cgc_recv(int fd, char *buf, cgc_size_t size);
  * @param s2 Source buffer
  * @return Number of bytes copied
  */
-cgc_size_t cgc_strcpy(char *s1, char *s2);
+size_t cgc_strcpy(char *s1, char *s2);
 
 /**
  * Copy a string with bounds checking
@@ -233,7 +233,7 @@ cgc_size_t cgc_strcpy(char *s1, char *s2);
  * @param n Size of destination buffer
  * @return Number of bytes copied
  */
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n);
+size_t cgc_strncpy(char *s1, char *s2, size_t n);
 
 /**
  * Concatenate two strings
@@ -250,7 +250,7 @@ char * cgc_strcat(char *s1, char *s2);
  * @param s String
  * @return length of s
  */
-cgc_size_t cgc_strlen(char *s);
+size_t cgc_strlen(char *s);
 
 /**
  * Check if two strings are identical
@@ -268,7 +268,7 @@ int cgc_streq(char *s1, char *s2);
  * @param s2 String 2
  * @return 0 if identical, 1 if different
  */
-int cgc_strncmp(char *s1, char *s2, cgc_size_t n);
+int cgc_strncmp(char *s1, char *s2, size_t n);
 
 /**
  * Check if a string starts with another string
@@ -287,7 +287,7 @@ int cgc_startswith(char *s1, char *s2);
  * @param n Number of times to copy character
  * @return dst
  */
-void * cgc_memset(void *dst, char c, cgc_size_t n); 
+void * cgc_memset(void *dst, char c, size_t n); 
 
 /**
  * Copy bytes from one buffer to another
@@ -297,7 +297,7 @@ void * cgc_memset(void *dst, char c, cgc_size_t n);
  * @param n Number of bytes to copy
  * @return dst
  */
-void * cgc_memcpy(void *dst, void *src, cgc_size_t n); 
+void * cgc_memcpy(void *dst, void *src, size_t n); 
 
 /**
  * Convert byte to hex character string
@@ -332,7 +332,7 @@ void cgc_sleep(int s);
  * @param n Number of bytes to compare
  * @return -1 if not equal, 0 if equal
  */
-int cgc_memcmp(void *a, void *b, cgc_size_t n); 
+int cgc_memcmp(void *a, void *b, size_t n); 
 
 /**
  * Allocate a buffer on heap
@@ -340,7 +340,7 @@ int cgc_memcmp(void *a, void *b, cgc_size_t n);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *cgc_malloc(cgc_size_t size);
+void *cgc_malloc(size_t size);
 
 /**
  * Allocate a zeroed buffer on heap
@@ -348,7 +348,7 @@ void *cgc_malloc(cgc_size_t size);
  * @param size Size of buffer to allocate
  * @return Pointer to newly allocated buffer 
  */
-void *cgc_calloc(cgc_size_t size); 
+void *cgc_calloc(size_t size); 
 
 /**
  * Free an allocated buffer

@@ -112,7 +112,7 @@ static int cgc_parse_tag(cgc_uint8_t *b, cgc_element *e)
 
 static int cgc_parse_length(cgc_uint8_t *b, cgc_element *e)
 {
-  cgc_size_t num_bytes, i;
+  size_t num_bytes, i;
   unsigned length;
   if (b[0] < 128) {
     DBG("parsed short form length: length = %d, num_bytes = 1, read = 1", *b);

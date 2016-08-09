@@ -40,18 +40,18 @@ struct cgc_trie
   cgc_trie* Children[UNIT_CARDINALITY];
   cgc_trie_unit Data;
   cgc_bool Terminal;
-  cgc_size_t Identifier;
+  size_t Identifier;
 };
 
 #define ROOT_IDENTIFIER 0
 void cgc_AllocateAndInitializeTrieRoot(cgc_trie** Trie);
 void cgc_FreeTrie(cgc_trie* Trie);
-void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize);
-cgc_trie_unit* cgc_GetDataString(cgc_trie* Trie, cgc_size_t* DataLength);
-cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, cgc_size_t* TerminalCount);
-cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, cgc_size_t DataSize);
-cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, cgc_size_t Identifier);
-cgc_size_t cgc_GetTrieCount(void);
+void cgc_InsertIntoTrie(cgc_trie* Trie, cgc_trie_unit* Data, size_t DataSize);
+cgc_trie_unit* cgc_GetDataString(cgc_trie* Trie, size_t* DataLength);
+cgc_trie** cgc_GatherTerminals(cgc_trie* Trie, size_t* TerminalCount);
+cgc_trie* cgc_FindInTrie(cgc_trie* Trie, cgc_trie_unit* Data, size_t DataSize);
+cgc_trie* cgc_FindInTrieByIdentifier(cgc_trie* Trie, size_t Identifier);
+size_t cgc_GetTrieCount(void);
 int cgc_TestTrie(void);
 
 #endif /* __TRIE_H__ */

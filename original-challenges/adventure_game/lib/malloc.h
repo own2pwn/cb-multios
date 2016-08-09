@@ -34,10 +34,10 @@
 #define ALIGNMENT 8
 
 extern struct blk_t *free_lists[NUM_FREE_LISTS];
-extern cgc_size_t size_class_limits[NUM_FREE_LISTS];
+extern size_t size_class_limits[NUM_FREE_LISTS];
 
 struct blk_t {
-  cgc_size_t size;
+  size_t size;
   unsigned int free;
   struct blk_t *fsucc;
   struct blk_t *fpred;
@@ -46,7 +46,7 @@ struct blk_t {
 };
 
 void coalesce(struct blk_t *);
-int get_size_class(cgc_size_t size);
+int get_size_class(size_t size);
 void insert_into_flist(struct blk_t *blk);
 void remove_from_flist(struct blk_t *blk);
 

@@ -24,10 +24,10 @@
 #include "libc.h"
 
 cgc_ssize_t
-cgc_read_all(int fd, void *buf, cgc_size_t n)
+cgc_read_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t read;
+    size_t read;
 
     while (n) {
         if (receive(fd, (char *)(buf + ret), n, &read) != 0)
@@ -41,10 +41,10 @@ cgc_read_all(int fd, void *buf, cgc_size_t n)
 }
 
 cgc_ssize_t
-cgc_write_all(int fd, void *buf, cgc_size_t n)
+cgc_write_all(int fd, void *buf, size_t n)
 {
     cgc_ssize_t ret = 0;
-    cgc_size_t written;
+    size_t written;
 
     while (n) {
         if (transmit(fd, (char *)(buf + ret), n, &written) != 0)
@@ -58,7 +58,7 @@ cgc_write_all(int fd, void *buf, cgc_size_t n)
 }
 
 void *
-cgc_memset(void *ptr, int val, cgc_size_t n)
+cgc_memset(void *ptr, int val, size_t n)
 {
     void *ret = ptr;
     while (n--)
@@ -69,7 +69,7 @@ cgc_memset(void *ptr, int val, cgc_size_t n)
 char *
 cgc_strcpy(char *dst, const char *src)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; src[i]; i++)
         dst[i] = src[i];
     dst[i] = '\0';
@@ -77,9 +77,9 @@ cgc_strcpy(char *dst, const char *src)
 }
 
 char *
-cgc_strncpy(char *dst, const char *src, cgc_size_t n)
+cgc_strncpy(char *dst, const char *src, size_t n)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; i < n && src[i]; i++)
         dst[i] = src[i];
     for (; i < n; i++)
@@ -98,7 +98,7 @@ cgc_strcat(char *dst, const char *src)
 }
 
 char *
-cgc_strncat(char *dst, const char *src, cgc_size_t n)
+cgc_strncat(char *dst, const char *src, size_t n)
 {
     char *ret = dst;
     dst += cgc_strlen(dst);
@@ -107,25 +107,25 @@ cgc_strncat(char *dst, const char *src, cgc_size_t n)
     return ret;
 }
 
-cgc_size_t
+size_t
 cgc_strlen(const char *s) {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (*s++)
         ret++;
     return ret;
 }
 
-cgc_size_t
-cgc_strnlen(const char *s, cgc_size_t n)
+size_t
+cgc_strnlen(const char *s, size_t n)
 {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (n-- && *s++)
         ret++;
     return ret;
 }
 
 int
-cgc_strncmp(const char *a, const char *b, cgc_size_t n)
+cgc_strncmp(const char *a, const char *b, size_t n)
 {
     for (; --n && *a && *a == *b; a++, b++)
         ;

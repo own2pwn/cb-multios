@@ -25,7 +25,7 @@
 
 
 
-int cgc_send(const char *buf, const cgc_size_t size) {
+int cgc_send(const char *buf, const size_t size) {
     int ret;
     ret = cgc_sendall(STDOUT, buf, size);
     if (ret != 0)
@@ -34,7 +34,7 @@ int cgc_send(const char *buf, const cgc_size_t size) {
     return 0;
 }
 
-int cgc_recv(char *res_buf, cgc_size_t res_buf_size) {
+int cgc_recv(char *res_buf, size_t res_buf_size) {
     int bytes_read;
     bytes_read = cgc_recvline(STDIN, res_buf, res_buf_size);
     if (bytes_read < 0) {
@@ -46,7 +46,7 @@ int cgc_recv(char *res_buf, cgc_size_t res_buf_size) {
 }
 
 // res_buf_size should be the number of byes to read from the user + 1 for '\0'.
-int cgc_prompt_user(char* prompt_str, char* res_buf, cgc_size_t res_buf_size) {
+int cgc_prompt_user(char* prompt_str, char* res_buf, size_t res_buf_size) {
     // cgc_send prompt
     cgc_send(prompt_str, cgc_strlen(prompt_str));
 
@@ -212,7 +212,7 @@ int cgc_do_quit() {
 }
 
 int main(void) {
-    cgc_size_t cmd_buf_sz = 20;
+    size_t cmd_buf_sz = 20;
     char buf[cmd_buf_sz];
     cgc_jokedb_struct jokedb;
 

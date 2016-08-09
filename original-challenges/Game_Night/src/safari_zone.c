@@ -29,11 +29,11 @@
 struct monster {
     char *name;
     unsigned char capture_chance, run_chance;
-    void (*cgc_set_nickname)(cgc_size_t, unsigned int);
+    void (*cgc_set_nickname)(size_t, unsigned int);
 };
 
 static void
-cgc_set_nickname(cgc_size_t index, unsigned int name)
+cgc_set_nickname(size_t index, unsigned int name)
 {
     char name_[sizeof(unsigned int) + 1] = { 0 };
     int i;
@@ -59,7 +59,7 @@ cgc_set_nickname(cgc_size_t index, unsigned int name)
 }
 
 static void
-cgc_glitch_items(cgc_size_t index, unsigned int name)
+cgc_glitch_items(size_t index, unsigned int name)
 {
     char buf[40] = { 0 };
     unsigned int item;
@@ -95,8 +95,8 @@ cgc_do_safari_zone(void)
 {
     char buf[40] = { 0 };
     unsigned int move, round, name;
-    cgc_size_t num_monsters = sizeof(data) / sizeof(data[0]);
-    cgc_size_t index = game_state.games.safari_zone.encounter_data + 1;
+    size_t num_monsters = sizeof(data) / sizeof(data[0]);
+    size_t index = game_state.games.safari_zone.encounter_data + 1;
     struct monster *monster;
     unsigned char capture_chance, run_chance;
 

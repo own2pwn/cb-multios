@@ -29,8 +29,8 @@ THE SOFTWARE.
 
 #include <libcgc.h>
 
-void *cgc_calloc( cgc_size_t);
-void *cgc_malloc( cgc_size_t );
+void *cgc_calloc( size_t);
+void *cgc_malloc( size_t );
 void cgc_free( void * );
 
 #endif

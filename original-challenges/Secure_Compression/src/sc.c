@@ -37,9 +37,9 @@ cgc_bio_t* cgc_bit_new(unsigned char *data)
     return bio;
 }
 
-unsigned char cgc_bit_read(cgc_bio_t *bio, cgc_size_t n)
+unsigned char cgc_bit_read(cgc_bio_t *bio, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     unsigned char b = bio->data[bio->didx], ret = 0;
     for (i = 0; i < n; ++i)
     {
@@ -55,9 +55,9 @@ unsigned char cgc_bit_read(cgc_bio_t *bio, cgc_size_t n)
     return ret;
 }
 
-void cgc_bit_write(cgc_bio_t *bio, unsigned char data, cgc_size_t n)
+void cgc_bit_write(cgc_bio_t *bio, unsigned char data, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     unsigned char b = bio->data[bio->didx];
     for (i = 0; i < n; ++i)
     {
@@ -74,9 +74,9 @@ void cgc_bit_write(cgc_bio_t *bio, unsigned char data, cgc_size_t n)
     bio->data[bio->didx] = b;
 }
 
-unsigned char *cgc__find_char(unsigned char *s, unsigned char c, cgc_size_t n)
+unsigned char *cgc__find_char(unsigned char *s, unsigned char c, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     unsigned char *p = s;
     for (i = 0; i < n; ++i)
         if (p[i] == c)
@@ -84,9 +84,9 @@ unsigned char *cgc__find_char(unsigned char *s, unsigned char c, cgc_size_t n)
     return NULL;
 }
 
-int cgc__sc_compare(unsigned char *order, unsigned char *s1, unsigned char *s2, cgc_size_t n)
+int cgc__sc_compare(unsigned char *order, unsigned char *s1, unsigned char *s2, size_t n)
 {
-    cgc_size_t i;
+    size_t i;
     unsigned char *p1, *p2;
     for (i = 0; i < n; ++i)
     {
@@ -111,12 +111,12 @@ cgc_sc_obj_t* cgc_sc_new(unsigned char *key)
     return sc;
 }
 
-int cgc_sc_scompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen)
+int cgc_sc_scompress(cgc_sc_obj_t *sc, unsigned char **out, size_t *outlen)
 {
     if (!sc || !out || !outlen)
         return -1;
 
-    cgc_size_t old_len = sc->data_len;
+    size_t old_len = sc->data_len;
     unsigned char *buf = NULL, *old = sc->data;
     buf = cgc_sc_bwt(sc, 0, outlen);
     if (!buf)
@@ -132,13 +132,13 @@ int cgc_sc_scompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen)
     return 0;
 }
 
-int cgc_sc_sdecompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen)
+int cgc_sc_sdecompress(cgc_sc_obj_t *sc, unsigned char **out, size_t *outlen)
 {
     if (!sc || !out || !outlen)
         return -1;
 
     int l;
-    cgc_size_t old_len = sc->data_len;
+    size_t old_len = sc->data_len;
     unsigned char *buf = NULL, *old = sc->data;
     buf = cgc_sc_mtf(sc, 1, outlen);
     if (!buf)
@@ -154,7 +154,7 @@ int cgc_sc_sdecompress(cgc_sc_obj_t *sc, unsigned char **out, cgc_size_t *outlen
     return 0;
 }
 
-int cgc_sc_set_data(cgc_sc_obj_t *sc, unsigned char *data, cgc_size_t data_len)
+int cgc_sc_set_data(cgc_sc_obj_t *sc, unsigned char *data, size_t data_len)
 {
     if (!sc)
         return -1;
@@ -173,7 +173,7 @@ int cgc__gcd(int a, int b)
     return cgc__gcd(b, a % b);
 }
 
-void cgc__rot_left(unsigned char *data, cgc_size_t sz, cgc_size_t rot)
+void cgc__rot_left(unsigned char *data, size_t sz, size_t rot)
 {
     int i, j, k;
     char c, tmp;
@@ -233,14 +233,14 @@ void cgc__sort(unsigned char **xs, int len, cgc_sc_obj_t *sc)
 }
 
 
-unsigned char* cgc_sc_bwt(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
+unsigned char* cgc_sc_bwt(cgc_sc_obj_t *sc, int op, size_t *outlen)
 {
     if (sc->data_len > MAX_DATA_SIZE)
         return NULL;
 
     int i, j, k;
     unsigned short oidx;
-    cgc_size_t size = 0, to_copy = 0, num_blocks = 0;
+    size_t size = 0, to_copy = 0, num_blocks = 0;
     unsigned char block[BLOCK_SIZE], tmp[BLOCK_SIZE];
     num_blocks = (sc->data_len / BLOCK_SIZE) + !!(sc->data_len % BLOCK_SIZE);
     *outlen = num_blocks * sizeof(short) + sc->data_len;
@@ -332,7 +332,7 @@ cleanup:
     return out;
 }
 
-unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
+unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, size_t *outlen)
 {
     int i, j, k;
     unsigned char list[256];
@@ -342,7 +342,7 @@ unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
         // Do MTF
         unsigned char *out = cgc_malloc(sc->data_len);
         unsigned char *out_c = cgc_malloc(sc->data_len * 2 + 4);
-        *(cgc_size_t *)out_c = sc->data_len;
+        *(size_t *)out_c = sc->data_len;
         cgc_memset(out, 0, sc->data_len);
 
         for (i = 0; i < 32; ++i)
@@ -395,7 +395,7 @@ unsigned char* cgc_sc_mtf(cgc_sc_obj_t *sc, int op, cgc_size_t *outlen)
 #else
         unsigned char out[MAX_DATA_SIZE/2];
 #endif
-        cgc_size_t sz = *(cgc_size_t *)sc->data;
+        size_t sz = *(size_t *)sc->data;
         if (sz > MAX_DATA_SIZE)
             return NULL;
         unsigned char *out_d = cgc_malloc(sz);

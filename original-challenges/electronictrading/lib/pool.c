@@ -32,7 +32,7 @@ struct freeblk {
 static int cgc_pool_grow(struct pool *pool);
 
 void
-cgc_pool_init(struct pool *pool, cgc_size_t size)
+cgc_pool_init(struct pool *pool, size_t size)
 {
     pool->size = MAX(size, sizeof(struct freeblk));
     LIST_INIT(&pool->freelist);
@@ -92,8 +92,8 @@ static int
 cgc_pool_grow(struct pool *pool)
 {
     int ret = 0;
-    cgc_size_t i = 0;
-    cgc_size_t num_pages = PAGE_SIZE / pool->size;
+    size_t i = 0;
+    size_t num_pages = PAGE_SIZE / pool->size;
     struct freeblk *toadd = NULL;
     unsigned char *page = NULL;
 

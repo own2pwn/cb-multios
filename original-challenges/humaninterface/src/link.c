@@ -27,7 +27,7 @@
 
 void cgc_link_send(unsigned channel, unsigned length, const unsigned char *payload)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     union {
         cgc_link_hdr_t hdr;
         unsigned char rawdata[LINK_PACKET_SIZE];
@@ -47,7 +47,7 @@ void cgc_link_send(unsigned channel, unsigned length, const unsigned char *paylo
 
 int cgc_link_recv(unsigned *channel, unsigned *length, unsigned char *payload)
 {
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_link_hdr_t hdr;
 
 retry:

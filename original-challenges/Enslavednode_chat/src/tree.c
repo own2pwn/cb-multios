@@ -79,7 +79,7 @@ int cgc_ins_tree(cgc_tree *t, HASH h, const DATA d)
   return 0;
 }
 
-cgc_size_t cgc_num_nodes(cgc_tree *t)
+size_t cgc_num_nodes(cgc_tree *t)
 {
   if (!t)
     return 0;

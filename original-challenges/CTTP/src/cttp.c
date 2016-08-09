@@ -80,8 +80,8 @@ struct cttpreq {
     char hdr[4];
     cgc_ver_t version;
     cgc_rtype_t type;
-    cgc_size_t psize;
-    cgc_size_t bodysize;
+    size_t psize;
+    size_t bodysize;
     char *path;
     char *body;
 } typedef cgc_cttpreq_t;
@@ -89,13 +89,13 @@ struct cttpreq {
 struct cttpresp {
     char hdr[4];
     cgc_rcode_t code;
-    cgc_size_t rsize;
+    size_t rsize;
     char *data;
 } typedef cgc_cttpresp_t;
 
 struct fileinfo {
-    cgc_size_t psize;
-    cgc_size_t bodysize;
+    size_t psize;
+    size_t bodysize;
     char *path;
     char *body;
 } typedef cgc_fileinfo_t;
@@ -189,7 +189,7 @@ static void cgc_logreq(cgc_cttpreq_t *req, int level) {
  * 
  * @return cgc_fileinfo_t struct of file
  */
-static cgc_fileinfo_t *cgc_get_file(char *path, cgc_size_t psize) {
+static cgc_fileinfo_t *cgc_get_file(char *path, size_t psize) {
     cgc_list_node_t *cur, *n;
     cgc_fileinfo_t *f = NULL;
 
@@ -243,7 +243,7 @@ static cgc_bool cgc_add_file(cgc_fileinfo_t *file) {
  * 
  * @return true on success, false on fail
  */
-static cgc_bool cgc_delete_file(char *path, cgc_size_t psize) {
+static cgc_bool cgc_delete_file(char *path, size_t psize) {
     cgc_list_node_t *cur, *n;
     cgc_fileinfo_t *f = NULL;
 
@@ -275,7 +275,7 @@ static cgc_bool cgc_delete_file(char *path, cgc_size_t psize) {
  * 
  * @return a response structure
  */
-static cgc_cttpresp_t *cgc_genericmsg(cgc_rcode_t code, const char *msg, cgc_size_t s) {
+static cgc_cttpresp_t *cgc_genericmsg(cgc_rcode_t code, const char *msg, size_t s) {
     cgc_cttpresp_t  *resp = cgc_calloc(sizeof(cgc_cttpresp_t));
 
     if (!resp) {
@@ -454,7 +454,7 @@ static cgc_cttpresp_t *cgc_handle_check(cgc_cttpreq_t *req) {
         goto out_free;
     }
 
-    resp->data = cgc_calloc(sizeof(cgc_size_t));
+    resp->data = cgc_calloc(sizeof(size_t));
     
     if (!resp->data) {
         debug("Failed to allocate resp data");
@@ -462,9 +462,9 @@ static cgc_cttpresp_t *cgc_handle_check(cgc_cttpreq_t *req) {
     }
 
     debug("found file\n");
-    cgc_memcpy(resp->data, &file->bodysize, sizeof(cgc_size_t));
+    cgc_memcpy(resp->data, &file->bodysize, sizeof(size_t));
 
-    resp->rsize = sizeof(cgc_size_t);
+    resp->rsize = sizeof(size_t);
     resp->code = OK;
 
     LOGINFO(req);
@@ -514,7 +514,7 @@ out:
 STACKPROTECTINIT
 static cgc_cttpresp_t *cgc_handle_auth(cgc_cttpreq_t *req) {
     STACKPROTECTADD
-    cgc_size_t s;
+    size_t s;
 #ifndef PATCHED_2
     char tmpbuf[4096];
 #endif
@@ -688,7 +688,7 @@ static cgc_cttpresp_t *cgc_handle_v4(cgc_cttpreq_t *req) {
  */
 cgc_bool cgc_do_challenge() {
     int i;
-    cgc_size_t clen;
+    size_t clen;
     char *encoded, *decoded;
     cgc_bool res;
     char *challenge = challenges[cgc_randint()%(sizeof(challenges)/sizeof(challenges[0]))];
@@ -847,7 +847,7 @@ cgc_bool cgc_handle_request() {
     }
 
     if (resp) {
-        cgc_size_t osize = resp->rsize;
+        size_t osize = resp->rsize;
         if(ISLE(&req)) {
             cgc_memcpy(resp->hdr, LEHDR, sizeof(resp->hdr));
         } else {

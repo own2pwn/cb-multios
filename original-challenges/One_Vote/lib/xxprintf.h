@@ -103,7 +103,7 @@ typedef __builtin_va_list cgc_va_list;
  * @param args Ptr to cgc_va_list of arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char fsm, const char term, const char * fmt, cgc_va_list args);
+int cgc_vsnprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, cgc_va_list args);
 
 /**
  * A simple, non-standard cgc_snprintf.
@@ -137,6 +137,6 @@ int cgc_vsnprintf(char * buf, cgc_size_t buf_size, const char fsm, const char te
  * @param ... Optional arguments to insert into fmt
  * @return Number of bytes written to buf, not counting term
  */
-int cgc_snprintf(char * buf, cgc_size_t buf_size, const char fsm, const char term, const char * fmt, ...);
+int cgc_snprintf(char * buf, size_t buf_size, const char fsm, const char term, const char * fmt, ...);
 
 #endif

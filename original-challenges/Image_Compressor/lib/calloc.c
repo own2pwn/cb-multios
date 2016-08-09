@@ -29,15 +29,15 @@
 
 #include "malloc_internal.h"
 
-void *cgc_calloc(cgc_size_t nmemb, cgc_size_t size)
+void *cgc_calloc(size_t nmemb, size_t size)
 {
     cgc_uint64_t total = (cgc_uint64_t)nmemb * size;
     if (total > UINT32_MAX)
         return NULL;
 
-    void *ret = cgc_malloc((cgc_size_t)total);
+    void *ret = cgc_malloc((size_t)total);
     if (ret == NULL)
         return NULL;
-    cgc_memset(ret, 0, (cgc_size_t)total);
+    cgc_memset(ret, 0, (size_t)total);
     return ret;
 }

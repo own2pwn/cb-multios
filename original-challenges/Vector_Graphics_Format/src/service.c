@@ -86,8 +86,8 @@ int main(void)
     cgc_free( pRenderData );
 
     // Send the complete file
-    cgc_size_t tx_bytes = pmSize;
-    cgc_size_t writeCur;
+    size_t tx_bytes = pmSize;
+    size_t writeCur;
     for ( writeCur = 0; writeCur < tx_bytes; writeCur++ )
         cgc_write_u8( pPMFileData[writeCur] );
 

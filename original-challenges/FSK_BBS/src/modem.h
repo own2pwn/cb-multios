@@ -26,10 +26,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef void (*cgc_modem_rx_cb_t) (const cgc_uint8_t *data, cgc_size_t count);
+typedef void (*cgc_modem_rx_cb_t) (const cgc_uint8_t *data, size_t count);
 
 void cgc_modem_init();
-void cgc_modem_output(cgc_uint8_t *data, cgc_size_t count);
+void cgc_modem_output(cgc_uint8_t *data, size_t count);
 void cgc_modem_loop(cgc_modem_rx_cb_t cb);
 
 #endif /* !MODEM_H_ */

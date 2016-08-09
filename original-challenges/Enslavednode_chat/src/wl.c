@@ -40,7 +40,7 @@ char *cgc_word_list_to_str(const cgc_list *l)
 
 #define START_SIZE 128
   char *flat = cgc_calloc(1, START_SIZE);
-  cgc_size_t cur_size = START_SIZE;
+  size_t cur_size = START_SIZE;
 
   if (!flat)
     error(EALLOC);
@@ -48,7 +48,7 @@ char *cgc_word_list_to_str(const cgc_list *l)
   const cgc_list *p = l;
 
   while (p && p->d) {
-    cgc_size_t cur_len = cgc_strlen(flat);
+    size_t cur_len = cgc_strlen(flat);
     if (cgc_strlen(flat) + cgc_strlen(p->d) + cgc_strlen(word_sep) + 1 > cur_size) {
       cur_size = (cgc_strlen(flat) + cgc_strlen(p->d) + cgc_strlen(word_sep) + 1) * 2;
       flat = cgc_realloc(flat, cur_size);
@@ -117,19 +117,19 @@ cgc_list *cgc_split_words(const char *line, int add_term)
   return words;
 }
 
-cgc_list *cgc_chunk_words(cgc_list *words, cgc_size_t chunk_size)
+cgc_list *cgc_chunk_words(cgc_list *words, size_t chunk_size)
 {
-  cgc_size_t num_words = cgc_len_list(words);
+  size_t num_words = cgc_len_list(words);
   cgc_list *chunks = NULL;
 
   if (num_words <= chunk_size)
     return NULL;
 
-  cgc_size_t num_chunks = num_words - chunk_size;
+  size_t num_chunks = num_words - chunk_size;
   if (num_chunks > num_words)
     return NULL;
 
-  for (cgc_size_t i = 0; i < num_chunks; i++) {
+  for (size_t i = 0; i < num_chunks; i++) {
     cgc_list *chunk = cgc_copy_list(words, i, i + chunk_size + 1);
     if (!chunk)
       error(EALLOC);
@@ -199,7 +199,7 @@ int cgc_insert_wordlists(const cgc_list *word_lists, cgc_tree **t)
 
 cgc_list *cgc_str_to_wordlists(const char *s)
 {
-  cgc_size_t len = cgc_strlen(s);
+  size_t len = cgc_strlen(s);
   char *x = cgc_calloc(1, len + 1);
   cgc_strncpy(x, s, len);
   x[len] = '\0';

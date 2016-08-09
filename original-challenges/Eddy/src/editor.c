@@ -188,7 +188,7 @@ static int
 cgc_join_command(struct command *command, struct result **result)
 {
     int i;
-    cgc_size_t size = 0;
+    size_t size = 0;
     struct line *start, *end, *newline, *cur, *tofree = NULL;
     char *c;
 
@@ -306,7 +306,7 @@ cgc_get_mark_command(struct command *command, struct result **result)
 static int
 cgc_list_command(struct command *command, struct result **result)
 {
-    cgc_size_t size = 0;
+    size_t size = 0;
     struct line *start, *end, *cur;
     char *c;
 
@@ -351,7 +351,7 @@ static int
 cgc_num_command(struct command *command, struct result **result)
 {
     int start_line = 0;
-    cgc_size_t size = 0;
+    size_t size = 0;
     struct line *start, *end, *cur;
     char *c, *buf, s[20];
 
@@ -414,7 +414,7 @@ cgc_num_command(struct command *command, struct result **result)
 static int
 cgc_do_search_command(struct command *command, struct result **result, int invert)
 {
-    cgc_size_t size = 0;
+    size_t size = 0;
     struct line *start, *end, *cur;
     char *c, *match_begin, *match_end;
 

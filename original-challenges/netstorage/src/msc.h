@@ -27,10 +27,10 @@ typedef struct {
 #define MSC_ST_IN 2
 #define MSC_ST_STATUS 3
     int status;
-    cgc_size_t count;
+    size_t count;
     cgc_uint8_t *memory;
 
-    cgc_size_t out_length;
+    size_t out_length;
     const cgc_uint8_t *out_buffer;
     unsigned int out_flags;
 #define MSC_F_DYNAMIC 0x01

@@ -22,11 +22,11 @@
  */
 #include <string.h>
 
-void *cgc_memmove(void *dst, const void *src, cgc_size_t n)
+void *cgc_memmove(void *dst, const void *src, size_t n)
 {
     unsigned char *udst = dst;
     const unsigned char *usrc = src;
-    cgc_size_t i;
+    size_t i;
 
     if (dst > src)
     {

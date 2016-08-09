@@ -84,7 +84,7 @@ cgc_lookup_dir(const struct vfs *vfs, const char *path, int follow_links)
     struct directory *dir = vfs->root;
     struct list *files;
     struct file *file;
-    cgc_size_t path_len;
+    size_t path_len;
     char *path_dup, *cur;
 
     path_len = cgc_strlen(path);
@@ -132,7 +132,7 @@ cgc_lookup_file(const struct vfs *vfs, const char *path, int follow_links)
 {
     struct file *ret = NULL;
     struct directory *dir = vfs->root;
-    cgc_size_t path_len;
+    size_t path_len;
     char *path_dup, *name;
 
     path_len = cgc_strlen(path);
@@ -162,7 +162,7 @@ char *
 cgc_get_path_from_dir(const struct vfs *vfs, const struct directory *dir)
 {
     char *tmp, *ret;
-    cgc_size_t cur_len, path_len = 1;
+    size_t cur_len, path_len = 1;
     const struct directory *cur = dir;
 
     if ((ret = cgc_calloc(1)) == NULL)
@@ -205,7 +205,7 @@ char *
 cgc_get_path_from_file(const struct vfs *vfs, const struct file *file)
 {
     char *tmp, *ret;
-    cgc_size_t name_len;
+    size_t name_len;
 
     name_len = cgc_strnlen(file->name, MAX_FILE_NAME_LENGTH);
     if ((ret = cgc_get_path_from_dir(vfs, file->parent)) == NULL)
@@ -253,7 +253,7 @@ cgc_read_file(const struct vfs *vfs, cgc_uid_t user, const char *path, unsigned 
 }
 
 int
-cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, cgc_size_t size)
+cgc_write_file(struct vfs *vfs, cgc_uid_t user, const char *path, unsigned char *contents, size_t size)
 {
     struct file *file;
 
@@ -284,7 +284,7 @@ cgc_create_dir(struct vfs *vfs, const char *path)
 {
     struct directory *ret = NULL;
     struct directory *dir = vfs->root;
-    cgc_size_t path_len;
+    size_t path_len;
     char *path_dup, *name;
 
     path_len = cgc_strlen(path);
@@ -342,7 +342,7 @@ cgc_create_file(struct vfs *vfs, const char *path)
 {
     struct file *ret = NULL;
     struct directory *dir = vfs->root;
-    cgc_size_t path_len;
+    size_t path_len;
     char *path_dup, *name;
 
     path_len = cgc_strlen(path);
@@ -402,7 +402,7 @@ cgc_create_symlink(struct vfs *vfs, cgc_uid_t user, const char *src_path, const 
     struct file *file, *cur;
     unsigned char *contents;
     struct directory *dir = vfs->root;
-    cgc_size_t src_path_len, dst_path_len;
+    size_t src_path_len, dst_path_len;
     char *path_dup, *name;
     cgc_uid_t owner;
 

@@ -33,7 +33,7 @@ static unsigned int
 #else
 static int
 #endif
-cgc_strhash(const char *s, cgc_size_t n)
+cgc_strhash(const char *s, size_t n)
 {
     int ret = 0;
     const unsigned char *p = NULL;
@@ -364,7 +364,7 @@ cgc_order_to_str(const struct order *order, char *s)
 int 
 cgc_cmd_list_stocks(struct stock_state *state)
 {
-    cgc_size_t len = 0;
+    size_t len = 0;
     struct stock *cur = NULL;
     struct stock *prev = NULL;
     char buf[5] = {};
@@ -412,7 +412,7 @@ cgc_cmd_list_orders(const struct stock_state *state, const char *name)
 {
     struct order *cur = NULL;
     struct stock *stock = NULL;
-    cgc_size_t len = 0;
+    size_t len = 0;
     char buf[200] = {};
 
     if ((stock = cgc_lookup_stock(state, name)) == NULL)
@@ -468,7 +468,7 @@ int
 cgc_cmd_check_order(const struct stock_state *state, unsigned int id)
 {
     struct order *order = NULL;
-    cgc_size_t len = 0;
+    size_t len = 0;
     char buf[200] = {};
 
     if ((order = cgc_lookup_order(state, id)) == NULL)
@@ -514,8 +514,8 @@ cgc_cmd_cancel_order(struct stock_state *state, unsigned int id)
 void
 cgc_stock_init(struct stock_state *state)
 {
-    cgc_size_t i = 0;
-    cgc_size_t size = MAX(sizeof(struct order), sizeof(struct stock));
+    size_t i = 0;
+    size_t size = MAX(sizeof(struct order), sizeof(struct stock));
 
 // Use after free
 #ifdef PATCHED

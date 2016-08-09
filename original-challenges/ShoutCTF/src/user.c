@@ -83,7 +83,7 @@ cgc_error_t cgc_team_add_member(cgc_team_t *team, cgc_user_t *user)
         return ERR_INTERNAL;
     if (team->num_members == team->sz_members)
     {
-        cgc_size_t nsz = team->sz_members * 2 * sizeof(cgc_user_t *);
+        size_t nsz = team->sz_members * 2 * sizeof(cgc_user_t *);
         team->members = (cgc_user_t **) cgc_realloc(team->members, nsz);
         team->sz_members *= 2;
     }
@@ -96,7 +96,7 @@ cgc_error_t cgc_team_add_member(cgc_team_t *team, cgc_user_t *user)
 cgc_error_t cgc_team_remove_member(cgc_team_t *team, const char *nick)
 {
     int i;
-    cgc_size_t n;
+    size_t n;
     if (!team || !nick)
         return ERR_INTERNAL;
     for (i = 0; i < team->num_members; ++i)

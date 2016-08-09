@@ -31,17 +31,17 @@
 
 typedef unsigned int cgc_uint32_t;
 typedef unsigned char cgc_uint8_t;
-extern int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size);
-int cgc_recv_until(int fd, char *buf, const cgc_size_t buf_sz, const char delim);
-extern cgc_size_t cgc_strlen(const char *s);
+extern int cgc_transmit_all(int fd, const char *buf, const size_t size);
+int cgc_recv_until(int fd, char *buf, const size_t buf_sz, const char delim);
+extern size_t cgc_strlen(const char *s);
 
-void * cgc_calloc(cgc_size_t nmemb, cgc_size_t sz);
+void * cgc_calloc(size_t nmemb, size_t sz);
 extern void cgc_free(void *p);
 
-void cgc_memcpy(void *d, const void *s, cgc_size_t size);
-int cgc_memcmp(void *d, const void *s, cgc_size_t size);
+void cgc_memcpy(void *d, const void *s, size_t size);
+int cgc_memcmp(void *d, const void *s, size_t size);
 char *cgc_strtok(char *str, const char delim);
-cgc_size_t cgc_read_ascii_line(int fd, char *data, cgc_size_t len);
+size_t cgc_read_ascii_line(int fd, char *data, size_t len);
 
 int cgc_buf_is_numeric(char *buf);
 int cgc_atoi(char *buf);

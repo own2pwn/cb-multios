@@ -27,9 +27,9 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <stdint.h>
 
-int cgc_memcpy( void *dest, void *src, cgc_size_t n )
+int cgc_memcpy( void *dest, void *src, size_t n )
 {
-        cgc_size_t index = 0;
+        size_t index = 0;
 
         while ( index < n ) {
                 ((char*)dest)[index] = ((char*)src)[index];
@@ -244,7 +244,7 @@ int cgc_atoi(const char* str)
 
 char *cgc_strcpy( char *dest, char *src )
 {
-    cgc_size_t i;
+    size_t i;
 
     for ( i = 0; ; i++ )
     {
@@ -258,9 +258,9 @@ char *cgc_strcpy( char *dest, char *src )
     return (dest);
 }
 
-char *cgc_strncpy( char *dest, const char *src, cgc_size_t n )
+char *cgc_strncpy( char *dest, const char *src, size_t n )
 {
-    cgc_size_t i;
+    size_t i;
 
     for ( i = 0; i < n && src[i] != '\0'; i++)
         dest[i] = src[i];
@@ -270,9 +270,9 @@ char *cgc_strncpy( char *dest, const char *src, cgc_size_t n )
     return (dest);
 }
 
-void cgc_bzero( void *buff, cgc_size_t len )
+void cgc_bzero( void *buff, size_t len )
 {
-    cgc_size_t index = 0;
+    size_t index = 0;
     unsigned char *c = buff;
 
     if ( buff == NULL ) {
@@ -291,7 +291,7 @@ end:
     return;
 }
 
-void *cgc_memset(void *s, int c, cgc_size_t n)
+void *cgc_memset(void *s, int c, size_t n)
 {
     unsigned char *t = (unsigned char *)s;
     while (--n)
@@ -333,10 +333,10 @@ int cgc_strncmp( const char *s1, const char *s2, int count )
 }
 
 
-char *cgc_strncat ( char *dest, const char *src, cgc_size_t n )
+char *cgc_strncat ( char *dest, const char *src, size_t n )
 {
-    cgc_size_t dest_len = cgc_strlen(dest);
-    cgc_size_t i;
+    size_t dest_len = cgc_strlen(dest);
+    size_t i;
 
     if (dest == NULL || src == NULL)
     {
@@ -357,7 +357,7 @@ int cgc_flush_input(int fd) {
     int ready_fd;
     struct cgc_timeval tv;
     char buffer[1024];
-    cgc_size_t rcv_cnt;
+    size_t rcv_cnt;
 
     while (1)  {
 
@@ -382,7 +382,7 @@ int cgc_flush_input(int fd) {
     return 0;
 } // cgc_flush_input()
 
-cgc_size_t cgc_getline( char *buffer, cgc_size_t len)  {
+size_t cgc_getline( char *buffer, size_t len)  {
     int count;
 
     count = cgc_receive_until(buffer, '\n', len);
@@ -397,10 +397,10 @@ cgc_size_t cgc_getline( char *buffer, cgc_size_t len)  {
 
 }
 
-cgc_size_t cgc_receive_until( char *dst, char delim, cgc_size_t max )
+size_t cgc_receive_until( char *dst, char delim, size_t max )
 {
-    cgc_size_t len = 0;
-    cgc_size_t rx = 0;
+    size_t len = 0;
+    size_t rx = 0;
     char c = 0;
 
     while( len < max ) {
@@ -426,10 +426,10 @@ cgc_size_t cgc_receive_until( char *dst, char delim, cgc_size_t max )
 end:
     return len;
 }
-cgc_size_t cgc_receive_fixed(char *dest, cgc_size_t size) {
-    cgc_size_t total_read = 0;
+size_t cgc_receive_fixed(char *dest, size_t size) {
+    size_t total_read = 0;
     int return_value;
-    cgc_size_t bytes_received;
+    size_t bytes_received;
     while (total_read < size) {
         return_value = receive(STDIN, dest + total_read, size - total_read, &bytes_received);
       if (return_value != 0 || bytes_received == 0) {
@@ -440,11 +440,11 @@ cgc_size_t cgc_receive_fixed(char *dest, cgc_size_t size) {
     return total_read;
 }
 
-int cgc_receive_bytes (unsigned char *buffer, cgc_size_t size)
+int cgc_receive_bytes (unsigned char *buffer, size_t size)
 {
-cgc_size_t count=0;
-cgc_size_t remaining = 0;
-cgc_size_t rxbytes=0;
+size_t count=0;
+size_t remaining = 0;
+size_t rxbytes=0;
 
     remaining = size - count;
 
@@ -470,10 +470,10 @@ return 0;
 
 }
 
-cgc_size_t cgc_strcat( char *dest, char*src )
+size_t cgc_strcat( char *dest, char*src )
 {
-    cgc_size_t length = 0;
-    cgc_size_t start = 0;
+    size_t length = 0;
+    size_t start = 0;
 
     if ( dest == NULL || src == NULL) {
         goto end;
@@ -490,9 +490,9 @@ end:
     return length;
 }
 
-cgc_size_t cgc_strlen( char * str )
+size_t cgc_strlen( char * str )
 {
-    cgc_size_t length = 0;
+    size_t length = 0;
 
     if ( str == NULL ) {
         goto end;
@@ -504,11 +504,11 @@ end:
     return length;
 }
 
-cgc_size_t cgc_itoa( char *out, cgc_size_t val, cgc_size_t max )
+size_t cgc_itoa( char *out, size_t val, size_t max )
 {
-    cgc_size_t length = 0;
-    cgc_size_t end = 0;
-    cgc_size_t temp = 0;
+    size_t length = 0;
+    size_t end = 0;
+    size_t temp = 0;
 
     if ( out == NULL ) {
         goto end;
@@ -544,9 +544,9 @@ end:
 
 void cgc_puts( char *t )
 {
-    cgc_size_t size;
-    cgc_size_t total_sent = 0;
-    cgc_size_t len;
+    size_t size;
+    size_t total_sent = 0;
+    size_t len;
 
     if (!t) {
        return;
@@ -673,10 +673,10 @@ char *cgc_strtok(char *str, const char *delim) {
 	return(token);
 }
 
-cgc_ssize_t cgc_write( const void *buf, cgc_size_t count )
+cgc_ssize_t cgc_write( const void *buf, size_t count )
 {
-	cgc_size_t size;
-	cgc_size_t total_sent = 0;
+	size_t size;
+	size_t total_sent = 0;
 
 	if (!buf) {
 		return(0);

@@ -25,7 +25,7 @@
 #include "vfs.h"
 
 #define USER_UID 1000
-#define MAX_FILE_SIZE (4096 - 2 * sizeof(cgc_size_t))
+#define MAX_FILE_SIZE (4096 - 2 * sizeof(size_t))
 
 static struct vfs vfs;
 static struct directory *pwd, *crond;
@@ -42,7 +42,7 @@ static char *
 cgc_append_to_path(char *path, const char *toappend)
 {
     char *tmp;
-    cgc_size_t len;
+    size_t len;
 
     len = cgc_strlen(path);
     if ((tmp = cgc_realloc(path, len + MAX_FILE_NAME_LENGTH + 2)) == NULL) {
@@ -152,7 +152,7 @@ cgc_do_write(void)
 {
     int ret = -1;
     char name[MAX_FILE_NAME_LENGTH + 1];
-    cgc_size_t size;
+    size_t size;
     char *contents, *path;
     struct file *file;
 
@@ -199,7 +199,7 @@ cgc_do_ln(void)
 {
     int ret = -1;
     char name[MAX_FILE_NAME_LENGTH + 1];
-    cgc_size_t size;
+    size_t size;
     char *src, *dst;
 
     if (cgc_read_all(STDIN, name, MAX_FILE_NAME_LENGTH) != MAX_FILE_NAME_LENGTH)

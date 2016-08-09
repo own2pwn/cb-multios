@@ -35,7 +35,7 @@
 #define MAX_SEARCH_STR_SIZE 500
 
 //Put the bug here -- Get it so there is a case where resizing the buffer doesn't set it to null
-static int cgc_resize_buf(void **buf, cgc_size_t old_size)
+static int cgc_resize_buf(void **buf, size_t old_size)
 {
     if (MAX_TEXT_SIZE / 2 < old_size)
         return 0;
@@ -52,7 +52,7 @@ static int cgc_resize_buf(void **buf, cgc_size_t old_size)
 
 static unsigned char cgc_readopt(int fd) {
     unsigned char c = 0, d = 0;
-    cgc_size_t rx;
+    size_t rx;
 
     if ((receive(fd, &c, 1, &rx) != 0 || rx == 0) || (receive(fd, &d, 1, &rx) != 0 || rx == 0))
         return -1;
@@ -67,9 +67,9 @@ static unsigned char cgc_readopt(int fd) {
     return c;
 }
 
-static int cgc_readtrex(int fd, unsigned char *trex, cgc_size_t size)
+static int cgc_readtrex(int fd, unsigned char *trex, size_t size)
 {
-    cgc_size_t i, rx;
+    size_t i, rx;
     unsigned char d = 0;
 
     for (i = 0; i < size; i++) {
@@ -94,7 +94,7 @@ static int cgc_readtrex(int fd, unsigned char *trex, cgc_size_t size)
 
 static int cgc_create_text(int fd, unsigned char **text)
 {
-    cgc_size_t len = 0, buf_size = 16, rx;
+    size_t len = 0, buf_size = 16, rx;
     unsigned char *pend_seq = TEXT_END_SEQ;
     unsigned char *buf;
 

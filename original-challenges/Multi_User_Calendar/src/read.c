@@ -24,12 +24,12 @@
 #include <string.h>
 #include "read.h"
 
-int cgc_readline(char *buf, cgc_size_t buf_size)
+int cgc_readline(char *buf, size_t buf_size)
 {
     if (!buf || buf_size < 2)
         return -1;
 
-    cgc_size_t rx, i = 0;
+    size_t rx, i = 0;
     for (i = 0; i < buf_size; i++)
     {
         if (cgc_fread(&buf[i], 1, stdin) == 1)
@@ -52,7 +52,7 @@ int cgc_readline(char *buf, cgc_size_t buf_size)
     return SUCCESS;
 }
 
-int cgc_readnum(char *buf, cgc_size_t buf_size, int *num)
+int cgc_readnum(char *buf, size_t buf_size, int *num)
 {
     int retval = cgc_readline(buf, buf_size);
     if (retval != SUCCESS)
@@ -63,7 +63,7 @@ int cgc_readnum(char *buf, cgc_size_t buf_size, int *num)
     return retval;
 }
 
-char *cgc_q_and_a(char *question, int maxlen, char *buf, cgc_size_t buflen, int *recv_status, cgc_bool allow_empty)
+char *cgc_q_and_a(char *question, int maxlen, char *buf, size_t buflen, int *recv_status, cgc_bool allow_empty)
 {
     char *answer = NULL;
     *recv_status = FAIL;

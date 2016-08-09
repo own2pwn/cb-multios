@@ -55,7 +55,7 @@ static void cgc_send_handshake(void *channel, unsigned int result)
 static void cgc_send_report(void *channel)
 {
     unsigned char data[800];
-    cgc_size_t bytes;
+    size_t bytes;
     cgc_random(data, sizeof(data), &bytes);
     cgc_send_data(channel, 1, g_protocol == 0 ? 200 : 700, data);
 }

@@ -24,7 +24,7 @@
 #include "libc.h"
 
 // overwrites the first n chars of str with unsigned char ch.
-void * cgc_memset(void* str, int ch, cgc_size_t n) {
+void * cgc_memset(void* str, int ch, size_t n) {
     unsigned char *ch_ptr = str;
     while (n > 0) {
         *ch_ptr = (unsigned char)ch;
@@ -36,9 +36,9 @@ void * cgc_memset(void* str, int ch, cgc_size_t n) {
 }
 
 // modified to remove "ret"
-int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
-    cgc_size_t sent = 0;
-    cgc_size_t sent_now = 0;
+int cgc_transmit_all(int fd, const char *buf, const size_t size) {
+    size_t sent = 0;
+    size_t sent_now = 0;
 
     if (!size)
         return 2;
@@ -55,9 +55,9 @@ int cgc_transmit_all(int fd, const char *buf, const cgc_size_t size) {
 }
 
 // mod from FASTLANE: lines terminated with \x07, diff return values, 
-int cgc_recvline(int fd, char *buf, cgc_size_t size) {
-    cgc_size_t bytes_read = 0;
-    cgc_size_t total_read = 0;
+int cgc_recvline(int fd, char *buf, size_t size) {
+    size_t bytes_read = 0;
+    size_t total_read = 0;
 
     if(!size)
         return 0;
@@ -84,7 +84,7 @@ int cgc_recvline(int fd, char *buf, cgc_size_t size) {
     return total_read;
 }
 
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n)
+int cgc_strncmp(const char *s1, const char *s2, size_t n)
 {
      for(; n>0; s1++, s2++, --n)
      {
@@ -99,7 +99,7 @@ int cgc_strncmp(const char *s1, const char *s2, cgc_size_t n)
 // takes a string and converts it to an int32
 // MAX int32 is +/- 2^31-1 (2,147,483,647) which is 10 digits
 // returns 0 if str_buf is "0" or has no digits.
-int cgc_strn2int(const char* str_buf, cgc_size_t max_chars) {
+int cgc_strn2int(const char* str_buf, size_t max_chars) {
     int result = 0;
     int temp = 0;
     int i = 0;
@@ -139,7 +139,7 @@ int cgc_strn2int(const char* str_buf, cgc_size_t max_chars) {
 }
 
 // copy cnt bytes from src into dst; src and dst cannot overlap!
-void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
+void * cgc_memcpy(void* dst, const void* src, size_t cnt) {
 
     cgc_uint8_t *dst_ptr = (cgc_uint8_t *) dst;
     cgc_uint8_t *src_ptr = (cgc_uint8_t *) src;
@@ -153,8 +153,8 @@ void * cgc_memcpy(void* dst, const void* src, cgc_size_t cnt) {
 }
 
 // Modified to stop at a max length
-cgc_size_t cgc_strnlen(const char *string, cgc_size_t max_len) {
-    cgc_size_t size = 0;
+size_t cgc_strnlen(const char *string, size_t max_len) {
+    size_t size = 0;
     
     while(size < max_len) {
         if(string[size] == '\0')
@@ -165,8 +165,8 @@ cgc_size_t cgc_strnlen(const char *string, cgc_size_t max_len) {
     return max_len;
 }
 
-cgc_size_t cgc_strlen(const char *string) {
-    cgc_size_t size = 0;
+size_t cgc_strlen(const char *string) {
+    size_t size = 0;
     
     while(1) {
         if(string[size] == '\0')

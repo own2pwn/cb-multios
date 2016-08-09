@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include <string.h>
 #include <stdint.h>
 
-cgc_size_t cgc_strlen( const char *str )
+size_t cgc_strlen( const char *str )
 {
-	cgc_size_t len = 0;
+	size_t len = 0;
 	while ( *str++ != '\0' )
 		len++;
 
@@ -48,9 +48,9 @@ int cgc_strcmp( const char *s1, const char *s2 )
     return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
-int cgc_strncmp( const char *s1, const char *s2, cgc_size_t len )
+int cgc_strncmp( const char *s1, const char *s2, size_t len )
 {
-cgc_size_t count = 0;
+size_t count = 0;
 
 	if (s1 == 0 || s2 == 0) 
 		return -1;
@@ -63,14 +63,14 @@ cgc_size_t count = 0;
     return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
-void cgc_bzero(void *s, cgc_size_t n) {
+void cgc_bzero(void *s, size_t n) {
         while (n) {
                 ((char *)s)[--n] = '\0';
         }
         ((char *)s)[n] = '\0';
 }
 
-void *cgc_memset( void *ptr, int value, cgc_size_t num )
+void *cgc_memset( void *ptr, int value, size_t num )
 {
 	void *ptr_temp = ptr;
 	cgc_uint8_t set_value_byte = (cgc_uint8_t)value;
@@ -103,9 +103,9 @@ char *cgc_strcpy( char *pDest, const char *pSrc )
 	return (pDestReturn);
 }
 
-char *cgc_strncpy( char *pDest, const char *pSrc, cgc_size_t maxlen )
+char *cgc_strncpy( char *pDest, const char *pSrc, size_t maxlen )
 {
-	cgc_size_t n;
+	size_t n;
 
 	for ( n = 0; n < maxlen; n++ )
 	{
@@ -121,7 +121,7 @@ char *cgc_strncpy( char *pDest, const char *pSrc, cgc_size_t maxlen )
 	return (pDest);
 }
 
-void *cgc_memcpy( void *pDest, const void *pSource, cgc_size_t nbytes )
+void *cgc_memcpy( void *pDest, const void *pSource, size_t nbytes )
 {
 	void *pDestReturn = pDest;
 

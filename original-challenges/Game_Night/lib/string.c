@@ -23,7 +23,7 @@
 #include "string.h"
 
 void *
-cgc_memcpy(void *destination, const void *source, cgc_size_t num)
+cgc_memcpy(void *destination, const void *source, size_t num)
 {
     unsigned char *destination_ = destination;
     const unsigned char *source_ = source;
@@ -33,7 +33,7 @@ cgc_memcpy(void *destination, const void *source, cgc_size_t num)
 }
 
 void *
-cgc_memmove(void *destination, const void *source, cgc_size_t num)
+cgc_memmove(void *destination, const void *source, size_t num)
 {
     unsigned char *destination_ = destination;
     const unsigned char *source_ = source;
@@ -46,7 +46,7 @@ cgc_memmove(void *destination, const void *source, cgc_size_t num)
 }
 
 void *
-cgc_memset(void *ptr, int value, cgc_size_t num)
+cgc_memset(void *ptr, int value, size_t num)
 {
     unsigned char *ptr_ = ptr;
     while (num--)
@@ -54,19 +54,19 @@ cgc_memset(void *ptr, int value, cgc_size_t num)
     return ptr;
 }
 
-cgc_size_t
+size_t
 cgc_strlen(const char *str)
 {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (*str++)
         ret++;
     return ret;
 }
 
-cgc_size_t
-cgc_strnlen(const char *str, cgc_size_t num)
+size_t
+cgc_strnlen(const char *str, size_t num)
 {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (num-- && *str++)
         ret++;
     return ret;
@@ -75,7 +75,7 @@ cgc_strnlen(const char *str, cgc_size_t num)
 char *
 cgc_strcpy(char *destination, const char *source)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; source[i]; i++)
         destination[i] = source[i];
     destination[i] = '\0';
@@ -83,9 +83,9 @@ cgc_strcpy(char *destination, const char *source)
 }
 
 char *
-cgc_strncpy(char *destination, const char *source, cgc_size_t num)
+cgc_strncpy(char *destination, const char *source, size_t num)
 {
-    cgc_size_t i = 0;
+    size_t i = 0;
     for (; i < num && source[i]; i++)
         destination[i] = source[i];
     for (; i < num; i++)
@@ -101,7 +101,7 @@ cgc_strcat(char *destination, const char *source)
 }
 
 char *
-cgc_strncat(char *destination, const char *source, cgc_size_t num)
+cgc_strncat(char *destination, const char *source, size_t num)
 {
     destination += cgc_strlen(destination);
     cgc_strncpy(destination, source, num);
@@ -110,7 +110,7 @@ cgc_strncat(char *destination, const char *source, cgc_size_t num)
 }
 
 int
-cgc_memcmp(const void *ptr1, const void *ptr2, cgc_size_t num)
+cgc_memcmp(const void *ptr1, const void *ptr2, size_t num)
 {
     const unsigned char *ptr1_ = ptr1;
     const unsigned char *ptr2_ = ptr2;
@@ -133,7 +133,7 @@ cgc_strcmp(const char *str1, const char *str2)
 }
 
 int
-cgc_strncmp(const char *str1, const char *str2, cgc_size_t num)
+cgc_strncmp(const char *str1, const char *str2, size_t num)
 {
     for (; --num && *str1 && *str2 && *str1 == *str2; str1++, str2++)
         ;
@@ -141,7 +141,7 @@ cgc_strncmp(const char *str1, const char *str2, cgc_size_t num)
 }
 
 void *
-cgc_memchr(void *ptr, int value, cgc_size_t num)
+cgc_memchr(void *ptr, int value, size_t num)
 {
     unsigned char *ptr_ = ptr;
     while (num--)
@@ -194,7 +194,7 @@ cgc_strrchr(char *str, int character)
 char *
 cgc_strstr(char *str1, const char *str2)
 {
-    cgc_size_t str2_len;
+    size_t str2_len;
 
     str2_len = cgc_strlen(str2);
     while (*str1)
@@ -206,7 +206,7 @@ cgc_strstr(char *str1, const char *str2)
     return NULL;
 }
 
-cgc_size_t
+size_t
 cgc_strcspn(const char *str1, const char *str2)
 {
     const char *match;
@@ -217,10 +217,10 @@ cgc_strcspn(const char *str1, const char *str2)
         return match - str1;
 }
 
-cgc_size_t
+size_t
 cgc_strspn(const char *str1, const char *str2)
 {
-    cgc_size_t ret = 0;
+    size_t ret = 0;
     while (*str1 && cgc_strchr((char *)str2, *str1))
         ret++;
     return ret;

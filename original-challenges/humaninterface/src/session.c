@@ -60,14 +60,14 @@ static unsigned char g_config_req_id = 1;
 
 static void cgc__session_send(unsigned short dest_channel, unsigned short length, unsigned char *data)
 {
-    cgc_size_t full_length = length + 4, offset = 0;
+    size_t full_length = length + 4, offset = 0;
     g_temp_packet.hdr.length = length;
     g_temp_packet.hdr.channel = dest_channel;
     cgc_memcpy(g_temp_packet.hdr.payload, data, length);
 
     while (offset < full_length)
     {
-        cgc_size_t payload_length = full_length - offset;
+        size_t payload_length = full_length - offset;
         if (payload_length > LINK_PAYLOAD_SIZE)
             payload_length = LINK_PAYLOAD_SIZE;
         cgc_link_send(offset == 0 ? LINK_CH_START : LINK_CH_CONTINUE, payload_length, &g_temp_packet.rawdata[offset]);
@@ -455,7 +455,7 @@ static void cgc_session_handle_command(cgc_command_t *cmd)
 
 static int cgc_session_handle_control()
 {
-    cgc_size_t offset = 0;
+    size_t offset = 0;
     while (offset + sizeof(cgc_command_t) <= g_current_packet.hdr.length)
     {
         cgc_command_t *cmd = (cgc_command_t *)&g_current_packet.hdr.payload[offset];

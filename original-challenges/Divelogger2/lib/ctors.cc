@@ -8,5 +8,4 @@ extern "C"
 void call_inits( void )
 {
     size_t asize, n;
-    printf("ctors called");
 }

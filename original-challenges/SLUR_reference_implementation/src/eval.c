@@ -234,7 +234,7 @@ cgc_exp_t *cgc_cond_fn(cgc_exp_t *e, cgc_sym_list *s)
   return res;
 }
 
-static cgc_exp_t *cgc_get(cgc_size_t n, cgc_exp_t *l)
+static cgc_exp_t *cgc_get(size_t n, cgc_exp_t *l)
 {
   cgc_exp_t *li = l;
 
@@ -296,7 +296,7 @@ cgc_exp_t *cgc_lambda(cgc_exp_t *l, cgc_exp_t *e, cgc_sym_list *s)
   if (!z)
     cgc_exit(1);
 
-  cgc_size_t n = 0;
+  size_t n = 0;
   for (;;) {
       cgc_exp_t *cur_bnd = cgc_get(n, l->bound_vars);
       cgc_exp_t *cur_arg = cgc_get(n, e);
@@ -323,7 +323,7 @@ cgc_exp_t *cgc_lambda(cgc_exp_t *l, cgc_exp_t *e, cgc_sym_list *s)
   if (!ret)
     return NULL;
 
-  cgc_size_t cnt = 0;
+  size_t cnt = 0;
   cgc_exp_t *cake = ret;
   for (cnt = 0; cnt < 4; cnt++) {
     if (cake && CAR(cake) && ATOMP(CAR(cake)) && cgc_strncmp(CAR(cake)->name, "CAKE", cgc_strlen("CAKE")) == 0) {

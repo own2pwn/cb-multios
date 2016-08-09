@@ -35,8 +35,8 @@ struct cgc_list {
 
 cgc_list *cgc_init_list(const DATA d);
 void cgc_append_list(cgc_list **l, const DATA d, int dups);
-cgc_size_t cgc_len_list(const cgc_list *l);
-cgc_list *cgc_copy_list(const cgc_list *l, cgc_size_t start, cgc_size_t stop);
+size_t cgc_len_list(const cgc_list *l);
+cgc_list *cgc_copy_list(const cgc_list *l, size_t start, size_t stop);
 const DATA cgc_lindex(const cgc_list *l, cgc_ssize_t i);
 const void *cgc_random_element(cgc_list *l);
 void cgc_free_list(const cgc_list *l, int ld);

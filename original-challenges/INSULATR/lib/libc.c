@@ -23,8 +23,8 @@
 #include "libc.h"
 
 // VERBATIM from GREATVIEW
-void * cgc_memset(void *dst, char c, cgc_size_t n) {
-    cgc_size_t i;
+void * cgc_memset(void *dst, char c, size_t n) {
+    size_t i;
     for (i=0; i<n; i++) {
         *((uint8_t*)dst+i) = c;
     }
@@ -71,8 +71,8 @@ int cgc_uint2str32(char* str_buf, int buf_size, uint32_t i) {
 }
 
 // VERBATIM from GREATVIEW
-int cgc_memcmp(void *a, void *b, cgc_size_t n) {
-    cgc_size_t i;
+int cgc_memcmp(void *a, void *b, size_t n) {
+    size_t i;
     for (i=0; i < n; i++)
         if ( *(uint8_t*)(a+i) != *(uint8_t*)(b+i))
             return -1;
@@ -120,7 +120,7 @@ bail:
 }
 
 // VERBATIM from GREATVIEW
-cgc_size_t cgc_strncpy(char *s1, char *s2, cgc_size_t n) {
+size_t cgc_strncpy(char *s1, char *s2, size_t n) {
     char *tmp = s1;
     while ((tmp-s1 < n) && *s2) {
         *tmp = *s2;
@@ -146,11 +146,11 @@ char * cgc_strnchr(char *str, char c, uint32_t n) {
 // Address fragmentation issue.
 // Keep looping until we've receive'd count bytes.
 // VERBATIM to JUSTINTIME, INTERPRETTHIS
-int cgc_receive_all(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes) {
+int cgc_receive_all(int fd, void *buf, size_t count, size_t *rx_bytes) {
 
   int ret = SUCCESS;
-  cgc_size_t bytes_left = count;
-  cgc_size_t rx_bytes_local = 0;
+  size_t bytes_left = count;
+  size_t rx_bytes_local = 0;
 
   while (bytes_left) {
 
@@ -182,11 +182,11 @@ bail:
 // Address fragmentation issue.
 // Keep looping until we've transmit'ed count bytes.
 // VERBATIM to JUSTINTIME, INTERPRETTHIS
-int cgc_transmit_all(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes) {
+int cgc_transmit_all(int fd, const void *buf, size_t count, size_t *tx_bytes) {
 
    int ret = SUCCESS;
-   cgc_size_t bytes_left = count;
-   cgc_size_t tx_bytes_local = 0;
+   size_t bytes_left = count;
+   size_t tx_bytes_local = 0;
 
 #ifdef DEBUG
     fprintf(stderr, "[D] cgc_transmit_all | sending: '%s'\n", buf);
@@ -295,8 +295,8 @@ int toupper(int c) {
    return c;
 }
 
-cgc_size_t strlen(const char *str) {
-   cgc_size_t res = 0;
+size_t strlen(const char *str) {
+   size_t res = 0;
    while (*str++) {res++;}
    return res;
 }

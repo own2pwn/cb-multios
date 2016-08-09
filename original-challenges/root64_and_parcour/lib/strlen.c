@@ -25,9 +25,9 @@
 #include <libcgc.h>
 #include <string.h>
 
-cgc_size_t cgc_strlen(const char *s)
+size_t cgc_strlen(const char *s)
 {
-    cgc_size_t n;
+    size_t n;
     for (n = 0; s[n] != '\0'; n++) ;
     return n;
 }

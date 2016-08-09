@@ -21,8 +21,8 @@
 */
 #include "memcmp.h"
 
-int cgc_memcmp(const char *buf1, const char *buf2, cgc_size_t n) {
-	cgc_size_t idx = 0;
+int cgc_memcmp(const char *buf1, const char *buf2, size_t n) {
+	size_t idx = 0;
 
 	if (0 == n) {
 		return 0;

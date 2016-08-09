@@ -147,11 +147,11 @@ cgc_dfa_process_input(struct dfa *dfa, char c)
 }
 
 int
-cgc_dfa_give_example(struct dfa *dfa, char *str, cgc_size_t len)
+cgc_dfa_give_example(struct dfa *dfa, char *str, size_t len)
 {
     int ret = EXIT_FAILURE, can_accept = 0;
     struct state *old_current = dfa->current;
-    cgc_size_t cur_len = 0;
+    size_t cur_len = 0;
     unsigned int i, rnd, num_transitions = 0;
     char c;
 

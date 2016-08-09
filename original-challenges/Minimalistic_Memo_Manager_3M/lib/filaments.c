@@ -107,14 +107,14 @@ cgc_fib_t *cgc_filaments_current()
     return g_fib;
 }
 
-int cgc___filaments_transmit(int fd, const void *buf, cgc_size_t count, cgc_size_t *tx_bytes)
+int cgc___filaments_transmit(int fd, const void *buf, size_t count, size_t *tx_bytes)
 {
     cgc_filaments_yield();
     int retval = transmit(fd, buf, count, tx_bytes);
     return retval;
 }
 
-int cgc___filaments_receive(int fd, void *buf, cgc_size_t count, cgc_size_t *rx_bytes)
+int cgc___filaments_receive(int fd, void *buf, size_t count, size_t *rx_bytes)
 {
     while (1)
     {
@@ -146,21 +146,21 @@ int cgc___filaments_cgc_fdwait(int nfds, cgc_fd_set *readfds, cgc_fd_set *writef
     return retval;
 }
 
-int cgc___filaments_allocate(cgc_size_t length, int is_X, void **addr)
+int cgc___filaments_allocate(size_t length, int is_X, void **addr)
 {
     cgc_filaments_yield();
     int retval = allocate(length, is_X, addr);
     return retval;
 }
 
-int cgc___filaments_deallocate(void *addr, cgc_size_t length)
+int cgc___filaments_deallocate(void *addr, size_t length)
 {
     cgc_filaments_yield();
     int retval = deallocate(addr, length);
     return retval;
 }
 
-int cgc___filaments_cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes)
+int cgc___filaments_cgc_random(void *buf, size_t count, size_t *rnd_bytes)
 {
     cgc_filaments_yield();
     int retval = cgc_random(buf, count, rnd_bytes);

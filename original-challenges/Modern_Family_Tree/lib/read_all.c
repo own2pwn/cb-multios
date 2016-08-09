@@ -24,10 +24,10 @@
 #include "read_all.h"
 
 // borrowed from REDPILL; modified to do full size receives
-cgc_size_t cgc_read_all(int fd, char *buf, cgc_size_t size) {
+size_t cgc_read_all(int fd, char *buf, size_t size) {
    char *p_ch = buf;
-   cgc_size_t total = 0;
-   cgc_size_t nbytes = 0;
+   size_t total = 0;
+   size_t nbytes = 0;
    while (size) {
       if (receive(fd, &p_ch[total], size, &nbytes) != 0 || nbytes == 0) {
          break;

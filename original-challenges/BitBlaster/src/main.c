@@ -17,10 +17,10 @@
 typedef unsigned int cgc_uint32_t;
 typedef unsigned char cgc_uint8_t;
 
-cgc_size_t cgc_transmit_all(int fd, char* buf, cgc_size_t size)
+size_t cgc_transmit_all(int fd, char* buf, size_t size)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {
@@ -41,10 +41,10 @@ cgc_size_t cgc_transmit_all(int fd, char* buf, cgc_size_t size)
   return (size);
 }
 
-cgc_size_t cgc_receive_all(int fd, char* buf, cgc_size_t size)
+size_t cgc_receive_all(int fd, char* buf, size_t size)
 {
-  cgc_size_t rx_bytes = 0;
-  cgc_size_t total = 0;
+  size_t rx_bytes = 0;
+  size_t total = 0;
   int ret = 0;
   if (buf == NULL)
   {

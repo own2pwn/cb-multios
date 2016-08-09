@@ -27,7 +27,7 @@
 
 #include "bloomy.h"
 
-cgc_bloomy_t* cgc_bloomy_new(cgc_size_t size, cgc_hash_t hash1, cgc_hash_t hash2, cgc_hash_t hash3)
+cgc_bloomy_t* cgc_bloomy_new(size_t size, cgc_hash_t hash1, cgc_hash_t hash2, cgc_hash_t hash3)
 {
   cgc_bloomy_t *bloomy;
 

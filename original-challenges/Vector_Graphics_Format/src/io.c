@@ -41,7 +41,7 @@ cgc_uint8_t cgc_read_u8( void )
 {
     int retvalue;
     cgc_uint8_t temp;
-    cgc_size_t rx_count = 1;
+    size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -53,7 +53,7 @@ cgc_uint16_t cgc_read_u16( void )
 {
     int retvalue;
     cgc_uint16_t temp;
-    cgc_size_t rx_count = 1;
+    size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -65,7 +65,7 @@ cgc_uint32_t cgc_read_u32( void )
 {
     int retvalue;
     cgc_uint32_t temp;
-    cgc_size_t rx_count = 1;
+    size_t rx_count = 1;
 
     if ( (retvalue = receive( g_currentReadFD, &temp, sizeof(temp), &rx_count )) != 0 )
         _terminate( IO_ERROR_TERMINATE );
@@ -76,7 +76,7 @@ cgc_uint32_t cgc_read_u32( void )
 void cgc_write_u8( cgc_uint8_t value )
 {
     int retvalue;
-    cgc_size_t tx_bytes = 1;
+    size_t tx_bytes = 1;
 
     if ( (retvalue = transmit( g_currentWriteFD, &value, sizeof(value), &tx_bytes )) != 0 )
         _terminate( IO_ERROR_TERMINATE );

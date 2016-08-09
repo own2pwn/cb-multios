@@ -25,7 +25,7 @@
 
 #define MAX_BUF_LEN (4 * 1024 * 1024)
 
-cgc_xpk_ctx_t* cgc_xpk_init(cgc_size_t size)
+cgc_xpk_ctx_t* cgc_xpk_init(size_t size)
 {
     cgc_xpk_ctx_t *ctx = (cgc_xpk_ctx_t *) cgc_malloc(sizeof(cgc_xpk_ctx_t));
     if (size == 0)
@@ -36,7 +36,7 @@ cgc_xpk_ctx_t* cgc_xpk_init(cgc_size_t size)
     return ctx;
 }
 
-int cgc__xpk_resize(cgc_xpk_ctx_t *ctx, cgc_size_t size)
+int cgc__xpk_resize(cgc_xpk_ctx_t *ctx, size_t size)
 {
     if (size <= ctx->len)
         return 0;
@@ -49,7 +49,7 @@ int cgc__xpk_resize(cgc_xpk_ctx_t *ctx, cgc_size_t size)
     return -1;
 }
 
-void cgc_xpk_reset(cgc_xpk_ctx_t *ctx, cgc_size_t size)
+void cgc_xpk_reset(cgc_xpk_ctx_t *ctx, size_t size)
 {
     if (cgc__xpk_resize(ctx, size) == 0)
     {
@@ -212,7 +212,7 @@ cgc_xpk_err cgc_xpk_next_type(cgc_xpk_ctx_t *ctx, cgc_xpk_type *t)
     return XPK_ERR_NONE;
 }
 
-cgc_xpk_err cgc_xpk_write(cgc_xpk_ctx_t *ctx, const char *in, cgc_size_t len)
+cgc_xpk_err cgc_xpk_write(cgc_xpk_ctx_t *ctx, const char *in, size_t len)
 {
     if (ctx->idx + len <= ctx->len || cgc__xpk_resize(ctx, ctx->len * 2) == 0)
     {
@@ -223,7 +223,7 @@ cgc_xpk_err cgc_xpk_write(cgc_xpk_ctx_t *ctx, const char *in, cgc_size_t len)
     return XPK_ERR_INTERNAL;
 }
 
-cgc_xpk_err cgc_xpk_read(cgc_xpk_ctx_t *ctx, char *out, cgc_size_t len)
+cgc_xpk_err cgc_xpk_read(cgc_xpk_ctx_t *ctx, char *out, size_t len)
 {
     if (ctx->idx + len <= ctx->len)
     {
@@ -234,7 +234,7 @@ cgc_xpk_err cgc_xpk_read(cgc_xpk_ctx_t *ctx, char *out, cgc_size_t len)
     return XPK_ERR_INTERNAL;
 }
 
-cgc_xpk_err cgc_xpk_peek(cgc_xpk_ctx_t *ctx, char *out, cgc_size_t len)
+cgc_xpk_err cgc_xpk_peek(cgc_xpk_ctx_t *ctx, char *out, size_t len)
 {
     if (ctx->idx + len > ctx->len)
         return XPK_ERR_INTERNAL;
@@ -325,7 +325,7 @@ cgc_xpk_err cgc_xpk_pack_str(cgc_xpk_ctx_t *ctx, const char *str)
 {
     cgc_xpk_err err = XPK_ERR_NONE;
 
-    cgc_size_t len_b, len = cgc_strlen(str);
+    size_t len_b, len = cgc_strlen(str);
     if (len <= 0x1F)
     {
         cgc_uint8_t val = XPK_FIXSTRING | len;
@@ -345,11 +345,11 @@ cgc_xpk_err cgc_xpk_pack_str(cgc_xpk_ctx_t *ctx, const char *str)
     return err;
 }
 
-cgc_xpk_err cgc_xpk_pack_bytes(cgc_xpk_ctx_t *ctx, const char *bytes, cgc_size_t len)
+cgc_xpk_err cgc_xpk_pack_bytes(cgc_xpk_ctx_t *ctx, const char *bytes, size_t len)
 {
     cgc_xpk_err err = XPK_ERR_NONE;
 
-    cgc_size_t len_b;
+    size_t len_b;
     if (len < (1 << 16))
     {
         if ((err = cgc_xpk_write_marker(ctx, XPK_BYTES)) != XPK_ERR_NONE) return err;
@@ -363,7 +363,7 @@ cgc_xpk_err cgc_xpk_pack_bytes(cgc_xpk_ctx_t *ctx, const char *bytes, cgc_size_t
     return err;
 }
 
-cgc_xpk_err cgc_xpk_pack_array(cgc_xpk_ctx_t *ctx, cgc_size_t len)
+cgc_xpk_err cgc_xpk_pack_array(cgc_xpk_ctx_t *ctx, size_t len)
 {
     cgc_xpk_err err = XPK_ERR_NONE;
 
@@ -378,7 +378,7 @@ cgc_xpk_err cgc_xpk_pack_array(cgc_xpk_ctx_t *ctx, cgc_size_t len)
     return err;
 }
 
-cgc_xpk_err cgc_xpk_pack_map(cgc_xpk_ctx_t *ctx, cgc_size_t len)
+cgc_xpk_err cgc_xpk_pack_map(cgc_xpk_ctx_t *ctx, size_t len)
 {
     cgc_xpk_err err = XPK_ERR_NONE;
 
@@ -467,7 +467,7 @@ cgc_xpk_err cgc_xpk_unpack_bool(cgc_xpk_ctx_t *ctx, cgc_uint8_t *b)
     return XPK_ERR_NONE;
 }
 
-cgc_xpk_err cgc_xpk_unpack_str(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
+cgc_xpk_err cgc_xpk_unpack_str(cgc_xpk_ctx_t *ctx, size_t *len)
 {
     cgc_xpk_err err;
     cgc_xpk_obj_t o;
@@ -479,7 +479,7 @@ cgc_xpk_err cgc_xpk_unpack_str(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
     return XPK_ERR_NONE;
 }
 
-cgc_xpk_err cgc_xpk_unpack_bytes(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
+cgc_xpk_err cgc_xpk_unpack_bytes(cgc_xpk_ctx_t *ctx, size_t *len)
 {
     cgc_xpk_err err;
     cgc_xpk_obj_t o;
@@ -491,7 +491,7 @@ cgc_xpk_err cgc_xpk_unpack_bytes(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
     return XPK_ERR_NONE;
 }
 
-cgc_xpk_err cgc_xpk_unpack_array(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
+cgc_xpk_err cgc_xpk_unpack_array(cgc_xpk_ctx_t *ctx, size_t *len)
 {
     cgc_xpk_err err;
     cgc_xpk_obj_t o;
@@ -503,7 +503,7 @@ cgc_xpk_err cgc_xpk_unpack_array(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
     return XPK_ERR_NONE;
 }
 
-cgc_xpk_err cgc_xpk_unpack_map(cgc_xpk_ctx_t *ctx, cgc_size_t *len)
+cgc_xpk_err cgc_xpk_unpack_map(cgc_xpk_ctx_t *ctx, size_t *len)
 {
     cgc_xpk_err err;
     cgc_xpk_obj_t o;

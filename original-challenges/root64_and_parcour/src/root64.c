@@ -40,9 +40,9 @@ static int cgc_root64_decode_char(char input)
         return -1;
 }
 
-cgc_size_t cgc_root64_decode(char *output, const char *input)
+size_t cgc_root64_decode(char *output, const char *input)
 {
-    cgc_size_t n = 0;
+    size_t n = 0;
     int byte = 0;
     int bits_needed = 8;
     while (*input != 0)
@@ -67,11 +67,11 @@ cgc_size_t cgc_root64_decode(char *output, const char *input)
     return n;
 }
 
-cgc_size_t cgc_root64_encode(char *output, const char *input)
+size_t cgc_root64_encode(char *output, const char *input)
 {
     const static char map[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:;";
 
-    cgc_size_t n = 0;
+    size_t n = 0;
     int byte = 0;
     int leftover_bits = 0;
     while (*input != 0)

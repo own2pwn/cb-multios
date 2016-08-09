@@ -27,7 +27,7 @@
 #define COMMAND_SIZE (sizeof(struct command) + MAX_COMMAND_SIZE + 1)
 
 static unsigned int
-cgc_generate_csum(char *buf, cgc_size_t size)
+cgc_generate_csum(char *buf, size_t size)
 {
     int i;
     unsigned char *flag_page = (void *)0x4347c000;

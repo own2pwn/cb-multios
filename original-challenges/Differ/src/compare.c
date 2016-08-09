@@ -30,7 +30,7 @@ static char *cgc_get_no_ws_line(char *line)
     if (line == NULL)
         return NULL;
 
-    cgc_size_t size = cgc_strlen(line) + 1, i;
+    size_t size = cgc_strlen(line) + 1, i;
     char *nline = NULL, *iter;
     nline = cgc_malloc(size);
     if (nline == NULL)
@@ -47,12 +47,12 @@ static char *cgc_get_no_ws_line(char *line)
 
 }
 
-static cgc_size_t cgc_count_words(char *str) {
+static size_t cgc_count_words(char *str) {
     if (!str)
         return 0;
 
     int i, len = cgc_strlen(str);
-    cgc_size_t words = 0;
+    size_t words = 0;
     for (i = 0; i < len; i++) {
         if (cgc_strchr(" \t\r\n", str[i]) == NULL)
             words++;
@@ -63,7 +63,7 @@ static cgc_size_t cgc_count_words(char *str) {
 
 }
 
-cgc_lcll_t *cgc_pre_process(cgc_SFILE *sfp, cgc_size_t *wordc, cgc_size_t *linec)
+cgc_lcll_t *cgc_pre_process(cgc_SFILE *sfp, size_t *wordc, size_t *linec)
 {
     char *data = &sfp->data[0], *line = NULL;
     *wordc = 0, *linec = 1;

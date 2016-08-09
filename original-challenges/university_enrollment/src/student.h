@@ -22,7 +22,7 @@ struct student
     cgc_course_t *courses[MAX_COURSES];
     int (*add_course)(cgc_student_t *, cgc_course_t *);
     int (*set_major)(cgc_student_t *, char *);
-    int (*remove_course)(cgc_student_t *, cgc_size_t);
+    int (*remove_course)(cgc_student_t *, size_t);
     void (*list_classes)(cgc_student_t *);
     void (*print_schedule)(cgc_student_t *);
 };

@@ -55,7 +55,7 @@ void cgc_print_deck(cgc_standard_deck *deck)
 } 
 
 // Print the face value of each card in the hand
-void cgc_print_hand(char *hand, cgc_size_t size)
+void cgc_print_hand(char *hand, size_t size)
 {
 	for (int i=0; i<size; i++)
 	{

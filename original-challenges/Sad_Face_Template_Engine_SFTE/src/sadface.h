@@ -51,8 +51,8 @@ typedef struct {
 typedef struct {
   cgc_faces_t faces;
   char *content;
-  cgc_size_t content_len;
-  cgc_size_t idx;
+  size_t content_len;
+  size_t idx;
   cgc_dict_t **vars;
 } cgc_sadface_ctx_t;
 
@@ -66,8 +66,8 @@ typedef enum {
 typedef struct sad_node {
   cgc_sad_node_type_t type;
   struct sad_node *next;
-  cgc_size_t idx;
-  cgc_size_t len;
+  size_t idx;
+  size_t len;
   union {
     cgc_sad_var_t *var;
     struct sad_node *child;
@@ -76,7 +76,7 @@ typedef struct sad_node {
 
 char* cgc_sadface_var2str(cgc_sad_var_t *var);
 int cgc_sadface_init(cgc_sadface_ctx_t **ctx, cgc_faces_t *faces, char *content, cgc_dict_t **vars);
-int cgc_sadface_render(cgc_sadface_ctx_t *ctx, char *out, cgc_size_t *out_len);
+int cgc_sadface_render(cgc_sadface_ctx_t *ctx, char *out, size_t *out_len);
 void cgc_sadface_destroy(cgc_sadface_ctx_t *ctx);
 
 #endif

@@ -28,7 +28,7 @@
 static int cgc_bitset_set_bit_value(struct bitset *, unsigned int, int);
 
 void
-cgc_bitset_init(struct bitset *bitset, cgc_size_t size)
+cgc_bitset_init(struct bitset *bitset, size_t size)
 {
     bitset->size = size;
     cgc_bitset_clear(bitset);

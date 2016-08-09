@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "service.h"
 
-void cgc_ReceiveBytesOrTerminate(void *buffer, cgc_size_t size);
+void cgc_ReceiveBytesOrTerminate(void *buffer, size_t size);
 int cgc_ReceiveAndVerifyInitializationPacket(cgc_SystemState *state);
 int cgc_ReceiveAndVerifyFilters(cgc_SystemState *state);
 int cgc_ReceiveAndProcessFile(cgc_SystemState *state);

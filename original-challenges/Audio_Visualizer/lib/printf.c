@@ -27,7 +27,7 @@
 #include <string.h>
 
 #define OUTPUT_BYTE(x) do { \
-    cgc_size_t bytes; \
+    size_t bytes; \
     char _c = x; \
     transmit(STDOUT, &_c, sizeof(_c), &bytes); \
 } while (0);
@@ -61,12 +61,12 @@ int cgc_output_number(unsigned int x, int base, int min, unsigned int flags)
     return n + 1;
 }
 
-int cgc_send_n_bytes(int fd, cgc_size_t n, char *buf)
+int cgc_send_n_bytes(int fd, size_t n, char *buf)
 {
     if (!n || !buf)
         return -1;
 
-    cgc_size_t tx = 0, total_sent = 0;
+    size_t tx = 0, total_sent = 0;
 
     while (total_sent < n) {
         if (transmit(fd, buf + total_sent, n - total_sent, &tx) != 0) {

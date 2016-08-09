@@ -31,13 +31,13 @@
 #define TRUE 1
 
 
-typedef int (*cgc_verify_input_t) (char *str, cgc_size_t size);
+typedef int (*cgc_verify_input_t) (char *str, size_t size);
 typedef struct app_input
 {
     char *text_field;
     char *input_specification;
     char is_required;
-    cgc_size_t max_input_length;
+    size_t max_input_length;
     char *input;
     cgc_verify_input_t verify_input;
 } cgc_app_input_t;
@@ -158,10 +158,10 @@ cgc_app_input_t screening_questions[] = {
 
 static cgc_page_option cgc_get_response()
 {
-    cgc_size_t i;
-    cgc_size_t rx;
+    size_t i;
+    size_t rx;
     int fd = STDIN;
-    cgc_size_t size = RESP_SIZE;
+    size_t size = RESP_SIZE;
     char *buf = g_user_resp;
     char *response = g_user_resp;
 
@@ -326,7 +326,7 @@ void cgc_print_page(char *banner, cgc_app_input_t form_questions[], int num_fiel
 }
 
 
-int cgc_form(char *banner, cgc_app_input_t form_questions[], cgc_size_t num_fields)
+int cgc_form(char *banner, cgc_app_input_t form_questions[], size_t num_fields)
 {
     char *update_tok;
     cgc_page_option pg_opt;

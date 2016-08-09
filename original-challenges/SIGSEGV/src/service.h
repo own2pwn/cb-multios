@@ -32,7 +32,7 @@
 #define MAX_NUM_SEGS 10
 
 typedef struct seg {
-    cgc_size_t size;
+    size_t size;
     char name[16];
     char desc[112];
     cgc_uint8_t code[4096];
@@ -53,7 +53,7 @@ struct segnode {
  * @param size Size of input buffer
  * @return Verification code in out buffer
  */
-void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, cgc_size_t len);
+void cgc_scramble(cgc_uint8_t *in, cgc_uint8_t *out, size_t len);
 
 /**
  * Run a SEG

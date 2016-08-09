@@ -36,10 +36,10 @@ THE SOFTWARE.
 enum colors {RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET, NUM_COLORS};
 char *color_names[NUM_COLORS] = {"RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "INDIGO", "VIOLET"};
 
-int cgc_keep_receiving_until(char *dst, char delim, cgc_size_t max) {
+int cgc_keep_receiving_until(char *dst, char delim, size_t max) {
   char c;
-  cgc_size_t rx;
-  cgc_size_t len = 0;
+  size_t rx;
+  size_t len = 0;
   do {
     if ( receive( STDIN, &c, 1, &rx ) != 0 ) {
       len = 0;

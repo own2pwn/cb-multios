@@ -1,7 +1,7 @@
 #include "cgc_libc.h"
 #include "cgc_malloc.h"
 
-void *cgc_memset(void *b, int c, cgc_size_t len) {
+void *cgc_memset(void *b, int c, size_t len) {
     if (!b)
         return NULL;
 
@@ -18,7 +18,7 @@ void *cgc_memset(void *b, int c, cgc_size_t len) {
 }
 
 #if 0
-void *cgc_calloc(cgc_size_t count, cgc_size_t size) {
+void *cgc_calloc(size_t count, size_t size) {
     if (size == 0)
         return NULL;
 
@@ -26,7 +26,7 @@ void *cgc_calloc(cgc_size_t count, cgc_size_t size) {
         return NULL;
 
     unsigned long long total = count * size;
-    cgc_size_t block_size = (cgc_size_t)total;
+    size_t block_size = (size_t)total;
     void *res = NULL;
 
     if (total == block_size)
@@ -54,7 +54,7 @@ int cgc_strcmp(const char *s1, const char *s2) {
     return *(const unsigned char *)s1 - *(const unsigned char *)s2;
 }
 
-int cgc_strncmp(const char *s1, const char *s2, cgc_size_t dstsize) {
+int cgc_strncmp(const char *s1, const char *s2, size_t dstsize) {
     if (!s1)
         return 0;
 
@@ -72,8 +72,8 @@ int cgc_strncmp(const char *s1, const char *s2, cgc_size_t dstsize) {
     return 0;
 }
 
-cgc_size_t cgc_strlcpy(char *dst, const char *src, const cgc_size_t dstsize) {
-    cgc_size_t i = 0;
+size_t cgc_strlcpy(char *dst, const char *src, const size_t dstsize) {
+    size_t i = 0;
 
     if (!src)
         return 0;
@@ -96,8 +96,8 @@ cgc_size_t cgc_strlcpy(char *dst, const char *src, const cgc_size_t dstsize) {
     return i;
 }
 
-cgc_size_t cgc_strlcat(char *dst, const char *src, const cgc_size_t dstsize) {
-    cgc_size_t current_dst_len;
+size_t cgc_strlcat(char *dst, const char *src, const size_t dstsize) {
+    size_t current_dst_len;
 
     if (!src)
         return 0;
@@ -112,7 +112,7 @@ cgc_size_t cgc_strlcat(char *dst, const char *src, const cgc_size_t dstsize) {
     return current_dst_len + cgc_strlcpy(dst + current_dst_len, src, dstsize - current_dst_len);
 }
 
-cgc_size_t cgc_strlen(const char *s) {
+size_t cgc_strlen(const char *s) {
     const char *p;
 
     /* less than good. */
@@ -124,7 +124,7 @@ cgc_size_t cgc_strlen(const char *s) {
     while (*s)
         ++s;
 
-    return (cgc_size_t)(s - p);
+    return (size_t)(s - p);
 }
 
 char *cgc_strchr(const char *s, int c) {
@@ -145,8 +145,8 @@ char *cgc_strchr(const char *s, int c) {
     return (char *)s;
 }
 
-cgc_size_t cgc_strspn(const char *s1, const char *s2) {
-    cgc_size_t ret = 0;
+size_t cgc_strspn(const char *s1, const char *s2) {
+    size_t ret = 0;
 
     if (!s1)
         return 0;
@@ -160,8 +160,8 @@ cgc_size_t cgc_strspn(const char *s1, const char *s2) {
     return ret;
 }
 
-cgc_size_t cgc_strcspn(const char *s1, const char *s2) {
-    cgc_size_t ret = 0;
+size_t cgc_strcspn(const char *s1, const char *s2) {
+    size_t ret = 0;
 
     if (!s1)
         return 0;
@@ -209,7 +209,7 @@ char *cgc_strtok(char *str, const char *sep) {
 }
 
 char *cgc_strdup(const char *src) {
-    cgc_size_t len = 0;
+    size_t len = 0;
     char *dst = NULL;
 
     if (!src)
@@ -224,10 +224,10 @@ char *cgc_strdup(const char *src) {
     return dst;
 }
 
-int cgc_transmit_all(int fd, const char *s, cgc_size_t size) {
+int cgc_transmit_all(int fd, const char *s, size_t size) {
     int ret;
-    cgc_size_t total_sent = 0;
-    cgc_size_t sent = 0;
+    size_t total_sent = 0;
+    size_t sent = 0;
 
     while (total_sent < size) {
         ret = transmit(fd, s + total_sent, size - total_sent, &sent);
@@ -249,7 +249,7 @@ void cgc_err(unsigned int id, char *str) {
     _terminate(id);
 }
 
-void *cgc_memcpy(void *dst, const void *src, cgc_size_t size) {
+void *cgc_memcpy(void *dst, const void *src, size_t size) {
     char *dst_char = (char *)dst;
     char *src_char = (char *)src;
 

@@ -32,16 +32,16 @@ int cgc_InitializeSearchMachine(cgc_search_machine* SearchMachine, cgc_trie* Tri
   SearchMachine->Trie = Trie;
 
   // For each keyword in the keyword tree, set out(Node-For-Keyword) = {Keyword}
-  cgc_size_t TerminalCount;
+  size_t TerminalCount;
   cgc_trie** Terminals = cgc_GatherTerminals(Trie, &TerminalCount);
 
   // Each state has an out (set of patterns recognized upon entering it
   // out :: Map StateID [String]
   SearchMachine->Out = cgc_xcalloc(cgc_GetTrieCount(), sizeof(cgc_list*));
-  for (cgc_size_t TerminalIndex = 0; TerminalIndex < TerminalCount; ++TerminalIndex)
+  for (size_t TerminalIndex = 0; TerminalIndex < TerminalCount; ++TerminalIndex)
   {
-    cgc_size_t DataLength;
-    cgc_size_t TerminalIdentifier = Terminals[TerminalIndex]->Identifier;
+    size_t DataLength;
+    size_t TerminalIdentifier = Terminals[TerminalIndex]->Identifier;
     cgc_trie_unit* DataUpToNode = cgc_GetDataString(Terminals[TerminalIndex], &DataLength);
     Assert(DataUpToNode != NULL, "ISM1");
     cgc_AllocateAndInitializeListHead(&(SearchMachine->Out[TerminalIdentifier]), DataUpToNode);
@@ -53,7 +53,7 @@ int cgc_InitializeSearchMachine(cgc_search_machine* SearchMachine, cgc_trie* Tri
   SearchMachine->Goto = cgc_xcalloc(sizeof(void *), cgc_GetTrieCount());
 
   // Copy over cgc_trie links into goto
-  for (cgc_size_t TrieIndex = 0; TrieIndex < cgc_GetTrieCount(); TrieIndex++)
+  for (size_t TrieIndex = 0; TrieIndex < cgc_GetTrieCount(); TrieIndex++)
   {
     SearchMachine->Goto[TrieIndex] = cgc_xcalloc(sizeof(cgc_trie*), UNIT_CARDINALITY);
     cgc_trie* TrieToCopy = cgc_FindInTrieByIdentifier(Trie, TrieIndex);
@@ -61,7 +61,7 @@ int cgc_InitializeSearchMachine(cgc_search_machine* SearchMachine, cgc_trie* Tri
   }
 
   // g(ROOT, a) := ROOT forall a in SIGMA where a doesn't leave ROOT
-  for (cgc_size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
+  for (size_t AlphabetIndex = 0; AlphabetIndex < UNIT_CARDINALITY; ++AlphabetIndex)
   {
     if (Trie->Children[AlphabetIndex] == NULL)
     {
@@ -78,12 +78,12 @@ void cgc_FreeSearchMachine(cgc_search_machine* SearchMachine)
   {
     // FreeSignatureDatabase will get the Trie
 
-    for (cgc_size_t ListIndex = 0; ListIndex < cgc_GetTrieCount(); ++ListIndex)
+    for (size_t ListIndex = 0; ListIndex < cgc_GetTrieCount(); ++ListIndex)
     {
       if (SearchMachine->Out[ListIndex])
       {
         cgc_FreeList(SearchMachine->Out[ListIndex]);
-        for (cgc_size_t OtherListIndex = 0; OtherListIndex < cgc_GetTrieCount(); ++OtherListIndex)
+        for (size_t OtherListIndex = 0; OtherListIndex < cgc_GetTrieCount(); ++OtherListIndex)
         {
           if (OtherListIndex != ListIndex && SearchMachine->Out[OtherListIndex] == SearchMachine->Out[ListIndex])
           {
@@ -102,7 +102,7 @@ void cgc_FreeSearchMachine(cgc_search_machine* SearchMachine)
 
     if (SearchMachine->Goto)
     {
-      for (cgc_size_t GotoIndex = 0; GotoIndex < cgc_GetTrieCount(); ++GotoIndex)
+      for (size_t GotoIndex = 0; GotoIndex < cgc_GetTrieCount(); ++GotoIndex)
       {
         if (SearchMachine->Goto[GotoIndex])
         {
@@ -116,15 +116,15 @@ void cgc_FreeSearchMachine(cgc_search_machine* SearchMachine)
   }
 }
 
-cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Data, cgc_size_t DataSize, cgc_size_t* NumMatches)
+cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Data, size_t DataSize, size_t* NumMatches)
 {
-  cgc_size_t MaxMatches = 0;
+  size_t MaxMatches = 0;
   cgc_match* Matches = NULL;
   *NumMatches = 0;
 
   cgc_trie* Node = SearchMachine->Trie;
 
-  for (cgc_size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
+  for (size_t DataIndex = 0; DataIndex < DataSize; ++DataIndex)
   {
     while (SearchMachine->Goto[Node->Identifier] == NULL || SearchMachine->Goto[Node->Identifier][Data[DataIndex]] == NULL)
     {
@@ -137,7 +137,7 @@ cgc_match* cgc_FindMatches(cgc_search_machine *SearchMachine, cgc_trie_unit* Dat
     {
       if (*NumMatches == MaxMatches)
       {
-        cgc_size_t NewMaxMatches = MaxMatches * 2 + 1;
+        size_t NewMaxMatches = MaxMatches * 2 + 1;
         Assert(NewMaxMatches > MaxMatches, "MATCH");
         cgc_match* NewMatches = cgc_xcalloc(sizeof(cgc_match), NewMaxMatches);
         cgc_memcpy(NewMatches, Matches, sizeof(cgc_match) * MaxMatches);

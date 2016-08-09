@@ -9,13 +9,13 @@
  * Transmits all len bytes from the buffer buf to the file descriptor
  *   or terminates in error
 **/
-void cgc_transmit_all(int fd, const void* buf, cgc_size_t len);
+void cgc_transmit_all(int fd, const void* buf, size_t len);
 
 /**
  * Receives all len bytes from the buffer buf to the file descriptor
  *   or terminates in error
 **/
-void cgc_receive_all(int fd, void* buf, cgc_size_t len);
+void cgc_receive_all(int fd, void* buf, size_t len);
 
 /**
  * Receives data from the buffer either until the delim is seen or until 
@@ -26,21 +26,21 @@ void cgc_receive_all(int fd, void* buf, cgc_size_t len);
  *  the user must check to see that buf[count-1] is actually delim, and not
  *  because it just ended due to the max size
 **/
-cgc_size_t cgc_receive_until(int fd, char* buf, cgc_size_t len, char delim);
+size_t cgc_receive_until(int fd, char* buf, size_t len, char delim);
 
 //string functions
 int cgc_strcmp(const char* s1, const char* s2);
 
-cgc_size_t cgc_strcpyUntil(char* dst, const char* src, char delim);
-static inline cgc_size_t cgc_strcpy(char* dst, const char* src)
+size_t cgc_strcpyUntil(char* dst, const char* src, char delim);
+static inline size_t cgc_strcpy(char* dst, const char* src)
 {
   return (cgc_strcpyUntil(dst, src, '\0'));
 }
 
 
-static inline cgc_size_t cgc_strlen(const char* str)
+static inline size_t cgc_strlen(const char* str)
 {
-  cgc_size_t i = 0; 
+  size_t i = 0; 
   if (str == NULL)
   {
     return (0);
