@@ -9,4 +9,3 @@ cmake -DCMAKE_GENERATE_COMPILE_COMMANDS=On ..
 
 make -j8
 
-popd
