@@ -10,9 +10,6 @@
 #endif
 #define NULL (0)
 
-typedef unsigned long cgc_size_t;
-typedef long cgc_ssize_t;
-
 // This is for challenges that define C++ operators and need to know std::size_t
 #if defined(APPLE) || defined(__LP64__) || defined(_LP64)
 # define STD_SIZE_T unsigned long
@@ -26,6 +23,10 @@ typedef long cgc_ssize_t;
 typedef STD_SIZE_T size_t;
 typedef STD_SSIZE_T ssize_t;
 #endif
+
+typedef size_t cgc_size_t;
+typedef ssize_t cgc_ssize_t;
+
 
 
 #ifndef PAGE_SIZE

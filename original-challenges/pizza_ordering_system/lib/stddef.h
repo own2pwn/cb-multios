@@ -1,14 +1,11 @@
 #ifndef STDDEF_H_
 #define STDDEF_H_
 
-#define PAGE_SIZE 4096
+#include <libcgc.h>
 
 typedef long int cgc_ptrdiff_t;
 
 #ifndef _LIBCGC_H
-    typedef long unsigned int size_t;
-    typedef long int cgc_ssize_t;
-
     #undef NULL
     #define NULL 0
 #endif
