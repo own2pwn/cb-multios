@@ -5,7 +5,7 @@ mkdir build
 pushd build
 
 echo "Creating Makefiles"
-cmake -DCMAKE_GENERATE_COMPILE_COMMANDS=On ..
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=On ..
 
 make -j8
 
