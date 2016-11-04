@@ -3,6 +3,7 @@
 #define LIBCGC_IMPL
 #include "libcgc.h"
 #include "ansi_x931_aes128.h"
+#include "initial_flag_page.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -210,15 +211,26 @@ static cgc_prng *cgc_internal_prng = NULL;
 /**
  * Initializes the prng for use with cgc_random and the flag page
  */
+
+static void finish_init_prng()
+{
+    static int initialized = 0;
+    if (initialized == 1) return; 
+
+    // Finish initializing the prng
+    initialized = 1;
+    cgc_aes_get_bytes(cgc_internal_prng, PAGE_SIZE, CGC_FLAG_PAGE_ADDRESS);
+}
+
 static void try_init_prng() {
     // Don't reinitialize
     if (cgc_internal_prng != NULL) return;
 
     uint8_t prng_seed[BLOCK_SIZE * 3] = {
-        0x73, 0x65, 0x65, 0x64, 0x73, 0x65, 0x65, 0x64, 0x73, 0x65, 0x65, 0x64,
-        0x73, 0x65, 0x65, 0x64, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-        0x38, 0x39, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      0x73, 0x65, 0x65, 0x64, 0x73, 0x65, 0x65, 0x64, 0x73, 0x65, 0x65, 0x64,
+      0x73, 0x65, 0x65, 0x64, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+      0x38, 0x39, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     }; // Default seed, definitely not random
 
     // This will be hex encoded
@@ -232,17 +244,39 @@ static void try_init_prng() {
         }
     }
 
-
-    // Create the prng
     cgc_internal_prng = (cgc_prng *) malloc(sizeof(cgc_prng));
     cgc_aes_state *seed = (cgc_aes_state *) prng_seed;
     cgc_init_prng(cgc_internal_prng, seed);
+
+    if (!prng_seed_hex)
+    {
+      // Fill in the random page with pre-calculated bytes (this is more friendly to symbolic execution engines)
+      memcpy(CGC_FLAG_PAGE_ADDRESS, initial_flag_page, initial_flag_page_len);
+    }
+    else
+    {
+      finish_init_prng();
+    }
 }
+
 
 int cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes) {
     // Get random bytes from the prng
-    try_init_prng();
-    cgc_aes_get_bytes(cgc_internal_prng, count, buf);
+    static cgc_size_t running_count = 0;
+    const uint8_t *out_buf = (uint8_t *)buf;
+    const uint8_t *rnd_page = (uint8_t *)CGC_FLAG_PAGE_ADDRESS;
+
+    if ((running_count + count) < PAGE_SIZE)
+    {
+      memcpy(buf, &(rnd_page[running_count]), count);
+      running_count += count;
+    }
+    else
+    {
+      finish_init_prng();
+      cgc_aes_get_bytes(cgc_internal_prng, count, buf);
+      running_count = PAGE_SIZE+1;
+    }
 
     if (rnd_bytes)
       *rnd_bytes = count;
@@ -262,5 +296,4 @@ static void __attribute__ ((constructor)) cgc_initialize_flag_page(void) {
 
   // Fill the flag page with bytes from the prng
   try_init_prng();
-  cgc_aes_get_bytes(cgc_internal_prng, PAGE_SIZE, mmap_addr);
 }
