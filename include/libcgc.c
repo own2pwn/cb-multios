@@ -262,21 +262,8 @@ static void try_init_prng() {
 
 int cgc_random(void *buf, cgc_size_t count, cgc_size_t *rnd_bytes) {
     // Get random bytes from the prng
-    static cgc_size_t running_count = 0;
-    const uint8_t *out_buf = (uint8_t *)buf;
-    const uint8_t *rnd_page = (uint8_t *)CGC_FLAG_PAGE_ADDRESS;
-
-    if ((running_count + count) < PAGE_SIZE)
-    {
-      memcpy(buf, &(rnd_page[running_count]), count);
-      running_count += count;
-    }
-    else
-    {
-      finish_init_prng();
-      cgc_aes_get_bytes(cgc_internal_prng, count, buf);
-      running_count = PAGE_SIZE+1;
-    }
+    finish_init_prng();
+    cgc_aes_get_bytes(cgc_internal_prng, count, buf);
 
     if (rnd_bytes)
       *rnd_bytes = count;
